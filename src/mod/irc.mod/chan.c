@@ -306,7 +306,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
                              struct chanset_t *chan, int which, char *victim)
 {
   char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
-  struct userrec *u;
+  struct userrec *u = 0;
+  struct capability *current;
   memberlist *m;
   int thr = 0, lapse = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -330,7 +331,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-  get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
+  current = find_capability("extended-join");
+  if (m && current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    u = get_user_by_host(from);
+  }
+
+  get_user_flagrec(u, &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
       ((which == FLOOD_KICK) && (glob_master(fr) || chan_master(fr)) &&
@@ -414,7 +423,12 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     chan->floodwho[which][0] = 0;
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
-    u = get_user_by_host(from);
+    if (m && current->enabled) { /* set at start of function */
+      u = get_user_by_account(m->account);
+    }
+    if (!u) {
+      u = get_user_by_host(from);
+    }
     if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->dname))
       return 0;
     switch (which) {
@@ -520,6 +534,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
   kicknick[0] = 0;
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
+//XXXXXXX Don't need this, we don't kick/ban based on accounts... yet... 
     get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         match_addr(hostmask, s) && !chan_sentkick(m) &&
@@ -571,6 +586,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
         char s[NICKMAX+UHOSTLEN+1];
 
         sprintf(s, "%s!%s", m->nick, m->userhost);
+//XXXXX Don't need it here, we don't ban on accounts... yet
         get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr,
                          chan->dname);
         if (!glob_friend(fr) && !chan_friend(fr)) {
@@ -976,14 +992,23 @@ static void check_this_user(char *hand, int delete, char *host)
 {
   char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
-  struct userrec *u;
+  struct userrec *u = 0;
   struct chanset_t *chan;
+  struct capability *current;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
+  current = find_capability("extended-join");
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = m->user ? m->user : get_user_by_host(s);
+      if (m->user) {
+        u = m->user;
+      } else if (current->enabled) {
+        u = get_user_by_account(m->account);
+      }
+      if (!u) {
+        u = get_user_by_host(s);
+      }
       if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
           (!u && delete == 2 && match_addr(host, s))) {
         u = delete ? NULL : u;
@@ -999,6 +1024,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
   char s[NICKMAX+UHOSTLEN+1];
+  struct capability *current;
+  struct userrec *u = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   static int stacking = 0;
   int stop_reset = 0;
@@ -1008,11 +1035,18 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 
   stacking++;
   /* Okay, sort through who needs to be deopped. */
+  current = find_capability("extended-join");
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (!m->user && !m->tried_getuser) {
       m->tried_getuser = 1;
-      m->user = get_user_by_host(s);
+      if (current->enabled) {
+        u = get_user_by_account(m->account);
+      }
+      if (!u) {
+        u = get_user_by_host(s);
+      }
+      m->user = u;
     }
     get_user_flagrec(m->user, &fr, chan->dname);
     if (glob_bot(fr) && chan_hasop(m) && !match_my_nick(m->nick))
@@ -1165,6 +1199,8 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
 {
   char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
   struct chanset_t *acctchan;
+  struct capability *current;
+  struct userrec *u = 0;
   memberlist *m;
   int empty_accounts;
 
@@ -1211,8 +1247,14 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
   }
-  m->user = get_user_by_host(userhost);
-
+  current = find_capability("extended-join");
+  if (m && current->enabled) {
+    u = get_user_by_account(m->account);
+  }
+  if (!u) {
+    u = get_user_by_host(userhost);
+  }
+  m->user = u;
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
   if (account) {
@@ -1393,6 +1435,16 @@ static int gotaway(char *from, char *msg)
 
   strlcpy(s1, from, sizeof buf);
   nick = splitnick(&s1);
+//XXXXXX AWAY may not be on a channel, how to handle?
+//  current = find_capability("extended-join");
+//  if (current->enabled) {
+//    u = get_user_by_account(m->account);
+//  }
+//  if (!u) {
+//    u = get_user_by_host(from);
+//  }
+
+
   u = get_user_by_host(from);
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
@@ -1935,6 +1987,16 @@ static int gottopic(char *from, char *msg)
 
   chname = newsplit(&msg);
   fixcolon(msg);
+//XXXXXX don't have account here yet
+//  current = find_capability("extended-join");
+//  if (current->enabled) {
+//    u = get_user_by_account(m->account);
+//  }
+//  if (!u) {
+//    u = get_user_by_host(from);
+//  }
+
+
   u = get_user_by_host(from);
   nick = splitnick(&from);
   chan = findchan(chname);
@@ -2068,7 +2130,9 @@ static int gotjoin(char *from, char *channame)
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
-  if (!extjoin) {
+  if (extjoin) {
+   strlcpy(account, newsplit(&channame), sizeof account);
+  } else {
     fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
@@ -2133,7 +2197,12 @@ static int gotjoin(char *from, char *channame)
       goto exit;
 
     /* Grab last time joined before we update it */
-    u = get_user_by_host(from);
+    if (extjoin) {
+      u = get_user_by_account(account);
+    }
+    if (!u) {
+      u = get_user_by_host(from);
+    }
     get_user_flagrec(u, &fr, chan->dname);      /* Lam: fix to work with !channels */
     if (!channel_active(chan) && !match_my_nick(nick)) {
       /* uh, what?!  i'm on the channel?! */
@@ -2160,7 +2229,12 @@ static int gotjoin(char *from, char *channame)
           goto exit;
 
         /* The tcl binding might have deleted the current user. Recheck. */
-        u = get_user_by_host(from);
+        if (extjoin) {
+          u = get_user_by_account(account);
+        }
+        if (!u) {
+          u = get_user_by_host(from);
+        }
         m->split = 0;
         m->last = now;
         m->delay = 0L;
@@ -2185,13 +2259,12 @@ static int gotjoin(char *from, char *channame)
         m->flags |= STOPWHO;
         if (extjoin) {
           /* Update account for all channels the nick is on, not just this one */
-          strlcpy(account, newsplit(&channame), sizeof account);
           for (extchan = chanset; extchan; extchan = extchan->next) {
             if ((n = ismember(extchan, nick))) {
               if (strcmp(account, "*")) {
                 strlcpy (n->account, account, sizeof n->account);
               } else {
-                n->account[0] = 0;
+                n->account[0] = '\0';
               }
               /* Don't trigger for the channel the user joined, but do trigger
                * for other channels the user is already in
@@ -2714,6 +2787,38 @@ static int gotmsg(char *from, char *msg, char *tags)
   tagobj = Tcl_NewStringObj(tags, -1);
   if (Tcl_DictObjGet(interp, tagobj, Tcl_NewStringObj("account", -1), &accountobj) != TCL_OK) {
     putlog(LOG_MISC, "*", "BUG! irc.mod/gotmsg() received an invalid Tcl dict for the message tags: '%s'. Please report this.", Tcl_GetString(tagobj));
+  }
+
+  /* Check for updated account names if account-tag capability is enabeld */
+/* Do we even need to do this? If we see it, lets just assume its wanted and use it, no?
+  current = cap;
+  while (current != NULL) {
+    if (!strcasecmp("account-tag", current->name)) {
+      accttag = current->enabled ? 1 : 0;
+      break;
+    }
+    current = current->next;
+  }
+*/
+  if (accountobj) {
+    for (extchan = chanset; extchan; extchan = extchan->next) {
+      if ((m = ismember(extchan, nick))) {      /* If member is on the channel */
+        if (strcmp(Tcl_GetString(accountobj), m->account)) {         /* If stored account and seen account don't match */
+putlog(LOG_MISC, "*", "Accounts don't match, updating %s with account %s", nick, Tcl_GetString(accountobj));
+          strlcpy(m->account, Tcl_GetString(accountobj), sizeof m->account);
+        }
+      }
+    }
+  }
+
+putlog(LOG_MISC, "*", "TAGS: '%s'", tags);
+  tagobj = Tcl_NewStringObj(tags, -1);
+  if (Tcl_DictObjGet(interp, tagobj, Tcl_NewStringObj("account", -1), &accountobj) != TCL_OK) {
+    putlog(LOG_MISC, "*", "BUG! irc.mod/gotmsg() received an invalid Tcl dict for the message tags: '%s'. Please report this.", Tcl_GetString(tagobj));
+  } else if (!accountobj) {
+    putlog(LOG_DEBUG, "*", "DEBUG: Message without account tag: %s", msg);
+  } else {
+    putlog(LOG_DEBUG, "*", "DEBUG: Message with account tag, account '%s': %s", Tcl_GetString(accountobj), msg);
   }
 
   /* Check for updated account names if account-tag capability is enabeld */

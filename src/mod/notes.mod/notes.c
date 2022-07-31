@@ -45,6 +45,7 @@ static int notify_onjoin = 1;   /* Notify users they have notes on join?
 
 #undef global /* Needs to be undef'd because of fcntl.h. */
 static Function *global = NULL; /* DAMN fcntl.h */
+struct capability *find_capability(char *capname);
 
 static struct user_entry_type USERENTRY_FWD = {
   NULL,                         /* always 0 ;) */
@@ -832,15 +833,24 @@ static void notes_hourly()
   if (notify_users) {
     struct chanset_t *chan;
     memberlist *m;
-    int k;
-    int l;
+    int k, l, extjoin;
     char s1[NICKMAX+UHOSTLEN+1];
     struct userrec *u;
+    struct capability *current;
 
+//    current = find_capability("extended-join");
+//    if (current->enabled) {
+//      extjoin = 1;
+//    }
     for (chan = chanset; chan; chan = chan->next) {
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-        sprintf(s1, "%s!%s", m->nick, m->userhost);
-        u = get_user_by_host(s1);
+//        if (extjoin) {
+//          u = get_user_by_account(m->account);
+//        }
+//        if (!u) {
+          sprintf(s1, "%s!%s", m->nick, m->userhost);
+          u = get_user_by_host(s1);
+//        }
         if (u) {
           k = num_notes(u->handle);
           for (l = 0; l < dcc_total; l++)
