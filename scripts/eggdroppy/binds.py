@@ -4,21 +4,50 @@ import sys
 from pprint import pprint
 
 class BindType:
-#  def __init__(self):
+  """ A BindType is an event that can trigger an Eggdrop response
+
+  Each event that Eggdrop refers to, called a bind, requires a :class:`BindType` to be loaded by the
+  :class:`Binds` class.
+
+  Args:
+    bindtype (string): A string representing one of the core Eggdrop bind types
+  """
   def __init__(self, bindtype):
     self.__bindtype = bindtype
     self.__binds = {}
 
   def add(self, callback, flags, mask):
+    """ Register a new bind event
+
+    Adds a new :class:`BindType` attribute to a :class:`Bind` object.
+
+    Args:
+      callback (method): The name of the function you wish to call when the event is triggered
+      flags (object): a flag object, we'll figure this out soon
+      mask (str): mask or command or something, maybe find a better word here
+    """
     self.__binds.update({uuid.uuid4().hex[:8]:{"callback":callback, "flags":flags, "mask":mask}})
 
   def list(self):
+    """ List all binds of the ``bindtype``
+
+    Returns:
+      list: A list of binds, in the format {A B C D}
+    """
     return self.__binds
 
   def __repr__(self):
     return f"Bindtype {self.__bindtype}: {repr(self.__binds)}"
 
 class Binds:
+  """ A :class:`Binds` object holds a collection of :class:`BindTypes` objects
+
+    All binds that are added to Eggdrop are collected and accessed through a :class:`Binds` object. Each
+    event type that Eggdrop reacts to is added to the :class:`Binds` object as a bind via a
+    :class:`BindTypes` object.
+
+    Args: None
+  """
   def __init__(self):
     self.__binds = {}
     self.__binds["pubm"] = BindType("pubm")
@@ -28,9 +57,19 @@ class Binds:
     return self.__binds[name]
 
   def all(self):
+    """ Lists all binds registered with the object
+
+    Returns:
+      list: A list, or maybe a dict? of all binds
+    """
     return self.__binds
 
   def types(self):
+    """ Lists all :class:`BindType` attributes added to the :class:`Binds` object
+
+    Returns:
+      list: maybe a list? of attributes
+    """
     return self.__binds.keys()
 
   def __repr__(self):
