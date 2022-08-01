@@ -16,41 +16,23 @@ static PyObject *testcmd(PyObject *self, PyObject *args) {
   return testdict;
 }
 
-static PyObject *py_putmsg(PyObject *self, PyObject *args) {
-  char *chan = 0, *msg = 0, *p;
+static PyObject *py_ircsend(PyObject *self, PyObject *args) {
+  char *text;
+  int queuenum;
 
-  if(!PyArg_ParseTuple(args, "ss", &chan, &msg)) {
-//    PyErr_SetString(PyExc_SyntaxError, "wrong number of args");
+  if(!PyArg_ParseTuple(args, "si", &text, &queuenum)) {
     PyErr_SetString(EggdropError, "wrong number of args");
     return NULL;
   }
 
-//  BADARGS(2, 3, " text ?options?");
-
-//  if ((argc == 3) && strcasecmp(argv[2], "-next") &&
-//      strcasecmp(argv[2], "-normal")) {
-//    Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
-//                     "-normal -next", NULL);
-//    return TCL_ERROR;
-//  }
-
-  p = strchr(chan, '\n');
-  if (p != NULL)
-    *p = 0;
-  p = strchr(chan, '\r');
-  if (p != NULL)
-    *p = 0;
-//  if (!strcasecmp(t, "-next"))
-//    dprintf(DP_SERVER_NEXT, "%s\n", s);
-//  else
-    dprintf(DP_SERVER, "PRIVMSG %s :%s\n", chan, msg);
+  dprintf(queuenum, "%s\n", text);
   Py_RETURN_NONE;
 }
 
 
 static PyMethodDef MyPyMethods[] = {
     {"testcmd", testcmd, METH_VARARGS, "A test dict"},
-    {"putmsg", py_putmsg, METH_VARARGS, "Send message to server"},
+    {"ircsend", py_ircsend, METH_VARARGS, "Send message to server"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -103,6 +85,16 @@ PyMODINIT_FUNC PyInit_eggdrop(void) {
   PyModule_AddIntConstant(pymodobj, "USER_XFER", 0x00800000);
   PyModule_AddIntConstant(pymodobj, "USER_AUTOHALFOP", 0x01000000);
   PyModule_AddIntConstant(pymodobj, "USER_WASHALFOPTEST", 0x02000000);
+
+  PyModule_AddIntConstant(pymodobj, "QUEUE_STDOUT", 0x7FF1);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_LOG", 0x7FF2);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_SERVER", 0x7FF3);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_HELP", 0x7FF4);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_STDERR", 0x7FF5);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_MODE", 0x7FF6);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_MODE_NEXT", 0x7FF7);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_SERVER_NEXT", 0x7FF8);
+  PyModule_AddIntConstant(pymodobj, "QUEUE_HELP_NEXT", 0x7FF9);
 
   return pymodobj;
 }

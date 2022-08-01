@@ -1,31 +1,30 @@
 import requests
 from bs4 import BeautifulSoup
-from eggdroppy import binds, FlagMatcher, UserFlags as perm
+from eggdroppy import binds, FlagMatcher, UserFlags as perm, putmsg
 from pprint import pprint
-import eggdrop
 
 def pubGetTitle(nick, uhost, hand, chan, text):
   print(text)
   reqs = requests.get(text)
   soup = BeautifulSoup(reqs.text, 'html.parser')
-  eggdrop.putmsg(chan, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
+  putmsg(chan, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
 
 def pubmGetTitle(nick, uhost, hand, chan, text):
   print(text)
   reqs = requests.get(text.split()[1])
   soup = BeautifulSoup(reqs.text, 'html.parser')
-  eggdrop.putmsg(chan, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
+  putmsg(chan, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
 
 def joinGreetUser(nick, uhost, hand, chan):
   print("JOIN BIND TRIGGERED SUCCESSFULLY")
-  eggdrop.putmsg(chan, f"Hello {nick}, welcome to {chan}")
+  putmsg(chan, f"Hello {nick}, welcome to {chan}")
 
 def mypub(nick, user, hand, chan, text):
-  eggdrop.putmsg(chan, "!!! "+nick+"+ on "+chan+" said "+text)
+  putmsg(chan, "!!! "+nick+"+ on "+chan+" said "+text)
   return
 
 def joinGreetOp(nick, uhost, hand, chan):
-  eggdrop.putmsg(chan, f"Hello {nick}, welcome to {chan}, you are an operator")
+  putmsg(chan, f"Hello {nick}, welcome to {chan}, you are an operator")
 
 def mypub2(nick, user, hand, chan, text):
   print("!!! "+nick+"+ on "+chan+" said "+text+" and is a global +o")
