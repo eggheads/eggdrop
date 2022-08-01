@@ -17,13 +17,14 @@ def pubmGetTitle(nick, uhost, hand, chan, text):
   eggdrop.putmsg(chan, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
 
 def joinGreetUser(nick, uhost, hand, chan):
+  print("JOIN BIND TRIGGERED SUCCESSFULLY")
   eggdrop.putmsg(chan, f"Hello {nick}, welcome to {chan}")
 
 def mypub(nick, user, hand, chan, text):
   eggdrop.putmsg(chan, "!!! "+nick+"+ on "+chan+" said "+text)
   return
 
-def joinGreetOp(nick, uhost, hand, chan, text):
+def joinGreetOp(nick, uhost, hand, chan):
   eggdrop.putmsg(chan, f"Hello {nick}, welcome to {chan}, you are an operator")
 
 def mypub2(nick, user, hand, chan, text):

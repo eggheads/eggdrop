@@ -1,4 +1,5 @@
 from enum import IntFlag
+from pprint import pprint
 import eggdrop
 
 # TODO: sort these properly
@@ -30,7 +31,7 @@ class UserFlags(IntFlag):
 
   def __repr__(self):
     if self.value == 0:
-      return ""
+      return "-"
     return ''.join(f.name for f in self.__class__ if f.value & self.value)
 
 class FlagRecord:
@@ -43,7 +44,7 @@ class FlagRecord:
     return 'globl: {}, chan: {}, bot: {}'.format(str(self.globl), str(self.chan), str(self.bot))
 
   def __repr__(self):
-    return repr({'global': repr(self.globl), 'chan': repr(self.chan), 'bot': repr(self.bot)})
+    return f"{repr(self.globl)}|{repr(self.chan)}|{repr(self.bot)}"
 
 class FlagMatcher:
   def __init__(self, globalflags=None, globalnegflags=None, chanflags=None, channegflags=None, botflags=None, botnegflags=None, requireall=False):
@@ -78,3 +79,25 @@ class FlagMatcher:
       s += sep
       s += self.reprflags(self.botflags, self.botnegflags)
     return s
+
+  @staticmethod
+  def flagcheck(posflags, negflags, requireall, flags):
+    if not requireall:
+      if posflags and not posflags & flags:
+        return False
+    else:
+      if posflags and not posflags & flags == posflags:
+        return False
+    if negflags and negflags & flags:
+      return False
+    return True
+
+  def match(self, flags : FlagRecord):
+    if not FlagMatcher.flagcheck(self.globalflags, self.globalnegflags, self.requireall, flags.globl):
+      return False
+    if not FlagMatcher.flagcheck(self.chanflags, self.channegflags, self.requireall, flags.chan):
+      return False
+    if not FlagMatcher.flagcheck(self.botflags, self.botnegflags, self.requireall, flags.bot):
+      return False
+    return True
+
