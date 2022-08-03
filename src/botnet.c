@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ tand_t *findbot(char *who)
 
 /* Add a tandem bot to our chain list
  */
-void addbot(char *who, char *from, char *next, char flag, int vernum)
+void addbot(char *who, char *from, char *next, char flag, int vernum, int ssl)
 {
   tand_t **ptr = &tandbot, *ptr2;
 
@@ -93,6 +93,7 @@ void addbot(char *who, char *from, char *next, char flag, int vernum)
   ptr2->share = flag;
   ptr2->ver = vernum;
   ptr2->next = *ptr;
+  ptr2->ssl = ssl;
   *ptr = ptr2;
   /* May be via itself */
   ptr2->via = findbot(from);
@@ -584,7 +585,8 @@ void tell_bots(int idx)
 void tell_bottree(int idx, int showver)
 {
   char s[161];
-  tand_t *last[20], *this, *bot, *bot2 = NULL;
+  char c = '-';
+  tand_t *last[20], *this, *bot, *bot2 = NULL, *lastbot = NULL;
   int lev = 0, more = 1, mark[20], ok, cnt, i, imark;
   char work[1024];
   int tothops = 0;
@@ -596,7 +598,7 @@ void tell_bottree(int idx, int showver)
   s[0] = 0;
   i = 0;
 
-  for (bot = tandbot; bot; bot = bot->next)
+  for (bot = tandbot; bot; bot = bot->next) {
     if (!bot->uplink) {
       if (i) {
         s[i++] = ',';
@@ -605,6 +607,9 @@ void tell_bottree(int idx, int showver)
       strcpy(s + i, bot->bot);
       i += strlen(bot->bot);
     }
+  }
+  dprintf(idx, "- Link    = Encrypted link    + Userfile Sharing\n");
+  dprintf(idx, "------------------------------------------------\n");
   if (s[0])
     dprintf(idx, "(%s %s)\n", BOT_NOTRACEINFO, s);
   if (showver)
@@ -626,6 +631,7 @@ void tell_bottree(int idx, int showver)
     for (bot = tandbot; bot; bot = bot->next)
       if (bot->uplink == this)
         cnt++;
+    bot = tandbot;
     if (cnt) {
       imark = 0;
       for (i = 0; i < lev; i++) {
@@ -635,16 +641,30 @@ void tell_bottree(int idx, int showver)
           strcpy(work + imark, "     ");
         imark += 5;
       }
-      if (cnt > 1)
-        strcpy(work + imark, "  |-");
-      else
-        strcpy(work + imark, "  `-");
+      if (cnt > 1) {
+        if (bot->ssl) {
+          strcpy(work + imark, "  |=");
+        } else {
+          strcpy(work + imark, "  |-");
+        }
+      } else {
+        if (bot->ssl) {
+          strcpy(work + imark, "  `=");
+        } else {
+          strcpy(work + imark, "  `-");
+        }
+      }
       s[0] = 0;
       bot = tandbot;
       while (!s[0]) {
         if (bot->uplink == this) {
           if (bot->ver) {
-            i = sprintf(s, "%c%s", bot->share, bot->bot);
+            if ((bot->share=='-') && (bot->ssl)) {
+              c = '=';
+            } else {
+              c = bot->share;
+            }
+            i = sprintf(s, "%c%s", c, bot->bot);
             if (showver)
               sprintf(s + i, " (%d.%d.%d.%d)",
                       bot->ver / 1000000,
@@ -682,7 +702,12 @@ void tell_bottree(int idx, int showver)
               if (cnt == 1) {
                 bot2 = bot;
                 if (bot->ver) {
-                  i = sprintf(s, "%c%s", bot->share, bot->bot);
+                  if ((bot->share=='-') && (bot->ssl)) {
+                    c = '=';
+                  } else {
+                    c = bot->share;
+                  }
+                  i = sprintf(s, "%c%s", c, bot->bot);
                   if (showver)
                     sprintf(s + i, " (%d.%d.%d.%d)",
                             bot->ver / 1000000,
@@ -693,6 +718,7 @@ void tell_bottree(int idx, int showver)
               }
             }
           }
+          lastbot = bot;
         }
         if (cnt) {
           imark = 0;
@@ -705,9 +731,9 @@ void tell_bottree(int idx, int showver)
           }
           more = 1;
           if (cnt > 1)
-            dprintf(idx, "%s  |-%s\n", work, s);
+            dprintf(idx, "%s  |%s%s\n", work, lastbot->ssl ? "=" : "-", s);
           else
-            dprintf(idx, "%s  `-%s\n", work, s);
+            dprintf(idx, "%s  `%s%s\n", work, lastbot->ssl ? "=" : "-", s);
           this = bot2;
           work[0] = 0;
           if (cnt > 1)
@@ -724,6 +750,7 @@ void tell_bottree(int idx, int showver)
             more = 1;
             this = last[lev];
           }
+          dprintf(idx, "------------------------------------------------\n");
         }
       }
     }
@@ -875,7 +902,7 @@ int users_in_subtree(tand_t *bot)
  */
 int botunlink(int idx, char *nick, char *reason, char *from)
 {
-  char s[20];
+  char s[1024];
   int i;
   int bots, users;
   tand_t *bot;
@@ -904,8 +931,6 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         if (nick[0] != '*')
           return 1;
       } else if (dcc[i].type == &DCC_BOT) {
-        char s[1024];
-
         if (idx >= 0)
           dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
         else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
@@ -914,16 +939,16 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
         if (reason && reason[0]) {
-          simple_sprintf(s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
-                         (bots != 1) ? "s" : "", users, (users != 1) ?
-                         "s" : "");
+          snprintf(s, sizeof s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
+                   BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
+                   (bots != 1) ? "s" : "", users, (users != 1) ?
+                   "s" : "");
           dprintf(i, "bye %s\n", reason);
         } else {
-          simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
-                         (bots != 1) ? "s" : "", users,
-                         (users != 1) ? "s" : "");
+          snprintf(s, sizeof s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+                   BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
+                   (bots != 1) ? "s" : "", users,
+                   (users != 1) ? "s" : "");
           dprintf(i, "bye No reason\n");
         }
         putlog(LOG_BOTS, "*", "%s.", s);
@@ -970,8 +995,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
                        party[i].chan);
     }
-    strcpy(s, "killassoc &");
-    Tcl_Eval(interp, s);
+    Tcl_Eval(interp, "killassoc &");
   }
   return 0;
 }
@@ -1605,6 +1629,7 @@ struct dcc_table DCC_RELAY = {
   display_relay,
   expmem_relay,
   kill_relay,
+  NULL,
   NULL
 };
 
@@ -1628,7 +1653,8 @@ struct dcc_table DCC_RELAYING = {
   display_relaying,
   expmem_relay,
   kill_relay,
-  out_relay
+  out_relay,
+  NULL
 };
 
 struct dcc_table DCC_FORK_RELAY = {
@@ -1641,6 +1667,7 @@ struct dcc_table DCC_FORK_RELAY = {
   display_tandem_relay,
   expmem_relay,
   kill_relay,
+  NULL,
   NULL
 };
 
@@ -1654,6 +1681,7 @@ struct dcc_table DCC_PRE_RELAY = {
   display_pre_relay,
   expmem_relay,
   kill_relay,
+  NULL,
   NULL
 };
 

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -95,10 +95,9 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
-static int msgtag;              /* Enable IRCv3 message-tags capability    */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
-static int tls_vfyserver;       /* Certificate validation mode for servrs  */
+static int tls_vfyserver;       /* Certificate validation mode for servers */
 #endif
 
 #ifndef TLS
@@ -421,7 +420,7 @@ static char *splitnicks(char **rest)
   char *o, *r;
 
   if (!rest)
-    return *rest = "";
+    return "";
   o = *rest;
   while (*o == ' ')
     o++;
@@ -1858,7 +1857,7 @@ static void dcc_chat_hostresolved(int i)
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
-    egg_snprintf(buf, sizeof buf, "TLS negotiation error");
+    strlcpy(buf, "TLS negotiation error", sizeof buf);
 #endif
   if (buf[0]) {
     if (!quiet_reject)
@@ -2022,7 +2021,9 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128];
+  char s1[64], s[128], capbuf[1024], buf[1024], *bufptr, *endptr;
+  size_t written = 0;
+  struct capability *current;
   int servidx;
 
   if (server_online) {
@@ -2035,7 +2036,7 @@ static void server_report(int idx, int details)
     egg_snprintf(s, sizeof s, "(connected %s)", s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
-        egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+        strlcpy(s1, " (bad pong replies)", sizeof s1);
       else
         egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
       strcat(s, s1);
@@ -2066,9 +2067,30 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(cap.negotiated) > 0) ?
-            cap.negotiated : "None" );
-  if (details) {
+
+  for (current = cap; current; current = current->next) {
+    if (current->enabled) {
+      written += snprintf(capbuf + written, sizeof capbuf - written, "%s ", current->name);
+    }
+  }
+  if (written) {
+    strlcpy(buf, capbuf, sizeof buf);
+    bufptr = buf;
+    endptr = buf + 80;
+    while (strlen(buf) > 80) {
+      while (endptr[0] != ' ') {
+        endptr--;
+      }
+      endptr[0] = 0;
+      dprintf(idx, "    Active CAP negotiations: %s\n", bufptr);
+      memmove(buf, endptr + 1, strlen(endptr + 1) + 1);
+    }
+    dprintf(idx, "    Active CAP negotiations: %s\n", buf);
+  } else {
+    dprintf(idx, "    Active CAP negotiations: (none)\n");
+  }
+
+if (details) {
     int size = server_expmem();
 
     if (initserver[0])
@@ -2179,7 +2201,7 @@ static Function server_table[] = {
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) & msgtag,          /* int                                  */
+  (Function) NULL,              /* was msgtag in 1.9.0, 1.9.1           */
   (Function) & answer_ctcp,     /* int                                  */
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int                                */
@@ -2215,14 +2237,16 @@ static Function server_table[] = {
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) & net_type_int,    /* int                                  */
   (Function) & H_account,       /* p_tcl_bind)list                      */
-  (Function) & cap,             /* cap_list                             */
+  (Function) & cap,             /* capability_t                         */
   /* 44 - 47 */
   (Function) & extended_join,   /* int                                  */
   (Function) & account_notify,  /* int                                  */
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
   /* 48 - 52 */
-  (Function) & isupport_parseint/*                                      */
+  (Function) & isupport_parseint,/*                                     */
+  (Function) check_tcl_account,
+  (Function) & find_capability
 };
 
 char *server_start(Function *global_funcs)

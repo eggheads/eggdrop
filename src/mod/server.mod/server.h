@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,7 +51,7 @@
 /* 12 - 15 */
 #define match_my_nick ((int(*)(char *))server_funcs[12])
 #define check_tcl_flud ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[13])
-#define msgtag (*(int *)(server_funcs[14]))
+/* Empty, formally msgtag */
 #define answer_ctcp (*(int *)(server_funcs[15]))
 /* 16 - 19 */
 #define trigger_on_ignore (*(int *)(server_funcs[16]))
@@ -86,15 +86,17 @@
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #define net_type_int (*(int *)(server_funcs[41]))
-#define cap (*(cap_list_t *)(server_funcs[42]))
-#define H_account (*(p_tcl_bind_list *)(server_funcs[43]))
+#define H_account (*(p_tcl_bind_list *)(server_funcs[42]))
+#define cap (*(capability_t **)(server_funcs[43]))
 /* 44 - 47 */
 #define extended_join (*(int *)(server_funcs[44]))
 #define account_notify (*(int *)(server_funcs[45]))
 #define H_isupport (*(p_tcl_bind_list *)(server_funcs[46]))
 #define isupport_get ((struct isupport *(*)(const char *, size_t))(server_funcs[47]))
-/* 48 - 52 */
+/* 48 - 51 */
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
+#define check_tcl_account ((int (*)(char *,char *,char *,struct userrec *,char *,char *))server_funcs[49])
+#define find_capability ((struct capability *(*)(char *))(server_funcs[50]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -109,11 +111,21 @@ struct server_list {
   char *realname;
 };
 
-typedef struct cap_list {
-  char supported[CAPMAX+1];   /* Capes supported by IRCD                  */
-  char negotiated[CAPMAX+1];  /* Common capes between IRCD and client     */
-  char desired[CAPMAX+1];     /* Capes Eggdrop wants to request from IRCD */
-} cap_list_t;
+/* struct to store values associated with a capability, such as "PLAIN" and
+ * "EXTERNAL" for SASL
+ */
+typedef struct cap_values {
+  struct cap_values *next;
+  char name[CAPMAX];
+} cap_values_t;
+
+typedef struct capability {
+  struct capability *next;
+  char name[CAPMAX+1];  /* Name of capability, +1 bc CAPMAX is for REQ not LS */
+  struct cap_values *value; /* List of values associated with the capability  */
+  int enabled;      /* Is the capability currently negotiated with the server */
+  int requested;    /* Does Eggdrop  want this capability, if available?      */
+} capability_t;
 
 /* Available net types. */
 enum {

@@ -1,5 +1,5 @@
 News
-Last revised: May 31, 2021
+Last revised: December 4, 2021
      _________________________________________________________________
 
                                 What's new?
@@ -15,12 +15,113 @@ Last revised: May 31, 2021
 
      _________________________________________________________________
 
+Eggdrop v1.9.3:
+
+ General changes:
+    - Added the ability to track services account names for users in a channel
+      and those added to an Eggdrop. To work properly, this feature requires a
+      server that supports WHOX requests and can negotiate the extended-join
+      and account-notify capabilities
+    - Added the +account and -account partyline commands to add or remove a
+      services account name to a handle
+    - Updated .channel output to display services account names associated with
+      channel users
+    - Added the ability to create a timer with a custom name instead of the
+      default "timerXX" format
+    - Fixed a compile error if TLS libraraies weren't detected on the host OS
+    - Fixed a compile error for pthreads found mainly on BSD systems
+    - Fixed a bug with threaded DNS queries where threads were not terminated
+      properly, potentially resulting in an out-of-memory error
+    - Updated information obtained via extended-join to all channels the user is
+      on, not just the channel they joined
+    - Force ident requests to originate from the specified vhost/listen IP
+    - Reorganized the documentation structure
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Updated the 'finduser' command to accept the -account flag. Using this
+      flag will search the userfile and return the handle that contains the
+      provided account name
+    - Updated the getuser and setuser commands to accept the "ACCOUNT" entry
+    - Added the 'accounttracking' variable, which returns a '1' if all three
+      requirements (WHOX, extended-join, and account-notify) are available and
+      active for the current server connection
+    - Added an optional timer name field to the timer and utimer commands
+    - Updated docs to reflect a value of '0' for the server-online value when
+      Eggdrop is disconnected
+
+ Module changes:
+    - None
+
+ Eggdrop config changes:
+    - None
+
+     _________________________________________________________________
+
+Eggdrop v1.9.2:
+
+ General changes:
+    - Added CAP 302 support, and generally enhance CAP support
+    - Enabled threaded core DNS requests as the default method for DNS lookups;
+      this can be disabled with ./configure --disable-tdns
+    - Added support for the MONITOR CAP capability, allowing tracking of online
+      and offline nicknames
+    - Added support for the 005 BOT flag, allowing tracking of users that
+      declare themselves as bots to the IRC server
+    - Added SSL status to the .bottree command, denoted with a '=' symbol
+    - Fixed allowing Eggdrop to process message-tags even if the message-tags
+      capability is not explicitly requested
+    - Alt-nick is now used before a randomly generated nickname if the requested
+      nickname is rejected as invalid by the server. This feature is now
+      divorced of any previous dependence on the keep-nick setting, with the
+      reasoning that getting the Eggdrop onto the server with a random nick is
+      more important than keeping a nickname and not ever joining, particularly
+      from a troubleshooting standpoint
+    - RAWT binds returning a '1' now block similar RAW binds from triggering
+      by the same activity (but RAW binds cannot block a RAWT bind- use a RAWT!)
+    - Fixed mistakenly requiring a flag for the 'listen script' command
+    - Fixed an issue with Eggdrop not properly updating the account-tracking
+      status
+
+  Botnet changes:
+    - None
+
+  Tcl API changes:
+    - Added the 'monitor' command, which allows interaction with the CAP
+      MONITOR capability
+    - Added the 'isircbot' command, which returns if a user has registered as a
+      bot with the IRC server
+    - Added the 'server list' command, which lists servers added to Eggdrop
+    - Added the USERNOTICE bind to the Twitch module
+    - Added a 'values' argument to the 'cap' command, outputting the display of
+      CAP 302 values, if any, associated with each capability
+
+  Module changes:
+    - Fixed bug in PBKDF2 that caused PBKDF2-only environments to not store
+      hashes properly, resulting in 'bad password' errors after relinking
+    - Deprecated the DNS module (functionality has been moved core Eggdrop
+      code). Eggdrop now natively handles asynchronous DNS (which was the
+      purpose of the DNS module), so the DNS module is no longer needed
+    - Fixed a bug with the Twitch module where it would crash on .rehash and
+      .restart
+
+  Eggdrop config file changes:
+    - Added the 'extended-join' setting, to enable the extended-join CAP
+      capability
+    - Moved DNS-related settings out of the modules section and into the core
+      config area
+    - No longer load the (now-deprecated) DNS module by default
+
+     _________________________________________________________________
+
 Eggdrop v1.9.1:
 
   General changes:
     - Fixed an issue where an IP address was incorrectly overwritten after a
       CTCP chat was received
-    - Fixed an issue where Eggdrop would occassionally crash if no port was
+    - Fixed an issue where Eggdrop would occasionally crash if no port was
       provided when the server was added
     - Error, instead of silently change, when adding a bot with invalid ascii
       characters in the handle (.+bot)
@@ -39,34 +140,119 @@ Eggdrop v1.9.1:
 
   Eggdrop config file changes:
     - Added Libera Chat to the accepted server types
-_________________________________________________________________
+
+     _________________________________________________________________
 
 Eggdrop v1.9.0:
 
   General changes:
-    - Fixed an issue where adding a server without a port could create a
-      condition where Eggdrop would crash on startup
-    - Fixed a bad merge in 1.9.0 that resulted in away status not being
-      properly tracked by Eggdrop
-    - Fixed/clarified some of the terrible error messages we've all come to
-      know and love for socket connections
+    - Added CAP support, allowing Eggdrop to extend IRC server capabilities
+    - Added support for SASL authentication
+    - Added a BETA threaded DNS capability, enabled with the --enable-tdns
+      configure flag. This allows asynchronus DNS requests similar to the what
+      the current DNS module offers, but using host system capability instead
+      of rewriting it from scratch. Using this means you no longer have to use
+      the DNS module.
+    - Eggdrop can listen on multiple IPs (and ports) now by using multiple
+      instances of the 'listen' command
+    - Added Twitch support
+    - Added support for users that change hosts mid-session, usually associated
+      with authenticating with services (396 raw code and CHGHOST capability).
+    - Added support for the users that change their realname value mis-session
+      (SETNAME capability)
+    - Added the ability for Eggdrop to internally track the away status of an
+      individual, with some limitations.
+    - Added the 'make sslsilent' option that creates an SSL certificate keypair
+      non-interactively, to assist in scripted/automated installs
+    - Differentiate between scripted and server WHOX calls, preventing mangling
+      of channel userlists
+    - The -n flag is no longer required to run Eggdrop in terminal mode; just
+      -t or -c are fine by themselves
+    - Added some checks to flags added via .chattr and .botattr to clearly
+      identify what happens when you add flags that can't co-exist together
 
   Botnet changes:
-    - None
+    - Removed automatic upgrade to TLS-protected botnet links with STARTTLS.
+      Based on user feedback, protecting a botnet link is now at the discretion
+      of the user. Prefixing a port with a '+' will require a TLS connection,
+      otherwise the connection will be in plaintext. A port not prefixed with a
+      + can still be upgraded with STARTTLS, allowing 1.8 bots and scripts to
+      initiate a secure connection, but 1.9.0 bots will not attempt the upgrade.
+    - Added granular userfile sharing flags (bcejnu). Adding these flags can limit
+      userfile sharing to a combination of bans, invites, exempts, channels,
+      users, and ignores (or still the s flag for all these).
+    - No longer try port+1,2,3 when connecting to a botnet port doesn't work
+      the first time
 
   Tcl API changes:
-    - None
+    - Added the RAWT bind, which will (eventually) phase out the RAW bind.
+      Implementing the IRCv3 message-tags capability requires a new way to
+      handle basic IRC messages, and RAWT was added in a way so that a) RAW
+      binds in old scripts still work and b) the RAWT bind can handle messages
+      that either do or do not have message-tags attached
+    - Added the INVT bind, allowing Eggdrop to react to a standard invitation,
+      or the new IRCv3 invite-notify capability
+    - Added the AWY3 bind, allowing Eggdrop to react to the new IRCv3
+      away-notify capability.
+    - Added the refreshchan command, which refreshes without removing existing
+      channel status information tracked by Eggdrop for users on a channel.
+    - Added the isaway command, which returns if a user is listed by the server
+      as away or not, if using the IRCv3 away-notify capability. If away-notify
+      is not enabled, this command can still be used effectively in conjunction
+      with 'refreshchan w', described above.
+    - Added the hand2nicks command, an alternative to the hand2nick command.
+      hand2nicks returns ALL nicks matching a handle, not just the first one.
+    - Aded the socklist command, an update to the dcclist command. Returns
+      similar info as a Tcl dict, and adds the IP to the information.
+    - Use the system's strftime formatting instead of Eggdrop-provided
+      GNU version/extensions. This could cause formatting differences
+      or errors between systems. To ensure fully portable code, developers
+      should only rely on POSIX-compliant formatting specifiers.
+    - The dcclist command now returns port information and whether or not TLS
+      is in use for that port. This change could affect field-based parsers
+      depending on this command
+    - Added the addserver and delserver command, to *gasp* add and delete a
+      server from Eggdrop's server list
+    - Modified the listen command to accept an optional IP argument. This
+      allows Eggdrop to listen on multiple addresses by using multiple listen
+      commands in the config file or Tcl script. If no IP is specified, 0.0.0.0
+      is used as default. As a result of this change, the listen-addr command
+      is no longer needed and removed from the config file
+    - Added an optional -channel flag to the end of the is* commands (isban,
+      isexempt, etc). This flag prevents the is* command from checking the
+      global list and returning a '1' when there is no channel-specific case
+    - Added several Tcl commands and binds to enable better interaction with
+      the Twitch gaming service. Because these commands only work with a Twitch
+      server, they are not included in tcl-commands.doc but rather
+      twitch-tcl-commands.doc, located in the doc/ directory.
+    - Limited the expiration for new bans, ignores and exempts to 2000 days.
 
   Module changes:
-    - Fixed a bug in the CTCP module that resulted in an IP in the socket table
-      being incorrectly overwritten, causing trouble with future CTCP chat
-      requests. This was also prevents some Eggdrop's from incorrectly throwing
-      a Tcl error during a rehash
-    - Fixed an error message that incorrectly appeared after a restart when
-      using the PBKDF2 module
+    - Added the PBKDF2 module, which allows Eggdrop to hash passwords using the
+      PBKDF2 algorithm. This module is a stepping stone to future, more
+      adaptable hashing and encryption implementation. IMPORTANT: PLEASE read
+      doc/PBKDF2 for more information on how to properly use it, you could
+      accidentally render old passwords useless!
+    - Added the twitch module, which allows Eggdrop to connect to the Twitch
+      gaming service. As Twitch offers only a limited subset of standard IRC
+      functionality, be prepared for some commands or scripts to work
+      differently than on a normal IRC server. Please read doc/TWITCH for more
+      information.
+    - Added the ident module, which can automatically interact with a running
+      oidentd service or allow Eggdrop to serve as its own ident server to
+      respond to ident requests during the server connection process.
 
   Eggdrop config file changes:
-    - None
+    - Added additional net-types for freenode, Quakenet, and Rizon (net-type)
+    - Added ability to choose specific SSL/TLS protocols to use (ssl-protocols)
+    - Added ability to allow bots to remain linked if userfile sharing fails
+      (sharefail-unlink)
+    - Changed the method Eggdrop uses to add servers from a {} list to the new
+      addserver command
+    - Removed the listen-addr command. See above; the listen command now
+      accepts an optional IP argument in lieu of using listen-addr
+    - Added the show-uname setting, which allows you to disable the display of
+      uname info for the host system in things like .status
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer
