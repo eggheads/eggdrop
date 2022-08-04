@@ -279,7 +279,7 @@ static void cmd_pysource(struct userrec *u, int idx, char *par) {
 }
 
 static void cmd_pybinds(struct userrec *u, int idx, char *par) {
-  cmd_pyexpr(u, idx, "binds.list()");
+  runPython("eggdroppy.binds print_all");
   return;
 }
 
