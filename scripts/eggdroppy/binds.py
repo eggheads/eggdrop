@@ -29,6 +29,11 @@ class BindType:
     """
     self.__binds.update({uuid.uuid4().hex[:8]:{"callback":callback, "flags":flags, "mask":mask, "hits":0}})
 
+  def delete(self, bindid):
+    print(self.__binds)
+    if bindid in self.__binds:
+      self.__binds.pop(bindid)
+
   def list(self):
     """ List all binds of the ``bindtype``
 
@@ -175,11 +180,12 @@ def types():
   return __allbinds.types()
 
 def print_all():
-  print("\n{0: <8} | {1: <18} | {2: <12} | {3: <24} | {4}".format('ID', 'function', 'flags', 'mask', 'hits'))
+  print("{0: <8} | {1: <18} | {2: <12} | {3: <24} | {4}".format('ID', 'function', 'flags', 'mask', 'hits'))
   for i in types():
-    print("-"*78)
-    print(f'{i:<8}')
-    print("-"*78)
-    for j in __allbinds.all()[i].all().keys():
-      print(f'{j} | {__allbinds.all()[i].all()[j]["callback"].__name__:<18} | {str(__allbinds.all()[i].all()[j]["flags"]):<12} | {__allbinds.all()[i].all()[j]["mask"]:<24} | {__allbinds.all()[i].all()[j]["hits"]:<4}')
+    if __allbinds.all()[i].all():
+      print("-"*78)
+      print(f'{i:<8}')
+      print("-"*78)
+      for j in __allbinds.all()[i].all().keys():
+        print(f'{j} | {__allbinds.all()[i].all()[j]["callback"].__name__:<18} | {str(__allbinds.all()[i].all()[j]["flags"]):<12} | {__allbinds.all()[i].all()[j]["mask"]:<24} | {__allbinds.all()[i].all()[j]["hits"]:<4}')
   print("-"*78)
