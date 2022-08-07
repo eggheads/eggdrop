@@ -1,6 +1,16 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <tcl.h>
+#include "src/mod/module.h"
 
+struct py_bind {
+  tcl_bind_list_t *bindtable;
+  char tclcmdname[512];
+  PyObject *callback;
+  struct py_bind *next;
+};
+
+static struct py_bind *py_bindlist;
 
 static PyObject *EggdropError;      //create static Python Exception object
 
@@ -29,10 +39,66 @@ static PyObject *py_ircsend(PyObject *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *const objv[])
+{
+  PyObject *args = PyTuple_New(objc);
+  struct py_bind *bindinfo = cd;
+
+  for (int i = 0; i < objc; i++) {
+    PyTuple_SET_ITEM(args, i, Py_BuildValue("s", Tcl_GetStringFromObj(objv[i], NULL)));
+  }
+  if (!PyObject_Call(bindinfo->callback, args, NULL)) {
+    PyErr_Print();
+    Tcl_SetResult(irp, "Error calling python code", NULL);
+    return TCL_ERROR;
+  }
+  return TCL_OK;
+}
+
+
+static PyObject *py_bind(PyObject *self, PyObject *args) {
+  PyObject *callback;
+  char *bindtype, *mask;
+  struct py_bind *bindinfo;
+  tcl_bind_list_t *tl;
+
+  // type flags mask callback
+  if (!PyArg_ParseTuple(args, "ssO", &bindtype, &mask, &callback) || !callback) {
+    PyErr_SetString(EggdropError, "wrong arguments");
+    return NULL;
+  }
+  if (!(tl = find_bind_table(bindtype))) {
+    PyErr_SetString(EggdropError, "unknown bind type");
+    return NULL;
+  }
+  if (callback == Py_None) {
+    PyErr_SetString(EggdropError, "callback is None");
+    return NULL;
+  }
+  if (!PyCallable_Check(callback)) {
+    PyErr_SetString(EggdropError, "callback is not callable");
+    return NULL;
+  }
+  Py_IncRef(callback);
+
+  bindinfo = nmalloc(sizeof *bindinfo);
+  bindinfo->bindtable = tl;
+  bindinfo->callback = callback;
+  bindinfo->next = py_bindlist;
+  snprintf(bindinfo->tclcmdname, sizeof bindinfo->tclcmdname, "*python:%s:%s:%" PRIxPTR, bindtype, mask, (uintptr_t)callback);
+  py_bindlist = bindinfo;
+  // TODO: deleteproc
+  Tcl_CreateObjCommand(tclinterp, bindinfo->tclcmdname, tcl_call_python, bindinfo, NULL);
+  // TODO: flags?
+  bind_bind_entry(tl, "-", mask, bindinfo->tclcmdname);
+  Py_RETURN_NONE;
+}
+
 
 static PyMethodDef MyPyMethods[] = {
     {"testcmd", testcmd, METH_VARARGS, "A test dict"},
     {"ircsend", py_ircsend, METH_VARARGS, "Send message to server"},
+    {"bind", py_bind, METH_VARARGS, "regsiter an eggdrop python bind"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

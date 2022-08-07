@@ -1,8 +1,33 @@
+from dataclasses import dataclass
+from typing import Callable
 import re
 import uuid
 import sys
 from pprint import pprint, pformat
-from eggdroppy import FlagRecord
+import eggdrop
+from eggdroppy.flags import FlagRecord, FlagMatcher
+from dataclasses import dataclass
+
+empty_flags = FlagMatcher()
+
+@dataclass
+class Bind:
+  flags: FlagMatcher
+  mask: str
+  callback: Callable
+  hits: int = 0
+
+  @property
+  def id(self):
+    return f'bind{hex(id(self))[2:]}'
+
+class BindCallback:
+  def __init__(self, callback : Callable):
+    self.__callback = callback
+  def __call__(self, *args, **kwargs):
+    self.__callback(*args, **kwargs)
+  def __str__(self):
+    return self.__callback.__name__
 
 class BindType:
   """ A BindType is an event that can trigger an Eggdrop response
@@ -12,27 +37,41 @@ class BindType:
 
   Args:
     bindtype (string): A string representing one of the core Eggdrop bind types
+    managed (bool): True if bindtype is managed by Eggdrop
   """
-  def __init__(self, bindtype):
+  def __init__(self, bindtype, managed):
     self.__bindtype = bindtype
+    self.__managed = managed
     self.__binds = {}
 
-  def add(self, callback, flags, mask):
+  @staticmethod
+  def make_callback_func(callback):
+    return BindCallback(callback)
+
+  def add(self, mask : str, callback : Callable, flags : FlagMatcher = empty_flags):
     """ Register a new bind event
 
     Adds a new :class:`BindType` attribute to a :class:`Bind` object.
 
     Args:
-      callback (method): The name of the function you wish to call when the event is triggered
       flags (object): a flag object, we'll figure this out soon
       mask (str): mask or command or something, maybe find a better word here
+      callback (method): The name of the function you wish to call when the event is triggered
     """
-    self.__binds.update({uuid.uuid4().hex[:8]:{"callback":callback, "flags":flags, "mask":mask, "hits":0}})
+    cb = self.make_callback_func(callback)
+    if flags is None:
+      flags = FlagMatcher()
+    bind = Bind(flags=flags, mask=mask, callback=cb)
+    self.__binds[bind.id] = bind
+    if self.__managed:
+      eggdrop.bind(self.__bindtype, mask, cb)
 
   def delete(self, bindid):
-    print(self.__binds)
+    bind = self.__binds[bindid]
+    if self.__managed:
+      eggdrop.unbind(self.__bindtype, bind.mask, bind.callback)
     if bindid in self.__binds:
-      self.__binds.pop(bindid)
+      del self.__binds[bindid]
 
   def list(self):
     """ List all binds of the ``bindtype``
@@ -46,7 +85,7 @@ class BindType:
     return self.list()
 
   def __str__(self):
-    return f"Bindtype {self.__bindtype}: {repr(self.__binds)}"
+    return f"{self.__bindtype}-binds: {str(self.__binds)}"
 
 class Binds:
   """ A :class:`Binds` object holds a collection of :class:`BindTypes` objects
@@ -59,8 +98,9 @@ class Binds:
   """
   def __init__(self):
     self.__binds = {}
-    self.__binds["pubm"] = BindType("pubm")
-    self.__binds["join"] = BindType("join")
+    self.__binds["pubm"] = BindType("pubm", False)
+    self.__binds["join"] = BindType("join", False)
+    self.__binds["dcc"] = BindType("dcc", True)
 
   def __getattr__(self, name):
     return self.__binds[name]
@@ -81,8 +121,8 @@ class Binds:
     """
     return self.__binds.keys()
 
-  def __repr__(self):
-    return repr(self.__binds)
+  def __str__(self):
+    return [{x: [str(b) for b in y]} for x, y in self.__binds.items()]
 
 def bindmask2re(mask):
   r = ''
@@ -100,43 +140,43 @@ def bindmask2re(mask):
   return re.compile('^' + r + '$')
 
 def flags_ok(bind, realflags):
-  return bind["flags"].match(realflags)
+  return bind.flags.match(realflags)
 
 def on_pub(flags, nick, uhost, hand, chan, text):
   print(f"on_pub({pformat(flags)}, {nick}, {uhost}, {hand}, {chan}, {text.split()[0]}, {text.split(' ', 1)[1]})")
   for b in __allbinds.pub.list().values():
     match_flags = flags_ok(b, flags)
-    match_mask = (b["cmd"] == text.split()[0])
+    match_mask = (b.mask == text.split()[0])
     call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
     if call_bind:
-      b["hits"] += 1
-      b["callback"](nick, uhost, hand, chan, text.split(" ", 1)[1])
+      b.hits += 1
+      b.callback(nick, uhost, hand, chan, text.split(" ", 1)[1])
   return
 
 def on_pubm(flags, nick, uhost, hand, chan, text):
   print(f"on_pubm({pformat(flags)}, {nick}, {uhost}, {hand}, {chan}, {text})")
   for b in __allbinds.pubm.list().values():
     match_flags = flags_ok(b, flags)
-    match_mask = bool(bindmask2re(b["mask"]).match(text))
+    match_mask = bool(bindmask2re(b.mask).match(text))
     call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
     if call_bind:
-      b["hits"] += 1
-      b["callback"](nick, uhost, hand, chan, text)
+      b.hits += 1
+      b.callback(nick, uhost, hand, chan, text)
   on_pub(flags, nick, uhost, hand, chan, text)
   return
 
-def on_msgm(nick, uhost, hand, text):
-  print(f"on_pubm({pformat(flags)}, {nick}, {uhost}, {hand}, {text})")
+def on_msgm(flags, nick, uhost, hand, text):
+  print(f"on_msgm({pformat(flags)}, {nick}, {uhost}, {hand}, {text})")
   for b in __allbinds.msgm.list().values():
     match_flags = flags_ok(b, flags)
-    match_mask = bool(bindmask2re(b["mask"]).match(text))
+    match_mask = bool(bindmask2re(b.mask).match(text))
     call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
     if call_bind:
-      b["hits"] += 1
-      b["callback"](nick, uhost, hand, text)
+      b.hits += 1
+      b.callback(nick, uhost, hand, text)
   return
 
 def on_join(flags, nick, uhost, hand, chan):
@@ -150,16 +190,16 @@ def on_join(flags, nick, uhost, hand, chan):
   print(f"on_join({pformat(flags)}, {nick}, {uhost}, {hand}, {chan})")
   for b in __allbinds.join.list().values():
     match_flags = flags_ok(b, flags)
-    match_mask = bool(bindmask2re(b["mask"]).match(f"{nick}!{uhost}"))
+    match_mask = bool(bindmask2re(b.mask).match(f"{nick}!{uhost}"))
     call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {repr(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
+    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
     if call_bind:
-      b["hits"] += 1
-      b["callback"](nick, uhost, hand, chan)
+      b.hits += 1
+      b.callback(nick, uhost, hand, chan)
 
 def on_event(bindtype, globalflags, chanflags, botflags, *args):
   flags = FlagRecord(globalflags, chanflags, botflags)
-  print(f"on_event({bindtype}, {repr(globalflags)}, {repr(chanflags)}, {repr(botflags)}, {pformat(args)}")
+  print(f"on_event({bindtype}, {str(globalflags)}, {str(chanflags)}, {str(botflags)}, {pformat(args)}")
   if bindtype == "pubm":
     on_pubm(flags, *args)
   elif bindtype == "msgm":
@@ -179,7 +219,7 @@ def all():
 def types():
   return __allbinds.types()
 
-def print_all():
+def print_all(*args):
   print("{0: <8} | {1: <18} | {2: <12} | {3: <24} | {4}".format('ID', 'function', 'flags', 'mask', 'hits'))
   for i in types():
     if __allbinds.all()[i].all():
@@ -187,5 +227,7 @@ def print_all():
       print(f'{i:<8}')
       print("-"*78)
       for j in __allbinds.all()[i].all().keys():
-        print(f'{j} | {__allbinds.all()[i].all()[j]["callback"].__name__:<18} | {str(__allbinds.all()[i].all()[j]["flags"]):<12} | {__allbinds.all()[i].all()[j]["mask"]:<24} | {__allbinds.all()[i].all()[j]["hits"]:<4}')
+        print(f'{j} | {str(__allbinds.all()[i].all()[j].callback):<18} | {str(__allbinds.all()[i].all()[j].flags):<12} | {__allbinds.all()[i].all()[j].mask:<24} | {__allbinds.all()[i].all()[j].hits:<4}')
   print("-"*78)
+
+__allbinds.dcc.add(mask='pybinds', callback=print_all)

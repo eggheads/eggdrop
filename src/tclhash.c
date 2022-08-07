@@ -348,7 +348,7 @@ static void dump_bind_tables(Tcl_Interp *irp)
   }
 }
 
-static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                              const char *cmd, const char *proc)
 {
   tcl_bind_mask_t *tm;
@@ -380,7 +380,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
 /* Add command (remove old one if necessary)
  */
-static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                            const char *cmd, const char *proc)
 {
   tcl_cmd_t *tc;
