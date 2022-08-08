@@ -8,6 +8,7 @@ import eggdrop
 from eggdroppy.flags import FlagRecord, FlagMatcher
 from eggdroppy.cmds import putmsg, putnotc
 from dataclasses import dataclass
+from datetime import datetime
 
 bindtypes = {
   "pub": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
@@ -17,6 +18,14 @@ bindtypes = {
   "dcc": {"args": ("handle", "idx", "text"), "reply": "dcc"},
   "join": {"args": ("nick", "host", "handle", "channel"), "reply": "privnotc"}
 }
+
+@dataclass
+class IRCUser:
+  nick: str
+  host: str
+  account: str
+  lastseen: datetime = None
+  joined: datetime = None
 
 @dataclass
 class Bind:
@@ -61,6 +70,9 @@ class BindCallback:
 
     kwargs = {"bindtype": self.__bindtype, "mask": self.__mask}
     kwargs.update(zip(bindinfo["args"], args))
+    if "nick" in kwargs:
+      ircuser_dict = eggdrop.findircuser(kwargs["nick"], kwargs["channel"]) if "channel" in kwargs else eggdrop.findircuser(kwargs["nick"])
+      kwargs["ircuser"] = IRCUser(**ircuser_dict)
     if "reply" in bindinfo:
       kwargs["reply"] = self.make_replyfunc(bindinfo["reply"], argdict=kwargs)
 

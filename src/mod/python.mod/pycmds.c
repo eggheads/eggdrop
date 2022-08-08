@@ -1,5 +1,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <datetime.h>
 #include <tcl.h>
 #include "src/mod/module.h"
 
@@ -30,12 +31,46 @@ static PyObject *py_ircsend(PyObject *self, PyObject *args) {
   char *text;
   int queuenum;
 
-  if(!PyArg_ParseTuple(args, "si", &text, &queuenum)) {
+  if (!PyArg_ParseTuple(args, "si", &text, &queuenum)) {
     PyErr_SetString(EggdropError, "wrong number of args");
     return NULL;
   }
 
   dprintf(queuenum, "%s\n", text);
+  Py_RETURN_NONE;
+}
+
+static PyObject *make_ircuser_dict(memberlist *m) {
+  PyObject *result = PyDict_New();
+  PyDict_SetItemString(result, "nick", PyUnicode_FromString(m->nick));
+  PyDict_SetItemString(result, "host", PyUnicode_FromString(m->userhost));
+  if (m->joined) {
+    PyObject *tmp = PyTuple_New(1);
+    PyTuple_SET_ITEM(tmp, 0, PyFloat_FromDouble((double)m->joined));
+    PyDict_SetItemString(result, "joined", PyDateTime_FromTimestamp(tmp));
+  }
+  if (m->last) {
+    PyObject *tmp = PyTuple_New(1);
+    PyTuple_SET_ITEM(tmp, 0, PyFloat_FromDouble((double)m->last));
+    PyDict_SetItemString(result, "lastseen", PyDateTime_FromTimestamp(tmp));
+  }
+  PyDict_SetItemString(result, "account", m->account[0] ? PyUnicode_FromString(m->account) : Py_None);
+  return result;
+}
+
+static PyObject *py_findircuser(PyObject *self, PyObject *args) {
+  char *nick, *chan = NULL;
+
+  if (!PyArg_ParseTuple(args, "s|s", &nick, &chan)) {
+    PyErr_SetString(EggdropError, "wrong number of args");
+    return NULL;
+  }
+  for (struct chanset_t *ch = chan ? findchan_by_dname(chan) : chanset; ch; ch = chan ? NULL : ch->next) {
+    memberlist *m = ismember(ch, nick);
+    if (m) {
+      return make_ircuser_dict(m);
+    }
+  }
   Py_RETURN_NONE;
 }
 
@@ -99,7 +134,8 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
 static PyMethodDef MyPyMethods[] = {
     {"testcmd", testcmd, METH_VARARGS, "A test dict"},
     {"ircsend", py_ircsend, METH_VARARGS, "Send message to server"},
-    {"bind", py_bind, METH_VARARGS, "regsiter an eggdrop python bind"},
+    {"bind", py_bind, METH_VARARGS, "register an eggdrop python bind"},
+    {"findircuser", py_findircuser, METH_VARARGS, "find an IRC user by nickname and optional channel"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

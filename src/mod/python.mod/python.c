@@ -32,8 +32,10 @@
 // HACK, but stable API
 #undef interp
 #define tclinterp (*(Tcl_Interp **)(global[128]))
+#undef days
 #include <stdlib.h>
 #include <Python.h>
+#include <datetime.h>
 #include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
 #include "src/mod/python.mod/python.h"
@@ -127,6 +129,7 @@ static void init_python() {
     exit(1);
   }
   Py_Initialize();
+  PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
     PyErr_Print();

@@ -13,14 +13,14 @@ def pubmGetTitle(nick, host, handle, channel, text, **kwargs):
   print(text)
   reqs = requests.get(text.split()[1])
   soup = BeautifulSoup(reqs.text, 'html.parser')
-  putmsg(chan, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
+  putmsg(channel, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
 
 def joinGreetUser(nick, host, handle, channel, **kwargs):
   putmsg(channel, f"Hello {nick}, welcome to {channel}")
 
 # Called from pub or msg, responds public or privately
-def mypub(nick, reply, **kwargs):
-  reply(f"{nick}, you said !moo")
+def mypub(reply, ircuser, **kwargs):
+  reply(f"{ircuser.nick}, you said !moo, your current account is {ircuser.account}")
   #putmsg(chan, "!!! "+nick+"+ on "+chan+" said "+text)
   return
 
