@@ -41,11 +41,12 @@ static PyObject *py_ircsend(PyObject *self, PyObject *args) {
 
 static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *const objv[])
 {
-  PyObject *args = PyTuple_New(objc);
+  PyObject *args = PyTuple_New(objc > 1 ? objc - 1: 0);
   struct py_bind *bindinfo = cd;
 
-  for (int i = 0; i < objc; i++) {
-    PyTuple_SET_ITEM(args, i, Py_BuildValue("s", Tcl_GetStringFromObj(objv[i], NULL)));
+  // objc[0] is procname
+  for (int i = 1; i < objc; i++) {
+    PyTuple_SET_ITEM(args, i - 1, Py_BuildValue("s", Tcl_GetStringFromObj(objv[i], NULL)));
   }
   if (!PyObject_Call(bindinfo->callback, args, NULL)) {
     PyErr_Print();
@@ -58,12 +59,12 @@ static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *co
 
 static PyObject *py_bind(PyObject *self, PyObject *args) {
   PyObject *callback;
-  char *bindtype, *mask;
+  char *bindtype, *mask, *flags;
   struct py_bind *bindinfo;
   tcl_bind_list_t *tl;
 
   // type flags mask callback
-  if (!PyArg_ParseTuple(args, "ssO", &bindtype, &mask, &callback) || !callback) {
+  if (!PyArg_ParseTuple(args, "sssO", &bindtype, &flags, &mask, &callback) || !callback) {
     PyErr_SetString(EggdropError, "wrong arguments");
     return NULL;
   }
@@ -90,7 +91,7 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
   // TODO: deleteproc
   Tcl_CreateObjCommand(tclinterp, bindinfo->tclcmdname, tcl_call_python, bindinfo, NULL);
   // TODO: flags?
-  bind_bind_entry(tl, "-", mask, bindinfo->tclcmdname);
+  bind_bind_entry(tl, flags, mask, bindinfo->tclcmdname);
   Py_RETURN_NONE;
 }
 

@@ -6,12 +6,14 @@ import sys
 from pprint import pprint, pformat
 import eggdrop
 from eggdroppy.flags import FlagRecord, FlagMatcher
+from eggdroppy.cmds import putmsg, putnotc
 from dataclasses import dataclass
 
 empty_flags = FlagMatcher()
 
 @dataclass
 class Bind:
+  bindtype: str
   flags: FlagMatcher
   mask: str
   callback: Callable
@@ -19,13 +21,52 @@ class Bind:
 
   @property
   def id(self):
-    return f'bind{hex(id(self))[2:]}'
+    return f'{self.bindtype}{hex(id(self))[2:]}'
 
 class BindCallback:
-  def __init__(self, callback : Callable):
+  bindargs = {
+    "pub": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
+    "pubm": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
+    "msg": {"args": ("nick", "host", "handle", "text"), "reply": "privmsg"},
+    "msgm": {"args": ("nick", "host", "handle", "text"), "reply": "privmsg"},
+    "dcc": {"args": ("handle", "idx", "text"), "reply": "dcc"},
+    "join": {"args": ("nick", "host", "handle", "channel"), "reply": "privnotc"}
+  }
+
+  @staticmethod
+  def make_replyfunc(replytype, argdict):
+    replyfunc = None
+    if replytype == "chanmsg":
+      def replyfunc(response):
+        putmsg(argdict["channel"], response)
+    elif replytype == "privmsg":
+      def replyfunc(response):
+        putmsg(argdict["nick"], response)
+    elif replytype == "privnotc":
+      def replyfunc(response):
+        putnotc(argdict["nick"], response)
+    elif replytype == "dcc":
+      def replyfunc(response):
+        # TODO: putdcc
+        print(f"Python DCC response: {response}")
+    return replyfunc
+
+  def __init__(self, bindtype, mask, callback : Callable):
     self.__callback = callback
-  def __call__(self, *args, **kwargs):
-    self.__callback(*args, **kwargs)
+    self.__bindtype = bindtype
+    self.__mask = mask
+
+  def __call__(self, *args):
+    bindinfo = self.bindargs[self.__bindtype]
+    pprint(args)
+
+    kwargs = {"bindtype": self.__bindtype, "mask": self.__mask}
+    kwargs.update(zip(bindinfo["args"], args))
+    if "reply" in bindinfo:
+      kwargs["reply"] = self.make_replyfunc(bindinfo["reply"], argdict=kwargs)
+    pprint(kwargs)
+    self.__callback(**kwargs)
+
   def __str__(self):
     return self.__callback.__name__
 
@@ -45,10 +86,10 @@ class BindType:
     self.__binds = {}
 
   @staticmethod
-  def make_callback_func(callback):
-    return BindCallback(callback)
+  def make_callback_func(bindtype, mask, callback):
+    return BindCallback(bindtype, mask, callback)
 
-  def add(self, mask : str, callback : Callable, flags : FlagMatcher = empty_flags):
+  def add(self, mask : str, callback : Callable, flags : str = "-"):
     """ Register a new bind event
 
     Adds a new :class:`BindType` attribute to a :class:`Bind` object.
@@ -58,18 +99,16 @@ class BindType:
       mask (str): mask or command or something, maybe find a better word here
       callback (method): The name of the function you wish to call when the event is triggered
     """
-    cb = self.make_callback_func(callback)
-    if flags is None:
-      flags = FlagMatcher()
-    bind = Bind(flags=flags, mask=mask, callback=cb)
+    cb = self.make_callback_func(bindtype=self.__bindtype, mask=mask, callback=callback)
+    bind = Bind(flags=flags, mask=mask, callback=cb, bindtype=self.__bindtype)
     self.__binds[bind.id] = bind
     if self.__managed:
-      eggdrop.bind(self.__bindtype, mask, cb)
+      eggdrop.bind(self.__bindtype, flags, mask, cb)
 
   def delete(self, bindid):
     bind = self.__binds[bindid]
     if self.__managed:
-      eggdrop.unbind(self.__bindtype, bind.mask, bind.callback)
+      eggdrop.unbind(self.__bindtype, bind.flags, bind.mask, bind.callback)
     if bindid in self.__binds:
       del self.__binds[bindid]
 
@@ -98,8 +137,11 @@ class Binds:
   """
   def __init__(self):
     self.__binds = {}
-    self.__binds["pubm"] = BindType("pubm", False)
-    self.__binds["join"] = BindType("join", False)
+    self.__binds["pubm"] = BindType("pubm", True)
+    self.__binds["pub"] = BindType("pub", True)
+    self.__binds["msgm"] = BindType("msgm", True)
+    self.__binds["msg"] = BindType("msg", True)
+    self.__binds["join"] = BindType("join", True)
     self.__binds["dcc"] = BindType("dcc", True)
 
   def __getattr__(self, name):
@@ -124,90 +166,6 @@ class Binds:
   def __str__(self):
     return [{x: [str(b) for b in y]} for x, y in self.__binds.items()]
 
-def bindmask2re(mask):
-  r = ''
-  for c in mask:
-    if c == '?':
-      r += '.'
-    elif c == '*':
-      r += '.*'
-    elif c == '%':
-      r += '\S*'
-    elif c == '~':
-      r += '\s+'
-    else:
-      r += re.escape(c)
-  return re.compile('^' + r + '$')
-
-def flags_ok(bind, realflags):
-  return bind.flags.match(realflags)
-
-def on_pub(flags, nick, uhost, hand, chan, text):
-  print(f"on_pub({pformat(flags)}, {nick}, {uhost}, {hand}, {chan}, {text.split()[0]}, {text.split(' ', 1)[1]})")
-  for b in __allbinds.pub.list().values():
-    match_flags = flags_ok(b, flags)
-    match_mask = (b.mask == text.split()[0])
-    call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
-    if call_bind:
-      b.hits += 1
-      b.callback(nick, uhost, hand, chan, text.split(" ", 1)[1])
-  return
-
-def on_pubm(flags, nick, uhost, hand, chan, text):
-  print(f"on_pubm({pformat(flags)}, {nick}, {uhost}, {hand}, {chan}, {text})")
-  for b in __allbinds.pubm.list().values():
-    match_flags = flags_ok(b, flags)
-    match_mask = bool(bindmask2re(b.mask).match(text))
-    call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
-    if call_bind:
-      b.hits += 1
-      b.callback(nick, uhost, hand, chan, text)
-  on_pub(flags, nick, uhost, hand, chan, text)
-  return
-
-def on_msgm(flags, nick, uhost, hand, text):
-  print(f"on_msgm({pformat(flags)}, {nick}, {uhost}, {hand}, {text})")
-  for b in __allbinds.msgm.list().values():
-    match_flags = flags_ok(b, flags)
-    match_mask = bool(bindmask2re(b.mask).match(text))
-    call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
-    if call_bind:
-      b.hits += 1
-      b.callback(nick, uhost, hand, text)
-  return
-
-def on_join(flags, nick, uhost, hand, chan):
-  """This method searches for binds to be triggered when a user joins a channel.
-
-        :param mask: a user hostmask, wildcards supported
-        :param flags: flags for the user
-
-        :returns: nick hostmask handle channel
-  """ 
-  print(f"on_join({pformat(flags)}, {nick}, {uhost}, {hand}, {chan})")
-  for b in __allbinds.join.list().values():
-    match_flags = flags_ok(b, flags)
-    match_mask = bool(bindmask2re(b.mask).match(f"{nick}!{uhost}"))
-    call_bind = True if match_flags and match_mask else False
-    print(f"  checking against {str(b)}: Flags={match_flags} Mask={match_mask}: {'Trigger' if call_bind else 'Skip'}")
-    if call_bind:
-      b.hits += 1
-      b.callback(nick, uhost, hand, chan)
-
-def on_event(bindtype, globalflags, chanflags, botflags, *args):
-  flags = FlagRecord(globalflags, chanflags, botflags)
-  print(f"on_event({bindtype}, {str(globalflags)}, {str(chanflags)}, {str(botflags)}, {pformat(args)}")
-  if bindtype == "pubm":
-    on_pubm(flags, *args)
-  elif bindtype == "msgm":
-    on_msgm(flags, *args)
-  elif bindtype == "join":
-    on_join(flags, *args)
-  return 0
-
 __allbinds = Binds()
 
 for bindtype in __allbinds.types():
@@ -219,15 +177,15 @@ def all():
 def types():
   return __allbinds.types()
 
-def print_all(*args):
-  print("{0: <8} | {1: <18} | {2: <12} | {3: <24} | {4}".format('ID', 'function', 'flags', 'mask', 'hits'))
+def print_all(reply, **kwargs):
+  reply("{0: <8} | {1: <18} | {2: <12} | {3: <24} | {4}".format('ID', 'function', 'flags', 'mask', 'hits'))
   for i in types():
     if __allbinds.all()[i].all():
-      print("-"*78)
-      print(f'{i:<8}')
-      print("-"*78)
+      reply("-"*78)
+      reply(f'{i:<8}')
+      reply("-"*78)
       for j in __allbinds.all()[i].all().keys():
-        print(f'{j} | {str(__allbinds.all()[i].all()[j].callback):<18} | {str(__allbinds.all()[i].all()[j].flags):<12} | {__allbinds.all()[i].all()[j].mask:<24} | {__allbinds.all()[i].all()[j].hits:<4}')
-  print("-"*78)
+        reply(f'{j} | {str(__allbinds.all()[i].all()[j].callback):<18} | {str(__allbinds.all()[i].all()[j].flags):<12} | {__allbinds.all()[i].all()[j].mask:<24} | {__allbinds.all()[i].all()[j].hits:<4}')
+  reply("-"*78)
 
 __allbinds.dcc.add(mask='pybinds', callback=print_all)

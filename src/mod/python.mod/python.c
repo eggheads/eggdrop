@@ -304,47 +304,11 @@ static cmd_t mydcc[] = {
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 
-static cmd_t mypy_pubm[] = {
-    {"*",   "",     py_pubm, "python:pubm"},
-    {NULL,  NULL,   NULL,     NULL}
-};
-
-static cmd_t mypy_join[] = {
-    {"*",   "",     py_join, "python:join"},
-    {NULL,  NULL,   NULL,   NULL}
-};
-
-/*static tcl_cmds mytcl[] = {
-  {"twcmd",           tcl_twcmd},
-  {"roomstate",   tcl_roomstate},
-  {"userstate",   tcl_userstate},
-  {"twitchmods", tcl_twitchmods},
-  {"twitchvips", tcl_twitchvips},
-  {"ismod",           tcl_ismod},
-  {"isvip",           tcl_isvip},
-  {NULL,                   NULL}
-}; */
-
-/*
-static tcl_ints my_tcl_ints[] = {
-  {"keep-nick",         &keepnick,        STR_PROTECT},
-  {NULL,                NULL,                       0}
-}; */
-
-/*
-static tcl_strings my_tcl_strings[] = {
-  {"cap-request",   cap_request,    55,     STR_PROTECT},
-  {NULL,            NULL,           0,                0}
-}; */
-
 static char *python_close()
 {
   Context;
   kill_python();
   rem_builtins(H_dcc, mydcc);
-  rem_builtins(H_pubm, mypy_pubm);
-//  rem_tcl_commands(mytcl);
-//  rem_tcl_ints(my_tcl_ints);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -387,11 +351,6 @@ char *python_start(Function *global_funcs)
   init_python();
 
   /* Add command table to bind list */
-  add_builtins(H_pubm, mypy_pubm);
-  add_builtins(H_join, mypy_join);
   add_builtins(H_dcc, mydcc);
-//  add_tcl_commands(mytcl);
-//  add_tcl_ints(my_tcl_ints);
-//  add_tcl_strings(my_tcl_strings);
   return NULL;
 }
