@@ -21,7 +21,7 @@ bindtypes = {
 @dataclass
 class Bind:
   bindtype: str
-  flags: FlagMatcher
+  flags: str
   mask: str
   callback: Callable
   hits: int = 0
@@ -56,13 +56,14 @@ class BindCallback:
     self.__mask = mask
 
   def __call__(self, *args):
-    bindinfo = bindtypes[self.__bindtype]
     pprint(args)
+    bindinfo = bindtypes[self.__bindtype]
 
     kwargs = {"bindtype": self.__bindtype, "mask": self.__mask}
     kwargs.update(zip(bindinfo["args"], args))
     if "reply" in bindinfo:
       kwargs["reply"] = self.make_replyfunc(bindinfo["reply"], argdict=kwargs)
+
     pprint(kwargs)
     self.__callback(**kwargs)
 
