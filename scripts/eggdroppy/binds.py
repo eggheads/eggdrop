@@ -9,7 +9,14 @@ from eggdroppy.flags import FlagRecord, FlagMatcher
 from eggdroppy.cmds import putmsg, putnotc
 from dataclasses import dataclass
 
-empty_flags = FlagMatcher()
+bindtypes = {
+  "pub": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
+  "pubm": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
+  "msg": {"args": ("nick", "host", "handle", "text"), "reply": "privmsg"},
+  "msgm": {"args": ("nick", "host", "handle", "text"), "reply": "privmsg"},
+  "dcc": {"args": ("handle", "idx", "text"), "reply": "dcc"},
+  "join": {"args": ("nick", "host", "handle", "channel"), "reply": "privnotc"}
+}
 
 @dataclass
 class Bind:
@@ -24,14 +31,6 @@ class Bind:
     return f'{self.bindtype}{hex(id(self))[2:]}'
 
 class BindCallback:
-  bindargs = {
-    "pub": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
-    "pubm": {"args": ("nick", "host", "handle", "channel", "text"), "reply": "chanmsg"},
-    "msg": {"args": ("nick", "host", "handle", "text"), "reply": "privmsg"},
-    "msgm": {"args": ("nick", "host", "handle", "text"), "reply": "privmsg"},
-    "dcc": {"args": ("handle", "idx", "text"), "reply": "dcc"},
-    "join": {"args": ("nick", "host", "handle", "channel"), "reply": "privnotc"}
-  }
 
   @staticmethod
   def make_replyfunc(replytype, argdict):
@@ -57,7 +56,7 @@ class BindCallback:
     self.__mask = mask
 
   def __call__(self, *args):
-    bindinfo = self.bindargs[self.__bindtype]
+    bindinfo = bindtypes[self.__bindtype]
     pprint(args)
 
     kwargs = {"bindtype": self.__bindtype, "mask": self.__mask}
@@ -136,13 +135,7 @@ class Binds:
     Args: None
   """
   def __init__(self):
-    self.__binds = {}
-    self.__binds["pubm"] = BindType("pubm", True)
-    self.__binds["pub"] = BindType("pub", True)
-    self.__binds["msgm"] = BindType("msgm", True)
-    self.__binds["msg"] = BindType("msg", True)
-    self.__binds["join"] = BindType("join", True)
-    self.__binds["dcc"] = BindType("dcc", True)
+    self.__binds = {x: BindType(x, True) for x in bindtypes.keys()}
 
   def __getattr__(self, name):
     return self.__binds[name]
@@ -165,6 +158,7 @@ class Binds:
 
   def __str__(self):
     return [{x: [str(b) for b in y]} for x, y in self.__binds.items()]
+
 
 __allbinds = Binds()
 
