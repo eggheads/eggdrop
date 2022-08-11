@@ -32,6 +32,8 @@ Eggdrop v1.9.3:
     - Fixed a compile error for pthreads found mainly on BSD systems
     - Fixed a bug with threaded DNS queries where threads were not terminated
       properly, potentially resulting in an out-of-memory error
+    - Fixed an issue where PLAIN SASL authentication incorrectly errored unless
+      (unneeded) TLS libraries were installed
     - Updated information obtained via extended-join to all channels the user is
       on, not just the channel they joined
     - Force ident requests to originate from the specified vhost/listen IP
