@@ -66,8 +66,6 @@ there).
 
 1.  Ensure
 
-::
-
     loadmodule pbkdf2
 
 is uncommented in the config file (or added, if this is a config file
