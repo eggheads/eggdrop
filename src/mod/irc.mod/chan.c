@@ -3038,6 +3038,7 @@ static cmd_t irc_raw[] = {
   {"KICK",    "",   (IntFunc) gotkick,        "irc:kick"},
   {"NICK",    "",   (IntFunc) gotnick,        "irc:nick"},
   {"QUIT",    "",   (IntFunc) gotquit,        "irc:quit"},
+  {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
   {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
   {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
   {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
@@ -3052,9 +3053,4 @@ static cmd_t irc_raw[] = {
 static cmd_t irc_isupport_binds[] = {
   {"*",       "",   (IntFunc) irc_isupport, "irc:isupport"},
   {NULL,    NULL,   NULL,                             NULL}
-};
-
-static cmd_t irc_rawt[] = {
-  {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
-  {NULL,      NULL, NULL,                           NULL}
 };
