@@ -40,15 +40,14 @@ static char OBUF[1024];
 #ifndef NO_OLD_BOTNET
 /* Ditto for tandem bots
  */
-void tandout_but EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+void tandout_but(int x, const char *format, ...)
 {
-  int i, x, len;
-  char *format;
+  int i, len;
   char s[511];
   va_list va;
 
-  x = EGG_VARARGS_START(int, arg1, va);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   len = egg_vsnprintf(s, sizeof s, format, va);
   va_end(va);
@@ -136,14 +135,16 @@ char *unsigned_int_to_base10(unsigned int val)
   return buf_base10 + i;
 }
 
-int simple_sprintf EGG_VARARGS_DEF(char *, arg1)
+// TODO: this should probably not be used eggdrop core anymore
+// and only stay for 3rd party module compatibility
+// Reason: No sane compiler error checking possible, hardcoded 1024 limit
+int simple_sprintf (char *buf, const char *format, ...)
 {
-  char *buf, *format, *s;
+  char *s;
   int c = 0, i;
   va_list va;
 
-  buf = EGG_VARARGS_START(char *, arg1, va);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   while (*format && c < 1023) {
     if (*format == '%') {
@@ -289,19 +290,14 @@ void botnet_send_pong(int idx)
     dprintf(idx, "po\n");
 }
 
-void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,5,6)
+void botnet_send_priv (int idx, char *from, char *to, char *tobot, const char *format, ...)
 {
-  int idx, l;
-  char *from, *to, *tobot, *format;
+  int l;
   char tbuf[1024];
   va_list va;
 
-  idx = EGG_VARARGS_START(int, arg1, va);
-  from = va_arg(va, char *);
-  to = va_arg(va, char *);
-  tobot = va_arg(va, char *);
-  format = va_arg(va, char *);
-
+  va_start(va, format);
   egg_vsnprintf(tbuf, 450, format, va);
   va_end(va);
   tbuf[sizeof(tbuf) - 1] = 0;
