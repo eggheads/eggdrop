@@ -183,11 +183,11 @@ void add_tcl_coups(tcl_coups *);
 void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
-const char *tcl_resultstring();
-int tcl_resultint();
-int tcl_resultempty();
-int tcl_threaded();
-int fork_before_tcl();
+const char *tcl_resultstring(void);
+int tcl_resultint(void);
+int tcl_resultempty(void);
+int tcl_threaded(void);
+int fork_before_tcl(void);
 time_t get_expire_time(Tcl_Interp *, const char *);
 
 /* From Tcl's tclUnixInit.c */
