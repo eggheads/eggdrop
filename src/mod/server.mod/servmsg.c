@@ -753,14 +753,23 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static int gottagmsg(char *from, char *msg) {
+static int gottagmsg(char *from, char *msg, char *tags) {
   char *nick;
+  int done;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *msgtagdict, *key;
+
+  msgtagdict = Tcl_NewStringObj(tags, -1);
+
+  for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    putlog(LOG_SERV, "*", "%s:%s", Tcl_GetString(key), Tcl_GetString(value));
+  }
   fixcolon(msg);
   if (strchr(from, '!')) {
     nick = splitnick(&from);
-    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] TAGMSG: %s", nick, from, tags);
   } else {
-    putlog(LOG_SERV, "*", "[#]%s[#] %s");
+    putlog(LOG_SERV, "*", "[#]%s[#] TAGMSG: %s", from, tags);
   }
   return 0;
 }
