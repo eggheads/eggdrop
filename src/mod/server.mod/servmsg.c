@@ -1990,6 +1990,7 @@ static int server_isupport(char *key, char *isset_str, char *value)
 }
 
 static cmd_t my_raw_binds[] = {
+  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
   {"MODE",         "",   (IntFunc) gotmode,         NULL},
   {"PING",         "",   (IntFunc) gotping,         NULL},
@@ -2035,7 +2036,6 @@ static cmd_t my_raw_binds[] = {
 
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
-  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
