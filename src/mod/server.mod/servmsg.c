@@ -325,6 +325,30 @@ static int match_my_nick(char *nick)
   return (!rfc_casecmp(nick, botname));
 }
 
+char *tagmsg_dicttostr(Tcl_Obj *msgtagdict) {
+  int done = 0;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *key;
+  static Tcl_DString ds;
+  static int ds_initialized = 0;
+
+  if (!ds_initialized) {
+    Tcl_DStringInit(&ds);
+    ds_initialized = 1;
+  } else {
+    Tcl_DStringFree(&ds);
+  }
+  for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    Tcl_DStringAppend(&ds, Tcl_GetString(key), -1);
+    Tcl_DStringAppend(&ds, "=", -1);
+    Tcl_DStringAppend(&ds, Tcl_GetString(value), -1);
+    Tcl_DStringAppend(&ds, ";", -1);
+  }
+  Tcl_DStringSetLength(&ds, (Tcl_DStringLength(&ds) - 1));
+
+  return Tcl_DStringValue(&ds);
+}
+
 /* 001: welcome to IRC (use it to fix the server name) */
 static int got001(char *from, char *msg)
 {
@@ -754,22 +778,18 @@ static int gotnotice(char *from, char *msg)
 }
 
 static int gottagmsg(char *from, char *msg, char *tags) {
-  char *nick;
-  int done;
-  Tcl_DictSearch s;
-  Tcl_Obj *value, *msgtagdict, *key;
+  char *nick, *dictstring;
+  Tcl_Obj *msgtagdict;
 
   msgtagdict = Tcl_NewStringObj(tags, -1);
+  dictstring = tagmsg_dicttostr(msgtagdict);
 
-  for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
-    putlog(LOG_SERV, "*", "%s:%s", Tcl_GetString(key), Tcl_GetString(value));
-  }
   fixcolon(msg);
   if (strchr(from, '!')) {
     nick = splitnick(&from);
-    putlog(LOG_SERV, "*", "[#]%s(%s)[#] TAGMSG: %s", nick, from, tags);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] TAGMSG: %s", nick, from, dictstring);
   } else {
-    putlog(LOG_SERV, "*", "[#]%s[#] TAGMSG: %s", from, tags);
+    putlog(LOG_SERV, "*", "[#]%s[#] TAGMSG: %s", from, dictstring);
   }
   return 0;
 }
