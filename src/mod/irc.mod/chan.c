@@ -1881,7 +1881,7 @@ static int gotinvite(char *from, char *msg)
   check_tcl_invite(nick, from, msg, invitee);
 /* Because who needs RFCs? Freakin IRCv3... */
   if (!match_my_nick(invitee)) {
-    putlog(LOG_DEBUG, "*", "Received invite notifiation for %s to %s by %s.",
+    putlog(LOG_DEBUG, "*", "Received invite notification for %s to %s by %s.",
             invitee, msg, nick);
     return 1;
   }

@@ -935,7 +935,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   if (tm_p && tm_p->next) {
     tm = tm_p->next;            /* Move mask to front of bind's mask list. */
     tm_p->next = tm->next;      /* Unlink mask from list. */
-    tm->next = tl->first;       /* Readd mask to front of list. */
+    tm->next = tl->first;       /* Re-add mask to front of list. */
     tl->first = tm;
   }
 

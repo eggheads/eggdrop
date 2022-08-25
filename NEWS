@@ -204,7 +204,7 @@ Eggdrop v1.9.0:
       with 'refreshchan w', described above.
     - Added the hand2nicks command, an alternative to the hand2nick command.
       hand2nicks returns ALL nicks matching a handle, not just the first one.
-    - Aded the socklist command, an update to the dcclist command. Returns
+    - Added the socklist command, an update to the dcclist command. Returns
       similar info as a Tcl dict, and adds the IP to the information.
     - Use the system's strftime formatting instead of Eggdrop-provided
       GNU version/extensions. This could cause formatting differences
