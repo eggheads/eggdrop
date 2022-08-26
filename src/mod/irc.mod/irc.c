@@ -137,7 +137,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   default:
     kick_msg = "revenge!";
   }
-  putlog(LOG_MISC, chan->dname, "Punishing %s (%s)", !!badnick, reason);
+  putlog(LOG_MISC, chan->dname, "Punishing %s (%s)", badnick, reason);
 
   /* Set the offender +d */
   if ((chan->revenge_mode > 0) && !(chan_deop(fr) || glob_deop(fr))) {

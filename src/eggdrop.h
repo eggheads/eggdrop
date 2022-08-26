@@ -379,6 +379,7 @@ struct userrec;
 
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
+                                /* ^-- Disagreed with, but changing back to int would break ABI */
   IP addr;                      /* IP address in host network byte order. */
   sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */
   unsigned int port;

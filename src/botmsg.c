@@ -612,7 +612,7 @@ void botnet_send_join_idx(int useridx, int oldchan)
                        dcc[useridx].sock, dcc[useridx].host);
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, "join %s %s %d %c%d %s\n", botnetnick,
+    tandout_but(-1, "join %s %s %d %c%ld %s\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].u.chat->channel,
                 geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s %s %s.\n",
@@ -670,7 +670,7 @@ void botnet_send_part_idx(int useridx, char *reason)
   if (tands > 0) {
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, "part %s %s %d\n", botnetnick,
+    tandout_but(-1, "part %s %s %ld\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].sock);
     tandout_but(-1, "chan %s %d %s has left the %s%s%s.\n",
                 botnetnick, dcc[useridx].u.chat->channel,
@@ -714,9 +714,9 @@ void botnet_send_nkch(int useridx, char *oldnick)
                        dcc[useridx].sock, dcc[useridx].nick);
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, "part %s %s %d\n", botnetnick,
+    tandout_but(-1, "part %s %s %ld\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].sock);
-    tandout_but(-1, "join %s %s %d %c%d %s\n", botnetnick,
+    tandout_but(-1, "join %s %s %d %c%ld %s\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].u.chat->channel,
                 geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s: %s -> %s.\n",

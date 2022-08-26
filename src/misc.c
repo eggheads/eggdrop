@@ -430,7 +430,7 @@ void dumplots(int idx, const char *prefix, const char *data)
     n = strchr(p, '\n');
     if (n && n < q) {
       /* Great! dump that first line then start over */
-      dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
       p = n + 1;
     } else {
       /* Search backwards for the last space */
@@ -438,7 +438,7 @@ void dumplots(int idx, const char *prefix, const char *data)
         q--;
       if (q == p)
         q = p + max_data_len;
-      dprintf(idx, "%s%.*s\n", prefix, q - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(q - p), p);
       p = q;
       if (*q == ' ')
         p++;
@@ -447,7 +447,7 @@ void dumplots(int idx, const char *prefix, const char *data)
   /* Last trailing bit: split by linefeeds if possible */
   n = strchr(p, '\n');
   while (n) {
-    dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+    dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
     p = n + 1;
     n = strchr(p, '\n');
   }

@@ -651,13 +651,13 @@ static void core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug2("timer: drift (lastmin=%d, nowmins=%d)", lastmin, nowmins);
+      debug1("timer: drift (%f seconds)", difftime(nowmins, lastmin));
       i++;
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
     if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
+      putlog(LOG_MISC, "*", "(!) timer drift -- spun %f minutes", difftime(nowmins, lastmin)/60);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
@@ -856,7 +856,7 @@ static void mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %d",
+          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %ld",
                  dcc[idx].type ? dcc[idx].type->name : "UNKNOWN", dcc[idx].sock);
         break;
       }
@@ -889,8 +889,8 @@ static void mainloop(int toplevel)
     for (i = 0; i < dcc_total; i++) {
       if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
         putlog(LOG_MISC, "*",
-               "DCC socket %d (type %d, name '%s') expired -- pfft",
-               dcc[i].sock, dcc[i].type, dcc[i].nick);
+               "DCC socket %ld (type %s, name '%s') expired -- pfft",
+               dcc[i].sock, dcc[i].type->name, dcc[i].nick);
         killsock(dcc[i].sock);
         lostdcc(i);
         i--;

@@ -290,8 +290,8 @@ static void tell_file_stats(int idx, char *hand)
   if (!(fs = get_user(&USERENTRY_FSTAT, u))) {
     dprintf(idx, "No file statistics for %s.\n", hand);
   } else {
-    dprintf(idx, "  uploads: %4u / %6luk\n", fs->uploads, fs->upload_ks);
-    dprintf(idx, "downloads: %4u / %6luk\n", fs->dnloads, fs->dnload_ks);
+    dprintf(idx, "  uploads: %4u / %6uk\n", fs->uploads, fs->upload_ks);
+    dprintf(idx, "downloads: %4u / %6uk\n", fs->dnloads, fs->dnload_ks);
     if (fs->uploads)
       fr = ((float) fs->dnloads / (float) fs->uploads);
     if (fs->upload_ks)

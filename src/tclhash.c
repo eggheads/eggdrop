@@ -1301,7 +1301,7 @@ void tell_binds(int idx, char *par)
     }
   }
   dprintf(idx, MISC_CMDBINDS);
-  dprintf(idx, "  %+*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
+  dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;

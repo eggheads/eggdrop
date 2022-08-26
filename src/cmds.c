@@ -3204,7 +3204,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
   } else {
     bot = newsplit(&par);
     if ((ptr = nextbot(bot)) >= 0)
-      dprintf(ptr, "v %s %s %d:%s\n", botnetnick, bot, dcc[idx].sock,
+      dprintf(ptr, "v %s %s %ld:%s\n", botnetnick, bot, dcc[idx].sock,
               dcc[idx].nick);
     else
       dprintf(idx, "No such bot online.\n");

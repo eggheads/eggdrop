@@ -1094,7 +1094,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 
   dcc[i].u.xfer->type = XFER_RESUME_PEND;
   dcc[i].u.xfer->offset = offset;
-  dprintf(DP_SERVER, "PRIVMSG %s :\001DCC ACCEPT %s %d %u\001\n", nick, fn, port,
+  dprintf(DP_SERVER, "PRIVMSG %s :\001DCC ACCEPT %s %d %lu\001\n", nick, fn, port,
           offset);
   return 1; /* Now we wait for the client to connect. */
 }

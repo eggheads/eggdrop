@@ -593,8 +593,8 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5_Init(&md5context);
 
-  egg_snprintf(digest_string, 33, "<%lx%x@", (long) getpid(),
-               (unsigned int) dcc[idx].timeval);
+  egg_snprintf(digest_string, 33, "<%lx%lx@", (long) getpid(),
+               (unsigned long) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));
   MD5_Update(&md5context, (unsigned char *) botnetnick, strlen(botnetnick));
@@ -1375,10 +1375,10 @@ static void dcc_telnet_hostresolved(int i)
       sockname_t name;
       name.addrlen = sizeof(name.addr);
       if (getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen) < 0)
-        debug2("dcc: dcc_telnet_hostresolved(): getsockname() socket %i error %s", dcc[i].sock, strerror(errno));
+        debug2("dcc: dcc_telnet_hostresolved(): getsockname() socket %ld error %s", dcc[i].sock, strerror(errno));
       setsnport(name, 0);
       if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
-        debug2("dcc: dcc_telnet_hostresolved(): bind() socket %i error %s", dcc[j].sock, strerror(errno));
+        debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
       setsnport(dcc[j].sockname, 113);
       if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
           dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
@@ -1777,7 +1777,7 @@ static void dcc_telnet_pass(int idx, int atr)
      */
     putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
     /* Prefix with \n in case of newline-less ending stealth_prompt */
-    dprintf(idx, "\npassreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+    dprintf(idx, "\npassreq <%x%lx@%s>\n", getpid(), (unsigned long)dcc[idx].timeval, botnetnick);
     dcc[idx].type = old;
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
