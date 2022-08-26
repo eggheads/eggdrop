@@ -264,23 +264,23 @@ Example edited and annotated gdb backtrace in cmd_boot after doing .boot test on
 ::
 
     #0  cmd_boot (u=0x55e8bd8a49b0, idx=4, par=0x55e8be6a0010 "test") at cmds.c:614
-        *u = {next = 0x55e8bd8aec90, handle = "thommey", flags = 8977024, flags_udef = 0, chanrec = 0x55e8bd8aeae0, entries = 0x55e8bd8a4a10}
+          *u = {next = 0x55e8bd8aec90, handle = "thommey", flags = 8977024, flags_udef = 0, chanrec = 0x55e8bd8aeae0, entries = 0x55e8bd8a4a10}
     #1  builtin_dcc (cd=0x55e8bbf002d0 <cmd_boot>, irp=0x55e8bd59b1c0, argc=4, argv=0x55e8bd7e3e00) at tclhash.c:678
-        idx = 4
-        argv = {0x55e8be642fa0 "*dcc:boot", 0x55e8be9f6bd0 "thommey", 0x55e8be7d9020 "4", 0x55e8be6a0010 "test", 0x0}
-        F = 0x55e8bbf002d0 <cmd_boot>
+          idx = 4
+          argv = {0x55e8be642fa0 "*dcc:boot", 0x55e8be9f6bd0 "thommey", 0x55e8be7d9020 "4", 0x55e8be6a0010 "test", 0x0}
+          F = 0x55e8bbf002d0 <cmd_boot>
     #5  Tcl_Eval (interp=0x55e8bd59b1c0, script = "*dcc:boot $_dcc1 $_dcc2 $_dcc3") from /usr/lib/x86_64-linux-gnu/libtcl8.6.so
-        Tcl: return $_dcc1 = "thommey"
-        Tcl: return $_dcc2 = "4"
-        Tcl: return $_dcc3 = "test"
-        Tcl: return $lastbind = "boot" (set automatically by trigger_bind)
+          Tcl: return $_dcc1 = "thommey"
+          Tcl: return $_dcc2 = "4"
+          Tcl: return $_dcc3 = "test"
+          Tcl: return $lastbind = "boot" (set automatically by trigger_bind)
     #8  trigger_bind (proc=proc@entry=0x55e8bd5efda0 "*dcc:boot", param=param@entry=0x55e8bbf4112b " $_dcc1 $_dcc2 $_dcc3", mask=mask@entry=0x55e8bd5efd40 "boot") at tclhash.c:742
     #9  check_tcl_bind (tl=0x55e8bd5eecb0 <H_dcc>, match=match@entry=0x7ffcf3f9dac1 "boot", atr=atr@entry=0x7ffcf3f9d100, param=param@entry=0x55e8bbf4112b " $_dcc1 $_dcc2 $_dcc3", match_type=match_type@entry=80) at tclhash.c:942
-        proc = 0x55e8bd5efda0 "*dcc:boot"
-        mask = 0x55e8bd5efd40 "boot"
-        brkt = 0x7ffcf3f9dac6 "test"
+          proc = 0x55e8bd5efda0 "*dcc:boot"
+          mask = 0x55e8bd5efd40 "boot"
+          brkt = 0x7ffcf3f9dac6 "test"
     #10 check_tcl_dcc (cmd=cmd@entry=0x7ffcf3f9dac1 "boot", idx=idx@entry=4, args=0x7ffcf3f9dac6 "test") at tclhash.c:974
-        fr = {match = 5, global = 8977024, udef_global = 0, bot = 0, chan = 0, udef_chan = 0}
+          fr = {match = 5, global = 8977024, udef_global = 0, bot = 0, chan = 0, udef_chan = 0}
     #11 dcc_chat (idx=idx@entry=4, buf=<optimized out>, i=<optimized out>) at dcc.c:1068
-        v = 0x7ffcf3f9dac1 "boot"
+          v = 0x7ffcf3f9dac1 "boot"
 
