@@ -19,7 +19,8 @@ Bind table creation
 The bind table is added by calling, either at module initialization or
 startup:
 
-::
+.. code-block:: c
+
     /* Global symbol, available to other C files with
      * extern p_tcl_bind_list H_dcc;
      */
@@ -46,9 +47,13 @@ Stackable binds: HT_STACKABLE
 ``HT_STACKABLE`` means that multiple binds can exist for the same mask and are
 all called, instead of the first matching bind. So:
 
-::
+.. code-block:: tcl
+
     bind dcc - test proc1; # not stackable
     bind dcc - test proc2; # overwrites the first one, only proc2 will be called
+
+It does not automatically call multiple binds that match, see later in the
+:ref:`Triggering any bind` section for details.
 
 Tcl binding
 -----------
@@ -56,7 +61,8 @@ Tcl binding
 After the bind table is created with ``add_bind_table``, Tcl procs can already be
 registered to this bind by calling:
 
-::
+.. code-block:: tcl
+
     bind dcc -|- test myproc
     proc myproc {args} {
         putlog "myproc was called, argument list: '[join $args ',']'"
@@ -74,7 +80,8 @@ Triggering the bind
 
 To trigger the bind and call it with the desired arguments, a function is created.
 
-::
+.. code-block:: c
+
     int check_tcl_dcc(const char *cmd, int idx, const char *args) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         int x;
@@ -106,7 +113,8 @@ Triggering any bind: check_tcl_bind()
 
 ``check_tcl_bind`` is used by all binds and does the following:
 
-::
+.. code-block:: c
+
     /* Generic function to call one/all matching binds
      * @param[in] tcl_bind_list_t *tl      Bind table (e.g. H_dcc)
      * @param[in] const char *match        String to match the bind-masks against
@@ -152,7 +160,8 @@ C binding
 
 To create a C function that is called by the bind, Eggdrop provides the ``add_builtins`` function.
 
-::
+.. code-block:: c
+
     /* Add a list of C function callbacks to a bind
      * @param[in] tcl_bind_list_t *  the bind type (e.g. H_dcc)
      * @param[in] cmd_t *            a NULL-terminated table of binds:
@@ -191,7 +200,8 @@ C handler
 
 The example handler for DCC looks as follows:
 
-::
+.. code-block:: c
+
     /* Typical Tcl_Command arguments, just like e.g. tcl_putdcc is a Tcl/C command for [putdcc] */
     static int builtin_dcc (ClientData cd, Tcl_Interp *irp, int argc, char *argv[]) {
         int idx;
@@ -227,7 +237,8 @@ This is finally the part where we see the arguments a C function gets for a DCC 
 
 So this is how we register C callbacks for binds:
 
-::
+.. code-block:: c
+
     /* We know the return value is ignored because the return value of F
      * in builtin_dcc is ignored, but it could be used, so it can be void
      */
@@ -244,6 +255,32 @@ Summary
 
 In summary, this is how the dcc bind is called:
 - ``check_tcl_dcc()`` creates Tcl variables ``$_dcc1 $_dcc2 $_dcc3`` and lets ``check_tcl_bind`` call the binds
-- Tcl binds are done here
+- Tcl binds are done at this point
 - C binds mean the Tcl command associated with the bind is ``*dcc:boot`` which calls ``builtin_dcc`` which gets ``cmd_boot`` as ``ClientData cd`` argument
 - ``buildin_dcc`` performs some sanity checking to avoid crashes and then calls ``cmd_boot() aka F()`` with the arguments it wants C callbacks to have
+
+Example edited and annotated gdb backtrace in cmd_boot after doing .boot test on the partyline as user thommey with typical owner flags.
+
+::
+
+    #0  cmd_boot (u=0x55e8bd8a49b0, idx=4, par=0x55e8be6a0010 "test") at cmds.c:614
+        *u = {next = 0x55e8bd8aec90, handle = "thommey", flags = 8977024, flags_udef = 0, chanrec = 0x55e8bd8aeae0, entries = 0x55e8bd8a4a10}
+    #1  builtin_dcc (cd=0x55e8bbf002d0 <cmd_boot>, irp=0x55e8bd59b1c0, argc=4, argv=0x55e8bd7e3e00) at tclhash.c:678
+        idx = 4
+        argv = {0x55e8be642fa0 "*dcc:boot", 0x55e8be9f6bd0 "thommey", 0x55e8be7d9020 "4", 0x55e8be6a0010 "test", 0x0}
+        F = 0x55e8bbf002d0 <cmd_boot>
+    #5  Tcl_Eval (interp=0x55e8bd59b1c0, script = "*dcc:boot $_dcc1 $_dcc2 $_dcc3") from /usr/lib/x86_64-linux-gnu/libtcl8.6.so
+        Tcl: return $_dcc1 = "thommey"
+        Tcl: return $_dcc2 = "4"
+        Tcl: return $_dcc3 = "test"
+        Tcl: return $lastbind = "boot" (set automatically by trigger_bind)
+    #8  trigger_bind (proc=proc@entry=0x55e8bd5efda0 "*dcc:boot", param=param@entry=0x55e8bbf4112b " $_dcc1 $_dcc2 $_dcc3", mask=mask@entry=0x55e8bd5efd40 "boot") at tclhash.c:742
+    #9  check_tcl_bind (tl=0x55e8bd5eecb0 <H_dcc>, match=match@entry=0x7ffcf3f9dac1 "boot", atr=atr@entry=0x7ffcf3f9d100, param=param@entry=0x55e8bbf4112b " $_dcc1 $_dcc2 $_dcc3", match_type=match_type@entry=80) at tclhash.c:942
+        proc = 0x55e8bd5efda0 "*dcc:boot"
+        mask = 0x55e8bd5efd40 "boot"
+        brkt = 0x7ffcf3f9dac6 "test"
+    #10 check_tcl_dcc (cmd=cmd@entry=0x7ffcf3f9dac1 "boot", idx=idx@entry=4, args=0x7ffcf3f9dac6 "test") at tclhash.c:974
+        fr = {match = 5, global = 8977024, udef_global = 0, bot = 0, chan = 0, udef_chan = 0}
+    #11 dcc_chat (idx=idx@entry=4, buf=<optimized out>, i=<optimized out>) at dcc.c:1068
+        v = 0x7ffcf3f9dac1 "boot"
+
