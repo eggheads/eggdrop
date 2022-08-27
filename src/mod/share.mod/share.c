@@ -1774,7 +1774,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     fclose(f);
   }
   if (!ok)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE2);
   return ok;
 }
 

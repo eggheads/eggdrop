@@ -794,7 +794,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     i = nextbot(p);
     if (i < 0) {
       if (idx >= 0)
-        dprintf(idx, BOT_NOTHERE);
+        dprintf(idx, "%s", BOT_NOTHERE);
 
       return NOTE_ERROR;
     }
@@ -835,7 +835,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   u = get_user_by_handle(userlist, to);
   if (!u) {
     if (idx >= 0)
-      dprintf(idx, USERF_UNKNOWN);
+      dprintf(idx, "%s", USERF_UNKNOWN);
 
     return NOTE_ERROR;
   }
@@ -843,7 +843,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is the note to a bot? */
   if (is_bot(u)) {
     if (idx >= 0)
-      dprintf(idx, BOT_NONOTES);
+      dprintf(idx, "%s", BOT_NONOTES);
 
     return NOTE_ERROR;
   }

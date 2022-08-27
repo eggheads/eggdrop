@@ -949,11 +949,11 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  putlog(LOG_MISC, "*", "Unloading filesystem; killing all filesystem "
+  putlog(LOG_MISC, "*", "%s", "Unloading filesystem; killing all filesystem "
          "connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
-      dprintf(i, DCC_BOOTED1);
+      dprintf(i, "%s", DCC_BOOTED1);
       dprintf(i, "You have been booted from the filesystem, module "
               "unloaded.\n");
       killsock(dcc[i].sock);

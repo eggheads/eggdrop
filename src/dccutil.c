@@ -612,7 +612,7 @@ void do_boot(int idx, char *by, char *reason)
 {
   int files = (dcc[idx].type != &DCC_CHAT);
 
-  dprintf(idx, DCC_BOOTED1);
+  dprintf(idx, "%s", DCC_BOOTED1);
   dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
           by, reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */

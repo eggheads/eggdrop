@@ -722,7 +722,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       dprintf(idx, "badpass\n");
       dcc[idx].type = old;
     } else
-      dprintf(idx, DCC_HOUSTON);
+      dprintf(idx, "%s", DCC_HOUSTON);
     putlog(LOG_MISC, "*", DCC_BADLOGIN, dcc[idx].nick,
            dcc[idx].host, dcc[idx].port);
     if (dcc[idx].u.chat->away) {        /* su from a dumb user */
@@ -1600,7 +1600,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
     dprintf(idx, IRC_TELNET, botnetnick);
-    dprintf(idx, IRC_TELNET1);
+    dprintf(idx, "%s", IRC_TELNET1);
     dprintf(idx, "\nEnter the handle you would like to use.\n");
     return;
   }
@@ -1892,7 +1892,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     dcc[idx].type = &DCC_TELNET_PW;
     if (make_userfile) {
       dprintf(idx, "\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n");
-      dprintf(idx, IRC_LIMBO);
+      dprintf(idx, "%s", IRC_LIMBO);
       putlog(LOG_MISC, "*", DCC_INSTCOMPL, buf);
       make_userfile = 0;
       write_userfile(-1);
@@ -2271,7 +2271,7 @@ void eof_timeout_dcc_ident(int idx, const char *s)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
-      putlog(LOG_MISC, "*", s);
+      putlog(LOG_MISC, "*", "%s", s);
       snprintf(buf, sizeof buf, "telnet@%s", dcc[idx].host);
       dcc_telnet_got_ident(i, buf);
     }
@@ -2320,7 +2320,7 @@ static void dcc_telnet_got_ident(int i, char *host)
       break;
   dcc[i].u.other = 0;
   if (dcc_total == idx) {
-    putlog(LOG_MISC, "*", DCC_LOSTIDENT);
+    putlog(LOG_MISC, "*", "%s", DCC_LOSTIDENT);
     killsock(dcc[i].sock);
     lostdcc(i);
     return;
@@ -2399,7 +2399,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     /* Show here so it doesn't interfere with newline-less stealth_prompt */
     if (allow_new_telnets)
       dprintf(i, "(If you are new, enter 'NEW' here.)\n");
-    dprintf(i, stealth_prompt);
+    dprintf(i, "%s", stealth_prompt);
   } else {
     dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);

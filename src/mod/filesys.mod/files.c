@@ -98,8 +98,8 @@ static int welcome_to_files(int idx)
     dcc[idx].u.file->dir[0] = 0;
     f = filedb_open(dcc[idx].u.file->dir, 0);
     if (f == NULL) {
-      dprintf(idx, FILES_BROKEN);
-      dprintf(idx, FILES_INVPATH);
+      dprintf(idx, "%s", FILES_BROKEN);
+      dprintf(idx, "%s", FILES_INVPATH);
       dprintf(idx, "\n\n");
       dccdir[0] = 0;
       chanout_but(-1, dcc[idx].u.file->chat->channel,
@@ -132,7 +132,7 @@ static void cmd_optimize(int idx, char *par)
   if (!p)
     fdb = filedb_open("", 1);
   if (!fdb) {
-    dprintf(idx, FILES_ILLDIR);
+    dprintf(idx, "%s", FILES_ILLDIR);
     return;
   }
   filedb_close(fdb);
@@ -341,7 +341,7 @@ static void cmd_chdir(int idx, char *msg)
     return;
   }
   if (!resolve_dir(dcc[idx].u.file->dir, msg, &s, idx)) {
-    dprintf(idx, FILES_NOSUCHDIR);
+    dprintf(idx, "%s", FILES_NOSUCHDIR);
     my_free(s);
     return;
   }
@@ -366,7 +366,7 @@ static void files_ls(int idx, char *par, int showall)
       malloc_strcpy(s, par);
       malloc_strcpy(mask, p + 1);
       if (!resolve_dir(dcc[idx].u.file->dir, s, &destdir, idx)) {
-        dprintf(idx, FILES_ILLDIR);
+        dprintf(idx, "%s", FILES_ILLDIR);
         my_free(s);
         my_free(mask);
         my_free(destdir);
@@ -386,7 +386,7 @@ static void files_ls(int idx, char *par, int showall)
     my_free(s);
     fdb = filedb_open(destdir, 0);
     if (!fdb) {
-      dprintf(idx, FILES_ILLDIR);
+      dprintf(idx, "%s", FILES_ILLDIR);
       my_free(destdir);
       my_free(mask);
       return;
@@ -402,7 +402,7 @@ static void files_ls(int idx, char *par, int showall)
       filedb_ls(fdb, idx, "*", showall);
       filedb_close(fdb);
     } else
-      dprintf(idx, FILES_ILLDIR);
+      dprintf(idx, "%s", FILES_ILLDIR);
   }
 }
 
@@ -439,7 +439,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
   }
   what = newsplit(&par);
   if (strlen(par) > nicklen) {
-    dprintf(idx, FILES_BADNICK);
+    dprintf(idx, "%s", FILES_BADNICK);
     return;
   }
   p = strrchr(what, '/');
@@ -450,7 +450,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
     if (!resolve_dir(dcc[idx].u.file->dir, s, &destdir, idx)) {
       my_free(destdir);
       my_free(s);
-      dprintf(idx, FILES_ILLDIR);
+      dprintf(idx, "%s", FILES_ILLDIR);
       return;
     }
     my_free(s);
@@ -465,7 +465,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
     filedb_close(fdb);
     free_fdbe(&fdbe);
     my_free(destdir);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     return;
   }
   while (fdbe) {
@@ -512,7 +512,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
   filedb_close(fdb);
   my_free(destdir);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else
     putlog(LOG_FILES, "*", "files: #%s# %sget %s %s", dcc[idx].nick,
            resend ? "re" : "", what, par);
@@ -566,7 +566,7 @@ static void cmd_hide(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     return;
   }
   while (fdbe) {
@@ -582,7 +582,7 @@ static void cmd_hide(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     putlog(LOG_FILES, "*", "files: #%s# hide %s", dcc[idx].nick, par);
     if (ok > 1)
@@ -608,7 +608,7 @@ static void cmd_unhide(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     return;
   }
   while (fdbe) {
@@ -624,7 +624,7 @@ static void cmd_unhide(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     putlog(LOG_FILES, "*", "files: #%s# unhide %s", dcc[idx].nick, par);
     if (ok > 1)
@@ -650,7 +650,7 @@ static void cmd_share(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     return;
   }
   while (fdbe) {
@@ -666,7 +666,7 @@ static void cmd_share(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     putlog(LOG_FILES, "*", "files: #%s# share %s", dcc[idx].nick, par);
     if (ok > 1)
@@ -692,7 +692,7 @@ static void cmd_unshare(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     return;
   }
   while (fdbe) {
@@ -709,7 +709,7 @@ static void cmd_unshare(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     putlog(LOG_FILES, "*", "files: #%s# unshare %s", dcc[idx].nick, par);
     if (ok > 1)
@@ -738,7 +738,7 @@ static void cmd_ln(int idx, char *par)
       *p = 0;
       malloc_strcpy(newfn, p + 1);
       if (!resolve_dir(dcc[idx].u.file->dir, par, &newpath, idx)) {
-        dprintf(idx, FILES_NOSUCHDIR);
+        dprintf(idx, "%s", FILES_NOSUCHDIR);
         my_free(newfn);
         my_free(newpath);
         return;
@@ -846,7 +846,7 @@ static void cmd_desc(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     my_free(desc);
     return;
   }
@@ -883,7 +883,7 @@ static void cmd_desc(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else
     putlog(LOG_FILES, "*", "files: #%s# desc %s", dcc[idx].nick, fn);
   my_free(desc);
@@ -908,7 +908,7 @@ static void cmd_rm(int idx, char *par)
   fdbe = filedb_matchfile(fdb, ftell(fdb), par);
   if (!fdbe) {
     filedb_close(fdb);
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
     return;
   }
   while (fdbe) {
@@ -930,7 +930,7 @@ static void cmd_rm(int idx, char *par)
   }
   filedb_close(fdb);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     putlog(LOG_FILES, "*", "files: #%s# rm %s", dcc[idx].nick, par);
     if (ok > 1)
@@ -989,7 +989,7 @@ static void cmd_mkdir(int idx, char *par)
                   + strlen(name) + 2);
       sprintf(s, "%s%s/%s", dccdir, dcc[idx].u.file->dir, name);
       if (mkdir(s, 0755) != 0) {
-        dprintf(idx, MISC_FAILED);
+        dprintf(idx, "%s", MISC_FAILED);
         filedb_close(fdb);
         my_free(s);
         return;
@@ -1002,7 +1002,7 @@ static void cmd_mkdir(int idx, char *par)
       dprintf(idx, "%s /%s%s%s\n", FILES_CREADIR, dcc[idx].u.file->dir,
               dcc[idx].u.file->dir[0] ? "/" : "", name);
     } else if (!(fdbe->stat & FILE_DIR)) {
-      dprintf(idx, FILES_NOSUCHDIR);
+      dprintf(idx, "%s", FILES_NOSUCHDIR);
       free_fdbe(&fdbe);
       filedb_close(fdb);
       return;
@@ -1054,13 +1054,13 @@ static void cmd_rmdir(int idx, char *par)
     filedb_readtop(fdb, NULL);
     fdbe = filedb_matchfile(fdb, ftell(fdb), name);
     if (!fdbe) {
-      dprintf(idx, FILES_NOSUCHDIR);
+      dprintf(idx, "%s", FILES_NOSUCHDIR);
       filedb_close(fdb);
       my_free(name);
       return;
     }
     if (!(fdbe->stat & FILE_DIR)) {
-      dprintf(idx, FILES_NOSUCHDIR);
+      dprintf(idx, "%s", FILES_NOSUCHDIR);
       filedb_close(fdb);
       my_free(name);
       free_fdbe(&fdbe);
@@ -1085,7 +1085,7 @@ static void cmd_rmdir(int idx, char *par)
       putlog(LOG_FILES, "*", "files: #%s# rmdir %s", dcc[idx].nick, name);
       return;
     }
-    dprintf(idx, MISC_FAILED);
+    dprintf(idx, "%s", MISC_FAILED);
     filedb_close(fdb);
     free_fdbe(&fdbe);
     my_free(s);
@@ -1114,7 +1114,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     malloc_strcpy(s, fn);
     strcpy(fn, p + 1);
     if (!resolve_dir(dcc[idx].u.file->dir, s, &oldpath, idx)) {
-      dprintf(idx, FILES_ILLSOURCE);
+      dprintf(idx, "%s", FILES_ILLSOURCE);
       my_free(s);
       my_free(oldpath);
       return;
@@ -1135,7 +1135,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
       malloc_strcpy(newfn, p + 1);
     }
     if (!resolve_dir(dcc[idx].u.file->dir, s, &newpath, idx)) {
-      dprintf(idx, FILES_ILLDEST);
+      dprintf(idx, "%s", FILES_ILLDEST);
       my_free(newfn);
       my_free(s);
       my_free(oldpath);
@@ -1191,7 +1191,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     filedb_entry *check_for_more;
     check_for_more = filedb_matchfile(fdb_old, ftell(fdb_old), fn);
     if (check_for_more) {
-      dprintf(idx, FILES_ILLDEST);
+      dprintf(idx, "%s", FILES_ILLDEST);
       free_fdbe(&fdbe_old);
       free_fdbe(&check_for_more);
       if (fdb_new != fdb_old) filedb_close(fdb_new);
@@ -1276,7 +1276,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     filedb_close(fdb_new);
   filedb_close(fdb_old);
   if (!ok)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     putlog(LOG_FILES, "*", "files: #%s# %s %s%s%s %s", dcc[idx].nick,
            copy ? "cp" : "mv", oldpath, oldpath[0] ? "/" : "", fn, par);

@@ -691,7 +691,7 @@ static void core_secondly()
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
         if (quiet_save < 3)
-          putlog(LOG_MISC, "*", MISC_LOGSWITCH);
+          putlog(LOG_MISC, "*", "%s", MISC_LOGSWITCH);
         for (i = 0; i < max_logs; i++)
           if (logs[i].filename) {
             char s[1024];
@@ -950,7 +950,7 @@ static void mainloop(int toplevel)
         }
       }
       if (f != 0) {
-        putlog(LOG_MISC, "*", MOD_STAGNANT);
+        putlog(LOG_MISC, "*", "%s", MOD_STAGNANT);
       }
 
       flushlogs();

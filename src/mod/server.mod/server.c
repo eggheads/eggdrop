@@ -1916,7 +1916,7 @@ static void server_5minutely()
 
       disconnect_server(servidx);
       lostdcc(servidx);
-      putlog(LOG_SERV, "*", IRC_SERVERSTONED);
+      putlog(LOG_SERV, "*", "%s", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* Check for server being stoned. */
       dprintf(DP_MODE, "PING :%li\n", now);

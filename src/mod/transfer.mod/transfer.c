@@ -252,7 +252,7 @@ static void eof_dcc_fork_send(int idx)
       dcc[y].status &= ~STAT_GETTING;
       dcc[y].status &= ~STAT_SHARE;
     }
-    putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
+    putlog(LOG_BOTS, "*", "%s", USERF_FAILEDXFER);
     unlink(dcc[idx].u.xfer->filename);
   } else {
     if (!quiet_reject)
@@ -280,7 +280,7 @@ static void eof_dcc_send(int idx)
       fclose(dcc[idx].u.xfer->f);
       putlog(LOG_FILES, "*", TRANSFER_FILENAME_TOOLONG, l);
       dprintf(DP_HELP, TRANSFER_NOTICE_FNTOOLONG, dcc[idx].nick, l);
-      putlog(LOG_FILES, "*", TRANSFER_TOO_BAD);
+      putlog(LOG_FILES, "*", "%s", TRANSFER_TOO_BAD);
       dprintf(DP_HELP, TRANSFER_NOTICE_TOOBAD, dcc[idx].nick);
       killsock(dcc[idx].sock);
       lostdcc(idx);
@@ -333,7 +333,7 @@ static void eof_dcc_send(int idx)
         if (!ok && (dcc[j].type->flags & (DCT_GETNOTES | DCT_FILES)) &&
             !strcasecmp(dcc[j].nick, hand)) {
           ok = 1;
-          dprintf(j, TRANSFER_THANKS);
+          dprintf(j, "%s", TRANSFER_THANKS);
         }
 
       if (!ok)
@@ -370,7 +370,7 @@ static void eof_dcc_send(int idx)
         dcc[y].status &= ~(STAT_GETTING | STAT_SHARE);
       }
     } else
-      putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
+      putlog(LOG_BOTS, "*", "%s", TRANSFER_ABORT_USERFILE);
   } else {
     putlog(LOG_FILES, "*", TRANSFER_LOST_DCCSEND, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].host, dcc[idx].status,
@@ -484,7 +484,7 @@ static void dcc_get(int idx, char *buf, int len)
   } else if (cmp > dcc[idx].status) {
     /* Attempt to resume */
     if (!strcmp(dcc[idx].nick, "*users"))
-      putlog(LOG_BOTS, "*", TRANSFER_TRY_SKIP_AHEAD);
+      putlog(LOG_BOTS, "*", "%s", TRANSFER_TRY_SKIP_AHEAD);
     else {
       fseek(dcc[idx].u.xfer->f, cmp, SEEK_SET);
       dcc[idx].status = cmp;
@@ -593,7 +593,7 @@ static void eof_dcc_get(int idx)
         dcc[y].status &= ~(STAT_SENDING | STAT_SHARE);
       }
     } else
-      putlog(LOG_BOTS, "*", TRANSFER_ABORT_USERFILE);
+      putlog(LOG_BOTS, "*", "%s", TRANSFER_ABORT_USERFILE);
   } else {
     struct userrec *u;
 
@@ -659,11 +659,11 @@ static void transfer_get_timeout(int i)
           lostdcc(y);
         }
       } else {
-        putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
+        putlog(LOG_BOTS, "*", "%s", TRANSFER_USERFILE_TIMEOUT);
         dcc[y].status &= ~(STAT_SENDING | STAT_SHARE);
       }
     } else
-      putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
+      putlog(LOG_BOTS, "*", "%s", TRANSFER_USERFILE_TIMEOUT);
   } else {
     char *p;
     struct userrec *u;
@@ -710,7 +710,7 @@ static void tout_dcc_send(int idx)
 
     unlink(dcc[idx].u.xfer->filename);
 
-    putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
+    putlog(LOG_BOTS, "*", "%s", TRANSFER_USERFILE_TIMEOUT);
   } else {
     dprintf(DP_HELP, TRANSFER_NOTICE_TIMEOUT, dcc[idx].nick,
             dcc[idx].u.xfer->origname);
@@ -1132,7 +1132,7 @@ static char *transfer_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  putlog(LOG_MISC, "*", TRANSFER_UNLOADING);
+  putlog(LOG_MISC, "*", "%s", TRANSFER_UNLOADING);
   for (i = dcc_total - 1; i >= 0; i--) {
     if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
       eof_dcc_get(i);

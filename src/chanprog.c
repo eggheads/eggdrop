@@ -511,7 +511,7 @@ void chanprog()
 void reload()
 {
   if (!file_readable(userfile)) {
-    putlog(LOG_MISC, "*", MISC_CANTRELOADUSER);
+    putlog(LOG_MISC, "*", "%s", MISC_CANTRELOADUSER);
     return;
   }
 

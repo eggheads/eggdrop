@@ -974,11 +974,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   x = check_tcl_bind(H_dcc, cmd, &fr, " $_dcc1 $_dcc2 $_dcc3",
                      MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
   if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, MISC_AMBIGUOUS);
+    dprintf(idx, "%s", MISC_AMBIGUOUS);
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return 0;
   }
 
@@ -1300,7 +1300,7 @@ void tell_binds(int idx, char *par)
       }
     }
   }
-  dprintf(idx, MISC_CMDBINDS);
+  dprintf(idx, "%s", MISC_CMDBINDS);
   dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
 
