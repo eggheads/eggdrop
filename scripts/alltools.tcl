@@ -447,15 +447,15 @@ proc ordnumber {string} {
 }
 
 proc ucwords {string} {
-	list asent
-	foreach word [split [join $string]] {
-		lappend asent [string totitle $word]
-	}
-	set string [join $asent]
-	return $string
+   set asent {}
+   foreach word [split [join $string]] {
+      lappend asent [string totitle $word]
+   }
+   set string [join $asent]
+   return $string
 }
 
 proc uclwords {string} {
-	set string [ucwords [string tolower [join $string]]]
-	return $string
+   set string [ucwords [string tolower $string]]
+   return $string
 }
