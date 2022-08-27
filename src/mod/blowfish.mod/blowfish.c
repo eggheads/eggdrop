@@ -153,7 +153,7 @@ static void blowfish_report(int idx, int details)
       dprintf(idx, "      %d of %d boxes in use:", tot, BOXES);
       for (i = 0; i < BOXES; i++)
         if (box[i].P != NULL) {
-          dprintf(idx, " (age: %d)", now - box[i].lastuse);
+          dprintf(idx, " (age: %f)", difftime(now, box[i].lastuse));
         }
       dprintf(idx, "\n");
     }

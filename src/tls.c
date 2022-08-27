@@ -135,7 +135,7 @@ int ssl_init()
   /* A TLS/SSL connection established with this method will understand all
      supported protocols (SSLv2, SSLv3, and TLSv1) */
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
-    putlog(LOG_MISC, "*", ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "%s", ERR_error_string(ERR_get_error(), NULL));
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
     ERR_free_strings();
     return -1;

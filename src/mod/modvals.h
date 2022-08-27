@@ -118,7 +118,7 @@ typedef struct _module_entry {
 #endif /* STATIC */
   Function *funcs;
 #ifdef DEBUG_MEM
-  int mem_work;
+  unsigned long mem_work;
 #endif /* DEBUG_MEM */
 } module_entry;
 

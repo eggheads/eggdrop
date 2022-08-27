@@ -181,7 +181,7 @@ static void fstat_display(int idx, struct user_entry *e)
   struct filesys_stats *fs;
 
   fs = e->u.extra;
-  dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
+  dprintf(idx, "  FILES: %u download%s (%uk), %u upload%s (%uk)\n",
           fs->dnloads, (fs->dnloads == 1) ? "" : "s", fs->dnload_ks,
           fs->uploads, (fs->uploads == 1) ? "" : "s", fs->upload_ks);
 }

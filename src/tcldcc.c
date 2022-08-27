@@ -1370,12 +1370,12 @@ static int tcl_rehash STDVAR
   BADARGS(1, 1, "");
 
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", "%s", USERF_NONEEDNEW);
     make_userfile = 0;
   }
   write_userfile(-1);
 
-  putlog(LOG_MISC, "*", USERF_REHASHING);
+  putlog(LOG_MISC, "*", "%s", USERF_REHASHING);
   do_restart = -2;
   return TCL_OK;
 }
@@ -1389,11 +1389,11 @@ static int tcl_restart STDVAR
     return TCL_ERROR;
   }
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", "%s", USERF_NONEEDNEW);
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", MISC_RESTARTING);
+  putlog(LOG_MISC, "*", "%s", MISC_RESTARTING);
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = -1;

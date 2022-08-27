@@ -659,7 +659,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && chan_hasop(m)) {
-    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n",
+    dprintf(idx, "I can't help you now because halfops cannot kick ops (on %s).\n",
             chan->dname);
     return;
   }
@@ -853,11 +853,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %-5s <- netsplit, %lus\n",
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- netsplit, %fs\n",
               chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
-              m->account, s, atrflag, now- (m->split));
+              m->account, s, atrflag, difftime(now, m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c          <- it's me!\n", chanflag,
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- it's me!\n", chanflag,
               maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
               s, atrflag);
       } else {

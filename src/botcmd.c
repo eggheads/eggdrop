@@ -1130,7 +1130,7 @@ static void bot_filereq(int idx, char *tobot)
       module_entry *fs = module_find("filesys", 0, 0);
 
       if (fs == NULL)
-        botnet_send_priv(idx, botnetnick, from, NULL, MOD_NOFILESYSMOD);
+        botnet_send_priv(idx, botnetnick, from, NULL, "%s", MOD_NOFILESYSMOD);
       else {
         Function f = fs->funcs[FILESYS_REMOTE_REQ];
 
