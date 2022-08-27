@@ -1383,23 +1383,24 @@ static int tryauthenticate(char *from, char *msg)
       }
     }
 #else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
-                "EXTERNAL method");
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs not present or missing EC support."
+                " Try the PLAIN or EXTERNAL method instead");
       return 1;
     }
 #endif
     else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
-#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
+#ifdef TLS          /* TLS required for EXTERNAL sasl */
       dst[0] = '+';
       dst[1] = 0;
     }
-    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
-    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #else
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
             "installed, try PLAIN method");
+      return 1;
     }
 #endif /* TLS */
+    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
   } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
@@ -1989,6 +1990,7 @@ static int server_isupport(char *key, char *isset_str, char *value)
 }
 
 static cmd_t my_raw_binds[] = {
+  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
   {"MODE",         "",   (IntFunc) gotmode,         NULL},
   {"PING",         "",   (IntFunc) gotping,         NULL},
@@ -2034,7 +2036,6 @@ static cmd_t my_raw_binds[] = {
 
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
-  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
