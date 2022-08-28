@@ -81,7 +81,6 @@
 #define EGG_IS_MAX_VER(ver)             ((ver) >= EGG_VERSION)
 
 typedef void (*putlogfunc)(int, char*, const char*, ...) ATTRIBUTE_FORMAT(printf,3,4);
-typedef void (*shareoutfunc)(struct chanset_t*, const char*, ...) ATTRIBUTE_FORMAT(printf,2,3);
 typedef void (*dprintffunc)(int, const char *, ...) ATTRIBUTE_FORMAT(printf,2,3);
 typedef void (*chatoutfunc)(const char *, ...) ATTRIBUTE_FORMAT(printf,1,2);
 typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(printf,3,4);
@@ -178,7 +177,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define flagrec_eq ((int(*)(struct flag_record*,struct flag_record *))global[66])
 #define flagrec_ok ((int(*)(struct flag_record*,struct flag_record *))global[67])
 /* 68 - 71 */
-#define shareout ((shareoutfunc)(global[68]))
+#define shareout (*(Function *)(global[68]))
 #define dprintf ((dprintffunc)(global[69]))
 #define chatout ((chatoutfunc)(global[70]))
 #define chanout_but ((chanout_butfunc)(global[71]))
