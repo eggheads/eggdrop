@@ -166,22 +166,22 @@ The following is a list of bind types and how they work. Below each bind type is
 
   bind rmst <flags> <mask> <proc>
 
-  procname <chan> <tags>
+  procname <chan> <roomstate> <newvalue>
 
-  Description: Called when Eggdrop receives a ROOMSTATE message. ``mask`` is in the format of ``#channel keys`` and can use wildcards. For example, to trigger this bind on #eggdrop for any change, you would use ``#eggdroptest *`` as the mask, or to trigger on #eggdrop specifically for the emote-only setting, you would use ``"#eggdrop *emote-only*"`` as the mask. Due to the nature of multiple keys per roomstate and uncertainty of ordering, it is recommended to use multiple binds if you wish to specify multiple key values. ``chan`` is the channel Eggdrop received the ROOMSTATE message for, and ``tags`` is a list of key/value pairs provided by the ROOMSTATE message, suitable for use as a Tcl dict. ``flags`` is ignored.
+  Description: Called when Eggdrop receives a ROOMSTATE message. ``mask`` is in the format of ``#channel key`` and can use wildcards. For example, to trigger this bind on #eggdrop for any change, you would use ``#eggdroptest *`` as the mask, or to trigger on #eggdrop specifically for the emote-only setting, you would use ``"#eggdrop emote-only"`` as the mask. ``chan`` is the channel Eggdrop received the ROOMSTATE message for, ``roomstate`` is the roomstate that changed (e.g. ``emote-only``) and ``value`` is the new value. The old value is still available in ``[roomstate <chan>]``, i.e. the bind is called before the internal state is updated. ``flags`` is ignored.
 
 7. USST (USERSTATE)
 
   bind usst <flags> <mask> <proc>
 
-  procname <chan> <tags>
+  procname <chan> <userstate> <newvalue>
 
-  Description: Called when Eggdrop receives a USERSTATE message. ``mask`` is in the format of ``#channel keys`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERSTATE message for, and ``tags`` is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict. ``flags`` is ignored.
+  Description: Called when Eggdrop receives a USERSTATE message. ``mask`` is in the format of ``#channel key`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERSTATE message for, ``userstate`` is the userstate that changed (e.g. ``badges``), and ``value`` is the new value. The old value is still available in ``[userstate <chan>]``, i.e. the bind is called before the internal state is updated. ``flags`` is ignored.
 
 8. USRNTC (USERNOTICE)
 
   bind usrntc <flags> <mask> <proc>
 
-  procname <chan> <tags>
+  procname <chan> <msg-id> <message> <tags>
 
-  Description: Called when Eggdrop received a USERNOTICE message. `mask`` is in the format of ``#channel keys`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERNOTICE message for, and ``tags`` is a list of key/value pairs provided in the USERNOTICE message, suitable for use as a Tcl dict. ``flags`` is ignored.
+  Description: Called when Eggdrop received a USERNOTICE message. ``mask`` is in the format of ``#channel msg-id`` and can use wildcards (see the RMST bind for additional details on format). ``chan`` is the channel Eggdrop received the USERNOTICE message for, ``msg-id`` is the msg-id of the usernotice (e.g. ``subgift``) and ``tags`` is a list of key/value pairs provided in the USERNOTICE message as message tags, suitable for use as a Tcl dict. ``message`` is an optional message associated with the event, it can be empty. ``flags`` is ignored.
