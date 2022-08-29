@@ -1301,14 +1301,24 @@ static int server_raw STDVAR
   return TCL_OK;
 }
 
-static int server_tag STDVAR
+static int server_rawt STDVAR
 {
+  int unused;
+  Tcl_Obj *tagdict;
   Function F = (Function) cd;
 
-  BADARGS(5, 5, " from code args tag");
+  BADARGS(5, 5, " from code args tagdict");
 
-  CHECKVALIDITY(server_tag);
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], argv[4])), NULL);
+  CHECKVALIDITY(server_rawt);
+  tagdict = Tcl_NewStringObj(argv[4], -1);
+  if (Tcl_DictObjSize(irp, tagdict, &unused) != TCL_OK) {
+    /* check early, Tcl sets error string first */
+    Tcl_AppendResult(irp, " in call to ", argv[0], NULL);
+    return TCL_ERROR;
+  }
+  Tcl_IncrRefCount(tagdict);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], tagdict)), NULL);
+  Tcl_DecrRefCount(tagdict);
   return TCL_OK;
 }
 
@@ -2349,7 +2359,7 @@ char *server_start(Function *global_funcs)
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_account = add_bind_table("account", HT_STACKABLE, server_account);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
-  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
+  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_rawt);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);

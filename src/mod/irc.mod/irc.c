@@ -1301,7 +1301,6 @@ static char *irc_close()
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
-  rem_builtins(H_rawt, irc_rawt);
   rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
@@ -1409,7 +1408,6 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
-  add_builtins(H_rawt, irc_rawt);
   add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");

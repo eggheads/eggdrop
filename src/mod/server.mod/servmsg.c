@@ -31,6 +31,8 @@
 #include "../channels.mod/channels.h"
 #include "server.h"
 
+static char *encode_msgtags(Tcl_Obj *msgtagdict);
+static char *encode_msgtag(char *key, char *value);
 static int del_capabilities(char *);
 static int del_capability(char *name);
 static time_t last_ctcp = (time_t) 0L;
@@ -325,7 +327,7 @@ static int match_my_nick(char *nick)
   return (!rfc_casecmp(nick, botname));
 }
 
-char *tagmsg_dicttostr(Tcl_Obj *msgtagdict) {
+static char *encode_msgtags(Tcl_Obj *msgtagdict) {
   int done = 0;
   Tcl_DictSearch s;
   Tcl_Obj *value, *key;
@@ -339,12 +341,11 @@ char *tagmsg_dicttostr(Tcl_Obj *msgtagdict) {
     Tcl_DStringFree(&ds);
   }
   for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
-    Tcl_DStringAppend(&ds, Tcl_GetString(key), -1);
-    Tcl_DStringAppend(&ds, "=", -1);
-    Tcl_DStringAppend(&ds, Tcl_GetString(value), -1);
-    Tcl_DStringAppend(&ds, ";", -1);
+    if (Tcl_DStringLength(&ds)) {
+      Tcl_DStringAppend(&ds, ";", -1);
+    }
+    Tcl_DStringAppend(&ds, encode_msgtag(Tcl_GetString(key), Tcl_GetString(value)), -1);
   }
-  Tcl_DStringSetLength(&ds, (Tcl_DStringLength(&ds) - 1));
 
   return Tcl_DStringValue(&ds);
 }
@@ -553,7 +554,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg, char *tag)
+static int gotmsg(char *from, char *msg)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -777,12 +778,10 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static int gottagmsg(char *from, char *msg, char *tags) {
+static int gottagmsg(char *from, char *msg, Tcl_Obj *tagdict) {
   char *nick, *dictstring;
-  Tcl_Obj *msgtagdict;
 
-  msgtagdict = Tcl_NewStringObj(tags, -1);
-  dictstring = tagmsg_dicttostr(msgtagdict);
+  dictstring = encode_msgtags(tagdict);
 
   fixcolon(msg);
   if (strchr(from, '!')) {
@@ -1151,6 +1150,37 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
+static char *encode_msgtag_value(char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+  size_t written = 0;
+
+  /* empty value and no value is identical, Tcl dict always has empty string as no-value, looks better to encode without = */
+  if (!value || !*value) {
+    return "";
+  }
+  buf[written++] = '=';
+
+  while (*value && written < sizeof buf - 1) {
+    if (*value == ';' || *value == ' ' || *value == '\\' || *value == '\r' || *value == '\n') {
+      buf[written++] = '\\';
+    }
+    buf[written++] = *value++;
+  }
+  buf[written] = '\0';
+
+  return buf;
+}
+
+/* TODO: validity enforcement on used characters in key? */
+static char *encode_msgtag(char *key, char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+
+  snprintf(buf, sizeof buf, "%s%s", key, encode_msgtag_value(value));
+  return buf;
+}
+
 static char *decode_msgtag_value(char *value, char **endptr)
 {
   static char valuebuf[TOTALTAGMAX+1];
@@ -1233,10 +1263,8 @@ static void server_activity(int idx, char *tagmsg, int len)
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts. If rawt returns 1 (blocking), don't process raw binds.*/
   /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
-  //Tcl_IncrRef(tagdict);
   strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
   ret = check_tcl_rawt(from, code, msgptr, rawmsg);
-  //Tcl_DecrRef(tagdict);
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
@@ -2019,6 +2047,7 @@ static int server_isupport(char *key, char *isset_str, char *value)
 }
 
 static cmd_t my_raw_binds[] = {
+  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
   {"MODE",         "",   (IntFunc) gotmode,         NULL},
   {"PING",         "",   (IntFunc) gotping,         NULL},
@@ -2064,7 +2093,6 @@ static cmd_t my_raw_binds[] = {
 
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
-  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 

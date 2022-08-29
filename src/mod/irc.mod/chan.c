@@ -2686,15 +2686,13 @@ static int gotquit(char *from, char *msg)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg, char *tags)
+static int gotmsg(char *from, char *msg)
 {
   char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf, *p, *p1,
        *code, *ctcp;
   int ctcp_count = 0, ignoring;
-  memberlist *m;
-  struct chanset_t *chan, *extchan;
+  struct chanset_t *chan;
   struct userrec *u;
-  Tcl_Obj *tagobj, *accountobj;
 
   /* Only handle if message is to a channel, or to @#channel. */
   /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc. */
@@ -2711,32 +2709,6 @@ static int gotmsg(char *from, char *msg, char *tags)
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   ignoring = match_ignore(from);
-  tagobj = Tcl_NewStringObj(tags, -1);
-  if (Tcl_DictObjGet(interp, tagobj, Tcl_NewStringObj("account", -1), &accountobj) != TCL_OK) {
-    putlog(LOG_MISC, "*", "BUG! irc.mod/gotmsg() received an invalid Tcl dict for the message tags: '%s'. Please report this.", Tcl_GetString(tagobj));
-  }
-
-  /* Check for updated account names if account-tag capability is enabeld */
-/* Do we even need to do this? If we see it, lets just assume its wanted and use it, no?
-  current = cap;
-  while (current != NULL) {
-    if (!strcasecmp("account-tag", current->name)) {
-      accttag = current->enabled ? 1 : 0;
-      break;
-    }
-    current = current->next;
-  }
-*/
-  if (accountobj) {
-    for (extchan = chanset; extchan; extchan = extchan->next) {
-      if ((m = ismember(extchan, nick))) {      /* If member is on the channel */
-        if (strcmp(Tcl_GetString(accountobj), m->account)) {         /* If stored account and seen account don't match */
-putlog(LOG_MISC, "*", "Accounts don't match, updating %s with account %s", nick, Tcl_GetString(accountobj));
-          strlcpy (m->account, Tcl_GetString(accountobj), sizeof m->account);
-        }
-      }
-    }
-  }
 
   /* Check for CTCP: */
   ctcp_reply[0] = 0;
@@ -3038,6 +3010,7 @@ static cmd_t irc_raw[] = {
   {"KICK",    "",   (IntFunc) gotkick,        "irc:kick"},
   {"NICK",    "",   (IntFunc) gotnick,        "irc:nick"},
   {"QUIT",    "",   (IntFunc) gotquit,        "irc:quit"},
+  {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
   {"NOTICE",  "",   (IntFunc) gotnotice,    "irc:notice"},
   {"MODE",    "",   (IntFunc) gotmode,        "irc:mode"},
   {"AWAY",    "",   (IntFunc) gotaway,     "irc:gotaway"},
@@ -3054,7 +3027,3 @@ static cmd_t irc_isupport_binds[] = {
   {NULL,    NULL,   NULL,                             NULL}
 };
 
-static cmd_t irc_rawt[] = {
-  {"PRIVMSG", "",   (IntFunc) gotmsg,          "irc:msg"},
-  {NULL,      NULL, NULL,                           NULL}
-};
