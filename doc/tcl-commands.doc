@@ -2448,6 +2448,7 @@ utimer <seconds> <tcl-command> [count [timerName]]
   specify a count of 0, the utimer will repeat until it's removed with
   killutimer or until the bot is restarted. If timerName is specified,
   it will become the unique identifier for the timer. If no timer
+
 Name is specified, Eggdrop will assign a timerName in the format of
 "timer<integer>".
 
