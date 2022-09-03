@@ -327,7 +327,7 @@ static int match_my_nick(char *nick)
   return (!rfc_casecmp(nick, botname));
 }
 
-static char *encode_msgtags(Tcl_Obj *msgtagdict) {
+char *encode_msgtags(Tcl_Obj *msgtagdict) {
   int done = 0;
   Tcl_DictSearch s;
   Tcl_Obj *value, *key;

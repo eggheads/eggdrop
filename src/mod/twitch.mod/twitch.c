@@ -264,40 +264,34 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
   return (x == BIND_EXEC_LOG);
 }
 
-static void check_tcl_roomstate(char *chan, char *key, char *value) {
-  char mask[TOTALTAGMAX]; /* channel + key */
+static void check_tcl_roomstate(char *chan, Tcl_Obj *tags) {
+  char mask[TOTALTAGMAX + 200]; /* channel + key */
 
-  putlog(LOG_SERV, "*", "* TWITCH: Roomstate '%s' in room %s changed to %s", key, chan, value);
-
-  snprintf(mask, sizeof mask, "%s %s", chan, key);
+  snprintf(mask, sizeof mask, "%s %s", chan, encode_msgtags(tags));
   Tcl_SetVar(interp, "_rmst1", chan, 0);
-  Tcl_SetVar(interp, "_rmst2", key, 0);
-  Tcl_SetVar(interp, "_rmst3", value, 0);
-  check_tcl_bind(H_rmst, mask, NULL, " $_rmst1 $_rmst2 $_rmst3",
+  Tcl_SetVar(interp, "_rmst2", Tcl_GetString(tags), 0);
+  check_tcl_bind(H_rmst, mask, NULL, " $_rmst1 $_rmst2",
         MATCH_MASK | BIND_STACKABLE);
 }
 
-static void check_tcl_userstate(char *chan, char *key, char *value) {
-  char mask[TOTALTAGMAX]; /* channel + key */
+static void check_tcl_userstate(char *chan, Tcl_Obj *tags) {
+  char mask[TOTALTAGMAX + 200]; /* channel + key */
 
-  putlog(LOG_SERV, "*", "* TWITCH: Userstate '%s' in room %s changed to %s", key, chan, value);
-
-  snprintf(mask, sizeof mask, "%s %s", chan, key);
+  snprintf(mask, sizeof mask, "%s %s", chan, encode_msgtags(tags));
   Tcl_SetVar(interp, "_usst1", chan, 0);
-  Tcl_SetVar(interp, "_usst2", key, 0);
-  Tcl_SetVar(interp, "_usst3", value, 0);
-  check_tcl_bind(H_usst, mask, NULL, " $_usst1 $_usst2 $_usst3",
+  Tcl_SetVar(interp, "_usst2", Tcl_GetString(tags), 0);
+  check_tcl_bind(H_usst, mask, NULL, " $_usst1 $_usst2",
         MATCH_MASK | BIND_STACKABLE);
 }
 
-static void check_tcl_usernotice(char *chan, char *msgid, char *msg, Tcl_Obj *tags) {
-  char mask[TOTALTAGMAX]; /* channel + msgid */
+/* TODO: the actual message is missing */
+static void check_tcl_usernotice(char *chan, Tcl_Obj *tags) {
+  char mask[TOTALTAGMAX + 200]; /* channel + msgid */
 
-  snprintf(mask, sizeof mask, "%s %s", chan, msgid);
+  snprintf(mask, sizeof mask, "%s %s", chan, encode_msgtags(tags));
   Tcl_SetVar(interp, "_usrntc1", chan, 0);
-  Tcl_SetVar(interp, "_usrntc2", msgid, 0);
-  Tcl_SetVar(interp, "_usrntc3", Tcl_GetString(tags), 0);
-  check_tcl_bind(H_usrntc, mask, NULL, " $_usrntc1 $_usrntc2 $_usrntc3",
+  Tcl_SetVar(interp, "_usrntc2", Tcl_GetString(tags), 0);
+  check_tcl_bind(H_usrntc, mask, NULL, " $_usrntc1 $_usrntc2",
         MATCH_MASK | BIND_STACKABLE);
 }
 
@@ -424,7 +418,7 @@ static int gothosttarget(char *from, char *msg) {
 
 static int gotuserstate(char *from, char *chan, Tcl_Obj *tags) {
   twitchchan_t *tchan;
-  int done = 0;
+  int done = 0, trigger_bind = 0;
   Tcl_DictSearch s;
   Tcl_Obj *value, *key;
   
@@ -438,26 +432,34 @@ static int gotuserstate(char *from, char *chan, Tcl_Obj *tags) {
   for (Tcl_DictObjFirst(interp, tags, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
     char *k = Tcl_GetString(key), *v = Tcl_GetString(value);
     long n = atol(v);
+    int changed = 0;
 
     if (!strcmp(k, "badge-info") && tchan->userstate.badge_info != n) {
-      check_tcl_userstate(chan, k, v);
+      changed = 1;
       tchan->userstate.badge_info = n;
     } else if (!strcmp(k, "badges") && strcmp(tchan->userstate.badges, v)) {
-      check_tcl_userstate(chan, k, v);
+      changed = 1;
       strlcpy(tchan->userstate.badges, v, sizeof tchan->userstate.badges);
     } else if (!strcmp(k, "color") && strcmp(tchan->userstate.color, v)) {
-      check_tcl_userstate(chan, k, v);
+      changed = 1;
       strlcpy(tchan->userstate.color, v, sizeof tchan->userstate.color);
     } else if (!strcmp(k, "display-name") && strcmp(tchan->userstate.display_name, v)) {
-      check_tcl_userstate(chan, k, v);
+      changed = 1;
       strlcpy(tchan->userstate.display_name, v, sizeof tchan->userstate.display_name);
     } else if (!strcmp(k, "emote-sets") && strcmp(tchan->userstate.emote_sets, v)) {
-      check_tcl_userstate(chan, k, v);
+      changed = 1;
       strlcpy(tchan->userstate.emote_sets, v, sizeof tchan->userstate.emote_sets);
     } else if (!strcmp(k, "mod") && tchan->userstate.mod != n) {
-      check_tcl_userstate(chan, k, v);
+      changed = 1;
       tchan->userstate.mod = n;
     }
+    if (changed) {
+      putlog(LOG_SERV, "*", "* TWITCH: Userstate '%s' in room %s changed to %s", key, chan, value);
+      trigger_bind = 1;
+    }
+  }
+  if (trigger_bind) {
+    check_tcl_userstate(chan, tags);
   }
   return 0;
 }
@@ -467,6 +469,7 @@ static int gotroomstate(char *from, char *chan, Tcl_Obj *tags) {
   int done = 0;
   Tcl_DictSearch s;
   Tcl_Obj *value, *key;
+  int trigger_bind = 0;
 
   if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
     tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
@@ -478,23 +481,31 @@ static int gotroomstate(char *from, char *chan, Tcl_Obj *tags) {
   for (Tcl_DictObjFirst(interp, tags, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
     char *k = Tcl_GetString(key), *v = Tcl_GetString(value);
     long n = atol(v);
+    int changed = 0;
 
     if (!strcmp(k, "emote-only") && tchan->emote_only != n) {
-      check_tcl_roomstate(chan, k, v);
       tchan->emote_only = n;
+      changed = 1;
     } else if (!strcmp(k, "followers-only") && tchan->followers_only != n) {
-      check_tcl_roomstate(chan, k, v);
       tchan->followers_only = n;
+      changed = 1;
     } else if (!strcmp(k, "r9k") && tchan->r9k != n) {
-      check_tcl_roomstate(chan, k, v);
       tchan->r9k = n;
+      changed = 1;
     } else if (!strcmp(k, "subs-only") && tchan->subs_only != n) {
-      check_tcl_roomstate(chan, k, v);
       tchan->subs_only = n;
+      changed = 1;
     } else if (!strcmp(k, "slow") && tchan->slow != n) {
-      check_tcl_roomstate(chan, k, v);
       tchan->slow = n;
+      changed = 1;
     }
+    if (changed) {
+      putlog(LOG_SERV, "*", "* TWITCH: Roomstate '%s' in room %s changed to %s", key, chan, value);
+      trigger_bind = 1;
+    }
+  }
+  if (trigger_bind) {
+    check_tcl_roomstate(chan, tags);
   }
   return 0;
 }
@@ -548,7 +559,7 @@ static int gotusernotice(char *from, char *msg, Tcl_Obj *tags) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-threshold", value, "USERNOTICE:BITSBADGETIER");
     putlog(LOG_SERV, "*", "* TWITCH: %s earned a %s bits badge", login, value);
   }
-  check_tcl_usernotice(chan, msgid, msg, tags);
+  check_tcl_usernotice(chan, tags);
   return 0;
 }
 

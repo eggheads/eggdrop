@@ -97,6 +97,7 @@
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
 #define check_tcl_account ((int (*)(char *,char *,char *,struct userrec *,char *,char *))server_funcs[49])
 #define find_capability ((struct capability *(*)(char *))(server_funcs[50]))
+#define encode_msgtags ((char *(*)(Tcl_Obj *))(server_funcs[51]))
 #endif /* MAKING_SERVER */
 
 struct server_list {

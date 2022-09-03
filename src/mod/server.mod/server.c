@@ -2256,7 +2256,8 @@ static Function server_table[] = {
   /* 48 - 52 */
   (Function) & isupport_parseint,/*                                     */
   (Function) check_tcl_account,
-  (Function) & find_capability
+  (Function) & find_capability,
+  (Function) encode_msgtags
 };
 
 char *server_start(Function *global_funcs)
