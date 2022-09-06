@@ -454,7 +454,7 @@ static int gotuserstate(char *from, char *chan, Tcl_Obj *tags) {
       tchan->userstate.mod = n;
     }
     if (changed) {
-      putlog(LOG_SERV, "*", "* TWITCH: Userstate '%s' in room %s changed to %s", key, chan, value);
+      putlog(LOG_SERV, "*", "* TWITCH: Userstate '%s' in room %s changed to %s", k, chan, v);
       trigger_bind = 1;
     }
   }
@@ -500,7 +500,7 @@ static int gotroomstate(char *from, char *chan, Tcl_Obj *tags) {
       changed = 1;
     }
     if (changed) {
-      putlog(LOG_SERV, "*", "* TWITCH: Roomstate '%s' in room %s changed to %s", key, chan, value);
+      putlog(LOG_SERV, "*", "* TWITCH: Roomstate '%s' in room %s changed to %s", k, chan, v);
       trigger_bind = 1;
     }
   }
