@@ -3026,4 +3026,3 @@ static cmd_t irc_isupport_binds[] = {
   {"*",       "",   (IntFunc) irc_isupport, "irc:isupport"},
   {NULL,    NULL,   NULL,                             NULL}
 };
-

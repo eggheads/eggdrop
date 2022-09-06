@@ -430,7 +430,7 @@ void dumplots(int idx, const char *prefix, const char *data)
     n = strchr(p, '\n');
     if (n && n < q) {
       /* Great! dump that first line then start over */
-      dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
       p = n + 1;
     } else {
       /* Search backwards for the last space */
@@ -438,7 +438,7 @@ void dumplots(int idx, const char *prefix, const char *data)
         q--;
       if (q == p)
         q = p + max_data_len;
-      dprintf(idx, "%s%.*s\n", prefix, q - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(q - p), p);
       p = q;
       if (*q == ' ')
         p++;
@@ -447,7 +447,7 @@ void dumplots(int idx, const char *prefix, const char *data)
   /* Last trailing bit: split by linefeeds if possible */
   n = strchr(p, '\n');
   while (n) {
-    dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+    dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
     p = n + 1;
     n = strchr(p, '\n');
   }
@@ -513,11 +513,12 @@ void daysdur(time_t now, time_t then, char *out)
 /* Log something
  * putlog(level,channel_name,format,...);
  */
-void putlog EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
-  int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  int i, tsl = 0;
+  char s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -528,9 +529,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     t = localtime(&now2);
   }
 
-  type = EGG_VARARGS_START(int, arg1, va);
-  chname = va_arg(va, char *);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   /* Create the timestamp */
   if (shtime) {

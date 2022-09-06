@@ -50,6 +50,22 @@ extern Tcl_Interp *interp;
 
 devent_t *dns_events = NULL;
 
+static int ipaddr_equal(const sockname_t *ip, const sockname_t *ip2)
+{
+  if (!ip || !ip2) {
+    return 0;
+  }
+#ifdef IPV6
+  if (ip->family == AF_INET6 && ip2->family == AF_INET6) {
+    return IN6_ARE_ADDR_EQUAL(&ip->addr.s6.sin6_addr, &ip2->addr.s6.sin6_addr);
+  }
+#endif
+  if (ip->family == AF_INET && ip2->family == AF_INET) {
+    return ip->addr.s4.sin_addr.s_addr == ip2->addr.s4.sin_addr.s_addr;
+  }
+  return 0;
+}
+
 
 /*
  *   DCC functions
@@ -231,9 +247,10 @@ void dcc_dnshostbyip(sockname_t *ip)
   for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_HOSTBYIP) &&
         (de->lookup == RES_HOSTBYIP)) {
-      if (de->res_data.ip_addr == ip)
+      if (ipaddr_equal(ip, de->res_data.ip_addr)) {
         /* No need to add anymore. */
         return;
+      }
     }
   }
 
@@ -246,7 +263,8 @@ void dcc_dnshostbyip(sockname_t *ip)
 
   de->type = &DNS_DCCEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  de->res_data.ip_addr = ip;
+  de->res_data.ip_addr = nmalloc(sizeof *ip);
+  memcpy(de->res_data.ip_addr, ip, sizeof *ip);
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -367,14 +385,13 @@ static void tcl_dnshostbyip(sockname_t *ip, char *proc, char *paras)
 
   de->type = &DNS_TCLEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  de->res_data.ip_addr = ip;
+  de->res_data.ip_addr = nmalloc(sizeof *ip);
+  memcpy(de->res_data.ip_addr, ip, sizeof *ip);
 
   /* Store additional data. */
   tclinfo = nmalloc(sizeof(devent_tclinfo_t));
   tclinfo->proc = nmalloc(strlen(proc) + 1);
   strcpy(tclinfo->proc, proc);
-  memcpy(&tclinfo->sockname, ip, sizeof(sockname_t));
-  de->res_data.ip_addr = &tclinfo->sockname;
   if (paras) {
     tclinfo->paras = nmalloc(strlen(paras) + 1);
     strcpy(tclinfo->paras, paras);
@@ -412,20 +429,7 @@ void call_hostbyip(sockname_t *ip, char *hostn, int ok)
 
   while (de) {
     nde = de->next;
-    if ((de->lookup == RES_HOSTBYIP) && (
-#ifdef IPV6
-        (ip->family == AF_INET6 &&
-          IN6_ARE_ADDR_EQUAL(&de->res_data.ip_addr->addr.s6.sin6_addr,
-                             &ip->addr.s6.sin6_addr)) ||
-        (ip->family == AF_INET &&
-#endif
-          (de->res_data.ip_addr->addr.s4.sin_addr.s_addr ==
-                              ip->addr.s4.sin_addr.s_addr)))
-#ifdef IPV6
-        )
-#endif
-    {
-        /* A memcmp() could have perfectly done it .. */
+    if ((de->lookup == RES_HOSTBYIP) && ipaddr_equal(ip, de->res_data.ip_addr)) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -438,6 +442,8 @@ void call_hostbyip(sockname_t *ip, char *hostn, int ok)
       else
         putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
                (de->type && de->type->name) ? de->type->name : "<empty>");
+      if (de->res_data.ip_addr)
+        nfree(de->res_data.ip_addr);
       nfree(de);
       de = ode;
     }

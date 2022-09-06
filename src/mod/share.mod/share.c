@@ -73,7 +73,7 @@ tandbuf *tbuf;
 
 /* Prototypes */
 static void start_sending_users(int);
-static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
+static void shareout_but(struct chanset_t *chan, int x, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 static int flush_tbuf(char *);
 static int can_resync(char *);
 static void dump_resync(int);
@@ -1462,18 +1462,15 @@ static void sharein_mod(int idx, char *msg)
   }
 }
 
-static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+static void shareout_mod(struct chanset_t *chan, const char *format, ...)
 {
   int i, l;
-  char *format;
   char s[601];
-  struct chanset_t *chan;
   va_list va;
 
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
-
   if (!chan || channel_shared(chan)) {
-    format = va_arg(va, char *);
+    va_start(va, format);
 
     strcpy(s, "s ");
     if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1492,21 +1489,18 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
         }
       }
     q_resync(s, chan);
+    va_end(va);
   }
-  va_end(va);
 }
 
-static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+static void shareout_but(struct chanset_t *chan, int x, const char *format, ...)
 {
-  int i, x, l;
-  char *format;
+  int i, l;
   char s[601];
-  struct chanset_t *chan;
   va_list va;
 
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
-  x = va_arg(va, int);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   strcpy(s, "s ");
   if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1780,7 +1774,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     fclose(f);
   }
   if (!ok)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE2);
   return ok;
 }
 

@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.3"
-#define EGG_NUMVER 1090300
-#define EGG_PATCH "alpha"
+#define EGG_NUMVER 1090303
+#define EGG_PATCH "gotmsg"

@@ -50,7 +50,7 @@ static int convert_old_files(char *path, char *newfiledb)
 
   fdb = fopen(newfiledb, "w+b");
   if (!fdb) {
-    putlog(LOG_MISC, "(!) Can't create filedb in %s", newfiledb);
+    putlog(LOG_MISC, "*", "(!) Can't create filedb in %s", newfiledb);
     fclose(f);
     return 0;
   }

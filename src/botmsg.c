@@ -40,15 +40,14 @@ static char OBUF[1024];
 #ifndef NO_OLD_BOTNET
 /* Ditto for tandem bots
  */
-void tandout_but EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+void tandout_but(int x, const char *format, ...)
 {
-  int i, x, len;
-  char *format;
+  int i, len;
   char s[511];
   va_list va;
 
-  x = EGG_VARARGS_START(int, arg1, va);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   len = egg_vsnprintf(s, sizeof s, format, va);
   va_end(va);
@@ -136,14 +135,16 @@ char *unsigned_int_to_base10(unsigned int val)
   return buf_base10 + i;
 }
 
-int simple_sprintf EGG_VARARGS_DEF(char *, arg1)
+// TODO: this should probably not be used eggdrop core anymore
+// and only stay for 3rd party module compatibility
+// Reason: No sane compiler error checking possible, hardcoded 1024 limit
+int simple_sprintf (char *buf, const char *format, ...)
 {
-  char *buf, *format, *s;
+  char *s;
   int c = 0, i;
   va_list va;
 
-  buf = EGG_VARARGS_START(char *, arg1, va);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   while (*format && c < 1023) {
     if (*format == '%') {
@@ -289,19 +290,14 @@ void botnet_send_pong(int idx)
     dprintf(idx, "po\n");
 }
 
-void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,5,6)
+void botnet_send_priv (int idx, char *from, char *to, char *tobot, const char *format, ...)
 {
-  int idx, l;
-  char *from, *to, *tobot, *format;
+  int l;
   char tbuf[1024];
   va_list va;
 
-  idx = EGG_VARARGS_START(int, arg1, va);
-  from = va_arg(va, char *);
-  to = va_arg(va, char *);
-  tobot = va_arg(va, char *);
-  format = va_arg(va, char *);
-
+  va_start(va, format);
   egg_vsnprintf(tbuf, 450, format, va);
   va_end(va);
   tbuf[sizeof(tbuf) - 1] = 0;
@@ -616,7 +612,7 @@ void botnet_send_join_idx(int useridx, int oldchan)
                        dcc[useridx].sock, dcc[useridx].host);
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, "join %s %s %d %c%d %s\n", botnetnick,
+    tandout_but(-1, "join %s %s %d %c%ld %s\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].u.chat->channel,
                 geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s %s %s.\n",
@@ -674,7 +670,7 @@ void botnet_send_part_idx(int useridx, char *reason)
   if (tands > 0) {
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, "part %s %s %d\n", botnetnick,
+    tandout_but(-1, "part %s %s %ld\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].sock);
     tandout_but(-1, "chan %s %d %s has left the %s%s%s.\n",
                 botnetnick, dcc[useridx].u.chat->channel,
@@ -718,9 +714,9 @@ void botnet_send_nkch(int useridx, char *oldnick)
                        dcc[useridx].sock, dcc[useridx].nick);
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
-    tandout_but(-1, "part %s %s %d\n", botnetnick,
+    tandout_but(-1, "part %s %s %ld\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].sock);
-    tandout_but(-1, "join %s %s %d %c%d %s\n", botnetnick,
+    tandout_but(-1, "join %s %s %d %c%ld %s\n", botnetnick,
                 dcc[useridx].nick, dcc[useridx].u.chat->channel,
                 geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s: %s -> %s.\n",
@@ -798,7 +794,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     i = nextbot(p);
     if (i < 0) {
       if (idx >= 0)
-        dprintf(idx, BOT_NOTHERE);
+        dprintf(idx, "%s", BOT_NOTHERE);
 
       return NOTE_ERROR;
     }
@@ -839,7 +835,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   u = get_user_by_handle(userlist, to);
   if (!u) {
     if (idx >= 0)
-      dprintf(idx, USERF_UNKNOWN);
+      dprintf(idx, "%s", USERF_UNKNOWN);
 
     return NOTE_ERROR;
   }
@@ -847,7 +843,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is the note to a bot? */
   if (is_bot(u)) {
     if (idx >= 0)
-      dprintf(idx, BOT_NONOTES);
+      dprintf(idx, "%s", BOT_NONOTES);
 
     return NOTE_ERROR;
   }

@@ -750,12 +750,12 @@ void tell_bottree(int idx, int showver)
             more = 1;
             this = last[lev];
           }
-          dprintf(idx, "------------------------------------------------\n");
         }
       }
     }
   }
   /* Hop information: (9d) */
+  dprintf(idx, "------------------------------------------------\n");
   dprintf(idx, "Average hops: %3.1f, total bots: %d\n",
           ((float) tothops) / ((float) tands), tands + 1);
 }
@@ -1135,7 +1135,7 @@ static void failed_tandem_relay(int idx)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1258,7 +1258,7 @@ static void tandem_relay_resolve_failure(int idx)
       break;
     }
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1331,7 +1331,7 @@ static void pre_relay(int idx, char *buf, int i)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1377,7 +1377,7 @@ static void failed_pre_relay(int idx)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1411,7 +1411,7 @@ static void cont_tandem_relay(int idx, char *buf, int i)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[i].sock, dcc[i].u.relay->sock);
     killsock(dcc[i].sock);
     lostdcc(i);

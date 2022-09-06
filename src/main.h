@@ -28,6 +28,16 @@
 #  include "config.h"
 #endif
 
+#ifndef __has_attribute
+#  define __has_attribute(x) 0
+#endif
+
+#if __has_attribute(format)
+#  define ATTRIBUTE_FORMAT(a,b,c) __attribute__((format(a,b,c)))
+#else
+#  define ATTRIBUTE_FORMAT(a,b,c)
+#endif
+
 #include "eggint.h"
 #include "lush.h"
 
@@ -55,21 +65,10 @@
 #  define TCL_CONST86
 #endif
 
-/* UGH! Why couldn't Tcl pick a standard? */
-#if defined(__STDC__) || defined(HAS_STDARG)
-#  ifdef HAVE_STDARG_H
-#    include <stdarg.h>
-#  endif
-#  define EGG_VARARGS(type, name) (type name, ...)
-#  define EGG_VARARGS_DEF(type, name) (type name, ...)
-#  define EGG_VARARGS_START(type, name, list) (va_start(list, name), name)
+#ifdef HAVE_STDARG_H
+#  include <stdarg.h>
 #else
-#  ifndef MAKING_DEPEND /* Allows 'make depend' to work on newer GCC versions. */
-#    include <varargs.h>
-#    define EGG_VARARGS(type, name) ()
-#    define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
-#    define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
-#  endif
+#  error "Must have stdarg.h"
 #endif
 
 #include <stdio.h>

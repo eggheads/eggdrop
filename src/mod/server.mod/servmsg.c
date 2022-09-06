@@ -893,7 +893,7 @@ static int got432(char *from, char *msg)
     putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
-    putlog(LOG_MISC, "*", IRC_BADBOTNICK);
+    putlog(LOG_MISC, "*", "%s", IRC_BADBOTNICK);
     if (!strcmp(erroneous, origbotname)) {
       strlcpy(nick, get_altbotnick(), sizeof nick);
     } else {

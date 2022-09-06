@@ -2848,7 +2848,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   Tcl_DString dstr;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   debug1("tcl: evaluate (.tcl): %s", msg);
@@ -2876,7 +2876,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   Tcl_DString dstr;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
@@ -2916,7 +2916,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
   const char *p;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   if (!par[0]) {
@@ -2938,7 +2938,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
   char *p;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   if (!par[0])
@@ -3145,6 +3145,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
 static void cmd_pls_host(struct userrec *u, int idx, char *par)
 
 {
+  int ret;
   char *handle, *host;
   module_entry *me;
 
@@ -3160,13 +3161,14 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     host = handle;
     handle = dcc[idx].nick;
   }
-  add_to_handle(u, idx, handle, host, 0);
-  putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
-  dprintf(idx, "Added '%s' to %s.\n", host, handle);
-  if ((me = module_find("irc", 0, 0))) {
-    Function *func = me->funcs;
-
-    (func[IRC_CHECK_THIS_USER]) (handle, 0, NULL);
+  ret = add_to_handle(u, idx, handle, host, 0);
+  if (!ret) {
+    putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
+    dprintf(idx, "Added '%s' to %s.\n", host, handle);
+    if ((me = module_find("irc", 0, 0))) {
+      Function *func = me->funcs;
+      (func[IRC_CHECK_THIS_USER]) (handle, 0, NULL);
+    }
   }
 }
 
@@ -3204,7 +3206,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
   } else {
     bot = newsplit(&par);
     if ((ptr = nextbot(bot)) >= 0)
-      dprintf(ptr, "v %s %s %d:%s\n", botnetnick, bot, dcc[idx].sock,
+      dprintf(ptr, "v %s %s %ld:%s\n", botnetnick, bot, dcc[idx].sock,
               dcc[idx].nick);
     else
       dprintf(idx, "No such bot online.\n");

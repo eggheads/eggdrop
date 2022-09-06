@@ -580,11 +580,11 @@ void write_userfile(int idx)
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE);
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", USERF_WRITING);
+    putlog(LOG_MISC, "*", "%s", USERF_WRITING);
 
   sort_userlist();
   tt = now;
@@ -610,7 +610,7 @@ void backup_userfile(void)
   char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
+    putlog(LOG_MISC, "*", "%s", USERF_BACKUP);
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }

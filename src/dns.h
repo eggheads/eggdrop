@@ -34,7 +34,6 @@ typedef struct {
 typedef struct {
   char *proc;                   /* Tcl proc                        */
   char *paras;                  /* Additional parameters           */
-  sockname_t sockname;
 } devent_tclinfo_t;
 
 typedef struct devent_str {

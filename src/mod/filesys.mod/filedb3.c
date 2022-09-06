@@ -652,7 +652,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
    */
   dir = opendir(path);
   if (dir == NULL) {
-    putlog(LOG_MISC, "*", FILES_NOUPDATE);
+    putlog(LOG_MISC, "*", "%s", FILES_NOUPDATE);
     return;
   }
   dd = readdir(dir);
@@ -903,8 +903,8 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     if (ok) {
       /* Display it! */
       if (cnt == 0) {
-        dprintf(idx, FILES_LSHEAD1);
-        dprintf(idx, FILES_LSHEAD2);
+        dprintf(idx, "%s", FILES_LSHEAD1);
+        dprintf(idx, "%s", FILES_LSHEAD2);
       }
       filelist_add(flist, fdbe->filename);
       if (fdbe->stat & FILE_DIR) {
@@ -1012,9 +1012,9 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     fdbe = filedb_getfile(fdb, ftell(fdb), GET_FULL);
   }
   if (is == 0)
-    dprintf(idx, FILES_NOFILES);
+    dprintf(idx, "%s", FILES_NOFILES);
   else if (cnt == 0)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     filelist_sort(flist);
     filelist_idxshow(flist, idx);

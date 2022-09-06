@@ -75,7 +75,7 @@ static void ident_activity(int idx, char *buf, int len)
     if (i < 0)
       putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     else
-      putlog(LOG_MISC, "*", "Ident error: Wrote %i bytes instead of %i bytes.", i, count);
+      putlog(LOG_MISC, "*", "Ident error: Wrote %ld bytes instead of %ld bytes.", (long)i, (long)count);
     return;
   }
   putlog(LOG_MISC, "*", "Ident: Responded.");
