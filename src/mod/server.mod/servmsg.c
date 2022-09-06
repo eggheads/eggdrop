@@ -31,7 +31,7 @@
 #include "../channels.mod/channels.h"
 #include "server.h"
 
-static char *encode_msgtags(Tcl_Obj *msgtagdict);
+char *encode_msgtags(Tcl_Obj *msgtagdict);
 static char *encode_msgtag(char *key, char *value);
 static int del_capabilities(char *);
 static int del_capability(char *name);
