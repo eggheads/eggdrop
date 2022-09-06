@@ -31,6 +31,8 @@
 #include "../channels.mod/channels.h"
 #include "server.h"
 
+char *encode_msgtags(Tcl_Obj *msgtagdict);
+static char *encode_msgtag(char *key, char *value);
 static int del_capabilities(char *);
 static int del_capability(char *name);
 static time_t last_ctcp = (time_t) 0L;
@@ -325,6 +327,29 @@ static int match_my_nick(char *nick)
   return (!rfc_casecmp(nick, botname));
 }
 
+char *encode_msgtags(Tcl_Obj *msgtagdict) {
+  int done = 0;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *key;
+  static Tcl_DString ds;
+  static int ds_initialized = 0;
+
+  if (!ds_initialized) {
+    Tcl_DStringInit(&ds);
+    ds_initialized = 1;
+  } else {
+    Tcl_DStringFree(&ds);
+  }
+  for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    if (Tcl_DStringLength(&ds)) {
+      Tcl_DStringAppend(&ds, ";", -1);
+    }
+    Tcl_DStringAppend(&ds, encode_msgtag(Tcl_GetString(key), Tcl_GetString(value)), -1);
+  }
+
+  return Tcl_DStringValue(&ds);
+}
+
 /* 001: welcome to IRC (use it to fix the server name) */
 static int got001(char *from, char *msg)
 {
@@ -529,7 +554,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg, char *tag)
+static int gotmsg(char *from, char *msg)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -753,14 +778,17 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static int gottagmsg(char *from, char *msg) {
-  char *nick;
+static int gottagmsg(char *from, char *msg, Tcl_Obj *tagdict) {
+  char *nick, *dictstring;
+
+  dictstring = encode_msgtags(tagdict);
+
   fixcolon(msg);
   if (strchr(from, '!')) {
     nick = splitnick(&from);
-    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] TAGMSG: %s", nick, from, dictstring);
   } else {
-    putlog(LOG_SERV, "*", "[#]%s[#] %s", from, msg);
+    putlog(LOG_SERV, "*", "[#]%s[#] TAGMSG: %s", from, dictstring);
   }
   return 0;
 }
@@ -1122,6 +1150,37 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
+static char *encode_msgtag_value(char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+  size_t written = 0;
+
+  /* empty value and no value is identical, Tcl dict always has empty string as no-value, looks better to encode without = */
+  if (!value || !*value) {
+    return "";
+  }
+  buf[written++] = '=';
+
+  while (*value && written < sizeof buf - 1) {
+    if (*value == ';' || *value == ' ' || *value == '\\' || *value == '\r' || *value == '\n') {
+      buf[written++] = '\\';
+    }
+    buf[written++] = *value++;
+  }
+  buf[written] = '\0';
+
+  return buf;
+}
+
+/* TODO: validity enforcement on used characters in key? */
+static char *encode_msgtag(char *key, char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+
+  snprintf(buf, sizeof buf, "%s%s", key, encode_msgtag_value(value));
+  return buf;
+}
+
 static char *decode_msgtag_value(char *value, char **endptr)
 {
   static char valuebuf[TOTALTAGMAX+1];
@@ -1204,10 +1263,8 @@ static void server_activity(int idx, char *tagmsg, int len)
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts. If rawt returns 1 (blocking), don't process raw binds.*/
   /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
-  //Tcl_IncrRef(tagdict);
   strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
   ret = check_tcl_rawt(from, code, msgptr, rawmsg);
-  //Tcl_DecrRef(tagdict);
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
