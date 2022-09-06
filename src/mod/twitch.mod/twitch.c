@@ -55,7 +55,7 @@ static char cap_request[55];
 /* valuevar must be used immediately without calling back into Tcl, refcount is not increased */
 #define GET_MSGTAG_VALUE_STR(tags, key, valuevar, errctx) do {                                              \
   Tcl_Obj *msgtagtmpvalue;                                                                                  \
-  if (!Tcl_DictObjGet(interp, (tags), Tcl_NewStringObj((key), -1), &msgtagtmpvalue)) {                      \
+  if (TCL_OK != Tcl_DictObjGet(interp, (tags), Tcl_NewStringObj((key), -1), &msgtagtmpvalue)) {             \
     putlog(LOG_MISC, "*", "* TWITCH: Error: Could not decode msgtag-dict message %s", (errctx));            \
     return 0;                                                                                               \
   }                                                                                                         \
