@@ -750,12 +750,12 @@ void tell_bottree(int idx, int showver)
             more = 1;
             this = last[lev];
           }
-          dprintf(idx, "------------------------------------------------\n");
         }
       }
     }
   }
   /* Hop information: (9d) */
+  dprintf(idx, "------------------------------------------------\n");
   dprintf(idx, "Average hops: %3.1f, total bots: %d\n",
           ((float) tothops) / ((float) tands), tands + 1);
 }
