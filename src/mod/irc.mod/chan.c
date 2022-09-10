@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1163,8 +1163,10 @@ static int got324(char *from, char *msg)
 static int got352or4(struct chanset_t *chan, char *user, char *host,
                      char *nick, char *flags, char *account)
 {
-  char userhost[UHOSTLEN];
+  char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+  struct chanset_t *acctchan;
   memberlist *m;
+  int empty_accounts;
 
   m = ismember(chan, nick);     /* In my channel list copy? */
   if (!m) {                     /* Nope, so update */
@@ -1210,14 +1212,28 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       do_tcl("need-op", chan->need_op);
   }
   m->user = get_user_by_host(userhost);
-  /* Update accountname in the channel record */
-  if ((account) && strcmp(account, "0")) {
-    if (m) {
-      strlcpy(m->account, account, sizeof(m->account));
-    }
-  } else {      /* Explicitly clear, in case someone deauthenticated? */
-    if (m) {
-      m->account[0] = 0;
+
+  /* Update accountname in channel records, 0 means logged out */
+  /* A 0 is not a change from "" */
+  if (account) {
+    empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
+    /* If the account has changed... */
+    if (strcmp(account, m->account) && !empty_accounts) {
+      for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
+        if ((m = ismember(chan, nick))) {
+          if (strcmp(account, "0")) {
+            strlcpy(m->account, account, sizeof(m->account));
+            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+            if (strcasecmp(chan->dname, acctchan->dname)) {
+            }
+          } else {      /* Explicitly clear, in case someone deauthenticated? */
+            m->account[0] = 0;
+            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
+            if (strcasecmp(chan->dname, acctchan->dname)) {
+            }
+          }
+        }
+      }
     }
   }
   return 0;
@@ -2025,22 +2041,34 @@ static void set_delay(struct chanset_t *chan, char *nick)
   m->delay = a_delay;
 }
 
+
 /* Got a join
  */
 static int gotjoin(char *from, char *channame)
 {
   char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
-  char *ch_dname = NULL;
+  char *ch_dname = NULL, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+  int extjoin = 0;
   struct chanset_t *chan;
-  memberlist *m;
+  struct chanset_t *extchan;
+  memberlist *m, *n;
   masklist *b;
+  struct capability *current;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
+  /* Check if extended-join CAP is enabled */
+  current = cap;
+  while (current != NULL) {
+    if (!strcasecmp("extended-join", current->name)) {
+      extjoin = current->enabled ? 1 : 0;
+    }
+    current = current->next;
+  }
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
-  if (!extended_join) {
+  if (!extjoin) {
     fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
@@ -2155,11 +2183,23 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
-        if (extended_join) {
+        if (extjoin) {
+          /* Update account for all channels the nick is on, not just this one */
           strlcpy(account, newsplit(&channame), sizeof account);
-          if (strcmp(account, "*")) {
-            if ((m = ismember(chan, nick))) {
-              strlcpy (m->account, account, sizeof m->account);
+          for (extchan = chanset; extchan; extchan = extchan->next) {
+            if ((n = ismember(extchan, nick))) {
+              if (strcmp(account, "*")) {
+                strlcpy (n->account, account, sizeof n->account);
+              } else {
+                n->account[0] = 0;
+              }
+              /* Don't trigger for the channel the user joined, but do trigger
+               * for other channels the user is already in
+               */
+              if (strcasecmp(chname, extchan->dname)) {
+                snprintf(mask, sizeof mask, "%s %s", chname, from);
+                //check_tcl_account(nick, from, mask, u, extchan->dname, account);
+              }
             }
           }
         }
@@ -2682,7 +2722,7 @@ static int gotmsg(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strlcpy(buf2, p1, sizeof buf2);
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
@@ -2801,7 +2841,7 @@ static int gotnotice(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strcpy(ctcp, p1);
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?
@@ -2985,8 +3025,4 @@ static cmd_t irc_raw[] = {
 static cmd_t irc_isupport_binds[] = {
   {"*",       "",   (IntFunc) irc_isupport, "irc:isupport"},
   {NULL,    NULL,   NULL,                             NULL}
-};
-
-static cmd_t irc_rawt[] = {
-  {NULL,      NULL, NULL,                         NULL}
 };

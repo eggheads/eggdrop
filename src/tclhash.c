@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +26,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
-#include "chan.h"
-#include "users.h"
 
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
@@ -709,11 +706,8 @@ static int builtin_idx STDVAR
 #endif
 
 /* Trigger (execute) a Tcl proc
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int trigger_bind(const char *proc, const char *param,
-                               char *mask)
+static int trigger_bind(const char *proc, const char *param, char *mask)
 {
   int x;
   struct rusage ru1, ru2;
@@ -777,11 +771,8 @@ static int trigger_bind(const char *proc, const char *param,
 
 /* Find out whether this bind matches the mask or provides the
  * requested attributes, depending on the specified requirements.
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int check_bind_match(const char *match, char *mask,
-                                   int match_type)
+static int check_bind_match(const char *match, char *mask, int match_type)
 {
   switch (match_type & 0x07) {
   case MATCH_PARTIAL:
@@ -811,11 +802,9 @@ static int check_bind_match(const char *match, char *mask,
 
 
 /* Check if the provided flags suffice for this command/trigger.
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int check_bind_flags(struct flag_record *flags,
-                                   struct flag_record *atr, int match_type)
+static int check_bind_flags(struct flag_record *flags, struct flag_record *atr,
+                            int match_type)
 {
   if (match_type & BIND_USE_ATTR) {
     if (match_type & BIND_HAS_BUILTINS)
@@ -985,11 +974,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   x = check_tcl_bind(H_dcc, cmd, &fr, " $_dcc1 $_dcc2 $_dcc3",
                      MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
   if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, MISC_AMBIGUOUS);
+    dprintf(idx, "%s", MISC_AMBIGUOUS);
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return 0;
   }
 
@@ -1311,8 +1300,8 @@ void tell_binds(int idx, char *par)
       }
     }
   }
-  dprintf(idx, MISC_CMDBINDS);
-  dprintf(idx, "  %+*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
+  dprintf(idx, "%s", MISC_CMDBINDS);
+  dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;

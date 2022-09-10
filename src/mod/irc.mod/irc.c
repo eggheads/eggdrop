@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1049,8 +1049,9 @@ static void irc_report(int idx, int details)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char ch[1024], q[256], *p;
-  int k, l;
+  int k, l, extjoin, acctnotify;
   struct chanset_t *chan;
+  struct capability *current;
 
   strcpy(q, "Channels: ");
   k = 10;
@@ -1084,17 +1085,31 @@ static void irc_report(int idx, int details)
     dprintf(idx, "    %s\n", q);
   }
   /* List status of account tracking. For 100% accuracy, this requires
-   * WHOX ability (354 messages) and the extended-join and account_notify
+   * WHOX ability (354 messages) and the extended-join and account-notify
    * capabilities to be enabled.
    */
-  if (use_354 && extended_join && account_notify) {
+  /* Check if CAPs are enabled */
+  current = cap;
+  extjoin = 0;
+  acctnotify = 0;
+  while (current != NULL) {
+    if (!strcasecmp("extended-join", current->name)) {
+      extjoin = current->enabled ? 1 : 0;
+    }
+    if (!strcasecmp("account-notify", current->name)) {
+      acctnotify = current->enabled ? 1 : 0;
+    }
+    current = current->next;
+  }
+
+  if (use_354 && extjoin && acctnotify) {
     dprintf(idx, "    Account tracking: Enabled\n");
   } else {
     dprintf(idx, "    Account tracking: Disabled\n"
                  "      (Missing capabilities:%s%s%s)\n",
                       use_354 ? "" : " use-354",
-                      extended_join ? "" : " extended-join",
-                      account_notify ? "" : " account-notify");
+                      extjoin ? "" : " extended-join",
+                      acctnotify ? "" : " account-notify");
   }
 }
 
@@ -1286,7 +1301,6 @@ static char *irc_close()
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
-  rem_builtins(H_rawt, irc_rawt);
   rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
@@ -1394,7 +1408,6 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
-  add_builtins(H_rawt, irc_rawt);
   add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
