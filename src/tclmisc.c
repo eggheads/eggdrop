@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -246,51 +246,73 @@ static int tcl_binds STDVAR
   return TCL_OK;
 }
 
-static int tcl_timer STDVAR
-{
-  unsigned long x;
-  char s[16];
-
-  BADARGS(3, 4, " minutes command ?count?");
+int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
+  char *endptr;
+  long val;
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
+    return 1;
   }
-  if (argc == 4 && atoi(argv[3]) < 0) {
-    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
-    return TCL_ERROR;
+  if (argc >=4) {
+    val = strtol(argv[3], &endptr, 0);
+    if ((*endptr != '\0') || (val < 0)) {
+      Tcl_AppendResult(irp, "count value must be >=0", NULL);
+      return 1;
+    }
   }
   if (argv[2][0] != '#') {
-    x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
-                  argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
+    if (argc == 5) {
+      /* Prevent collisions with unnamed timers */
+      if (strncmp(argv[4], "timer", 5) == 0) {
+        Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
+        return 1;
+      }
+      /* Check for existing timers by same name */
+      if (find_timer(timer, argv[4])) {
+        Tcl_AppendResult(irp, "timer already exists by that name", NULL);
+        return 1;
+      }
+    }
   }
+  return 0;
+}
+
+static int tcl_timer STDVAR
+{
+  char *x;
+
+  BADARGS(3, 5, " minutes command ?count ?name??");
+
+  if (check_timer_syntax(irp, argc, argv)) {
+    return TCL_ERROR;
+  }
+  x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : NULL), 0L);
+  if (!x) {
+    Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
+    return TCL_ERROR;
+  }
+  Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
 
 static int tcl_utimer STDVAR
 {
-  unsigned long x;
-  char s[16];
+  char *x;
 
-  BADARGS(3, 4, " seconds command ?count?");
+  BADARGS(3, 5, " seconds command ?count ?name??");
 
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
+  if (check_timer_syntax(irp, argc, argv)) {
     return TCL_ERROR;
   }
-  if (argc == 4 && atoi(argv[3]) < 0) {
-    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
+  x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
+  if (!x) {
+    Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
     return TCL_ERROR;
   }
-  if (argv[2][0] != '#') {
-    x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
-                  argv[2], 0L);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
-  }
+  Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
 
@@ -298,27 +320,20 @@ static int tcl_killtimer STDVAR
 {
   BADARGS(2, 2, " timerID");
 
-  if (strncmp(argv[1], "timer", 5)) {
-    Tcl_AppendResult(irp, "argument is not a timerID", NULL);
-    return TCL_ERROR;
-  }
-  if (remove_timer(&timer, atol(&argv[1][5])))
+  if (remove_timer(&timer, argv[1]))
     return TCL_OK;
-  Tcl_AppendResult(irp, "invalid timerID", NULL);
+  Tcl_AppendResult(irp, "invalid timer name", NULL);
   return TCL_ERROR;
 }
 
 static int tcl_killutimer STDVAR
 {
-  BADARGS(2, 2, " timerID");
+  BADARGS(2, 2, " timerName");
 
-  if (strncmp(argv[1], "timer", 5)) {
-    Tcl_AppendResult(irp, "argument is not a timerID", NULL);
-    return TCL_ERROR;
-  }
-  if (remove_timer(&utimer, atol(&argv[1][5])))
+  if (remove_timer(&utimer, argv[1])) {
     return TCL_OK;
-  Tcl_AppendResult(irp, "invalid timerID", NULL);
+  }
+  Tcl_AppendResult(irp, "invalid utimer name", NULL);
   return TCL_ERROR;
 }
 
@@ -435,12 +450,7 @@ static int tcl_strftime STDVAR
 
 static int tcl_myip STDVAR
 {
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
-
+  char s[EGG_INET_ADDRSTRLEN];
 
   BADARGS(1, 1, "");
 
@@ -570,17 +580,7 @@ static int tcl_unloadmodule STDVAR
 
 static int tcl_unames STDVAR
 {
-  char *unix_n, *vers_n;
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    unix_n = "*unknown*";
-    vers_n = "";
-  } else {
-    unix_n = un.sysname;
-    vers_n = un.release;
-  }
-  Tcl_AppendResult(irp, unix_n, " ", vers_n, NULL);
+  Tcl_AppendResult(irp, egg_uname(), NULL);
   return TCL_OK;
 }
 

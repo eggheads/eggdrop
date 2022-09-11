@@ -1,22 +1,8 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
- */
-/*
+ *
  * Portions Copyright (C) 2000 - 2020 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include "main.h"
@@ -29,12 +15,12 @@
 #endif
 
 #ifndef HAVE_INET_ATON
-/*
- * ++Copyright++ 1983, 1990, 1993
- * -
+/*-
+ * SPDX-License-Identifier: (BSD-3-Clause AND ISC)
+ *
  * Copyright (c) 1983, 1990, 1993
  *    The Regents of the University of California.  All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -43,14 +29,10 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *      This product includes software developed by the University of
- *      California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
+ * 3. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -62,16 +44,18 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * -
+ */
+
+/*
  * Portions Copyright (c) 1993 by Digital Equipment Corporation.
- *
+ * 
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies, and that
  * the name of Digital Equipment Corporation not be used in advertising or
  * publicity pertaining to distribution of the document or software without
  * specific, written prior permission.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND DIGITAL EQUIPMENT CORP. DISCLAIMS ALL
  * WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS.   IN NO EVENT SHALL DIGITAL EQUIPMENT
@@ -80,16 +64,35 @@
  * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
- * --Copyright--
+ */
+
+/*
+ * Copyright (c) 2004 by Internet Systems Consortium, Inc. ("ISC")
+ * Portions Copyright (c) 1996-1999 by Internet Software Consortium.
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL ISC BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+ * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)inet_addr.c	8.1 (Berkeley) 6/17/93";
-static char rcsid[] = "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp $";
+static const char sccsid[] = "@(#)inet_addr.c  8.1 (Berkeley) 6/17/93";
+static const char rcsid[] = "$Id: inet_addr.c,v 1.5 2005/04/27 04:56:19 sra Exp $";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/types.h>
 #include <sys/param.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include <ctype.h>
 
 /*
@@ -99,19 +102,13 @@ static char rcsid[] = "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp 
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int egg_inet_aton(cp, addr)
-const char *cp;
-struct in_addr *addr;
-{
-  static const uint32_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
-  uint32_t val;       /* changed from u_long --david */
-  int base;
-  int n;
+int egg_inet_aton(const char *cp, struct in_addr *addr) {
+  u_long val;
+  int base, n;
   char c;
-  uint32_t parts[4];
-  uint32_t *pp = parts;
-
-  egg_bzero(parts, sizeof(parts));
+  u_int8_t parts[4];
+  u_int8_t *pp = parts;
+  int digit;
 
   c = *cp;
   for (;;) {
@@ -120,36 +117,43 @@ struct in_addr *addr;
      * Values are specified as for C:
      * 0x=hex, 0=octal, isdigit=decimal.
      */
-    if (!egg_isdigit(c))
-      goto ret_0;
-    base = 10;
+    if (!isdigit((unsigned char)c))
+      return (0);
+    val = 0; base = 10; digit = 0;
     if (c == '0') {
       c = *++cp;
       if (c == 'x' || c == 'X')
         base = 16, c = *++cp;
-      else
+      else {
         base = 8;
+        digit = 1 ;
+      }
     }
-    val = 0;
     for (;;) {
-      if (inet_isascii(c) && egg_isdigit(c)) {
+      if (isascii(c) && isdigit((unsigned char)c)) {
+        if (base == 8 && (c == '8' || c == '9'))
+          return (0);
         val = (val * base) + (c - '0');
         c = *++cp;
-      } else if (base == 16 && inet_isascii(c) && egg_isxdigit(c)) {
-        val = (val << 4) | (c + 10 - (egg_islower(c) ? 'a' : 'A'));
+        digit = 1;
+      } else if (base == 16 && isascii(c) && 
+           isxdigit((unsigned char)c)) {
+        val = (val << 4) |
+          (c + 10 - (islower((unsigned char)c) ? 'a' : 'A'));
         c = *++cp;
+        digit = 1;
       } else
         break;
     }
     if (c == '.') {
       /*
        * Internet format:
-       *      a.b.c.d
-       *      a.b.c   (with c treated as 16 bits)
-       *      a.b     (with b treated as 24 bits)
+       *  a.b.c.d
+       *  a.b.c  (with c treated as 16 bits)
+       *  a.b  (with b treated as 24 bits)
        */
-      if (pp >= parts + 3)
-        goto ret_0;
+      if (pp >= parts + 3 || val > 0xffU)
+        return (0);
       *pp++ = val;
       c = *++cp;
     } else
@@ -158,26 +162,43 @@ struct in_addr *addr;
   /*
    * Check for trailing characters.
    */
-  if (c != '\0' && (!inet_isascii(c) || !egg_isspace(c)))
-    goto ret_0;
+  if (c != '\0' && (!isascii(c) || !isspace((unsigned char)c)))
+    return (0);
+  /*
+   * Did we get a valid digit?
+   */
+  if (!digit)
+    return (0);
   /*
    * Concoct the address according to
    * the number of parts specified.
    */
   n = pp - parts + 1;
+  switch (n) {
+  case 1:        /* a -- 32 bits */
+    break;
 
-  if (n == 0 ||                 /* initial nondigit */
-      parts[0] > 0xff || parts[1] > 0xff || parts[2] > 0xff ||
-      val > max[n - 1])
-    goto ret_0;
+  case 2:        /* a.b -- 8.24 bits */
+    if (val > 0xffffffU)
+      return (0);
+    val |= (uint32_t)parts[0] << 24;
+    break;
 
-  val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
+  case 3:        /* a.b.c -- 8.8.16 bits */
+    if (val > 0xffffU)
+      return (0);
+    val |= ((uint32_t)parts[0] << 24) | (parts[1] << 16);
+    break;
 
-  if (addr)
+  case 4:        /* a.b.c.d -- 8.8.8.8 bits */
+    if (val > 0xffU)
+      return (0);
+    val |= ((uint32_t)parts[0] << 24) | (parts[1] << 16) |
+        (parts[2] << 8);
+    break;
+  }
+  if (addr != NULL)
     addr->s_addr = htonl(val);
-  return 1;
-
-ret_0:
-  return 0;
+  return (1);
 }
 #endif /* !HAVE_INET_ATON */

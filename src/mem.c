@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,7 +81,7 @@ void init_mem()
 
   size =  memtbl_size * sizeof *memtbl;
   if (!(memtbl = malloc(size))) {
-    putlog(LOG_MISC, "*", "*** FAILED MALLOC mem.c (memtbl) (%i): %s", size,
+    putlog(LOG_MISC, "*", "*** FAILED MALLOC mem.c (memtbl) (%ld): %s", (long)size,
            strerror(errno));
     fatal("Memory allocation failed", 0);
   } 
@@ -119,8 +119,8 @@ void tell_mem_status_dcc(int idx)
   if (per != 100.0)
     dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n",
             exp, memused, per);
-  dprintf(idx, "Memory table itself occupies an additional %dk static\n",
-          (int) memtbl_size * sizeof *memtbl / 1024);
+  dprintf(idx, "Memory table itself occupies an additional %ldk static\n",
+          (long)(memtbl_size * sizeof *memtbl / 1024));
 #endif
 }
 
@@ -289,7 +289,7 @@ void debug_mem_to_dcc(int idx)
 
   for (me = module_list; me; me = me->next) {
     Function *f = me->funcs;
-    int expt = 0;
+    unsigned long expt = 0;
 
     if ((f != NULL) && (f[MODCALL_EXPMEM] != NULL))
       expt = f[MODCALL_EXPMEM] ();
@@ -355,7 +355,7 @@ void *n_malloc(int size, const char *file, int line)
     }
     size2 = memtbl_size * sizeof *memtbl;
     if (!(memtbl = realloc(memtbl, size2))) {
-      putlog(LOG_MISC, "*", "*** FAILED REALLOC mem.c (memtbl) (%i): %s", size2,
+      putlog(LOG_MISC, "*", "*** FAILED REALLOC mem.c (memtbl) (%lu): %s", (unsigned long)size2,
              strerror(errno));
       fatal("Memory allocation failed", 0);
     } 
@@ -368,8 +368,7 @@ void *n_malloc(int size, const char *file, int line)
   memtbl[i].line = line;
   memtbl[i].size = size;
   p = strrchr(file, '/');
-  strncpy(memtbl[i].file, p ? p + 1 : file, 19);
-  memtbl[i].file[19] = 0;
+  strlcpy(memtbl[i].file, p ? p + 1 : file, sizeof memtbl[i].file);
   memused += size;
   lastused++;
 #endif
@@ -405,8 +404,7 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   memtbl[i].line = line;
   memtbl[i].size = size;
   p = strrchr(file, '/');
-  strncpy(memtbl[i].file, p ? p + 1 : file, 19);
-  memtbl[i].file[19] = 0;
+  strlcpy(memtbl[i].file, p ? p + 1 : file, sizeof memtbl[i].file);
   memused += size;
 #endif
   return x;

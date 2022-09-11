@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2020 Eggheads Development Team
+ * Copyright (C) 2000 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -152,6 +152,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if (len < 0) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzread failed.",
              f_src);
+      fclose(fout);
       return COMPF_ERROR;
     }
     if (!len)
@@ -159,6 +160,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
              "failed: %s.", f_src, strerror(errno));
+      fclose(fout);
       return COMPF_ERROR;
     }
   }
@@ -379,9 +381,9 @@ static uff_table_t compress_uff_table[] = {
  */
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-compressed", (int *)&share_compressed},
-  {"compress-level",     (int *)&compress_level},
-  {NULL,                                   NULL}
+  {"share-compressed", (int *)&share_compressed, 0},
+  {"compress-level",     (int *)&compress_level, 0},
+  {NULL,                                   NULL, 0}
 };
 
 static int compress_expmem(void)

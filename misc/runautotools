@@ -2,7 +2,7 @@
 #
 # runautotools -
 #
-# Copyright (C) 2004 - 2020 Eggheads Development Team
+# Copyright (C) 2004 - 2022 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ if test "x${1}" = "x-h" || test "x${1}" = "x--help"; then
 fi
 
 echo "Running autotools in root directory..."
-# Necessary to regenerate misc/getcommit revsion info
+# Necessary to regenerate misc/getcommit revision info
 touch -c configure.ac
 autoconf
 autoheader

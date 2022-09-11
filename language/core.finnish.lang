@@ -429,3 +429,4 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0xe32,Evätään telnet yhteys %s (yritä käyttää minun botnetnickkiäni)
 0xe33,Telnet yhteys hukattu %s silläaikaa kun tarkistettiin tuplausta
 0xe34,Kadotettu ident yhteys
+0xe35,Please remove the #comment from your listen setting and try again
