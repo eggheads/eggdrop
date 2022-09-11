@@ -42,7 +42,11 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 2) INFORMATION ABOUT TCL
 
 2.1) Tcl library version:
-     8.6._
+     ( ) 8.3._
+     ( ) 8.4._
+     ( ) 8.5._
+     ( ) 8.6._
+     ( ) Other - Which? ____
 
 2.2) Tcl scripts used:
      [ ] alltools
