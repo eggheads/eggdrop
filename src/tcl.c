@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,14 +41,13 @@ typedef struct {
 } intinfo;
 
 
-extern time_t online_since;
+extern time_t now, online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
-            network[], botnetnick[], bannerfile[], egg_version[], natip[],
+            network[], botnetnick[], bannerfile[], egg_version[], nat_ip[],
             configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
             listen_ip[], stealth_prompt[], language[];
-
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
@@ -95,7 +94,7 @@ int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
 
-extern Tcl_VarTraceProc traced_myiphostname, traced_remove_pass;
+extern Tcl_VarTraceProc traced_myiphostname, traced_natip, traced_remove_pass;
 
 int expmem_tcl()
 {
@@ -428,7 +427,7 @@ static tcl_strings def_tcl_strings[] = {
   {"listen-addr",     listen_ip,      120,                     0},
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
-  {"nat-ip",          natip,          120,                     0},
+  {"nat-ip",          nat_ip,         INET_ADDRSTRLEN - 1,     0},
   {"username",        botuser,        USERLEN,                 0},
   {"version",         egg_version,    0,                       0},
   {"firewall",        firewall,       120,                     0},
@@ -513,8 +512,9 @@ static void init_traces()
   add_tcl_coups(def_tcl_coups);
   add_tcl_strings(def_tcl_strings);
   add_tcl_ints(def_tcl_ints);
-  Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_TraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_TraceVar(interp, "nat-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_natip, NULL);
   Tcl_TraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
 }
 
@@ -523,8 +523,9 @@ void kill_tcl()
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
-  Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_UntraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_UntraceVar(interp, "nat-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_natip, NULL);
   Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
   kill_bind();
   Tcl_DeleteInterp(interp);
@@ -585,6 +586,12 @@ ClientData tickle_InitNotifier()
   if (ismainthread)
     ismainthread = 0;
   return NULL;
+}
+
+void tickle_AlertNotifier(ClientData cd)
+{
+  if (cd)
+    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
 }
 
 int tclthreadmainloop(int zero)
@@ -653,6 +660,7 @@ void init_tcl(int argc, char **argv)
   notifierprocs.setTimerProc = tickle_SetTimer;
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
+  notifierprocs.alertNotifierProc = tickle_AlertNotifier;
 
   Tcl_SetNotifier(&notifierprocs);
 #endif /* REPLACE_NOTIFIER */
@@ -967,6 +975,28 @@ int fork_before_tcl()
 {
 #ifndef REPLACE_NOTIFIER
   return tcl_threaded();
-#endif
+#else
   return 0;
+#endif
+}
+
+time_t get_expire_time(Tcl_Interp * irp, const char *s) {
+  char *endptr;
+  long expire_foo = strtol(s, &endptr, 10);
+
+  if (*endptr) {
+    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    return -1;
+  }
+  if (expire_foo < 0) {
+    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    return -1;
+  }
+  if (expire_foo == 0)
+    return 0;
+  if (expire_foo > (60 * 24 * 2000)) {
+    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    return -1;
+  }
+  return now + 60 * expire_foo;
 }

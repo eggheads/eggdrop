@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,6 +64,9 @@
    MSVC and with C++ compilers. */
 #undef FLEXIBLE_ARRAY_MEMBER
 
+/* Define to 1 if you have the `a2i_IPADDRESS' function. */
+#undef HAVE_A2I_IPADDRESS
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
@@ -90,8 +93,14 @@
 /* Define to 1 if you have the `dprintf' function. */
 #undef HAVE_DPRINTF
 
+/* Define to 1 if you have the `EVP_md5' function. */
+#undef HAVE_EVP_MD5
+
 /* Define to 1 if you have the `EVP_PKEY_get1_EC_KEY' function. */
 #undef HAVE_EVP_PKEY_GET1_EC_KEY
+
+/* Define to 1 if you have the `EVP_sha1' function. */
+#undef HAVE_EVP_SHA1
 
 /* Define to 1 if you have the `explicit_bzero' function. */
 #undef HAVE_EXPLICIT_BZERO
@@ -110,9 +119,6 @@
 
 /* Define to 1 if you have the `getrandom' function. */
 #undef HAVE_GETRANDOM
-
-/* Define to 1 if you have the `getrusage' function. */
-#undef HAVE_GETRUSAGE
 
 /* Define to 1 if you have the in6addr_any constant. */
 #undef HAVE_IN6ADDR_ANY
@@ -207,6 +213,9 @@
 /* Define to 1 if you have the <openssl/x509v3.h> header file. */
 #undef HAVE_OPENSSL_X509V3_H
 
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
+
 /* Define to 1 if you have the `rand' function. */
 #undef HAVE_RAND
 
@@ -271,9 +280,6 @@
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
-
-/* Define to 1 if you have the <sys/rusage.h> header file. */
-#undef HAVE_SYS_RUSAGE_H
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
@@ -356,6 +362,10 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
 
 /* Define if running under QNX. */
 #undef QNX_HACKS

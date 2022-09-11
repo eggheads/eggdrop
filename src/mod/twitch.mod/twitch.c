@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 Eggheads Development Team
+ * Copyright (C) 2020 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,11 +47,24 @@
 #undef global
 static Function *global = NULL, *server_funcs = NULL;
 
-static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst;
+static p_tcl_bind_list H_ccht, H_cmsg, H_htgt, H_wspr, H_wspm, H_rmst, H_usst, H_usrntc;
 
 twitchchan_t *twitchchan = NULL;
-static int keepnick;
 static char cap_request[55];
+
+/* valuevar must be used immediately without calling back into Tcl, refcount is not increased */
+#define GET_MSGTAG_VALUE_STR(tags, key, valuevar, errctx) do {                                              \
+  Tcl_Obj *msgtagtmpvalue;                                                                                  \
+  if (TCL_OK != Tcl_DictObjGet(interp, (tags), Tcl_NewStringObj((key), -1), &msgtagtmpvalue)) {             \
+    putlog(LOG_MISC, "*", "* TWITCH: Error: Could not decode msgtag-dict message %s", (errctx));            \
+    return 0;                                                                                               \
+  }                                                                                                         \
+  if (!msgtagtmpvalue) {                                                                                    \
+    putlog(LOG_MISC, "*", "* TWITCH: Error: required msg-tag %s not found in message %s", (key), (errctx)); \
+    return 0;                                                                                               \
+  }                                                                                                         \
+  (valuevar) = Tcl_GetString(msgtagtmpvalue);                                                               \
+} while (0)
 
 /* Calculate the memory we keep allocated.
  */
@@ -59,7 +72,6 @@ static int twitch_expmem()
 {
   int size = 0;
 
-  Context;
   return size;
 }
 
@@ -82,6 +94,22 @@ void remove_chars(char* str, char c) {
         pw += (*pw != c);
     }
     *pw = '\0';
+}
+
+char *traced_keepnick(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
+                   EGG_CONST char *name2, int flags)
+{
+  const char *value;
+
+  if (flags & TCL_TRACE_DESTROYED) {
+    Tcl_TraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
+  }
+  value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
+  if (value && strcmp(value, "0")) {
+    putlog(LOG_MISC, "*", "Twitch: keep-nick is forced to be 0 when twitch.mod is loaded");
+    Tcl_SetVar2(irp, name1, name2, "0", TCL_GLOBAL_ONLY);
+  }
+  return NULL;
 }
 
 static void cmd_twcmd(struct userrec *u, int idx, char *par) {
@@ -145,24 +173,6 @@ static void cmd_userstate(struct userrec *u, int idx, char *par) {
   dprintf(idx, "Moderator:    %s\n", tchan->userstate.mod ? "yes" : "no");
   dprintf(idx, "End of userstate info.\n");
   return;
-}
-
-/* Takes a space-seperated string (key/value pair), makes a copy of it,
- * (since we're going to muck with it) and returns a pointer to the value
- * associated with the key provided.
- */
-char *get_value(char *dict, char *key) {
-  char *ptr, *ptr2, s[8092];
-  strcpy(s, dict);
-  ptr = strstr(s, key);                  /* Get ptr to key */
-  if (!ptr) {
-    return NULL;
-  }
-  ptr2 = strtok(ptr, " ");                      /* Move to value */
-  if (!ptr2) {
-    return NULL;
-  }
-  return strtok(NULL, " ");              /* Return null-term'd value for key */
 }
 
 static int check_tcl_clearchat(char *chan, char *nick) {
@@ -239,7 +249,7 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   if (msg[0])                       /* Re-attach the cmd to the msg */
-    simple_sprintf(args, "%s %s", cmd, msg);
+    snprintf(args, sizeof args, "%s %s", cmd, msg);
   else
     strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
@@ -254,28 +264,35 @@ static int check_tcl_whisperm(char *from, char *cmd, char *msg) {
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_roomstate(char *chan, char *tags) {
-  int x;
-  char mask[TOTALTAGMAX + 200]; /* tags + channel */
+static void check_tcl_roomstate(char *chan, Tcl_Obj *tags) {
+  char mask[TOTALTAGMAX + 200]; /* channel + key */
 
-  snprintf(mask, sizeof mask, "%s %s", chan, tags);
+  snprintf(mask, sizeof mask, "%s %s", chan, encode_msgtags(tags));
   Tcl_SetVar(interp, "_rmst1", chan, 0);
-  Tcl_SetVar(interp, "_rmst2", tags, 0);
-  x = check_tcl_bind(H_rmst, mask, NULL, " $_rmst1 $_rmst2",
+  Tcl_SetVar(interp, "_rmst2", Tcl_GetString(tags), 0);
+  check_tcl_bind(H_rmst, mask, NULL, " $_rmst1 $_rmst2",
         MATCH_MASK | BIND_STACKABLE);
-  return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_userstate(char *chan, char *tags) {
-  int x;
-  char mask[TOTALTAGMAX + 200]; /* tags + channel */
+static void check_tcl_userstate(char *chan, Tcl_Obj *tags) {
+  char mask[TOTALTAGMAX + 200]; /* channel + key */
 
-  snprintf(mask, sizeof mask, "%s %s", chan, tags);
+  snprintf(mask, sizeof mask, "%s %s", chan, encode_msgtags(tags));
   Tcl_SetVar(interp, "_usst1", chan, 0);
-  Tcl_SetVar(interp, "_usst2", tags, 0);
-  x = check_tcl_bind(H_usst, mask, NULL, " $_usst1 $_usst2",
+  Tcl_SetVar(interp, "_usst2", Tcl_GetString(tags), 0);
+  check_tcl_bind(H_usst, mask, NULL, " $_usst1 $_usst2",
         MATCH_MASK | BIND_STACKABLE);
-  return (x == BIND_EXEC_LOG);
+}
+
+/* TODO: the actual message is missing */
+static void check_tcl_usernotice(char *chan, Tcl_Obj *tags) {
+  char mask[TOTALTAGMAX + 200]; /* channel + msgid */
+
+  snprintf(mask, sizeof mask, "%s %s", chan, encode_msgtags(tags));
+  Tcl_SetVar(interp, "_usrntc1", chan, 0);
+  Tcl_SetVar(interp, "_usrntc2", Tcl_GetString(tags), 0);
+  check_tcl_bind(H_usrntc, mask, NULL, " $_usrntc1 $_usrntc2",
+        MATCH_MASK | BIND_STACKABLE);
 }
 
 /* Right now, we only use this to do some init stuff for a channel we join
@@ -304,32 +321,32 @@ static int gotjoin (char *from, char *msg) {
 
 
 /* We use this to catch lists of mods and vips for a room */
-static int gotnotice (char *from, char *msg, char *tags) {
+static int gotnotice (char *from, char *msg, Tcl_Obj *tags) {
   twitchchan_t *tchan;
-  char *chan, *modptr, *vipptr;
+  char *chan, *modptr, *vipptr, *msgid;
 
   chan = newsplit(&msg);
   fixcolon(msg);
   tchan = findtchan_by_dname(chan);
+
+  GET_MSGTAG_VALUE_STR(tags, "msg-id", msgid, "NOTICE");
   /* Check if this is a list of mods */
-  if (!strcmp(tags, "msg-id room_mods")) {
+  if (!strcmp(msgid, "room_mods")) {
     modptr = msg + 36; /* Remove "The moderators of this channel are: " */
     remove_chars(modptr, ',');
     remove_chars(modptr, '.');
     strlcpy(tchan->mods, modptr, sizeof tchan->mods);
-putlog(LOG_DEBUG, "*", "The mod list is %s", modptr);
-  } else if (!strcmp(tags, "msg-id vips_success")) {
+  } else if (!strcmp(msgid, "vips_success")) {
     vipptr = msg + 30; /* Remove "The VIPs of this channel are: " from str */
     remove_chars(vipptr, ',');
     remove_chars(vipptr, '.');
     strlcpy(tchan->vips, vipptr, sizeof tchan->vips);
-putlog(LOG_DEBUG, "*", "The mod list is %s", vipptr);
   }
   return 0;
 }
 
 
-static int gotwhisper(char *from, char *msg, char *tags) {
+static int gotwhisper(char *from, char *msg, Tcl_Obj *tags) {
   int result = 0;
   char *code;
 
@@ -346,13 +363,19 @@ static int gotwhisper(char *from, char *msg, char *tags) {
   return 0; 
 }
 
-static int gotclearmsg(char *from, char *msg, char *tags) {
-  char nick[NICKLEN], *chan, *msgid;
+static int gotclearmsg(char *from, char *msg, Tcl_Obj *tags) {
+  char nick[NICKLEN], *chan, msgid[TOTALTAGMAX];
+  char *value;
   
   chan = newsplit(&msg);
   fixcolon(msg);
-  strlcpy(nick, get_value(tags, "login"), sizeof nick);
-  msgid = get_value(tags, "target-msg-id");
+
+  GET_MSGTAG_VALUE_STR(tags, "login", value, "CLEARMSG");
+  strlcpy(nick, value, sizeof nick);
+
+  GET_MSGTAG_VALUE_STR(tags, "target-msg-id", value, "CLEARMSG");
+  strlcpy(msgid, value, sizeof msgid);
+
   check_tcl_clearmsg(nick, chan, msgid, msg);
   putlog(LOG_SERV, "*", "* TWITCH: Cleared message %s from %s", msgid, nick);
   return 0;
@@ -361,7 +384,6 @@ static int gotclearmsg(char *from, char *msg, char *tags) {
 static int gotclearchat(char *from, char *msg) {
   char *nick=NULL, *chan=NULL;
 
-putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
@@ -377,7 +399,6 @@ putlog(LOG_DEBUG, "*", "TWITCH: from is %s msg is %s", from, msg);
 static int gothosttarget(char *from, char *msg) {
   char s[30], *nick, *chan, *viewers;
 
-putlog(LOG_DEBUG, "*", "TWITCH: hosttarget from is %s msg is %s", msg);
   chan = newsplit(&msg);
   fixcolon(msg);
   nick = newsplit(&msg);
@@ -395,9 +416,11 @@ putlog(LOG_DEBUG, "*", "TWITCH: hosttarget from is %s msg is %s", msg);
   return 0;
 }
 
-static int gotuserstate(char *from, char *chan, char *tags) {
+static int gotuserstate(char *from, char *chan, Tcl_Obj *tags) {
   twitchchan_t *tchan;
-  char *ptr, s[TOTALTAGMAX];
+  int done = 0, trigger_bind = 0;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *key;
   
   if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
     tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
@@ -405,145 +428,138 @@ static int gotuserstate(char *from, char *chan, char *tags) {
     strlcpy(tchan->dname, chan, sizeof tchan->dname);
     egg_list_append((struct list_type **) &twitchchan, (struct list_type *) tchan);
   }
-  strcpy(s, tags);
-  ptr = strtok(s, " ");
-  while (ptr != NULL) {
-    if (!strcmp(ptr, "badge-info")) {
-      ptr = strtok(NULL, " ");
-      tchan->userstate.badge_info = atol(ptr);
-    } else if (!strcmp(ptr, "badges")) {
-      ptr = strtok(NULL, " ");
-      strlcpy(tchan->userstate.badges, ptr,
-            sizeof tchan->userstate.badges);
-    } else if (!strcmp(ptr, "color")) {
-      ptr = strtok(NULL, " ");
-      strlcpy(tchan->userstate.color, ptr,
-            sizeof tchan->userstate.display_name);
-    } else if (!strcmp(ptr, "display-name")) {
-      ptr = strtok(NULL, " ");
-      strlcpy(tchan->userstate.display_name, ptr,
-            sizeof tchan->userstate.display_name);
-    } else if (!strcmp(ptr, "emote-sets")) {
-      ptr = strtok(NULL, " ");
-      strlcpy(tchan->userstate.emote_sets, ptr,
-            sizeof tchan->userstate.emote_sets);
-    } else if (!strcmp(ptr, "mod")) {
-      ptr = strtok(NULL, " ");
-      tchan->userstate.mod = atol(ptr);
-    } else {  /* This is a key we don't understand, so skip the value */
-      strtok(NULL, " ");
+
+  for (Tcl_DictObjFirst(interp, tags, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    char *k = Tcl_GetString(key), *v = Tcl_GetString(value);
+    long n = atol(v);
+    int changed = 0;
+
+    if (!strcmp(k, "badge-info") && tchan->userstate.badge_info != n) {
+      changed = 1;
+      tchan->userstate.badge_info = n;
+    } else if (!strcmp(k, "badges") && strcmp(tchan->userstate.badges, v)) {
+      changed = 1;
+      strlcpy(tchan->userstate.badges, v, sizeof tchan->userstate.badges);
+    } else if (!strcmp(k, "color") && strcmp(tchan->userstate.color, v)) {
+      changed = 1;
+      strlcpy(tchan->userstate.color, v, sizeof tchan->userstate.color);
+    } else if (!strcmp(k, "display-name") && strcmp(tchan->userstate.display_name, v)) {
+      changed = 1;
+      strlcpy(tchan->userstate.display_name, v, sizeof tchan->userstate.display_name);
+    } else if (!strcmp(k, "emote-sets") && strcmp(tchan->userstate.emote_sets, v)) {
+      changed = 1;
+      strlcpy(tchan->userstate.emote_sets, v, sizeof tchan->userstate.emote_sets);
+    } else if (!strcmp(k, "mod") && tchan->userstate.mod != n) {
+      changed = 1;
+      tchan->userstate.mod = n;
     }
-    ptr = strtok(NULL, " ");  /* Move to the next key */
+    if (changed) {
+      putlog(LOG_SERV, "*", "* TWITCH: Userstate '%s' in room %s changed to %s", k, chan, v);
+      trigger_bind = 1;
+    }
   }
-  check_tcl_userstate(chan, tags);
+  if (trigger_bind) {
+    check_tcl_userstate(chan, tags);
+  }
   return 0;
 }
 
-static int gotroomstate(char *from, char *msg, char *tags) {
-  char *channame, *ptr;
-  char s[TOTALTAGMAX];
-  twitchchan_t *chan;
+static int gotroomstate(char *from, char *chan, Tcl_Obj *tags) {
+  twitchchan_t *tchan;
+  int done = 0;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *key;
+  int trigger_bind = 0;
 
-  channame = newsplit(&msg);
-  /* Find channel or, if it doesn't exist, create it */
-  if (!(chan = findtchan_by_dname(channame))) {
-    chan = nmalloc(sizeof *chan);
-    explicit_bzero(chan, sizeof(twitchchan_t));
-    strlcpy(chan->dname, channame, sizeof chan->dname);
-    egg_list_append((struct list_type **) &twitchchan, (struct list_type *) chan);
+  if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
+    tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
+    explicit_bzero(tchan, sizeof(twitchchan_t));
+    strlcpy(tchan->dname, chan, sizeof tchan->dname);
+    egg_list_append((struct list_type **) &twitchchan, (struct list_type *) tchan);
   }
-  strcpy(s, tags);
-  ptr = strtok(s, " ");
-  /* Go through the tag-msg and update roomstate values present */
-  while (ptr != NULL) {
-    if (!strcmp(ptr, "emote-only")) {
-      ptr = strtok(NULL, " ");
-      if (chan->emote_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'emote-only' changed to %s",
-            ptr);
-        chan->emote_only = atol(ptr);
-      }
-    } else if (!strcmp(ptr, "followers-only")) {
-      ptr = strtok(NULL, " ");
-      if (chan->followers_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'followers-only' changed to %s",
-            ptr);
-        chan->followers_only = atol(ptr);
-      }
-    } else if (!strcmp(ptr, "r9k")) {
-      ptr = strtok(NULL, " ");
-      if (chan->r9k != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'r9k' changed to %s",
-            ptr);
-        chan->r9k = atol(ptr);
-      }
-    } else if (!strcmp(ptr, "subs-only")) {
-      ptr = strtok(NULL, " ");
-      if (chan->subs_only != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'subs-only' changed to %s",
-            ptr);
-        chan->subs_only = atol(ptr);
-      }
-    } else if (!strcmp(ptr, "slow")) {
-      ptr = strtok(NULL, " ");
-      if (chan->slow != atol(ptr)) {
-        putlog(LOG_SERV, "*", "* TWITCH: Roomstate 'slow' changed to %s",
-            ptr);
-        chan->slow = atol(ptr);
-      }
-    } else {  /* This is a key we don't understand, so skip the value */
-      strtok(NULL, " ");
+
+  for (Tcl_DictObjFirst(interp, tags, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    char *k = Tcl_GetString(key), *v = Tcl_GetString(value);
+    long n = atol(v);
+    int changed = 0;
+
+    if (!strcmp(k, "emote-only") && tchan->emote_only != n) {
+      tchan->emote_only = n;
+      changed = 1;
+    } else if (!strcmp(k, "followers-only") && tchan->followers_only != n) {
+      tchan->followers_only = n;
+      changed = 1;
+    } else if (!strcmp(k, "r9k") && tchan->r9k != n) {
+      tchan->r9k = n;
+      changed = 1;
+    } else if (!strcmp(k, "subs-only") && tchan->subs_only != n) {
+      tchan->subs_only = n;
+      changed = 1;
+    } else if (!strcmp(k, "slow") && tchan->slow != n) {
+      tchan->slow = n;
+      changed = 1;
     }
-    ptr = strtok(NULL, " ");            /* Advance to the next key */
+    if (changed) {
+      putlog(LOG_SERV, "*", "* TWITCH: Roomstate '%s' in room %s changed to %s", k, chan, v);
+      trigger_bind = 1;
+    }
   }
-  check_tcl_roomstate(channame, tags);
+  if (trigger_bind) {
+    check_tcl_roomstate(chan, tags);
+  }
   return 0;
 }
 
-static int gotusernotice(char *from, char *msg, char *tags) {
-  char *chan, *login, *msgid;
+static int gotusernotice(char *from, char *msg, Tcl_Obj *tags) {
+  char *chan, login[NICKLEN], msgid[TOTALTAGMAX];
+  char *value, *value2;
 
   chan = newsplit(&msg);
   fixcolon(msg);
-  login = get_value(tags, "login");
-  msgid = get_value(tags, "msg-id");
+
+  GET_MSGTAG_VALUE_STR(tags, "login", value, "USERNOTICE");
+  strlcpy(login, value, sizeof login);
+
+  GET_MSGTAG_VALUE_STR(tags, "msg-id", value, "USERNOTICE");
+  strlcpy(msgid, value, sizeof msgid);
+
   if (!strcmp(msgid, "sub")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s subscribed to the %s plan", login,
-        get_value(tags, "msg-param-sub-plan"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-sub-plan", value, "USERNOTICE:SUB");
+    putlog(LOG_SERV, "*", "* TWITCH: %s subscribed to the %s plan", login, value);
   } else if (!strcmp(msgid, "resub")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s re-subscribed to the %s plan", login,
-        get_value(tags, "msg-param-sub-plan")); 
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-sub-plan", value, "USERNOTICE:RESUB");
+    putlog(LOG_SERV, "*", "* TWITCH: %s re-subscribed to the %s plan", login, value);
   } else if (!strcmp(msgid, "subgift")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s gifted %s a subscription to the %s "
-        "plan", login, get_value(tags, "msg-param-recipient-user-name"),
-        get_value(tags, "msg-param-sub-plan"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:SUBGIFT");
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-sub-plan", value2, "USERNOTICE:SUBGIFT");
+    putlog(LOG_SERV, "*", "* TWITCH: %s gifted %s a subscription to the %s plan", login, value, value2);
   } else if (!strcmp(msgid, "anonsubgift")) {
-    putlog(LOG_SERV, "*", "* TWITCH: Someone gifted %s a subscription to the "
-        "%s plan", get_value(tags, "msg-param-recipient-user-name"),
-        get_value(tags, "msg-param-sub-plan"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:ANONSUBGIFT");
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-sub-plan", value2, "USERNOTICE:ANONSUBGIFT");
+    putlog(LOG_SERV, "*", "* TWITCH: Someone gifted %s a subscription to the %s plan", value, value2);
   } else if (!strcmp(msgid, "submysterygift")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift %s", login,
-        get_value(tags, "msg-param-recipient-user-name"));
+    putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift", login);
   } else if (!strcmp(msgid, "giftpaidupgrade")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s",
-        login, get_value(tags, "msg-param-recipient-user-name"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:GIFTPAIDUPGRADE");
+    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s", login, value);
   } else if (!strcmp(msgid, "rewardgift")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a reward gift", login);
   } else if (!strcmp(msgid, "anongiftpaidupgrade")) {
-    putlog(LOG_SERV, "*", "* TWITCH: Someone anonomously gifted a subscription "
-        "upgrade to %s", get_value(tags, "msg-param-recipient-user-name"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:ANONGIFTPAIDUPGRADE");
+    putlog(LOG_SERV, "*", "* TWITCH: Someone anonomously gifted a subscription upgrade to %s", value);
   } else if (!strcmp(msgid, "raid")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s raided %s with %s users", login, chan,
-        get_value(tags, "msg-param-viewerCount"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-viewerCount", value, "USERNOTICE:RAID");
+    putlog(LOG_SERV, "*", "* TWITCH: %s raided %s with %s users", login, chan, value);
   } else if (!strcmp(msgid, "unraid")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s ended their raid on %s", login, chan);
   } else if (!strcmp(msgid, "ritual")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s initiated a %s ritual", login,
-        get_value(tags, "msg-param-ritual-name"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-ritual-name", value, "USERNOTICE:RITUAL");
+    putlog(LOG_SERV, "*", "* TWITCH: %s initiated a %s ritual", login, value);
   } else if (!strcmp(msgid, "bitsbadgetier")) {
-    putlog(LOG_SERV, "*", "* TWITCH: %s earned a %s bits badge", login,
-        get_value(tags, "msg-param-threshold"));
+    GET_MSGTAG_VALUE_STR(tags, "msg-param-threshold", value, "USERNOTICE:BITSBADGETIER");
+    putlog(LOG_SERV, "*", "* TWITCH: %s earned a %s bits badge", login, value);
   }
+  check_tcl_usernotice(chan, tags);
   return 0;
 }
 
@@ -625,12 +641,12 @@ static int tcl_ismod STDVAR {
     tchan = twitchchan;
   }
   /* If there's no mods, no reason to even check, eh? */
-  if (!tchan->mods) {
+  if (!strlen(tchan->mods)) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strstr(argv[1], tchan->mods)) {
+    if (strstr(tchan->mods, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -661,12 +677,12 @@ static int tcl_isvip STDVAR {
     tchan = twitchchan;
   }
   /* If there's no VIPs, no reason to even check, eh? */
-  if (tchan->vips) {
+  if (!strlen(tchan->vips)) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
   while (tchan && (thechan == NULL || thechan == tchan)) {
-    if (strstr(argv[1], tchan->vips)) {
+    if (strstr(tchan->vips, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -719,7 +735,8 @@ static int tcl_twcmd STDVAR {
     Tcl_AppendResult(irp, "Invalid channel", NULL);
     return TCL_ERROR;
   }
-  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[1], argv[2], argv[3] ? argv[3] : "");
+  dprintf(DP_SERVER, "PRIVMSG %s :/%s %s", argv[1], argv[2],
+      argc >= 4 && argv[3] ? argv[3] : "");
   return TCL_OK;
 }
 
@@ -745,18 +762,6 @@ static int twitch_3char STDVAR
   F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
-
-static int twitch_cmsg STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(5, 5, " nick chan msgid msg");
-
-  CHECKVALIDITY(twitch_cmsg);
-  F(argv[1], argv[2], argv[3], argv[4]);
-  return TCL_OK;
-}
-
 
 /* A report on the module status.
  *
@@ -793,10 +798,11 @@ static tcl_cmds mytcl[] = {
   {NULL,                   NULL}
 };
 
+/*
 static tcl_ints my_tcl_ints[] = {
-  {"keep-nick",         &keepnick,        STR_PROTECT},
   {NULL,                NULL,                       0}
 };
+*/
 
 static tcl_strings my_tcl_strings[] = {
   {"cap-request",   cap_request,    55,     STR_PROTECT},
@@ -823,12 +829,12 @@ static cmd_t twitch_rawt[] = {
 
 static char *twitch_close()
 {
-  Context;
   rem_builtins(H_dcc, mydcc);
   rem_builtins(H_raw, twitch_raw);
   rem_builtins(H_rawt, twitch_rawt);
   rem_tcl_commands(mytcl);
-  rem_tcl_ints(my_tcl_ints);
+  // rem_tcl_ints(my_tcl_ints);
+  rem_tcl_strings(my_tcl_strings);
   del_bind_table(H_ccht);
   del_bind_table(H_cmsg);
   del_bind_table(H_htgt);
@@ -836,6 +842,7 @@ static char *twitch_close()
   del_bind_table(H_wspm);
   del_bind_table(H_rmst);
   del_bind_table(H_usst);
+  del_bind_table(H_usrntc);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -853,18 +860,19 @@ static Function twitch_table[] = {
   (Function) & H_wspr,
   (Function) & H_wspm,
   (Function) & H_rmst,
-  (Function) & H_usst
+  (Function) & H_usst,
+  (Function) & H_usrntc
 };
 
 char *twitch_start(Function *global_funcs)
 {
+  const char *value;
+
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
   global = global_funcs;
-  keepnick = 0;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, twitch_table, 0, 1);
 
@@ -893,7 +901,7 @@ char *twitch_start(Function *global_funcs)
  */
   if (net_type_int != NETT_TWITCH) {
     fatal("ERROR: ATTEMPTED TO LOAD TWITCH MODULE WITH INCORRECT NET-TYPE SET\n"
-          "  Please check net-type in config and try again", 0);
+          "  Please check that net-type is set to twitch in config before loadmodule twitch and try again", 0);
   }
 
   H_ccht = add_bind_table("ccht", HT_STACKABLE, twitch_2char);
@@ -903,18 +911,24 @@ char *twitch_start(Function *global_funcs)
   H_wspm = add_bind_table("wspm", HT_STACKABLE, twitch_3char);
   H_rmst = add_bind_table("rmst", HT_STACKABLE, twitch_3char);
   H_usst = add_bind_table("usst", HT_STACKABLE, twitch_3char);
+  H_usrntc = add_bind_table("usrntc", HT_STACKABLE, twitch_3char);
 
-/* Override config setting with these values; they are required for Twitch */
+  /* Override config setting with these values; they are required for Twitch */
   Tcl_SetVar(interp, "cap-request",
         "twitch.tv/commands twitch.tv/membership twitch.tv/tags", 0);
-  Tcl_SetVar(interp, "keep-nick", "0", 0);  /* keep-nick causes ISONs to be
-                                             * sent, which are not supported */
+  /* keep-nick causes ISONs to be sent, which are not supported */
+  if ((value = Tcl_GetVar2(interp, "keep-nick", NULL, TCL_GLOBAL_ONLY)) && strcmp(value, "0")) {
+    putlog(LOG_MISC, "*", "Twitch: keep-nick is forced to be 0 when twitch.mod is loaded");
+  }
+  Tcl_SetVar2(interp, "keep-nick", NULL, "0", TCL_GLOBAL_ONLY);
+  Tcl_TraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
+
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_builtins(H_raw, twitch_raw);
   add_builtins(H_rawt, twitch_rawt);
   add_tcl_commands(mytcl);
-  add_tcl_ints(my_tcl_ints);
+  // add_tcl_ints(my_tcl_ints);
   add_tcl_strings(my_tcl_strings);
   return NULL;
 }

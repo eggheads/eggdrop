@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2020 Eggheads Development Team
+dnl Copyright (C) 1999 - 2022 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@ builtin(include,m4/tcl.m4)
 dnl Load gnu autoconf archive macros
 builtin(include,m4/ax_create_stdint_h.m4)
 builtin(include,m4/ax_lib_socket_nsl.m4)
+builtin(include,m4/ax_pthread.m4)
 builtin(include,m4/ax_type_socklen_t.m4)
 
 
@@ -72,7 +73,7 @@ AC_DEFUN([EGG_MSG_SUMMARY],
     fi
   fi
   AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
-  AC_MSG_RESULT([Threaded DNS core (beta): $tdns_enabled])
+  AC_MSG_RESULT([Threaded DNS core: $tdns_enabled])
   AC_MSG_RESULT
 ])
 
@@ -851,32 +852,9 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AX_LIB_SOCKET_NSL
+    AX_PTHREAD(LDFLAGS="$LDFLAGS $PTHREAD_LIBS")
     AC_SEARCH_LIBS([dlopen], [dl])
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
-
-    # This is needed for Tcl libraries compiled with thread support
-    AC_CHECK_LIB(pthread, pthread_mutex_init, [
-      ac_cv_lib_pthread_pthread_mutex_init="yes"
-      ac_cv_lib_pthread="-lpthread"
-    ], [
-      AC_CHECK_LIB(pthread, __pthread_mutex_init, [
-        ac_cv_lib_pthread_pthread_mutex_init="yes"
-        ac_cv_lib_pthread="-lpthread"
-      ], [
-        AC_CHECK_LIB(pthreads, pthread_mutex_init, [
-          ac_cv_lib_pthread_pthread_mutex_init="yes"
-          ac_cv_lib_pthread="-lpthreads"
-        ], [
-          AC_CHECK_FUNC(pthread_mutex_init, [
-            ac_cv_lib_pthread_pthread_mutex_init="yes"
-            ac_cv_lib_pthread=""
-          ], [
-            ac_cv_lib_pthread_pthread_mutex_init="no"
-          ]
-        )]
-      )]
-    )])
-
     if test "$HPUX" = yes; then
       AC_CHECK_LIB(dld, shl_load)
     fi
@@ -1054,12 +1032,6 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     # Also, use the Tcl linker idea to be compatible with their ldflags
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
-      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
-        TCL_PTHREAD_LDFLAG="-pthread"
-      else
-        TCL_PTHREAD_LDFLAG=""
-      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
@@ -1067,27 +1039,18 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
       TCL_LIBS="${EGG_MATH_LIB}"
     fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     if test -r ${TCLLIB}/tclConfig.sh; then
       . ${TCLLIB}/tclConfig.sh
-      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
-        TCL_PTHREAD_LDFLAG="-pthread"
-      else
-        TCL_PTHREAD_LDFLAG=""
-      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
       TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-      TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+      TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
     else
       TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
-      if test "x$ac_cv_lib_pthread" != x; then
-        TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
-      fi
       TCL_INCLUDE_SPEC=""
       TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
       TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
@@ -1658,6 +1621,10 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
+      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
+        havessllib="no"
+        break
+      ]])
     fi
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
@@ -1714,18 +1681,18 @@ dnl EGG_TDNS_ENABLE
 dnl
 AC_DEFUN([EGG_TDNS_ENABLE],
 [
-  AC_MSG_CHECKING(for threaded dns core (beta))
-  AC_ARG_ENABLE([tdns], [  --enable-tdns           enable threaded DNS core (beta)],
-    [
-      AC_MSG_RESULT(yes)
+  AC_ARG_ENABLE([tdns],
+    [AS_HELP_STRING([--disable-tdns],
+      [disable threaded DNS core])],
+    [tdns_enabled="$enableval"],
+    [tdns_enabled="yes"])
+  if test "x$ax_pthread_ok" = "xno"; then
+    tdns_enabled="no (pthread.h not found)"
+  else
+    if test "$tdns_enabled" = "yes"; then
       AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
-      LDFLAGS="${LDFLAGS} -lpthread"
-      tdns_enabled="yes"
-    ],
-    [
-      AC_MSG_RESULT(no)
-      tdns_enabled="no"
-    ])
+    fi
+  fi
 ])
 
 

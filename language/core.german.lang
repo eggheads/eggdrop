@@ -438,3 +438,4 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe32,Telnet-Verbindung von %s zurueckgewiesen (versuchte, meinen botnetnick zu benutzen)
 0xe33,Telnet-Verbindung von %s waerend Kontrolle auf Duplikat verloren
 0xe34,Zeitueberschreitung bei der Ident-Verbindung
+0xe35,Bitte entferne den #Kommentar im listen-Befehl und versuche es erneut

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -332,7 +332,10 @@ typedef intptr_t (*Function) ();
 typedef int (*IntFunc) ();
 
 #ifdef IPV6
-#include "compat/in6.h"
+  #include "compat/in6.h"
+  #define EGG_INET_ADDRSTRLEN INET6_ADDRSTRLEN
+#else
+  #define EGG_INET_ADDRSTRLEN INET_ADDRSTRLEN
 #endif
 
 #include <sys/socket.h>
@@ -376,6 +379,7 @@ struct userrec;
 
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
+                                /* ^-- Disagreed with, but changing back to int would break ABI */
   IP addr;                      /* IP address in host network byte order. */
   sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */
   unsigned int port;
@@ -538,6 +542,7 @@ struct dupwait_info {
 #define STAT_BOTONLY 0x00020    /* telnet on bots-only connect          */
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
+#define STAT_SERV    0x00100    /* this is a server connection          */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -782,11 +787,13 @@ enum {
 #endif
 
 #ifdef EGG_TDNS
+#include <pthread.h>
 #define DTN_TYPE_HOSTBYIP 0
 #define DTN_TYPE_IPBYHOST 1
 
 /* linked list instead of array because of multi threading */
 struct dns_thread_node {
+  pthread_mutex_t mutex;
   int fildes[2];
   int type;
   sockname_t addr;

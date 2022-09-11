@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@ static int check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
 static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
                                     char*);
+static int check_tcl_monitor(char *, int);
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
@@ -69,6 +70,7 @@ static void refresh_who_chan(char *);
 
 void reset_chan_info(struct chanset_t *, int, int);
 static void recheck_channel(struct chanset_t *, int);
+#undef set_key /* because it could collide with openssl */
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);
 static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
@@ -83,6 +85,12 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static int gotmode(char *, char *);
+
+typedef struct monitor_list {
+  char nick[NICKLEN];         /* List of nicks to monitor,                */
+  int online;                 /* Flag if nickname is currently online     */
+  struct monitor_list *next;  /* Linked list y'all                        */
+} monitor_list_t;
 
 #define newban(chan, mask, who)         newmask((chan)->channel.ban, mask, who)
 #define newexempt(chan, mask, who)      newmask((chan)->channel.exempt, mask, \
@@ -122,6 +130,7 @@ static int gotmode(char *, char *);
 #define twitch (*(int *)(irc_funcs[27]))
 /* 28 - 31 */
 #define H_ircaway (*(p_tcl_bind_list *)(irc_funcs[28])
+#define H_monitor (*(p_tcl_bind_list *)(irc_funcs[29])
 
 #endif /* MAKING_IRC */
 
