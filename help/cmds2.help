@@ -210,8 +210,8 @@ See also: whom
 See also: rehash, reload, save
 %{help=save}%{+m|m}
 ###  %bsave%b
-   This makes the bot write its entire userfile to disk. This is useful if you
-   think the bot is about to crash or something, since the user file is only
+   This makes the bot write its entire userfile and channel file to disk. This
+   is useful if you want to force a save of these files since they are only
    written to disk about once an hour.
 
 See also: reload, rehash, backup

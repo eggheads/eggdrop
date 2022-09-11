@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,7 +97,7 @@ static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
-static int tls_vfyserver;       /* Certificate validation mode for servrs  */
+static int tls_vfyserver;       /* Certificate validation mode for servers */
 #endif
 
 #ifndef TLS
@@ -1301,14 +1301,24 @@ static int server_raw STDVAR
   return TCL_OK;
 }
 
-static int server_tag STDVAR
+static int server_rawt STDVAR
 {
+  int unused;
+  Tcl_Obj *tagdict;
   Function F = (Function) cd;
 
-  BADARGS(5, 5, " from code args tag");
+  BADARGS(5, 5, " from code args tagdict");
 
-  CHECKVALIDITY(server_tag);
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], argv[4])), NULL);
+  CHECKVALIDITY(server_rawt);
+  tagdict = Tcl_NewStringObj(argv[4], -1);
+  if (Tcl_DictObjSize(irp, tagdict, &unused) != TCL_OK) {
+    /* check early, Tcl sets error string first */
+    Tcl_AppendResult(irp, " in call to ", argv[0], NULL);
+    return TCL_ERROR;
+  }
+  Tcl_IncrRefCount(tagdict);
+  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3], tagdict)), NULL);
+  Tcl_DecrRefCount(tagdict);
   return TCL_OK;
 }
 
@@ -1857,7 +1867,7 @@ static void dcc_chat_hostresolved(int i)
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
-    egg_snprintf(buf, sizeof buf, "TLS negotiation error");
+    strlcpy(buf, "TLS negotiation error", sizeof buf);
 #endif
   if (buf[0]) {
     if (!quiet_reject)
@@ -1916,7 +1926,7 @@ static void server_5minutely()
 
       disconnect_server(servidx);
       lostdcc(servidx);
-      putlog(LOG_SERV, "*", IRC_SERVERSTONED);
+      putlog(LOG_SERV, "*", "%s", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* Check for server being stoned. */
       dprintf(DP_MODE, "PING :%li\n", now);
@@ -2021,7 +2031,8 @@ static int server_expmem()
 
 static void server_report(int idx, int details)
 {
-  char s1[64], s[128], buf[128];
+  char s1[64], s[128], capbuf[1024], buf[1024], *bufptr, *endptr;
+  size_t written = 0;
   struct capability *current;
   int servidx;
 
@@ -2035,7 +2046,7 @@ static void server_report(int idx, int details)
     egg_snprintf(s, sizeof s, "(connected %s)", s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
-        egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+        strlcpy(s1, " (bad pong replies)", sizeof s1);
       else
         egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
       strcat(s, s1);
@@ -2066,18 +2077,30 @@ static void server_report(int idx, int details)
   if (hq.tot)
     dprintf(idx, "    %s %d%% (%d msgs)\n", IRC_HELPQUEUE,
             (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
-  current = cap;
-  buf[0] = 0;
-  while (current != NULL) {
+
+  for (current = cap; current; current = current->next) {
     if (current->enabled) {
-      strncat(buf, current->name, (sizeof buf - strlen(buf) - 1));
-      strncat(buf, " ", (sizeof buf - strlen(buf) - 1));
+      written += snprintf(capbuf + written, sizeof capbuf - written, "%s ", current->name);
     }
-    current = current->next;
   }
-  dprintf(idx, "    Active CAP negotiations: %s\n", (strlen(buf) > 0) ?
-            buf : "None" );
-  if (details) {
+  if (written) {
+    strlcpy(buf, capbuf, sizeof buf);
+    bufptr = buf;
+    endptr = buf + 80;
+    while (strlen(buf) > 80) {
+      while (endptr[0] != ' ') {
+        endptr--;
+      }
+      endptr[0] = 0;
+      dprintf(idx, "    Active CAP negotiations: %s\n", bufptr);
+      memmove(buf, endptr + 1, strlen(endptr + 1) + 1);
+    }
+    dprintf(idx, "    Active CAP negotiations: %s\n", buf);
+  } else {
+    dprintf(idx, "    Active CAP negotiations: (none)\n");
+  }
+
+if (details) {
     int size = server_expmem();
 
     if (initserver[0])
@@ -2231,7 +2254,10 @@ static Function server_table[] = {
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
   /* 48 - 52 */
-  (Function) & isupport_parseint/*                                      */
+  (Function) & isupport_parseint,/*                                     */
+  (Function) check_tcl_account,
+  (Function) & find_capability,
+  (Function) encode_msgtags
 };
 
 char *server_start(Function *global_funcs)
@@ -2334,7 +2360,7 @@ char *server_start(Function *global_funcs)
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_account = add_bind_table("account", HT_STACKABLE, server_account);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
-  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_tag);
+  H_rawt = add_bind_table("rawt", HT_STACKABLE, server_rawt);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,7 +66,7 @@ void botnet_send_chat(int, char *, char *);
 void botnet_send_act(int, char *, char *, int, char *);
 void botnet_send_ping(int);
 void botnet_send_pong(int);
-void botnet_send_priv EGG_VARARGS(int, arg1);
+void botnet_send_priv (int idx, char *from, char *to, char *tobot, const char *format, ...) ATTRIBUTE_FORMAT(printf,5,6);
 void botnet_send_who(int, char *, char *, int);
 void botnet_send_infoq(int, char *);
 void botnet_send_unlinked(int, char *, char *);
@@ -89,7 +89,7 @@ void botnet_send_join_idx(int, int);
 void botnet_send_join_party(int, int, int, int);
 void botnet_send_part_idx(int, char *);
 void botnet_send_part_party(int, int, char *, int);
-void botnet_send_bye();
+void botnet_send_bye(void);
 void botnet_send_nkch_part(int, int, char *);
 void botnet_send_nkch(int, char *);
 int bots_in_subtree(tand_t *);

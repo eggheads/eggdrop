@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -112,7 +112,8 @@ static struct dcc_table DCC_FILES = {
   disp_dcc_files,
   expmem_dcc_files,
   kill_dcc_files,
-  out_dcc_files
+  out_dcc_files,
+  NULL
 };
 
 static struct user_entry_type USERENTRY_DCCDIR = {
@@ -289,8 +290,8 @@ static void tell_file_stats(int idx, char *hand)
   if (!(fs = get_user(&USERENTRY_FSTAT, u))) {
     dprintf(idx, "No file statistics for %s.\n", hand);
   } else {
-    dprintf(idx, "  uploads: %4u / %6luk\n", fs->uploads, fs->upload_ks);
-    dprintf(idx, "downloads: %4u / %6luk\n", fs->dnloads, fs->dnload_ks);
+    dprintf(idx, "  uploads: %4u / %6uk\n", fs->uploads, fs->upload_ks);
+    dprintf(idx, "downloads: %4u / %6uk\n", fs->dnloads, fs->dnload_ks);
     if (fs->uploads)
       fr = ((float) fs->dnloads / (float) fs->uploads);
     if (fs->upload_ks)
@@ -584,10 +585,10 @@ static tcl_strings mystrings[] = {
 };
 
 static tcl_ints myints[] = {
-  {"max-filesize",    &dcc_maxsize},
-  {"max-file-users",    &dcc_users},
-  {"upload-to-pwd",  &upload_to_cd},
-  {NULL,                      NULL}
+  {"max-filesize",    &dcc_maxsize, 0},
+  {"max-file-users",    &dcc_users, 0},
+  {"upload-to-pwd",  &upload_to_cd, 0},
+  {NULL,                      NULL, 0}
 };
 
 static struct dcc_table DCC_FILES_PASS = {
@@ -600,7 +601,8 @@ static struct dcc_table DCC_FILES_PASS = {
   disp_dcc_files_pass,
   expmem_dcc_files,
   kill_dcc_files,
-  out_dcc_files
+  out_dcc_files,
+  NULL
 };
 
 
@@ -947,11 +949,11 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  putlog(LOG_MISC, "*", "Unloading filesystem; killing all filesystem "
+  putlog(LOG_MISC, "*", "%s", "Unloading filesystem; killing all filesystem "
          "connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
-      dprintf(i, DCC_BOOTED1);
+      dprintf(i, "%s", DCC_BOOTED1);
       dprintf(i, "You have been booted from the filesystem, module "
               "unloaded.\n");
       killsock(dcc[i].sock);
