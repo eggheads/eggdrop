@@ -518,7 +518,8 @@ void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
   int i, tsl = 0;
-  char s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34], *f, c;
+  char s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34],
+       stamp2[sizeof stamp], *f, c;
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -534,8 +535,10 @@ void putlog (int type, char *chname, const char *format, ...)
 
   /* Create the timestamp */
   if (shtime) {
-    strftime(stamp, sizeof(stamp) - 2, log_ts, t);
-    if ((f = strstr(stamp, "%f"))) { /* handle millisecond specifier %f */
+    strlcpy(stamp, log_ts, sizeof stamp);
+
+    /* handle millisecond specifier %f */
+    if ((f = strstr(stamp, "%f")) && ((f - 1) != (strstr(stamp, "%%f")))) {
       memmove(f + 3, f + 2, strlen(f + 2) + 1);
       c = f[3]; /* save the char the following snprintf() will overwrite with
                  * null terminator
@@ -543,13 +546,14 @@ void putlog (int type, char *chname, const char *format, ...)
       gettimeofday(&tv, NULL);
       snprintf(f, sizeof stamp - (f - stamp), "%03i", (int) tv.tv_usec / 1000);
       f[3] = c;
-
     }
-    strcat(stamp, " ");
-    tsl = strlen(stamp);
+
+    strftime(stamp2, sizeof(stamp2) - 2, stamp, t);
+    strcat(stamp2, " ");
+    tsl = strlen(stamp2);
   }
   else
-    *stamp = '\0';
+    *stamp2 = '\0';
 
   /* Format log entry at offset 'tsl,' then i can prepend the timestamp */
   out = s + tsl;
@@ -581,7 +585,7 @@ void putlog (int type, char *chname, const char *format, ...)
   }
   /* Place the timestamp in the string to be printed */
   if (out[0] && shtime) {
-    memcpy(s, stamp, tsl);
+    memcpy(s, stamp2, tsl);
     out = s;
   }
   strcat(out, "\n");
@@ -614,7 +618,7 @@ void putlog (int type, char *chname, const char *format, ...)
                * then reset repeats. We want the current time here,
                * so put that in the file first.
                */
-              fprintf(logs[i].f, "%s", stamp);
+              fprintf(logs[i].f, "%s", stamp2);
               fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
               logs[i].repeats = 0;
               /* No need to reset logs[i].szlast here
