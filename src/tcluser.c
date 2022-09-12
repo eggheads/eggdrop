@@ -622,11 +622,11 @@ static int tcl_ignorelist STDVAR
     list[1] = i->msg;
 
     tv = i->expire;
-    snprintf(expire, sizeof expire, "%lu", tv);
+    snprintf(expire, sizeof expire, "%ld", tv);
     list[2] = expire;
 
     tv = i->added;
-    snprintf(added, sizeof added, "%lu", tv);
+    snprintf(added, sizeof added, "%ld", tv);
     list[3] = added;
 
     list[4] = i->user;
