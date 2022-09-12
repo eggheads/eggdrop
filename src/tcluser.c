@@ -610,7 +610,7 @@ static int tcl_killignore STDVAR
 
 static int tcl_ignorelist STDVAR
 {
-  char expire[11], added[11], *p;
+  char expire[21], added[21], *p;
   long tv;
   EGG_CONST char *list[5];
   struct igrec *i;
@@ -622,11 +622,11 @@ static int tcl_ignorelist STDVAR
     list[1] = i->msg;
 
     tv = i->expire;
-    egg_snprintf(expire, sizeof expire, "%lu", tv);
+    snprintf(expire, sizeof expire, "%lu", tv);
     list[2] = expire;
 
     tv = i->added;
-    egg_snprintf(added, sizeof added, "%lu", tv);
+    snprintf(added, sizeof added, "%lu", tv);
     list[3] = added;
 
     list[4] = i->user;
