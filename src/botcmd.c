@@ -837,8 +837,8 @@ static void bot_traced(int idx, char *par)
               if (*c == ':')
                 j++;
           }
-          dprintf(i, "%s -> %s (%lu secs, %d hop%s)\n", BOT_TRACERESULT, p,
-                  now - t, j, (j != 1) ? "s" : "");
+          dprintf(i, "%s -> %s (%" PRId64 " secs, %d hop%s)\n", BOT_TRACERESULT,
+                  p, (int64_t) (now - t), j, (j != 1) ? "s" : "");
         } else
           dprintf(i, "%s -> %s\n", BOT_TRACERESULT, p);
       }
