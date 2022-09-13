@@ -1069,7 +1069,12 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     }
 #endif
   }
-  freeaddrinfo(ipaddr);
+  else
+    debug1("tcldcc: (): setlisten(): getaddrinfo(): error = %s",
+           gai_strerror(ret));
+  if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFC
+               * 3493 */
+    freeaddrinfo(ipaddr);
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {

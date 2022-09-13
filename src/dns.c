@@ -503,6 +503,7 @@ void *thread_dns_hostbyip(void *arg)
   i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
                   dtn->host, sizeof dtn->host, NULL, 0, 0);
   if (i) {
+    debug1("dns: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
 #ifdef IPV6
     if (addr->family == AF_INET6)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
@@ -549,8 +550,14 @@ void *thread_dns_ipbyhost(void *arg)
       }
     }
 #endif
-    freeaddrinfo(res0);
+    if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFC
+               * 3493 */
+      freeaddrinfo(res0);
   }
+  else if (i == EAI_NONAME)
+    debug0("dns: thread_dns_ipbyhost(): getaddrinfo(): hostname not known");
+  else
+    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(i));
   pthread_mutex_lock(&dtn->mutex);
   dtn->ok = !i;
   close(dtn->fildes[1]);
@@ -661,7 +668,7 @@ void core_dns_hostbyip(sockname_t *addr)
                       sizeof (struct sockaddr_in), host, sizeof host, NULL, 0, 0);
       alarm(0);
       if (i)
-        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+        debug1("dns: core_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
     }
     if (i)
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
@@ -673,7 +680,7 @@ void core_dns_hostbyip(sockname_t *addr)
                       sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0, 0);
       alarm(0);
       if (i)
-        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+        debug1("dns: core_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
     }
     if (i)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, host, sizeof host);
