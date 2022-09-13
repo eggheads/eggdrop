@@ -550,8 +550,8 @@ void *thread_dns_ipbyhost(void *arg)
       }
     }
 #endif
-    if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFC
-               * 3493 */
+    if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+               * 2553 and 3493. Avoid to be compatible with all OSes. */
       freeaddrinfo(res0);
   }
   else if (i == EAI_NONAME)
