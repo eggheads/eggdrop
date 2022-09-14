@@ -1070,7 +1070,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
 #endif
   }
   else
-    debug1("tcldcc: (): setlisten(): getaddrinfo(): error = %s",
+    putlog(LOG_MISC, "*", "tcldcc: (): setlisten(): getaddrinfo(): error = %s",
            gai_strerror(ret));
   if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
                * 2553 and 3493. Avoid to be compatible with all OSes. */
