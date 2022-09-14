@@ -521,7 +521,7 @@ void *thread_dns_hostbyip(void *arg)
 void *thread_dns_ipbyhost(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
-  struct addrinfo *res0, *res;
+  struct addrinfo *res0 = NULL, *res;
   int i;
   sockname_t *addr = &dtn->addr;
 
