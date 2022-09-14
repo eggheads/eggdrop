@@ -1069,6 +1069,9 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     }
 #endif
   }
+  else if (ret == EAI_NONAME)
+    putlog(LOG_MISC, "*",
+           "tcldcc: setlisten(): getaddrinfo(): hostname not known");
   else
     putlog(LOG_MISC, "*", "tcldcc: setlisten(): getaddrinfo(): error = %s",
            gai_strerror(ret));
