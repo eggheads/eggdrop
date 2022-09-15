@@ -1068,6 +1068,9 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       ipv4 = 0;
     }
 #endif
+    if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+                 * 2553 and 3493. Avoid to be compatible with all OSes. */
+      freeaddrinfo(ipaddr);
   }
   else if (ret == EAI_NONAME)
     putlog(LOG_MISC, "*",
@@ -1075,9 +1078,6 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   else
     putlog(LOG_MISC, "*", "tcldcc: setlisten(): getaddrinfo(): error = %s",
            gai_strerror(ret));
-  if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
-               * 2553 and 3493. Avoid to be compatible with all OSes. */
-    freeaddrinfo(ipaddr);
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {
