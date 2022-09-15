@@ -156,8 +156,13 @@ static int send_uptime(void)
   hints.ai_socktype = SOCK_DGRAM;
   error = getaddrinfo(UPTIME_HOST, UPTIME_PORT, &hints, &res0);
   if (error) {
-    putlog(LOG_DEBUG, "*", "send_uptime(): getaddrinfo(): %s",
-           gai_strerror(error));
+    if (error == EAI_NONAME)
+      putlog(LOG_MISC, "*",
+             "send_uptime(): getaddrinfo(): hostname:port '%s:%s' not known",
+             UPTIME_HOST, UPTIME_PORT);
+    else
+      putlog(LOG_MISC, "*", "send_uptime(): getaddrinfo(): error = %s",
+             gai_strerror(error));
     return -2;
   }
 
