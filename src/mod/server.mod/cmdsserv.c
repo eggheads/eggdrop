@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +86,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 static void cmd_dump(struct userrec *u, int idx, char *par)
 {
   if (!(isowner(dcc[idx].nick)) && (must_be_owner == 2)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   if (!par[0]) {

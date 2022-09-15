@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2021 Eggheads Development Team
+ * Copyright (C) 2000 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -381,9 +381,9 @@ static uff_table_t compress_uff_table[] = {
  */
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-compressed", (int *)&share_compressed},
-  {"compress-level",     (int *)&compress_level},
-  {NULL,                                   NULL}
+  {"share-compressed", (int *)&share_compressed, 0},
+  {"compress-level",     (int *)&compress_level, 0},
+  {NULL,                                   NULL, 0}
 };
 
 static int compress_expmem(void)

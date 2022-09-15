@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,14 +31,17 @@
 #include "../channels.mod/channels.h"
 #include "server.h"
 
+char *encode_msgtags(Tcl_Obj *msgtagdict);
+static char *encode_msgtag(char *key, char *value);
 static int del_capabilities(char *);
 static int del_capability(char *name);
 static time_t last_ctcp = (time_t) 0L;
 static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
-int ncapesc, account_notify = 0, extended_join = 0;
-Tcl_Obj **ncapesv, *ncapeslist;
+struct capability *find_capability(char *capname);
+int account_notify, extended_join;
+Tcl_Obj *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -133,7 +136,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   char args[1024];
 
   if (arg[0])
-    simple_sprintf(args, "%s %s", cmd, arg);
+    snprintf(args, sizeof args, "%s %s", cmd, arg);
   else
     strlcpy(args, cmd, sizeof args);
   get_user_flagrec(u, &fr, NULL);
@@ -199,29 +202,17 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   return (x == BIND_EXEC_LOG);
 }
 
-/* tagstr is a space-separated list of key/value pairs */
-static int check_tcl_rawt(char *from, char *code, char *msg, char *tagstr)
+/* tagstr is the string value of a Tcl dictionary (flat key/value list) */
+static int check_tcl_rawt(char *from, char *code, char *msg, char *tagdict)
 {
   int x;
-  char * ptr;
-  Tcl_DString tagdict;
 
-  Tcl_DStringInit(&tagdict);
   Tcl_SetVar(interp, "_rawt1", from, 0);
   Tcl_SetVar(interp, "_rawt2", code, 0);
   Tcl_SetVar(interp, "_rawt3", msg, 0);
-  ptr = strtok(tagstr, " ");
-  Tcl_DStringAppendElement(&tagdict, ptr);
-  while (ptr != NULL) {
-    ptr = strtok(NULL, " ");
-    if (ptr) {
-      Tcl_DStringAppendElement(&tagdict, ptr);
-    }
-  }
-  Tcl_SetVar(interp, "_rawt4", Tcl_DStringValue(&tagdict), 0);
+  Tcl_SetVar(interp, "_rawt4", tagdict, 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
                     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
-  Tcl_DStringFree(&tagdict);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -334,6 +325,29 @@ static int check_tcl_out(int which, char *msg, int sent)
 static int match_my_nick(char *nick)
 {
   return (!rfc_casecmp(nick, botname));
+}
+
+char *encode_msgtags(Tcl_Obj *msgtagdict) {
+  int done = 0;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *key;
+  static Tcl_DString ds;
+  static int ds_initialized = 0;
+
+  if (!ds_initialized) {
+    Tcl_DStringInit(&ds);
+    ds_initialized = 1;
+  } else {
+    Tcl_DStringFree(&ds);
+  }
+  for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    if (Tcl_DStringLength(&ds)) {
+      Tcl_DStringAppend(&ds, ";", -1);
+    }
+    Tcl_DStringAppend(&ds, encode_msgtag(Tcl_GetString(key), Tcl_GetString(value)), -1);
+  }
+
+  return Tcl_DStringValue(&ds);
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -529,7 +543,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     if (check_tcl_flud(floodnick, floodhost, u, ftype, "*"))
       return 0;
     /* Private msg */
-    simple_sprintf(h, "*!*@%s", p);
+    snprintf(h, sizeof h, "*!*@%s", p);
     putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
     addignore(h, botnetnick, (which == FLOOD_CTCP) ? "CTCP flood" :
               "MSG/NOTICE flood", now + (60 * ignore_time));
@@ -537,9 +551,10 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   return 0;
 }
 
+
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg, char *tag)
+static int gotmsg(char *from, char *msg)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -574,7 +589,7 @@ static int gotmsg(char *from, char *msg, char *tag)
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
-      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
+      memmove(p1 - 1, p + 1, strlen(p));
 
       if (!ignoring)
         detect_flood(nick, uhost, from,
@@ -644,7 +659,6 @@ static int gotmsg(char *from, char *msg, char *tag)
   }
   if (msg[0]) {
     int result = 0;
-
     /* Msg from oper, don't interpret */
     if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
       if (!ignoring) {
@@ -764,14 +778,17 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static int gottagmsg(char *from, char *msg) {
-  char *nick;
+static int gottagmsg(char *from, char *msg, Tcl_Obj *tagdict) {
+  char *nick, *dictstring;
+
+  dictstring = encode_msgtags(tagdict);
+
   fixcolon(msg);
   if (strchr(from, '!')) {
     nick = splitnick(&from);
-    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] TAGMSG: %s", nick, from, dictstring);
   } else {
-    putlog(LOG_SERV, "*", "[#]%s[#] %s");
+    putlog(LOG_SERV, "*", "[#]%s[#] TAGMSG: %s", from, dictstring);
   }
   return 0;
 }
@@ -876,13 +893,15 @@ static int got432(char *from, char *msg)
     putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
-    putlog(LOG_MISC, "*", IRC_BADBOTNICK);
-    if (!keepnick) {
+    putlog(LOG_MISC, "*", "%s", IRC_BADBOTNICK);
+    if (!strcmp(erroneous, origbotname)) {
+      strlcpy(nick, get_altbotnick(), sizeof nick);
+    } else {
       make_rand_str_from_chars(nick, sizeof nick - 1, CHARSET_LOWER_ALPHA);
-      putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
-              erroneous, nick);
-      dprintf(DP_MODE, "NICK %s\n", nick);
     }
+    putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (using '%s' instead)",
+            erroneous, nick);
+    dprintf(DP_MODE, "NICK %s\n", nick);
     return 0;
   }
   return 0;
@@ -1127,15 +1146,82 @@ static struct dcc_table SERVER_SOCKET = {
   display_server,
   NULL,
   kill_server,
+  NULL,
   NULL
 };
 
+static char *encode_msgtag_value(char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+  size_t written = 0;
+
+  /* empty value and no value is identical, Tcl dict always has empty string as no-value, looks better to encode without = */
+  if (!value || !*value) {
+    return "";
+  }
+  buf[written++] = '=';
+
+  while (*value && written < sizeof buf - 1) {
+    if (*value == ';' || *value == ' ' || *value == '\\' || *value == '\r' || *value == '\n') {
+      buf[written++] = '\\';
+    }
+    buf[written++] = *value++;
+  }
+  buf[written] = '\0';
+
+  return buf;
+}
+
+/* TODO: validity enforcement on used characters in key? */
+static char *encode_msgtag(char *key, char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+
+  snprintf(buf, sizeof buf, "%s%s", key, encode_msgtag_value(value));
+  return buf;
+}
+
+static char *decode_msgtag_value(char *value, char **endptr)
+{
+  static char valuebuf[TOTALTAGMAX+1];
+  char *tmp, *decoded = valuebuf;
+  int escaped = 0;
+
+  for (tmp = value; *tmp && *tmp != ';' && *tmp != ' ' && decoded - valuebuf < TOTALTAGMAX; tmp++) {
+    if (!escaped && *tmp == '\\') {
+      escaped = 1;
+      continue;
+    }
+    if (escaped) {
+      if (*tmp == ':') {
+        *decoded++ = ';';
+      } else if (*tmp == 'n') {
+        *decoded++ = '\n';
+      } else if (*tmp == 'r') {
+        *decoded++ = '\r';
+      } else if (*tmp == 's') {
+        *decoded++ = ' ';
+      } else {
+        *decoded++ = *tmp;
+      }
+      escaped = 0;
+    } else {
+      *decoded++ = *tmp;
+    }
+  }
+  /* either points to \0 or ; */
+  *endptr = tmp;
+
+  *decoded = '\0';
+  return valuebuf;
+}
+
 static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code, *s1, *s2, *saveptr1=NULL, *saveptr2=NULL, *tagstrptr=NULL;
-  char *token, *subtoken, tagstr[TOTALTAGMAX+1], tagdict[TOTALTAGMAX+1] = "";
-  char *msgptr, rawmsg[RECVLINEMAX+7];
-  int taglen, i, found;
+  char *from, *code, *msgptr;
+  char rawmsg[RECVLINEMAX+7];
+  int ret;
+  Tcl_Obj *tagdict = Tcl_NewDictObj();
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1144,44 +1230,25 @@ static void server_activity(int idx, char *tagmsg, int len)
     SERVER_SOCKET.timeout_val = 0;
   }
   lastpingcheck = 0;
-/* Check if message-tags are enabled and, if so, check/grab the tag */
+  /* Parse optional message-tags, regardless of whether they are enabled on our side */
   msgptr = tagmsg;
   strlcpy(rawmsg, tagmsg, TOTALTAGMAX+1);
   if (*tagmsg == '@') {
-    taglen = 0;
-    tagstrptr = newsplit(&msgptr);
-    strlcpy(tagstr, tagstrptr, TOTALTAGMAX+1);
-    tagstrptr++;     /* Remove @ */
-    /* Split each key/value pair apart, then split the key from the value */
-    for (i = 0, s1 = tagstrptr; ; i++, s1 = NULL){
-      token = strtok_r(s1, ";", &saveptr1);
-      if (token == NULL) {
-        break;
+    char *key, *value, *lastendptr = tagmsg;
+
+    do {
+      key = lastendptr + 1;
+      value = key + strcspn(key, "=; ");
+
+      if (*value == '=') {
+        Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj(decode_msgtag_value(value + 1, &lastendptr), -1));
+      } else {
+        Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj("", -1));
+        lastendptr = value;
       }
-      if (*token == '+') {
-        token++;
-      }
-      if (strchr(token, '=')) {
-        found = 0;
-        for (s2 = token; ; s2 = NULL) {
-          subtoken = strtok_r(s2, "=", &saveptr2);
-          if (subtoken == NULL) {
-            break;
-          }
-          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-                "%s ", subtoken);
-          found++;
-        }
-        /* Account for tags (not key/value pairs), prep empty value for Tcl */
-        if (found < 2) {
-          taglen += egg_snprintf(tagdict + taglen, TOTALTAGMAX - taglen,
-              "{} ");
-        }
-      }
-    }
-    if (taglen > 0) {
-      tagdict[taglen-1] = '\0';     /* Remove trailing space */
-    }
+    } while (*lastendptr && *lastendptr != ' ');
+
+    msgptr = lastendptr + (*lastendptr != '\0');
   }
   from = "";
   if (*msgptr == ':') {
@@ -1194,9 +1261,13 @@ static void server_activity(int idx, char *tagmsg, int len)
     putlog(LOG_RAW, "*", "[@] %s", rawmsg);
   }
   /* Check both raw and rawt, to allow backwards compatibility with older
-   * scripts */
-  check_tcl_rawt(from, code, msgptr, tagdict);
-  check_tcl_raw(from, code, msgptr);
+   * scripts. If rawt returns 1 (blocking), don't process raw binds.*/
+  /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
+  strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
+  ret = check_tcl_rawt(from, code, msgptr, rawmsg);
+  if (!ret) {
+    check_tcl_raw(from, code, msgptr);
+  }
 }
 
 static int gotping(char *from, char *msg)
@@ -1369,23 +1440,24 @@ static int tryauthenticate(char *from, char *msg)
       }
     }
 #else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
-                "EXTERNAL method");
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs not present or missing EC support."
+                " Try the PLAIN or EXTERNAL method instead");
       return 1;
     }
 #endif
     else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
-#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
+#ifdef TLS          /* TLS required for EXTERNAL sasl */
       dst[0] = '+';
       dst[1] = 0;
     }
-    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
-    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #else
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
             "installed, try PLAIN method");
+      return 1;
     }
 #endif /* TLS */
+    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
   } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
@@ -1586,17 +1658,17 @@ static int gotaccount(char *from, char *msg) {
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
     if ((m = ismember(chan, nick))) {
-      strlcpy (m->account, msg, sizeof m->account);
+      strlcpy (m->account, msg[0] == '*' ? "" : msg, sizeof m->account);
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       if (!strcasecmp(msg, "*")) {
         msg[0] = '\0';
-        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged out of their "
+        putlog(LOG_JOIN, chname, "%s!%s has logged out of their "
                 "account", nick, from);
       } else {
-        putlog(LOG_JOIN | LOG_MISC, chname, "%s!%s has logged into account %s",
+        putlog(LOG_JOIN, chname, "%s!%s has logged into account %s",
                 nick, from, msg);
       }
-      check_tcl_account(nick, from, mask, u, chname, msg);
+      check_tcl_account(nick, from, mask, u, chname, msg[0] == '*' ? "" : msg);
     }
   }
   return 0;

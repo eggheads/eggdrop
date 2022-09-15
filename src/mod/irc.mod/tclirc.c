@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -571,6 +571,23 @@ static int tcl_isircbot STDVAR
   }
   Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
+}
+
+static int tcl_accounttracking STDVAR
+{
+  struct capability *current =0;
+  int extjoin = 0, acctnotify = 0;
+
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    extjoin = 1;
+  }
+  current = find_capability("account-notify");
+  if (current->enabled) {
+    acctnotify = 1;
+  }
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+ return TCL_OK;
 }
 
 static int tcl_getchanhost STDVAR
@@ -1309,5 +1326,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
   {"monitor",        tcl_monitor},
+  {"accounttracking",tcl_accounttracking},
   {NULL,             NULL}
 };

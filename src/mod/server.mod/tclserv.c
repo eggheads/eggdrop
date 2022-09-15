@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -266,8 +266,10 @@ static int tcl_tagmsg STDVAR {
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
+  int found = 0;
   struct capability *current;
-  Tcl_Obj *capes;
+  struct cap_values *currentvalue;
+  Tcl_Obj *capes, *values;
   BADARGS(2, 3, " sub-cmd ?arg?");
 
   capes = Tcl_NewListObj(0, NULL);
@@ -288,19 +290,56 @@ static int tcl_cap STDVAR {
       current = current->next;
     }
     Tcl_SetObjResult(irp, capes);
+  } else if (!strcasecmp(argv[1], "values")) {
+    capes = Tcl_NewListObj(0, NULL);
+    values = Tcl_NewListObj(0, NULL);
+    current = cap;
+    while (current != NULL) {
+      if ((argc == 3) &&(!strcasecmp(argv[2], current->name))) {
+        found = 1;
+      }
+      currentvalue = current->value;
+      while (currentvalue != NULL) {
+        if (argc == 3) {
+          if (!strcasecmp(argv[2], current->name)) {
+            /* Don't get confused, we use the capes var but its really values */
+            Tcl_ListObjAppendElement(irp, capes,
+                    Tcl_NewStringObj(currentvalue->name, -1));
+          }
+        } else {
+          Tcl_ListObjAppendElement(irp, values,
+                    Tcl_NewStringObj(currentvalue->name, -1));
+        }
+        currentvalue = currentvalue->next;
+      }
+      if (argc != 3) {
+        Tcl_ListObjAppendElement(irp, capes,
+                Tcl_NewStringObj(current->name, -1));
+        Tcl_ListObjAppendElement(irp, capes, values);
+      }
+      /* Clear out the list so it isn't repeatedly added */
+      values = Tcl_NewListObj(0, NULL);
+      current = current->next;
+    }
+    if ((argc == 3) && (!found)) {
+      simple_sprintf(s, "Capability \"%s\" is not enabled", argv[2]);
+      Tcl_AppendResult(irp, s, NULL);
+      return TCL_ERROR;
+    }
+    Tcl_SetObjResult(irp, capes);
   /* Send a request to negotiate a capability with server */
   } else if (!strcasecmp(argv[1], "req")) {
     if (argc != 3) {
       Tcl_AppendResult(irp, "No CAP request provided", NULL);
       return TCL_ERROR;
     } else {
-      simple_sprintf(s, "CAP REQ :%s", argv[2]);
+      snprintf(s, sizeof s, "CAP REQ :%s", argv[2]);
       dprintf(DP_SERVER, "%s\n", s);
     }
   /* Send a raw CAP command to the server */
   } else if (!strcasecmp(argv[1], "raw")) {
     if (argc == 3) {
-      simple_sprintf(s, "CAP %s", argv[2]);
+      snprintf(s, sizeof s, "CAP %s", argv[2]);
       dprintf(DP_SERVER, "%s\n", s);
     } else {
       Tcl_AppendResult(irp, "Raw requires a CAP sub-command to be provided",
@@ -463,15 +502,52 @@ static int tcl_queuesize STDVAR
 
 static int tcl_server STDVAR {
   int ret;
+  char s[7];
+  struct server_list *z;
+  Tcl_Obj *server;
 
-  BADARGS(3, 5, " subcommand host ?port ?password??");
+  BADARGS(2, 5, " subcommand ?host ?port? ?password?");
   if (!strcmp(argv[1], "add")) {
     ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
+    if (!ret) {
+      server = Tcl_NewListObj(0, NULL);
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[2], -1));
+      if ((argc >= 4) && argv[3]) {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[3], -1));
+      } else {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
+      }
+      if ((argc >= 5) && argv[4]) {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[4], -1));
+      } else {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
+      }
+      Tcl_SetObjResult(irp, server);
+    }
   } else if (!strcmp(argv[1], "remove")) {
     ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
+  } else if (!strcmp(argv[1], "list")) {
+    Tcl_Obj *servers = Tcl_NewListObj(0, NULL);
+    z = serverlist;
+    while(z != NULL) {
+      server = Tcl_NewListObj(0, NULL);
+#ifdef TLS
+      snprintf(s, sizeof s, "%s%d", z->ssl ? "+" : "", z->port);
+#else
+      snprintf(s, sizeof s, "%d", z->port);
+#endif
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->name, -1));
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(s, -1));
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->pass, -1));
+      Tcl_SetObjResult(irp, server);
+      Tcl_ListObjAppendElement(irp, servers, server);
+      z = z->next;
+    }
+    Tcl_SetObjResult(irp, servers);
+    return TCL_OK;
   } else {
     Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
-        ". Should be \"add\" or \"remove\"", NULL);
+        ". Should be \"add\", \"remove\", or \"list\"", NULL);
     return TCL_ERROR;
   }
   if (ret == 0) {

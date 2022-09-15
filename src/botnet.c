@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -586,7 +586,7 @@ void tell_bottree(int idx, int showver)
 {
   char s[161];
   char c = '-';
-  tand_t *last[20], *this, *bot, *bot2 = NULL;
+  tand_t *last[20], *this, *bot, *bot2 = NULL, *lastbot = NULL;
   int lev = 0, more = 1, mark[20], ok, cnt, i, imark;
   char work[1024];
   int tothops = 0;
@@ -718,6 +718,7 @@ void tell_bottree(int idx, int showver)
               }
             }
           }
+          lastbot = bot;
         }
         if (cnt) {
           imark = 0;
@@ -730,9 +731,9 @@ void tell_bottree(int idx, int showver)
           }
           more = 1;
           if (cnt > 1)
-            dprintf(idx, "%s  |%s%s\n", work, bot->ssl ? "=" : "-", s);
+            dprintf(idx, "%s  |%s%s\n", work, lastbot->ssl ? "=" : "-", s);
           else
-            dprintf(idx, "%s  `%s%s\n", work, bot->ssl ? "=" : "-", s);
+            dprintf(idx, "%s  `%s%s\n", work, lastbot->ssl ? "=" : "-", s);
           this = bot2;
           work[0] = 0;
           if (cnt > 1)
@@ -750,11 +751,11 @@ void tell_bottree(int idx, int showver)
             this = last[lev];
           }
         }
-        dprintf(idx, "------------------------------------------------\n");
       }
     }
   }
   /* Hop information: (9d) */
+  dprintf(idx, "------------------------------------------------\n");
   dprintf(idx, "Average hops: %3.1f, total bots: %d\n",
           ((float) tothops) / ((float) tands), tands + 1);
 }
@@ -901,7 +902,7 @@ int users_in_subtree(tand_t *bot)
  */
 int botunlink(int idx, char *nick, char *reason, char *from)
 {
-  char s[20];
+  char s[1024];
   int i;
   int bots, users;
   tand_t *bot;
@@ -930,8 +931,6 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         if (nick[0] != '*')
           return 1;
       } else if (dcc[i].type == &DCC_BOT) {
-        char s[1024];
-
         if (idx >= 0)
           dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
         else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
@@ -940,16 +939,16 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
         if (reason && reason[0]) {
-          simple_sprintf(s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
-                         (bots != 1) ? "s" : "", users, (users != 1) ?
-                         "s" : "");
+          snprintf(s, sizeof s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
+                   BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
+                   (bots != 1) ? "s" : "", users, (users != 1) ?
+                   "s" : "");
           dprintf(i, "bye %s\n", reason);
         } else {
-          simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-                         BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
-                         (bots != 1) ? "s" : "", users,
-                         (users != 1) ? "s" : "");
+          snprintf(s, sizeof s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+                   BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
+                   (bots != 1) ? "s" : "", users,
+                   (users != 1) ? "s" : "");
           dprintf(i, "bye No reason\n");
         }
         putlog(LOG_BOTS, "*", "%s.", s);
@@ -996,8 +995,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
                        party[i].chan);
     }
-    strcpy(s, "killassoc &");
-    Tcl_Eval(interp, s);
+    Tcl_Eval(interp, "killassoc &");
   }
   return 0;
 }
@@ -1137,7 +1135,7 @@ static void failed_tandem_relay(int idx)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1260,7 +1258,7 @@ static void tandem_relay_resolve_failure(int idx)
       break;
     }
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1333,7 +1331,7 @@ static void pre_relay(int idx, char *buf, int i)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1379,7 +1377,7 @@ static void failed_pre_relay(int idx)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1413,7 +1411,7 @@ static void cont_tandem_relay(int idx, char *buf, int i)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[i].sock, dcc[i].u.relay->sock);
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1631,6 +1629,7 @@ struct dcc_table DCC_RELAY = {
   display_relay,
   expmem_relay,
   kill_relay,
+  NULL,
   NULL
 };
 
@@ -1654,7 +1653,8 @@ struct dcc_table DCC_RELAYING = {
   display_relaying,
   expmem_relay,
   kill_relay,
-  out_relay
+  out_relay,
+  NULL
 };
 
 struct dcc_table DCC_FORK_RELAY = {
@@ -1667,6 +1667,7 @@ struct dcc_table DCC_FORK_RELAY = {
   display_tandem_relay,
   expmem_relay,
   kill_relay,
+  NULL,
   NULL
 };
 
@@ -1680,6 +1681,7 @@ struct dcc_table DCC_PRE_RELAY = {
   display_pre_relay,
   expmem_relay,
   kill_relay,
+  NULL,
   NULL
 };
 
