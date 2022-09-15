@@ -555,7 +555,7 @@ void *thread_dns_ipbyhost(void *arg)
       freeaddrinfo(res0);
   }
   else if (i == EAI_NONAME)
-    debug0("dns: thread_dns_ipbyhost(): getaddrinfo(): hostname not known");
+    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): hostname '%s' not known", dtn->host);
   else
     debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(i));
   pthread_mutex_lock(&dtn->mutex);
