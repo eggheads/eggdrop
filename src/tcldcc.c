@@ -1028,13 +1028,12 @@ static int tcl_connect STDVAR
 }
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
-  int i, idx = -1, port, realport, found=0, ipv4=1;
+  int i, idx = -1, port, realport, found=0, ipv4=1, error;
   char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
   struct addrinfo hint, *ipaddr = NULL;
-  int ret;
 #ifdef IPV6
   struct in6_addr ipaddr6;
 #endif
@@ -1056,8 +1055,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strlcpy(newip, ip, sizeof newip);
   }
   /* Return addrinfo struct ipaddr containing family... */
-  ret = getaddrinfo(newip, NULL, &hint, &ipaddr);
-  if (!ret) {
+  error = getaddrinfo(newip, NULL, &hint, &ipaddr);
+  if (!error) {
   /* Load network address to in(6)_addr struct for later byte comparisons */
     if (ipaddr->ai_family == AF_INET) {
       inet_pton(AF_INET, newip, &ipaddr4);
@@ -1072,12 +1071,12 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
                  * 2553 and 3493. Avoid to be compatible with all OSes. */
       freeaddrinfo(ipaddr);
   }
-  else if (ret == EAI_NONAME)
+  else if (error == EAI_NONAME)
     putlog(LOG_MISC, "*",
            "tcldcc: setlisten(): getaddrinfo(): hostname '%s' not known", newip);
   else
     putlog(LOG_MISC, "*", "tcldcc: setlisten(): getaddrinfo(): error = %s",
-           gai_strerror(ret));
+           gai_strerror(error));
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {

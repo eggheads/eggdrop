@@ -522,12 +522,12 @@ void *thread_dns_ipbyhost(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
   struct addrinfo *res0 = NULL, *res;
-  int i;
+  int error;
   sockname_t *addr = &dtn->addr;
 
-  i = getaddrinfo(dtn->host, NULL, NULL, &res0);
+  error = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
-  if (!i) {
+  if (!error) {
 #ifdef IPV6
     for (res = res0; res; res = res->ai_next) {
       if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
@@ -539,13 +539,13 @@ void *thread_dns_ipbyhost(void *arg)
       }
     }
 #else
-    i = 1;
+    error = 1;
     for (res = res0; res; res = res->ai_next) {
       if (res->ai_family == AF_INET) {
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-        i = 0;
+        error = 0;
         break;
       }
     }
@@ -554,12 +554,12 @@ void *thread_dns_ipbyhost(void *arg)
                * 2553 and 3493. Avoid to be compatible with all OSes. */
       freeaddrinfo(res0);
   }
-  else if (i == EAI_NONAME)
+  else if (error == EAI_NONAME)
     debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): hostname '%s' not known", dtn->host);
   else
-    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(i));
+    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(error));
   pthread_mutex_lock(&dtn->mutex);
-  dtn->ok = !i;
+  dtn->ok = !error;
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
