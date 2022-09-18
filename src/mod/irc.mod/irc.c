@@ -1452,6 +1452,7 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+  add_builtins(H_rawt, irc_rawt);
   add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");

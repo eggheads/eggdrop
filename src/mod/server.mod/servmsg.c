@@ -40,7 +40,7 @@ static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
 struct capability *find_capability(char *capname);
-int account_notify, extended_join;
+int account_notify = 1, extended_join = 1, account_tag = 0;
 Tcl_Obj *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -1841,6 +1841,9 @@ static int gotcap(char *from, char *msg) {
       if (!strcmp(current->name, "sasl") && (sasl) && !(current->enabled)) {
         add_req(current->name);
       } else if (!strcmp(current->name, "account-notify") && (account_notify)
+                && (!current->enabled)) {
+        add_req(current->name);
+      } else if (!strcmp(current->name, "account-tag") && (account_tag)
                 && (!current->enabled)) {
         add_req(current->name);
       } else if (!strcmp(current->name, "extended-join") && (extended_join) 
