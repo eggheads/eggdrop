@@ -196,7 +196,7 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
-                     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
 
   /* Return 1 if processed */
   return (x == BIND_EXEC_LOG);
@@ -212,7 +212,7 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagdict)
   Tcl_SetVar(interp, "_rawt3", msg, 0);
   Tcl_SetVar(interp, "_rawt4", tagdict, 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
-                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                    MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
   return (x == BIND_EXEC_LOG);
 }
 
