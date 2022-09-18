@@ -62,6 +62,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#checking-account-tracking-status">Checking Account-tracking Status</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#determining-if-a-server-supports-account-capabilities">Determining if a Server Supports Account Capabilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#best-effort-account-tracking">Best-Effort Account Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-accounts-with-tcl-scripts">Using Accounts with Tcl Scripts</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
@@ -172,6 +173,11 @@
 <h3>account-tag<a class="headerlink" href="#account-tag" title="Permalink to this headline">¶</a></h3>
 <p>One supplementary capability that can assist a best-effort account tracking scenario is the IRCv3-defined <a class="reference external" href="https://ircv3.net/specs/extensions/account-tag">account-tag capability</a>. The account-tag capability attaches a tag with the account name associated with the user sending a command. Enabling this capability allows Eggdrop to update its account tracking every time a user talks in channel, sets a mode, sends a kick, etc. While still not able to offer the same level of accuracy as enabling the “main three” account tracking features, it can increase the accuracy and can help with scripts that react to user commands/messages.</p>
 </div>
+</div>
+<div class="section" id="using-accounts-with-tcl-scripts">
+<h2>Using Accounts with Tcl Scripts<a class="headerlink" href="#using-accounts-with-tcl-scripts" title="Permalink to this headline">¶</a></h2>
+<p>The Eggdrop Tcl ACCOUNT bind is triggered whenver an existing account record stored by Eggdrop is modified, such as a user de/authenticating to their account while in a channel, or information such as an account-tag being seen that updates an existing user. However, the ACCOUNT bind will NOT be triggered for the creation of a new user record, such as a user joining a channel. The bind is triggered for every channel the user is seen on- this means if a user is present with Eggdrop on four channels, the bind will be executed four times, each time with a different channel variable being passed to the associated Tcl procedure. Additionally, in a best-effort account tracking situation, Eggdrop will update the account associated with a user on all channels, not just the channel the event is seen on (and thus resulting in a bind trigger for each channel the user is on).</p>
+<p>In order to trigger Tcl script events to cover all instances where a user logs in, you need to pair an ACCOUNT bind with a JOIN bind. This will allow you to execute account-based events when a user joins as well as if they authenticate after joining.</p>
 </div>
 </div>
 

@@ -73,3 +73,9 @@ One workaround to significantly increase the accuracy of account tracking for sc
 account-tag
 ^^^^^^^^^^^
 One supplementary capability that can assist a best-effort account tracking scenario is the IRCv3-defined `account-tag capability <https://ircv3.net/specs/extensions/account-tag>`_. The account-tag capability attaches a tag with the account name associated with the user sending a command. Enabling this capability allows Eggdrop to update its account tracking every time a user talks in channel, sets a mode, sends a kick, etc. While still not able to offer the same level of accuracy as enabling the "main three" account tracking features, it can increase the accuracy and can help with scripts that react to user commands/messages.
+
+Using Accounts with Tcl Scripts
+-------------------------------
+The Eggdrop Tcl ACCOUNT bind is triggered whenver an existing account record stored by Eggdrop is modified, such as a user de/authenticating to their account while in a channel, or information such as an account-tag being seen that updates an existing user. However, the ACCOUNT bind will NOT be triggered for the creation of a new user record, such as a user joining a channel. The bind is triggered for every channel the user is seen on- this means if a user is present with Eggdrop on four channels, the bind will be executed four times, each time with a different channel variable being passed to the associated Tcl procedure. Additionally, in a best-effort account tracking situation, Eggdrop will update the account associated with a user on all channels, not just the channel the event is seen on (and thus resulting in a bind trigger for each channel the user is on).
+
+In order to trigger Tcl script events to cover all instances where a user logs in, you need to pair an ACCOUNT bind with a JOIN bind. This will allow you to execute account-based events when a user joins as well as if they authenticate after joining. 
