@@ -226,9 +226,9 @@ static void setaccount(char *nick, char *account)
         /* account was known */
         if (m->account[0]) {
           if (!strcmp(account, "*")) {
-            putlog(LOG_JOIN, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
+            putlog(LOG_MODES, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
           } else {
-            putlog(LOG_JOIN, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
+            putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
           }
           check_tcl_account(m->nick, m->userhost, m->user, chan->dname, account);
         }
@@ -1415,10 +1415,10 @@ static int gotaway(char *from, char *msg)
       if (strlen(msg)) {
         m->flags |= IRCAWAY;
         fixcolon(msg);
-        putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
+        putlog(LOG_MODES, chan->dname, "%s is now away: %s", from, msg);
       } else {
         m->flags &= ~IRCAWAY;
-        putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
+        putlog(LOG_MODES, chan->dname, "%s has returned from away status", from);
       }
     }
   }
