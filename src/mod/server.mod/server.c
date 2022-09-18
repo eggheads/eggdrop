@@ -105,7 +105,7 @@ static char sslserver = 0;
 #endif
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_account;
+                       H_ctcp, H_out, H_rawt;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -1279,17 +1279,6 @@ static int server_msg STDVAR
   return TCL_OK;
 }
 
-static int server_account STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(6, 6, " nick uhost hand chan account");
-
-  CHECKVALIDITY(server_account);
-  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4], argv[5]);
-  return TCL_OK;
-}
-
 static int server_raw STDVAR
 {
   Function F = (Function) cd;
@@ -2139,7 +2128,6 @@ static char *server_close()
   isupport_fini();
   /* Restore original commands. */
   del_bind_table(H_wall);
-  del_bind_table(H_account);
   del_bind_table(H_raw);
   del_bind_table(H_rawt);
   del_bind_table(H_notc);
@@ -2246,7 +2234,7 @@ static Function server_table[] = {
   /* 40 - 43 */
   (Function) & H_out,           /* p_tcl_bind_list                      */
   (Function) & net_type_int,    /* int                                  */
-  (Function) & H_account,       /* p_tcl_bind)list                      */
+  (Function) NULL,              /* was H_account, now irc.mod           */
   (Function) & cap,             /* capability_t                         */
   /* 44 - 47 */
   (Function) & extended_join,   /* int                                  */
@@ -2255,7 +2243,7 @@ static Function server_table[] = {
   (Function) & isupport_get,    /*                                      */
   /* 48 - 52 */
   (Function) & isupport_parseint,/*                                     */
-  (Function) check_tcl_account,
+  (Function) NULL,               /* was check_tcl_account, now irc.mod  */
   (Function) & find_capability,
   (Function) encode_msgtags
 };
@@ -2358,7 +2346,6 @@ char *server_start(Function *global_funcs)
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
-  H_account = add_bind_table("account", HT_STACKABLE, server_account);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_rawt);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);

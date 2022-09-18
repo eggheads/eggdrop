@@ -1157,7 +1157,9 @@ accounttracking
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  "" if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name associated with nickname, "*" if the user is not logged into services, or "" if eggdrop does not know the account status of the user.
+
+  NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
@@ -3526,7 +3528,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <chan> <account>
 
-  Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receiving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+  Description: this bind will trigger when eggdrop detects a change in the authentication status of a user's service account. The mask for the bind is in the format "#channel nick!user@hostname.com account" and accepts :ref:`<wildcards>Match Characters`. account is either the account name the user is logging in to or "*" if the user is not logged in to an account.
+
+  NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking but this bind could be triggered late or never on account changes. Please see doc/ACCOUNTS for additional information.
 
 (54) ISUPPORT (stackable)
 
