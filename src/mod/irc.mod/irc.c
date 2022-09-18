@@ -1110,7 +1110,7 @@ static void tell_account_tracking_status(int idx, int details)
       if (tag && (!whox || !notify || !extjoin)) {
         dprintf(idx, "%s", "      - account-tag enabled    => Accounts will update whenever someone messages a channel or this bot\n");
       }
-      dprintf(idx, "%s", "      See doc/ACCOUNT for more details\n");
+      dprintf(idx, "%s", "      See doc/ACCOUNTS for more details\n");
     }
   }
 }
