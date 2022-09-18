@@ -270,6 +270,7 @@ static int tcl_matchattr STDVAR
       if (!plus.global && !plus.udef_global && !plus.chan &&
           !plus.udef_chan && !plus.bot) {
         /* No flags (e.g. "-" or "+" or "-|-" matches anyone */
+        Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
     }
