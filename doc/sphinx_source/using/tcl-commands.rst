@@ -3719,5 +3719,8 @@ are the four special characters:
 | ~   | matches 1 or more space characters (can be used for whitespace between   |
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
+| \\* | matches a literal \*, but please note that Tcl needs escaping as well,   |
+|     | so a bind would have to use "\\*" or {\*} for a mask argument            |
++-----+--------------------------------------------------------------------------+
 
   Copyright (C) 1999 - 2022 Eggheads Development Team
