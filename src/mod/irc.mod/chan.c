@@ -1311,9 +1311,10 @@ static int got354(char *from, char *msg)
 
   if (use_354) {
     newsplit(&msg);             /* Skip my nick - efficiently */
-    if (!strncmp(msg, "222", strlen("222"))) {
-      newsplit(&msg);           /* Skip our query-type magic number" */
+    if (strncmp(msg, "222", strlen("222"))) {
+      return 0;                 /* ignore request without our query type, could be different arguments */
     }
+    newsplit(&msg);           /* Skip our query-type magic number" */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
