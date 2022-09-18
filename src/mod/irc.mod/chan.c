@@ -2982,6 +2982,18 @@ static int irc_isupport(char *key, char *isset_str, char *value)
   return 0;
 }
 
+static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
+  Tcl_Obj *valueobj;
+  if (TCL_OK != Tcl_DictObjGet(interp, tags, Tcl_NewStringObj("account", -1), &valueobj)) {
+    putlog(LOG_MISC, "*", "ERROR: irc:rawt called with invalid dictionary");
+    return 0;
+  }
+  if (valueobj) {
+    setaccount(splitnick(&from), Tcl_GetString(valueobj));
+  }
+  return 0;
+}
+
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
@@ -3021,6 +3033,11 @@ static cmd_t irc_raw[] = {
   {"349",     "",   (IntFunc) got349,          "irc:349"},
   {"ACCOUNT", "",   (IntFunc) gotaccount,  "irc:account"},
   {NULL,     NULL,  NULL,                           NULL}
+};
+
+static cmd_t irc_rawt[] = {
+  {"*",       "",   (IntFunc) gotrawt,        "irc:rawt"},
+  {NULL,    NULL,   NULL,                           NULL}
 };
 
 static cmd_t irc_isupport_binds[] = {
