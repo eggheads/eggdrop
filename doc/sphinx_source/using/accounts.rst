@@ -60,7 +60,7 @@ A server announces if it supports WHOX via its ISUPPORT (005) announcement. If y
 
 Best-Effort Account Tracking
 ----------------------------
-If a server only supports some, but not all, of the required capabilities, Eggdrop will switch to 'best effort' account tracking. This means Eggdrop will update account statuses whenever it sees account information, but Eggdrop cannnot guarantee the accuracy of account association at any given time.
+If a server only supports some, but not all, of the required capabilities, Eggdrop will switch to 'best effort' account tracking. This means Eggdrop will update account statuses whenever it sees account information, but in this mode Eggdrop cannnot guarantee that all account associations are up to date.
 
 If a server does not support extended-join, Eggdrop will not be able to determine the account associated with a user when they join. Eggdrop can update this information by sending a WHOX to the server.
 
@@ -68,11 +68,11 @@ If a server does not support account-notify, Eggdrop will not be able to determi
 
 If a server does not support WHOX, Eggdrop will not be able to determine the accounts associated with users already on a channel before Eggdrop joined. There is no reliable way to update this information.
 
-One workaround to significantly increase the accuracy of account tracking for scripts in a 'best effort' scenario would be to issue a WHOX query (assuming the server supports it), wait for the reply from the eserver, and then query for the account information.
+One workaround to significantly increase the accuracy of account tracking for scripts in a 'best effort' scenario would be to issue a WHOX query (assuming the server supports it), wait for the reply from the server, and then query for the account information.
 
 account-tag
 ^^^^^^^^^^^
-One supplementary capability that can assist a best-effort account tracking scenario is the IRCv3-defined `account-tag capability <https://ircv3.net/specs/extensions/account-tag>`_. The account-tag capability attaches a tag with the account name associated with the user sending a command. Enabling this capability allows Eggdrop to update its account tracking every time a user talks in channel, sets a mode, sends a kick, etc. While still not able to offer the same level of accuracy as enabling the "main three" account tracking features, it can increase the accuracy and can help with scripts that react to user commands/messages.
+One supplementary capability that can assist a best-effort account tracking scenario is the IRCv3-defined `account-tag capability <https://ircv3.net/specs/extensions/account-tag>`_. The account-tag capability attaches a tag with the account name associated with the user sending a command. Enabling this capability allows Eggdrop to update its account tracking every time a user talks in channel, sets a mode, sends a kick, etc. While still not able to offer the same level of accuracy as enabling the "main three" account tracking features, it can increase the overall accuracy of the account list. Additionally, binds that react to user activity (pub, kick, mode, etc) containing account-tag will update the internal account list prior to executing the associated callback, so looking up the account name in the callback can be considered accurate.
 
 Using Accounts with Tcl Scripts
 -------------------------------
