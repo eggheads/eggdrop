@@ -367,6 +367,8 @@ botattr <handle> [changes [channel]]
 
   Module: core
 
+.. _matchattr:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1372,7 +1374,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
+  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr_ above for additional examples).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -2357,8 +2359,7 @@ timer <minutes> <tcl-command> [count [timerName]]
 utimer <seconds> <tcl-command> [count [timerName]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer
-Name is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
+  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timerName is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
   Returns: a timerName
 
@@ -2908,22 +2909,23 @@ language
 Binds
 -----
 
-You can use the 'bind' command to attach Tcl procedures to certain events.
-For example, you can write a Tcl procedure that gets called every time a
-user says "danger" on the channel.
+You can use the 'bind' command to attach Tcl procedures to certain events. For example, you can write a Tcl procedure that gets called every time a user says "danger" on the channel. When a bind is triggered, ALL of the Tcl procs that are bound to it will be called. Raw binds are triggered before builtin binds, as a builtin bind has the potential to modify args.
 
-Some bind types are marked as "stackable". That means that you can bind
-multiple commands to the same trigger. Normally, for example, a bind such
-as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the
-Tcl proc "msg:stop") will overwrite any previous binding you had for the
-msg command "stop". With stackable bindings, like 'msgm' for example,
-you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called. Raw binds are
-triggered before builtin binds, as a builtin bind has the potential to
-modify args.
+^^^^^^^^^^^^^^^
+Stackable binds
+^^^^^^^^^^^^^^^
+Some bind types are marked as "stackable". That means that you can bind multiple commands to the same trigger. Normally, for example, a bind such as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the Tcl proc "msg:stop") will overwrite any previous binding you had for the msg command "stop". With stackable bindings, like 'msgm' for example, you can bind the same command to multiple procs.
 
+^^^^^^^^^^^^^^^
+Removing a bind
+^^^^^^^^^^^^^^^
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
+
+^^^^^^^^^^
+Flag Masks
+^^^^^^^^^^
+In the next section, you will see several references to "flags". The "flags" argument is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc), or a "-" or "*" can be used to denote "any user". For example, a flag mask of "ov" would allow a bind to be triggered by a user added to Eggdrop with either the o or v global flags. A flag mask of of "-\|m" would allow a bind to be triggered by a user with the m channel flag. For more advanced information on how flag matching works, please see the matchattr_ description.
 
 ^^^^^^^^^^
 Bind Types
@@ -3528,7 +3530,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <chan> <account>
 
-  Description: this bind will trigger when eggdrop detects a change in the authentication status of a user's service account. The mask for the bind is in the format "#channel nick!user@hostname.com account" and accepts :ref:`<wildcards>Match Characters`. account is either the account name the user is logging in to or "*" if the user is not logged in to an account.
+  Description: this bind will trigger when eggdrop detects a change in the authentication status of a user's service account. The mask for the bind is in the format "#channel nick!user@hostname.com account" and accepts wildcards_. account is either the account name the user is logging in to or "*" if the user is not logged in to an account.
 
   NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking but this bind could be triggered late or never on account changes. Please see doc/ACCOUNTS for additional information.
 
@@ -3701,6 +3703,8 @@ When a new connection arrives in port 6687, Eggdrop will create a new idx for th
 Secure connection can be also established after a connection is active. You can connect/listen normally and switch later using the 'starttls' command. Your script should first inform the other side of the connection that it wants to switch to SSL. How to do this is application specific.
 
 The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.
+
+.. _wildcards:
 
 Match Characters
 ----------------
