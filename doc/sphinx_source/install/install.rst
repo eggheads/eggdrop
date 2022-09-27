@@ -72,7 +72,7 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
      Read docs/TLS for more info on this process.
 
-     [The following is performed from the directory installed above.]
+[The following steps are performed in the directory you just installed Eggdrop into from the preevious step]
 
 6. Edit your config file completely.
 
