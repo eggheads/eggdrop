@@ -853,11 +853,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- netsplit, %fs\n",
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %fs\n",
               chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
               m->account, s, atrflag, difftime(now, m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- it's me!\n", chanflag,
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n", chanflag,
               maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
               s, atrflag);
       } else {
