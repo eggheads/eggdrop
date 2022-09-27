@@ -460,7 +460,7 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
 }
 
 /* Leave the specified channel and notify registered Tcl procs. This
- * should not be called by itsself.
+ * should not be called by itself.
  */
 static void do_channel_part(struct chanset_t *chan)
 {

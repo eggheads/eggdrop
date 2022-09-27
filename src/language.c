@@ -44,7 +44,7 @@
  * FILE FORMAT: language.lang
  *              <textidx>,<text>
  * TEXT MESSAGE USAGE:
- *              get_language(<textidx> [,<PARMS>])
+ *              get_language(<textidx> [,<PARAMS>])
  *
  * ADDING LANGUAGES:
  *              o       Copy an existing <section>.<oldlanguage>.lang to a
