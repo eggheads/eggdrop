@@ -587,7 +587,7 @@ static int tcl_accounttracking STDVAR
     acctnotify = 1;
   }
   Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
- return TCL_OK;
+  return TCL_OK;
 }
 
 static int tcl_getchanhost STDVAR

@@ -40,7 +40,7 @@ static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
 struct capability *find_capability(char *capname);
-int account_notify, extended_join;
+int account_notify = 1, extended_join = 1, account_tag = 0;
 Tcl_Obj *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -196,7 +196,7 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
-                     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
 
   /* Return 1 if processed */
   return (x == BIND_EXEC_LOG);
@@ -212,7 +212,7 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagdict)
   Tcl_SetVar(interp, "_rawt3", msg, 0);
   Tcl_SetVar(interp, "_rawt4", tagdict, 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
-                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                    MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -257,22 +257,6 @@ static int check_tcl_wall(char *from, char *msg)
     return 2;
 
   return 1;
-}
-
-static int check_tcl_account(char *nick, char *uhost, char *mask,
-                            struct userrec *u, char *chan,  char *account)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  int x;
-
-  Tcl_SetVar(interp, "_acnt1", nick, 0);
-  Tcl_SetVar(interp, "_acnt2", uhost, 0);
-  Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_acnt4", chan, 0);
-  Tcl_SetVar(interp, "_acnt5", account, 0);
-  x = check_tcl_bind(H_account, mask, &fr,
-       " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5", MATCH_MASK | BIND_STACKABLE);
-  return (x == BIND_EXEC_LOG);
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
@@ -1646,34 +1630,6 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
-/* Got ACCOUNT message; only valid for account-notify capability */
-static int gotaccount(char *from, char *msg) {
-  struct chanset_t *chan;
-  struct userrec *u;
-  memberlist *m;
-  char *nick, *chname, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
-
-  u = get_user_by_host(from);
-  nick = splitnick(&from);
-  for (chan = chanset; chan; chan = chan->next) {
-    chname = chan->dname;
-    if ((m = ismember(chan, nick))) {
-      strlcpy (m->account, msg[0] == '*' ? "" : msg, sizeof m->account);
-      snprintf(mask, sizeof mask, "%s %s", chname, from);
-      if (!strcasecmp(msg, "*")) {
-        msg[0] = '\0';
-        putlog(LOG_JOIN, chname, "%s!%s has logged out of their "
-                "account", nick, from);
-      } else {
-        putlog(LOG_JOIN, chname, "%s!%s has logged into account %s",
-                nick, from, msg);
-      }
-      check_tcl_account(nick, from, mask, u, chname, msg[0] == '*' ? "" : msg);
-    }
-  }
-  return 0;
-}
-
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
@@ -1887,6 +1843,9 @@ static int gotcap(char *from, char *msg) {
       } else if (!strcmp(current->name, "account-notify") && (account_notify)
                 && (!current->enabled)) {
         add_req(current->name);
+      } else if (!strcmp(current->name, "account-tag") && (account_tag)
+                && (!current->enabled)) {
+        add_req(current->name);
       } else if (!strcmp(current->name, "extended-join") && (extended_join) 
                 && (!current->enabled)) {
         add_req(current->name);
@@ -2085,7 +2044,6 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
-  {"ACCOUNT",      "",   (IntFunc) gotaccount,      NULL},
   {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}

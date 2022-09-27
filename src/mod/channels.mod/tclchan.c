@@ -974,14 +974,14 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
       continue;
 
     if (ul->type == UDEF_FLAG) {
-      simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
-                     ul->name);
+      snprintf(s, sizeof s, "%c%s",
+               getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
       Tcl_AppendElement(irp, s);
     } else if (ul->type == UDEF_INT) {
       char *x;
 
       egg_snprintf(a, sizeof a, "%s", ul->name);
-      egg_snprintf(b, sizeof b, "%d", getudef(ul->values, chan->dname));
+      snprintf(b, sizeof b, "%" PRIdPTR, getudef(ul->values, chan->dname));
       args[0] = a;
       args[1] = b;
       x = Tcl_Merge(2, args);
@@ -1120,7 +1120,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
         APPEND_KEYVAL(ul->name, argv[0]);
       Tcl_Free((char *) argv);
     } else {
-      simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+      snprintf(s, sizeof s, "%" PRIdPTR, getudef(ul->values, chan->dname));
       APPEND_KEYVAL(ul->name, s);
     }
   }
@@ -1228,7 +1228,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
       Tcl_Free((char *) argv);
     } else {
       /* Flag or int, all the same. */
-      simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+      snprintf(s, sizeof s, "%" PRIdPTR, getudef(ul->values, chan->dname));
       Tcl_AppendResult(irp, s, NULL);
     }
     return TCL_OK;

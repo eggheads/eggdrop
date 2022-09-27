@@ -212,6 +212,32 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
+/* set user account on all members on all channels,
+ * trigger account bind if account state was not "unknown" (empty string)
+ */
+static void setaccount(char *nick, char *account)
+{
+  memberlist *m;
+  struct chanset_t *chan;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    if ((m = ismember(chan, nick))) {
+      if (rfc_casecmp(m->account, account)) {
+        /* account was known */
+        if (m->account[0]) {
+          if (!strcmp(account, "*")) {
+            putlog(LOG_MODES, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
+          } else {
+            putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
+          }
+          check_tcl_account(m->nick, m->userhost, m->user, chan->dname, account);
+        }
+        strlcpy(m->account, account, sizeof m->account);
+      }
+    }
+  }
+}
+
 /* Returns the current channel mode.
  */
 static char *getchanmode(struct chanset_t *chan)
@@ -1163,10 +1189,8 @@ static int got324(char *from, char *msg)
 static int got352or4(struct chanset_t *chan, char *user, char *host,
                      char *nick, char *flags, char *account)
 {
-  char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
-  struct chanset_t *acctchan;
+  char userhost[UHOSTLEN];
   memberlist *m;
-  int empty_accounts;
 
   m = ismember(chan, nick);     /* In my channel list copy? */
   if (!m) {                     /* Nope, so update */
@@ -1216,25 +1240,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
   if (account) {
-    empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
-    /* If the account has changed... */
-    if (strcmp(account, m->account) && !empty_accounts) {
-      for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
-        if ((m = ismember(chan, nick))) {
-          if (strcmp(account, "0")) {
-            strlcpy(m->account, account, sizeof(m->account));
-            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-            if (strcasecmp(chan->dname, acctchan->dname)) {
-            }
-          } else {      /* Explicitly clear, in case someone deauthenticated? */
-            m->account[0] = 0;
-            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-            if (strcasecmp(chan->dname, acctchan->dname)) {
-            }
-          }
-        }
-      }
+    if (!strcmp(account, "0")) {
+      /* normalize "logged out" to "*" */
+      account = "*";
     }
+    setaccount(nick, account);
   }
   return 0;
 }
@@ -1301,9 +1311,10 @@ static int got354(char *from, char *msg)
 
   if (use_354) {
     newsplit(&msg);             /* Skip my nick - efficiently */
-    if (!strncmp(msg, "222", strlen("222"))) {
-      newsplit(&msg);           /* Skip our query-type magic number" */
+    if (strncmp(msg, "222", strlen("222"))) {
+      return 0;                 /* ignore request without our query type, could be different arguments */
     }
+    newsplit(&msg);           /* Skip our query-type magic number" */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -1404,10 +1415,10 @@ static int gotaway(char *from, char *msg)
       if (strlen(msg)) {
         m->flags |= IRCAWAY;
         fixcolon(msg);
-        putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
+        putlog(LOG_MODES, chan->dname, "%s is now away: %s", from, msg);
       } else {
         m->flags &= ~IRCAWAY;
-        putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
+        putlog(LOG_MODES, chan->dname, "%s has returned from away status", from);
       }
     }
   }
@@ -1881,7 +1892,7 @@ static int gotinvite(char *from, char *msg)
   check_tcl_invite(nick, from, msg, invitee);
 /* Because who needs RFCs? Freakin IRCv3... */
   if (!match_my_nick(invitee)) {
-    putlog(LOG_DEBUG, "*", "Received invite notifiation for %s to %s by %s.",
+    putlog(LOG_DEBUG, "*", "Received invite notification for %s to %s by %s.",
             invitee, msg, nick);
     return 1;
   }
@@ -2046,12 +2057,11 @@ static void set_delay(struct chanset_t *chan, char *nick)
  */
 static int gotjoin(char *from, char *channame)
 {
-  char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
-  char *ch_dname = NULL, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+  char *nick, *p, buf[UHOSTLEN], *uhost = buf, *chname;
+  char *ch_dname = NULL;
   int extjoin = 0;
   struct chanset_t *chan;
-  struct chanset_t *extchan;
-  memberlist *m, *n;
+  memberlist *m;
   masklist *b;
   struct capability *current;
   struct userrec *u;
@@ -2183,42 +2193,23 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
+
         if (extjoin) {
-          /* Update account for all channels the nick is on, not just this one */
-          strlcpy(account, newsplit(&channame), sizeof account);
-          for (extchan = chanset; extchan; extchan = extchan->next) {
-            if ((n = ismember(extchan, nick))) {
-              if (strcmp(account, "*")) {
-                strlcpy (n->account, account, sizeof n->account);
-              } else {
-                n->account[0] = 0;
-              }
-              /* Don't trigger for the channel the user joined, but do trigger
-               * for other channels the user is already in
-               */
-              if (strcasecmp(chname, extchan->dname)) {
-                snprintf(mask, sizeof mask, "%s %s", chname, from);
-                //check_tcl_account(nick, from, mask, u, extchan->dname, account);
-              }
-            }
+          /* calls check_tcl_account which can delete the channel */
+          setaccount(nick, newsplit(&channame));
+          
+          if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
+            /* The channel doesn't exist anymore, so get out of here. */
+            goto exit;
           }
         }
+
         check_tcl_join(nick, uhost, u, chan->dname);
 
-        /* The tcl binding might have deleted the current user and the
-         * current channel, so we'll now have to re-check whether they
-         * both still exist.
-         */
-        chan = findchan(chname);
-        if (!chan) {
-          if (ch_dname)
-            chan = findchan_by_dname(ch_dname);
-          else
-            chan = findchan_by_dname(chname);
-        }
-        if (!chan)
+        if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
           /* The channel doesn't exist anymore, so get out of here. */
           goto exit;
+        }
 
         /* The record saved in the channel record always gets updated,
          * so we can use that. */
@@ -2891,6 +2882,15 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+/* Got ACCOUNT message; only valid for account-notify capability */
+static int gotaccount(char *from, char *msg) {
+  char *nick = splitnick(&from);
+  fixcolon(msg);
+  /* nick!ident@host ACCOUNT xxx */
+  setaccount(nick, msg);
+  return 0;
+}
+
 static int parse_maxlist(const char *value)
 {
   int tmpsum = 0, addtosum;
@@ -2982,6 +2982,18 @@ static int irc_isupport(char *key, char *isset_str, char *value)
   return 0;
 }
 
+static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
+  Tcl_Obj *valueobj;
+  if (TCL_OK != Tcl_DictObjGet(interp, tags, Tcl_NewStringObj("account", -1), &valueobj)) {
+    putlog(LOG_MISC, "*", "ERROR: irc:rawt called with invalid dictionary");
+    return 0;
+  }
+  if (valueobj) {
+    setaccount(splitnick(&from), Tcl_GetString(valueobj));
+  }
+  return 0;
+}
+
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
@@ -3019,7 +3031,13 @@ static cmd_t irc_raw[] = {
   {"347",     "",   (IntFunc) got347,          "irc:347"},
   {"348",     "",   (IntFunc) got348,          "irc:348"},
   {"349",     "",   (IntFunc) got349,          "irc:349"},
-  {NULL,      NULL, NULL,                           NULL}
+  {"ACCOUNT", "",   (IntFunc) gotaccount,  "irc:account"},
+  {NULL,     NULL,  NULL,                           NULL}
+};
+
+static cmd_t irc_rawt[] = {
+  {"*",       "",   (IntFunc) gotrawt,        "irc:rawt"},
+  {NULL,    NULL,   NULL,                           NULL}
 };
 
 static cmd_t irc_isupport_binds[] = {

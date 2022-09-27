@@ -853,13 +853,13 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- netsplit, %" PRId64 "s\n",
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %" PRId64 "s\n",
                 chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
                 m->account, s, atrflag, (int64_t) (now - m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- it's me!\n", chanflag,
-              maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
-              s, atrflag);
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
+                m->account, s, atrflag);
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)

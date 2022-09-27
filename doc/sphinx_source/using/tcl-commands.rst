@@ -367,6 +367,8 @@ botattr <handle> [changes [channel]]
 
   Module: core
 
+.. _matchattr:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1157,7 +1159,9 @@ accounttracking
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  "" if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name associated with nickname, "*" if the user is not logged into services, or "" if eggdrop does not know the account status of the user.
+
+  NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
@@ -1370,7 +1374,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
+  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr_ above for additional examples).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -2355,8 +2359,7 @@ timer <minutes> <tcl-command> [count [timerName]]
 utimer <seconds> <tcl-command> [count [timerName]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer
-Name is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
+  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If timerName is not specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
   Returns: a timerName
 
@@ -2906,22 +2909,23 @@ language
 Binds
 -----
 
-You can use the 'bind' command to attach Tcl procedures to certain events.
-For example, you can write a Tcl procedure that gets called every time a
-user says "danger" on the channel.
+You can use the 'bind' command to attach Tcl procedures to certain events. For example, you can write a Tcl procedure that gets called every time a user says "danger" on the channel. When a bind is triggered, ALL of the Tcl procs that are bound to it will be called. Raw binds are triggered before builtin binds, as a builtin bind has the potential to modify args.
 
-Some bind types are marked as "stackable". That means that you can bind
-multiple commands to the same trigger. Normally, for example, a bind such
-as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the
-Tcl proc "msg:stop") will overwrite any previous binding you had for the
-msg command "stop". With stackable bindings, like 'msgm' for example,
-you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called. Raw binds are
-triggered before builtin binds, as a builtin bind has the potential to
-modify args.
+^^^^^^^^^^^^^^^
+Stackable binds
+^^^^^^^^^^^^^^^
+Some bind types are marked as "stackable". That means that you can bind multiple commands to the same trigger. Normally, for example, a bind such as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the Tcl proc "msg:stop") will overwrite any previous binding you had for the msg command "stop". With stackable bindings, like 'msgm' for example, you can bind the same command to multiple procs.
 
+^^^^^^^^^^^^^^^
+Removing a bind
+^^^^^^^^^^^^^^^
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
+
+^^^^^^^^^^
+Flag Masks
+^^^^^^^^^^
+In the next section, you will see several references to "flags". The "flags" argument is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc), or a "-" or "*" can be used to denote "any user". For example, a flag mask of "ov" would allow a bind to be triggered by a user added to Eggdrop with either the o or v global flags. A flag mask of of "-\|m" would allow a bind to be triggered by a user with the m channel flag. For more advanced information on how flag matching works, please see the matchattr_ description.
 
 ^^^^^^^^^^
 Bind Types
@@ -3135,13 +3139,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
 (17) RAW (stackable)
 
-  bind raw <flags> <keyword> <proc>
+  bind raw <flags> <mask> <proc>
 
   procname <from> <keyword> <text>
 
-  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind, which supports the IRCv3 message-tags capability, as of 1.9.0. You probably want to be using RAWT, not RAW.
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
+  Description: The mask can contain wildcards and is matched against the keyword, which is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source nick!ident@host (depending on the keyword); flags are ignored. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind).
 
   Module: server
 
@@ -3514,11 +3518,11 @@ The following is a list of bind types and how they work. Below each bind type is
 
 (52) RAWT (stackable)
 
-  bind rawt <flags> <keyword> <proc>
+  bind rawt <flags> <mask> <proc>
 
-  procname <from> <keyword> <text> <tag>
+  procname <from> <keyword> <text> <tags>
 
-  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The mask can contain wildcards and is matched against the keyword which is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source nick!ident@host (depending on the keyword); flags are ignored. "tag" is a dictionary (flat key/value list) of the message tags with "" for empty values (e.g. "account eggdrop realname LamestBot"). If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
 (53) ACCOUNT (stackable)
 
@@ -3526,7 +3530,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <chan> <account>
 
-  Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receiving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+  Description: this bind will trigger when eggdrop detects a change in the authentication status of a user's service account. The mask for the bind is in the format "#channel nick!user@hostname.com account" and accepts wildcards_. account is either the account name the user is logging in to or "*" if the user is not logged in to an account.
+
+  NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking but this bind could be triggered late or never on account changes. Please see doc/ACCOUNTS for additional information.
 
 (54) ISUPPORT (stackable)
 
@@ -3698,6 +3704,8 @@ Secure connection can be also established after a connection is active. You can 
 
 The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.
 
+.. _wildcards:
+
 Match Characters
 ----------------
 
@@ -3714,6 +3722,9 @@ are the four special characters:
 +-----+--------------------------------------------------------------------------+
 | ~   | matches 1 or more space characters (can be used for whitespace between   |
 |     | words) (This char only works in binds, not in regular matching)          |
++-----+--------------------------------------------------------------------------+
+| \\* | matches a literal \*, but please note that Tcl needs escaping as well,   |
+|     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
   Copyright (C) 1999 - 2022 Eggheads Development Team
