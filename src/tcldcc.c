@@ -1072,8 +1072,9 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       freeaddrinfo(ipaddr);
   }
   else if (error == EAI_NONAME)
+    /* currently setlisten() handles only ip not hostname */
     putlog(LOG_MISC, "*",
-           "tcldcc: setlisten(): getaddrinfo(): hostname '%s' not known", newip);
+           "tcldcc: setlisten(): getaddrinfo(): ip %s not known", newip);
   else
     putlog(LOG_MISC, "*", "tcldcc: setlisten(): getaddrinfo(): error = %s",
            gai_strerror(error));
