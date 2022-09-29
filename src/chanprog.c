@@ -340,6 +340,7 @@ void tell_verbose_status(int idx)
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
+  dprintf(idx, "Tcl TCL_UTF_MAX: %i\n", TCL_UTF_MAX);
 #ifdef TLS
   dprintf(idx, "TLS support is enabled.\n"
   #if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
