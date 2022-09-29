@@ -2342,6 +2342,12 @@ maskhost <nick!user@host> [masktype]
   host, only numbers in hostnames are replaced with the '?' wildcard.
   Same is valid for types 20-29, but instead of '?', the '\*' wildcard
   will be used. Types 30-39 set the host to '\*'.
+  
+  NOTES
+   - Does not require a proper hostmask in as argument. Accepts any strings, including empty ones and attempts to provide meaningful results.
+   - Strings containing no '@' character will be parsed as if the whole string is a host.
+   - Strings containing no '!' character will be interpreted as if there is no nick.
+   - '!' as a nick/user separator must precede any '@' characters, otherwise it will be considered a part of the host.
 
   Module: core
 
