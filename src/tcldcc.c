@@ -1290,7 +1290,7 @@ static int tcl_listen STDVAR
       strlcpy(ip, argv[1], sizeof(ip));
       i++;
     } else {
-      Tcl_AppendResult(irp, "invalid ip address", NULL);
+      Tcl_AppendResult(irp, "invalid IP address argument", NULL);
       return TCL_ERROR;
     }
   }
