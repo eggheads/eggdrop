@@ -60,11 +60,11 @@ A server announces if it supports WHOX via its ISUPPORT (005) announcement. If y
 
 Best-Effort Account Tracking
 ----------------------------
-If a server only supports some, but not all, of the required capabilities, Eggdrop will switch to 'best effort' account tracking. This means Eggdrop will update account statuses whenever it sees account information, but in this mode Eggdrop cannnot guarantee that all account associations are up to date.
+If a server only supports some, but not all, of the required capabilities, Eggdrop will switch to 'best effort' account tracking. This means Eggdrop will update account statuses whenever it sees account information, but in this mode Eggdrop cannot guarantee that all account associations are up to date.
 
 If a server does not support extended-join, Eggdrop will not be able to determine the account associated with a user when they join. Eggdrop can update this information by sending a WHOX to the server.
 
-If a server does not support account-notify, Eggdrop will not be able to determine the account assoicated with a user if they authenticate/deauthenticate from their account after joining a channel. Eggdrop can update this information by sending a WHOX to the server.
+If a server does not support account-notify, Eggdrop will not be able to determine the account associated with a user if they authenticate/deauthenticate from their account after joining a channel. Eggdrop can update this information by sending a WHOX to the server.
 
 If a server does not support WHOX, Eggdrop will not be able to determine the accounts associated with users already on a channel before Eggdrop joined. There is no reliable way to update this information.
 
@@ -76,6 +76,6 @@ One supplementary capability that can assist a best-effort account tracking scen
 
 Using Accounts with Tcl Scripts
 -------------------------------
-The Eggdrop Tcl ACCOUNT bind is triggered whenver an existing account record stored by Eggdrop is modified, such as a user de/authenticating to their account while in a channel, or information such as an account-tag being seen that updates an existing user. However, the ACCOUNT bind will NOT be triggered for the creation of a new user record, such as a user joining a channel. The bind is triggered for every channel the user is seen on- this means if a user is present with Eggdrop on four channels, the bind will be executed four times, each time with a different channel variable being passed to the associated Tcl procedure. Additionally, in a best-effort account tracking situation, Eggdrop will update the account associated with a user on all channels, not just the channel the event is seen on (and thus resulting in a bind trigger for each channel the user is on).
+The Eggdrop Tcl ACCOUNT bind is triggered whenever an existing account record stored by Eggdrop is modified, such as a user de/authenticating to their account while in a channel, or information such as an account-tag being seen that updates an existing user. However, the ACCOUNT bind will NOT be triggered for the creation of a new user record, such as a user joining a channel. The bind is triggered for every channel the user is seen on- this means if a user is present with Eggdrop on four channels, the bind will be executed four times, each time with a different channel variable being passed to the associated Tcl procedure. Additionally, in a best-effort account tracking situation, Eggdrop will update the account associated with a user on all channels, not just the channel the event is seen on (and thus resulting in a bind trigger for each channel the user is on).
 
 In order to trigger Tcl script events to cover all instances where a user logs in, you need to pair an ACCOUNT bind with a JOIN bind. This will allow you to execute account-based events when a user joins as well as if they authenticate after joining. 
