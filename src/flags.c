@@ -1133,7 +1133,7 @@ static int flag2str(char *string, int bot, int udef)
     x++;
   }
   if (string == old)
-    *string++ = '-';
+    *string++ = '*';
   return string - old;
 }
 
