@@ -23,6 +23,7 @@
 # Souperman 05Nov2002: added ordnumber
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
+# CrazyCat  18Oct2022: added achannels
 #
 ########################################
 #
@@ -100,6 +101,9 @@
 # killdccbut <idx>
 #   kill all dcc user connections except for the given idx
 #
+# achannels [flag]
+#   return channels with flag enabled
+#   if channels is empty, return channel list
 #
 ##
 ## (moretools):
@@ -436,4 +440,21 @@ proc ordnumber {string} {
     return ${string}th
   }
   return $string
+}
+
+proc achannels {{attr ""}} {
+  set achans {}
+  if {$attr eq ""} {
+    set achans [channels]
+  } else {
+    if {[catch {set atype [chansettype $attr]}]} { set atype "unknow" }
+    if {$atype ne "flag"} {
+      throw {TCL ATTRUNK "$attr is unknow or not flag attribute"} "$attr is unknow or not flag attribute"
+      return
+    }
+    foreach c [channels] {
+      if {[channel get $c $attr]} { lappend achans $c }
+    }
+  }
+  return $achans
 }
