@@ -63,13 +63,13 @@ extern struct hook_entry {
 
 #endif
 
-typedef struct _dependancy {
+typedef struct _dependency {
   struct _module_entry *needed;
   struct _module_entry *needing;
-  struct _dependancy *next;
+  struct _dependency *next;
   int major;
   int minor;
-} dependancy;
-extern dependancy *dependancy_list;
+} dependency;
+extern dependency *dependency_list;
 
 #endif /* _EGG_MODULE_H */

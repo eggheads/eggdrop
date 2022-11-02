@@ -921,7 +921,7 @@ static void mainloop(int toplevel)
       while (f) {
         f = 0;
         for (p = module_list; p != NULL; p = p->next) {
-          dependancy *d = dependancy_list;
+          dependency *d = dependency_list;
           int ok = 1;
 
           while (ok && d) {

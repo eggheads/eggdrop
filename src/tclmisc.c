@@ -589,7 +589,7 @@ static int tcl_modules STDVAR
   int i;
   char *p, s[24], s2[24];
   EGG_CONST char *list[100], *list2[2];
-  dependancy *dep;
+  dependency *dep;
   module_entry *current;
 
   BADARGS(1, 1, "");
@@ -599,7 +599,7 @@ static int tcl_modules STDVAR
     egg_snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
     list[1] = s;
     i = 2;
-    for (dep = dependancy_list; dep && (i < 100); dep = dep->next) {
+    for (dep = dependency_list; dep && (i < 100); dep = dep->next) {
       if (dep->needing == current) {
         list2[0] = dep->needed->name;
         egg_snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);

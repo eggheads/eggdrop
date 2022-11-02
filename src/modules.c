@@ -176,7 +176,7 @@ void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
 
 module_entry *module_list;
-dependancy *dependancy_list = NULL;
+dependency *dependency_list = NULL;
 
 /* The horrible global lookup table for functions
  * BUT it makes the whole thing *much* more portable than letting each
@@ -652,7 +652,7 @@ int expmem_modules(int y)
 {
   int c = 0, i;
   module_entry *p;
-  dependancy *d;
+  dependency *d;
   struct hook_entry *q;
   Function *f;
 #ifdef STATIC
@@ -666,8 +666,8 @@ int expmem_modules(int y)
     for (q = hook_list[i]; q; q = q->next)
       c += sizeof(struct hook_entry);
 
-  for (d = dependancy_list; d; d = d->next)
-    c += sizeof(dependancy);
+  for (d = dependency_list; d; d = d->next)
+    c += sizeof(dependency);
 
   for (p = module_list; p; p = p->next) {
     c += sizeof(module_entry);
@@ -863,9 +863,9 @@ char *module_unload(char *name, char *user)
 
   while (p) {
     if ((p->name != NULL) && !strcmp(name, p->name)) {
-      dependancy *d;
+      dependency *d;
 
-      for (d = dependancy_list; d; d = d->next)
+      for (d = dependency_list; d; d = d->next)
         if (d->needed == p)
           return MOD_NEEDED;
 
@@ -944,7 +944,7 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
 {
   module_entry *p = module_find(name2, major, minor);
   module_entry *o = module_find(name1, 0, 0);
-  dependancy *d;
+  dependency *d;
 
   if (!p) {
     if (module_load(name2))
@@ -953,14 +953,14 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
   }
   if (!p || !o)
     return 0;
-  d = nmalloc(sizeof(dependancy));
+  d = nmalloc(sizeof(dependency));
 
   d->needed = p;
   d->needing = o;
-  d->next = dependancy_list;
+  d->next = dependency_list;
   d->major = major;
   d->minor = minor;
-  dependancy_list = d;
+  dependency_list = d;
   return p->funcs ? p->funcs : (Function *) 1;
 }
 
@@ -968,20 +968,20 @@ int module_undepend(char *name1)
 {
   int ok = 0;
   module_entry *p = module_find(name1, 0, 0);
-  dependancy *d = dependancy_list, *o = NULL;
+  dependency *d = dependency_list, *o = NULL;
 
   if (p == NULL)
     return 0;
   while (d != NULL) {
     if (d->needing == p) {
       if (o == NULL) {
-        dependancy_list = d->next;
+        dependency_list = d->next;
       } else {
         o->next = d->next;
       }
       nfree(d);
       if (o == NULL)
-        d = dependancy_list;
+        d = dependency_list;
       else
         d = o->next;
       ok++;
@@ -1186,13 +1186,13 @@ void do_module_report(int idx, int details, char *which)
     dprintf(idx, "Loaded module information:\n");
   for (; p; p = p->next) {
     if (!which || !strcasecmp(which, p->name)) {
-      dependancy *d;
+      dependency *d;
 
       if (details)
         dprintf(idx, "  Module: %s, v %d.%d\n", p->name ? p->name : "CORE",
                 p->major, p->minor);
       if (details > 1) {
-        for (d = dependancy_list; d; d = d->next)
+        for (d = dependency_list; d; d = d->next)
           if (d->needing == p)
             dprintf(idx, "    requires: %s, v %d.%d\n", d->needed->name,
                     d->major, d->minor);
