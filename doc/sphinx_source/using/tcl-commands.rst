@@ -367,8 +367,6 @@ botattr <handle> [changes [channel]]
 
   Module: core
 
-.. _matchattr:
-
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -377,43 +375,7 @@ matchattr <handle> <flags> [channel]
 
       [+/-]<global flags>[&/|<channel flags>[&/|<bot flags>]]
 
-  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
-
-+------------+-----------------------------------------------------------------+
-| Flag Mask  | Action                                                          |
-+============+=================================================================+
-| +m         + Checks if the user has the m global flag                        |
-+------------+-----------------------------------------------------------------+
-| +mn        | Checks if the user has the m OR n global flag                   |
-+------------+-----------------------------------------------------------------+
-| \|+mn      | Checks if the user has the m OR n global flag                   |
-+------------+-----------------------------------------------------------------+
-| \|+mn #foo | Checks if the user has the m OR n channel flag for #foo         |
-+------------+-----------------------------------------------------------------+
-| &+mn       | Checks if the user has the m AND n global flag                  |
-+------------+-----------------------------------------------------------------+
-| &mn #foo   | Checks if the user has the m AND n channel flag for #foo        |
-+------------+-----------------------------------------------------------------+
-| \|+o #foo  | Checks if the user has the o channel flag for #foo              |
-+------------+-----------------------------------------------------------------+
-| +o|+n #foo | Checks if the user has the o global flag OR the n channel flag  |
-|            | for #foo                                                        |
-+------------+-----------------------------------------------------------------+
-| +m&+v #foo | Checks if the user has the m global flag AND the v channel flag |
-|            | for #foo                                                        |
-+------------+-----------------------------------------------------------------+
-| -m         | Checks if the user does not have the m global flag              |
-+------------+-----------------------------------------------------------------+
-| \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
-+------------+-----------------------------------------------------------------+
-| +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
-|            | channel n flag for #foo                                         |
-+------------+-----------------------------------------------------------------+
-| -n&-m #foo | Checks if the user does not have the global n flag AND does     |
-|            | not have the channel m flag for #foo                            |
-+------------+-----------------------------------------------------------------+
-| ||+b       | Checks if the user has the bot flag b                           |
-+------------+-----------------------------------------------------------------+
+  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags. Please see `Flag Masks`_ for additional information on flag usage.
 
   Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
 
@@ -1374,7 +1336,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr_ above for additional examples).
+  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See `Flag Masks`_ for additional information).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -2922,10 +2884,55 @@ Removing a bind
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+
 ^^^^^^^^^^
 Flag Masks
 ^^^^^^^^^^
-In the next section, you will see several references to "flags". The "flags" argument is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc), or a "-" or "*" can be used to denote "any user". For example, a flag mask of "ov" would allow a bind to be triggered by a user added to Eggdrop with either the o or v global flags. A flag mask of of "-\|m" would allow a bind to be triggered by a user with the m channel flag. For more advanced information on how flag matching works, please see the matchattr_ description.
+In the `Bind Types`_ section (and other commands, such as `matchattr`_), you will see several references to the "flags" argument. The "flags" argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a "-" or "*" can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or & logical operators ( the | means "OR" and the & means "AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a '+' and '-' can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.
+
+The easiest way to explain how to build a flag mask is by demonstration. A flag mask of "v" by itself means "has a global v flag". To also check for a channel flag, you would use the flag mask "v|v". This checks if the user has a global "v" flag, OR a channel "v" flag (again, the | means "OR" and ties the two types of flags together). You could change this mask to be "v&v", which would check if the user has a global "v" flag AND a channel "v" flag. Lastly, to check if a user ONLY has a channel flag, you would use "\*|v" as a mask, which would not check global flags but does check if the user had a channel "v" flag.
+
+You will commonly see flag masks for global flags written "ov"; this is the same as "\|ov" or "\*\|ov".
+
+Some additional examples:
+
++------------+-----------------------------------------------------------------+
+| Flag Mask  | Action                                                          |
++============+=================================================================+
+| m, +m, m|* | Checks if the user has the m global flag                        |
++------------+-----------------------------------------------------------------+
+| +mn        | Checks if the user has the m OR n global flag                   |
++------------+-----------------------------------------------------------------+
+| \|+mn      | Checks if the user has the m OR n channel flag                  |
++------------+-----------------------------------------------------------------+
+| \|+mn #foo | Checks if the user has the m OR n channel flag for #foo         |
++------------+-----------------------------------------------------------------+
+| &+mn       | Checks if the user has the m AND n channel flag                 |
++------------+-----------------------------------------------------------------+
+| &mn #foo   | Checks if the user has the m AND n channel flag for #foo        |
++------------+-----------------------------------------------------------------+
+| \|+o #foo  | Checks if the user has the o channel flag for #foo              |
++------------+-----------------------------------------------------------------+
+| +o|+n #foo | Checks if the user has the o global flag OR the n channel flag  |
+|            | for #foo                                                        |
++------------+-----------------------------------------------------------------+
+| +m&+v #foo | Checks if the user has the m global flag AND the v channel flag |
+|            | for #foo                                                        |
++------------+-----------------------------------------------------------------+
+| -m         | Checks if the user does not have the m global flag              |
++------------+-----------------------------------------------------------------+
+| \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
++------------+-----------------------------------------------------------------+
+| +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
+|            | channel n flag for #foo                                         |
++------------+-----------------------------------------------------------------+
+| -n&-m #foo | Checks if the user does not have the global n flag AND does     |
+|            | not have the channel m flag for #foo                            |
++------------+-----------------------------------------------------------------+
+| ||+b       | Checks if the user has the bot flag b                           |
++------------+-----------------------------------------------------------------+
+
+As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
 
 ^^^^^^^^^^
 Bind Types
