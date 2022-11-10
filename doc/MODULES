@@ -1,4 +1,4 @@
-Eggdrop Module Information Last revised: Jul 25, 2016
+Eggdrop Module Information Last revised: Nov 10, 2022
 
 Eggdrop Module Information
 
@@ -60,9 +60,9 @@ MODULES INCLUDED WITH EGGDROP
 
   compress
 
-      This module provides support for file compression. This allows the
-      bot to transfer compressed user files and, therefore, save a
-      significant amount of bandwidth.
+      This module provides support for file compression. With share module
+      loaded this allows the bot to transfer compressed user files and,
+      therefore, save a significant amount of bandwidth.
 
   console
 

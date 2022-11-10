@@ -34,6 +34,7 @@
 #include "src/users.h"
 #include "transfer.mod/transfer.h"
 #include "channels.mod/channels.h"
+#include "compress.mod/compress.h"
 
 /* Minimum version I will share with. */
 static const int min_share = 1029900;
@@ -44,7 +45,8 @@ static const int min_exemptinvite = 1032800;
 /* Minimum version that supports userfile features. */
 static const int min_uffeature = 1050200;
 
-static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
+static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL,
+                *compress_funcs = NULL;
 
 static int private_global = 0;
 static int private_user = 0;
@@ -2349,10 +2351,11 @@ static Function share_table[] = {
 
 char *share_start(Function *global_funcs)
 {
+  module_entry *me;
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, share_table, 2, 4);
+  module_register(MODULE_NAME, share_table, 2, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
@@ -2378,6 +2381,13 @@ char *share_start(Function *global_funcs)
   add_builtins(H_dcc, my_cmds);
   uff_init();
   uff_addtable(internal_uff_table);
+
+  me = module_find("compress", 1, 3);
+  if (me) {
+    compress_funcs = me->funcs;
+    compress_start_share();
+  }
+
   return NULL;
 }
 
