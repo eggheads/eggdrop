@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.3 documentation</title>
+    <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.4 documentation</title>
     <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.4 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="text-sub.html" title="Textfile Substitutions"
              accesskey="P">previous</a> |
@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -122,7 +123,7 @@ Last revised: January 24, 2021</p>
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.</p>
-<p>This list is accurate for Eggdrop v1.9.3. Scripts written for v1.3, v1.4,
+<p>This list is accurate for Eggdrop v1.9.4. Scripts written for v1.3, v1.4,
 1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -466,70 +467,8 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[+/-]&lt;global flags&gt;[&amp;/|&lt;channel flags&gt;[&amp;/|&lt;bot flags&gt;]]
 </pre></div>
 </div>
-<p>Either | or &amp; can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A ‘+’ is used to check if a user has the subsequent flags, and a ‘-‘ is used to check if a user does NOT have the subsequent flags.</p>
-</div></blockquote>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="84%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Flag Mask</th>
-<th class="head">Action</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td rowspan="2">+m</td>
-<td rowspan="2">Checks if the user has the m global flag</td>
-</tr>
-<tr class="row-odd"></tr>
-<tr class="row-even"><td>+mn</td>
-<td>Checks if the user has the m OR n global flag</td>
-</tr>
-<tr class="row-odd"><td>|+mn</td>
-<td>Checks if the user has the m OR n global flag</td>
-</tr>
-<tr class="row-even"><td>|+mn #foo</td>
-<td>Checks if the user has the m OR n channel flag for #foo</td>
-</tr>
-<tr class="row-odd"><td>&amp;+mn</td>
-<td>Checks if the user has the m AND n global flag</td>
-</tr>
-<tr class="row-even"><td>&amp;mn #foo</td>
-<td>Checks if the user has the m AND n channel flag for #foo</td>
-</tr>
-<tr class="row-odd"><td>|+o #foo</td>
-<td>Checks if the user has the o channel flag for #foo</td>
-</tr>
-<tr class="row-even"><td>+o|+n #foo</td>
-<td>Checks if the user has the o global flag OR the n channel flag
-for #foo</td>
-</tr>
-<tr class="row-odd"><td>+m&amp;+v #foo</td>
-<td>Checks if the user has the m global flag AND the v channel flag
-for #foo</td>
-</tr>
-<tr class="row-even"><td>-m</td>
-<td>Checks if the user does not have the m global flag</td>
-</tr>
-<tr class="row-odd"><td>|-n #foo</td>
-<td>Checks if the user does not have the n channel flag for #foo</td>
-</tr>
-<tr class="row-even"><td>+m|-n #foo</td>
-<td>Checks if the user has the global m flag OR does not have a
-channel n flag for #foo</td>
-</tr>
-<tr class="row-odd"><td>-n&amp;-m #foo</td>
-<td>Checks if the user does not have the global n flag AND does
-not have the channel m flag for #foo</td>
-</tr>
-<tr class="row-even"><td>||+b</td>
-<td>Checks if the user has the bot flag b</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<div><p>Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise</p>
+<p>Either | or &amp; can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A ‘+’ is used to check if a user has the subsequent flags, and a ‘-‘ is used to check if a user does NOT have the subsequent flags. Please see <a class="reference internal" href="#flag-masks">Flag Masks</a> for additional information on flag usage.</p>
+<p>Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -1198,7 +1137,9 @@ channel’s invite list is checked as well.</p>
 <div class="section" id="getaccount-nickname-channel">
 <h3>getaccount &lt;nickname&gt; [channel]<a class="headerlink" href="#getaccount-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  “” if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).</div></blockquote>
+<div><p>Returns: the services account name associated with nickname, “*” if the user is not logged into services, or “” if eggdrop does not know the account status of the user.</p>
+<p>NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.</p>
+</div></blockquote>
 </div>
 <div class="section" id="nick2hand-nickname-channel">
 <h3>nick2hand &lt;nickname&gt; [channel]<a class="headerlink" href="#nick2hand-nickname-channel" title="Permalink to this headline">¶</a></h3>
@@ -1406,7 +1347,7 @@ channel’s invite list is checked as well.</p>
 <div class="section" id="chanlist-channel-flags-chanflags">
 <h3>chanlist &lt;channel&gt; [flags][&lt;&amp;|&gt;chanflags]<a class="headerlink" href="#chanlist-channel-flags-chanflags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: flags are any global flags; the ‘&amp;’ or ‘|’ denotes to look for channel specific flags, where ‘&amp;’ will return users having ALL chanflags and ‘|’ returns users having ANY of the chanflags (See matchattr above for additional examples).</p>
+<div><p>Description: flags are any global flags; the ‘&amp;’ or ‘|’ denotes to look for channel specific flags, where ‘&amp;’ will return users having ALL chanflags and ‘|’ returns users having ANY of the chanflags (See <a class="reference internal" href="#flag-masks">Flag Masks</a> for additional information).</p>
 <p>Returns: Searching for flags optionally preceded with a ‘+’ will return a list of nicknames that have all the flags listed. Searching for flags preceded with a ‘-‘ will return a list of nicknames that do not have have any of the flags (differently said, ‘-‘ will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.</p>
 <p>Please note that if you’re executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.</p>
 <p>Module: irc</p>
@@ -2390,10 +2331,8 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <div class="section" id="utimer-seconds-tcl-command-count-timername">
 <h3>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#utimer-seconds-tcl-command-count-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it’s removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer</div></blockquote>
-<p>Name is specified, Eggdrop will assign a timerName in the format of “timer&lt;integer&gt;”.</p>
-<blockquote>
-<div><p>Returns: a timerName</p>
+<div><p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it’s removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If timerName is not specified, Eggdrop will assign a timerName in the format of “timer&lt;integer&gt;”.</p>
+<p>Returns: a timerName</p>
 <p>Module: core</p>
 </div></blockquote>
 </div>
@@ -2915,20 +2854,83 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div>
 <div class="section" id="binds">
 <h2>Binds<a class="headerlink" href="#binds" title="Permalink to this headline">¶</a></h2>
-<p>You can use the ‘bind’ command to attach Tcl procedures to certain events.
-For example, you can write a Tcl procedure that gets called every time a
-user says “danger” on the channel.</p>
-<p>Some bind types are marked as “stackable”. That means that you can bind
-multiple commands to the same trigger. Normally, for example, a bind such
-as ‘bind msg - stop msg:stop’ (which makes a msg-command “stop” call the
-Tcl proc “msg:stop”) will overwrite any previous binding you had for the
-msg command “stop”. With stackable bindings, like ‘msgm’ for example,
-you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called. Raw binds are
-triggered before builtin binds, as a builtin bind has the potential to
-modify args.</p>
+<p>You can use the ‘bind’ command to attach Tcl procedures to certain events. For example, you can write a Tcl procedure that gets called every time a user says “danger” on the channel. When a bind is triggered, ALL of the Tcl procs that are bound to it will be called. Raw binds are triggered before builtin binds, as a builtin bind has the potential to modify args.</p>
+<div class="section" id="stackable-binds">
+<h3>Stackable binds<a class="headerlink" href="#stackable-binds" title="Permalink to this headline">¶</a></h3>
+<p>Some bind types are marked as “stackable”. That means that you can bind multiple commands to the same trigger. Normally, for example, a bind such as ‘bind msg - stop msg:stop’ (which makes a msg-command “stop” call the Tcl proc “msg:stop”) will overwrite any previous binding you had for the msg command “stop”. With stackable bindings, like ‘msgm’ for example, you can bind the same command to multiple procs.</p>
+</div>
+<div class="section" id="removing-a-bind">
+<h3>Removing a bind<a class="headerlink" href="#removing-a-bind" title="Permalink to this headline">¶</a></h3>
 <p>To remove a bind, use the ‘unbind’ command. For example, to remove the
 bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
+</div>
+<div class="section" id="flag-masks">
+<h3>Flag Masks<a class="headerlink" href="#flag-masks" title="Permalink to this headline">¶</a></h3>
+<p>In the <a class="reference internal" href="#bind-types">Bind Types</a> section (and other commands, such as <a href="#id3"><span class="problematic" id="id4">`matchattr`_</span></a>), you will see several references to the “flags” argument. The “flags” argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a “-” or “*” can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or &amp; logical operators ( the | means “OR” and the &amp; means “AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a ‘+’ and ‘-‘ can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.</p>
+<p>The easiest way to explain how to build a flag mask is by demonstration. A flag mask of “v” by itself means “has a global v flag”. To also check for a channel flag, you would use the flag mask “v|v”. This checks if the user has a global “v” flag, OR a channel “v” flag (again, the | means “OR” and ties the two types of flags together). You could change this mask to be “v&amp;v”, which would check if the user has a global “v” flag AND a channel “v” flag. Lastly, to check if a user ONLY has a channel flag, you would use “*|v” as a mask, which would not check global flags but does check if the user had a channel “v” flag.</p>
+<p>You will commonly see flag masks for global flags written “ov”; this is the same as “|ov” or “*|ov”.</p>
+<p>Some additional examples:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Flag Mask</th>
+<th class="head">Action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>m, +m, m|*</td>
+<td>Checks if the user has the m global flag</td>
+</tr>
+<tr class="row-odd"><td>+mn</td>
+<td>Checks if the user has the m OR n global flag</td>
+</tr>
+<tr class="row-even"><td>|+mn</td>
+<td>Checks if the user has the m OR n channel flag</td>
+</tr>
+<tr class="row-odd"><td>|+mn #foo</td>
+<td>Checks if the user has the m OR n channel flag for #foo</td>
+</tr>
+<tr class="row-even"><td>&amp;+mn</td>
+<td>Checks if the user has the m AND n channel flag</td>
+</tr>
+<tr class="row-odd"><td>&amp;mn #foo</td>
+<td>Checks if the user has the m AND n channel flag for #foo</td>
+</tr>
+<tr class="row-even"><td>|+o #foo</td>
+<td>Checks if the user has the o channel flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>+o|+n #foo</td>
+<td>Checks if the user has the o global flag OR the n channel flag
+for #foo</td>
+</tr>
+<tr class="row-even"><td>+m&amp;+v #foo</td>
+<td>Checks if the user has the m global flag AND the v channel flag
+for #foo</td>
+</tr>
+<tr class="row-odd"><td>-m</td>
+<td>Checks if the user does not have the m global flag</td>
+</tr>
+<tr class="row-even"><td>|-n #foo</td>
+<td>Checks if the user does not have the n channel flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>+m|-n #foo</td>
+<td>Checks if the user has the global m flag OR does not have a
+channel n flag for #foo</td>
+</tr>
+<tr class="row-even"><td>-n&amp;-m #foo</td>
+<td>Checks if the user does not have the global n flag AND does
+not have the channel m flag for #foo</td>
+</tr>
+<tr class="row-odd"><td>||+b</td>
+<td>Checks if the user has the bot flag b</td>
+</tr>
+</tbody>
+</table>
+<p>As a side note, Tcl scripts historically have used a ‘-‘ to skip processing of a flag type (Example: -<a href="#id1"><span class="problematic" id="id2">|</span></a>o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a ‘*’ to skip processing, so as not to confuse a single “-” meaning “skip processing” with a preceding “-ov” which means “not these flags”.</p>
+</div>
 <div class="section" id="bind-types">
 <h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this headline">¶</a></h3>
 <p>The following is a list of bind types and how they work. Below each bind type is the format of the bind command, the list of arguments sent to the Tcl proc, and an explanation.</p>
@@ -3122,10 +3124,10 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <li>RAW (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind raw &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
+<div><p>bind raw &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt;</p>
-<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.</p>
-<p>Description: previous versions of Eggdrop required a special compile option to enable this binding, but it’s now standard. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.</p>
+<p>IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind, which supports the IRCv3 message-tags capability, as of 1.9.0. You probably want to be using RAWT, not RAW.</p>
+<p>Description: The mask can contain wildcards and is matched against the keyword, which is either a numeric, like “368”, or a keyword, such as “PRIVMSG”. “from” will be the server name or the source <a class="reference external" href="mailto:nick!ident&#37;&#52;&#48;host">nick!ident<span>&#64;</span>host</a> (depending on the keyword); flags are ignored. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind).</p>
 <p>Module: server</p>
 </div></blockquote>
 <ol class="arabic simple" start="18">
@@ -3464,9 +3466,9 @@ fail-server       - called when an IRC server fails to respond
 <li>RAWT (stackable)</li>
 </ol>
 <blockquote>
-<div><p>bind rawt &lt;flags&gt; &lt;keyword&gt; &lt;proc&gt;</p>
-<p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt; &lt;tag&gt;</p>
-<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source user (depending on the keyword); flags are ignored. “tag” will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as “msgid 890157217279768 aaa bbb”. The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.</p>
+<div><p>bind rawt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;from&gt; &lt;keyword&gt; &lt;text&gt; &lt;tags&gt;</p>
+<p>Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The mask can contain wildcards and is matched against the keyword which is either a numeric, like “368”, or a keyword, such as “PRIVMSG” or “TAGMSG”. “from” will be the server name or the source <a class="reference external" href="mailto:nick!ident&#37;&#52;&#48;host">nick!ident<span>&#64;</span>host</a> (depending on the keyword); flags are ignored. “tag” is a dictionary (flat key/value list) of the message tags with “” for empty values (e.g. “account eggdrop realname LamestBot”). If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.</p>
 </div></blockquote>
 <ol class="arabic simple" start="53">
 <li>ACCOUNT (stackable)</li>
@@ -3474,7 +3476,8 @@ fail-server       - called when an IRC server fails to respond
 <blockquote>
 <div><p>bind account &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;nick&gt; &lt;user&gt; &lt;hand&gt; &lt;chan&gt; &lt;account&gt;</p>
-<p>Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receiving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” where channel is the channel the user was found on when the bind was triggered, the hostmask is the user’s hostmask, and account is the account name the user is logging in to, or “” for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the <a class="reference external" href="mailto:user&#37;&#52;&#48;host&#46;com">user<span>&#64;</span>host<span>&#46;</span>com</a> hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or “” if the user logged out of an account).</p>
+<p>Description: this bind will trigger when eggdrop detects a change in the authentication status of a user’s service account. The mask for the bind is in the format “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;hostname&#46;com">nick!user<span>&#64;</span>hostname<span>&#46;</span>com</a> account” and accepts <a class="reference internal" href="#wildcards">wildcards</a>. account is either the account name the user is logging in to or “*” if the user is not logged in to an account.</p>
+<p>NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking but this bind could be triggered late or never on account changes. Please see doc/ACCOUNTS for additional information.</p>
 </div></blockquote>
 <ol class="arabic simple" start="54">
 <li>ISUPPORT (stackable)</li>
@@ -3637,7 +3640,7 @@ proc listen:grab {newidx} {
 <p>The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.</p>
 </div>
 <div class="section" id="match-characters">
-<h2>Match Characters<a class="headerlink" href="#match-characters" title="Permalink to this headline">¶</a></h2>
+<span id="wildcards"></span><h2>Match Characters<a class="headerlink" href="#match-characters" title="Permalink to this headline">¶</a></h2>
 <p>Many of the bindings allow match characters in the arguments. Here
 are the four special characters:</p>
 <table border="1" class="docutils">
@@ -3659,6 +3662,10 @@ word) (This character only works in binds, not in regular matching)</td>
 <tr class="row-even"><td>~</td>
 <td>matches 1 or more space characters (can be used for whitespace between
 words) (This char only works in binds, not in regular matching)</td>
+</tr>
+<tr class="row-odd"><td>\*</td>
+<td>matches a literal *, but please note that Tcl needs escaping as well,
+so a bind would have to use “\*” or {*} for a mask argument</td>
 </tr>
 </tbody>
 </table>
@@ -3693,7 +3700,7 @@ words) (This char only works in binds, not in regular matching)</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
+      Last updated on Nov 10, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
