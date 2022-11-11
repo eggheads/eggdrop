@@ -2994,12 +2994,13 @@ the user does (+) have it, or does not (-) have it.
 
 The easiest way to explain how to build a flag mask is by demonstration.
 A flag mask of "v" by itself means "has a global v flag". To also check
-for a channel flag, you would use the flag mask "v means "OR" and ties
-the two types of flags together). You could change this mask to be
-"v&v", which would check if the user has a global "v" flag AND a channel
-"v" flag. Lastly, to check if a user ONLY has a channel flag, you would
-use "*|v" as a mask, which would not check global flags but does check
-if the user had a channel "v" flag.
+for a channel flag, you would use the flag mask "v|v". This checks if
+the user has a global "v" flag, OR a channel "v" flag (again, the |
+means "OR" and ties the two types of flags together). You could change
+this mask to be "v&v", which would check if the user has a global "v"
+flag AND a channel "v" flag. Lastly, to check if a user ONLY has a
+channel flag, you would use "*|v" as a mask, which would not check
+global flags but does check if the user had a channel "v" flag.
 
 You will commonly see flag masks for global flags written "ov"; this is
 the same as "|ov" or "*|ov".

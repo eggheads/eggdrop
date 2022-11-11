@@ -461,7 +461,7 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 </div></blockquote>
 </div>
 <div class="section" id="matchattr-handle-flags-channel">
-<h3>matchattr &lt;handle&gt; &lt;flags&gt; [channel]<a class="headerlink" href="#matchattr-handle-flags-channel" title="Permalink to this headline">¶</a></h3>
+<span id="matchattr"></span><h3>matchattr &lt;handle&gt; &lt;flags&gt; [channel]<a class="headerlink" href="#matchattr-handle-flags-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if the flags of the specified user match the flags provided. “flags” is of the form:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[+/-]&lt;global flags&gt;[&amp;/|&lt;channel flags&gt;[&amp;/|&lt;bot flags&gt;]]
@@ -2866,7 +2866,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 </div>
 <div class="section" id="flag-masks">
 <h3>Flag Masks<a class="headerlink" href="#flag-masks" title="Permalink to this headline">¶</a></h3>
-<p>In the <a class="reference internal" href="#bind-types">Bind Types</a> section (and other commands, such as <a href="#id3"><span class="problematic" id="id4">`matchattr`_</span></a>), you will see several references to the “flags” argument. The “flags” argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a “-” or “*” can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or &amp; logical operators ( the | means “OR” and the &amp; means “AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a ‘+’ and ‘-‘ can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.</p>
+<p>In the <a class="reference internal" href="#bind-types">Bind Types</a> section (and other commands, such as <a class="reference internal" href="#matchattr">matchattr</a>), you will see several references to the “flags” argument. The “flags” argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a “-” or “*” can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or &amp; logical operators ( the | means “OR” and the &amp; means “AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a ‘+’ and ‘-‘ can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.</p>
 <p>The easiest way to explain how to build a flag mask is by demonstration. A flag mask of “v” by itself means “has a global v flag”. To also check for a channel flag, you would use the flag mask “v|v”. This checks if the user has a global “v” flag, OR a channel “v” flag (again, the | means “OR” and ties the two types of flags together). You could change this mask to be “v&amp;v”, which would check if the user has a global “v” flag AND a channel “v” flag. Lastly, to check if a user ONLY has a channel flag, you would use “*|v” as a mask, which would not check global flags but does check if the user had a channel “v” flag.</p>
 <p>You will commonly see flag masks for global flags written “ov”; this is the same as “|ov” or “*|ov”.</p>
 <p>Some additional examples:</p>
@@ -2929,7 +2929,7 @@ not have the channel m flag for #foo</td>
 </tr>
 </tbody>
 </table>
-<p>As a side note, Tcl scripts historically have used a ‘-‘ to skip processing of a flag type (Example: -<a href="#id1"><span class="problematic" id="id2">|</span></a>o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a ‘*’ to skip processing, so as not to confuse a single “-” meaning “skip processing” with a preceding “-ov” which means “not these flags”.</p>
+<p>As a side note, Tcl scripts historically have used a ‘-‘ to skip processing of a flag type (Example: -|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a ‘*’ to skip processing, so as not to confuse a single “-” meaning “skip processing” with a preceding “-ov” which means “not these flags”.</p>
 </div>
 <div class="section" id="bind-types">
 <h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this headline">¶</a></h3>
@@ -3700,7 +3700,7 @@ so a bind would have to use “\*” or {*} for a mask argument</td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on Nov 10, 2022.
+      Last updated on Nov 11, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>

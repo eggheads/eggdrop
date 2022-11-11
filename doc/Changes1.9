@@ -1,8 +1,398 @@
 
-Eggdrop Changes (Last Updated 2021-01-24):
+Eggdrop Changes (Last Updated 2022-11-11):
 __________________________________________
 
-Eggdrop v1.9.0rc1:
+Eggdrop v1.9.4rc1:
+
+  2022-11-10 * Fix matchattr without flags
+                 [Found by: crazycatdevs, wilk / Patch by: thommey]
+             * redo matching docs
+             * Update NEWS
+             * Update version strings to 1.9.4
+             * Generate docs with 1.9.4 version
+  2022-10-05 * Avoid freeaddrinfo(NULL)
+                 [Found by: Release_ / Patch by: michaelortmann]
+  2022-10-01 * Fix typo
+             * Fix typos
+  2022-09-27 * Fix format specifier for intptr_t
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * doc typo
+                 [Found by: SpiKe^^ / Patch by: simple]
+             * Update doc typo
+             * Update install doc
+                 [Found by: CrazyCatDevs / Patch by: CrazyCatDevs]
+             * Fix typos
+  2022-09-24 * Move account bind to irc.mod and normalize account bind.
+                 [Patch by: thommey]
+             * Raw and rawt bind now support wildcards, necessary for account-tag usage
+             * Document how to wildcard match against an asterisk (*)
+             * Eggdrop no longer interprets WHO response it didn't request in the WHOX case
+                 [Found by: Geo / Patch by: thommey]
+             * Offer the option to use account-tag for imperfect tracking
+                 [Patch by: thommey]
+             * Format fix for .channel
+             * Move away and account change logs from console +j to +m
+                 [Found by: Geo / Patch by: Geo, thommey]
+             * Add ACCOUNTS doc
+                 [Patch by: Geo]
+  2022-09-06 * Fix bottree format error
+                 [Found by: SergioR]
+             * Fix tag handling in rawt
+                 [Found by: thommey / Patch by: Geo, thommey]
+  2022-08-28 * Undo changes to format specifiers for hooked function shareout
+             * Fix shareout crash #1324 (see fb9f52ca)
+                 [Found by: ploxxusVulgaris / Patch by: thommey]
+  2022-08-27 * Fix format specifiers
+                 [Patch by: thommey]
+             * Fix bad +host logmsg
+                 [Found by: thommey / Patch by: Geo]
+  2022-08-26 * Fix gotmsg being moved to raw, no tags available
+  2022-08-24 * Move gotmsg back to raw bind
+                 [Found by: CrazyCat]
+             * Fixes a DNS bug when DCC connections were disconnected while the DNS request was pending. Fixes
+               #1174 (#1319)
+                 [Found by: DasBrain, ERR1R, CrazyCat / Patch by: thommey]
+
+Eggdrop v1.9.3 (2022-08-11):
+
+  2022-08-11 * docfix
+             * Fix plain SASL when TLS unavailable
+                 [Found by: @eryg-kai / Patch by: @eryg-kai]
+             * doc updates
+             * Eggdrop v1.9.3 *STABLE*
+
+Eggdrop v1.9.3rc1 (2022-07-12):
+
+  2022-07-12 * remove old docs from newversion
+             * Update version strings to 1.9.3
+             * Generate docs with 1.9.3 version
+             * doc format fix
+             * Eggdrop v1.9.3 Release Candidate 1
+  2022-07-11 * update NEWS THANKS
+             * Fix extjoin config typo
+             * remove account2hand
+  2022-07-08 * Update NEWS
+             * add account2hand doc
+  2022-07-07 * reduce TLS log noise
+  2022-07-05 * typo fixes
+  2022-07-04 * create thread as detached
+                 [Found by: ]x[ / Patch by: michaelortmann]
+  2022-07-03 * Uptime dns cache expiry
+                 [Found by: Geo / Patch by: thommey]
+  2022-07-02 * fix disable-ipv6
+                 [Patch by: michaelortmann]
+             * Fix dcc ident, truncation warning
+  2022-06-21 * fix account logic
+  2022-06-19 * Update documentation structure
+             * add missing ifdef TLS
+             * missing TLS ifdef
+             * Update flood buffer size
+  2022-06-18 * remove Context from modules
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update inet_aton.c from FreeBSD uptream removes advertising clause (#967)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2022-06-17 * Add account tracking to Eggdrop
+  2022-06-11 * Add timers with names
+                 [Found by: Zartek / Patch by: Geo]
+  2022-06-06 * No escape codes to non-ssl conns
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix strcpy param overlap
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * simple_sprintf() into snprintf()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * fix strlcpy size params
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * inline keyword cleanup
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Adjust buffer
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * sprintf/egg_snprintf -> strlcpy
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * simplify main loop
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Cleanup includes
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Simplify tcl_channel_add
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * mod format specifier
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Add field initializers
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * getrusage() is POSIX 2001
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Cleanup botunlink
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * run autotools
+  2022-06-04 * Fix --disable-tls compile bug
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Doc typo
+                 [Found by: dereckson / Patch by: dereckson]
+             * Fix memory leak - SSL_get_peer_certificate() -> X509_free() (#1262)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix ident lookup bind (#1254)
+                 [Found by: thommey / Patch by: michaelortmann]
+             * Fix pthread include and autoconf (#1270)
+                 [Found by: carlin0 / Patch by: michaelortmann]
+             * Add server-online offline value to doc
+                 [Patch by: ZarTek-Creole]
+             * Fix typo
+             * Update THANKS
+  2022-03-27 * Update ext-join acct for all chans
+                 [Found by: Jobe / Patch by: Geo]
+  2022-03-13 * Fix -t without active other sockets
+                 [Found by: Geo / Patch by: thommey]
+  2022-03-08 * Create configure_flags.yml
+  2022-03-07 * Delete main.yml
+  2022-03-05 * Fix CAP output in .status
+  2022-03-02 * Revert "Fix status output of capabilities"
+  2022-03-01 * Fix string truncation
+             * Fix status output of capabilities
+  2022-02-07 * Update docs for 1.9.2rc2
+  2022-01-31 * Fix tdns mutex
+                 [Found by: Geo / Patch by: michaelortmann]
+  2022-01-29 * Revert "Merge branch 'mmorton/mutex' into develop"
+
+Eggdrop v1.9.2 (2022-03-06):
+
+  2022-03-06 * Fix CAP output in .status
+             * Eggdrop v1.9.2 *STABLE*
+  2022-02-27 * Typo fix
+             * Update docs
+             * Update copyright to 2022
+             * fix NULL ptr (#1261)
+                 [Found by: tuvok / Patch by: Geo]
+             * Fix twitch restart/rehash crash
+                 [Found by: roughnecks / Patch by: Lord255, michaelortmann, thommey]
+             * update NEWS THANKS
+
+Eggdrop v1.9.2rc2 (2022-02-07):
+
+  2022-02-07 * Add UPGRADING to gendocs
+             * Remove unneeded DNS comments from config
+             * Restore missing 1.9.0 NEWS
+             * Update docs
+             * Initialize vars
+             * init mutex
+             * Fix PBKDF2 cheks for PASS/2
+                 [Found by: ldm / Patch by: michaelortmann]
+             * Remove old -n doc references
+             * Fix indent (#1258)
+             * Fix users.rst typo
+                 [Found by: kveremitz / Patch by: PeGaSuS-Coder]
+             * Fix tdns mutex
+                 [Found by: Geo / Patch by: michaelortmann]
+             * fix cap exports
+             * typo fix
+             * Eggdrop v1.9.2 Release Candidate 2
+
+Eggdrop v1.9.2rc1 (2021-12-18):
+
+  2021-12-18 * make tdns default
+             * Update version strings to 1.9.2
+             * Generate docs with 1.9.2 version
+             * Eggdrop v1.9.2 Release Candidate 1
+  2021-12-04 * Update 1.9.2 NEWS
+  2021-11-30 * Properly check cap settings outside server.mod
+             * Prohibit hostname in nat-ip
+  2021-11-28 * Documentation update
+             * Generate 1.9.2 docs
+             * Doc typos
+             * Update NEWS for 1.9.2
+             * Update THANKS for 1.9.2
+             * Update THANKS for 1.9.2 again
+  2021-11-27 * prevent race in threaded dns
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Add values argument to Tcl cap command
+                 [Found by: thommey / Patch by: Geo]
+             * Use nick/altnick/randnick on bad nickname
+             * Add server list Tcl command
+             * Log error on rejected botattr
+  2021-11-06 * Add an AlertNotifier callback function
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * RAWT blocks RAW
+                 [Found by: DasBrain / Patch by: Geo, thommey]
+  2021-10-22 * Don't require message-tags to check for message-tags
+                 [Found by: DasBrain, Lord255 / Patch by: Geo]
+  2021-10-21 * Fix missing ACCOUNT bind value in docs
+                 [Found by: Geo]
+  2021-10-20 * Add MONITOR support (#1173)
+                 [Patch by: Geo]
+  2021-10-18 * adjust buffer size
+                 [Found by: mortmann / Patch by: Geo]
+  2021-10-15 * Improve CAP302 implementation
+                 [Patch by: thommey, Geo]
+  2021-10-06 * Remove extra comma in ircaway bind
+                 [Found by: CrazyCatDevs / Patch by: Geo]
+  2021-09-30 * SASL 302 support
+                 [Patch by: Geo]
+  2021-09-29 * Adds Twitch USERNOTICE bind
+  2021-09-23 * Add CAP 302 support (#1203)
+                 [Patch by: thommey, Geo]
+  2021-09-07 * Fix CAP config settings
+                 [Found by: Sensiva / Patch by: Geo]
+  2021-09-01 * Add ssl status to bottree
+                 [Patch by: michaelortmann]
+  2021-08-22 * initialize dns_thread_head before chanprog
+                 [Found by: MalaGaM / Patch by: michaelortmann]
+             * Use defines instead of raw telnet codes
+             * Fix potential NULL deref in splitnicks
+                 [Found by: michaelortmann / Patch by: michaelortmann, and, thommey]
+             * Fix truncation
+                 [Patch by: michaelortmann]
+             * Make functions static
+  2021-08-15 * Add 005 BOT flag support, isircbot Tcl command
+             * Fix broken format code (%b) in core.help
+                 [Found by: wilk / Patch by: wilk]
+             * Fix typo
+  2021-08-10 * Update version, server block in docs
+  2021-08-08 * Update docs
+  2021-08-05 * Add irc settings for Libera Chat
+             * remove mandatory flag for listen script
+                 [Found by: Krambaek]
+  2021-07-13 * Update first install versions
+  2021-06-20 * Add IRCv3 explanation doc
+
+Eggdrop v1.9.1 (2021-05-31):
+
+  2021-05-31 * Change freenode references to Libera
+             * Update NEWS for 1.9.1
+             * Update docs
+             * Merge branch 'stable/1.9' into release/1.9.1
+
+Eggdrop v1.9.1rc1 (2021-05-08):
+
+  2021-05-08 * Fix stagnant module warning
+                 [Patch by: michaelortmann]
+             * Reject invalid chars in +bot
+                 [Found by: MalaGaM / Patch by: Geo]
+             * Correctly track away status on away
+                 [Found by: DasBrain / Patch by: DasBrain]
+             * Fix crash when adding server wo port
+                 [Found by: bdrewery / Patch by: bdrewery]
+             * Don't overwrite socket IP on CTCP
+                 [Found by: [TriiiX] / Patch by: Geo]
+             * Fix socket connection error msgs
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Make the compiler use 64bit ari
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix OpenBSD compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update NEWS THANKS
+             * Fix genereatedocs pip
+             * remove temp version hardcode
+             * Update version strings to 1.9.1
+             * Generate docs with 1.9.1 version
+             * FIX: Exclude cherry-picked commits from changelogs, experimental
+             * misc/genchanges: Add comment how cherry-pick diff works
+             * tweak releaseprep one more time
+             * Eggdrop v1.9.1 Release Candidate 1
+  2021-05-05 * fix typos
+                 [Patch by: michaelortmann]
+             * Remove -n CLI flag reference
+                 [Patch by: michaelortmann]
+             * Update docs, lang file
+                 [Patch by: crazycatdevs]
+             * Use correct type for CTCP flood
+                 [Patch by: DasBrain]
+  2021-04-10 * Update install docs with 1.9 refs
+
+Eggdrop v1.9.0 (2021-03-28):
+
+  2021-03-28 * Fix DNS module help
+                 [Found by: Carlin0]
+             * Fix DNS module help
+                 [Found by: Carlin0]
+             * Add CHAT6 to IPv6 docs
+             * Remove quotepass from install
+                 [Found by: arduent]
+             * remove quotepass ref from CONTENTS
+             * Fix /dcc chat <bot> for eggdrop compiled with --disable-ipv6 (#1146)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update docs
+             * Fix formatting
+             * Eggdrop v1.9.0
+             * docs typo
+             * Generate doc after typo
+  2021-03-21 * config typo
+             * Add unlink comment doc
+                 [Found by: Malagam]
+             * Update Versions file
+             * fix #ifdef compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * config typo
+             * misplaced return
+                 [Found by: mortmann]
+             * Add Italian language files
+                 [Patch by: Carlin0]
+             * Update THANKS
+
+Eggdrop v1.9.0rc3 (2021-03-02):
+
+  2021-03-02 * Fix releaseprep Changelog
+             * Update THANKS
+             * Eggdrop v1.9.0 Release Candidate 3
+  2021-03-01 * Fix releaseprep script for versions higher than .0rc1
+             * Fix socklist for bots without tls support
+                 [Patch by: mortmann]
+             * Update set/tcl unbind docs
+                 [Found by: Dooms40]
+             * server args OBOE
+             * Fix typo
+             * Remove listen-addr refs from basic config
+             * Remove quotepass.tcl
+             * Restore listen-addr being used as default if not specified in listen command
+                 [Found by: style / Patch by: thommey]
+             * update config words
+             * Fix SunOS bzero compile error
+             * better-fix SunOS bzero compile error
+             * Doc formatting
+
+Eggdrop v1.9.0rc2 (2021-02-15):
+
+  2021-02-15 * Update AUTHORS
+             * typo
+             * Fix copyright
+             * Fix eggdrop.conf CAP comment
+                 [Found by: jack3]
+             * Fix add/delserver syntax typo
+                 [Found by: ZarTek]
+             * Update field length
+             * Remove self-refrence in .conf
+             * Move some SASL log messages to debug
+             * Fix typos
+                 [Patch by: mortmann]
+             * Fix twitch parameter
+                 [Patch by: mortmann]
+             * Change add/delserver to server add/remove (#1114)
+                 [Found by: Malagam / Patch by: Geo]
+             * Update THANKS
+             * Fix file leak (#1118)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix file leak
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix dns resolving hang
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update strncpys
+             * Fix type warning in Cygwin
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update THANKS
+             * Update THANKS
+             * Revert "Remove unnecessary openssl checks" (#1124)
+             * undef set_key
+                 [Found by: mortmann]
+             * Fix vhost6 being ignored if vhost4 was empty, regardless of address family actually used.
+                 [Found by: Harekiet / Patch by: thommey]
+             * Update net-type warning
+             * Update network format/note
+             * fix typo
+             * Try to avoid ident race condition
+                 [Found by: PeGaSuS / Patch by: michaelortmann]
+             * Update releaseprep for python3
+             * Revert "Update releaseprep for python3"
+             * Run autotools
+             * Eggdrop v1.9.0 Release Candidate 2
+
+Eggdrop v1.9.0rc1 (2021-01-24):
 
   2021-01-24 * Fix OBOE
                  [Found by: michaelortmann / Patch by: michaelortmann]
@@ -16,6 +406,7 @@ Eggdrop v1.9.0rc1:
              * update Change doc gen
              * update releaseprep
              * Fix releaseprep for 1.9.x
+             * Eggdrop v1.9.0 Release Candidate 1
   2021-01-22 * Change buffer size
              * Fix format strings
              * Fix OBOE

@@ -37,9 +37,13 @@ Eggdrop v1.9.4:
       moved to a rawt bind in 1.9.3, causing issuse with scripts attempting to
       unbind this internal reference
 
+Module changes:
+    - None
+
 Eggdrop config changes:
     - None
-    
+
+_________________________________________________________________
 
 Eggdrop v1.9.3:
 

@@ -367,6 +367,8 @@ botattr <handle> [changes [channel]]
 
   Module: core
 
+.. _matchattr:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2888,9 +2890,9 @@ bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 ^^^^^^^^^^
 Flag Masks
 ^^^^^^^^^^
-In the `Bind Types`_ section (and other commands, such as `matchattr`_), you will see several references to the "flags" argument. The "flags" argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a "-" or "*" can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or & logical operators ( the | means "OR" and the & means "AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a '+' and '-' can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.
+In the `Bind Types`_ section (and other commands, such as matchattr_), you will see several references to the "flags" argument. The "flags" argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a "-" or "*" can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or & logical operators ( the | means "OR" and the & means "AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a '+' and '-' can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.
 
-The easiest way to explain how to build a flag mask is by demonstration. A flag mask of "v" by itself means "has a global v flag". To also check for a channel flag, you would use the flag mask "v|v". This checks if the user has a global "v" flag, OR a channel "v" flag (again, the | means "OR" and ties the two types of flags together). You could change this mask to be "v&v", which would check if the user has a global "v" flag AND a channel "v" flag. Lastly, to check if a user ONLY has a channel flag, you would use "\*|v" as a mask, which would not check global flags but does check if the user had a channel "v" flag.
+The easiest way to explain how to build a flag mask is by demonstration. A flag mask of "v" by itself means "has a global v flag". To also check for a channel flag, you would use the flag mask "v\|v". This checks if the user has a global "v" flag, OR a channel "v" flag (again, the | means "OR" and ties the two types of flags together). You could change this mask to be "v&v", which would check if the user has a global "v" flag AND a channel "v" flag. Lastly, to check if a user ONLY has a channel flag, you would use "\*|v" as a mask, which would not check global flags but does check if the user had a channel "v" flag.
 
 You will commonly see flag masks for global flags written "ov"; this is the same as "\|ov" or "\*\|ov".
 
@@ -2932,7 +2934,7 @@ Some additional examples:
 | ||+b       | Checks if the user has the bot flag b                           |
 +------------+-----------------------------------------------------------------+
 
-As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
+As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
 
 ^^^^^^^^^^
 Bind Types
