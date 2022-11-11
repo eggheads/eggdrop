@@ -7,7 +7,7 @@ Botnet Sharing and Linking
 
 WHAT IS A BOTNET?
 
-  A botnet consists of one or more bots linked together. This can allow
+  A botnet consists of two or more bots linked together. This can allow
   bots to op each other securely, control floods efficiently, and share
   user lists, ban lists, exempt/invite lists, and ignore lists (if
   sharing is enabled).
@@ -18,7 +18,7 @@ The following are some common terms used in this document:
 
 Botnet
 
-    A botnet consists of one or more bots connected together.
+    A botnet consists of two or more bots connected together.
 
 Link
 

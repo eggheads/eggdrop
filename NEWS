@@ -15,6 +15,32 @@ Last revised: December 4, 2021
 
      _________________________________________________________________
 
+Eggdrop v1.9.4:
+
+ General changes:
+    - Fixed a DNS bug causing Eggdrop to often hang on DCC or telnet
+      connections
+    - Reverted matchattr match syntax to previous functionality. Matching
+      against "-" as a flag will once again successfully match against "no"
+      flags, instead of returning an error.
+    - Fixed some inaccurate log messages
+    - Fixed some format specifiers that could cause crashes in certain
+      situations
+    - Fixed logging of TAGMSG messages
+    - Fixed unspecified behavior of freeaddrinfo() on some BSD systems
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Moved the 'gotmsg' function back as a raw bind. It was inadvertantly
+      moved to a rawt bind in 1.9.3, causing issuse with scripts attempting to
+      unbind this internal reference
+
+Eggdrop config changes:
+    - None
+    
+
 Eggdrop v1.9.3:
 
  General changes:
