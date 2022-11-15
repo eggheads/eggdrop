@@ -22,6 +22,7 @@
  */
 
 #include "main.h"
+#include <netdb.h>
 #include "tandem.h"
 #include "modules.h"
 #include <errno.h>
