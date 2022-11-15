@@ -2539,7 +2539,7 @@ md5 <string>
 callevent <event>
 ^^^^^^^^^^^^^^^^^
 
-  Description: triggers the evnt bind manually for a certain event. You can call arbitrary events here, even ones that are not pre-defined by Eggdrop. For example: callevent rehash, or callevent myownevent123.
+  Description: triggers the event bind manually for a certain event. You can call arbitrary events here, even ones that are not pre-defined by Eggdrop. For example: callevent rehash, or callevent myownevent123.
 
   Returns: nothing
 
