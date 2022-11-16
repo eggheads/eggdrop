@@ -594,6 +594,11 @@ void tickle_AlertNotifier(ClientData cd)
     putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
 }
 
+void tickle_ServiceModeHook(int mode)
+{
+  putlog(LOG_MISC, "*", "stub tickle_ServiceModeHook");
+}
+
 int tclthreadmainloop(int zero)
 {
   int i;
@@ -661,6 +666,7 @@ void init_tcl(int argc, char **argv)
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
   notifierprocs.alertNotifierProc = tickle_AlertNotifier;
+  notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
 #endif /* REPLACE_NOTIFIER */
