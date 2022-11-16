@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
 static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);
+static void check_tcl_invite(char *, char *, char *, char *);
 static void check_tcl_mode(char *, char *, struct userrec *, char *, char *, char *);
 static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
                                    p_tcl_bind_list);
@@ -44,6 +45,10 @@ static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
                                    char *, p_tcl_bind_list);
 static int check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
+static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
+                                    char*);
+static int check_tcl_monitor(char *, int);
+static void check_tcl_account(char *nick, char *uhost, struct userrec *u, char *chan, char *account);
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
@@ -64,8 +69,9 @@ static void refresh_who_chan(char *);
 #define resetinvites(chan)  resetmasks((chan), (chan)->channel.invite,       \
                                        (chan)->invites, global_invites, 'I')
 
-void reset_chan_info(struct chanset_t *, int);
+void reset_chan_info(struct chanset_t *, int, int);
 static void recheck_channel(struct chanset_t *, int);
+#undef set_key /* because it could collide with openssl */
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);
 static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
@@ -80,6 +86,12 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static int gotmode(char *, char *);
+
+typedef struct monitor_list {
+  char nick[NICKLEN];         /* List of nicks to monitor,                */
+  int online;                 /* Flag if nickname is currently online     */
+  struct monitor_list *next;  /* Linked list y'all                        */
+} monitor_list_t;
 
 #define newban(chan, mask, who)         newmask((chan)->channel.ban, mask, who)
 #define newexempt(chan, mask, who)      newmask((chan)->channel.exempt, mask, \
@@ -114,6 +126,12 @@ static int gotmode(char *, char *);
 #define me_voice ((int(*)(struct chanset_t *))irc_funcs[23])
 /* 24 - 27 */
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
+#define reset_chan_info (*(void *)(irc_funcs[25]))
+#define H_invt (*(p_tcl_bind_list *)(irc_funcs[26])
+#define twitch (*(int *)(irc_funcs[27]))
+/* 28 - 31 */
+#define H_ircaway (*(p_tcl_bind_list *)(irc_funcs[28])
+#define H_monitor (*(p_tcl_bind_list *)(irc_funcs[29])
 
 #endif /* MAKING_IRC */
 

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,14 +41,13 @@ typedef struct {
 } intinfo;
 
 
-extern time_t online_since;
+extern time_t now, online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], vhost[], moddir[], owner[],
-            network[], botnetnick[], bannerfile[], egg_version[], natip[],
+            network[], botnetnick[], bannerfile[], egg_version[], nat_ip[],
             configfile[], logfile_suffix[], log_ts[], textdir[], pid_file[],
-            listen_ip[], stealth_prompt[];
-
+            listen_ip[], stealth_prompt[], language[];
 
 extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
@@ -57,8 +56,8 @@ extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            ignore_time, reserved_port_min, reserved_port_max, max_logs,
            max_logsize, dcc_total, raw_log, identtimeout, dcc_sanitycheck,
            dupwait_timeout, egg_numver, share_unlinks, protect_telnet,
-           strict_host, resolve_timeout, default_uflags, userfile_perm,
-           cidr_support;
+           resolve_timeout, default_uflags, userfile_perm, cidr_support,
+           remove_pass, show_uname;
 
 #ifdef IPV6
 extern char vhost6[];
@@ -94,14 +93,12 @@ int par_telnet_flood = 1;
 int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
-int utftot = 0;
-int clientdata_stuff = 0;
 
-extern Tcl_VarTraceProc traced_myiphostname;
+extern Tcl_VarTraceProc traced_myiphostname, traced_natip, traced_remove_pass;
 
 int expmem_tcl()
 {
-  return strtot + utftot + clientdata_stuff;
+  return strtot;
 }
 
 static void botnet_change(char *new)
@@ -300,6 +297,41 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
   }
 }
 
+struct tcl_call_stringinfo {
+  Tcl_CmdProc *proc;
+  ClientData cd;
+};
+
+static void tcl_cleanup_stringinfo(ClientData cd)
+{
+  nfree(cd);
+}
+
+/* Compatibility wrapper that calls Tcl functions with String API */
+static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+  static int max;
+  static const char **argv;
+  int i;
+  struct tcl_call_stringinfo *info = cd;
+  /* The string API guarantees argv[argc] == NULL, unlike the obj API */
+  if (objc + 1 > max)
+    argv = nrealloc(argv, (objc + 1) * sizeof *argv);
+  for (i = 0; i < objc; i++)
+    argv[i] = Tcl_GetString(objv[i]);
+  argv[objc] = NULL;
+  return (info->proc)(info->cd, interp, objc, argv);
+}
+
+/* The standard case of no actual cd */
+static int tcl_call_stringproc(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+  struct tcl_call_stringinfo info;
+  info.proc = cd;
+  info.cd = NULL;
+  return tcl_call_stringproc_cd(&info, interp, objc, objv);
+}
+
 /* Add/remove tcl commands
  */
 
@@ -308,14 +340,21 @@ void add_tcl_commands(tcl_cmds *table)
   int i;
 
   for (i = 0; table[i].name; i++)
-    Tcl_CreateCommand(interp, table[i].name, table[i].func, NULL, NULL);
+    Tcl_CreateObjCommand(interp, table[i].name, tcl_call_stringproc, table[i].func, NULL);
 }
 
 void add_cd_tcl_cmds(cd_tcl_cmd *table)
 {
+  struct tcl_call_stringinfo *info;
   while (table->name) {
-    Tcl_CreateCommand(interp, table->name, table->callback,
-                      (ClientData) table->cdata, NULL);
+    if (table->cdata) {
+      info = nmalloc(sizeof *info);
+      info->proc = table->callback;
+      info->cd = table->cdata;
+      Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc_cd, info, tcl_cleanup_stringinfo);
+    } else {
+      Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc, table->callback, NULL);
+    }
     table++;
   }
 }
@@ -388,7 +427,7 @@ static tcl_strings def_tcl_strings[] = {
   {"listen-addr",     listen_ip,      120,                     0},
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
-  {"nat-ip",          natip,          120,                     0},
+  {"nat-ip",          nat_ip,         INET_ADDRSTRLEN - 1,     0},
   {"username",        botuser,        USERLEN,                 0},
   {"version",         egg_version,    0,                       0},
   {"firewall",        firewall,       120,                     0},
@@ -399,6 +438,7 @@ static tcl_strings def_tcl_strings[] = {
   {"pidfile",         pid_file,       120,           STR_PROTECT},
   {"configureargs",   EGG_AC_ARGS,    0,             STR_PROTECT},
   {"stealth-prompt",  stealth_prompt, 80,                      0},
+  {"language",        language,       64,            STR_PROTECT},
   {NULL,              NULL,           0,                       0}
 };
 
@@ -446,14 +486,15 @@ static tcl_ints def_tcl_ints[] = {
   {"quiet-save",            &quiet_save,           0},
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
-  {"strict-host",           &strict_host,          0},
   {"userfile-perm",         &userfile_perm,        0},
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
+  {"remove-pass",           &remove_pass,          0},
 #ifdef IPV6
   {"prefer-ipv6",           &pref_af,              0},
 #endif
+  {"show-uname",            &show_uname,           0},
   {NULL,                    NULL,                  0}
 };
 
@@ -471,8 +512,10 @@ static void init_traces()
   add_tcl_coups(def_tcl_coups);
   add_tcl_strings(def_tcl_strings);
   add_tcl_ints(def_tcl_ints);
-  Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_TraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_TraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_TraceVar(interp, "nat-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_natip, NULL);
+  Tcl_TraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
 }
 
 void kill_tcl()
@@ -480,8 +523,10 @@ void kill_tcl()
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
-  Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
   Tcl_UntraceVar(interp, "my-hostname", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_UntraceVar(interp, "my-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, NULL);
+  Tcl_UntraceVar(interp, "nat-ip", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_natip, NULL);
+  Tcl_UntraceVar(interp, "remove-pass", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES, traced_remove_pass, NULL);
   kill_bind();
   Tcl_DeleteInterp(interp);
 }
@@ -541,6 +586,12 @@ ClientData tickle_InitNotifier()
   if (ismainthread)
     ismainthread = 0;
   return NULL;
+}
+
+void tickle_AlertNotifier(ClientData cd)
+{
+  if (cd)
+    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
 }
 
 int tclthreadmainloop(int zero)
@@ -609,6 +660,7 @@ void init_tcl(int argc, char **argv)
   notifierprocs.setTimerProc = tickle_SetTimer;
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
+  notifierprocs.alertNotifierProc = tickle_AlertNotifier;
 
   Tcl_SetNotifier(&notifierprocs);
 #endif /* REPLACE_NOTIFIER */
@@ -923,6 +975,28 @@ int fork_before_tcl()
 {
 #ifndef REPLACE_NOTIFIER
   return tcl_threaded();
-#endif
+#else
   return 0;
+#endif
+}
+
+time_t get_expire_time(Tcl_Interp * irp, const char *s) {
+  char *endptr;
+  long expire_foo = strtol(s, &endptr, 10);
+
+  if (*endptr) {
+    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    return -1;
+  }
+  if (expire_foo < 0) {
+    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    return -1;
+  }
+  if (expire_foo == 0)
+    return 0;
+  if (expire_foo > (60 * 24 * 2000)) {
+    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    return -1;
+  }
+  return now + 60 * expire_foo;
 }

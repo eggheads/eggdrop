@@ -125,13 +125,13 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x539,LA LISTE UTILISATEURS EXISTE DEJA (enlevez le '-m')
 # 0x53a - unused / inutilisé
 0x53b,Ne peut pas recharger la liste utilisateurs!
-0x53c,La liste utilisateurs est innexistante!
+0x53c,La liste utilisateurs est inexistante!
 0x53e,%B  (%E)\n\nEntrez votre surnom.\n
 0x53f,Rotation du fichier log %s, taille maximale depassée (%d)
 # 0x540 - unused / inutilisé
 0x541,Dernier message repété %d fois.\n
 0x542,bloqué
-0x543,No free sockets available.
+0x543,Pas de socket libre disponible.
 0x544,Tcl version:
 0x545,header version
 
@@ -143,7 +143,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x604,Salut
 0x605,Au revoir
 0x606,Vous êtes banni, goober.
-0x607,NOTICE %s :Ton nick était trop longue, j'ai du le changer à '%s'.\n
+0x607,NOTICE %s :Ton nick était trop long, j'ai du le changer à '%s'.\n
 0x608,Présenté à
 0x609,site public
 0x60a,NOTICE %s :Salut %s!  Je suis %s, un bot eggdrop.\n
@@ -172,10 +172,10 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x624,Votre ligne de renseignements est verrouillée
 0x625,Retrait de votre ligne de renseignements sur
 0x626,Retrait de votre ligne de renseignements.
-0x627,Vous n'avez aucuns renseignements sur
-0x628,Vous n'avez aucuns renseignements.
+0x627,Vous n'avez aucun renseignements sur
+0x628,Vous n'avez aucun renseignements.
 0x629,Je ne contrôle pas ce canal.
-0x62a,Reinitialisation des renseignements du canal.
+0x62a,Réinitialisation des renseignements du canal.
 0x62b,Changement de serveur...
 0x62c,Le canal est actuellement caché.
 0x62d,Maintenant sur le canal
@@ -206,8 +206,8 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x647,La file d'attente des modes est à
 0x648,La file d'attente des serveurs est à
 0x649,La file d'attente d'aide est à
-0x64a,Le vhost qu'est configurÃ© dans le fichier de configuration n'est pas capable de connecter Ã  l'addresse du serveur
-0x64b,Le vhost qu'est configurÃ© dans le fichier de configuration n'est pas disponsible en cette machine
+0x64a,Le vhost qui est configuré dans le fichier de configuration n'est pas capable de connecter à l'addresse du serveur
+0x64b,Le vhost qui est configuré dans le fichier de configuration n'est pas disponsible sur cette machine
 0x64c,Traitement du canal
 0x64d,Canal
 0x64e,Je désire le canal
@@ -424,8 +424,10 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xe2c,Erreur tcl [%s]: %s
 0xe2d,*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED
 0xe2e,Connexion perdue pendant l'ident [%s/%d]
-0xe2f,Timeout/EOF ident connection
+0xe2f,EOF ident connection
 0xe30,Lost ident wait telnet socket!!
 0xe31,Telnet refusé: %s, aucun accès
 0xe32,Refus de la connexion telnet de %s (essai avec mon surnom botnet)
 0xe33,Connexion telnet de %s perdue pendant la vérification des doublons
+0xe34,Timeout ident connection
+0xe35,Please remove the #comment from your listen setting and try again

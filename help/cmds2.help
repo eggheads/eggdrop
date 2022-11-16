@@ -210,8 +210,8 @@ See also: whom
 See also: rehash, reload, save
 %{help=save}%{+m|m}
 ###  %bsave%b
-   This makes the bot write its entire userfile to disk. This is useful if you
-   think the bot is about to crash or something, since the user file is only
+   This makes the bot write its entire userfile and channel file to disk. This
+   is useful if you want to force a save of these files since they are only
    written to disk about once an hour.
 
 See also: reload, rehash, backup
@@ -414,14 +414,21 @@ See also: whom
 
    For bots, there are additional flags seen under the "BOTATTR:" section.
    Valid botflags include:
-      %bs%b - share aggressively (SEND userfile to a passive bot)
-      %bp%b - share passively (ACCEPT userfile from an aggressive bot)
+      %ba%b - alternate (bot is autolinked if no hub bots can be linked)
+      %bb%b - ban sharing (pasv bot can share bans with aggr bot)
+      %bc%b - channel sharing (pasv bot can share chan changes with aggr bot)
+      %bd%b - share aggressively (SEND userfile to a passive bot), none sharing (pasv bot to aggr bot)
+      %be%b - exempt sharing (pasv bot can share exempts with aggr bot)
       %bg%b - global share (bot is sharing all channels)
       %bh%b - hub (bot is autolinked at highest priority)
-      %ba%b - alternate (bot is autolinked if no hub bots can be linked)
-      %bl%b - leaf (bot is not allowed to link other bots onto the botnet)
-      %br%b - reject (bot will not be allowed to link to the botnet)
       %bi%b - isolate (isolate the party line across a botlink)
+      %bj%b - invite sharing (pasv bot can share invites with aggr bot)
+      %bl%b - leaf (bot is not allowed to link other bots onto the botnet)
+      %bn%b - ignore sharing (pasv bot can share ignores with aggr bot)
+      %bp%b - share passively (ACCEPT userfile from an aggressive bot)
+      %br%b - reject (bot will not be allowed to link to the botnet)
+      %bs%b - share aggressively (SEND userfile to a passive bot), all sharing (pasv bot to aggr bot)
+      %bu%b - user sharing (pasv bot can share user changes with aggr bot)
 
       There are also 10 user-defined bot flags (0-9). Bots may also have +s
       (share) settings for individual channels.
@@ -495,3 +502,9 @@ See also: bots, botinfo, bottree
    can log in to the partyline using SSL and use %b'.fprint +'%b to add the
    current certificate, or use %b'.fprint <SHA1 fingerprint>'%b to manually
    add a certificate fingerprint.
+
+%{help=chfinger}%{-}
+### %bchfinger <handle> [fingerprint]%b
+   Changes the SSL certificate fingerprint associated with your user account.
+   Not specifying a value for 'fingerprint' will remove an existing certificate
+   associated with your user account.

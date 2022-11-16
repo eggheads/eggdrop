@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -149,17 +149,16 @@ char *add_cr(char *buf)
 
 extern void (*qserver) (int, char *, int);
 
-void dprintf EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+void dprintf(int idx, const char *format, ...)
 {
-  char buf[1024];
-  char *format;
-  int idx, len;
+  char buf[LOGLINEMAX];
+  int len;
   va_list va;
 
-  idx = EGG_VARARGS_START(int, arg1, va);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
-  egg_vsnprintf(buf, 1023, format, va);
+  egg_vsnprintf(buf, LOGLINEMAX-1, format, va);
   va_end(va);
   /* We can not use the return value vsnprintf() to determine where
    * to null terminate. The C99 standard specifies that vsnprintf()
@@ -202,10 +201,10 @@ void dprint(int idx, char *buf, int len)
     }
     return;
   } else {
-    if (len > 500) {            /* Truncate to fit */
-      buf[500] = 0;
-      strcat(buf, "\n");
-      len = 501;
+    if (len > LOGLINEMAX-11) {            /* Truncate to fit */
+      buf[LOGLINEMAX-11] = '\n';
+      buf[LOGLINEMAX-10] = 0;
+      len = LOGLINEMAX-10;
     }
     if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
       char *p = add_cr(buf);
@@ -218,14 +217,14 @@ void dprint(int idx, char *buf, int len)
   }
 }
 
-void chatout EGG_VARARGS_DEF(char *, arg1)
+ATTRIBUTE_FORMAT(printf,1,2)
+void chatout(const char *format, ...)
 {
   int i, len;
-  char *format;
   char s[601];
   va_list va;
 
-  format = EGG_VARARGS_START(char *, arg1, va);
+  va_start(va, format);
 
   egg_vsnprintf(s, 511, format, va);
   va_end(va);
@@ -243,16 +242,14 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
 
 /* Print to all on this channel but one.
  */
-void chanout_but EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+void chanout_but(int x, int chan, const char *format, ...)
 {
-  int i, x, chan, len;
-  char *format;
+  int i, len;
   char s[601];
   va_list va;
 
-  x = EGG_VARARGS_START(int, arg1, va);
-  chan = va_arg(va, int);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   egg_vsnprintf(s, 511, format, va);
   va_end(va);
@@ -504,11 +501,11 @@ void *_get_data_ptr(int size, char *file, int line)
   return p;
 }
 
-/* Make a password with (PASSWORDLEN - 1) random lower case letters and digits
+/* Make a password with max length and random lower case letters and digits
  */
 void makepass(char *pass)
 {
-  make_rand_str(pass, PASSWORDLEN - 1);
+  make_rand_str_from_chars(pass, PASSWORDMAX, CHARSET_PASSWORD);
 }
 
 void flush_lines(int idx, struct chat_info *ci)
@@ -615,7 +612,7 @@ void do_boot(int idx, char *by, char *reason)
 {
   int files = (dcc[idx].type != &DCC_CHAT);
 
-  dprintf(idx, DCC_BOOTED1);
+  dprintf(idx, "%s", DCC_BOOTED1);
   dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
           by, reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */

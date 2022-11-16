@@ -1,0 +1,63 @@
+# transfer.italian.lang
+#   language messages for transfer module
+
+0xf00,Ricezione di dcc %s rifiutata: copia alla posizione temporanea FALLITA!
+0xf01,NOTICE %s :Il filesystem è rotto; annullamento coda file.\n
+0xf02,NOTICE %s :Qui c'è il file da %s ...\n
+0xf03,Connessioni DCC piene: GET %s [%s]
+0xf04,NOTICE %s :Connessioni DCC piene; annullamento coda file.\n
+0xf05,DCC errore di socket: GET %s [%s]
+0xf06,NOTICE %s :DCC errore di socket; annullamento coda file.\n
+0xf07,Annullamento ricezione dcc %s: il file è vuoto!
+0xf08,NOTICE %s :Il file %s è vuoto, trasferimento annullato.\n
+0xf09,  Invia a  %s  Nome file\n
+0xf0a,  ---------%s  --------------------\n
+0xf0b,  %s%s  %s  [IN ATTESA]\n
+0xf0c,  %s%s  %s  (%.1f%% trasferito)\n
+0xf0d,Nessun file in coda.\n
+0xf0e,Totale: %d\n
+0xf0f,Annullato: %s a %s\n
+0xf10,Annullato: %s  (invio dcc annullato)
+0xf11,NOTICE %s :Trasferimento di %s annullato da %s\n
+0xf12,Cancellata DCC: GET %s (%s) a %lu/%lu
+0xf13,Nessun riscontro.\n
+0xf14,Cancellato %d file%s.\n
+0xf15,Invio dcc completato %s da %s!%s
+0xf16,Il nome del file %d è troppo lungo
+0xf17,NOTICE %s :Il nome del file %d è TROPPO LUNGO!\n
+0xf18,Fai male!
+0xf19,NOTICE %s :Fai male!\n
+0xf1a,Spostamento di `%s' dal posto temporaneo FALLITO! File perso!
+0xf1b,Grazie per il file!\n
+0xf1c,NOTICE %s :Grazie per il file!\n
+0xf1d,Trasferimento della lista utenti da %s perso; annullato.
+# 0xf1e, < this one is now empty
+0xf1f,Disconnesso %s (trasferimento lista utenti annullato)
+0xf20,Invio dcc perso %s da %s!%s (%lu/%lu)
+0xf21,(!) pacchetto di recupero da %s per %s non valido!
+0xf22,!! Riprendo il trasferimento dopo la fine del file per %s a %s
+0xf23,!!! Provo ad andare avanti col trasferimento della lista utenti
+0xf24,Riprendo il trasferimento file a %dk per %s a %s
+0xf25,Trasferimento della lista utenti a %s completato
+0xf26,Fine dell'invio dcc %s a %s
+0xf27,Trasferimento lista utenti perso; annullo
+0xf28,Persa ricezione dcc %s da %s!%s
+0xf29,NOTICE %s :Lunghezza del file non valida.\n
+0xf2a,File troppo lungo: cancello invio dcc %s da %s!%s
+0xf2b,Trasferimento lista utenti fuori tempo massimo.
+0xf2c,Disconnesso %s (trasferimento lista utenti fuori tempo massimo)
+0xf2d,NOTICE %s :Timeout durante il trasferimento, annullo %s.\n
+0xf2f,DCC timeout: GET %s (%s) a %lu/%lu
+0xf30,DCC timeout: SEND %s (%s) a %lu/%lu
+0xf31,invio (%lu)/%lu\n    Nome file: %s\n
+0xf32,atteso invio %lus\n    Nome file: %s\n
+0xf33,conn invio
+0xf34,Connessione DCC: SEND %s (%s)
+0xf35,NOTICE %s :Cattiva connessione (%s)\n
+0xf36,Cattiva connessione DCC: GET %s (%s!%s)
+0xf37,Inizio DCC %s invio %s a %s
+0xf38,re
+0xf39,NOTICE %s :Ignoro il recupero di `%s':nessun dato richiesto.\n
+0xf40,Scaricamento del modulo transfer, fermati tutti i trasferimenti...
+0xf41,    Dimensione del blocco DCC: %d%s\n
+0xf42,    Scaricamenti massimi simultanei per utente: %d\n

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,7 @@ static int convert_old_files(char *path, char *newfiledb)
 
   fdb = fopen(newfiledb, "w+b");
   if (!fdb) {
-    putlog(LOG_MISC, "(!) Can't create filedb in %s", newfiledb);
+    putlog(LOG_MISC, "*", "(!) Can't create filedb in %s", newfiledb);
     fclose(f);
     return 0;
   }
@@ -128,7 +128,7 @@ static int convert_old_files(char *path, char *newfiledb)
     filedb_addfile(fdb, fdbe);
     free_fdbe(&fdbe);
   }
-  fseek(fdb, 0L, SEEK_END);
+  fseeko(fdb, 0, SEEK_END);
   unlockfile(f);
   unlockfile(fdb);
   fclose(fdb);

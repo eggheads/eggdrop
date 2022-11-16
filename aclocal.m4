@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2019 Eggheads Development Team
+dnl Copyright (C) 1999 - 2022 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@ builtin(include,m4/tcl.m4)
 dnl Load gnu autoconf archive macros
 builtin(include,m4/ax_create_stdint_h.m4)
 builtin(include,m4/ax_lib_socket_nsl.m4)
+builtin(include,m4/ax_pthread.m4)
 builtin(include,m4/ax_type_socklen_t.m4)
 
 
@@ -72,6 +73,7 @@ AC_DEFUN([EGG_MSG_SUMMARY],
     fi
   fi
   AC_MSG_RESULT([SSL/TLS Support: $tls_enabled$ADD])
+  AC_MSG_RESULT([Threaded DNS core: $tdns_enabled])
   AC_MSG_RESULT
 ])
 
@@ -184,6 +186,25 @@ EOF
 ])
 
 
+dnl EGG_CHECK_CC_C99()
+dnl
+dnl Check for a working C99 C compiler.
+dnl
+AC_DEFUN([EGG_CHECK_CC_C99],
+[
+  if test "$ac_cv_prog_cc_c99" = no; then
+    cat << 'EOF' >&2
+configure: error:
+
+  This C compiler does not appear to have a working C99 mode.
+  A working C99 C compiler is required to compile Eggdrop.
+
+EOF
+    exit 1
+  fi
+])
+
+
 dnl EGG_HEADER_STDC()
 dnl
 AC_DEFUN([EGG_HEADER_STDC],
@@ -284,20 +305,68 @@ dnl Checks for types and functions.
 dnl
 
 
-dnl EGG_FUNC_VPRINTF()
+dnl EGG_FUNC_B64_NTOP()
 dnl
-AC_DEFUN([EGG_FUNC_VPRINTF],
+AC_DEFUN([EGG_FUNC_B64_NTOP],
 [
-  AC_FUNC_VPRINTF
-  if test "$ac_cv_func_vprintf" = no; then
-    cat << 'EOF' >&2
-configure: error:
+  # https://raw.githubusercontent.com/tmux/tmux/2dd9a4fb9cd73987bdca5b8b2f85ca8b1a6e4e73/configure.ac
 
-  Your system does not have the vprintf/vsprintf/sprintf libraries.
-  These are required to compile almost anything. Sorry.
+  # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
+  AC_MSG_CHECKING(for b64_ntop)
+  AC_TRY_LINK(
+    [
+      #include <sys/types.h>
+      #include <netinet/in.h>
+      #include <resolv.h>
+    ],
+    [b64_ntop(NULL, 0, NULL, 0);],
+    found_b64_ntop=yes,
+    found_b64_ntop=no
+  )
+  if test "x$found_b64_ntop" = xno; then
+    AC_MSG_RESULT(no)
 
-EOF
-    exit 1
+    AC_MSG_CHECKING(for b64_ntop with -lresolv)
+    OLD_LIBS="$LIBS"
+    LIBS="$LIBS -lresolv"
+    AC_TRY_LINK(
+      [
+        #include <sys/types.h>
+        #include <netinet/in.h>
+        #include <resolv.h>
+      ],
+      [b64_ntop(NULL, 0, NULL, 0);],
+      found_b64_ntop=yes,
+      found_b64_ntop=no
+    )
+    if test "x$found_b64_ntop" = xno; then
+      LIBS="$OLD_LIBS"
+      AC_MSG_RESULT(no)
+
+      AC_MSG_CHECKING(for b64_ntop with -lnetwork)
+      OLD_LIBS="$LIBS"
+      LIBS="-lnetwork"
+      AC_TRY_LINK(
+      [
+        #include <sys/types.h>
+        #include <netinet/in.h>
+        #include <resolv.h>
+        ],
+        [b64_ntop(NULL, 0, NULL, 0);],
+        found_b64_ntop=yes,
+        found_b64_ntop=no
+      )
+      if test "x$found_b64_ntop" = xno; then
+        LIBS="$OLD_LIBS"
+        AC_MSG_RESULT(no)
+      fi
+    fi
+  fi
+  if test "x$found_b64_ntop" = xyes; then
+    AC_DEFINE([HAVE_BASE64], [1], [Define if b64_ntop exists.])
+    AC_MSG_RESULT(yes)
+  else
+    AC_LIBOBJ(base64)
   fi
 ])
 
@@ -736,12 +805,9 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_LD="$CC -G -z text"
       fi
     ;;
-    FreeBSD|OpenBSD|NetBSD)
+    FreeBSD|DragonFly|OpenBSD|NetBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
-    ;;
-    DragonFly)
-      SHLIB_CC="$CC -fPIC"
     ;;
     Darwin)
       # Mac OS X
@@ -786,32 +852,9 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AX_LIB_SOCKET_NSL
+    AX_PTHREAD(LDFLAGS="$LDFLAGS $PTHREAD_LIBS")
     AC_SEARCH_LIBS([dlopen], [dl])
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
-
-    # This is needed for Tcl libraries compiled with thread support
-    AC_CHECK_LIB(pthread, pthread_mutex_init, [
-      ac_cv_lib_pthread_pthread_mutex_init="yes"
-      ac_cv_lib_pthread="-lpthread"
-    ], [
-      AC_CHECK_LIB(pthread, __pthread_mutex_init, [
-        ac_cv_lib_pthread_pthread_mutex_init="yes"
-        ac_cv_lib_pthread="-lpthread"
-      ], [
-        AC_CHECK_LIB(pthreads, pthread_mutex_init, [
-          ac_cv_lib_pthread_pthread_mutex_init="yes"
-          ac_cv_lib_pthread="-lpthreads"
-        ], [
-          AC_CHECK_FUNC(pthread_mutex_init, [
-            ac_cv_lib_pthread_pthread_mutex_init="yes"
-            ac_cv_lib_pthread=""
-          ], [
-            ac_cv_lib_pthread_pthread_mutex_init="no"
-          ]
-        )]
-      )]
-    )])
-
     if test "$HPUX" = yes; then
       AC_CHECK_LIB(dld, shl_load)
     fi
@@ -862,7 +905,7 @@ dnl EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
-  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.5.so)], [tcllibname="$withval"])
+  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library (e.g. /usr/lib/libtcl8.6.so)], [tcllibname="$withval"])
   AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header (e.g. /usr/include/tcl.h)],  [tclincname="$withval"])
 
   WARN=0
@@ -928,7 +971,7 @@ EOF
 configure: WARNING:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
-  Specify the full path including the file name (e.g. /usr/lib/libtcl8.5.so)
+  Specify the full path including the file name (e.g. /usr/lib/libtcl8.6.so)
 
   configure will now attempt to autodetect both the Tcl library and header.
 
@@ -989,12 +1032,6 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     # Also, use the Tcl linker idea to be compatible with their ldflags
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
-      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
-        TCL_PTHREAD_LDFLAG="-pthread"
-      else
-        TCL_PTHREAD_LDFLAG=""
-      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
@@ -1002,30 +1039,21 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
       TCL_LIBS="${EGG_MATH_LIB}"
     fi
     TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-    TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+    TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
   else
     egg_tcl_changed="yes"
     if test -r ${TCLLIB}/tclConfig.sh; then
       . ${TCLLIB}/tclConfig.sh
-      # OpenBSD uses -pthread, but tclConfig.sh provides that flag in EXTRA_CFLAGS
-      if test "$(echo $TCL_EXTRA_CFLAGS | grep -- -pthread)"; then
-        TCL_PTHREAD_LDFLAG="-pthread"
-      else
-        TCL_PTHREAD_LDFLAG=""
-      fi
       AC_SUBST(SHLIB_LD, $TCL_SHLIB_LD)
       AC_MSG_CHECKING([for Tcl linker])
       AC_MSG_RESULT([$SHLIB_LD])
       TCL_PATCHLEVEL="${TCL_MAJOR_VERSION}.${TCL_MINOR_VERSION}${TCL_PATCH_LEVEL}"
-      TCL_LIB_SPEC="${TCL_PTHREAD_LDFLAG} ${TCL_LIB_SPEC} ${TCL_LIBS}"
+      TCL_LIB_SPEC="${TCL_LIB_SPEC} ${TCL_LIBS}"
     else
       TCL_LIB_SPEC="-L$TCLLIB -l$TCLLIBFNS ${EGG_MATH_LIB}"
-      if test "x$ac_cv_lib_pthread" != x; then
-        TCL_LIB_SPEC="$TCL_LIB_SPEC $ac_cv_lib_pthread"
-      fi
       TCL_INCLUDE_SPEC=""
-      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
-      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+      TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
+      TCL_PATCHLEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/"/, "", [$]3); print [$]3}'`
       TCL_MAJOR_VERSION=`echo $TCL_VERSION | cut -d. -f1`
       TCL_MINOR_VERSION=`echo $TCL_VERSION | cut -d. -f2`
       if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 6; then
@@ -1101,7 +1129,7 @@ dnl
 AC_DEFUN([EGG_SUBST_EGGVERSION],
 [
 
-  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(\")/, "", $NF); print $NF}'`
+  EGGVERSION=`grep '^ *# *define  *EGG_STRINGVER ' $srcdir/src/version.h | $AWK '{gsub(/(")/, "", $NF); print $NF}'`
   egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
   AC_SUBST(EGGVERSION)
   AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])
@@ -1404,7 +1432,7 @@ dnl
 AC_DEFUN([EGG_IPV6_COMPAT],
 [
 if test "$enable_ipv6" = "yes"; then
-  AC_CHECK_FUNCS([inet_pton gethostbyname2])
+  AC_CHECK_FUNCS([gethostbyname2])
   AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes", egg_cv_var_have_in6_addr="no", [
     #include <sys/types.h>
     #include <netinet/in.h>
@@ -1635,14 +1663,34 @@ AC_DEFUN([EGG_TLS_DETECT],
           AC_DEFINE([__int64], [long long], [Define this to a 64-bit type on Cygwin to satisfy OpenSSL dependencies.])
         ])
       fi
-      AC_CHECK_FUNCS([RAND_status])
       AC_DEFINE(TLS, 1, [Define this to enable SSL support.])
       AC_CHECK_FUNC(ASN1_STRING_get0_data,
         AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_get0_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
         , AC_DEFINE([egg_ASN1_string_data], [ASN1_STRING_data], [Define this to ASN1_STRING_get0_data when using OpenSSL 1.1.0+, ASN1_STRING_data otherwise.])
       )
+      dnl EVP_PKEY_get1_EC_KEY: OpenSSL without EC (SunOS 5.11 Solaris 11.3 I love you Oracle)
+      AC_CHECK_FUNCS([EVP_PKEY_get1_EC_KEY])
       tls_enabled="yes"
       EGG_MD5_COMPAT
+    fi
+  fi
+])
+
+
+dnl EGG_TDNS_ENABLE
+dnl
+AC_DEFUN([EGG_TDNS_ENABLE],
+[
+  AC_ARG_ENABLE([tdns],
+    [AS_HELP_STRING([--disable-tdns],
+      [disable threaded DNS core])],
+    [tdns_enabled="$enableval"],
+    [tdns_enabled="yes"])
+  if test "x$ax_pthread_ok" = "xno"; then
+    tdns_enabled="no (pthread.h not found)"
+  else
+    if test "$tdns_enabled" = "yes"; then
+      AC_DEFINE([EGG_TDNS], [1], [Define this to enable threaded DNS core.])
     fi
   fi
 ])

@@ -11,7 +11,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2019 Eggheads Development Team
+ * Copyright (C) 2001 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -260,6 +260,11 @@ void check_secondly()
   }
 }
 
+void expire_dnscache()
+{
+  uptimeip = -1;
+}
+
 static char *uptime_close()
 {
   return "You cannot unload the uptime module "
@@ -288,6 +293,7 @@ char *uptime_start(Function *global_funcs)
 
     add_help_reference("uptime.help");
     add_hook(HOOK_MINUTELY, (Function) check_minutely);
+    add_hook(HOOK_DAILY, (Function) expire_dnscache);
     init_uptime();
   }
   return NULL;

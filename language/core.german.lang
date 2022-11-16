@@ -432,8 +432,10 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe2c,Tcl-Fehler [%s]: %s
 0xe2d,*** VORSICHT: TOD EINES SOCKETS (%d), TYP %s WURDE NICHT ABGEFANGEN
 0xe2e,Telnet-Verbindung waehrend des Ident-Vorgangs verloren [%s/%d]
-0xe2f,Zeitueberschreitung/EOF bei der Ident-Verbindung
+0xe2f,EOF bei der Ident-Verbindung
 0xe30,Ident-Socket beim Wartern auf die Antwort verloren!!
 0xe31,Telnet verweigert: %s, Kein Zugriff
 0xe32,Telnet-Verbindung von %s zurueckgewiesen (versuchte, meinen botnetnick zu benutzen)
 0xe33,Telnet-Verbindung von %s waerend Kontrolle auf Duplikat verloren
+0xe34,Zeitueberschreitung bei der Ident-Verbindung
+0xe35,Bitte entferne den #Kommentar im listen-Befehl und versuche es erneut

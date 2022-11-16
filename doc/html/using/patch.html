@@ -1,0 +1,180 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Patching Eggdrop &#8212; Eggdrop 1.9.4 documentation</title>
+    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Setting Up Eggdrop" href="../tutorials/setup.html" />
+    <link rel="prev" title="Eggdrop Twitch Tcl Commands" href="twitch-tcl-commands.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.4 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="twitch-tcl-commands.html" title="Eggdrop Twitch Tcl Commands"
+             accesskey="P">previous</a> |
+          <a href="../tutorials/setup.html" title="Setting Up Eggdrop"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Patching Eggdrop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submitting-a-patch-via-github">Submitting a patch via GitHub</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+</ul>
+<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="patching-eggdrop">
+<h1>Patching Eggdrop<a class="headerlink" href="#patching-eggdrop" title="Permalink to this headline">¶</a></h1>
+<p>Eggdrop is an open source project that depends on contributions of its users- like you! If you come across a feature you’d like to see implemented, find a bug, or think the documentation could be made more clear, you can open an issue on <a class="reference external" href="https://github.com/eggheads/eggdrop/issues">GitHub</a> to discuss your ideas, and then submit a <a class="reference external" href="https://github.com/eggheads/eggdrop/pulls">Pull Request</a> to implement it!</p>
+<div class="section" id="submitting-a-patch-via-github">
+<h2>Submitting a patch via GitHub<a class="headerlink" href="#submitting-a-patch-via-github" title="Permalink to this headline">¶</a></h2>
+<p>To create a patch via github:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Fork the eggdrop git repo by logging in to your GitHub account and
+clicking the fork button at the top of the screen. Follow the
+directions it provides to configure your local repo.</p>
+</li>
+<li><p class="first">Enter the local directory and create a new branch for your patch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="o">&lt;</span><span class="n">DescriptiveBranchName</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Make your changes</p>
+</li>
+<li><p class="first">Once you confirm your patch works, push the changes back to your
+GitHub repo - this is usually done by something similar to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="o">&lt;</span><span class="n">DescriptiveBranchName</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a pull request by clicking on the “Pull Request” button on
+your GitHub page. Select the appropriate branches (usually eggheads/eggdrop/develop
+and yourUserName/eggdrop/YourBranchName)</p>
+</li>
+<li><p class="first">Fill in the Pull Request template and submit</p>
+</li>
+<li><p class="first">Pour yourself a cold one and bask in the warm feeling of contributing
+to the open source community! Karma++!</p>
+</li>
+</ol>
+</div></blockquote>
+<p>Copyright (C) 1999 - 2022 Eggheads Development Team</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="twitch-tcl-commands.html" title="Eggdrop Twitch Tcl Commands"
+              >previous</a> |
+            <a href="../tutorials/setup.html" title="Setting Up Eggdrop"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Eggheads.
+      Last updated on Nov 10, 2022.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ static int tcl_isbotnick STDVAR
 static int tcl_putnow STDVAR
 {
   int len;
-  char buf[512], *p, *q, *r;
+  char buf[MSGMAX], *p, *q, *r;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -83,7 +83,7 @@ static int tcl_putnow STDVAR
 
 static int tcl_putquick STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -110,7 +110,7 @@ static int tcl_putquick STDVAR
 
 static int tcl_putserv STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -137,7 +137,7 @@ static int tcl_putserv STDVAR
 
 static int tcl_puthelp STDVAR
 {
-  char s[511], *p;
+  char s[MSGMAX], *p;
 
   BADARGS(2, 3, " text ?options?");
 
@@ -162,18 +162,184 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
+/* Get the user's account name from Eggdrop's internal list if a) they are
+  * logged in and b) Eggdrop has seen it.
+  */
+static int tcl_getaccount STDVAR {
+  memberlist *m;
+  struct chanset_t *chan, *thechan = NULL;
+
+  BADARGS(2, 3, " nickname ?channel?");
+
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1]))) {
+      Tcl_AppendResult(irp, m->account, NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "", NULL);
+  return TCL_OK;
+}
+
+static int tcl_isidentified STDVAR {
+  memberlist *m;
+  struct chanset_t *chan, *thechan = NULL;
+
+  BADARGS(2, 3, " nickname ?channel?");
+
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1]))) {
+      if (strcmp(m->account, "")) {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      }
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+/* Send a msg to the server prefixed with an IRCv3 message-tag */
+static int tcl_tagmsg STDVAR {
+  char tag[CLITAGMAX-9];    /* minus @, TAGMSG and two spaces */
+  char tagdict[CLITAGMAX-9];
+  char target[MSGMAX];
+  struct capability *current = 0;
+  char *p;
+  int taglen = 0, i = 1;
+  BADARGS(3, 3, " tag target");
+
+  current = find_capability("message-tags");
+  if ((!current) || (!(current->enabled))) {
+    Tcl_AppendResult(irp, "message-tags not enabled, cannot send tag", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(tagdict, argv[1], sizeof tag);
+  strlcpy(target, argv[2], sizeof target);
+  p = strtok(tagdict, " ");
+  while (p != NULL) {
+    if ((i % 2) != 0) {
+      taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
+    } else {
+      if (strcmp(p, "{}") != 0) {
+        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
+      } else {
+        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
+      }
+    }
+    i++;
+    p = strtok(NULL, " ");
+  }
+  p = strchr(target, '\n');
+  if (p != NULL)
+    *p = 0;
+  p = strchr(target, '\r');
+  if (p != NULL)
+    *p = 0;
+  dprintf(DP_SERVER, "@%s TAGMSG %s\n", tag, target);
+  return TCL_OK;
+}
+
+
 /* Tcl interface to send CAP messages to server */
 static int tcl_cap STDVAR {
   char s[CAPMAX];
+  int found = 0;
+  struct capability *current;
+  struct cap_values *currentvalue;
+  Tcl_Obj *capes, *values;
   BADARGS(2, 3, " sub-cmd ?arg?");
 
-  if (!strcasecmp(argv[1], "available")) {
-    Tcl_AppendResult(irp, cap.supported, NULL);
-  } else if (!strcasecmp(argv[1], "active")) {
-    Tcl_AppendResult(irp, cap.negotiated, NULL);
+  capes = Tcl_NewListObj(0, NULL);
+  current = cap;
+  /* List capabilities available on server */
+  if (!strcasecmp(argv[1], "ls")) {
+    while (current != NULL) {
+      Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
+      current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
+  /* List capabilities Eggdrop is internally tracking as enabled with server */
+  } else if (!strcasecmp(argv[1], "enabled")) {
+    while (current != NULL) {
+      if (current->enabled) {
+        Tcl_ListObjAppendElement(irp, capes, Tcl_NewStringObj(current->name, -1));
+      }
+      current = current->next;
+    }
+    Tcl_SetObjResult(irp, capes);
+  } else if (!strcasecmp(argv[1], "values")) {
+    capes = Tcl_NewListObj(0, NULL);
+    values = Tcl_NewListObj(0, NULL);
+    current = cap;
+    while (current != NULL) {
+      if ((argc == 3) &&(!strcasecmp(argv[2], current->name))) {
+        found = 1;
+      }
+      currentvalue = current->value;
+      while (currentvalue != NULL) {
+        if (argc == 3) {
+          if (!strcasecmp(argv[2], current->name)) {
+            /* Don't get confused, we use the capes var but its really values */
+            Tcl_ListObjAppendElement(irp, capes,
+                    Tcl_NewStringObj(currentvalue->name, -1));
+          }
+        } else {
+          Tcl_ListObjAppendElement(irp, values,
+                    Tcl_NewStringObj(currentvalue->name, -1));
+        }
+        currentvalue = currentvalue->next;
+      }
+      if (argc != 3) {
+        Tcl_ListObjAppendElement(irp, capes,
+                Tcl_NewStringObj(current->name, -1));
+        Tcl_ListObjAppendElement(irp, capes, values);
+      }
+      /* Clear out the list so it isn't repeatedly added */
+      values = Tcl_NewListObj(0, NULL);
+      current = current->next;
+    }
+    if ((argc == 3) && (!found)) {
+      simple_sprintf(s, "Capability \"%s\" is not enabled", argv[2]);
+      Tcl_AppendResult(irp, s, NULL);
+      return TCL_ERROR;
+    }
+    Tcl_SetObjResult(irp, capes);
+  /* Send a request to negotiate a capability with server */
+  } else if (!strcasecmp(argv[1], "req")) {
+    if (argc != 3) {
+      Tcl_AppendResult(irp, "No CAP request provided", NULL);
+      return TCL_ERROR;
+    } else {
+      snprintf(s, sizeof s, "CAP REQ :%s", argv[2]);
+      dprintf(DP_SERVER, "%s\n", s);
+    }
+  /* Send a raw CAP command to the server */
   } else if (!strcasecmp(argv[1], "raw")) {
     if (argc == 3) {
-      simple_sprintf(s, "CAP %s", argv[2]);
+      snprintf(s, sizeof s, "CAP %s", argv[2]);
       dprintf(DP_SERVER, "%s\n", s);
     } else {
       Tcl_AppendResult(irp, "Raw requires a CAP sub-command to be provided",
@@ -181,7 +347,8 @@ static int tcl_cap STDVAR {
       return TCL_ERROR;
     }
   } else {
-      Tcl_AppendResult(irp, "Invalid cap command", NULL);
+      Tcl_AppendResult(irp, "Invalid cap command, must be ls, enabled, req, or raw", NULL);
+      return TCL_ERROR;
   }
   return TCL_OK;
 }
@@ -333,15 +500,85 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_server STDVAR {
+  int ret;
+  char s[7];
+  struct server_list *z;
+  Tcl_Obj *server;
+
+  BADARGS(2, 5, " subcommand ?host ?port? ?password?");
+  if (!strcmp(argv[1], "add")) {
+    ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
+    if (!ret) {
+      server = Tcl_NewListObj(0, NULL);
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[2], -1));
+      if ((argc >= 4) && argv[3]) {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[3], -1));
+      } else {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
+      }
+      if ((argc >= 5) && argv[4]) {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(argv[4], -1));
+      } else {
+        Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj("", -1));
+      }
+      Tcl_SetObjResult(irp, server);
+    }
+  } else if (!strcmp(argv[1], "remove")) {
+    ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
+  } else if (!strcmp(argv[1], "list")) {
+    Tcl_Obj *servers = Tcl_NewListObj(0, NULL);
+    z = serverlist;
+    while(z != NULL) {
+      server = Tcl_NewListObj(0, NULL);
+#ifdef TLS
+      snprintf(s, sizeof s, "%s%d", z->ssl ? "+" : "", z->port);
+#else
+      snprintf(s, sizeof s, "%d", z->port);
+#endif
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->name, -1));
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(s, -1));
+      Tcl_ListObjAppendElement(irp, server, Tcl_NewStringObj(z->pass, -1));
+      Tcl_SetObjResult(irp, server);
+      Tcl_ListObjAppendElement(irp, servers, server);
+      z = z->next;
+    }
+    Tcl_SetObjResult(irp, servers);
+    return TCL_OK;
+  } else {
+    Tcl_AppendResult(irp, "Invalid subcommand: ", argv[1],
+        ". Should be \"add\", \"remove\", or \"list\"", NULL);
+    return TCL_ERROR;
+  }
+  if (ret == 0) {
+    return TCL_OK;
+  }
+  if (ret == 1) {
+    Tcl_AppendResult(irp, "A ':' was detected in the non-IPv6 address ", argv[2],
+            " Make sure the port is separated by a space, not a ':'. ", NULL);
+  } else if (ret == 2) {
+    Tcl_AppendResult(irp, "Attempted to add SSL-enabled server, but Eggdrop "
+            "was not compiled with SSL libraries.", NULL);
+  } else if (ret == 3) {    /* del_server only */
+    Tcl_AppendResult(irp, "Server ", argv[2], argc >= 4 && argv[3] ? ":" : "",
+            argc >= 4 && argv[3] ? argv[3] : ""," not found.", NULL);
+  }
+  return TCL_ERROR;
+}
+
 static tcl_cmds my_tcl_cmds[] = {
-  {"jump",       tcl_jump},
-  {"cap",        tcl_cap},
-  {"isbotnick",  tcl_isbotnick},
-  {"clearqueue", tcl_clearqueue},
-  {"queuesize",  tcl_queuesize},
-  {"puthelp",    tcl_puthelp},
-  {"putserv",    tcl_putserv},
-  {"putquick",   tcl_putquick},
-  {"putnow",     tcl_putnow},
+  {"jump",          tcl_jump},
+  {"cap",           tcl_cap},
+  {"isbotnick",     tcl_isbotnick},
+  {"clearqueue",    tcl_clearqueue},
+  {"queuesize",     tcl_queuesize},
+  {"puthelp",       tcl_puthelp},
+  {"putserv",       tcl_putserv},
+  {"putquick",      tcl_putquick},
+  {"putnow",        tcl_putnow},
+  {"tagmsg",        tcl_tagmsg},
+  {"server",        tcl_server},
+  {"getaccount",    tcl_getaccount},
+  {"isidentified",  tcl_isidentified},
   {NULL,         NULL}
 };

@@ -423,8 +423,10 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xe2c,Tcl fejl [%s]: %s
 0xe2d,*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED
 0xe2e,Mistede forbindelsen under identing [%s/%d]
-0xe2f,Timeout/EOF ident forbindelse
+0xe2f,EOF ident forbindelse
 0xe30,Mistede ident wait telnet socket!!
 0xe31,Afviste telnet: %s, Ingen Adgang
 0xe32,Afviste telnet forbindelse fra %s (forsøg på at bruge mit botnetnick)
 0xe33,Mistede telnet forbindelse fra %s mens der blev tjekket for dubletter
+0xe34,TIMEOUT ident forbindelse
+0xe35,Please remove the #comment from your listen setting and try again

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,7 +119,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 
 static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
 {
-  char *old, *new;
+  char *old, *new, *s;
 
   if (!u || match_my_nick(nick) || (u->flags & (USER_BOT | USER_COMMON)))
     return 1;
@@ -144,16 +144,13 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
-  if (strlen(new) > 15)
-    new[15] = 0;
-  if (strlen(new) < 6) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
-    return 0;
+  if ((s = check_validpass(u, new))) {
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
+    return 1;
   }
-  set_user(&USERENTRY_PASS, u, new);
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
           new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
-  return 1;
+  return 0;
 }
 
 static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
@@ -354,7 +351,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   memberlist *m;
-  char s[UHOSTLEN], also[512], *info;
+  char s[NICKLEN + UHOSTLEN], also[512], *info;
   int i;
 
   if (!use_info || match_my_nick(nick))
@@ -434,7 +431,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[UHOSTLEN], s1[81], *s2;
+  char s[UHOSTLEN + 1], s1[143], *s2, stime[14];
   int ok;
   struct chanset_t *chan;
   memberlist *m;
@@ -501,10 +498,10 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
           hand_on_chan(chan, u) || (glob_op(fr) && !chan_deop(fr)) ||
           glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
         tt = cr->laston;
-        strftime(s, 14, "%b %d %H:%M", localtime(&tt));
+        strftime(stime, sizeof stime, "%b %d %H:%M", localtime(&tt));
         ok = 1;
         egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s on %s", nick,
-                     u2->handle, IRC_LASTSEENAT, s, chan->dname);
+                     u2->handle, IRC_LASTSEENAT, stime, chan->dname);
       }
     }
   }
@@ -783,20 +780,10 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[256], *vers_t, *uni_t, *pass;
+  char s[256], *pass, *sysrel;
   int i;
   struct chanset_t *chan;
   time_t now2 = now - online_since, hr, min;
-
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    vers_t = " ";
-    uni_t  = "*unknown*";
-  } else {
-    vers_t = un.release;
-    uni_t  = un.sysname;
-  }
 
   if (match_my_nick(nick))
     return 1;
@@ -838,7 +825,9 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   if (admin[0])
     dprintf(DP_HELP, "NOTICE %s :Admin: %s.\n", nick, admin);
-  dprintf(DP_HELP, "NOTICE %s :OS: %s %s.\n", nick, uni_t, vers_t);
+  sysrel = egg_uname();
+  if (*sysrel)
+    dprintf(DP_HELP, "NOTICE %s :OS: %s.\n", nick, sysrel);
   dprintf(DP_HELP, "NOTICE %s :Online as: %s!%s.\n", nick, botname, botuserhost);
 
   /* This shouldn't overflow anymore -Wcc */
@@ -993,13 +982,13 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
     }
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET %s", nick, host, u->handle, par);
     dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_RESETCHAN);
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 1);
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET ALL", nick, host, u->handle);
   dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RESETCHAN);
   for (chan = chanset; chan; chan = chan->next)
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 1);
   return 1;
 }
 

@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,7 +60,7 @@ typedef struct {
    *       movements often invalidate them too, so make sure you know
    *       what you're doing before using/relying on them.
    */
-  long pos;                     /* Last position in the filedb  */
+  unsigned long pos;            /* Last position in the filedb  */
   unsigned short int dyn_len;   /* Length of dynamic data in DB */
   unsigned short int buf_len;   /* Length of additional buffer  */
 

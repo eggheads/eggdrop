@@ -6,7 +6,7 @@
  * Comments by Fabian Knittel             29 December 1999
  */
 /*
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,19 +41,11 @@ static int woobie_expmem()
 {
   int size = 0;
 
-  Context;
   return size;
 }
 
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
-  /* Define a context.
-   *
-   * If the bot crashes after the context, it will be  the last mentioned
-   * in the resulting DEBUG file. This helps you debugging.
-   */
-  Context;
-
   /* Log the command as soon as you're sure all parameters are valid. */
   putlog(LOG_CMDS, "*", "#%s# woobie", dcc[idx].nick);
 
@@ -94,7 +86,6 @@ static cmd_t mydcc[] = {
 
 static char *woobie_close()
 {
-  Context;
   rem_builtins(H_dcc, mydcc);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -125,7 +116,6 @@ char *woobie_start(Function *global_funcs)
    */
   global = global_funcs;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, woobie_table, 2, 1);
   /*                                            ^--- minor module version

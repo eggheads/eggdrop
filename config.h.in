@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2019 Eggheads Development Team
+ * Copyright (C) 1999 - 2022 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,6 +49,9 @@
 /* Defines the extension of Eggdrop modules. */
 #undef EGG_MOD_EXT
 
+/* Define this to enable threaded DNS core. */
+#undef EGG_TDNS
+
 /* Defines the current Eggdrop version. */
 #undef EGG_VERSION
 
@@ -67,8 +70,8 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
-/* Define to 1 if you have the `clock' function. */
-#undef HAVE_CLOCK
+/* Define if b64_ntop exists. */
+#undef HAVE_BASE64
 
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
@@ -87,17 +90,23 @@
 /* Define to 1 if you have the <dl.h> header file. */
 #undef HAVE_DL_H
 
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#undef HAVE_DOPRNT
-
 /* Define to 1 if you have the `dprintf' function. */
 #undef HAVE_DPRINTF
 
 /* Define to 1 if you have the `EVP_md5' function. */
 #undef HAVE_EVP_MD5
 
+/* Define to 1 if you have the `EVP_PKEY_get1_EC_KEY' function. */
+#undef HAVE_EVP_PKEY_GET1_EC_KEY
+
 /* Define to 1 if you have the `EVP_sha1' function. */
 #undef HAVE_EVP_SHA1
+
+/* Define to 1 if you have the `explicit_bzero' function. */
+#undef HAVE_EXPLICIT_BZERO
+
+/* Define to 1 if you have the `explicit_memset' function. */
+#undef HAVE_EXPLICIT_MEMSET
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
@@ -111,9 +120,6 @@
 /* Define to 1 if you have the `getrandom' function. */
 #undef HAVE_GETRANDOM
 
-/* Define to 1 if you have the `getrusage' function. */
-#undef HAVE_GETRUSAGE
-
 /* Define to 1 if you have the in6addr_any constant. */
 #undef HAVE_IN6ADDR_ANY
 
@@ -122,12 +128,6 @@
 
 /* Define to 1 if you have the `inet_aton' function. */
 #undef HAVE_INET_ATON
-
-/* Define to 1 if you have the `inet_ntop' function. */
-#undef HAVE_INET_NTOP
-
-/* Define to 1 if you have the `inet_pton' function. */
-#undef HAVE_INET_PTON
 
 /* Define to 1 if the system has the type `intptr_t'. */
 #undef HAVE_INTPTR_T
@@ -180,6 +180,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define to 1 if you have the `memset_s' function. */
+#undef HAVE_MEMSET_S
+
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
 
@@ -210,23 +213,20 @@
 /* Define to 1 if you have the <openssl/x509v3.h> header file. */
 #undef HAVE_OPENSSL_X509V3_H
 
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
+
 /* Define to 1 if you have the `rand' function. */
 #undef HAVE_RAND
 
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
 
-/* Define to 1 if you have the `RAND_status' function. */
-#undef HAVE_RAND_STATUS
-
 /* Define to 1 if you have the <rld.h> header file. */
 #undef HAVE_RLD_H
 
 /* Define to 1 if you have the `rld_load' function. */
 #undef HAVE_RLD_LOAD
-
-/* Define to 1 if you have the `setpgid' function. */
-#undef HAVE_SETPGID
 
 /* Define to 1 if you have the `shl_load' function. */
 #undef HAVE_SHL_LOAD
@@ -281,9 +281,6 @@
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
 
-/* Define to 1 if you have the <sys/rusage.h> header file. */
-#undef HAVE_SYS_RUSAGE_H
-
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
 
@@ -313,9 +310,6 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
-
-/* Define to 1 if you have the `vprintf' function. */
-#undef HAVE_VPRINTF
 
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
@@ -368,6 +362,10 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
 
 /* Define if running under QNX. */
 #undef QNX_HACKS
