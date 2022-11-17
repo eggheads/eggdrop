@@ -596,7 +596,8 @@ void tickle_AlertNotifier(ClientData cd)
 
 void tickle_ServiceModeHook(int mode)
 {
-  putlog(LOG_MISC, "*", "stub tickle_ServiceModeHook");
+  if (mode != TCL_SERVICE_ALL)
+    putlog(LOG_MISC, "*", "stub tickle_ServiceModeHook");
 }
 
 int tclthreadmainloop(int zero)
