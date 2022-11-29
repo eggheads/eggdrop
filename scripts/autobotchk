@@ -275,7 +275,6 @@ if {$systemd} {
   puts "Oops, something went wrong. Is systemd running on this system?"
   exit
  }
- puts $res
  puts "Creating systemd directory..."
  catch {exec mkdir -p ~/.config/systemd/user} res
  if {[catch {open ~/.config/systemd/user/${botnet-nick}.service w} fd]} {
