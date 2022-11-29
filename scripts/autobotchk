@@ -236,38 +236,38 @@ foreach config $confs {
   puts " done"
 }
 
- if {![info exists {botnet-nick}] && [info exists nick]} {
-  puts "  Defaulting \$botnet-nick to \"$nick\""
-  set botnet-nick $nick
- }
- if {![info exists {botnet-nick}] || ![info exists userfile]} {
-  puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
-  puts ""
-  puts "  Are you sure this is a valid eggdrop config file?"
-  puts ""
-  exit
- }
- catch {exec "$dir/$binary" -v} execres
- if {![regexp {handlen=([0-9]+)} "$execres" -> handlen]} {
-  puts "  Could not find handlen used, defaulting to 32."
-  # len 32 means up to index 31
-  set handlen 31
- } else {
-  set handlen [expr $handlen - 1]
- }
- set nick [string range [subst -nocommands $nick] 0 $handlen]
- set botnet-nick [string range [subst -nocommands ${botnet-nick}] 0 $handlen]
- if {![info exists pidfile]} {
-  puts "  Defaulting \$pidfile to \"pid.${botnet-nick}\""
-  set pidfile "pid.${botnet-nick}"
- }
- set pidfile [subst -nocommands $pidfile]
- if {[catch {open $dir/${botnet-nick}.botchk w} fd]} {
-  puts "  *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
-  puts ""
-  exit
- }
- puts $fd "#! /bin/sh
+if {![info exists {botnet-nick}] && [info exists nick]} {
+ puts "  Defaulting \$botnet-nick to \"$nick\""
+ set botnet-nick $nick
+}
+if {![info exists {botnet-nick}] || ![info exists userfile]} {
+ puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
+ puts ""
+ puts "  Are you sure this is a valid eggdrop config file?"
+ puts ""
+ exit
+}
+catch {exec "$dir/$binary" -v} execres
+if {![regexp {handlen=([0-9]+)} "$execres" -> handlen]} {
+ puts "  Could not find handlen used, defaulting to 32."
+ # len 32 means up to index 31
+ set handlen 31
+} else {
+ set handlen [expr $handlen - 1]
+}
+set nick [string range [subst -nocommands $nick] 0 $handlen]
+set botnet-nick [string range [subst -nocommands ${botnet-nick}] 0 $handlen]
+if {![info exists pidfile]} {
+ puts "  Defaulting \$pidfile to \"pid.${botnet-nick}\""
+ set pidfile "pid.${botnet-nick}"
+}
+set pidfile [subst -nocommands $pidfile]
+if {[catch {open $dir/${botnet-nick}.botchk w} fd]} {
+ puts "  *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
+ puts ""
+ exit
+}
+puts $fd "#! /bin/sh
 #
 # ${botnet-nick}.botchk (generated on [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"])
 #
@@ -360,14 +360,14 @@ fi
 
 exit 0
  "
- close $fd
- puts "Wrote '${botnet-nick}.botchk' successfully ([file size $dir/${botnet-nick}.botchk] bytes)"
- if {[catch {exec chmod u+x $dir/${botnet-nick}.botchk} 0]} {
-  puts "  *** ERROR: unable to 'chmod u+x' the output file"
-  puts ""
-  exit
- }
- puts -nonewline "Scanning crontab entries ... "
+close $fd
+puts "Wrote '${botnet-nick}.botchk' successfully ([file size $dir/${botnet-nick}.botchk] bytes)"
+if {[catch {exec chmod u+x $dir/${botnet-nick}.botchk} 0]} {
+ puts "  *** ERROR: unable to 'chmod u+x' the output file"
+ puts ""
+ exit
+}
+puts -nonewline "Scanning crontab entries ... "
 
 set tmp ".autobotchk[clock clicks].[pid]"
 set cronbotchk [string map {\\ \\\\ \[ \\\[ \] \\\]} "${botnet-nick}.botchk"]
