@@ -133,7 +133,7 @@ proc newsplit {text {split " "}} {
 }
 
 puts "\nautobotchk 1.11, (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)"
-puts "\n                 (C) 2004-2016 Eggheads Development Team"
+puts "                   (C) 2004-2022 Eggheads Development Team"
 puts "------------------------------------------------------------\n"
 
 set mainconf [newsplit argv]
