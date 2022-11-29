@@ -308,7 +308,12 @@ if {$systemd} {
   puts "ERROR: Eggdrop did not start."
   puts $res
  } else {
-  puts "Success."
+  puts "Success. Enabling ${botnet-nick}.service..."
+  if {[catch {exec systemctl --user enable ${botnet-nick}.service} res]} {
+   puts "ERROR! $res"
+  } else {
+   puts $res
+  }
  }
  exit
 }
