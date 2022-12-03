@@ -112,7 +112,21 @@ Systemd Method (Newer Systems)
 
     ./scripts/autobotchk yourEggdropConfigNameHere.conf -systemd
 
-3. Note the output at the end of the script informing you of the command you can use to start/stop the Eggdrop in thee future
+3. Note the output at the end of the script informing you of the command you can use to start/stop the Eggdrop in thee future. For example, to manually start the Eggdrop, use::
+
+    systemctl --user start <botname>.service
+
+To stop Eggdrop, use::
+
+    systemctl --usre stop <botname>.service
+
+To prevent Eggdrop from automatically running after a system start, use::
+
+    systemctl --user disable <botname>.service 
+
+To re-enable Eggdrop automatically starting after a system start, use::
+
+    systemctl --user enable <botname>.service
 
 Authenticating with NickServ
 ----------------------------
