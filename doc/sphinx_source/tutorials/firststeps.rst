@@ -118,13 +118,13 @@ Systemd Method (Newer Systems)
 
 To stop Eggdrop, use::
 
-    systemctl --usre stop <botname>.service
+    systemctl --user stop <botname>.service
 
 To prevent Eggdrop from automatically running after a system start, use::
 
     systemctl --user disable <botname>.service 
 
-To re-enable Eggdrop automatically starting after a system start, use::
+To re-enable Eggdrop automatically starting after a system start (default), use::
 
     systemctl --user enable <botname>.service
 
