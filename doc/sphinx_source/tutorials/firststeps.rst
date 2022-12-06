@@ -118,7 +118,13 @@ Systemd Method (Newer Systems)
 
 To stop Eggdrop, use::
 
-    systemctl --usre stop <botname>.service
+    systemctl --user stop <botname>.service
+
+To rehash (not reload) Eggdrop, use::
+
+    systemctl --user reload <botname>.service
+
+(Yes, we acknowledge the confusion that the systemd reload command will execute the Eggdrop '.rehash' command, not the '.reload' command. Unfortunately, systemd did not consult us when choosing its commands!)
 
 To prevent Eggdrop from automatically running after a system start, use::
 

@@ -302,7 +302,7 @@ if {$systemd} {
  catch {exec systemctl --user enable ${botnet-nick}.service} res
  puts $res
  puts "systemd job successfully installed as '${botnet-nick}.service'."
- puts "* Use 'systemctl --user <start|stop|restart|reload> ${botnet-nick}.service' to control your Eggdrop"
+ puts "* Use 'systemctl --user <start|stop|restart|reload|enable|disable> ${botnet-nick}.service' to control your Eggdrop"
  puts "Starting Eggdrop..."
  if {[catch {exec systemctl --user start ${botnet-nick}.service} res]} {
   puts "ERROR: Eggdrop did not start."
