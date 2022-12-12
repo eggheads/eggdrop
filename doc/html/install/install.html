@@ -212,8 +212,14 @@ MUST contain the correct path to the Eggdrop executable.</p>
 </li>
 <li><dl class="first docutils">
 <dt>It’s advisable to run your bot via crontab, so that it will</dt>
-<dd><p class="first">automatically restart if the machine goes down or (heaven forbid)
-the bot should crash. Eggdrop includes a helper script to generate a proper crontab script and entry. You can run this script by typing:</p>
+<dd><blockquote class="first">
+<div><p>automatically restart if the machine goes down or (heaven forbid)
+the bot should crash. Eggdrop includes a helper script to auto-generate either a systemd or crontab entry. To add a systemd job, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="p">[</span><span class="n">yourconfig</span><span class="o">.</span><span class="n">conf</span><span class="p">]</span> <span class="o">-</span><span class="n">systemd</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>or to add a crontab job, run:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="p">[</span><span class="n">yourconfig</span><span class="o">.</span><span class="n">conf</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -284,7 +290,7 @@ Copyright (C) 1999 - 2022 Eggheads Development Team</div></blockquote>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on Nov 10, 2022.
+      Last updated on Dec 12, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
