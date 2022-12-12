@@ -96,7 +96,11 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
 9. It's advisable to run your bot via crontab, so that it will
      automatically restart if the machine goes down or (heaven forbid)
-     the bot should crash. Eggdrop includes a helper script to generate a proper crontab script and entry. You can run this script by typing::
+     the bot should crash. Eggdrop includes a helper script to auto-generate either a systemd or crontab entry. To add a systemd job, run::
+
+        ./scripts/autobotchk [yourconfig.conf] -systemd
+
+    or to add a crontab job, run::
 
         ./scripts/autobotchk [yourconfig.conf]
 
