@@ -215,9 +215,29 @@
 </pre></div>
 </div>
 </li>
-<li><p class="first">Note the output at the end of the script informing you of the command you can use to start/stop the Eggdrop in thee future</p>
+<li><p class="first">Note the output at the end of the script informing you of the command you can use to start/stop the Eggdrop in thee future. For example, to manually start the Eggdrop, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="o">--</span><span class="n">user</span> <span class="n">start</span> <span class="o">&lt;</span><span class="n">botname</span><span class="o">&gt;.</span><span class="n">service</span>
+</pre></div>
+</div>
 </li>
 </ol>
+<p>To stop Eggdrop, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="o">--</span><span class="n">user</span> <span class="n">stop</span> <span class="o">&lt;</span><span class="n">botname</span><span class="o">&gt;.</span><span class="n">service</span>
+</pre></div>
+</div>
+<p>To rehash (not reload) Eggdrop, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="o">--</span><span class="n">user</span> <span class="n">reload</span> <span class="o">&lt;</span><span class="n">botname</span><span class="o">&gt;.</span><span class="n">service</span>
+</pre></div>
+</div>
+<p>(Yes, we acknowledge the confusion that the systemd reload command will execute the Eggdrop ‘.rehash’ command, not the ‘.reload’ command. Unfortunately, systemd did not consult us when choosing its commands!)</p>
+<p>To prevent Eggdrop from automatically running after a system start, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="o">--</span><span class="n">user</span> <span class="n">disable</span> <span class="o">&lt;</span><span class="n">botname</span><span class="o">&gt;.</span><span class="n">service</span>
+</pre></div>
+</div>
+<p>To re-enable Eggdrop automatically starting after a system start, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="o">--</span><span class="n">user</span> <span class="n">enable</span> <span class="o">&lt;</span><span class="n">botname</span><span class="o">&gt;.</span><span class="n">service</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="authenticating-with-nickserv">
@@ -290,7 +310,7 @@
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on Dec 03, 2022.
+      Last updated on Dec 12, 2022.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
