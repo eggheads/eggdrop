@@ -379,7 +379,7 @@ static int tcl_jump STDVAR
   }
   cycle_time = 0;
 
-  nuke_server("changing servers\n");
+  nuke_server(IRC_CHANGINGSERV);
   return TCL_OK;
 }
 
