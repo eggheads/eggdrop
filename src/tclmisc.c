@@ -73,7 +73,7 @@ int expmem_tclmisc()
 static int tcl_logfile STDVAR
 {
   int i;
-  char s[151];
+  char s[256];
 
   BADARGS(1, 4, " ?logModes channel logFile?");
 
@@ -81,7 +81,7 @@ static int tcl_logfile STDVAR
     /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
       if (logs[i].filename != NULL) {
-        egg_snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
+        snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
                  logs[i].chname, logs[i].filename);
         Tcl_AppendElement(interp, s);
       }
