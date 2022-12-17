@@ -484,9 +484,9 @@ void chanprog()
 
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile) {
-      char tmp[178];
+      char tmp[256];
 
-      egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
+      snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
       fatal(tmp, 0);
     }
     printf("\n\n%s\n", MISC_NOUSERFILE2);
