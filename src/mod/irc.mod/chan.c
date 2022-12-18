@@ -1335,6 +1335,34 @@ static int got354(char *from, char *msg)
   return 0;
 }
 
+/* got 353: NAMES
+ * <server> 353 <chan> :[+/@]nick [+/@]nick ....
+ *
+ * if userhost-in-names is enabled, nick is nick@userhost.com
+ * this function is added solely to handle userhost-in-names stuff, and will
+ * update hostnames for nicks received
+ */
+static int got353(char *from, char *msg)
+{
+  char *nameptr, *uhost, *nick;
+  struct chanset_t *chan;
+  memberlist *m;
+
+  if (find_capability("userhost-in-names")) {
+    nameptr = strchr(msg, ':');
+    while ((uhost = newsplit(&nameptr))) {
+      nick = splitnick(&uhost);
+      for (chan = chanset; chan; chan = chan->next) {
+        m = ismember(chan, nick);
+        if (m) {
+          strlcpy(m->userhost, uhost, UHOSTLEN);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
 
 /* got 315: end of who
  * <server> 315 <to> <chan> :End of /who
@@ -2997,6 +3025,7 @@ static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
+  {"353",     "",   (IntFunc) got353,          "irc:353"},
   {"354",     "",   (IntFunc) got354,          "irc:354"},
   {"315",     "",   (IntFunc) got315,          "irc:315"},
   {"366",     "",   (IntFunc) gottwitch366,   "irc:t366"},
