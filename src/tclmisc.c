@@ -404,12 +404,12 @@ static int tcl_duration STDVAR
 
 static int tcl_unixtime STDVAR
 {
-  char s[11];
+  char s[21];
   time_t now2 = time(NULL);
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%li", (long) now2);
+  snprintf(s, sizeof s, "%" PRId64, (int64_t) now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
