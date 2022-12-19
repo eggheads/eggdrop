@@ -1320,7 +1320,9 @@ static int got396orchghost(char *nick, char *user, char *uhost)
     m = ismember(chan, nick);
     if (m) {
       snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      strcpy(botuserhost, m->userhost);
+      if (!rfc_casecmp(m->nick, botname)) {
+        strcpy(botuserhost, m->userhost);
+      }
     }
   }
   return 0;
