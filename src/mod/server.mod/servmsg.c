@@ -188,6 +188,27 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   return 1;
 }
 
+static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec *u,
+                             char *chan, char *ident, char * host)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  char usermask[USERLEN];
+  int x;
+
+  get_user_flagrec(u, &fr, NULL);
+  simple_sprintf(usermask, "%s!%s@%s", nick, ident, host);
+
+  Tcl_SetVar(interp, "_chghost1", nick, 0);
+  Tcl_SetVar(interp, "_chghost2", from, 0);
+  Tcl_SetVar(interp, "_chghost3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_chghost4", chan, 0);
+  Tcl_SetVar(interp, "_chghost5", usermask, 0);
+  x = check_tcl_bind(H_chghost, mask, &fr,
+                " $_chghost1 $_chghost2 $_chghost3 $_chghost4 $_chghost5",
+                MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
@@ -1335,11 +1356,25 @@ static int got396orchghost(char *nick, char *user, char *uhost)
  * changes user hostmask to tehgeo@foo.io
  */
 static int gotchghost(char *from, char *msg){
-  char *nick, *user;
+  struct userrec *u;
+  struct chanset_t *chan;
+  memberlist *m;
+  char mask[1024], *nick, *ident, buf[MSGMAX], *s1=buf, *chname;
 
-  nick = splitnick(&from); /* Get the nick */
-  user = newsplit(&msg);  /* Get the user */
-  got396orchghost(nick, user, msg);
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  ident = newsplit(&msg);  /* Get the ident */
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    m = ismember(chan, nick);
+    if (m) {
+      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
+    }
+  }
+  got396orchghost(nick, ident, msg);
   return 0;
 }
 
