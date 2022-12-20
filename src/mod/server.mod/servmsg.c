@@ -192,7 +192,7 @@ static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec 
                              char *chan, char *ident, char * host)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  char usermask[USERLEN];
+  char usermask[USERHOSTMAX];
   int x;
 
   get_user_flagrec(u, &fr, NULL);
@@ -1334,8 +1334,10 @@ static int got311(char *from, char *msg)
 
 static int got396orchghost(char *nick, char *user, char *uhost)
 {
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct chanset_t *chan;
   memberlist *m;
+  char s1[UHOSTLEN];
 
   for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
@@ -1344,6 +1346,11 @@ static int got396orchghost(char *nick, char *user, char *uhost)
       if (!rfc_casecmp(m->nick, botname)) {
         strcpy(botuserhost, m->userhost);
       }
+      /* Re-check the user's new hostmask against bans, etc */
+      sprintf(s1, "%s!%s@%s", nick, user, uhost);
+      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
+                       chan->dname);
+      check_this_member(chan, m->nick, &fr);
     }
   }
   return 0;
