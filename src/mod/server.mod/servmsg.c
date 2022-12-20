@@ -188,27 +188,6 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   return 1;
 }
 
-static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec *u,
-                             char *chan, char *ident, char * host)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  char usermask[UHOSTMAX];
-  int x;
-
-  get_user_flagrec(u, &fr, NULL);
-  simple_sprintf(usermask, "%s!%s@%s", nick, ident, host);
-
-  Tcl_SetVar(interp, "_chghost1", nick, 0);
-  Tcl_SetVar(interp, "_chghost2", from, 0);
-  Tcl_SetVar(interp, "_chghost3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_chghost4", chan, 0);
-  Tcl_SetVar(interp, "_chghost5", usermask, 0);
-  x = check_tcl_bind(H_chghost, mask, &fr,
-                " $_chghost1 $_chghost2 $_chghost3 $_chghost4 $_chghost5",
-                MATCH_MASK | BIND_STACKABLE);
-  return (x == BIND_EXEC_LOG);
-}
-
 static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
@@ -1332,77 +1311,6 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static int got396orchghost(char *nick, char *user, char *uhost)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-  struct chanset_t *chan;
-  memberlist *m;
-  char s1[UHOSTLEN];
-
-  for (chan = chanset; chan; chan = chan->next) {
-    m = ismember(chan, nick);
-    if (m) {
-      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      if (!rfc_casecmp(m->nick, botname)) {
-        strcpy(botuserhost, m->userhost);
-      }
-      /* Re-check the user's new hostmask against bans, etc */
-      sprintf(s1, "%s!%s@%s", nick, user, uhost);
-      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
-                       chan->dname);
-      check_this_member(chan, m->nick, &fr);
-    }
-  }
-  return 0;
-}
-
-
-/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
- * ident of the user. Format:
- * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
- * changes user hostmask to tehgeo@foo.io
- */
-static int gotchghost(char *from, char *msg){
-  struct userrec *u;
-  struct chanset_t *chan;
-  memberlist *m;
-  char mask[1024], *nick, *ident, buf[MSGMAX], *s1=buf, *chname;
-
-  strlcpy(s1, from, sizeof buf);
-  nick = splitnick(&s1);
-  ident = newsplit(&msg);  /* Get the ident */
-  u = get_user_by_host(from);
-  /* Run the bind for each channel the user is on */
-  for (chan = chanset; chan; chan = chan->next) {
-    chname = chan->dname;
-    m = ismember(chan, nick);
-    if (m) {
-      snprintf(mask, sizeof mask, "%s %s", chname, from);
-      check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
-    }
-  }
-  got396orchghost(nick, ident, msg);
-  return 0;
-}
-
-/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
- * successfully set. Format:
- * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
- */
-static int got396(char *from, char *msg)
-{
-  char *nick, *uhost, *user, userbuf[UHOSTLEN];
-
-  nick = newsplit(&msg);
-  if (match_my_nick(nick)) {  /* Double check this really is for me */
-    uhost = newsplit(&msg);
-    strlcpy(userbuf, botuserhost, sizeof userbuf);
-    user = strtok(userbuf, "@");
-    got396orchghost(nick, user, uhost);
-  }
-  return 0;
-}
-
 static int gotsetname(char *from, char *msg)
 {
   fixcolon(msg);
@@ -2061,7 +1969,6 @@ static cmd_t my_raw_binds[] = {
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
-  {"396",          "",   (IntFunc) got396,          NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
   {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
@@ -2088,7 +1995,6 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
-  {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
