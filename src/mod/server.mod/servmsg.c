@@ -192,7 +192,7 @@ static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec 
                              char *chan, char *ident, char * host)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  char usermask[USERHOSTMAX];
+  char usermask[UHOSTMAX];
   int x;
 
   get_user_flagrec(u, &fr, NULL);
