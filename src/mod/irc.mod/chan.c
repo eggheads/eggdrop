@@ -1365,6 +1365,7 @@ static int got396orchghost(char *nick, char *user, char *uhost)
  * changes user hostmask to tehgeo@foo.io
  */
 static int gotchghost(char *from, char *msg){
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct userrec *u;
   struct chanset_t *chan;
   memberlist *m;
@@ -1373,17 +1374,25 @@ static int gotchghost(char *from, char *msg){
   strlcpy(s1, from, sizeof buf);
   nick = splitnick(&s1);
   ident = newsplit(&msg);  /* Get the ident */
+  /* Update my own internal hostmask */
+  if (match_my_nick(nick)) {
+    strlcpy(botuserhost, from, sizeof botuserhost);
+  }
   u = get_user_by_host(from);
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
     m = ismember(chan, nick);
     if (m) {
+      snprintf(m->userhost, sizeof m->userhost, "%s@%s", ident, msg);
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
+      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
+                       chan->dname);
+      check_this_member(chan, m->nick, &fr);
     }
   }
-  got396orchghost(nick, ident, msg);
+//  got396orchghost(nick, ident, msg);
   return 0;
 }
 
@@ -1393,14 +1402,28 @@ static int gotchghost(char *from, char *msg){
  */
 static int got396(char *from, char *msg)
 {
-  char *nick, *uhost, *user, userbuf[UHOSTLEN];
+  char *chname, *nick, *ident, *uhost, mask[UHOSTLEN+1], buf[UHOSTLEN], *s1 = buf;
+  struct chanset_t *chan;
+  struct userrec *u;
+  memberlist *m;
 
   nick = newsplit(&msg);
+  uhost = newsplit(&msg);
   if (match_my_nick(nick)) {  /* Double check this really is for me */
-    uhost = newsplit(&msg);
-    strlcpy(userbuf, botuserhost, sizeof userbuf);
-    user = strtok(userbuf, "@");
-    got396orchghost(nick, user, uhost);
+    strlcpy(botuserhost, uhost, sizeof botuserhost);
+  }
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    m = ismember(chan, nick);
+    if (m) {
+      u = get_user_by_host(m->userhost);
+      strlcpy(s1, m->userhost, sizeof s1);
+      splitnick(&s1);
+      ident = strtok(s1, "@");
+      snprintf(mask, sizeof mask, "%s %s", chname, m->userhost);
+      check_tcl_chghost(nick, m->userhost, mask, u, chname, ident, msg);
+    }
   }
   return 0;
 }
