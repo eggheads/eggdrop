@@ -1335,30 +1335,6 @@ static int got354(char *from, char *msg)
   return 0;
 }
 
-static int got396orchghost(char *nick, char *user, char *uhost)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-  struct chanset_t *chan;
-  memberlist *m;
-  char s1[UHOSTLEN];
-
-  for (chan = chanset; chan; chan = chan->next) {
-    m = ismember(chan, nick);
-    if (m) {
-      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      if (!rfc_casecmp(m->nick, botname)) {
-        strcpy(botuserhost, m->userhost);
-      }
-      /* Re-check the user's new hostmask against bans, etc */
-      sprintf(s1, "%s!%s@%s", nick, user, uhost);
-      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
-                       chan->dname);
-      check_this_member(chan, m->nick, &fr);
-    }
-  }
-  return 0;
-}
-
 /* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
  * ident of the user. Format:
  * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
@@ -1392,7 +1368,6 @@ static int gotchghost(char *from, char *msg){
       check_this_member(chan, m->nick, &fr);
     }
   }
-//  got396orchghost(nick, ident, msg);
   return 0;
 }
 
@@ -1402,28 +1377,14 @@ static int gotchghost(char *from, char *msg){
  */
 static int got396(char *from, char *msg)
 {
-  char *chname, *nick, *ident, *uhost, mask[UHOSTLEN+1], buf[UHOSTLEN], *s1 = buf;
-  struct chanset_t *chan;
-  struct userrec *u;
-  memberlist *m;
+  char *nick, *ident, userbuf[UHOSTLEN];
 
   nick = newsplit(&msg);
-  uhost = newsplit(&msg);
   if (match_my_nick(nick)) {  /* Double check this really is for me */
-    strlcpy(botuserhost, uhost, sizeof botuserhost);
-  }
-  /* Run the bind for each channel the user is on */
-  for (chan = chanset; chan; chan = chan->next) {
-    chname = chan->dname;
-    m = ismember(chan, nick);
-    if (m) {
-      u = get_user_by_host(m->userhost);
-      strlcpy(s1, m->userhost, sizeof s1);
-      splitnick(&s1);
-      ident = strtok(s1, "@");
-      snprintf(mask, sizeof mask, "%s %s", chname, m->userhost);
-      check_tcl_chghost(nick, m->userhost, mask, u, chname, ident, msg);
-    }
+    strlcpy(userbuf, botuserhost, sizeof userbuf);
+    ident = strtok(userbuf, "@");
+    egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", ident, msg);
+    strlcpy(botuserhost, userbuf, sizeof botuserhost);
   }
   return 0;
 }
