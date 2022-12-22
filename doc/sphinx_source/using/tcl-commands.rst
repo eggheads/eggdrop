@@ -3571,7 +3571,6 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: triggered when a server sends either an IRCv3 spec CHGHOST message to change a user's hostmask. The mask is matched against "#channel nick!user\@host" and can contain wildcards. The triggered proc will return the nick of the user who's hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
-
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
