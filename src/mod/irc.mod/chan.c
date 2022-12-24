@@ -1357,10 +1357,14 @@ static int got353(char *from, char *msg)
       }
       fixcolon(uhost);
       nick = splitnick(&uhost);
+      /* Strip @, +, etc chars prefixed to nicks in NAMES */
       for (i = 0; opchars[i]; i++) {
         if(nick[0] == opchars[i]) {
           nick=nick+1;
         }
+      }
+      if ((nick[0] == '+') || (nick[0] == '%')) {
+        nick=nick+1;
       }
       for (chan = chanset; chan; chan = chan->next) {
         m = ismember(chan, nick);
