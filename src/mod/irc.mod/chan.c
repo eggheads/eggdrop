@@ -1347,11 +1347,21 @@ static int got353(char *from, char *msg)
   char *nameptr, *uhost, *nick;
   struct chanset_t *chan;
   memberlist *m;
+  int i;
 
   if (find_capability("userhost-in-names")) {
     nameptr = strchr(msg, ':');
     while ((uhost = newsplit(&nameptr))) {
+      if (!strcmp(uhost, "")) {
+        break;
+      }
+      fixcolon(uhost);
       nick = splitnick(&uhost);
+      for (i = 0; opchars[i]; i++) {
+        if(nick[0] == opchars[i]) {
+          nick=nick+1;
+        }
+      }
       for (chan = chanset; chan; chan = chan->next) {
         m = ismember(chan, nick);
         if (m) {
