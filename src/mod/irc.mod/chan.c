@@ -1349,33 +1349,38 @@ static int got353(char *from, char *msg)
   memberlist *m;
   int i;
 
-  if (find_capability("userhost-in-names")) {
-    nameptr = strchr(msg, ':');
-    while ((uhost = newsplit(&nameptr))) {
-      if (!strcmp(uhost, "")) {
-        break;
+  if (!find_capability("userhost-in-names")) {
+    return 0;
+  }
+
+  nameptr = strchr(msg, ':');
+  while ((uhost = newsplit(&nameptr))) {
+    if (strcmp(uhost, "") == 0) {
+      break;
+    }
+    fixcolon(uhost);
+    nick = splitnick(&uhost);
+    i = 0;
+    while (opchars[i]) {
+      if (nick[0] == opchars[i]) {
+        nick++;
       }
-      fixcolon(uhost);
-      nick = splitnick(&uhost);
-      /* Strip @, +, etc chars prefixed to nicks in NAMES */
-      for (i = 0; opchars[i]; i++) {
-        if(nick[0] == opchars[i]) {
-          nick=nick+1;
-        }
-      }
-      if ((nick[0] == '+') || (nick[0] == '%')) {
-        nick=nick+1;
-      }
-      for (chan = chanset; chan; chan = chan->next) {
-        m = ismember(chan, nick);
-        if (m) {
-          strlcpy(m->userhost, uhost, UHOSTLEN);
-        }
+      i++;
+    }
+    if (nick[0] == '+' || nick[0] == '%') {
+      nick++;
+    }
+    for (chan = chanset; chan; chan = chan->next) {
+      m = ismember(chan, nick);
+      if (m) {
+        strlcpy(m->userhost, uhost, UHOSTLEN);
       }
     }
   }
+
   return 0;
 }
+
 
 
 /* got 315: end of who
