@@ -1344,12 +1344,14 @@ static int got354(char *from, char *msg)
  */
 static int got353(char *from, char *msg)
 {
-  char *nameptr, *uhost, *nick;
+  char *nameptr, *chname, *uhost, *nick;
   struct chanset_t *chan;
   memberlist *m;
   int i;
 
   if (find_capability("userhost-in-names")) {
+    chname = newsplit(msg);
+    /* use this instead of newsplit(), because sometimes there's a = in a 353 */
     nameptr = strchr(msg, ':');
     while ((uhost = newsplit(&nameptr))) {
       if (!strcmp(uhost, "")) {
@@ -1373,6 +1375,13 @@ static int got353(char *from, char *msg)
         }
       }
     }
+    /* The assumption here is the user enabled userhost-in-names because WHO
+     * is disabled. We remove the pending flag here because we'll never get a
+     * a WHO to do it
+     */
+    chan = findchan(chname);
+    chan->status |= CHAN_ACTIVE;
+    chan->status &= ~CHAN_PEND;
   }
   return 0;
 }
