@@ -1350,7 +1350,7 @@ static int got353(char *from, char *msg)
   int i;
 
   if (find_capability("userhost-in-names")) {
-    chname = newsplit(msg);
+    chname = newsplit(&msg);
     /* use this instead of newsplit(), because sometimes there's a = in a 353 */
     nameptr = strchr(msg, ':');
     while ((uhost = newsplit(&nameptr))) {
