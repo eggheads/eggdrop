@@ -1,5 +1,5 @@
-Writing an Eggdrop Module
-=========================
+Writing a Basic Eggdrop Module
+==============================
 
 An Eggdrop module is a piece of C code that can be loaded (or unloaded) onto the core Eggdrop code. A module differs from a Tcl script in that modules must be compiled and then loaded, whereas scripts can be edited and loaded directly. Importantly, a module can be written to create new Eggdrop-specific Tcl commands and binds that a user can then use in a Tcl script. For example, the server module loaded by Eggdrop is what creates the "jump" Tcl command, which causes tells the Eggdrop to jump to the next server in its server list.
 
