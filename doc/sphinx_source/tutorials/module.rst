@@ -29,13 +29,13 @@ A module should include license information. This tells other open source users 
 Required Code
 -------------
 
-For this section, you don't necessarily need to understand what it is doing, but this code is required for a module to function.
+For this section, you don't necessarily need to understand what it is doing, but this code is required for a module to function. If you want to learn more about this, check out :ref:`writing_module`
 
 You'll next want to name your module::
 
   #define MODULE_NAME "woobie"
 
-Declare your own function tables (you don't need to understand this part; you just need to copy/paste it)::
+Declare your own function tables (again, you don't need to understand this part; you just need to copy/paste it)::
 
   #undef global
   static Function *global = NULL, *server_funcs = NULL;
