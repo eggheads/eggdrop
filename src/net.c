@@ -136,7 +136,7 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   volatile int af = AF_UNSPEC;
   char ip2[EGG_INET_ADDRSTRLEN];
 #ifdef IPV6
-  int pref;
+  volatile int pref;
   struct addrinfo *res0 = NULL, *res;
   int error;
 #else

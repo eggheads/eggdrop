@@ -1720,25 +1720,17 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
 {
   char ts[21], ts1[21], ts2[21], *p;
-  long tv;
   EGG_CONST char *list[6];
 
   for (; m; m = m->next) {
     list[0] = m->mask;
     list[1] = m->desc;
-
-    tv = m->expire;
-    sprintf(ts, "%lu", tv);
+    snprintf(ts, sizeof ts, "%" PRId64, (int64_t) m->expire);
     list[2] = ts;
-
-    tv = m->added;
-    sprintf(ts1, "%lu", tv);
+    snprintf(ts1, sizeof ts1, "%" PRId64, (int64_t) m->added);
     list[3] = ts1;
-
-    tv = m->lastactive;
-    sprintf(ts2, "%lu", tv);
+    snprintf(ts2, sizeof ts2, "%" PRId64, (int64_t) m->lastactive);
     list[4] = ts2;
-
     list[5] = m->user;
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);

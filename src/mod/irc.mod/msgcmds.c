@@ -1101,7 +1101,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP", nick, host, u->handle);
     dprintf(-serv, "NOTICE %s :%s\n", nick, IRC_JUMP);
     cycle_time = 0;
-    nuke_server("changing servers");
+    nuke_server(IRC_CHANGINGSERV);
   } else
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
   return 1;

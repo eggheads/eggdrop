@@ -20,6 +20,8 @@ Eggdrop v1.9.4:
  General changes:
     - Fixed a DNS bug causing Eggdrop to often hang on DCC or telnet
       connections
+    - BETA: Added -systemd option to autobotchk script to restart Eggdrop via
+      systemd instead of cron
     - Reverted matchattr match syntax to previous functionality. Matching
       against "-" as a flag will once again successfully match against "no"
       flags, instead of returning an error.
@@ -33,9 +35,11 @@ Eggdrop v1.9.4:
     - None
 
  Tcl API changes:
-    - Moved the 'gotmsg' function back as a raw bind. It was inadvertantly
+    - Moved the 'gotmsg' function back as a raw bind. It was inadvertently
       moved to a rawt bind in 1.9.3, causing issuse with scripts attempting to
       unbind this internal reference
+ Module changes:
+    - None
 
 Eggdrop config changes:
     - None

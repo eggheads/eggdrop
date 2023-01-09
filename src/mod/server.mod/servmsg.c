@@ -1320,7 +1320,9 @@ static int got396orchghost(char *nick, char *user, char *uhost)
     m = ismember(chan, nick);
     if (m) {
       snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      strcpy(botuserhost, m->userhost);
+      if (!rfc_casecmp(m->nick, botname)) {
+        strcpy(botuserhost, m->userhost);
+      }
     }
   }
   return 0;
@@ -1520,7 +1522,7 @@ static int tryauthenticate(char *from, char *msg)
     ret = ECDSA_sign(0, dst, olen, sig, &siglen, eckey);
     EC_KEY_free(eckey);
     if (!ret) {
-      printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       nfree(sig);
       return 1;
@@ -1536,8 +1538,8 @@ static int tryauthenticate(char *from, char *msg)
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
-    dprintf(LOG_DEBUG, "*", "SASL: Received EC message, but no TLS EC libs "
-                "present. Try PLAIN method");
+    putlog(LOG_SERV, "*", "SASL: Received EC message, but no TLS EC libs "
+           "present. Try PLAIN method");
     return 1;
 #endif /* TLS */
   }

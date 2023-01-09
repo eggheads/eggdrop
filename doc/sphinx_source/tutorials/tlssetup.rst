@@ -39,7 +39,7 @@ Eggdrop has the ability to protect botnet (direct bot to bot) communications wit
 
 Configuration File Preparation - Generating Keys
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If an Eggdrop is going to listen/accept connections on a TLS port (more on that in a moment), it must have a public/private certificate pair generated and configured. For most users, a self-signed certificate is sufficient for encryption (a certificate signed by a certificate authority would be more secure, but obtaining one is outside the scope of this tutorial. However, the implementatino of a signed keypair is no different than a self-signed pair). To generate a self-signed key pair, enter the Eggdrop source directory (the directory you first compiled Eggdrop from, usually named eggdrop-X.Y.Z) and type::
+If an Eggdrop is going to listen/accept connections on a TLS port (more on that in a moment), it must have a public/private certificate pair generated and configured. For most users, a self-signed certificate is sufficient for encryption (a certificate signed by a certificate authority would be more secure, but obtaining one is outside the scope of this tutorial. However, the implementation of a signed keypair is no different than a self-signed pair). To generate a self-signed key pair, enter the Eggdrop source directory (the directory you first compiled Eggdrop from, usually named eggdrop-X.Y.Z) and type::
 
   make sslcert
 
