@@ -41,7 +41,7 @@ Declare your own function tables (you don't need to understand this part; you ju
   static Function *global = NULL, *server_funcs = NULL;
   EXPORT_SCOPE char *woobie_start();
 
-Next are two memory-reporting functions used by the core Eggdrop .status and .module commands::
+Next are two memory-related functions used by the core Eggdrop .status and .module commands::
 
   static int woobie_expmem()
   {
@@ -60,7 +60,7 @@ Next are two memory-reporting functions used by the core Eggdrop .status and .mo
     }
   }
 
-This function is calld when Eggdrop loads the module::
+This function is called when Eggdrop loads the module::
 
   char *woobie_start(Function *global_funcs)
   {
@@ -88,7 +88,6 @@ This next function is used to unload the module::
   }
 
 This creates a function table that is exported to Eggdrop. In other words, these are commands that are made available to the Eggdrop core and other modules. At minimum, the following functions must be exported::
-This creates a function table that is exported to Eggdrop. In other words, these are commands that are made available to the Eggdrop core and other modules. At minimum, the following functions must be exported::
 
   static Function woobie_table[] = {
     (Function) woobie_start,
@@ -113,7 +112,7 @@ A partyline command function accepts three arguments- a pointer to the user reco
 
 If you add partyline commands, you need to create a table which links the new command name to the function it should call. This can be done like so::
 
-  static cmd_t mydcc[] = {
+  static cmd_t mywoobie[] = {
     /* command  flags  function     tcl-name */
     {"woobie",  "",    cmd_woobie,  NULL},
     {NULL,      NULL,  NULL,        NULL}  /* Mark end. */
@@ -144,9 +143,11 @@ Eggdrop uses the Tcl C API library to interact with the Tcl interpreter. Learnin
 Similar to adding a partyline command, you also have to create a function table for a new Tcl command::
 
   static tcl_cmds mytcl[] = {
-    {"twcmd",           tcl_twcmd},
+    {"echome",           tcl_echome},
     {NULL,                   NULL}   /* Required to mark end of table */
   };
+
+And now the newly-created Tcl command 'echome' is available for use in a script!
 
 Adding a Tcl Bind
 -----------------
@@ -160,15 +161,15 @@ A Tcl bind is a command that is activated when a certain condition is met. With 
   char *woobie_start(Function *global_funcs)
   {
     ...
-    H_ccht = add_bind_table("woobie", HT_STACKABLE, woobie_2char);  
+    H_woob = add_bind_table("woobie", HT_STACKABLE, woobie_2char);  
   }
 
 And then remove the binds when the module is unloaded::
 
-  static char *twitch_close()
+  static char *woobie_close()
   {
     ...
-    del_bind_table(H_ccht);
+    del_bind_table(H_woob);
   }
 
 Here, "woobie" is the name of the bind (similar to the PUB, MSG, JOIN types of binds you already see in tcl-commands.doc). HT_STACKABLE means you can have multiple binds of this type. "woobie_2char" defines how many arguments the bind will take, and we'll talk about that next.
@@ -212,13 +213,13 @@ To call the bind, Eggdrop coding style it to name that function "check_tcl_bindn
   check_tcl_woobie(chan, nick);
 
 
-  static int check_tcl_woobie(char *chan, char *nick) {
+  static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
     int x;
     char mask[1024];
     struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-    snprintf(mask, sizeof mask, "%s %s!%s@%s.tmi.twitch.tv",
-                                  chan, nick, nick, nick);
+    snprintf(mask, sizeof mask, "%s %s!%s",
+                                  chan, nick, userhost);
     Tcl_SetVar(interp, "_woob1", nick ? (char *) nick : "", 0);
     Tcl_SetVar(interp, "_woob2", chan, 0);
     x = check_tcl_bind(H_woob, mask, &fr, " $_woob1 $_woob2",
