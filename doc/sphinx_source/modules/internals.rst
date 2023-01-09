@@ -27,14 +27,14 @@ The bind table is added by calling, either at module initialization or startup::
    */
   H_dcc = add_bind_table("dcc", 0, builtin_dcc);
 
-What the `C handler` does is explained later, because a lot happens before it is actually called. `IntFunc` is a generic function pointer that returns an `int` with arbitrary arguments.
+What the :code:`C handler` does is explained later, because a lot happens before it is actually called. :code:`IntFunc` is a generic function pointer that returns an :code:`int` with arbitrary arguments.
 
-`H_dcc` can be exported from core and imported into modules as any other variable or function. That should be explained in a separate document.
+:code:`H_dcc` can be exported from core and imported into modules as any other variable or function. That should be explained in a separate document.
 
 Stackable Binds: HT_STACKABLE
 -----------------------------
 
-`HT_STACKABLE` means that multiple binds can exist for the same mask.
+:code:`HT_STACKABLE` means that multiple binds can exist for the same mask.
 ::
 
   bind dcc - test proc1; # not stackable
@@ -45,7 +45,7 @@ It does not automatically call multiple binds that match, see later in the `Trig
 Tcl Binding
 -----------
 
-After the bind table is created with `add_bind_table`, Tcl procs can already be registered to this bind by calling::
+After the bind table is created with :code:`add_bind_table`, Tcl procs can already be registered to this bind by calling::
 
   bind dcc -|- test myproc
   proc myproc {args} {
@@ -55,10 +55,10 @@ After the bind table is created with `add_bind_table`, Tcl procs can already be 
 
 Of course it is not clear so far:
 
-* If flags `-|-` matter for this bind at all and what they are checked against
+* If flags :code:`-|-` matter for this bind at all and what they are checked against
 * If channel flags have a meaning or global/bot only
-* What `test` is matched against to see if the bind should trigger
-* Which arguments `myproc` receives, the example just accepts all arguments
+* What :code:`test` is matched against to see if the bind should trigger
+* Which arguments :code:`myproc` receives, the example just accepts all arguments
 
 Triggering the Bind
 -------------------
@@ -82,15 +82,15 @@ To trigger the bind and call it with the desired arguments, a function is create
     return 0;
   }
 
-The global Tcl variables `$_dcc1 $_dcc2 $_dcc3` are used as temporary string variables and passed as arguments to the registered Tcl proc.
+The global Tcl variables :code:`$_dcc1 $_dcc2 $_dcc3` are used as temporary string variables and passed as arguments to the registered Tcl proc.
 
 This shows which arguments the callbacks in Tcl get:
 
 * the nickname of the DCC chat user (handle of the user)
-* the IDX (socket id) of the partyline so `[putdcc]` can respond back
+* the IDX (socket id) of the partyline so :code:`[putdcc]` can respond back
 * another string argument that depends on the caller
 
-The call to `check_tcl_dcc` can be found in the DCC parsing in `src/dcc.c`.
+The call to :code:`check_tcl_dcc` can be found in the DCC parsing in `src/dcc.c`.
 
 Triggering any Bind
 -------------------
@@ -125,22 +125,22 @@ Triggering any Bind
     return x;
   }
 
-The supplied flags to `check_tcl_bind` in `check_tcl_dcc` are what defines how matching is performed.
+The supplied flags to :code:`check_tcl_bind` in `check_tcl_dcc` are what defines how matching is performed.
 
 In the case of a DCC bind we had:
 
-* Matchtype `MATCH_PARTIAL`: Prefix-Matching if the command can be uniquely identified (e.g. dcc .help calls .help)
-* Additional flag `BIND_USE_ATTR`: Flags are checked
-* Additional flag `BIND_HAS_BUILTINS`: Something with flag matching, unsure
+* Matchtype :code:`MATCH_PARTIAL`: Prefix-Matching if the command can be uniquely identified (e.g. dcc .help calls .help)
+* Additional flag :code:`BIND_USE_ATTR`: Flags are checked
+* Additional flag :code:`BIND_HAS_BUILTINS`: Something with flag matching, unsure
 
-For details on the available match types (wildcard matching, exact matching, etc.) see `src/tclegg.h`. Additional flags are also described there as well as the return codes of `check_tcl_bind` (e.g. `BIND_NOMATCH`).
+For details on the available match types (wildcard matching, exact matching, etc.) see :code:`src/tclegg.h`. Additional flags are also described there as well as the return codes of :code:`check_tcl_bind` (e.g. :code:`BIND_NOMATCH`).
 
-Note: For a bind type to be stackable it needs to be registered with `HT_STACKABLE` AND `check_tcl_bind` must be called with `BIND_STACKABLE`.
+Note: For a bind type to be stackable it needs to be registered with :code:`HT_STACKABLE` AND :code:`check_tcl_bind` must be called with :code:`BIND_STACKABLE`.
 
 C Binding
 ---------
 
-To create a C function that is called by the bind, Eggdrop provides the `add_builtins` function.
+To create a C function that is called by the bind, Eggdrop provides the :code:`add_builtins` function.
 ::
 
   /* Add a list of C function callbacks to a bind
@@ -171,7 +171,7 @@ To create a C function that is called by the bind, Eggdrop provides the `add_bui
     }
   }
 
-It automatically creates Tcl commands (e.g. `*dcc:cmd_boot`) that will call the `C handler` from `add_bind_table` in the first section `Bind Table Creation`_ and it gets a context (void \*) argument with the C function it is supposed to call (e.g. `cmd_boot()`).
+It automatically creates Tcl commands (e.g. :code:`*dcc:cmd_boot`) that will call the `C handler` from `add_bind_table` in the first section `Bind Table Creation`_ and it gets a context (void \*) argument with the C function it is supposed to call (e.g. `cmd_boot()`).
 
 Now we can actually look at the C function handler for dcc as an example and what it has to implement.
 
@@ -209,11 +209,11 @@ The example handler for DCC looks as follows::
 
 This is finally the part where we see the arguments a C function gets for a DCC bind as opposed to a Tcl proc.
 
-`F(dcc[idx].user, idx, argv[3])`:
+code:`F(dcc[idx].user, idx, argv[3])`:
 
 * User information as struct userrec *
 * IDX as int
-* The 3rd string argument from the Tcl call to \*dcc:cmd_boot, which was `$_dcc3` which was `args` to `check_tcl_dcc` which was everything after the dcc command
+* The 3rd string argument from the Tcl call to \*dcc:cmd_boot, which was :code:`$_dcc3` which was :code:`args` to :code:`check_tcl_dcc` which was everything after the dcc command
 
 So this is how we register C callbacks for binds with the correct arguments::
 
@@ -234,12 +234,12 @@ Summary
 
 In summary, this is how the dcc bind is called:
 
-* `check_tcl_dcc()` creates Tcl variables `$_dcc1 $_dcc2 $_dcc3` and lets `check_tcl_bind` call the binds
+* :code:`check_tcl_dcc()` creates Tcl variables :code:`$_dcc1 $_dcc2 $_dcc3` and lets :code:`check_tcl_bind` call the binds
 * Tcl binds are done at this point
-* C binds mean the Tcl command associated with the bind is `*dcc:boot` which calls `builtin_dcc` which gets `cmd_boot` as ClientData cd argument
-* `buildin_dcc` performs some sanity checking to avoid crashes and then calls `cmd_boot()` aka `F()` with the arguments it wants C callbacks to have
+* C binds mean the Tcl command associated with the bind is :code:`*dcc:boot` which calls :code:`builtin_dcc` which gets :code:`cmd_boot` as ClientData cd argument
+* :code:`gbuildin_dcc` performs some sanity checking to avoid crashes and then calls :code:`cmd_boot()` aka :code:`F()` with the arguments it wants C callbacks to have
 
-Example edited and annotated gdb backtrace in `cmd_boot` after doing `.boot test` on the partyline as user `thommey` with typical owner flags.
+Example edited and annotated gdb backtrace in :code::`cmd_boot` after doing :code:`.boot test` on the partyline as user :code:`thommey` with typical owner flags.
 ::
 
   #0  cmd_boot (u=0x55e8bd8a49b0, idx=4, par=0x55e8be6a0010 "test") at cmds.c:614
