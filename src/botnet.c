@@ -359,7 +359,7 @@ void remparty(char *bot, int sock)
 
 /* Cancel every user that was on a certain bot
  */
-void rempartybot(char *bot)
+static void rempartybot(char *bot)
 {
   int i;
 

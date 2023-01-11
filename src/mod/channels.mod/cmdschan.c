@@ -27,8 +27,8 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
 
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
-void truncate_mask_hostname(char *s) {
-char *r = NULL;
+static void truncate_mask_hostname(char *s) {
+  char *r = NULL;
 
   if ( (r = strchr(s, '@')) ) {
     r++;

@@ -103,7 +103,7 @@ char language[64];
 /* Add a new preferred language to the list of languages. Newly added
  * languages get the highest priority.
  */
-void add_lang(char *lang)
+static void add_lang(char *lang)
 {
   lang_pri *lp = langpriority, *lpo = NULL;
 

@@ -76,7 +76,7 @@ static int twitch_expmem()
 }
 
 /* Find a twitch channel by it's display name */
-twitchchan_t *findtchan_by_dname(char *name)
+static twitchchan_t *findtchan_by_dname(char *name)
 {
   twitchchan_t *chan;
 
@@ -87,7 +87,7 @@ twitchchan_t *findtchan_by_dname(char *name)
 }
 
 /* Remove given characters from a string */
-void remove_chars(char* str, char c) {
+static void remove_chars(char* str, char c) {
     char *pr = str, *pw = str;
     while (*pr) {
         *pw = *pr++;

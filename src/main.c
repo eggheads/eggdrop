@@ -784,8 +784,8 @@ int init_userent();
 int init_misc();
 int init_bots();
 int init_modules();
-int init_tcl(int, char **);
-int init_language(int);
+void init_tcl(int, char **);
+void init_language(int);
 #ifdef TLS
 int ssl_init();
 #endif
