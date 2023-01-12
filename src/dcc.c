@@ -329,7 +329,7 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   unsigned char digest[16];
   int i;
 
-#ifdef HAVE_EVP_MD5
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5) 
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
   const EVP_MD *md = EVP_md5();
   unsigned int md_len;
@@ -602,7 +602,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
     return 1;
   snprintf(digest_string, 33, "<%lx%lx@", (long) getpid(),
            (unsigned long) dcc[idx].timeval);
-#ifdef HAVE_EVP_MD5
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
   const EVP_MD *md = EVP_md5();
   unsigned int md_len;
