@@ -784,7 +784,7 @@ static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec 
   int x;
 
   get_user_flagrec(u, &fr, NULL);
-  simple_sprintf(usermask, "%s!%s@%s", nick, ident, host);
+  snprintf(usermask, "%s!%s@%s", nick, ident, host);
 
   Tcl_SetVar(interp, "_chghost1", nick, 0);
   Tcl_SetVar(interp, "_chghost2", from, 0);
