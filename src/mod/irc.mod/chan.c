@@ -1377,13 +1377,14 @@ static int gotchghost(char *from, char *msg){
  */
 static int got396(char *from, char *msg)
 {
-  char *nick, *ident, userbuf[UHOSTLEN];
+  char *nick, *ident, *uhost, userbuf[UHOSTLEN];
 
   nick = newsplit(&msg);
   if (match_my_nick(nick)) {  /* Double check this really is for me */
     strlcpy(userbuf, botuserhost, sizeof userbuf);
     ident = strtok(userbuf, "@");
-    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, msg);
+    uhost = newsplit(&msg);
+    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, uhost);
   }
   return 0;
 }
