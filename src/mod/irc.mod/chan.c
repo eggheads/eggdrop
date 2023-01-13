@@ -1383,8 +1383,7 @@ static int got396(char *from, char *msg)
   if (match_my_nick(nick)) {  /* Double check this really is for me */
     strlcpy(userbuf, botuserhost, sizeof userbuf);
     ident = strtok(userbuf, "@");
-    snprintf(botuserhost, sizeof botuserhost, "%s@%s", ident, msg);
-    strlcpy(botuserhost, userbuf, sizeof botuserhost);
+    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, msg);
   }
   return 0;
 }

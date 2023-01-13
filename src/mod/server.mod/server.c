@@ -46,7 +46,7 @@ static int flud_ctcp_thr;       /* ctcp flood threshold */
 static int flud_ctcp_time;      /* ctcp flood time */
 static char initserver[121];    /* what, if anything, to send to the
                                  * server on connection */
-static char botuserhost[121];   /* bot's user@host (refreshed whenever the
+static char botuserhost[UHOSTMAX];/* bot's user@host (refreshed whenever the
                                  * bot joins a channel) */
                                 /* may not be correct user@host BUT it's
                                  * how the server sees it */
