@@ -1385,6 +1385,7 @@ static int got396(char *from, char *msg)
     ident = strtok(userbuf, "@");
     uhost = newsplit(&msg);
     snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, uhost);
+    check_tcl_event("hidden-host");
   }
   return 0;
 }

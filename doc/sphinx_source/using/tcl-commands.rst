@@ -3432,6 +3432,7 @@ The following is a list of bind types and how they work. Below each bind type is
           init-server       - called when we actually get on our IRC server
           disconnect-server - called when we disconnect from our IRC server
           fail-server       - called when an IRC server fails to respond 
+          hidden-host       - called when the bot's host is hidden by the server
 
   Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.
 
