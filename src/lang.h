@@ -122,7 +122,7 @@
 #define MISC_JUPED              get_language(0x542)
 #define MISC_NOFREESOCK         get_language(0x543)
 #define MISC_TCLVERSION         get_language(0x544)
-#define MISC_TCLHVERSION        get_language(0x545)
+#define MISC_HEADERVERSION      get_language(0x545)
 
 /* IRC */
 #define IRC_BANNED              get_language(0x600)
