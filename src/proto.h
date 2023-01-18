@@ -302,7 +302,7 @@ void safe_write(int, const void *, size_t);
 
 /* tcl.c */
 struct threaddata *threaddata(void);
-int init_threaddata(int);
+void init_threaddata(int);
 void protect_tcl(void);
 void unprotect_tcl(void);
 void do_tcl(char *, char *);

@@ -778,7 +778,7 @@ void check_static(char *, char *(*)());
 
 #include "mod/static.h"
 #endif
-int init_threaddata(int);
+void init_threaddata(int);
 int init_mem();
 int init_userent();
 int init_misc();
