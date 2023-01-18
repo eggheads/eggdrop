@@ -126,7 +126,7 @@ int check_int_range(char *value, int min, int max);
 int stripmodes(char *);
 char *stripmasktype(int);
 char *check_validpass(struct userrec *, char *);
-void cmd_die(struct userrec *u, int idx, char *par);
+void cmd_die(struct userrec *, int, char *);
 
 /* dcc.c */
 void failed_link(int);
