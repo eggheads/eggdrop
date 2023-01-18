@@ -209,7 +209,6 @@ int expmem_botnet();
 int expmem_tcl();
 int expmem_tclhash();
 int expmem_net();
-int expmem_modules(int);
 int expmem_language();
 int expmem_tcldcc();
 int expmem_tclmisc();
