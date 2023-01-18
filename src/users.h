@@ -180,7 +180,6 @@ extern struct igrec *global_ign;
  * Note: Flags are in eggdrop.h
  */
 
-struct userrec *adduser();
 struct userrec *get_user_by_handle(struct userrec *, char *);
 struct userrec *get_user_by_host(char *);
 struct userrec *get_user_by_account(char *);
