@@ -37,7 +37,7 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
      and will enlarge the binary a bit, but it's worth it if you want to
      support Eggdrop development.
 
-4. Eggdrop must be installed in a directory somewhere.  This is
+4. Eggdrop must be installed in a directory somewhere. This is
      accomplished by entering the UNIX command::
 
        make install

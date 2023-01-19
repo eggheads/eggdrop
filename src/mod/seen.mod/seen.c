@@ -395,7 +395,7 @@ targetcont:
             prefix, whoredirect, whotarget);
     return;
   }
-  /* Target not on this channel.   Check other channels */
+  /* Target not on this channel. Check other channels */
   chan = chanset;
   while (chan) {
     m = ismember(chan, whotarget);
@@ -442,7 +442,7 @@ targetcont:
       }
     }
   }
-  /* Target known, but nowhere to be seen.  Give last IRC and botnet time */
+  /* Target known, but nowhere to be seen. Give last IRC and botnet time */
   wordshift(word1, text);
   if (!strcasecmp(word1, "anywhere"))
     cr = NULL;

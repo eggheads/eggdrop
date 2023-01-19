@@ -1079,7 +1079,7 @@ isidentified <nickname> [channel]
 isaway <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command).  Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
 
   Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
 
@@ -2688,7 +2688,7 @@ matchcidr <block> <address> <prefix>
 matchstr <pattern> <string>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.  
+  Description: checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.
 
   Returns: 1 if the pattern matches the string, 0 if it doesn't.
 

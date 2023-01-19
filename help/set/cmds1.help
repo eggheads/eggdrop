@@ -191,7 +191,7 @@
 ###  %bset timestamp-format%b <format>
    Set the following to the timestamp for the logfile entries. Popular
    times might be "[%H:%M]" (hour,min), or "[%H:%M:%S]" (hour, min, sec).
-   Read `man strftime' for more formatting options.  Keep it below 32
+   Read `man strftime' for more formatting options. Keep it below 32
    chars.
 %{help=set max-logsize}%{+n}
 ###  %bset max-logsize%b <filesize>
