@@ -1001,7 +1001,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef DEBUG_CONTEXT
       for (int j = 0; j < dcc_total; j++) {
         if (dcc[j].sock == slist[i].sock) {
-          if (!strcmp(dcc[j].type->name, "SERVER")) {
+          if (dcc[j].type && dcc[j].type->name && !strcmp(dcc[j].type->name, "SERVER")) {
             strlcpy(last_server_read, s, sizeof last_server_read);
           }
           break;
