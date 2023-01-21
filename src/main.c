@@ -30,7 +30,7 @@
  */
 
 /* We need config.h for CYGWIN_HACKS, but windows.h must be included before
- * eggdrop headers, because the malloc/free/Context macros break the inclusion.
+ * eggdrop headers, because the malloc/free macros break the inclusion.
  * The SSL undefs are a workaround for bug #2182 in openssl with msys/mingw.
  */
 #include <config.h>
@@ -171,11 +171,8 @@ unsigned long itraffic_unknown = 0;
 unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
-/* Context storage for fatal crashes */
-char cx_file[16][32];
-char cx_note[16][256];
-int cx_line[16];
-int cx_ptr = 0;
+extern char last_server_read[];
+extern char last_bind_called[];
 #endif
 
 #ifdef TLS
@@ -261,32 +258,25 @@ static void write_debug()
 {
   int x;
   char s[25];
-  int y;
 
   if (nested_debug) {
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
-     *
-     * NOTE: don't try and display context-notes in here, it's
-     *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
       strlcpy(s, ctime(&now), sizeof s);
-      dprintf(-x, "Debug (%s) written %s\n", ver, s);
-      dprintf(-x, "Please report problem to bugs@eggheads.org\n");
-      dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
+      dprintf(-x, "Debug (%s) written %s\n"
+                  "Please REPORT this BUG!\n"
+                  "Check doc/BUG-REPORT on how to do so.", ver, s);
 #ifdef EGG_PATCH
       dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
-      dprintf(-x, "Context: ");
-      cx_ptr = cx_ptr & 15;
-      for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
-        dprintf(-x, "%s/%d,\n         ", cx_file[y], cx_line[y]);
-      dprintf(-x, "%s/%d\n\n", cx_file[y], cx_line[y]);
+      dprintf(-x, "* last server read: %s\n"
+                  "* last bind called: %s", last_server_read, last_bind_called);
       killsock(x);
       close(x);
     }
@@ -295,10 +285,11 @@ static void write_debug()
                                  * have caused the fault last time. */
   } else
     nested_debug = 1;
-  putlog(LOG_MISC, "*", "* Last context: %s/%d [%s]", cx_file[cx_ptr],
-         cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
-  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!\n"
+                        "* Check doc/BUG-REPORT on how to do so.\n"
+                        "* last server read: %s\n"
+                        "* last bind called: %s", last_server_read,
+         last_bind_called);
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
@@ -354,14 +345,10 @@ static void write_debug()
 #ifdef STRIPFLAGS
     dprintf(-x, "Strip flags: %s\n", STRIPFLAGS);
 #endif
-
-    dprintf(-x, "Context: ");
-    cx_ptr = cx_ptr & 15;
-    for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
-      dprintf(-x, "%s/%d, [%s]\n         ", cx_file[y], cx_line[y],
-              (cx_note[y][0]) ? cx_note[y] : "");
-    dprintf(-x, "%s/%d [%s]\n\n", cx_file[cx_ptr], cx_line[cx_ptr],
-            (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
+    dprintf(-x, "* Please REPORT this BUG!\n"
+                "* Check doc/BUG-REPORT on how to do so.\n"
+                "* last server read: %s\n"
+                "* last bind called: %s", last_server_read, last_bind_called);
     tell_dcc(-x);
     dprintf(-x, "\n");
     debug_mem_to_dcc(-x);
@@ -446,39 +433,13 @@ static void got_ill(int z)
 {
   check_tcl_signal("sigill");
 #ifdef DEBUG_CONTEXT
-  putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
-         cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!\n"
+                        "* Check doc/BUG-REPORT on how to do so.\n"
+                        "* last server read: %s\n"
+                        "* last bind called: %s", last_server_read,
+         last_bind_called);
 #endif
 }
-
-#ifdef DEBUG_CONTEXT
-/* Called from the Context macro.
- */
-void eggContext(const char *file, int line, const char *module)
-{
-  eggContextNote(file, line, module, NULL);
-}
-
-/* Called from the ContextNote macro.
- */
-void eggContextNote(const char *file, int line, const char *module,
-                    const char *note)
-{
-  char *p;
-
-  p = strrchr(file, '/');
-  cx_ptr = ((cx_ptr + 1) & 15);
-  if (!module)
-    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
-  else
-    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
-  cx_line[cx_ptr] = line;
-  if (!note)
-    cx_note[cx_ptr][0] = 0;
-  else
-    strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
-}
-#endif /* DEBUG_CONTEXT */
 
 #ifdef DEBUG_ASSERT
 /* Called from the Assert macro.
@@ -611,8 +572,6 @@ static time_t then;
 static struct tm nowtm;
 
 /* Called once a second.
- *
- * Note:  Try to not put any Context lines in here (guppy 21Mar2000).
  */
 static void core_secondly()
 {
@@ -1035,12 +994,6 @@ int main(int arg_c, char **arg_v)
   cdlim.rlim_cur = RLIM_INFINITY;
   cdlim.rlim_max = RLIM_INFINITY;
   setrlimit(RLIMIT_CORE, &cdlim);
-#endif
-
-#ifdef DEBUG_CONTEXT
-  /* Initialise context list */
-  for (i = 0; i < 16; i++)
-    Context;
 #endif
 
   argc = arg_c;

@@ -69,6 +69,9 @@ char botuser[USERLEN + 1] = "eggdrop"; /* Username of the user running the bot*/
 int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 sigjmp_buf alarmret;          /* Env buffer for alarm() returns.              */
+#ifdef DEBUG_CONTEXT
+char last_server_read[512] = "";
+#endif
 
 /* Types of proxies */
 #define PROXY_SOCKS   1
@@ -995,6 +998,16 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
         }
       }
       s[x] = 0;
+#ifdef DEBUG_CONTEXT
+      for (int j = 0; j < dcc_total; j++) {
+        if (dcc[j].sock == slist[i].sock) {
+          if (!strcmp(dcc[j].type->name, "SERVER")) {
+            strlcpy(last_server_read, s, sizeof last_server_read);
+          }
+          break;
+        }
+      }
+#endif
       *len = x;
       if (slist[i].flags & SOCK_PROXYWAIT) {
         debug2("net: socket: %d proxy errno: %d", slist[i].sock, s[1]);
@@ -1085,7 +1098,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
  * dcc functions. Simply ignore it.
  * Returns -5 if tcl sockets are busy but not eggdrop sockets.
  */
-
 int sockgets(char *s, int *len)
 {
   char xx[RECVLINEMAX], *p, *px, *p2;
@@ -1270,8 +1282,6 @@ int sockgets(char *s, int *len)
 }
 
 /* Dump something to a socket
- *
- * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
 void tputs(int z, char *s, unsigned int len)
 {
