@@ -275,8 +275,8 @@ static void write_debug()
 #else
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
-      dprintf(-x, "* last server read: %s\n"
-                  "* last bind called: %s\n", last_server_read, last_bind_called);
+      dprintf(-x, "Last server read: %s\n"
+                  "Last bind called: %s\n", last_server_read, last_bind_called);
       killsock(x);
       close(x);
     }
@@ -287,8 +287,8 @@ static void write_debug()
     nested_debug = 1;
   putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  putlog(LOG_MISC, "*", "* last server read: %s", last_server_read);
-  putlog(LOG_MISC, "*", "* last bind called: %s", last_bind_called);
+  putlog(LOG_MISC, "*", "* Last server read: %s", last_server_read);
+  putlog(LOG_MISC, "*", "* Last bind called: %s", last_bind_called);
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
@@ -344,10 +344,8 @@ static void write_debug()
 #ifdef STRIPFLAGS
     dprintf(-x, "Strip flags: %s\n", STRIPFLAGS);
 #endif
-    dprintf(-x, "* Please REPORT this BUG!\n"
-                "* Check doc/BUG-REPORT on how to do so.\n"
-                "* last server read: %s\n"
-                "* last bind called: %s\n", last_server_read, last_bind_called);
+    dprintf(-x, "Last server read: %s\n"
+                "Last bind called: %s\n", last_server_read, last_bind_called);
     tell_dcc(-x);
     dprintf(-x, "\n");
     debug_mem_to_dcc(-x);
@@ -434,8 +432,8 @@ static void got_ill(int z)
 #ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  putlog(LOG_MISC, "*", "* last server read: %s", last_server_read);
-  putlog(LOG_MISC, "*", "* last bind called: %s", last_bind_called);
+  putlog(LOG_MISC, "*", "* Last server read: %s", last_server_read);
+  putlog(LOG_MISC, "*", "* Last bind called: %s", last_bind_called);
 #endif
 }
 
