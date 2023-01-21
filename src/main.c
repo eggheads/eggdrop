@@ -285,11 +285,10 @@ static void write_debug()
                                  * have caused the fault last time. */
   } else
     nested_debug = 1;
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!\n"
-                        "* Check doc/BUG-REPORT on how to do so.\n"
-                        "* last server read: %s\n"
-                        "* last bind called: %s", last_server_read,
-         last_bind_called);
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  putlog(LOG_MISC, "*", "* last server read: %s", last_server_read);
+  putlog(LOG_MISC, "*", "* last bind called: %s", last_bind_called);
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
@@ -433,11 +432,10 @@ static void got_ill(int z)
 {
   check_tcl_signal("sigill");
 #ifdef DEBUG_CONTEXT
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!\n"
-                        "* Check doc/BUG-REPORT on how to do so.\n"
-                        "* last server read: %s\n"
-                        "* last bind called: %s", last_server_read,
-         last_bind_called);
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  putlog(LOG_MISC, "*", "* last server read: %s", last_server_read);
+  putlog(LOG_MISC, "*", "* last bind called: %s", last_bind_called);
 #endif
 }
 
