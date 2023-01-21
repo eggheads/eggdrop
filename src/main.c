@@ -276,7 +276,7 @@ static void write_debug()
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
       dprintf(-x, "* last server read: %s\n"
-                  "* last bind called: %s", last_server_read, last_bind_called);
+                  "* last bind called: %s\n", last_server_read, last_bind_called);
       killsock(x);
       close(x);
     }
@@ -348,7 +348,7 @@ static void write_debug()
     dprintf(-x, "* Please REPORT this BUG!\n"
                 "* Check doc/BUG-REPORT on how to do so.\n"
                 "* last server read: %s\n"
-                "* last bind called: %s", last_server_read, last_bind_called);
+                "* last bind called: %s\n", last_server_read, last_bind_called);
     tell_dcc(-x);
     dprintf(-x, "\n");
     debug_mem_to_dcc(-x);
