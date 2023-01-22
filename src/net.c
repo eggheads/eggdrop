@@ -1700,6 +1700,12 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   int r;
   struct in_addr ia;
 
+  /* Recover trace in case of unset. */
+  if (flags & TCL_TRACE_DESTROYED) {
+    Tcl_TraceVar2(irp, name1, name2, TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_natip, cd);
+    return NULL;
+  }
+
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
   if (*value) {
     r = inet_pton(AF_INET, value, &ia);
