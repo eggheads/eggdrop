@@ -719,7 +719,7 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
    * of the command that triggered the bind will be available to the proc.
    * This feature is used by scripts such as userinfo.tcl
    */
-  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "lastbind", mask, TCL_GLOBAL_ONLY);
 
   if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
 #ifdef DEBUG_CONTEXT
