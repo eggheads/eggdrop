@@ -151,7 +151,7 @@ At this point, you can link the two bots by typing '.link BotA' on BotB (or '.li
 
 Secure (TLS) Links
 ^^^^^^^^^^^^^^^^^^
-Since Eggdrop 1.8.0, the ability to encrypt bot links using TLS is possible. On the hub bot you would prefix the port given in the `listen` command with a +, and when you add the hub bot to the leaf, you would prefix the port used in the `.+bot` command with a +. In other words, you would set `listen +5555` in the hub config and use `.+bot hubbot 1.2.3.4 +5555` on the leaf bot. These settings are explained in detail in the `TLS botnet documentation. <https://docs.eggheads.org/using/tls.html#botnet>`_
+Since Eggdrop 1.8.0, the ability to encrypt bot links using TLS is possible. On the hub bot you would prefix the port given in the `listen` command with a +, and when you add the hub bot to the leaf, you would prefix the port used in the `.+bot` command with a +. In other words, you would set `listen +5555` in the hub config and use `.+bot hubbot 1.2.3.4 +5555` on the leaf bot. These settings are explained more thoroughly in the `TLS botnet documentation. <https://docs.eggheads.org/using/tls.html#botnet>`_
 
 
 Using botflags
