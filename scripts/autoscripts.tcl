@@ -134,6 +134,7 @@ proc egg_list {idx} {
 }
 
 # Load or unload a script and update JSON field
+# loadme is 0 to unload a script, 1 to load a script
 proc egg_load {idx script loadme} {
   global jsondict
   global eggdir
@@ -157,6 +158,7 @@ proc egg_load {idx script loadme} {
       } else {
         dict set scriptentry config loaded 0
         putdcc $idx "* Removed $script from being loaded. Restart Eggdrop to complete."
+        set found 1
       }
       write_json $script [compile_json {dict config {dict vars {dict * dict}}} $scriptentry]
       readjsonfile
@@ -166,6 +168,7 @@ proc egg_load {idx script loadme} {
   if {!$found} {
     putdcc $idx "* $script not found."
   }
+  return $found
 }
 
 # List variables available for a script
@@ -258,11 +261,15 @@ proc egg_fetch {idx script} {
 
 proc egg_clean {idx script} {
   global eggdir
+  if {![egg_load $idx $script 0]} {
+    putdcc $idx "* Cannot remove $script"
+    return
+  }
   if {[file isdirectory $eggdir/$script]} {
     file delete -force $eggdir/$script
     putdcc $idx "* $script deleted"
   } else {
-    putdcc %idx "* $script not found"
+    putdcc $idx "* $script not found"
   }
 }
 
