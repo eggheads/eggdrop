@@ -89,26 +89,28 @@ proc loadscripts {} {
 proc parse_egg {hand idx text} {
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
-	if {$subcmd in {list remote}} {
+	if {$subcmd in {remote}} {
 		egg_$subcmd $idx
 	} elseif {$subcmd in {config fetch clean}} {
 		if {$arg1 eq ""} {
-			putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName"
+		  putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName"
 		} else {
-			egg_$subcmd $idx $arg1
+		  egg_$subcmd $idx $arg1
 		}
 	} elseif {$subcmd in {load unload}} {
 		if {$arg1 eq ""} {
-			putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName"
+		  putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName"
 		} else {
-			egg_load $idx $arg1 [expr {$subcmd eq "load"}]
+		  egg_load $idx $arg1 [expr {$subcmd eq "load"}]
 		}
 	} elseif {$subcmd in {set}} {
 		if {![llength $args]} {
-			putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName settingName newSettingValue"
+		  putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName settingName newSettingValue"
 		} else {
-			egg_$subcmd $idx $arg1 $arg2 [join $args]
+		  egg_$subcmd $idx $arg1 $arg2 [join $args]
 		}
+    } elseif {$subcmd in {loaded unloaded all}} {
+       egg_$subcmd
 	} else {
 		putdcc $idx "Missing or unknown subcommand, must be $::lastbind set, config, load, unload, remote, fetch, clean"
 	}
@@ -225,6 +227,41 @@ proc egg_remote {idx} {
   putdcc $idx "\n"
   putdcc $idx "* Type '.egg fetch <scriptname>' to download a script"
 }
+
+# Helper command for scripts- return a Tcl list of scripts that are loaded
+proc egg_loaded {} {
+  global jsondict
+  list scriptlist
+  foreach scriptentry $jsondict {
+    if {[dict get $scriptentry config loaded]} {
+      lappend scriptlist [dict get $scriptentry name]
+    }
+  }
+  return $scriptlist
+}
+
+# Helper command for scripts- return a Tcl list of scripts that are loaded
+proc egg_unloaded {} {
+  global jsondict
+  list scriptlist
+  foreach scriptentry $jsondict {
+    if {![dict get $scriptentry config loaded]} {
+      lappend scriptlist [dict get $scriptentry name]
+    }
+  }
+  return $scriptlist
+}
+
+# Helper command for scripts- return a Tcl list of scripts that are loaded
+proc egg_all {} {
+  global jsondict
+  list scriptlist
+  foreach scriptentry $jsondict {
+    lappend scriptlist [dict get $scriptentry name]
+  }
+  return $scriptlist
+}
+
 
 # Download a script from the eggheads repository
 proc egg_fetch {idx script} {
