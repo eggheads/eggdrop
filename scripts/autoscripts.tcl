@@ -18,7 +18,6 @@ proc readjsonfile {} {
   set jsonstring "\["
 ### How to get filepath properly
   foreach dirname [glob -nocomplain -type d -directory $eggdir *] {
-putlog "doing $dirname"
     if {![file exists $dirname/manifest.json]} {
       file delete -force $dirname
       putlog "$dirname missing manifest.json, deleting"
