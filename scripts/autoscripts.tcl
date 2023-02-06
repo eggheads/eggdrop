@@ -88,7 +88,7 @@ proc loadscripts {} {
 proc parse_egg {hand idx text} {
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
-	if {$subcmd in {remote}} {
+	if {$subcmd in {remote help}} {
 		egg_$subcmd $idx
 	} elseif {$subcmd in {config fetch clean}} {
 		if {$arg1 eq ""} {
@@ -108,10 +108,11 @@ proc parse_egg {hand idx text} {
 		} else {
 		  egg_$subcmd $idx $arg1 $arg2 [join $args]
 		}
-    } elseif {$subcmd in {loaded unloaded all}} {
+    } elseif {$subcmd in {loaded unloaded all help}} {
        egg_$subcmd
 	} else {
-		putdcc $idx "Missing or unknown subcommand, must be $::lastbind set, config, load, unload, remote, fetch, clean"
+		putdcc $idx "Missing or unknown subcommand"
+        egg_help $idx
 	}
 }
 
@@ -307,6 +308,21 @@ proc egg_clean {idx script} {
   } else {
     putdcc $idx "* $script not found"
   }
+}
+
+proc egg_help {idx} {
+  putidx $idx "* The following commands are available for use with $::lastbind:"
+  putidx $idx "    remote, fetch, list, config, set, load, unload, clean"
+  putidx $idx ""
+  putidx $idx "* remote:               : List scripts available for download"
+  putidx $idx "* fetch <script>:       : Download the script"
+  putidx $idx "* list                  : List all scripts present on the local system available for use"
+  putidx $idx "* config <script>       : View configuration options for a script"
+  putidx $idx "* set <script> <setting>: Set the value for a script setting"
+  putidx $idx "* load <script>         : Load a script, and enable a script to be loaded when Eggdrop starts"
+  putidx $idx "* unload <script>       : Prevent a script from running when Eggdrop starts"
+  putidx $idx "                          (Must restart Eggdrop to remove stop a currently running script!)"
+  putidx $idx "* clean <script>        : Permanently remove a script and any associated settings or files"
 }
 
 # Yikes.
