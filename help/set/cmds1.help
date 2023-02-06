@@ -167,7 +167,7 @@
    the traditional Eggdrop banner.
 %{help=set use-telnet-banner}%{+n}
 ###  %bset use-telnet-banner%b <0/1>
-   If you want Eggdrop to display a banner when telneting in, set
+   If you want Eggdrop to display a banner when telnetting in, set
    this setting to 1. The telnet banner is set by 'set telnet-banner'.
 %{help=set handlen}%{+n}
 ###  %bset handlen%b
@@ -341,7 +341,7 @@ See also: set ssl-verify-clients
 %{help=set ssl-verify-clients}%{+n}
 ###  %bset ssl-verify-clients%b <#>
    Control certificate verification for SSL listening ports. This includes
-   leaf bots connecting to us, users telneting in and /ctcp bot chat.
+   leaf bots connecting to us, users telnetting in and /ctcp bot chat.
    You can set this by adding together the numbers for all exceptions you
    want to enable. By default certificate verification is disabled and all
    certificates are assumed to be valid.

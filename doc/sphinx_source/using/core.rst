@@ -297,7 +297,7 @@ should read doc/BOTNET before modifying these settings.
 
   listen <port> <mode>
     This opens a telnet port by which you and other bots can interact with
-    the Eggdrop by telneting in.
+    the Eggdrop by telnetting in.
 
     There are more options for the listen command in doc/tcl-commands.doc.
     Note that if you are running more than one bot on the same machine, you
@@ -369,7 +369,7 @@ should read doc/BOTNET before modifying these settings.
     instead.
 
   set use-telnet-banner 0
-    If you want Eggdrop to display a banner when telneting in, set this
+    If you want Eggdrop to display a banner when telnetting in, set this
     setting to 1. The telnet banner is set by 'set telnet-banner'.
 
   set connect-timeout 15
@@ -590,7 +590,7 @@ support.
 
   set ssl-verify-clients 0
     Control certificate verification for SSL listening ports. This includes
-    leaf bots connecting, users telneting in and /ctcp bot chat.
+    leaf bots connecting, users telnetting in and /ctcp bot chat.
 
 Modules
 -------
