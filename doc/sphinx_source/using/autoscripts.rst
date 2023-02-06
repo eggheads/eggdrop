@@ -111,3 +111,32 @@ Development hints
 * An autoscript should not require a user to manually open the script in an editor for any reason. Design your script as such!
 * Use `user defined channel flags <https://docs.eggheads.org/using/tcl-commands.html#setudef-flag-int-str-name>` to enable/disable a script for a particular channel, they're easy!
 * Variables used in autoscripts are placed into the global namespace. Make them unique to prevent collisions! We recommend prefixing the script name in front of a variable, such as myscript_setting or ms_setting.
+
+Tcl Commands
+------------
+
+The autoscripts Tcl script adds three new commands for use with Tcl scripts:
+
+^^^^^^^^^^
+egg_loaded
+^^^^^^^^^^
+
+  Description: lists all scripts currently loaded via the autoscripts system
+
+  Returns: A Tcl list of script names currently loaded via autoscripts
+
+^^^^^^^^^^^^
+egg_unloaded
+^^^^^^^^^^^^
+
+  Description: lists all scripts downloaded to the local machine via the autoscripts system but not currently loaded by Eggdrop
+
+  Returns: A Tcl list of script names downloaded but not currently loaded via autoscripts
+
+^^^^^^^
+egg_all
+^^^^^^^
+
+  Description: lists all script downloaded to the localm machine via the autoscripts system, regardless if they are running or not
+
+  Returns: A Tcl list of all script namees download via autoscripts
