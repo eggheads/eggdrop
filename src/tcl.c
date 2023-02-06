@@ -654,6 +654,9 @@ int init_threaddata(int mainthread)
 #ifdef TCL_WORKAROUND_UNICODESUP
 
 /* Based on https://github.com/skeeto/branchless-utf8 which is released into the public domain */
+/* 0 means not utf-8, so the length is still 1 but we can distinguish that case,
+ * that's why len = len + !len is used, to convert 0 to 1 and leave the rest as-is
+ */
 static const char utf8lengths[] = {
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 3, 4, 0
