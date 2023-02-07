@@ -178,10 +178,6 @@ int cx_line[16];
 int cx_ptr = 0;
 #endif
 
-#ifdef TLS
-int ssl_cleanup();
-#endif
-
 void fatal(const char *s, int recoverable)
 {
   int i;

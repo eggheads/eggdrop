@@ -1006,6 +1006,10 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           continue;           /* EAGAIN */
         }
       }
+#ifdef TLS
+      if (socklist[i].flags & SOCK_WS)
+        webui_unframe(s, &x);
+#endif /* TLS */
       s[x] = 0;
       *len = x;
       if (slist[i].flags & SOCK_PROXYWAIT) {
@@ -1173,6 +1177,8 @@ int sockgets(char *s, int *len)
     s[0] = 0;
     return ret;
   }
+  debug5("sockread sock %i return %i >>%s<< %i binary? %i", socklist[ret].sock, ret, xx, *len, socklist[ret].flags & SOCK_BINARY);
+  debug1("flags %i", socklist[ret].flags);
   /* sockread can return binary data while socket still has connectflag, process first */
   if (socklist[ret].flags & SOCK_BINARY && *len > 0) {
     socklist[ret].flags &= ~SOCK_CONNECT;
@@ -1332,6 +1338,8 @@ void tputs(int z, char *s, unsigned int len)
         return;
       }
 #ifdef TLS
+      if (socklist[i].flags & SOCK_WS) /* TODO: early enough for un-tls ws? */
+        webui_frame(&s, &len);
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, s, len);
         if (x < 0) {

@@ -54,6 +54,9 @@ extern int (*rfc_ncasecmp) (const char *, const char *, int);
 extern int (*rfc_toupper) (int);
 extern int (*rfc_tolower) (int);
 extern int (*match_noterej) (struct userrec *, char *);
+extern void (*webui_dcc_telnet_hostresolved) (int);
+extern void (*webui_frame) (char **, unsigned int *);
+extern void (*webui_unframe) (char *, int *);
 #endif
 
 /* botcmd.c */
@@ -134,6 +137,7 @@ int check_ansi(char *);
 void dupwait_notify(char *);
 #ifdef TLS
 int dcc_fingerprint(int);
+void dcc_telnet_hostresolved2(int, int);
 #endif
 
 /* dccutil.c */
@@ -310,6 +314,7 @@ int readtclprog(char *fname);
 
 /* tls.c */
 #ifdef TLS
+void ssl_cleanup();
 int ssl_handshake(int, int, int, int, char *, IntFunc);
 char *ssl_fpconv(char *in, char *out);
 const char *ssl_getuid(int sock);
