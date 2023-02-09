@@ -521,12 +521,22 @@ static int get_port_from_addr(const sockname_t *addr)
 }
 
 /* Check for O_NONBLOCK connect() EINPROGRESS could be ECONNREFUSED */
-int check_connect(int rc, int sock, sockname_t *addr) {
+int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
+  int rc, res, e;
   struct timeval tv;
   fd_set sockset;
   socklen_t res_len;
-  int res;
 
+  rc = connect(s, &addr->addr.sa, addr->addrlen);
+  /* To minimize a proven race condition, call ident here (especially when
+   * rc < 0 and errno == EINPROGRESS)
+   */
+  if (check_tcl_event_ident) {
+    /* push/pop errno, better safe than sorry */
+    e = errno;
+    check_tcl_event("ident");
+    errno = e;
+  }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor
@@ -534,12 +544,12 @@ int check_connect(int rc, int sock, sockname_t *addr) {
       tv.tv_sec = 0; /* dont block */
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
-      FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
+      FD_SET(s, &sockset);
+      select(s + 1, &sockset, NULL, NULL, &tv);
       res_len = sizeof(res);
-      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+      getsockopt(s, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
-        return sock; /* This could probably fail somewhere */
+        return s; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
         debug2("net: attempted socket connection refused: %s:%i",
                iptostr(&addr->addr.sa), get_port_from_addr(addr));
@@ -550,12 +560,12 @@ int check_connect(int rc, int sock, sockname_t *addr) {
         debug1("net: getsockopt error %d", res);
         return -1;
       }
-      return sock; /* async success! */
+      return s; /* async success! */
     }
-    debug2("net: check_connect(): socket %i error %s", sock, strerror(errno));
+    debug2("net: check_connect(): socket %i error %s", s, strerror(errno));
     return -1;
   }
-  return sock;
+  return s;
 }
 
 /* Starts a connection attempt through a socket
@@ -568,7 +578,7 @@ int check_connect(int rc, int sock, sockname_t *addr) {
  */
 int open_telnet_raw(int sock, sockname_t *addr)
 {
-  int i, j, rc, e;
+  int i, j;
   sockname_t name;
 
   for (i = 0; i < dcc_total; i++)
@@ -592,17 +602,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   }
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
-  rc = connect(sock, &addr->addr.sa, addr->addrlen);
-  /* To minimize a proven race condition, call ident here (especially when
-   * rc < 0 and errno == EINPROGRESS)
-   */
-  if (dcc[i].status & STAT_SERV) {
-    /* push/pop errno, better safe than sorry */
-    e = errno;
-    check_tcl_event("ident");
-    errno = e;
-  }
-  return check_connect(rc, sock, addr);
+  return connect_nonblock(sock, addr, (dcc[i].status & STAT_SERV));
 }
 
 /* Ordinary non-binary connection attempt
