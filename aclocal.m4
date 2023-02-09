@@ -816,15 +816,10 @@ AC_DEFUN([EGG_CHECK_OS],
       AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on Mac OS X with dns.mod.])
     ;;
     *)
-      if test -r /mach; then
-        # At this point, we're guessing this is NeXT Step.
-        AC_DEFINE(BORGCUBES, 1, [Define if running on NeXT Step.])
-      else
-        if test -r /cmds; then
-          # Probably QNX.
-          SHLIB_LD="ld -shared"
-          SHLIB_STRIP="touch"
-        fi
+      if test -r /cmds; then
+        # Probably QNX.
+        SHLIB_LD="ld -shared"
+        SHLIB_STRIP="touch"
       fi
     ;;
   esac

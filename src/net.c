@@ -520,6 +520,44 @@ static int get_port_from_addr(const sockname_t *addr)
 #endif
 }
 
+/* Check for O_NONBLOCK connect() EINPROGRESS could be ECONNREFUSED */
+int check_connect(int rc, int sock, sockname_t *addr) {
+  struct timeval tv;
+  fd_set sockset;
+  socklen_t res_len;
+  int res;
+
+  if (rc < 0) {
+    if (errno == EINPROGRESS) {
+      /* Async connection... don't return socket descriptor
+       * until after we confirm if it was successful or not */
+      tv.tv_sec = 0; /* dont block */
+      tv.tv_usec = 0;
+      FD_ZERO(&sockset);
+      FD_SET(sock, &sockset);
+      select(sock + 1, &sockset, NULL, NULL, &tv);
+      res_len = sizeof(res);
+      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+      if (res == EINPROGRESS) /* Operation now in progress */
+        return sock; /* This could probably fail somewhere */
+      if (res == ECONNREFUSED) { /* Connection refused */
+        debug2("net: attempted socket connection refused: %s:%i",
+               iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        errno = res;
+        return -4;
+      }
+      if (res != 0) {
+        debug1("net: getsockopt error %d", res);
+        return -1;
+      }
+      return sock; /* async success! */
+    }
+    debug2("net: check_connect(): socket %i error %s", sock, strerror(errno));
+    return -1;
+  }
+  return sock;
+}
+
 /* Starts a connection attempt through a socket
  *
  * The server address should be filled in addr by setsockname() or by the
@@ -530,11 +568,8 @@ static int get_port_from_addr(const sockname_t *addr)
  */
 int open_telnet_raw(int sock, sockname_t *addr)
 {
+  int i, j, rc, e;
   sockname_t name;
-  socklen_t res_len;
-  fd_set sockset;
-  struct timeval tv;
-  int i, j, rc, res;
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
@@ -562,38 +597,12 @@ int open_telnet_raw(int sock, sockname_t *addr)
    * rc < 0 and errno == EINPROGRESS)
    */
   if (dcc[i].status & STAT_SERV) {
+    /* push/pop errno, better safe than sorry */
+    e = errno;
     check_tcl_event("ident");
+    errno = e;
   }
-  if (rc < 0) {
-    if (errno == EINPROGRESS) {
-      /* Async connection... don't return socket descriptor
-       * until after we confirm if it was successful or not */
-      tv.tv_sec = 1;
-      tv.tv_usec = 0;
-      FD_ZERO(&sockset);
-      FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
-      res_len = sizeof(res);
-      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
-      if (res == EINPROGRESS) /* Operation now in progress */
-        return sock; /* This could probably fail somewhere */
-      if (res == ECONNREFUSED) { /* Connection refused */
-        debug2("net: attempted socket connection refused: %s:%i",
-               iptostr(&addr->addr.sa), get_port_from_addr(addr));
-        errno = res;
-        return -4;
-      }
-      if (res != 0) {
-        debug1("net: getsockopt error %d", res);
-        return -1;
-      }
-      return sock; /* async success! */
-    }
-    else {
-      return -1;
-    }
-  }
-  return sock;
+  return check_connect(rc, sock, addr);
 }
 
 /* Ordinary non-binary connection attempt

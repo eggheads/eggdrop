@@ -1292,8 +1292,7 @@ static void dcc_telnet(int idx, char *buf, int i)
 
 static void dcc_telnet_hostresolved(int i)
 {
-  int idx;
-  int j = 0, sock;
+  int idx, sock, j, rc;
   char s[sizeof lasttelnethost], *userhost;
 
   strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
@@ -1380,17 +1379,16 @@ static void dcc_telnet_hostresolved(int i)
       if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
         debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
       setsnport(dcc[j].sockname, 113);
-      if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
-          dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
+      rc = connect(dcc[j].sock, &dcc[j].sockname.addr.sa, dcc[j].sockname.addrlen);
+      if ((sock = check_connect(rc, dcc[j].sock, &dcc[j].sockname)) < 0) {
+        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         killsock(dcc[j].sock);
         lostdcc(j);
-        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         j = 0;
       }
-      sock = dcc[j].sock;
     }
   }
-  if (j < 0) {
+  if (j <= 0) {
     dcc_telnet_got_ident(i, userhost);
     return;
   }

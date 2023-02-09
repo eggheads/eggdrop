@@ -281,6 +281,7 @@ int open_listen(int *);
 void getvhost(sockname_t *, int);
 int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
+int check_connect(int, int, sockname_t *);
 int open_telnet_raw(int, sockname_t *);
 int open_telnet(int, char *, int);
 int answer(int, sockname_t *, uint16_t *, int);
