@@ -1379,7 +1379,6 @@ static void dcc_telnet_hostresolved(int i)
       if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
         debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
       setsnport(dcc[j].sockname, 113);
-      //rc = connect(dcc[j].sock, &dcc[j].sockname.addr.sa, dcc[j].sockname.addrlen);
       if ((sock = connect_nonblock(dcc[j].sock, &dcc[j].sockname, 0)) < 0) {
         putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         killsock(dcc[j].sock);
