@@ -1384,11 +1384,11 @@ static void dcc_telnet_hostresolved(int i)
         putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         killsock(dcc[j].sock);
         lostdcc(j);
-        j = 0;
+        j = -1;
       }
     }
   }
-  if (j <= 0) {
+  if (j < 0) {
     dcc_telnet_got_ident(i, userhost);
     return;
   }
