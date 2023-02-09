@@ -602,7 +602,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   }
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
-  return connect_nonblock(sock, addr, (dcc[i].status & STAT_SERV));
+  return connect_nonblock(sock, addr, dcc[i].status & STAT_SERV);
 }
 
 /* Ordinary non-binary connection attempt
