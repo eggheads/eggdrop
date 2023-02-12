@@ -843,6 +843,7 @@ static char *twitch_close()
   del_bind_table(H_rmst);
   del_bind_table(H_usst);
   del_bind_table(H_usrntc);
+  Tcl_UntraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
   module_undepend(MODULE_NAME);
   return NULL;
 }
