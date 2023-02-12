@@ -1316,6 +1316,10 @@ void tell_binds(int idx, char *par)
           continue;
         proc = tc->func_name;
         build_flags(flg, &(tc->flags), NULL);
+        if (!strcmp(flg, "-|-")) {
+          flg[0] = '*';
+          flg[1] = '\0';
+        }
         if (showall || proc[0] != '*') {
           int ok = 0;
 
