@@ -122,7 +122,7 @@ AC_FUNC_MMAP
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.6.X"
-tclrecommendsite="ftp://ftp.tcl.tk/pub/tcl/tcl8_6/"
+tclrecommendsite="https://sourceforge.net/projects/tcl/files/Tcl/"
 
 # Tcl header filenames.
 tclheadernames="tcl.h"
