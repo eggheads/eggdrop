@@ -620,7 +620,7 @@ struct threaddata *threaddata()
 
 #endif /* REPLACE_NOTIFIER */
 
-int init_threaddata(int mainthread)
+void init_threaddata(int mainthread)
 {
   struct threaddata *td = threaddata();
 /* Nested evaluation (vwait/update) of the event loop only
@@ -636,7 +636,6 @@ int init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
-  return 0;
 }
 
 /* Not going through Tcl's crazy main() system (what on earth was he
