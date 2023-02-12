@@ -2282,7 +2282,7 @@ static int tcl_deludef STDVAR
 static int tcl_getudefs STDVAR
 {
   struct udef_struct *ul;
-  int type = 0, count = 0;
+  int type = 0;
 
   BADARGS(1, 2, " ?type?");
 
@@ -2302,7 +2302,6 @@ static int tcl_getudefs STDVAR
   for (ul = udef; ul; ul = ul->next)
     if (!type || (ul->type == type)) {
       Tcl_AppendElement(irp, ul->name);
-      count++;
     }
 
   return TCL_OK;
