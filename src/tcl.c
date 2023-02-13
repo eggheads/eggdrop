@@ -96,8 +96,8 @@ int handlen = HANDLEN;
 
 extern Tcl_VarTraceProc traced_myiphostname, traced_natip, traced_remove_pass;
 
-/* Unicode workaround for Tcl versions that only support BMP characters (3 byte utf-8) */
-#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 5 && TCL_MINOR_VERSION <= 6 && TCL_UTF_MAX < 4
+/* Unicode workaround for Tcl versions (8.5/8.6) that only support BMP characters (3 byte utf-8) */
+#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 6 && TCL_UTF_MAX < 4
 #  define TCL_WORKAROUND_UNICODESUP 1
 struct tcl_unicodesup_info {
   const char *subcmd;
