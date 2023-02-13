@@ -88,7 +88,7 @@ proc loadscripts {} {
 proc parse_egg {hand idx text} {
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
-	if {$subcmd in {remote help}} {
+	if {$subcmd in {remote list help}} {
 		egg_$subcmd $idx
 	} elseif {$subcmd in {config fetch clean}} {
 		if {$arg1 eq ""} {
@@ -176,8 +176,10 @@ proc egg_load {idx script loadme} {
 # List variables available for a script
 proc egg_config {idx script} {
   global jsondict
+  set found 0
   foreach scriptentry $jsondict {
     if {[string match $script [dict get $scriptentry name]]} {
+      set found 1
       if {[dict exists $scriptentry long_description]} {
         putdcc $idx "\n* [dict get $scriptentry long_description]\n\n"
       }
@@ -195,6 +197,9 @@ proc egg_config {idx script} {
         }
       }
     }
+  }
+  if {!$found} {
+    putdcc $idx "Script $script not found."
   }
 }
 
