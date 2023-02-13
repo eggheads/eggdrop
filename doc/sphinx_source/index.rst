@@ -78,6 +78,7 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     tutorials/firststeps
     tutorials/tlssetup
     tutorials/firstscript
+    tutorials/module.rst
 
 .. toctree::
     :caption: Eggdrop Modules
@@ -86,6 +87,7 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     modules/index
     modules/included
     modules/writing
+    modules/internals.rst
 
 .. toctree::
     :caption: About Eggdrop

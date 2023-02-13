@@ -68,12 +68,14 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/module.html">Writing an Eggdrop Module</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/included.html">Modules included with Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
 <p class="caption"><span class="caption-text">About Eggdrop</span></p>
 <ul>
@@ -301,6 +303,15 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/module.html">Writing an Eggdrop Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#module-header">Module Header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#required-code">Required Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#adding-a-partyline-command">Adding a Partyline Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#adding-a-tcl-command">Adding a Tcl Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#adding-a-tcl-bind">Adding a Tcl Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#exporting-the-bind">Exporting the Bind</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -339,6 +350,17 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/writing.html#what-to-do-with-a-module">What to do with a module?</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="modules/internals.html">Eggdrop Bind Internals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#bind-table-creation">Bind Table Creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#stackable-binds-ht-stackable">Stackable Binds: HT_STACKABLE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#tcl-binding">Tcl Binding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#triggering-the-bind">Triggering the Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#triggering-any-bind">Triggering any Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#c-binding">C Binding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#c-handler">C Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#summary">Summary</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -375,7 +397,7 @@
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Eggheads.
-      Last updated on Dec 12, 2022.
+      Last updated on Jan 08, 2023.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
         </div>
