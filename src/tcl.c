@@ -596,8 +596,9 @@ void tickle_AlertNotifier(ClientData cd)
 
 void tickle_ServiceModeHook(int mode)
 {
-  if (mode != TCL_SERVICE_ALL)
-    putlog(LOG_MISC, "*", "stub tickle_ServiceModeHook");
+  if (mode != TCL_SERVICE_ALL) {
+    fatal("Tcl_ServiceModeHook called with unsupported mode", 0);
+  }
 }
 
 int tclthreadmainloop(int zero)
