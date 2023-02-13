@@ -45,16 +45,8 @@
 #  define TCL_PATCH_LEVEL "*unknown*"
 #endif
 
-#if defined(HAVE_TCL_NOTIFIER_INIT)
-#  define REPLACE_NOTIFIER
-#endif
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-#  ifdef CONST
-#    define EGG_CONST CONST
-#  else
-#    define EGG_CONST
-#  endif
+#ifdef CONST
+#  define EGG_CONST CONST
 #else
 #  define EGG_CONST
 #endif

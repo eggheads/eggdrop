@@ -981,11 +981,7 @@ static void mainloop(int toplevel)
 
   if (!eggbusy) {
 /* Process all pending tcl events */
-#  ifdef REPLACE_NOTIFIER
     Tcl_ServiceAll();
-#  else
-    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS));
-#  endif /* REPLACE_NOTIFIER */
   }
 }
 
@@ -1119,9 +1115,6 @@ int main(int arg_c, char **arg_v)
     fatal("ERROR: Eggdrop will not run as root!", 0);
 #endif
 
-#ifndef REPLACE_NOTIFIER
-  init_threaddata(1);
-#endif
   init_userent();
   init_misc();
   init_bots();

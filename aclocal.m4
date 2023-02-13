@@ -1087,14 +1087,14 @@ dnl
 AC_DEFUN([EGG_TCL_CHECK_VERSION],
 [
 
-  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 3; then
+  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 5; then
     cat << EOF >&2
 configure: error:
 
   Your Tcl version is much too old for Eggdrop to use. You should
   download and compile a more recent version. The most reliable
   current version is $tclrecommendver and can be downloaded from
-  ${tclrecommendsite}. We require at least Tcl 8.3.
+  ${tclrecommendsite}. We require at least Tcl 8.5.
 
   See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
@@ -1112,16 +1112,6 @@ dnl Unsets a certain cache item. Typically called before using the AC_CACHE_*()
 dnl macros.
 dnl
 AC_DEFUN([EGG_CACHE_UNSET], [unset $1])
-
-
-dnl EGG_TCL_CHECK_NOTIFIER_INIT
-dnl
-AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
-[
-  if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 4; then
-    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotifierProcs struct member initNotifierProc (8.4 and later).])
-  fi
-])
 
 
 dnl EGG_SUBST_EGGVERSION()
