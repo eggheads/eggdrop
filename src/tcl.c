@@ -548,7 +548,6 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
 extern tcl_cmds tcltls_cmds[];
 #endif
 
-#ifdef REPLACE_NOTIFIER
 /* The tickle_*() functions replace the Tcl Notifier
  * The tickle_*() functions can be called by Tcl threads
  */
@@ -618,18 +617,6 @@ struct threaddata *threaddata()
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
   return td;
 }
-
-#else /* REPLACE_NOTIFIER */
-
-int tclthreadmainloop() { return 0; }
-
-struct threaddata *threaddata()
-{
-  static struct threaddata tsd;
-  return &tsd;
-}
-
-#endif /* REPLACE_NOTIFIER */
 
 void init_threaddata(int mainthread)
 {
@@ -915,15 +902,12 @@ void init_unicodesup(void)
  */
 void init_tcl(int argc, char **argv)
 {
-#ifdef REPLACE_NOTIFIER
   Tcl_NotifierProcs notifierprocs;
-#endif /* REPLACE_NOTIFIER */
 
   const char *encoding;
   int i, j;
   char *langEnv, pver[1024] = "";
 
-#ifdef REPLACE_NOTIFIER
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -934,7 +918,6 @@ void init_tcl(int argc, char **argv)
   notifierprocs.alertNotifierProc = tickle_AlertNotifier;
 
   Tcl_SetNotifier(&notifierprocs);
-#endif /* REPLACE_NOTIFIER */
 
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
@@ -1247,11 +1230,7 @@ int tcl_threaded()
 */
 int fork_before_tcl()
 {
-#ifndef REPLACE_NOTIFIER
-  return tcl_threaded();
-#else
   return 0;
-#endif
 }
 
 time_t get_expire_time(Tcl_Interp * irp, const char *s) {
