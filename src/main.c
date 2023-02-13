@@ -681,6 +681,7 @@ static void core_secondly()
             logs[j].f = NULL;
           }
         }
+        verify_cert_expiry();
       }
     }
     if (nowtm.tm_min == notify_users_at)
