@@ -590,8 +590,9 @@ ClientData tickle_InitNotifier()
 
 void tickle_AlertNotifier(ClientData cd)
 {
-  if (cd)
-    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
+  if (cd) {
+    fatal("Error calling Tcl_AlertNotifier", 0);
+  }
 }
 
 void tickle_ServiceModeHook(int mode)
