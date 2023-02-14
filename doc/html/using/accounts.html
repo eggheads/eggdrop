@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>Account tracking in Eggdrop &#8212; Eggdrop 1.9.4 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Encryption/Hashing" href="pbkdf2info.html" />
     <link rel="prev" title="IRCv3 support" href="ircv3.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.9.4 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -73,20 +68,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -107,27 +104,27 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="account-tracking-in-eggdrop">
-<h1>Account tracking in Eggdrop<a class="headerlink" href="#account-tracking-in-eggdrop" title="Permalink to this headline">¶</a></h1>
+  <section id="account-tracking-in-eggdrop">
+<h1>Account tracking in Eggdrop<a class="headerlink" href="#account-tracking-in-eggdrop" title="Permalink to this heading">¶</a></h1>
 <p>In Eggdrop 1.9.3, Eggdrop added the ability to associate nicknames with the service accounts they are logged into. It is IMPORTANT to note that Eggdrop’s ability to do this is dependent on an IRC server’s implementation of three features- the IRCv3 extended-join capability, the IRCv3 account-notify capability, and WHOX support. All three of these features must be supported by the server and, in the case of extended-join and account-notify, requested by Eggdrop in order for Eggdrop to maintain “perfect” association between nicknames and account statuses.</p>
-<div class="section" id="required-server-capabilities">
-<h2>Required Server Capabilities<a class="headerlink" href="#required-server-capabilities" title="Permalink to this headline">¶</a></h2>
+<section id="required-server-capabilities">
+<h2>Required Server Capabilities<a class="headerlink" href="#required-server-capabilities" title="Permalink to this heading">¶</a></h2>
 <p>You’re going to see this repeated a lot- the IRC server must support three features in order for Eggdrop to accurately associate accounts with nicknames. These three features allow Eggdrop to always know the current association between an account and a nickname by getting account statuses of users already on a channel when it joins, new users joining a channel, and users who authenticate while on a channel.</p>
-<div class="section" id="extended-join">
-<h3>extended-join<a class="headerlink" href="#extended-join" title="Permalink to this headline">¶</a></h3>
+<section id="extended-join">
+<h3>extended-join<a class="headerlink" href="#extended-join" title="Permalink to this heading">¶</a></h3>
 <p><a class="reference external" href="https://ircv3.net/specs/extensions/extended-join">extended-join</a> is an IRCv3-defined capability that adds the account name of a user to the JOIN message sent by the IRC server, alerting clients that a new member has joined a channel. Enabling this capability allows Eggdrop to immediately determine the account name associated with a user joining a channel</p>
-</div>
-<div class="section" id="account-notify">
-<h3>account-notify<a class="headerlink" href="#account-notify" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="account-notify">
+<h3>account-notify<a class="headerlink" href="#account-notify" title="Permalink to this heading">¶</a></h3>
 <p><a class="reference external" href="https://ircv3.net/specs/extensions/account-notify">account-notify</a> is an IRCv3-defined capability that sends a message to a channel when a member of the channel either authenticates or deauthenticates from their account. Enabling this capability allows Eggdrop to immediately associate an account to a channel member when they authenticate or deauthenticate.</p>
-</div>
-<div class="section" id="whox">
-<h3>WHOX<a class="headerlink" href="#whox" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="whox">
+<h3>WHOX<a class="headerlink" href="#whox" title="Permalink to this heading">¶</a></h3>
 <p>‘WHOX &lt;<a class="reference external" href="https://ircv3.net/specs/extensions/whox">https://ircv3.net/specs/extensions/whox</a>&gt;`_ is a server feature that allows a client to request custom fields to be returned in a WHO response. If a server supports this capability, Eggdrop sends a WHOX query to the server when it joins a channel, allowing it to immediately determine accounts associated with channel members when Eggdrop joins a channel.</p>
-</div>
-</div>
-<div class="section" id="enabling-eggdrop-account-tracking">
-<h2>Enabling Eggdrop Account Tracking<a class="headerlink" href="#enabling-eggdrop-account-tracking" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="enabling-eggdrop-account-tracking">
+<h2>Enabling Eggdrop Account Tracking<a class="headerlink" href="#enabling-eggdrop-account-tracking" title="Permalink to this heading">¶</a></h2>
 <p>By default, the Eggdrop config file will attempt to enable all the capabilities required for account tracking. There are two settings to pay attention to</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># To request the account-notify feature via CAP, set this to 1</span>
 <span class="nb">set</span> <span class="n">account</span><span class="o">-</span><span class="n">notify</span> <span class="mi">1</span>
@@ -137,9 +134,9 @@
 </pre></div>
 </div>
 <p>The ability of a server to support WHOX queries is determined via a server’s ISUPPORT (005) reply. If a server supports WHOX queries, Eggdrop will automatically enable this feature.</p>
-</div>
-<div class="section" id="checking-account-tracking-status">
-<h2>Checking Account-tracking Status<a class="headerlink" href="#checking-account-tracking-status" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="checking-account-tracking-status">
+<h2>Checking Account-tracking Status<a class="headerlink" href="#checking-account-tracking-status" title="Permalink to this heading">¶</a></h2>
 <p>While Eggdrop is running, join the partyline and type <cite>.status</cite>. If account-tracking is enabled (both the server supports and Eggdrop has requested), you’ll see this line</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Loaded</span> <span class="n">module</span> <span class="n">information</span><span class="p">:</span>
   <span class="c1">#eggdroptest        : (not on channel)</span>
@@ -156,32 +153,33 @@
   <span class="n">Online</span> <span class="k">as</span><span class="p">:</span> <span class="n">Eggdrop</span> <span class="p">(</span><span class="n">Eggdrop</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="determining-if-a-server-supports-account-capabilities">
-<h2>Determining if a Server Supports Account Capabilities<a class="headerlink" href="#determining-if-a-server-supports-account-capabilities" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="determining-if-a-server-supports-account-capabilities">
+<h2>Determining if a Server Supports Account Capabilities<a class="headerlink" href="#determining-if-a-server-supports-account-capabilities" title="Permalink to this heading">¶</a></h2>
 <p>A server announces the capabilities it supports via a CAP request. If you have Tcl enabled on the partyline (or via a raw message from a client), you can send <cite>.tcl cap ls</cite> and see if the extended-join and account-notify capabilities are supported by the server. If they are not listed, the server does not support it.</p>
 <p>A server announces if it supports WHOX via its ISUPPORT (005) announcement. If you have Tcl enabled on the partyline, you can send <cite>.tcl issupport isset WHOX</cite> and if it returns ‘1’, WHOX is supported by the server.</p>
-</div>
-<div class="section" id="best-effort-account-tracking">
-<h2>Best-Effort Account Tracking<a class="headerlink" href="#best-effort-account-tracking" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="best-effort-account-tracking">
+<h2>Best-Effort Account Tracking<a class="headerlink" href="#best-effort-account-tracking" title="Permalink to this heading">¶</a></h2>
 <p>If a server only supports some, but not all, of the required capabilities, Eggdrop will switch to ‘best effort’ account tracking. This means Eggdrop will update account statuses whenever it sees account information, but in this mode Eggdrop cannot guarantee that all account associations are up to date.</p>
 <p>If a server does not support extended-join, Eggdrop will not be able to determine the account associated with a user when they join. Eggdrop can update this information by sending a WHOX to the server.</p>
 <p>If a server does not support account-notify, Eggdrop will not be able to determine the account associated with a user if they authenticate/deauthenticate from their account after joining a channel. Eggdrop can update this information by sending a WHOX to the server.</p>
 <p>If a server does not support WHOX, Eggdrop will not be able to determine the accounts associated with users already on a channel before Eggdrop joined. There is no reliable way to update this information.</p>
 <p>One workaround to significantly increase the accuracy of account tracking for scripts in a ‘best effort’ scenario would be to issue a WHOX query (assuming the server supports it), wait for the reply from the server, and then query for the account information.</p>
-<div class="section" id="account-tag">
-<h3>account-tag<a class="headerlink" href="#account-tag" title="Permalink to this headline">¶</a></h3>
+<section id="account-tag">
+<h3>account-tag<a class="headerlink" href="#account-tag" title="Permalink to this heading">¶</a></h3>
 <p>One supplementary capability that can assist a best-effort account tracking scenario is the IRCv3-defined <a class="reference external" href="https://ircv3.net/specs/extensions/account-tag">account-tag capability</a>. The account-tag capability attaches a tag with the account name associated with the user sending a command. Enabling this capability allows Eggdrop to update its account tracking every time a user talks in channel, sets a mode, sends a kick, etc. While still not able to offer the same level of accuracy as enabling the “main three” account tracking features, it can increase the overall accuracy of the account list. Additionally, binds that react to user activity (pub, kick, mode, etc) containing account-tag will update the internal account list prior to executing the associated callback, so looking up the account name in the callback can be considered accurate.</p>
-</div>
-</div>
-<div class="section" id="using-accounts-with-tcl-scripts">
-<h2>Using Accounts with Tcl Scripts<a class="headerlink" href="#using-accounts-with-tcl-scripts" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="using-accounts-with-tcl-scripts">
+<h2>Using Accounts with Tcl Scripts<a class="headerlink" href="#using-accounts-with-tcl-scripts" title="Permalink to this heading">¶</a></h2>
 <p>The Eggdrop Tcl ACCOUNT bind is triggered whenever an existing account record stored by Eggdrop is modified, such as a user de/authenticating to their account while in a channel, or information such as an account-tag being seen that updates an existing user. However, the ACCOUNT bind will NOT be triggered for the creation of a new user record, such as a user joining a channel. The bind is triggered for every channel the user is seen on- this means if a user is present with Eggdrop on four channels, the bind will be executed four times, each time with a different channel variable being passed to the associated Tcl procedure. Additionally, in a best-effort account tracking situation, Eggdrop will update the account associated with a user on all channels, not just the channel the event is seen on (and thus resulting in a bind trigger for each channel the user is on).</p>
 <p>In order to trigger Tcl script events to cover all instances where a user logs in, you need to pair an ACCOUNT bind with a JOIN bind. This will allow you to execute account-based events when a user joins as well as if they authenticate after joining.</p>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -206,9 +204,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Dec 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Feb 13, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

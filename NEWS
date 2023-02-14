@@ -36,7 +36,7 @@ Eggdrop v1.9.5:
  Module changes:
     - Updated woobie.mod with additional example code
 
- Eggdrop config changes: 
+ Eggdrop config changes:
     - None
 
  Documentation changes:
@@ -317,4 +317,4 @@ Eggdrop v1.9.0:
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2021 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

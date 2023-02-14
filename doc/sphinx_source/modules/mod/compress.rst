@@ -28,4 +28,4 @@ There are also some variables you can set in your config file:
     as those used by GNU gzip.
 
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

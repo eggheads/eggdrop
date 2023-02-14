@@ -3736,4 +3736,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2022 Eggheads Development Team
+  Copyright (C) 1999 - 2023 Eggheads Development Team

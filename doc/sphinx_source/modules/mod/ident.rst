@@ -73,4 +73,4 @@ There are also some variables you can set in your config file:
     for potential ways to implement this setting.
 
 
-Copyright (C) 2019 - 2022 Eggheads Development Team
+Copyright (C) 2019 - 2023 Eggheads Development Team

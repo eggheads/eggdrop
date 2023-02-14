@@ -4,7 +4,7 @@
  *
  * Written by thommey and Michael Ortmann
  *
- * Copyright (C) 2017 - 2022 Eggheads Development Team
+ * Copyright (C) 2017 - 2023 Eggheads Development Team
  */
 
 #include "src/mod/module.h"
