@@ -600,8 +600,16 @@ ClientData tickle_InitNotifier()
 
 void tickle_AlertNotifier(ClientData cd)
 {
-  if (cd)
-    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
+  if (cd) {
+    fatal("Error calling Tcl_AlertNotifier", 0);
+  }
+}
+
+void tickle_ServiceModeHook(int mode)
+{
+  if (mode != TCL_SERVICE_ALL) {
+    fatal("Tcl_ServiceModeHook called with unsupported mode", 0);
+  }
 }
 
 int tclthreadmainloop(int zero)
@@ -916,6 +924,7 @@ void init_tcl(int argc, char **argv)
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
   notifierprocs.alertNotifierProc = tickle_AlertNotifier;
+  notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
 
