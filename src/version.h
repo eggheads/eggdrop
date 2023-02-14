@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.4"
-#define EGG_NUMVER 1090404
-#define EGG_PATCH "logupdates"
+#define EGG_NUMVER 1090405
+#define EGG_PATCH "raisetcl"
