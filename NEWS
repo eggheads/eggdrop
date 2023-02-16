@@ -31,7 +31,7 @@ Eggdrop v1.9.5:
 
  Tcl API changes:
     - Tcl minimum required version is now 8.5! This actually happened in version
-      version 1.9.0; we just forgot to tell people. Oops! :)
+      1.9.0; we just forgot to tell people. Oops! :)
 
  Module changes:
     - Updated woobie.mod with additional example code
