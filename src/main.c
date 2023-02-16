@@ -276,7 +276,7 @@ static void write_debug()
       strlcpy(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
       dprintf(-x, "Please report problem to bugs@eggheads.org\n");
-      dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
+      dprintf(-x, "after a visit to https://github.com/eggheads/eggdrop/issues\n");
 #ifdef EGG_PATCH
       dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
