@@ -2252,11 +2252,12 @@ void dcc_ident(int idx, char *buf, int len)
     dcc[idx].timeval = now;
     return;
   }
-  for (i = 0; i < dcc_total; i++)
+  for (i = dcc_total - 1;i > 0; i--)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
       snprintf(buf1, sizeof buf1, "%s@%s", uid, dcc[idx].host);
       dcc_telnet_got_ident(i, buf1);
+      break;
     }
   dcc[idx].u.other = 0;
   killsock(dcc[idx].sock);
@@ -2268,12 +2269,13 @@ void eof_timeout_dcc_ident(int idx, const char *s)
   char buf[7 + UHOSTLEN];
   int i;
 
-  for (i = 0; i < dcc_total; i++)
+  for (i = dcc_total - 1;i > 0; i--)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
       putlog(LOG_MISC, "*", "%s", s);
       snprintf(buf, sizeof buf, "telnet@%s", dcc[idx].host);
       dcc_telnet_got_ident(i, buf);
+      break;
     }
   killsock(dcc[idx].sock);
   dcc[idx].u.other = 0;
