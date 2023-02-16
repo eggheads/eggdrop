@@ -3,7 +3,7 @@
    Specifies the response the bot gives to a CTCP FINGER request.
 
    For example:
-      .set ctcp-finger "Robey (robey@wc130), idle 0 seconds"
+      .set ctcp-finger "(lamer@lamest.lame.org) Idle 0 seconds"
 
 See also: set ctcp-version, set ctcp-userinfo
 %{help=set ctcp-userinfo}%{+n}
@@ -16,11 +16,7 @@ See also: set ctcp-version, set ctcp-finger
    Specifies the response to send to a CTCP VERSION request.
 
    For example:
-      .set ctcp-version "Irssi 0.8.9"
-
-   Or
-      .set ctcp-version "xchat 2.0.7 Linux 2.6.5-1.358smp [i686/2.60GHz/SMP]"
-
+      .set ctcp-version "irssi v1.4.3 - running on Linux x86_64"
 
 See also: set ctcp-finger, set ctcp-userinfo
 %{help=set ctcp-mode}%{+n}
