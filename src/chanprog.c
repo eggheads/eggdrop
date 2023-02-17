@@ -379,12 +379,12 @@ void tell_settings(int idx)
   dprintf(idx, "Botnet nickname: %s\n", botnetnick);
   if (firewall[0])
     dprintf(idx, "Firewall: %s:%d\n", firewall, firewallport);
-  dprintf(idx, "Userfile: %s\n", userfile);
-  dprintf(idx, "Motd: %s\n",  motdfile);
-  dprintf(idx, "Directories:\n");
+  dprintf(idx, "Userfile: %s\n"
+               "Motd: %s\n"
+               "Directories:\n", userfile, motdfile);
 #ifndef STATIC
-  dprintf(idx, "  Help   : %s\n", helpdir);
-  dprintf(idx, "  Modules: %s\n", moddir);
+  dprintf(idx, "  Help   : %s\n"
+               "  Modules: %s\n", helpdir, moddir);
 #else
   dprintf(idx, "  Help: %s\n", helpdir);
 #endif
