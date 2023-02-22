@@ -2762,9 +2762,9 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         strcpy(dcc[idx].nick, par);
         /* Display password prompt and turn off echo (send IAC WILL ECHO). */
         if (dcc[idx].status & STAT_TELNET) {
-          char buf[1024];
-          snprintf(buf, sizeof buf, "Enter password for %s%s\r\n", par,
-                   TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
+          char buf[512];
+          snprintf(buf, sizeof buf, "Enter password for %s" TLN_IAC_C TLN_WILL_C
+                   TLN_ECHO_C "\r\n", par);
           tputs(dcc[idx].sock, buf, strlen(buf));
         } else
           dprintf(idx, "Enter password for %s\n", par);
