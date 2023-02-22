@@ -1438,6 +1438,8 @@ static void cont_tandem_relay(int idx, char *buf, int i)
   check_tcl_chof(dcc[uidx].nick, dcc[uidx].sock);
   dcc[uidx].type = &DCC_RELAYING;
   dcc[uidx].u.relay = ri;
+  if (dcc[uidx].status & STAT_TELNET)
+    tputs(dcc[idx].sock, TLN_IAC_C TLN_DO_C TLN_STATUS_C, 3);
 }
 
 static void eof_dcc_relay(int idx)
