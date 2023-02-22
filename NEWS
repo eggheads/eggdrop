@@ -210,7 +210,7 @@ Eggdrop v1.9.0:
     - Added CAP support, allowing Eggdrop to extend IRC server capabilities
     - Added support for SASL authentication
     - Added a BETA threaded DNS capability, enabled with the --enable-tdns
-      configure flag. This allows asynchronus DNS requests similar to the what
+      configure flag. This allows asynchronous DNS requests similar to the what
       the current DNS module offers, but using host system capability instead
       of rewriting it from scratch. Using this means you no longer have to use
       the DNS module.
