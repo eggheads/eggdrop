@@ -1458,7 +1458,7 @@ static void eof_dcc_relay(int idx)
   dcc[j].status = dcc[j].u.relay->old_status;
   /* In case echo was off, turn it back on (send IAC WON'T ECHO): */
   if (dcc[j].status & STAT_TELNET)
-    dprintf(j, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");
+    tputs(dcc[j].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C, 3);
   putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_ENDRELAY1, dcc[j].nick,
          dcc[idx].nick);
   dprintf(j, "\n\n*** %s %s\n", BOT_ENDRELAY2, botnetnick);
