@@ -1984,7 +1984,7 @@ Eggdrop Changes (since version 0.9)
 
   - Each channel keeps its own banlist now for temporary bans
 
-  - Changed various Tcl ban commands to accomidate the concept of having a
+  - Changed various Tcl ban commands to accommodate the concept of having a
     global banlist + separate banlist for each channel
 
   - Channel ban lists are sent by channel name to other sharebots
@@ -2365,7 +2365,7 @@ Eggdrop Changes (since version 0.9)
 
   - Each channel keeps its own banlist now for temporary bans
 
-  - Changed various Tcl ban commands to accomidate the concept of having a
+  - Changed various Tcl ban commands to accommodate the concept of having a
     global banlist + separate banlist for each channel
 
   - Channel ban lists are sent by channel name to other sharebots
