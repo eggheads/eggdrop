@@ -73,6 +73,8 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   char *out2;
   unsigned char *buf;
   struct rusage ru1, ru2;
+  /* log only once as long as rounds aint changed */
+  static int rounds_last, responsiveness;
 
   digest = EVP_get_digestbyname(digest_name);
   if (!digest) {
@@ -120,6 +122,24 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
            (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+    if (rounds != rounds_last) {
+      rounds_last = rounds;
+      responsiveness = 0;
+    }
+    if ((((ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+         (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000 +
+         (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+         (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000) > 100.0) &&
+        !responsiveness) {
+      putlog(LOG_MISC, "*", "PBKDF2 warning: pbkdf2 method %s rounds %i took more than 100ms (user %.3fms sys %.3fms). Consider lowering pbkdf2-rounds for eggdrops responsiveness.",
+             digest_name,
+             rounds,
+             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+      responsiveness = 1;
+    }
   }
   else {
     debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
