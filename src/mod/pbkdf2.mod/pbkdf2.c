@@ -73,6 +73,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   char *out2;
   unsigned char *buf;
   struct rusage ru1, ru2;
+  double utime, stime;
   /* log only once as long as rounds aint changed */
   static int rounds_last, responsiveness;
 
@@ -116,28 +117,19 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
     return NULL;
   }
   if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
+    utime = (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000;
+    stime = (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+            (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000;
     debug4("pbkdf2 method %s rounds %i, user %.3fms sys %.3fms", digest_name,
-           rounds,
-           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+           rounds, utime, stime);
     if (rounds != rounds_last) {
       rounds_last = rounds;
       responsiveness = 0;
     }
-    if ((((ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-         (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000 +
-         (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-         (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000) > 100.0) &&
-        !responsiveness) {
+    if (((utime + stime) > 100.0) && !responsiveness) {
       putlog(LOG_MISC, "*", "PBKDF2 warning: pbkdf2 method %s rounds %i took more than 100ms (user %.3fms sys %.3fms). Consider lowering pbkdf2-rounds for eggdrops responsiveness.",
-             digest_name,
-             rounds,
-             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+             digest_name, rounds, utime, stime);
       responsiveness = 1;
     }
   }
