@@ -122,7 +122,7 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGCUBES */
 
-/* Handle for the user that's used when starting eggdrop with -tn */
+/* Handle for the user that's used when starting eggdrop with -t */
 #define EGG_BG_HANDLE "-HQ"
 /* Default recommended flags for this user, use | as splitter */
 #define EGG_BG_CONMASK LOG_MISC /* "o" */
