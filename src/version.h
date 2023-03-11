@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.5"
-#define EGG_NUMVER 1090500
-#define EGG_PATCH "alpha"
+#define EGG_NUMVER 1090501
+#define EGG_PATCH "release"
