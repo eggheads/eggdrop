@@ -203,8 +203,8 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[275]; /* Change this if you change the levels */
-  int i = 0;          /* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
+  static char s[6+8+7+13+6+6+6+17+5+7+14+7+9+15+17+17+24+24+(8*9)+1]; /* Change this if you change the levels */
+  int i = 0;
 
   s[0] = 0;
   if (x & LOG_MSGS)
@@ -228,7 +228,7 @@ char *maskname(int x)
   if (x & LOG_FILES)
     i += my_strcpy(s + i, "files, "); /* 7 */
   if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server input, "); /* 8 */
+    i += my_strcpy(s + i, "server input, "); /* 14 */
   if (x & LOG_DEBUG)
     i += my_strcpy(s + i, "debug, "); /* 7 */
   if (x & LOG_WALL)
