@@ -206,7 +206,6 @@ char *maskname(int x)
   static char s[6+8+7+13+6+6+6+17+5+7+14+7+9+15+17+17+24+24+(8*9)+1]; /* Change this if you change the levels */
   int i = 0;
 
-  s[0] = 0;
   if (x & LOG_MSGS)
     i += my_strcpy(s, "msgs, "); /* 6 */
   if (x & LOG_PUBLIC)
