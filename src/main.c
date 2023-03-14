@@ -639,7 +639,7 @@ static void core_secondly()
   }
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
-    memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    localtime_r(&now, &nowtm);
     i = 0;
 
     /* Once a minute */
