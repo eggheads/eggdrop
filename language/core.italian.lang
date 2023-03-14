@@ -434,3 +434,5 @@ Connetti in telnet il bot e  scrivi 'NEW' come tuo soprannome.
 0xe33,Connessione telnet persa da %s mentre controllo se è un duplicato
 0xe34,Connessione ident fuori tempo
 0xe35,Per favore togli il #commento dalle tue impostazione di ascolto e riprova
+0xe36,This telnet port is for bots only.
+0xe37,This telnet port is for users only (no bots).

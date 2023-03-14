@@ -1578,8 +1578,16 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 #endif
   /* Make sure users-only/bots-only connects are honored */
   if ((dcc[idx].status & STAT_BOTONLY) && !glob_bot(fr)) {
-    dprintf(idx, "This telnet port is for bots only.\n");
-    putlog(LOG_BOTS, "*", DCC_NONBOT, dcc[idx].host);
+    if (dcc[idx].user) {
+      if (!stealth_telnets)
+        dprintf(idx, "%s\n", DCC_NONBOT2);
+      putlog(LOG_BOTS, "*", DCC_NONBOT, dcc[idx].host);
+    }
+    else {
+      if (!stealth_telnets)
+        dprintf(idx, "You don't have access.\n");
+      putlog(LOG_MISC, "*", DCC_INVHANDLE, dcc[idx].host, buf);
+    }
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1587,7 +1595,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   if ((dcc[idx].status & STAT_USRONLY) && glob_bot(fr)) {
     /* change here temp to use bot output */
     dcc[idx].type = &DCC_BOT_NEW;
-    dprintf(idx, "error Only users may connect at this port.\n");
+    if (!stealth_telnets)
+      dprintf(idx, "%s\n", DCC_NONUSER2);
     dcc[idx].type = old;
     putlog(LOG_BOTS, "*", DCC_NONUSER, dcc[idx].host);
     killsock(dcc[idx].sock);
@@ -1612,7 +1621,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     ok = 1;
 
   if (!ok) {
-    dprintf(idx, "You don't have access.\n");
+    if (!stealth_telnets)
+      dprintf(idx, "You don't have access.\n");
     putlog(LOG_MISC, "*", DCC_INVHANDLE, dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
