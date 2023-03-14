@@ -101,8 +101,7 @@ static void uptime_report(int idx, int details)
   if (details) {
     delta_seconds = (int) (next_update - time(NULL));
     ctime_r(&next_update, next_update_at);
-    next_update_at[strlen(next_update_at) - 1] = 0;
-
+    next_update_at[24] = 0;
     dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
             (uptimecount != 1) ? "s" : "");
     dprintf(idx, "      Approximately %-.2f hours until next update "

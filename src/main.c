@@ -274,7 +274,7 @@ static void write_debug()
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
       ctime_r(&now, s);
-      dprintf(-x, "Debug (%s) written %s\n", ver, s);
+      dprintf(-x, "Debug (%s) written %s", ver, s);
       dprintf(-x, "Please report problem to https://github.com/eggheads/eggdrop/issues\n");
 #ifdef EGG_PATCH
       dprintf(-x, "Patch level: %s\n", EGG_PATCH);
@@ -304,7 +304,7 @@ static void write_debug()
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
     ctime_r(&now, s);
-    dprintf(-x, "Debug (%s) written %s\n", ver, s);
+    dprintf(-x, "Debug (%s) written %s", ver, s);
 #ifdef EGG_PATCH
     dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
@@ -671,6 +671,7 @@ static void core_secondly()
         int j;
 
         ctime_r(&now, s);
+        s[24] = 0;
         if (quiet_save < 3)
           putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
@@ -1131,7 +1132,7 @@ int main(int arg_c, char **arg_v)
   dns_thread_head->next = NULL;
 #endif
   ctime_r(&now, s);
-  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
+  s[24] = 0;
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass2 && !encrypt_pass) {

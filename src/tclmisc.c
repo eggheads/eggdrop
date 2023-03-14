@@ -424,6 +424,7 @@ static int tcl_ctime STDVAR
 
   tt = (time_t) atol(argv[1]);
   ctime_r(&tt, s);
+  s[24] = 0;
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
