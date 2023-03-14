@@ -418,12 +418,12 @@ static int tcl_unixtime STDVAR
 static int tcl_ctime STDVAR
 {
   time_t tt;
-  char s[25];
+  char s[26];
 
   BADARGS(2, 2, " unixtime");
 
   tt = (time_t) atol(argv[1]);
-  strlcpy(s, ctime(&tt), sizeof s);
+  ctime_r(&tt, s);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }

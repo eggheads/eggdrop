@@ -96,11 +96,11 @@ static int uptime_expmem()
 static void uptime_report(int idx, int details)
 {
   int delta_seconds;
-  char *next_update_at;
+  char next_update_at[26];
 
   if (details) {
     delta_seconds = (int) (next_update - time(NULL));
-    next_update_at = ctime(&next_update);
+    ctime_r(&next_update, next_update_at);
     next_update_at[strlen(next_update_at) - 1] = 0;
 
     dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
