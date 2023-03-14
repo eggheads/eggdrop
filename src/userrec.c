@@ -568,7 +568,6 @@ void write_userfile(int idx)
   FILE *f;
   char new_userfile[(sizeof userfile) + 4]; /* 4 = strlen("~new") */
   char s[26];
-  time_t tt;
   struct userrec *u;
   int ok;
 
@@ -587,8 +586,7 @@ void write_userfile(int idx)
     putlog(LOG_MISC, "*", "%s", USERF_WRITING);
 
   sort_userlist();
-  tt = now;
-  ctime_r(&tt, s);
+  ctime_r(&now, s);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s);
   ok = 1;
   /* Add all users except the -tn user */
