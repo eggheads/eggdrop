@@ -1,4 +1,4 @@
-Eggdrop Module Information Last revised: Jul 25, 2016
+Eggdrop Module Information Last revised: Mar 14, 2023
 
 Eggdrop Module Information
 
@@ -105,7 +105,8 @@ MODULES INCLUDED WITH EGGDROP
       or via dcc. This module works only for users in the bot's
       userlist. If you are looking for a better and more advanced seen
       module, try the gseen module by G'Quann. You can find it at
-      http://www.kreativrauschen.com/gseen.mod/.
+      https://www.kreativrauschen.com/gseen.mod/ and
+      https://github.com/michaelortmann/gseen.mod.
 
   server
 
@@ -126,7 +127,7 @@ MODULES INCLUDED WITH EGGDROP
   uptime
 
       This module reports uptime statistics to the uptime contest web
-      site at http://uptime.eggheads.org. Go look and see what your
+      site at https://www.eggheads.org/uptime/. Go look and see what your
       uptime is! It takes about 9 hours to show up, so if your bot isn't
       listed, try again later. See doc/settings/mod.uptime for more
       information, including details on what information is sent to the
@@ -415,7 +416,8 @@ WHAT TO DO WITH A MODULE?
   the rest of the Eggdrop community, upload it to the incoming directory
   on incoming.eggheads.org (/incoming/modules/1.8). Place a nice
   descriptive text (modulename.desc) with it, and it'll make its way to
-  the modules directory on ftp.eggheads.org. Don't forget to mention in
-  your text file which version Eggdrop the module is written for.
+  the modules directory at https://ftp.eggheads.org/pub/eggdrop/modules/.
+  Don't forget to mention in your text file which version Eggdrop the module
+  is written for.
 
 Copyright (C) 1999 - 2023 Eggheads Development Team

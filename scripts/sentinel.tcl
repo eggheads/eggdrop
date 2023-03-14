@@ -1,6 +1,5 @@
 # sentinel.tcl v2.70 (15 April 2002)
 # Copyright 1998-2002 by slennox
-# slennox's eggdrop page - http://www.egghelp.org/
 
 # Flood protection system for eggdrop, with integrated BitchX CTCP
 # simulation. This script is designed to provide strong protection for your
