@@ -1199,7 +1199,7 @@ int sockgets(char *s, int *len)
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & SOCK_BUFFER) {
-    socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
+    socklist[ret].handler.sock.inbuf = nrealloc(socklist[ret].handler.sock.inbuf,
                                             socklist[ret].handler.sock.inbuflen + *len + 1);
     memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
     socklist[ret].handler.sock.inbuflen += *len;
@@ -1325,7 +1325,7 @@ void tputs(int z, char *s, unsigned int len)
 
       if (socklist[i].handler.sock.outbuf != NULL) {
         /* Already queueing: just add it */
-        p = (char *) nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
+        p = nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
         memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
         socklist[i].handler.sock.outbuf = p;
         socklist[i].handler.sock.outbuflen += len;
