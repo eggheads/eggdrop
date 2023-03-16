@@ -1401,6 +1401,9 @@ static void dcc_telnet_hostresolved(int i)
   strcpy(dcc[j].nick, "*");
   dcc[j].u.ident_sock = dcc[i].sock;
   dcc[j].timeval = now;
+#ifdef CYGWIN_HACKS
+  threaddata()->socklist[findsock(dcc[j].sock)].flags = SOCK_CONNECT;
+#endif
   dprintf(j, "%d, %d\n", dcc[i].port, dcc[idx].port);
 }
 

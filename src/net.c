@@ -1410,6 +1410,21 @@ void dequeue_sockets()
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
+#ifdef CYGWIN_HACKS
+      int res;
+      socklen_t res_len;
+      if (socklist[i].flags == SOCK_CONNECT) {
+        res_len = sizeof(res);
+        getsockopt(socklist[i].sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+        if (res == ECONNREFUSED) { /* Connection refused */
+          int idx = findanyidx(socklist[i].sock);
+          putlog(LOG_MISC, "*", "Connection refused: %s:%i", dcc[idx].host,
+                 dcc[idx].port);
+          socklist[i].flags |= SOCK_EOFD;
+          return ;
+        }
+      }
+#endif
       /* Trick tputs into doing the work */
       errno = 0;
 #ifdef TLS
