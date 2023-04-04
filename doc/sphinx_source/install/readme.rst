@@ -191,4 +191,4 @@ Obtaining Help
       * Don't ask to ask- just state your question, along with any relevant details and error messages
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

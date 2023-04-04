@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -690,13 +690,13 @@ static int tcl_getchanidle STDVAR
 
 static int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
-  char work[20], *p;
+  char work[21], *p;
   EGG_CONST char *list[3];
 
   for (; m && m->mask && m->mask[0]; m = m->next) {
     list[0] = m->mask;
     list[1] = m->who;
-    simple_sprintf(work, "%d", now - m->timer);
+    snprintf(work, sizeof work, "%" PRId64, (int64_t) (now - m->timer));
     list[2] = work;
     p = Tcl_Merge(3, list);
     Tcl_AppendElement(irp, p);

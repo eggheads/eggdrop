@@ -231,9 +231,7 @@ logfile <logflags> <channel> "logs/logfile"
     set logfile-suffix ".%d%b%Y" If keep-all-logs is 1, this setting
     will define the suffix of the logfiles. The default will result in a
     suffix like "04May2000". "%Y%m%d" will produce the often used
-    yyyymmdd format. Read the strftime manpages for more options. NOTE:
-    On systems which don't support strftime, the default format will
-    always be used.
+    yyyymmdd format. Read the strftime manpages for more options.
 
 CONSOLE SETTINGS
 
@@ -712,4 +710,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

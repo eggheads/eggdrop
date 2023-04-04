@@ -201,4 +201,4 @@ verification and authorization.
     Higher values enable specific exceptions like allowing self-signed
     or expired certificates. Details are documented in eggdrop.conf.
 	
-Copyright (C) 2010 - 2022 Eggheads Development Team
+Copyright (C) 2010 - 2023 Eggheads Development Team

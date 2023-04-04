@@ -55,4 +55,4 @@ About Eggdrop
 
     * Tcl -- Eggdrop cannot compile without Tcl installed on your shell.
 
-  Copyright (C) 1999 - 2022 Eggheads Development Team
+  Copyright (C) 1999 - 2023 Eggheads Development Team

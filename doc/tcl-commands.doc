@@ -7,7 +7,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.4. Scripts written for v1.3,
+This list is accurate for Eggdrop v1.9.5. Scripts written for v1.3,
 v1.4, 1.6 and 1.8 series of Eggdrop should probably work with a few
 minor modifications depending on the script. Scripts which were written
 for v0.9, v1.0, v1.1 or v1.2 will probably not work without
@@ -4131,4 +4131,4 @@ the four special characters:
         well, so a bind would have to use "\*" or {*} for a mask argument
   ----- -----------------------------------------------------------------
 
-  Copyright (C) 1999 - 2022 Eggheads Development Team
+  Copyright (C) 1999 - 2023 Eggheads Development Team

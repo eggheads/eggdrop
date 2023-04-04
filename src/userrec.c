@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -656,7 +656,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   struct userrec *u, *x;
   struct xtra_key *xk;
   int oldshare = noshare;
-  long tv;
+  time_t tv;
 
   noshare = 1;
   u = nmalloc(sizeof *u);
@@ -680,9 +680,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
     tv = now;
-    l = snprintf(NULL, 0, "%li", tv);
+    l = snprintf(NULL, 0, "%" PRId64, (int64_t) tv);
     xk->data = nmalloc(l + 1);
-    sprintf(xk->data, "%li", tv);
+    sprintf(xk->data, "%" PRId64, (int64_t) tv);
     set_user(&USERENTRY_XTRA, u, xk);
   }
   /* Strip out commas -- they're illegal */

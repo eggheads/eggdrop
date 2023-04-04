@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,12 +133,14 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
   char *endptr, *src2 = src;;
   long val;
   IP ip;
-  struct hostent *hp;
   volatile int af = AF_UNSPEC;
   char ip2[EGG_INET_ADDRSTRLEN];
 #ifdef IPV6
-  int pref;
+  volatile int pref;
+  struct addrinfo *res0 = NULL, *res;
+  int error;
 #else
+  struct hostent *hp;
   int i, count;
 #endif
 
@@ -176,18 +178,28 @@ int setsockname(sockname_t *addr, char *src, int port, int allowres)
     /* src is a hostname. Attempt to resolve it.. */
     if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
-      hp = gethostbyname2(src, pref_af ? AF_INET6 : AF_INET);
-      if (!hp)
-        hp = gethostbyname2(src, pref_af ? AF_INET : AF_INET6);
-      alarm(0);
-    } else
-      hp = NULL;
-    if (hp) {
-      if (hp->h_addrtype == AF_INET)
-        memcpy(&addr->addr.s4.sin_addr, hp->h_addr_list[0], hp->h_length);
+      error = getaddrinfo(src, NULL, NULL, &res0);
+      if (!error) {
+        for (res = res0; res; res = res->ai_next) {
+          if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
+            af = res->ai_family;
+            memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+            if (res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
+              break;
+            }
+          }
+        }
+        if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+                   * 2553 and 3493. Avoid to be compatible with all OSes. */
+          freeaddrinfo(res0);
+      }
+      else if (error == EAI_NONAME)
+        debug1("net: setsockname(): getaddrinfo(): hostname %s not known", src);
       else
-        memcpy(&addr->addr.s6.sin6_addr, hp->h_addr_list[0], hp->h_length);
-      af = hp->h_addrtype;
+        debug1("net: setsockname(): getaddrinfo(): error = %s", gai_strerror(error));
+      alarm(0);
+    } else {
+      debug1("net: setsockname(): getaddrinfo(): hostname %s resolve timeout", src);
     }
   }
 
@@ -1699,6 +1711,12 @@ char *traced_natip(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
   const char *value;
   int r;
   struct in_addr ia;
+
+  /* Recover trace in case of unset. */
+  if (flags & TCL_TRACE_DESTROYED) {
+    Tcl_TraceVar2(irp, name1, name2, TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_natip, cd);
+    return NULL;
+  }
 
   value = Tcl_GetVar2(irp, name1, name2, TCL_GLOBAL_ONLY);
   if (*value) {

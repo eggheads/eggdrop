@@ -103,8 +103,8 @@ There are also some variables you can set in your config file:
 
   set msg-rate 2
     Number of seconds to wait between transmitting queued lines to the
-    server. Lower this value at your own risk.  ircd is known to start
-    flood control at 512 bytes/2 seconds.
+    server. Lower this value at your own risk. ircd is known to start flood
+    control at 512 bytes/2 seconds.
 
   set ssl-verify-servers 0
     Control certificate verification for servers. You can set this by adding
@@ -237,5 +237,5 @@ There are additional settings for 'net-type' Efnet.
       your network. The default setting is 9. The maximum supported length by
       Eggdrop is 32.
 
-  Copyright (C) 2000 - 2022 Eggheads Development Team
+  Copyright (C) 2000 - 2023 Eggheads Development Team
 

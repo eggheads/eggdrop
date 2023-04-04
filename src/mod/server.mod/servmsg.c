@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1320,7 +1320,9 @@ static int got396orchghost(char *nick, char *user, char *uhost)
     m = ismember(chan, nick);
     if (m) {
       snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      strcpy(botuserhost, m->userhost);
+      if (!rfc_casecmp(m->nick, botname)) {
+        strcpy(botuserhost, m->userhost);
+      }
     }
   }
   return 0;
