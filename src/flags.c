@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1133,7 +1133,7 @@ static int flag2str(char *string, int bot, int udef)
     x++;
   }
   if (string == old)
-    *string++ = '*';
+    *string++ = '-';
   return string - old;
 }
 

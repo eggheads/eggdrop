@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -440,11 +441,16 @@ static int tcl_strftime STDVAR
   else
     t = now;
   tm1 = localtime(&t);
+  if (!tm1) {
+    Tcl_AppendResult(irp, "tcl_strftime(): localtime(): error = ",
+                     strerror(errno), NULL);
+    return TCL_ERROR;
+  }
   if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }
-  Tcl_AppendResult(irp, " error with strftime", NULL);
+  Tcl_AppendResult(irp, "tcl_strftime(): strftime(): error", NULL);
   return TCL_ERROR;
 }
 

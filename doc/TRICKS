@@ -58,4 +58,4 @@ normal Tcl file. For example, you can set 'userfile' and 'chanfile' to
     set userfile "$myvar.user"
     set chanfile "$myvar.chan"
 
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

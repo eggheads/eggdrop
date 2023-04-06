@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1304,6 +1304,10 @@ void tell_binds(int idx, char *par)
           continue;
         proc = tc->func_name;
         build_flags(flg, &(tc->flags), NULL);
+        if (!strcmp(flg, "-|-")) {
+          flg[0] = '*';
+          flg[1] = '\0';
+        }
         if (showall || proc[0] != '*') {
           int ok = 0;
 

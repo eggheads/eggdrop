@@ -15,6 +15,35 @@ Last revised: December 4, 2021
 
      _________________________________________________________________
 
+Eggdrop v1.9.5:
+
+ General changes:
+    - Implemented a workaround for a Tcl issue parsing emojis that can cause a
+      crash
+    - Fixed an improper change to the display of bind flags that caused issues
+      with Tcl scripts that parse bind flags
+    - Added SSL header information to .status to help diagnose ./configure
+      mismatches
+    - Lots of under-the-hood bug fixes
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Tcl minimum required version is now 8.5! This actually happened in version
+      1.9.0; we just forgot to tell people. Oops! :)
+
+ Module changes:
+    - Updated woobie.mod with additional example code
+
+ Eggdrop config changes:
+    - None
+
+ Documentation changes:
+    - Added additional documentation to help write modules
+    - Updated botnet docs to include reference to TLS docs for secure links
+    - Updated Tcl repo from unmaintained FTP to HTTP repository
+
 Eggdrop v1.9.4:
 
  General changes:
@@ -181,7 +210,7 @@ Eggdrop v1.9.0:
     - Added CAP support, allowing Eggdrop to extend IRC server capabilities
     - Added support for SASL authentication
     - Added a BETA threaded DNS capability, enabled with the --enable-tdns
-      configure flag. This allows asynchronus DNS requests similar to the what
+      configure flag. This allows asynchronous DNS requests similar to the what
       the current DNS module offers, but using host system capability instead
       of rewriting it from scratch. Using this means you no longer have to use
       the DNS module.
@@ -288,4 +317,4 @@ Eggdrop v1.9.0:
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2021 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

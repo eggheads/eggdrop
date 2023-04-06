@@ -2,7 +2,7 @@
  * in6.h -- various IPv6 related definitions and macros
  */
 /*
- * Copyright (C) 2010 - 2022 Eggheads Development Team
+ * Copyright (C) 2010 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

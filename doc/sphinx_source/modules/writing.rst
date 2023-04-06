@@ -1,5 +1,7 @@
-Writing an Eggdrop Module
-=========================
+.. _writing_module:
+
+How to Write an Eggdrop Module
+==============================
 
 Note: This is for a simple module of 1 source file.
 

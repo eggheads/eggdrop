@@ -1,8 +1,8 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
 AC_PREREQ(2.61)
-AC_INIT([Eggdrop],[1.9.4],[bugs@eggheads.org])
-AC_COPYRIGHT([Copyright (C) 1999 - 2022 Eggheads Development Team])
+AC_INIT([Eggdrop],[1.9.5],[bugs@eggheads.org])
+AC_COPYRIGHT([Copyright (C) 1999 - 2023 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
 AC_CONFIG_SRCDIR(src/eggdrop.h)
@@ -14,7 +14,7 @@ AC_PRESERVE_HELP_ORDER
 dnl config.h stuff
 AH_TOP([/*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -122,7 +122,7 @@ AC_FUNC_MMAP
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.6.X"
-tclrecommendsite="ftp://ftp.tcl.tk/pub/tcl/tcl8_6/"
+tclrecommendsite="https://sourceforge.net/projects/tcl/files/Tcl/"
 
 # Tcl header filenames.
 tclheadernames="tcl.h"
@@ -136,7 +136,6 @@ EGG_TCL_WITH_TCLLIB
 EGG_TCL_WITH_TCLINC
 EGG_TCL_TCLCONFIG
 EGG_TCL_CHECK_VERSION
-EGG_TCL_CHECK_NOTIFIER_INIT
 EGG_TCL_LUSH
 
 

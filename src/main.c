@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -268,15 +268,17 @@ static void write_debug()
       setsock(x, SOCK_NONSOCK);
       strlcpy(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n"
-                  "Please REPORT this BUG!\n"
+                  "Please report problem to https://github.com/eggheads/eggdrop/issues\n"
                   "Check doc/BUG-REPORT on how to do so.", ver, s);
 #ifdef EGG_PATCH
       dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
-      dprintf(-x, "Last server read: %s\n"
-                  "Last bind called: %s\n", last_server_read, last_bind_called);
+      if (*last_server_read)
+        dprintf(-x, "Last server read: %s\n", last_server_read);
+      if (*last_bind_called)
+        dprintf(-x, "Last bind called: %s\n", last_bind_called);
       killsock(x);
       close(x);
     }
@@ -285,10 +287,12 @@ static void write_debug()
                                  * have caused the fault last time. */
   } else
     nested_debug = 1;
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Please report problem to https://github.com/eggheads/eggdrop/issues");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  putlog(LOG_MISC, "*", "* Last server read: %s", last_server_read);
-  putlog(LOG_MISC, "*", "* Last bind called: %s", last_bind_called);
+  if (*last_server_read)
+    putlog(LOG_MISC, "*", "* Last server read: %s", last_server_read);
+  if (*last_bind_called)
+    putlog(LOG_MISC, "*", "* Last bind called: %s", last_bind_called);
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
@@ -733,7 +737,7 @@ void check_static(char *, char *(*)());
 
 #include "mod/static.h"
 #endif
-int init_threaddata(int);
+void init_threaddata(int);
 int init_mem();
 int init_userent();
 int init_misc();
@@ -936,11 +940,7 @@ static void mainloop(int toplevel)
 
   if (!eggbusy) {
 /* Process all pending tcl events */
-#  ifdef REPLACE_NOTIFIER
     Tcl_ServiceAll();
-#  else
-    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS));
-#  endif /* REPLACE_NOTIFIER */
   }
 }
 
@@ -1000,13 +1000,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2022 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2022 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
                 EGG_STRINGVER);
 #endif
 
@@ -1068,9 +1068,6 @@ int main(int arg_c, char **arg_v)
     fatal("ERROR: Eggdrop will not run as root!", 0);
 #endif
 
-#ifndef REPLACE_NOTIFIER
-  init_threaddata(1);
-#endif
   init_userent();
   init_misc();
   init_bots();
