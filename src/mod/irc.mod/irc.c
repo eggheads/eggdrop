@@ -799,7 +799,8 @@ static int check_tcl_monitor(char *nick, int online)
 
   Tcl_SetVar(interp, "_monitor1", nick, 0);
   Tcl_SetVar(interp, "_monitor2", online ? "1" : "0", 0);
-  x = check_tcl_bind(H_monitor, nick, 0, " $_monitor1 $_monitor2", BIND_STACKABLE);
+  x = check_tcl_bind(H_monitor, nick, 0, " $_monitor1 $_monitor2",
+                    MATCH_MASK | BIND_STACKABLE);
 
   return (x == BIND_EXEC_LOG);
 }
