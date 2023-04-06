@@ -1518,7 +1518,7 @@ static int got732(char *from, char *msg)
   return 0;
 }
 
-/* Got 733/RPL_ENDOFMONLISt
+/* Got 733/RPL_ENDOFMONLIST
  * :<server> 733 <nick> :End of MONITOR list
  */
 static int got733(char *from, char *msg)
