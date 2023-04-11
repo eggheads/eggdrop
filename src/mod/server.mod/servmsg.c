@@ -1311,56 +1311,6 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
-static int got396orchghost(char *nick, char *user, char *uhost)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next) {
-    m = ismember(chan, nick);
-    if (m) {
-      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      if (!rfc_casecmp(m->nick, botname)) {
-        strcpy(botuserhost, m->userhost);
-      }
-    }
-  }
-  return 0;
-}
-
-
-/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
- * ident of the user. Format:
- * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
- * changes user hostmask to tehgeo@foo.io
- */
-static int gotchghost(char *from, char *msg){
-  char *nick, *user;
-
-  nick = splitnick(&from); /* Get the nick */
-  user = newsplit(&msg);  /* Get the user */
-  got396orchghost(nick, user, msg);
-  return 0;
-}
-
-/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
- * successfully set. Format:
- * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
- */
-static int got396(char *from, char *msg)
-{
-  char *nick, *uhost, *user, userbuf[UHOSTLEN];
-
-  nick = newsplit(&msg);
-  if (match_my_nick(nick)) {  /* Double check this really is for me */
-    uhost = newsplit(&msg);
-    strlcpy(userbuf, botuserhost, sizeof userbuf);
-    user = strtok(userbuf, "@");
-    got396orchghost(nick, user, uhost);
-  }
-  return 0;
-}
-
 static int gotsetname(char *from, char *msg)
 {
   fixcolon(msg);
@@ -2019,7 +1969,6 @@ static cmd_t my_raw_binds[] = {
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
-  {"396",          "",   (IntFunc) got396,          NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
   {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
@@ -2046,7 +1995,6 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
-  {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };

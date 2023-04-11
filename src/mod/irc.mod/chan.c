@@ -1335,6 +1335,62 @@ static int got354(char *from, char *msg)
   return 0;
 }
 
+/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
+ * ident of the user. Format:
+ * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
+ * changes user hostmask to tehgeo@foo.io
+ */
+static int gotchghost(char *from, char *msg){
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct userrec *u;
+  struct chanset_t *chan;
+  memberlist *m;
+  char mask[1024], *nick, *ident, buf[MSGMAX], *s1=buf, *chname;
+
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  ident = newsplit(&msg);  /* Get the ident */
+  /* Update my own internal hostmask */
+  if (match_my_nick(nick)) {
+    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, msg);
+  }
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    m = ismember(chan, nick);
+    if (m) {
+      snprintf(m->userhost, sizeof m->userhost, "%s@%s", ident, msg);
+      snprintf(mask, sizeof mask, "%s %s!%s@%s", chname, nick, ident, msg);
+      check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
+      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
+                       chan->dname);
+      check_this_member(chan, m->nick, &fr);
+    }
+  }
+  return 0;
+}
+
+/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
+ * successfully set. Format:
+ * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
+ */
+static int got396(char *from, char *msg)
+{
+  char *nick, *ident, *uhost, userbuf[UHOSTLEN];
+
+  nick = newsplit(&msg);
+  if (match_my_nick(nick)) {  /* Double check this really is for me */
+    strlcpy(userbuf, botuserhost, sizeof userbuf);
+    ident = strtok(userbuf, "@");
+    uhost = newsplit(&msg);
+    if (ident) {
+      snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, uhost);
+      check_tcl_event("hidden-host");
+    }
+  }
+  return 0;
+}
 
 /* got 315: end of who
  * <server> 315 <to> <chan> :End of /who
@@ -3031,7 +3087,9 @@ static cmd_t irc_raw[] = {
   {"347",     "",   (IntFunc) got347,          "irc:347"},
   {"348",     "",   (IntFunc) got348,          "irc:348"},
   {"349",     "",   (IntFunc) got349,          "irc:349"},
+  {"396",     "",   (IntFunc) got396,          "irc:396"},
   {"ACCOUNT", "",   (IntFunc) gotaccount,  "irc:account"},
+  {"CHGHOST", "",   (IntFunc) gotchghost,  "irc:chghost"},
   {NULL,     NULL,  NULL,                           NULL}
 };
 

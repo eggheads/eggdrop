@@ -33,7 +33,7 @@
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
-static p_tcl_bind_list H_monitor, H_account;
+static p_tcl_bind_list H_monitor, H_account, H_chghost;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -776,6 +776,27 @@ static int invite_4char STDVAR
   return TCL_OK;
 }
 
+static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec *u,
+                             char *chan, char *ident, char * host)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  char usermask[UHOSTMAX];
+  int x;
+
+  get_user_flagrec(u, &fr, NULL);
+  snprintf(usermask, sizeof usermask, "%s!%s@%s", nick, ident, host);
+
+  Tcl_SetVar(interp, "_chghost1", nick, 0);
+  Tcl_SetVar(interp, "_chghost2", from, 0);
+  Tcl_SetVar(interp, "_chghost3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_chghost4", chan, 0);
+  Tcl_SetVar(interp, "_chghost5", usermask, 0);
+  x = check_tcl_bind(H_chghost, mask, &fr,
+                " $_chghost1 $_chghost2 $_chghost3 $_chghost4 $_chghost5",
+                MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_ircaway(char *nick, char *from, char *mask,
             struct userrec *u, char *chan, char *msg)
 {
@@ -1340,6 +1361,7 @@ static char *irc_close()
   del_bind_table(H_ircaway);
   del_bind_table(H_monitor);
   del_bind_table(H_account);
+  del_bind_table(H_chghost);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1402,7 +1424,8 @@ static Function irc_table[] = {
   (Function) & twitch,          /* int                          */
   /* 28 - 31 */
   (Function) & H_ircaway,       /* p_tcl_bind_list              */
-  (Function) & H_monitor        /* p_tcl_bind_list              */
+  (Function) & H_monitor,       /* p_tcl_bind_list              */
+  (Function) & H_chghost        /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1472,6 +1495,7 @@ char *irc_start(Function *global_funcs)
   H_ircaway = add_bind_table("ircaway", HT_STACKABLE, channels_5char);
   H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
   H_account = add_bind_table("account", HT_STACKABLE, channels_5char);
+  H_chghost = add_bind_table("chghost", HT_STACKABLE, channels_5char);
   do_nettype();
   return NULL;
 }
