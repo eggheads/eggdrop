@@ -1352,7 +1352,7 @@ static int gotchghost(char *from, char *msg){
   ident = newsplit(&msg);  /* Get the ident */
   /* Update my own internal hostmask */
   if (match_my_nick(nick)) {
-    strlcpy(botuserhost, from, sizeof botuserhost);
+    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, msg);
   }
   u = get_user_by_host(from);
   /* Run the bind for each channel the user is on */
@@ -1361,7 +1361,7 @@ static int gotchghost(char *from, char *msg){
     m = ismember(chan, nick);
     if (m) {
       snprintf(m->userhost, sizeof m->userhost, "%s@%s", ident, msg);
-      snprintf(mask, sizeof mask, "%s %s", chname, from);
+      snprintf(mask, sizeof mask, "%s %s!%s@%s", chname, nick, ident, msg);
       check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
       get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
                        chan->dname);
@@ -1384,8 +1384,10 @@ static int got396(char *from, char *msg)
     strlcpy(userbuf, botuserhost, sizeof userbuf);
     ident = strtok(userbuf, "@");
     uhost = newsplit(&msg);
-    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, uhost);
-    check_tcl_event("hidden-host");
+    if (ident) {
+      snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, uhost);
+      check_tcl_event("hidden-host");
+    }
   }
   return 0;
 }

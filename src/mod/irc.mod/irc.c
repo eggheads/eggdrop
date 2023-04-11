@@ -793,7 +793,7 @@ static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec 
   Tcl_SetVar(interp, "_chghost5", usermask, 0);
   x = check_tcl_bind(H_chghost, mask, &fr,
                 " $_chghost1 $_chghost2 $_chghost3 $_chghost4 $_chghost5",
-                MATCH_MASK | BIND_STACKABLE);
+                MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
   return (x == BIND_EXEC_LOG);
 }
 
