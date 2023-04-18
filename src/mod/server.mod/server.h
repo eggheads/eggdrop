@@ -128,6 +128,12 @@ typedef struct capability {
   int requested;    /* Does Eggdrop  want this capability, if available?      */
 } capability_t;
 
+typedef struct monitor_list {
+  char nick[NICKLEN];         /* List of nicks to monitor,                */
+  int online;                 /* Flag if nickname is currently online     */
+  struct monitor_list *next;  /* Linked list y'all                        */
+} monitor_list_t;
+
 /* Available net types. */
 enum {
   NETT_DALNET,       /* DALnet                            */
