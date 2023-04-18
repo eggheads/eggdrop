@@ -48,6 +48,7 @@ static int check_tcl_pub(char *, char *, char *, char *);
 static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
                                     char*);
 static void check_tcl_account(char *nick, char *uhost, struct userrec *u, char *chan, char *account);
+static int check_tcl_chghost(char *, char *, char *, struct userrec *, char *, char *, char *);
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
