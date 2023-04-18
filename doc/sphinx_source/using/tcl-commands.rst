@@ -1101,11 +1101,11 @@ onchan <nickname> [channel]
   Module: irc
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-monitor <command> [nickname]
+monitor <sub-command> [nickname]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid sub-commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
 
-  Returns: The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Returns: The 'add' sub-command returns a '1' if the nick was succssfully added, a '0' if the nick is already in the monitor list, and a '2' if the nick could not be added. The 'delete' sub-command returns a '1' if the nick is removed, or an error if the nick is not found. The 'status' sub-command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
 
   Module: irc
 

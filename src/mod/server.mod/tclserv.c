@@ -368,7 +368,7 @@ static int tcl_monitor STDVAR
         return TCL_OK;
       } else if (ret == 1) {
         Tcl_AppendResult(irp, "nickname already present in monitor list", NULL);
-        return TCL_ERROR;
+        return TCL_OK;
         /* ret = 2 */
       } else {
         Tcl_AppendResult(irp,
