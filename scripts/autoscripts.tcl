@@ -3,13 +3,35 @@ package require json::write
 package require http
 package require tls
 
-
-bind dcc * egg parse_egg
-bind dcc * scripts parse_egg
-
+set asidx 0
 set eggdir "autoscripts"
-
+set cmdtxt "\nEnter your command (done to exit):"
 set jsondict [dict create]
+
+bind DCC * autoscript console
+bind dcc * egg parse_egg
+bind dcc * scripts
+
+proc console {hand idx arg} {
+  global echostatus
+  global oldchan
+  global asidx
+  set oldchan [getchan $idx]
+  set echostatus [echo $idx]
+  set asidx $idx
+  setchan $idx 469
+  echo $idx 0
+  bind CHAT * * parse_egg
+  bind evnt * prerehash {egg_done $asidx}
+  putdcc $idx "   _         _                      _       _  "
+  putdcc $idx "  /_\\  _   _| |_ ___  ___  ___ _ __(_)_ __ | |_ "
+  putdcc $idx " //_\\\\| | | | __/ _ \\/ __|/ __| '__| | '_ \\| __|"
+  putdcc $idx "/  _  \\ |_| | || (_) \\__ \\ (__| |  | | |_) | |_ "
+  putdcc $idx "\\_/ \\_/\\__,_|\\__\\___/|___/\\___|_|  |_| .__/ \\__|"
+  putdcc $idx "                                     |_|        "
+  putdcc $idx "=======================================================\n"
+  putdcc $idx "Welcome to the autoscript console. Enter your command: "
+}
 
 #Read all JSON script files
 proc readjsonfile {} {
@@ -85,10 +107,22 @@ proc loadscripts {} {
 }
 
 # Initial function called by .egg command, sends to proper proc based on args
-proc parse_egg {hand idx text} {
+proc parse_egg {hand chan text} {
+    global echostatus
+    global oldchan
+    global asidx
+
+    # Check if this is the user who triggered the console
+    if {[hand2idx $hand] != $asidx} {
+      return 0
+    }
+    set idx $asidx
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
-	if {$subcmd in {remote list help}} {
+
+    if {$subcmd in {done}} {
+      egg_done $idx "parse"
+    } elseif {$subcmd in {remote list help}} {
 		egg_$subcmd $idx
 	} elseif {$subcmd in {config fetch clean}} {
 		if {$arg1 eq ""} {
@@ -114,11 +148,13 @@ proc parse_egg {hand idx text} {
 		putdcc $idx "Missing or unknown subcommand"
         egg_help $idx
 	}
+  return 1
 }
 
 # List scripts that are locally present in .egg
 proc egg_list {idx} {
   global jsondict
+  global cmdtxt
   readjsonfile
   putdcc $idx "\nThe following scripts are available for configuration:"
   putdcc $idx "------------------------------------------------------"
@@ -133,6 +169,7 @@ proc egg_list {idx} {
       }
     }
   }
+  putidx $idx "$cmdtxt"
 }
 
 # Load or unload a script and update JSON field
@@ -175,6 +212,7 @@ proc egg_load {idx script loadme} {
 
 # List variables available for a script
 proc egg_config {idx script} {
+  global cmdtxt
   global jsondict
   set found 0
   foreach scriptentry $jsondict {
@@ -201,10 +239,12 @@ proc egg_config {idx script} {
   if {!$found} {
     putdcc $idx "Script $script not found."
   }
+  putidx $idx "$cmdtxt"
 }
 
 # Set a variable for a script
 proc egg_set {idx script setting value} {
+  global cmdtxt
   global jsondict
   foreach scriptentry $jsondict {
     if {[string match $script [dict get $scriptentry name]]} {
@@ -212,6 +252,7 @@ proc egg_set {idx script setting value} {
         dict set scriptentry config vars $setting value $value
         write_json $script [compile_json {dict config {dict vars {dict * dict}}} $scriptentry]
         putdcc $idx "* ${script}: Variable \"$setting\" set to \"${value}\""
+        putidx $idx "$cmdtxt"
         readjsonfile        
       }
     }
@@ -221,6 +262,7 @@ proc egg_set {idx script setting value} {
 # Pull down remote Tcl file listing
 # For future eggheads- 100 is the maximum WP supports without doing pagination
 proc egg_remote {idx} {
+  global cmdtxt
   set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip&orderby=slug&per_page=100&order=asc" 0]
   set datadict [json::json2dict $jsondata]
   putdcc $idx "* Retrieving script list, please wait..."
@@ -231,6 +273,7 @@ proc egg_remote {idx} {
   }
   putdcc $idx "\n"
   putdcc $idx "* Type '.egg fetch <scriptname>' to download a script"
+  putidx $idx "$cmdtxt"
 }
 
 # Helper command for scripts- return a Tcl list of scripts that are loaded
@@ -270,6 +313,7 @@ proc egg_all {} {
 
 # Download a script from the eggheads repository
 proc egg_fetch {idx script} {
+  global cmdtxt
   global eggdir
   try {
     set results [exec which tar]
@@ -277,11 +321,13 @@ proc egg_fetch {idx script} {
   } trap CHILDSTATUS {results options} {
     if {lindex [dict get $options -errorcode] 2} {
       putdcc $idx "* ERROR: This feature is not available (tar not detected on this system, cannot extract a downloaded file)."
+      putidx $idx "$cmdtxt"
       return
     }
   }
   if {[file isdirectory $eggdir/$script]} {
     putdcc $idx "* Script directory already exists. Not downloading again!"
+    putidx $idx "$cmdtxt"
     return
   }
 ### CHECK IF IT IS ON SITE FIRST
@@ -296,12 +342,14 @@ proc egg_fetch {idx script} {
       file delete $eggdir/[dict get $scriptentry slug].tgz
       putdcc $idx "* [dict get $scriptentry slug] downloaded."
       putdcc $idx "* Use '.egg load [dict get $scriptentry slug]' to load and '.egg config [dict get $scriptentry slug]' to configure."
+      putidx $idx "$cmdtxt"
       readjsonfile
     }
   }
 }
 
 proc egg_clean {idx script} {
+  global cmdtxt
   global eggdir
   if {![egg_load $idx $script 0]} {
     putdcc $idx "* Cannot remove $script"
@@ -313,21 +361,37 @@ proc egg_clean {idx script} {
   } else {
     putdcc $idx "* $script not found"
   }
+  putidx $idx "$cmdtxt"
 }
 
+proc egg_done {idx arg} {
+  global oldchan
+  global echostatus
+  putdcc $idx "Returning to partyline..."
+  unbind CHAT * * parse_egg
+  unbind EVNT * prerehash {egg_done $asidx}
+  echo $idx $echostatus
+  setchan $idx $oldchan
+}
+
+
 proc egg_help {idx} {
+  global cmdtxt
   putidx $idx "* The following commands are available for use with $::lastbind:"
-  putidx $idx "    remote, fetch, list, config, set, load, unload, clean"
+  putidx $idx "    remote, fetch, list, config, set, load, unload, clean, done"
   putidx $idx ""
-  putidx $idx "* remote:               : List scripts available for download"
-  putidx $idx "* fetch <script>:       : Download the script"
-  putidx $idx "* list                  : List all scripts present on the local system available for use"
-  putidx $idx "* config <script>       : View configuration options for a script"
-  putidx $idx "* set <script> <setting>: Set the value for a script setting"
-  putidx $idx "* load <script>         : Load a script, and enable a script to be loaded when Eggdrop starts"
-  putidx $idx "* unload <script>       : Prevent a script from running when Eggdrop starts"
-  putidx $idx "                          (Must restart Eggdrop to remove stop a currently running script!)"
-  putidx $idx "* clean <script>        : Permanently remove a script and any associated settings or files"
+  putidx $idx "* remote                 : List scripts available for download"
+  putidx $idx "* fetch <script>         : Download the script"
+  putidx $idx "* list                   : List all scripts present on the local system available for use"
+  putidx $idx "* config <script>        : View configuration options for a script"
+  putidx $idx "* set <script> <setting> : Set the value for a script setting"
+  putidx $idx "* load <script>          : Load a script, and enable a script to be loaded when Eggdrop starts"
+  putidx $idx "* unload <script>        : Prevent a script from running when Eggdrop starts"
+  putidx $idx "                           (You must restart Eggdrop to stop a currently running script!)"
+  putidx $idx "* clean <script>         : Permanently remove a script and any associated settings or files"
+  putidx $idx "* done                   : Return to Eggdrop partyline"
+  putidx $idx "----------------------------------------------------------------------------------------------"
+  putidx $idx "$cmdtxt"
 }
 
 # Yikes.
