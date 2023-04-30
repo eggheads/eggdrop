@@ -37,7 +37,7 @@ proc console {hand idx arg} {
 proc readjsonfile {} {
   global jsondict
   global eggdir
-  set jsonstring "\["
+  set jsonlist {}
 ### How to get filepath properly
   foreach dirname [glob -nocomplain -type d -directory $eggdir *] {
     if {![file exists $dirname/manifest.json]} {
@@ -45,16 +45,11 @@ proc readjsonfile {} {
       putlog "$dirname missing manifest.json, deleting"
     } else {
       set fs [open $dirname/manifest.json r]
-      if {[string length $jsonstring] > 1} {
-        append jsonstring ","
-      }
-      set filestring [read $fs]
-      append jsonstring $filestring
+      lappend jsonlist [read $fs]
       close $fs
     }
   }
-  append jsonstring "\]"
-  set jsondict [json::json2dict $jsonstring]
+  set jsondict [json::json2dict "\[[join $jsonlist {,}]\]"]
 }
 
 # Write a script's JSON content to file
@@ -478,4 +473,4 @@ proc compile_json {spec data} {
 if {![file exists autoscripts]} {file mkdir autoscripts}
 readjsonfile
 loadscripts
-putlog "Loading foo.tcl"
+putlog "Loading autoscripts.tcl"
