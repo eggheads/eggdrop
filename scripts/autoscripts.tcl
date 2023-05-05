@@ -246,6 +246,7 @@ proc egg_set {idx script setting value} {
         dict set scriptentry config vars $setting value $value
         write_json $script [compile_json {dict config {dict vars {dict * dict}}} $scriptentry]
         putdcc $idx "* ${script}: Variable \"$setting\" set to \"${value}\""
+        putdcc $idx "* Use \"load $script\" to enable this change"
         putidx $idx "$cmdtxt"
         readjsonfile        
       }
