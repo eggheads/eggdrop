@@ -9,8 +9,6 @@ set cmdtxt "\nEnter your command (done to exit):"
 set jsondict [dict create]
 
 bind DCC * autoscript console
-bind dcc * egg parse_egg
-bind dcc * scripts
 
 proc console {hand idx arg} {
   global echostatus
@@ -47,6 +45,7 @@ proc readjsonfile {} {
       set fs [open $dirname/manifest.json r]
       lappend jsonlist [read $fs]
       close $fs
+  putlog "arg is $arg"
     }
   }
   set jsondict [json::json2dict "\[[join $jsonlist {,}]\]"]
@@ -143,7 +142,7 @@ proc parse_egg {hand chan text} {
 		putdcc $idx "Missing or unknown subcommand"
         egg_help $idx
 	}
-  return 1
+    return 1
 }
 
 # List scripts that are locally present in .egg
@@ -267,7 +266,7 @@ proc egg_remote {idx} {
     putdcc $idx "* [dict get $scriptentry slug] ([lindex [regexp -inline {\n.*<p>([^<>]*)</p>} [dict get $scriptentry description rendered]] 1])"
   }
   putdcc $idx "\n"
-  putdcc $idx "* Type '.egg fetch <scriptname>' to download a script"
+  putdcc $idx "* Type 'fetch <scriptname>' to download a script"
   putidx $idx "$cmdtxt"
 }
 
@@ -336,7 +335,7 @@ proc egg_fetch {idx script} {
       exec tar -zxf $eggdir/[dict get $scriptentry slug].tgz -C $eggdir/[dict get $scriptentry slug]
       file delete $eggdir/[dict get $scriptentry slug].tgz
       putdcc $idx "* [dict get $scriptentry slug] downloaded."
-      putdcc $idx "* Use '.egg load [dict get $scriptentry slug]' to load and '.egg config [dict get $scriptentry slug]' to configure."
+      putdcc $idx "* Use 'load [dict get $scriptentry slug]' to load and 'config [dict get $scriptentry slug]' to configure."
       putidx $idx "$cmdtxt"
       readjsonfile
     }
