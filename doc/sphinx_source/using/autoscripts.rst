@@ -11,7 +11,7 @@ Since it's inception, users have needed to load a Tcl script into Eggdrop by dow
 
 Autoscripts usage
 -----------------
-To view available autoscript commands, type ``.script`` on the partyline. The following sub-commands are available for use with script:
+To view available autoscript commands, type ``.autoscript`` on the partyline. This will open up a special Eggdrop console that doesn't require you to prefix commands with a '.' . The following sub-commands are available for use with script:
 
 remote
 ^^^^^^
@@ -31,11 +31,11 @@ This command will list settings available for configuration for the provided scr
 
 set <script> <setting>
 ^^^^^^^^^^^^^^^^^^^^^^
-This command will set ``setting`` for ``script`` to the provided value.
+This command will set ``setting`` for ``script`` to the provided value. To activate this change, use the ``load`` command.
 
 load <script>
 ^^^^^^^^^^^^^
-This command will activate the script for use.
+This command will activate the script for use. You can also use this command to reload a script after modifying a script variable.
 
 unload <script>
 ^^^^^^^^^^^^^^^
