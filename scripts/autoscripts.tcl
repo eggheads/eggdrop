@@ -43,9 +43,14 @@ proc readjsonfile {} {
       putlog "$dirname missing manifest.json, deleting"
     } else {
       set fs [open $dirname/manifest.json r]
-      lappend jsonlist [read $fs]
+      set contents [read $fs]
+      set jcontents [json::json2dict $contents]
+      if {![string equal [dict get $jcontents schema] "1"]} {
+        putlog "$dirname contains invalid manifest.json format, skipping..."
+        continue
+      }
+      lappend jsonlist $contents
       close $fs
-  putlog "arg is $arg"
     }
   }
   set jsondict [json::json2dict "\[[join $jsonlist {,}]\]"]
@@ -100,7 +105,7 @@ proc loadscripts {} {
   }
 }
 
-# Initial function called by .egg command, sends to proper proc based on args
+# Initial function called from autoscript console, sends to proper proc based on args
 proc parse_egg {hand chan text} {
     global echostatus
     global oldchan
