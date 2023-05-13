@@ -416,7 +416,7 @@ WHAT TO DO WITH A MODULE?
   the rest of the Eggdrop community, upload it to the incoming directory
   on incoming.eggheads.org (/incoming/modules/1.8). Place a nice
   descriptive text (modulename.desc) with it, and it'll make its way to
-  the modules directory at https://ftp.eggheads.org/pub/eggdrop/modules/.
+  the modules directory at ftp.eggheads.org/pub/eggdrop/modules/.
   Don't forget to mention in your text file which version Eggdrop the module
   is written for.
 

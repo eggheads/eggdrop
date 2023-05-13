@@ -19,7 +19,7 @@ The super-short version
 
 You can read the `Installation`_ section for a more detailed explanation of these steps.
 
-1. Download the `latest stable Eggdrop release <https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.9.5.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.9.5.tar.gz``
+1. Download the `latest stable Eggdrop release <ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.9.5.tar.gz>`_ to your shell via FTP, or simply type ``wget geteggdrop.com -O eggdrop-1.9.5.tar.gz``
 2. From the commadline of your shell, type ``tar zxvf eggdrop-1.9.5.tar.gz``
 3. Type ``cd eggdrop-1.9.5``
 4. Type ``./configure``
@@ -49,7 +49,7 @@ Download locations
 
 The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.5 source, for example, would be named eggdrop-1.9.5.tar.gz.
 
-`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop1.9.5.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
+`The Eggheads FTP <ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop1.9.5.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
 
 Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type ``git checkout stable/1.9``. You can then skip to step 4 in the Installation section below.
 
@@ -60,7 +60,7 @@ Installing Eggdrop is a relatively simple process provided your shell has the re
 
 Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing eggdrop-1.9.5.tar.gz, so just change the numbers if you are installing another version.
 
-1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-1.9.5.tar.gz <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.5.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
+1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-1.9.5.tar.gz <ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.5.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
 
 2. SSH to the shell (if you haven't already), and type ``tar zxvf eggdrop-1.9.5.tar.gz`` (if this doesn't work, try ``gunzip eggdrop-1.9.5.tar.gz`` then ``tar xvf eggdrop-1.9.5.tar``). This will extract the Eggdrop source into its installation directory, named 'eggdrop-1.9.5'.
 
