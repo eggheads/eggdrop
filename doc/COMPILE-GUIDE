@@ -250,9 +250,7 @@ Last revised: Mar 16, 2023
 
     H. Cygwin / Windows
       To compile and install Eggdrop on windows, perform the steps listed
-      below or install a binary / precompiled version from
-      https://windrop.sourceforge.net or
-      https://github.com/michaelortmann/windrop
+      below.
 
         1. Download and install Cygwin (https://cygwin.com/). Select packages:
              autoconf
