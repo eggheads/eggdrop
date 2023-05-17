@@ -40,6 +40,10 @@ static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
 struct capability *find_capability(char *capname);
+static int monitor_add(char * nick, int send);
+static int monitor_del (char *nick);
+static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
+static void monitor_clear();
 int account_notify = 1, extended_join = 1, account_tag = 0;
 Tcl_Obj *ncapeslist;
 
@@ -302,6 +306,18 @@ static int check_tcl_out(int which, char *msg, int sent)
   Tcl_SetVar(interp, "_out3", sent ? "sent" : "queued", 0);
   x = check_tcl_bind(H_out, args, 0, " $_out1 $_out2 $_out3",
                      MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
+
+  return (x == BIND_EXEC_LOG);
+}
+
+static int check_tcl_monitor(char *nick, int online)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_monitor1", nick, 0);
+  Tcl_SetVar(interp, "_monitor2", online ? "1" : "0", 0);
+  x = check_tcl_bind(H_monitor, nick, 0, " $_monitor1 $_monitor2",
+                    MATCH_MASK | BIND_STACKABLE);
 
   return (x == BIND_EXEC_LOG);
 }
@@ -1947,12 +1963,126 @@ static int gotcap(char *from, char *msg) {
   return 0;
 }
 
+/* Got 730/RPL_MONONLINE
+ * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
+ */
+static int got730or1(char *from, char *msg, int code)
+{
+  char *nick, *tok;
+  struct monitor_list *current = monitor;
+
+  newsplit(&msg);               /* Get rid of nick */
+  fixcolon(msg);                /* Get rid of :    */
+
+  for (tok = strtok(msg, ","); tok; tok = strtok(NULL, " ")) {
+    if (strchr(tok, '!')) {
+      nick = splitnick(&tok);
+    } else {
+      nick = tok;
+    }
+    while (current != NULL) {
+      if (!rfc_casecmp(current->nick, nick)) {
+        if (code == 1) {
+          current->online = 1;
+          check_tcl_monitor(nick, 1);
+          putlog(LOG_SERV, "*", "%s is now online", nick);
+        } else if (code == 0) {
+          current->online = 0;
+          check_tcl_monitor(nick, 0);
+          putlog(LOG_SERV, "*", "%s is now offline", nick);
+        }
+      }
+      current = current->next;
+    }
+  }
+  return 0;
+}
+
+/* Got 730/RPL_MONONLINE
+ * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
+ */
+static int got730(char *from, char *msg)
+{
+  got730or1(from, msg, 1);
+  return 0;
+}
+
+/* Got 731/RPL_MONOFFLINE
+ * :<server> 731 <nick> :target[,target2]*
+ */
+static int got731(char *from, char *msg)
+{
+  got730or1(from, msg, 0);
+  return 0;
+}
+
+/* Got 732/RPL_MONLIST
+ * :<server> 732 <nick> :target[,target2]*
+ *
+ * Clear the existing list, replace it with what the server sends us, as
+ * that is what is 100% accurate
+ */
+static int got732(char *from, char *msg)
+{
+  char *tok, *nick;
+  struct monitor_list *current = monitor;
+  struct monitor_list *next = NULL;
+
+/* Did we already get a 732? If no, clear the existing list, otherwise leave
+ * it for appending
+ */
+  if (!monitor732) {
+    while (current != NULL) {
+      next = current->next;
+      nfree(current);
+      current = next;
+    }
+    monitor = NULL;
+  }
+
+  newsplit(&msg);               /* Get rid of nick */
+  fixcolon(msg);                /* Get rid of :    */
+
+  for (tok = strtok(msg, ","); tok && *tok; tok = strtok(NULL, ",")) {
+    /* returned target could be in nick!u@host format */
+    if (strchr(tok, '!')) {
+      nick = splitnick(&tok);
+    } else {
+      nick = tok;
+    }
+    monitor_add(nick, 0);
+  }
+  monitor732 = 1;
+  return 0;
+}
+
+/* Got 733/RPL_ENDOFMONLIST
+ * :<server> 733 <nick> :End of MONITOR list
+ */
+static int got733(char *from, char *msg)
+{
+  monitor732 = 0;
+  return 0;
+}
+
+/* Got 734/RPL_MONLISTFULL
+ * :<server> 734 <nick> <limit> <targets> :Monitor list is full.
+ */
+static int got734(char *from, char *msg)
+{
+  putlog(LOG_SERV, "*", "Server monitor list is full, nickname not added");
+  return 0;
+}
+
 static int server_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
 
   if (!strcmp(key, "NICKLEN") || !strcmp(key, "MAXNICKLEN")) {
     isupport_parseint(key, isset ? value : NULL, 9, NICKMAX, 1, 9, &nick_len);
+  } else if (!strcmp(key, "MONITOR")) {
+    monitor005 = isset;
+    isupport_parseint(key, isset ? value : NULL, 1, 500, 1, 0, &max_monitor);
   }
   return 0;
 }
@@ -1979,6 +2109,11 @@ static cmd_t my_raw_binds[] = {
   {"451",          "",   (IntFunc) got451,          NULL},
   {"442",          "",   (IntFunc) got442,          NULL},
   {"465",          "",   (IntFunc) got465,          NULL},
+  {"730",          "",   (IntFunc) got730,          NULL},
+  {"731",          "",   (IntFunc) got731,          NULL},
+  {"732",          "",   (IntFunc) got732,          NULL},
+  {"733",          "",   (IntFunc) got733,          NULL},
+  {"734",          "",   (IntFunc) got734,          NULL},
   {"900",          "",   (IntFunc) got900,          NULL},
   {"901",          "",   (IntFunc) got901,          NULL},
   {"902",          "",   (IntFunc) gotsasl90X,      NULL},
