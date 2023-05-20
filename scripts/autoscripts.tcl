@@ -7,6 +7,8 @@ set asidx 0
 set eggdir "autoscripts"
 set cmdtxt "\nEnter your command (done to exit):"
 set jsondict [dict create]
+set asmajor 1
+set asminor 0
 
 bind DCC * autoscript console
 
@@ -111,12 +113,16 @@ proc parse_egg {idx text} {
     global oldchan
     global asidx
 
+    # Check if this is the user who triggered the console
+    if {$idx != $asidx} {
+      return
+    }
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
 
     if {$subcmd in {done}} {
       egg_done $idx "parse"
-    } elseif {$subcmd in {remote list help}} {
+    } elseif {$subcmd in {update remote list help}} {
 		egg_$subcmd $idx
 	} elseif {$subcmd in {config fetch clean}} {
 		if {$arg1 eq ""} {
@@ -283,6 +289,43 @@ proc egg_loaded {} {
   return $scriptlist
 }
 
+proc egg_update {idx} {
+  global cmdtxt
+  global jsondict
+  global version
+  global asminor
+  global asmajor
+
+  readjsonfile
+  set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip&orderby=slug&per_page=100&order=asc" 0]
+  set datadict [json::json2dict $jsondata]
+  foreach localscript $jsondict {
+    foreach remotescript $datadict {
+      if {[string equal -nocase [dict get $remotescript slug] [dict get $localscript name]]} {
+        if { ([dict get $remotescript version_minor] > [dict get $localscript version_minor] &&
+              [dict get $remotescript version_major] >= [dict get $localscript version_major]) ||
+             ([dict get $remotescript version_major] > [dict get $localscript version_major]) } {
+          putdcc $idx "* [dict get $localscript name] has an update available."
+        }
+      }
+    }
+  }
+}
+
+  foreach script $jsondict {
+    set loaded [expr {[dict get $script config loaded] == 1 ? "\[X\]" : "\[ \]"}]
+    putdcc $idx "* $loaded [dict get $script name] (v[dict get $script version_major].[dict get $script version_minor]) - [dict get $script description]"
+
+
+  set asversion [send_http "https://www.eggheads.org/wp-content/uploads/simple-file-list/autoscript.txt" 0]
+  lassign [split $asversion .] major minor
+  if { ($minor > $asminor && $major >= $asmajor) || ($major > $asmajor)} {
+    putdcc $idx "* New version of autoscript found!"
+  } else {
+    putdcc $idx "* autoscript is up to date."
+  }
+}
+
 # Helper command for scripts- return a Tcl list of scripts that are loaded
 proc egg_unloaded {} {
   global jsondict
@@ -384,6 +427,7 @@ proc egg_help {idx} {
   putidx $idx "* unload <script>        : Prevent a script from running when Eggdrop starts"
   putidx $idx "                           (You must restart Eggdrop to stop a currently running script!)"
   putidx $idx "* clean <script>         : Permanently remove a script and any associated settings or files"
+  putidx $idx "* update                 : Check for updates for autoscript"
   putidx $idx "* done                   : Return to Eggdrop partyline"
   putidx $idx "----------------------------------------------------------------------------------------------"
   putidx $idx "$cmdtxt"
