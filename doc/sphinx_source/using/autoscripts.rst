@@ -45,6 +45,10 @@ clean <script>
 ^^^^^^^^^^^^^^
 This command will delete the script from the filesystem. After running this command, you will have to re-download and re-configure the script if you wish to use it again.
 
+update
+^^^^^^
+This command checks if there is a newer version of autoscript available.
+
 
 Autoscripts File Structure
 --------------------------
