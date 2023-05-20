@@ -1025,7 +1025,7 @@ void check_tcl_chatactbcst(const char *from, int chan, const char *text,
   Tcl_SetVar(interp, "_cab2", (char *) s, 0);
   Tcl_SetVar(interp, "_cab3", (char *) text, 0);
   check_tcl_bind(tl, text, 0, " $_cab1 $_cab2 $_cab3",
-                 MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
+                 MATCH_MASK | BIND_STACKABLE);
 }
 
 void check_tcl_nkch(const char *ohand, const char *nhand)

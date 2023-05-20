@@ -19,7 +19,7 @@ proc console {hand idx arg} {
   set asidx $idx
   setchan $idx 469
   echo $idx 0
-  bind CHAT * * parse_egg
+  bind FILT * * parse_egg
   bind evnt * prerehash {egg_done $asidx}
   putdcc $idx "   _         _                      _       _  "
   putdcc $idx "  /_\\  _   _| |_ ___  ___  ___ _ __(_)_ __ | |_ "
@@ -106,16 +106,11 @@ proc loadscripts {} {
 }
 
 # Initial function called from autoscript console, sends to proper proc based on args
-proc parse_egg {hand chan text} {
+proc parse_egg {idx text} {
     global echostatus
     global oldchan
     global asidx
 
-    # Check if this is the user who triggered the console
-    if {[hand2idx $hand] != $asidx} {
-      return 0
-    }
-    set idx $asidx
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
 
@@ -147,7 +142,7 @@ proc parse_egg {hand chan text} {
 		putdcc $idx "Missing or unknown subcommand"
         egg_help $idx
 	}
-    return 1
+    return
 }
 
 # List scripts that are locally present in .egg
@@ -368,7 +363,7 @@ proc egg_done {idx arg} {
   global oldchan
   global echostatus
   putdcc $idx "Returning to partyline..."
-  unbind CHAT * * parse_egg
+  unbind FILT * * parse_egg
   unbind EVNT * prerehash {egg_done $asidx}
   echo $idx $echostatus
   setchan $idx $oldchan
