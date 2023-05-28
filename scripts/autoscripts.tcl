@@ -295,20 +295,26 @@ proc egg_update {idx} {
   global version
   global asminor
   global asmajor
+  set found 0
 
   readjsonfile
   set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip&orderby=slug&per_page=100&order=asc" 0]
+  set jsondata [send_http "https://www.eggheads.org/wp-content/uploads/2023/05/asman.json" 0]
   set datadict [json::json2dict $jsondata]
   foreach localscript $jsondict {
     foreach remotescript $datadict {
-      if {[string equal -nocase [dict get $remotescript slug] [dict get $localscript name]]} {
-        if { ([dict get $remotescript version_minor] > [dict get $localscript version_minor] &&
-              [dict get $remotescript version_major] >= [dict get $localscript version_major]) ||
-             ([dict get $remotescript version_major] > [dict get $localscript version_major]) } {
+      if {[string equal -nocase [dict get $remotescript name] [dict get $localscript name]]} {
+        if { ([dict get $remotescript minor] > [dict get $localscript version_minor] &&
+              [dict get $remotescript major] >= [dict get $localscript version_major]) ||
+             ([dict get $remotescript major] > [dict get $localscript version_major]) } {
           putdcc $idx "* [dict get $localscript name] has an update available."
+          set found 1
         }
       }
     }
+  }
+  if {!$found} {
+    putdcc $idx "* No updates available."
   }
 }
 
@@ -365,6 +371,7 @@ proc egg_fetch {idx script} {
   }
   if {[file isdirectory $eggdir/$script]} {
     putdcc $idx "* Script directory already exists. Not downloading again!"
+    putdcc $idx "* Use \"update $script\" if you're trying to update the script"
     putidx $idx "$cmdtxt"
     return
   }
