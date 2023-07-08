@@ -3226,7 +3226,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <handle> <channel#> <text>
 
-  Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.
+  Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards. Eggdrop passes the partyline channel number the user spoke on to the proc in "channel#".
 
   NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.
 
