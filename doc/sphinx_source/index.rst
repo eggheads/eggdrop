@@ -20,7 +20,7 @@ Eggdrop has a large number of features, such as:
 How to get Eggdrop
 ------------------
 
-The Eggdrop project source code is hosted at https://github.com/eggheads/egggdrop. You can clone it via git, or alternatively a copy of the current stable snapshot is located at https://geteggdrop.com. Additional information can be found on the official Eggdrop webpage at https://www.eggheads.org. For more information, see `Installing Eggdrop <install/install.html>`_
+The Eggdrop project source code is hosted at https://github.com/eggheads/eggdrop. You can clone it via git, or alternatively a copy of the current stable snapshot is located at https://geteggdrop.com. Additional information can be found on the official Eggdrop webpage at https://www.eggheads.org. For more information, see `Installing Eggdrop <install/install.html>`_
 
 How to install Eggdrop
 ----------------------
