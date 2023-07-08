@@ -10,7 +10,7 @@ set jsondict [dict create]
 set asmajor 1
 set asminor 0
 
-bind DCC * autoscript console
+bind DCC n autoscript console
 
 proc console {hand idx arg} {
   global echostatus
@@ -21,8 +21,8 @@ proc console {hand idx arg} {
   set asidx $idx
   setchan $idx 469
   echo $idx 0
-  bind FILT * * parse_egg
-  bind evnt * prerehash {egg_done $asidx}
+  bind FILT n * parse_egg
+  bind evnt n prerehash {egg_done $asidx}
   putdcc $idx "   _         _                      _       _  "
   putdcc $idx "  /_\\  _   _| |_ ___  ___  ___ _ __(_)_ __ | |_ "
   putdcc $idx " //_\\\\| | | | __/ _ \\/ __|/ __| '__| | '_ \\| __|"
@@ -430,8 +430,8 @@ proc egg_done {idx arg} {
   global oldchan
   global echostatus
   putdcc $idx "Returning to partyline..."
-  unbind FILT * * parse_egg
-  unbind EVNT * prerehash {egg_done $asidx}
+  unbind FILT n * parse_egg
+  unbind EVNT n prerehash {egg_done $asidx}
   echo $idx $echostatus
   setchan $idx $oldchan
 }
