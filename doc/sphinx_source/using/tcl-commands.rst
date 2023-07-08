@@ -1490,6 +1490,8 @@ isupport isset <key>
 DCC Commands
 ------------
 
+.. _putdcc:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 putdcc <idx> <text> [-raw]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1499,6 +1501,16 @@ putdcc <idx> <text> [-raw]
   Returns: nothing
 
   Module: core
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+putidx <idx> <text> -[raw]
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Description. Alias for the putdcc_ command.
+
+    Returns: nothing
+
+    Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^
 dccbroadcast <message>
