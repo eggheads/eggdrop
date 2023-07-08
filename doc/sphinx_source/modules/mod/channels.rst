@@ -53,7 +53,7 @@ Channel Settings
 ----------------
 
 Value-based Channel Settings
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
       idle-kick 0
         This setting will make the bot check every minute for idle users. Set
@@ -348,7 +348,7 @@ Default Channel Values
 ----------------------
 
     The following settings are used as default values when you .+chan #chan or .tcl
-    channel add #chan. Look in the `Channel Settings`_ for an explanation of each option.
+    channel add #chan. You can modify these default values by adding the below values to your config fil. Look in the `Channel Settings`_ for an explanation of each option.
 
       set default-flood-chan 15:60
 
