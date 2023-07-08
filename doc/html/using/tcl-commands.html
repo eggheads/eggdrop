@@ -1,23 +1,27 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Eggdrop Tcl Commands &#8212; Eggdrop 1.9.5 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Twitch Tcl Commands" href="twitch-tcl-commands.html" />
     <link rel="prev" title="Textfile Substitutions" href="text-sub.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
+          </a></p>
         <div class="headertitle"><a
           href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
@@ -115,7 +119,7 @@
   <p>Eggdrop Tcl Commands
 Last revised: January 24, 2021</p>
 <section id="eggdrop-tcl-commands">
-<h1>Eggdrop Tcl Commands<a class="headerlink" href="#eggdrop-tcl-commands" title="Permalink to this heading">¶</a></h1>
+<h1>Eggdrop Tcl Commands<a class="headerlink" href="#eggdrop-tcl-commands" title="Permalink to this headline">¶</a></h1>
 <p>This is an exhaustive list of all the Tcl commands added to Eggdrop. All
 of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
@@ -127,9 +131,9 @@ or v1.2 will probably not work without modification. Commands which have
 been changed in this version of Eggdrop (or are just new commands) are
 marked with vertical bars (|) on the left.</p>
 <section id="output-commands">
-<h2>Output Commands<a class="headerlink" href="#output-commands" title="Permalink to this heading">¶</a></h2>
+<h2>Output Commands<a class="headerlink" href="#output-commands" title="Permalink to this headline">¶</a></h2>
 <section id="putserv-text-options">
-<h3>putserv &lt;text&gt; [options]<a class="headerlink" href="#putserv-text-options" title="Permalink to this heading">¶</a></h3>
+<h3>putserv &lt;text&gt; [options]<a class="headerlink" href="#putserv-text-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends text to the server, like ‘.dump’ (intended for direct server commands); output is queued so that the bot won’t flood itself off the server.</p>
 <p>Options:
@@ -140,7 +144,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="puthelp-text-options">
-<h3>puthelp &lt;text&gt; [options]<a class="headerlink" href="#puthelp-text-options" title="Permalink to this heading">¶</a></h3>
+<h3>puthelp &lt;text&gt; [options]<a class="headerlink" href="#puthelp-text-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends text to the server, like ‘putserv’, but it uses a different queue intended for sending messages to channels or people.</p>
 <p>Options:
@@ -151,7 +155,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putquick-text-options">
-<h3>putquick &lt;text&gt; [options]<a class="headerlink" href="#putquick-text-options" title="Permalink to this heading">¶</a></h3>
+<h3>putquick &lt;text&gt; [options]<a class="headerlink" href="#putquick-text-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends text to the server, like ‘putserv’, but it uses a different (and faster) queue.</p>
 <p>Options:
@@ -162,7 +166,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putnow-text-oneline">
-<h3>putnow &lt;text&gt; [-oneline]<a class="headerlink" href="#putnow-text-oneline" title="Permalink to this heading">¶</a></h3>
+<h3>putnow &lt;text&gt; [-oneline]<a class="headerlink" href="#putnow-text-oneline" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends text to the server immediately, bypassing all queues. Use with caution, as the bot may easily flood itself off the server.</p>
 <p>Options:
@@ -172,7 +176,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putkick-channel-nick-nick-reason">
-<h3>putkick &lt;channel&gt; &lt;nick,nick,…&gt; [reason]<a class="headerlink" href="#putkick-channel-nick-nick-reason" title="Permalink to this heading">¶</a></h3>
+<h3>putkick &lt;channel&gt; &lt;nick,nick,…&gt; [reason]<a class="headerlink" href="#putkick-channel-nick-nick-reason" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends kicks to the server and tries to put as many nicks into one kick command as possible.</p>
 <p>Returns: nothing</p>
@@ -180,7 +184,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putlog-text">
-<h3>putlog &lt;text&gt;<a class="headerlink" href="#putlog-text" title="Permalink to this heading">¶</a></h3>
+<h3>putlog &lt;text&gt;<a class="headerlink" href="#putlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: logs &lt;text&gt; to the logfile and partyline if the ‘misc’ flag (o) is active via the ‘logfile’ config file setting and the ‘.console’ partyline setting, respectively.</p>
 <p>Returns: nothing</p>
@@ -188,7 +192,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putcmdlog-text">
-<h3>putcmdlog &lt;text&gt;<a class="headerlink" href="#putcmdlog-text" title="Permalink to this heading">¶</a></h3>
+<h3>putcmdlog &lt;text&gt;<a class="headerlink" href="#putcmdlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: logs &lt;text&gt; to the logfile and partyline if the ‘cmds’ flag (c) is active via the ‘logfile’ config file setting and the ‘.console’ partyline setting, respectively.</p>
 <p>Returns: nothing</p>
@@ -196,7 +200,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putxferlog-text">
-<h3>putxferlog &lt;text&gt;<a class="headerlink" href="#putxferlog-text" title="Permalink to this heading">¶</a></h3>
+<h3>putxferlog &lt;text&gt;<a class="headerlink" href="#putxferlog-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: logs &lt;text&gt; to the logfile and partyline if the ‘files’ flag (x) is active via the ‘logfile’ config file setting and the ‘.console’ partyline setting, respectively.</p>
 <p>Returns: nothing</p>
@@ -204,7 +208,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="putloglev-flag-s-channel-text">
-<h3>putloglev &lt;flag(s)&gt; &lt;channel&gt; &lt;text&gt;<a class="headerlink" href="#putloglev-flag-s-channel-text" title="Permalink to this heading">¶</a></h3>
+<h3>putloglev &lt;flag(s)&gt; &lt;channel&gt; &lt;text&gt;<a class="headerlink" href="#putloglev-flag-s-channel-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: logs &lt;text&gt; to the logfile and partyline at the log level of the specified flag. Use “*” in lieu of a flag to indicate all log levels.</p>
 <p>Returns: nothing</p>
@@ -212,7 +216,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="dumpfile-nick-filename">
-<h3>dumpfile &lt;nick&gt; &lt;filename&gt;<a class="headerlink" href="#dumpfile-nick-filename" title="Permalink to this heading">¶</a></h3>
+<h3>dumpfile &lt;nick&gt; &lt;filename&gt;<a class="headerlink" href="#dumpfile-nick-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: dumps file from the help/text directory to a user on IRC via msg (one line per msg). The user has no flags, so the flag bindings won’t work within the file.</p>
 <p>Returns: nothing</p>
@@ -220,14 +224,14 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="queuesize-queue">
-<h3>queuesize [queue]<a class="headerlink" href="#queuesize-queue" title="Permalink to this heading">¶</a></h3>
+<h3>queuesize [queue]<a class="headerlink" href="#queuesize-queue" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the number of messages in all queues. If a queue is specified, only the size of this queue is returned. Valid queues are: mode, server, help.</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="clearqueue-queue">
-<h3>clearqueue &lt;queue&gt;<a class="headerlink" href="#clearqueue-queue" title="Permalink to this heading">¶</a></h3>
+<h3>clearqueue &lt;queue&gt;<a class="headerlink" href="#clearqueue-queue" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes all messages from a queue. Valid arguments are: mode, server, help, or all.</p>
 <p>Returns: the number of deleted lines from the specified queue.</p>
@@ -235,7 +239,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="cap-ls-values-req-enabled-raw-arg">
-<h3>cap &lt;ls/values/req/enabled/raw&gt; [arg]<a class="headerlink" href="#cap-ls-values-req-enabled-raw-arg" title="Permalink to this heading">¶</a></h3>
+<h3>cap &lt;ls/values/req/enabled/raw&gt; [arg]<a class="headerlink" href="#cap-ls-values-req-enabled-raw-arg" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: displays CAP status or sends a raw CAP command to the server. “ls” will list the capabilities Eggdrop is internally tracking as supported by the server. “values” will list all capabilities and their associated CAP 302 values (if any) as a key/value pair, and “values” with a capability name as arg will list the values associated for the capability. “enabled” will list the capabilities Eggdrop is internally tracking as negotiated with the server. “req” will request the capabilities listed in “arg” from the server. “raw” will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req “foo bar”], and for example purposes, sending the same request as a raw command would be [cap raw “REQ :foo bar”].</p>
 <p>Returns: a list of CAP capabilities for the “enabled” and “ls” sub-commands; a dict of capability/value pairs for the “values” command or a list if “values” if followed by an argument; otherwise nothing.</p>
@@ -243,7 +247,7 @@ marked with vertical bars (|) on the left.</p>
 </div></blockquote>
 </section>
 <section id="tagmsg-tags-target">
-<h3>tagmsg &lt;tags&gt; &lt;target&gt;<a class="headerlink" href="#tagmsg-tags-target" title="Permalink to this heading">¶</a></h3>
+<h3>tagmsg &lt;tags&gt; &lt;target&gt;<a class="headerlink" href="#tagmsg-tags-target" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends an IRCv3 TAGMSG command to the target. Only works if message-tags has been negotiated with the server via the cap command. tags is a Tcl dict (or space-separated string) of the tags you wish to send separated by commas (do not include the &#64;prefix), and target is the nickname or channel you wish to send the tags to. To send a tag only (not a key/value pair), use a “” as the value for a key in a dict, or a “{}” if you are sending as a space-separated string.</p>
 <dl class="simple">
@@ -256,7 +260,7 @@ tagmsg “+foo bar moo baa +last {}” #channel</p>
 </div></blockquote>
 </section>
 <section id="server-add-ip-host-port-password">
-<h3>server add &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#server-add-ip-host-port-password" title="Permalink to this heading">¶</a></h3>
+<h3>server add &lt;ip/host&gt; [[+]port [password]]<a class="headerlink" href="#server-add-ip-host-port-password" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a server to the list of servers Eggdrop will connect to. Prefix the port with ‘+’ to indicate an SSL-protected port. A port value is required if password is to be specified. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
 <p>Returns: nothing</p>
@@ -264,7 +268,7 @@ tagmsg “+foo bar moo baa +last {}” #channel</p>
 </div></blockquote>
 </section>
 <section id="server-remove-ip-host-port">
-<h3>server remove &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#server-remove-ip-host-port" title="Permalink to this heading">¶</a></h3>
+<h3>server remove &lt;ip/host&gt; [[+]port]<a class="headerlink" href="#server-remove-ip-host-port" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a server from the list of servers Eggdrop will connect to. If no port is provided, all servers matching the ip or hostname provided will be removed, otherwise only the ip/host with the corresponding port will be removed. The SSL status (+) of the provided port is matched against as well (ie, 7000 is not the same as +7000).</p>
 <p>Returns: nothing</p>
@@ -272,7 +276,7 @@ tagmsg “+foo bar moo baa +last {}” #channel</p>
 </div></blockquote>
 </section>
 <section id="server-list">
-<h3>server list<a class="headerlink" href="#server-list" title="Permalink to this heading">¶</a></h3>
+<h3>server list<a class="headerlink" href="#server-list" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: lists all servers currently added to the bots internal server list</p>
 <p>Returns: A list of lists in the format {{hostname} {port} {password}}</p>
@@ -281,23 +285,23 @@ tagmsg “+foo bar moo baa +last {}” #channel</p>
 </section>
 </section>
 <section id="user-record-manipulation-commands">
-<h2>User Record Manipulation Commands<a class="headerlink" href="#user-record-manipulation-commands" title="Permalink to this heading">¶</a></h2>
+<h2>User Record Manipulation Commands<a class="headerlink" href="#user-record-manipulation-commands" title="Permalink to this headline">¶</a></h2>
 <section id="countusers">
-<h3>countusers<a class="headerlink" href="#countusers" title="Permalink to this heading">¶</a></h3>
+<h3>countusers<a class="headerlink" href="#countusers" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: number of users in the bot’s database</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="validuser-handle">
-<h3>validuser &lt;handle&gt;<a class="headerlink" href="#validuser-handle" title="Permalink to this heading">¶</a></h3>
+<h3>validuser &lt;handle&gt;<a class="headerlink" href="#validuser-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if a user by that name exists; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="finduser-account-value">
-<h3>finduser [-account] &lt;value&gt;<a class="headerlink" href="#finduser-account-value" title="Permalink to this heading">¶</a></h3>
+<h3>finduser [-account] &lt;value&gt;<a class="headerlink" href="#finduser-account-value" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: finds the internal user record which most closely matches the given value. When used with the -account flag, value is a services account name, otherwise by default value is a string in the hostmask format of nick!user&#64;host.</p>
 <p>Returns: the handle found, or “*” if none</p>
@@ -305,14 +309,14 @@ tagmsg “+foo bar moo baa +last {}” #channel</p>
 </div></blockquote>
 </section>
 <section id="userlist-flags">
-<h3>userlist [flags]<a class="headerlink" href="#userlist-flags" title="Permalink to this heading">¶</a></h3>
+<h3>userlist [flags]<a class="headerlink" href="#userlist-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of users on the bot. You can use the flag matching system here ([global]{&amp;/|}[chan]{&amp;/|}[bot]). ‘&amp;’ specifies “and”; ‘|’ specifies “or”.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="passwdok-handle-pass">
-<h3>passwdok &lt;handle&gt; &lt;pass&gt;<a class="headerlink" href="#passwdok-handle-pass" title="Permalink to this heading">¶</a></h3>
+<h3>passwdok &lt;handle&gt; &lt;pass&gt;<a class="headerlink" href="#passwdok-handle-pass" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks the password given against the user’s password. Check against the password “-” to find out if a user has no password set.</p>
 <p>Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password “-”: 1 if the user has no password set; 0 otherwise.</p>
@@ -320,10 +324,14 @@ tagmsg “+foo bar moo baa +last {}” #channel</p>
 </div></blockquote>
 </section>
 <section id="getuser-handle-entry-type-extra-info">
-<h3>getuser &lt;handle&gt; [entry-type] [extra info]<a class="headerlink" href="#getuser-handle-entry-type-extra-info" title="Permalink to this heading">¶</a></h3>
+<h3>getuser &lt;handle&gt; [entry-type] [extra info]<a class="headerlink" href="#getuser-handle-entry-type-extra-info" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>ACCOUNT</p></td>
 <td><p>returns thee a list of servivce accounts associated with the user</p></td>
@@ -365,10 +373,14 @@ exists.</p></td>
 </div></blockquote>
 </section>
 <section id="setuser-handle-entry-type-extra-info">
-<h3>setuser &lt;handle&gt; &lt;entry-type&gt; [extra info]<a class="headerlink" href="#setuser-handle-entry-type-extra-info" title="Permalink to this heading">¶</a></h3>
+<h3>setuser &lt;handle&gt; &lt;entry-type&gt; [extra info]<a class="headerlink" href="#setuser-handle-entry-type-extra-info" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: this is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser’s.</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 91%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Type</p></th>
 <th class="head"><p>Extra Info</p></th>
@@ -425,7 +437,7 @@ anything.</p>
 </div></blockquote>
 </section>
 <section id="chhandle-old-handle-new-handle">
-<h3>chhandle &lt;old-handle&gt; &lt;new-handle&gt;<a class="headerlink" href="#chhandle-old-handle-new-handle" title="Permalink to this heading">¶</a></h3>
+<h3>chhandle &lt;old-handle&gt; &lt;new-handle&gt;<a class="headerlink" href="#chhandle-old-handle-new-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes a user’s handle</p>
 <p>Returns: 1 on success; 0 if the new handle is invalid or already used, or if the user can’t be found</p>
@@ -433,7 +445,7 @@ anything.</p>
 </div></blockquote>
 </section>
 <section id="chattr-handle-changes-channel">
-<h3>chattr &lt;handle&gt; [changes [channel]]<a class="headerlink" href="#chattr-handle-changes-channel" title="Permalink to this heading">¶</a></h3>
+<h3>chattr &lt;handle&gt; [changes [channel]]<a class="headerlink" href="#chattr-handle-changes-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes the attributes for a user record, if you include any.
 Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If changes are specified in the format of |&lt;changes&gt; &lt;channel&gt;, the channel-specific flags for that channel are altered. You can now use the +o|-o #channel format here too.</p>
@@ -442,7 +454,7 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 </div></blockquote>
 </section>
 <section id="botattr-handle-changes-channel">
-<h3>botattr &lt;handle&gt; [changes [channel]]<a class="headerlink" href="#botattr-handle-changes-channel" title="Permalink to this heading">¶</a></h3>
+<h3>botattr &lt;handle&gt; [changes [channel]]<a class="headerlink" href="#botattr-handle-changes-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: similar to chattr except this modifies bot flags rather than normal user attributes.</p>
 <p>Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. “*” is returned if the specified bot does not exist.</p>
@@ -450,7 +462,7 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 </div></blockquote>
 </section>
 <section id="matchattr-handle-flags-channel">
-<span id="matchattr"></span><h3>matchattr &lt;handle&gt; &lt;flags&gt; [channel]<a class="headerlink" href="#matchattr-handle-flags-channel" title="Permalink to this heading">¶</a></h3>
+<span id="matchattr"></span><h3>matchattr &lt;handle&gt; &lt;flags&gt; [channel]<a class="headerlink" href="#matchattr-handle-flags-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if the flags of the specified user match the flags provided. “flags” is of the form:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[+/-]&lt;global flags&gt;[&amp;/|&lt;channel flags&gt;[&amp;/|&lt;bot flags&gt;]]
@@ -462,7 +474,7 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 </div></blockquote>
 </section>
 <section id="adduser-handle-hostmask">
-<h3>adduser &lt;handle&gt; [hostmask]<a class="headerlink" href="#adduser-handle-hostmask" title="Permalink to this heading">¶</a></h3>
+<h3>adduser &lt;handle&gt; [hostmask]<a class="headerlink" href="#adduser-handle-hostmask" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: creates a new user entry with the handle and hostmask given (with no password and the default flags)</p>
 <p>Returns: 1 if successful; 0 if the handle already exists</p>
@@ -470,7 +482,7 @@ Changes are of the form ‘+f’, ‘-o’, ‘+dk’, ‘-o+d’, etc. If chang
 </div></blockquote>
 </section>
 <section id="addbot-handle-address-botport-userport">
-<h3>addbot &lt;handle&gt; &lt;address&gt; [botport [userport]]<a class="headerlink" href="#addbot-handle-address-botport-userport" title="Permalink to this heading">¶</a></h3>
+<h3>addbot &lt;handle&gt; &lt;address&gt; [botport [userport]]<a class="headerlink" href="#addbot-handle-address-botport-userport" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a new bot to the userlist with the handle and botaddress given (with no password and no flags). &lt;address&gt; format is one of:</p>
 <ul class="simple">
@@ -487,7 +499,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="deluser-handle">
-<h3>deluser &lt;handle&gt;<a class="headerlink" href="#deluser-handle" title="Permalink to this heading">¶</a></h3>
+<h3>deluser &lt;handle&gt;<a class="headerlink" href="#deluser-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to erase the user record for a handle</p>
 <p>Returns: 1 if successful, 0 if no such user exists</p>
@@ -495,7 +507,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="delhost-handle-hostmask">
-<h3>delhost &lt;handle&gt; &lt;hostmask&gt;<a class="headerlink" href="#delhost-handle-hostmask" title="Permalink to this heading">¶</a></h3>
+<h3>delhost &lt;handle&gt; &lt;hostmask&gt;<a class="headerlink" href="#delhost-handle-hostmask" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: deletes a hostmask from a user’s host list</p>
 <p>Returns: 1 on success; 0 if the hostmask (or user) doesn’t exist</p>
@@ -503,7 +515,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="addchanrec-handle-channel">
-<h3>addchanrec &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#addchanrec-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>addchanrec &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#addchanrec-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a channel record for a user</p>
 <p>Returns: 1 on success; 0 if the user or channel does not exist</p>
@@ -511,7 +523,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="delchanrec-handle-channel">
-<h3>delchanrec &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#delchanrec-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>delchanrec &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#delchanrec-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a channel record for a user. This includes all associated channel flags.</p>
 <p>Returns: 1 on success; 0 if the user or channel does not exist</p>
@@ -519,21 +531,21 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="haschanrec-handle-channel">
-<h3>haschanrec &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#haschanrec-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>haschanrec &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#haschanrec-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the given handle has a chanrec for the specified channel; 0 otherwise</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="getchaninfo-handle-channel">
-<h3>getchaninfo &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#getchaninfo-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>getchaninfo &lt;handle&gt; &lt;channel&gt;<a class="headerlink" href="#getchaninfo-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: info line for a specific channel (behaves just like ‘getinfo’)</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="setchaninfo-handle-channel-info">
-<h3>setchaninfo &lt;handle&gt; &lt;channel&gt; &lt;info&gt;<a class="headerlink" href="#setchaninfo-handle-channel-info" title="Permalink to this heading">¶</a></h3>
+<h3>setchaninfo &lt;handle&gt; &lt;channel&gt; &lt;info&gt;<a class="headerlink" href="#setchaninfo-handle-channel-info" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets the info line on a specific channel for a user. If info is “none”, it will be removed.</p>
 <p>Returns: nothing</p>
@@ -541,11 +553,15 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="newchanban-channel-ban-creator-comment-lifetime-options">
-<h3>newchanban &lt;channel&gt; &lt;ban&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newchanban-channel-ban-creator-comment-lifetime-options" title="Permalink to this heading">¶</a></h3>
+<h3>newchanban &lt;channel&gt; &lt;ban&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newchanban-channel-ban-creator-comment-lifetime-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a ban to the ban list of a channel; creator is given credit for the ban in the ban list. lifetime is specified in minutes. If lifetime is not specified, ban-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent ban.</p>
 <p>Options:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>sticky</p></td>
 <td><p>forces the ban to be always active on a channel, even with dynamicbans on</p></td>
@@ -557,11 +573,15 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="newban-ban-creator-comment-lifetime-options">
-<h3>newban &lt;ban&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newban-ban-creator-comment-lifetime-options" title="Permalink to this heading">¶</a></h3>
+<h3>newban &lt;ban&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newban-ban-creator-comment-lifetime-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a ban to the global ban list (which takes effect on all channels); creator is given credit for the ban in the ban list. lifetime is specified in minutes. If lifetime is not specified, default-ban-time (usually 120) is used. Setting the lifetime to 0 makes it a permanent ban.</p>
 <p>Options:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>sticky</p></td>
 <td><p>forces the ban to be always active on a channel, even with dynamicbans on</p></td>
@@ -573,11 +593,15 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="newchanexempt-channel-exempt-creator-comment-lifetime-options">
-<h3>newchanexempt &lt;channel&gt; &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newchanexempt-channel-exempt-creator-comment-lifetime-options" title="Permalink to this heading">¶</a></h3>
+<h3>newchanexempt &lt;channel&gt; &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newchanexempt-channel-exempt-creator-comment-lifetime-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a exempt to the exempt list of a channel; creator is given credit for the exempt in the exempt list. lifetime is specified in minutes. If lifetime is not specified, exempt-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent exempt. The exempt will not be removed until the corresponding ban has been removed. For timed bans, once the time period has expired, the exempt will not be removed until the corresponding ban has either expired or been removed.</p>
 <p>Options:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>sticky</p></td>
 <td><p>forces the exempt to be always active on a channel, even with dynamicexempts on</p></td>
@@ -589,11 +613,15 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="newexempt-exempt-creator-comment-lifetime-options">
-<h3>newexempt &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newexempt-exempt-creator-comment-lifetime-options" title="Permalink to this heading">¶</a></h3>
+<h3>newexempt &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newexempt-exempt-creator-comment-lifetime-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a exempt to the global exempt list (which takes effect on all channels); creator is given credit for the exempt in the exempt list. lifetime is specified in minutes. If lifetime is not specified, exempt-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent exempt. The exempt will not be removed until the corresponding ban has been removed.</p>
 <p>Options:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>sticky</p></td>
 <td><p>forces the exempt to be always active on a channel, even with dynamicexempts on</p></td>
@@ -605,11 +633,15 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="newchaninvite-channel-invite-creator-comment-lifetime-options">
-<h3>newchaninvite &lt;channel&gt; &lt;invite&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newchaninvite-channel-invite-creator-comment-lifetime-options" title="Permalink to this heading">¶</a></h3>
+<h3>newchaninvite &lt;channel&gt; &lt;invite&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newchaninvite-channel-invite-creator-comment-lifetime-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a invite to the invite list of a channel; creator is given credit for the invite in the invite list. lifetime is specified in minutes. If lifetime is not specified, invite-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent invite. The invite will not be removed until the channel has gone -i.</p>
 <p>Options:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>sticky</p></td>
 <td><p>forces the invite to be always active on a channel, even with dynamicinvites on</p></td>
@@ -621,11 +653,15 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="newinvite-invite-creator-comment-lifetime-options">
-<h3>newinvite &lt;invite&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newinvite-invite-creator-comment-lifetime-options" title="Permalink to this heading">¶</a></h3>
+<h3>newinvite &lt;invite&gt; &lt;creator&gt; &lt;comment&gt; [lifetime] [options]<a class="headerlink" href="#newinvite-invite-creator-comment-lifetime-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a invite to the global invite list (which takes effect on all channels); creator is given credit for the invite in the invite list. lifetime is specified in minutes. If lifetime is not specified, invite-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent invite. The invite will not be removed until the channel has gone -i.</p>
 <p>Options:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>sticky</p></td>
 <td><p>forces the invite to be always active on a channel, even with dynamicinvites on</p></td>
@@ -637,7 +673,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="stickban-banmask-channel">
-<h3>stickban &lt;banmask&gt; [channel]<a class="headerlink" href="#stickban-banmask-channel" title="Permalink to this heading">¶</a></h3>
+<h3>stickban &lt;banmask&gt; [channel]<a class="headerlink" href="#stickban-banmask-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes a ban sticky, or, if a channel is specified, then it is set sticky on that channel only.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -645,7 +681,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="unstickban-banmask-channel">
-<h3>unstickban &lt;banmask&gt; [channel]<a class="headerlink" href="#unstickban-banmask-channel" title="Permalink to this heading">¶</a></h3>
+<h3>unstickban &lt;banmask&gt; [channel]<a class="headerlink" href="#unstickban-banmask-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes a ban no longer sticky, or, if a channel is specified, then it is unstuck on that channel only.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -653,7 +689,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="stickexempt-exemptmask-channel">
-<h3>stickexempt &lt;exemptmask&gt; [channel]<a class="headerlink" href="#stickexempt-exemptmask-channel" title="Permalink to this heading">¶</a></h3>
+<h3>stickexempt &lt;exemptmask&gt; [channel]<a class="headerlink" href="#stickexempt-exemptmask-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes an exempt sticky, or, if a channel is specified, then it is set sticky on that channel only.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -661,7 +697,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="unstickexempt-exemptmask-channel">
-<h3>unstickexempt &lt;exemptmask&gt; [channel]<a class="headerlink" href="#unstickexempt-exemptmask-channel" title="Permalink to this heading">¶</a></h3>
+<h3>unstickexempt &lt;exemptmask&gt; [channel]<a class="headerlink" href="#unstickexempt-exemptmask-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes an exempt no longer sticky, or, if a channel is specified, then it is unstuck on that channel only.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -669,7 +705,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="stickinvite-invitemask-channel">
-<h3>stickinvite &lt;invitemask&gt; [channel]<a class="headerlink" href="#stickinvite-invitemask-channel" title="Permalink to this heading">¶</a></h3>
+<h3>stickinvite &lt;invitemask&gt; [channel]<a class="headerlink" href="#stickinvite-invitemask-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes an invite sticky, or, if a channel is specified, then it is set sticky on that channel only.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -677,7 +713,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="unstickinvite-invitemask-channel">
-<h3>unstickinvite &lt;invitemask&gt; [channel]<a class="headerlink" href="#unstickinvite-invitemask-channel" title="Permalink to this heading">¶</a></h3>
+<h3>unstickinvite &lt;invitemask&gt; [channel]<a class="headerlink" href="#unstickinvite-invitemask-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes an invite no longer sticky, or, if a channel is specified, then it is unstuck on that channel only.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -685,7 +721,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="killchanban-channel-ban">
-<h3>killchanban &lt;channel&gt; &lt;ban&gt;<a class="headerlink" href="#killchanban-channel-ban" title="Permalink to this heading">¶</a></h3>
+<h3>killchanban &lt;channel&gt; &lt;ban&gt;<a class="headerlink" href="#killchanban-channel-ban" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a ban from the ban list for a channel</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -693,7 +729,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="killban-ban">
-<h3>killban &lt;ban&gt;<a class="headerlink" href="#killban-ban" title="Permalink to this heading">¶</a></h3>
+<h3>killban &lt;ban&gt;<a class="headerlink" href="#killban-ban" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a ban from the global ban list</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -701,7 +737,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="killchanexempt-channel-exempt">
-<h3>killchanexempt &lt;channel&gt; &lt;exempt&gt;<a class="headerlink" href="#killchanexempt-channel-exempt" title="Permalink to this heading">¶</a></h3>
+<h3>killchanexempt &lt;channel&gt; &lt;exempt&gt;<a class="headerlink" href="#killchanexempt-channel-exempt" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes an exempt from the exempt list for a channel</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -709,7 +745,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="killexempt-exempt">
-<h3>killexempt &lt;exempt&gt;<a class="headerlink" href="#killexempt-exempt" title="Permalink to this heading">¶</a></h3>
+<h3>killexempt &lt;exempt&gt;<a class="headerlink" href="#killexempt-exempt" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes an exempt from the global exempt list</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -717,7 +753,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="killchaninvite-channel-invite">
-<h3>killchaninvite &lt;channel&gt; &lt;invite&gt;<a class="headerlink" href="#killchaninvite-channel-invite" title="Permalink to this heading">¶</a></h3>
+<h3>killchaninvite &lt;channel&gt; &lt;invite&gt;<a class="headerlink" href="#killchaninvite-channel-invite" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes an invite from the invite list for a channel</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -725,7 +761,7 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="killinvite-invite">
-<h3>killinvite &lt;invite&gt;<a class="headerlink" href="#killinvite-invite" title="Permalink to this heading">¶</a></h3>
+<h3>killinvite &lt;invite&gt;<a class="headerlink" href="#killinvite-invite" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes an invite from the global invite list</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -733,91 +769,91 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
 </div></blockquote>
 </section>
 <section id="ischanjuped-channel">
-<h3>ischanjuped &lt;channel&gt;<a class="headerlink" href="#ischanjuped-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ischanjuped &lt;channel&gt;<a class="headerlink" href="#ischanjuped-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the channel is juped, and the bot is unable to join; 0 otherwise</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isban-ban-channel-channel">
-<h3>isban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isban-ban-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isban-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="ispermban-ban-channel-channel">
-<h3>ispermban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#ispermban-ban-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ispermban &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#ispermban-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isexempt-exempt-channel-channel">
-<h3>isexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexempt-exempt-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexempt-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="ispermexempt-exempt-channel-channel">
-<h3>ispermexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#ispermexempt-exempt-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ispermexempt &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#ispermexempt-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isinvite-invite-channel-channel">
-<h3>isinvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvite-invite-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isinvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvite-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isperminvite-invite-channel-channel">
-<h3>isperminvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isperminvite-invite-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isperminvite &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isperminvite-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isbansticky-ban-channel-channel">
-<h3>isbansticky &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isbansticky-ban-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isbansticky &lt;ban&gt; [channel [-channel]]<a class="headerlink" href="#isbansticky-ban-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well. If the -channel flag is used at the end of the command, *only* the channel bans are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isexemptsticky-exempt-channel-channel">
-<h3>isexemptsticky &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexemptsticky-exempt-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isexemptsticky &lt;exempt&gt; [channel [-channel]]<a class="headerlink" href="#isexemptsticky-exempt-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well. If the -channel flag is used at the end of the command, *only* the channel exempts are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isinvitesticky-invite-channel-channel">
-<h3>isinvitesticky &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvitesticky-invite-channel-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isinvitesticky &lt;invite&gt; [channel [-channel]]<a class="headerlink" href="#isinvitesticky-invite-channel-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel’s invite list is checked as well. If the -channel flag is used at the end of the command, *only* the channel invites are checked.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="matchban-nick-user-host-channel">
-<h3>matchban &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchban-nick-user-host-channel" title="Permalink to this heading">¶</a></h3>
+<h3>matchban &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchban-nick-user-host-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified nick!user&#64;host matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel’s ban list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="matchexempt-nick-user-host-channel">
-<h3>matchexempt &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchexempt-nick-user-host-channel" title="Permalink to this heading">¶</a></h3>
+<h3>matchexempt &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchexempt-nick-user-host-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified nick!user&#64;host matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel’s exempt list is checked as well.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="matchinvite-nick-user-host-channel">
-<h3>matchinvite &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchinvite-nick-user-host-channel" title="Permalink to this heading">¶</a></h3>
+<h3>matchinvite &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [channel]<a class="headerlink" href="#matchinvite-nick-user-host-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified nick!user&#64;host matches an invite in the global invite list; 0 otherwise. If a channel is specified, that
 channel’s invite list is checked as well.</p>
@@ -825,28 +861,28 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="banlist-channel">
-<h3>banlist [channel]<a class="headerlink" href="#banlist-channel" title="Permalink to this heading">¶</a></h3>
+<h3>banlist [channel]<a class="headerlink" href="#banlist-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of global bans, or, if a channel is specified, a list of channel-specific bans. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="exemptlist-channel">
-<h3>exemptlist [channel]<a class="headerlink" href="#exemptlist-channel" title="Permalink to this heading">¶</a></h3>
+<h3>exemptlist [channel]<a class="headerlink" href="#exemptlist-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of global exempts, or, if a channel is specified, a list of channel-specific exempts. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="invitelist-channel">
-<h3>invitelist [channel]<a class="headerlink" href="#invitelist-channel" title="Permalink to this heading">¶</a></h3>
+<h3>invitelist [channel]<a class="headerlink" href="#invitelist-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of global invites, or, if a channel is specified, a list of channel-specific invites. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="newignore-hostmask-creator-comment-lifetime">
-<h3>newignore &lt;hostmask&gt; &lt;creator&gt; &lt;comment&gt; [lifetime]<a class="headerlink" href="#newignore-hostmask-creator-comment-lifetime" title="Permalink to this heading">¶</a></h3>
+<h3>newignore &lt;hostmask&gt; &lt;creator&gt; &lt;comment&gt; [lifetime]<a class="headerlink" href="#newignore-hostmask-creator-comment-lifetime" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds an entry to the ignore list; creator is given credit for the ignore. lifetime is how many minutes until the ignore expires and is removed. If lifetime is not specified, ignore-time (usually 60) is used. Setting the lifetime to 0 makes it a permanent ignore.</p>
 <p>Returns: nothing</p>
@@ -854,7 +890,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="killignore-hostmask">
-<h3>killignore &lt;hostmask&gt;<a class="headerlink" href="#killignore-hostmask" title="Permalink to this heading">¶</a></h3>
+<h3>killignore &lt;hostmask&gt;<a class="headerlink" href="#killignore-hostmask" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes an entry from the ignore list</p>
 <p>Returns: 1 if successful; 0 otherwise</p>
@@ -862,21 +898,21 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="ignorelist">
-<h3>ignorelist<a class="headerlink" href="#ignorelist" title="Permalink to this heading">¶</a></h3>
+<h3>ignorelist<a class="headerlink" href="#ignorelist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of ignores. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, and creator. The timestamps are in unixtime format.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="isignore-hostmask">
-<h3>isignore &lt;hostmask&gt;<a class="headerlink" href="#isignore-hostmask" title="Permalink to this heading">¶</a></h3>
+<h3>isignore &lt;hostmask&gt;<a class="headerlink" href="#isignore-hostmask" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the ignore is in the list; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="save">
-<h3>save<a class="headerlink" href="#save" title="Permalink to this heading">¶</a></h3>
+<h3>save<a class="headerlink" href="#save" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: writes the user and channel files to disk</p>
 <p>Returns: nothing</p>
@@ -884,7 +920,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="reload">
-<h3>reload<a class="headerlink" href="#reload" title="Permalink to this heading">¶</a></h3>
+<h3>reload<a class="headerlink" href="#reload" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: loads the userfile from disk, replacing whatever is in memory</p>
 <p>Returns: nothing</p>
@@ -892,7 +928,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="backup">
-<h3>backup<a class="headerlink" href="#backup" title="Permalink to this heading">¶</a></h3>
+<h3>backup<a class="headerlink" href="#backup" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes a simple backup of the userfile that’s on disk. If the channels module is loaded, this also makes a simple backup of the channel file.</p>
 <p>Returns: nothing</p>
@@ -900,7 +936,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="getting-users">
-<h3>getting-users<a class="headerlink" href="#getting-users" title="Permalink to this heading">¶</a></h3>
+<h3>getting-users<a class="headerlink" href="#getting-users" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the bot is currently downloading a userfile from a sharebot (and hence, user records are about to drastically change); 0 if not</p>
 <p>Module: core</p>
@@ -908,9 +944,9 @@ channel’s invite list is checked as well.</p>
 </section>
 </section>
 <section id="channel-commands">
-<h2>Channel Commands<a class="headerlink" href="#channel-commands" title="Permalink to this heading">¶</a></h2>
+<h2>Channel Commands<a class="headerlink" href="#channel-commands" title="Permalink to this headline">¶</a></h2>
 <section id="channel-add-name-option-list">
-<h3>channel add &lt;name&gt; [option-list]<a class="headerlink" href="#channel-add-name-option-list" title="Permalink to this heading">¶</a></h3>
+<h3>channel add &lt;name&gt; [option-list]<a class="headerlink" href="#channel-add-name-option-list" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: adds a channel record for the bot to monitor. The full list of possible options are given in doc/settings/mod.channels. Note that the channel options must be in a list (enclosed in {}).</p>
 <p>Returns: nothing</p>
@@ -918,7 +954,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="channel-set-name-options">
-<h3>channel set &lt;name&gt; &lt;options…&gt;<a class="headerlink" href="#channel-set-name-options" title="Permalink to this heading">¶</a></h3>
+<h3>channel set &lt;name&gt; &lt;options…&gt;<a class="headerlink" href="#channel-set-name-options" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.</p>
 <p>Returns: nothing</p>
@@ -926,21 +962,21 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="channel-info-name">
-<h3>channel info &lt;name&gt;<a class="headerlink" href="#channel-info-name" title="Permalink to this heading">¶</a></h3>
+<h3>channel info &lt;name&gt;<a class="headerlink" href="#channel-info-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of info about the specified channel’s settings.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="channel-get-name-setting">
-<h3>channel get &lt;name&gt; [setting]<a class="headerlink" href="#channel-get-name-setting" title="Permalink to this heading">¶</a></h3>
+<h3>channel get &lt;name&gt; [setting]<a class="headerlink" href="#channel-get-name-setting" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: The value of the setting you specify. For flags, a value of 0 means it is disabled (-), and non-zero means enabled (+). If no setting is specified, a flat list of all available settings and their values will be returned.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="channel-remove-name">
-<h3>channel remove &lt;name&gt;<a class="headerlink" href="#channel-remove-name" title="Permalink to this heading">¶</a></h3>
+<h3>channel remove &lt;name&gt;<a class="headerlink" href="#channel-remove-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a channel record from the bot and makes the bot no longer monitor the channel</p>
 <p>Returns: nothing</p>
@@ -948,7 +984,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="savechannels">
-<h3>savechannels<a class="headerlink" href="#savechannels" title="Permalink to this heading">¶</a></h3>
+<h3>savechannels<a class="headerlink" href="#savechannels" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: saves the channel settings to the channel-file if one is defined.</p>
 <p>Returns: nothing</p>
@@ -956,7 +992,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="loadchannels">
-<h3>loadchannels<a class="headerlink" href="#loadchannels" title="Permalink to this heading">¶</a></h3>
+<h3>loadchannels<a class="headerlink" href="#loadchannels" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: reloads the channel settings from the channel-file if one is defined.</p>
 <p>Returns: nothing</p>
@@ -964,17 +1000,17 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="channels">
-<h3>channels<a class="headerlink" href="#channels" title="Permalink to this heading">¶</a></h3>
+<h3>channels<a class="headerlink" href="#channels" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of the channels the bot has a channel record for</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="channame2dname-channel-name">
-<h3>channame2dname &lt;channel-name&gt;<a class="headerlink" href="#channame2dname-channel-name" title="Permalink to this heading">¶</a></h3>
+<h3>channame2dname &lt;channel-name&gt;<a class="headerlink" href="#channame2dname-channel-name" title="Permalink to this headline">¶</a></h3>
 </section>
 <section id="chandname2name-channel-dname">
-<h3>chandname2name &lt;channel-dname&gt;<a class="headerlink" href="#chandname2name-channel-dname" title="Permalink to this heading">¶</a></h3>
+<h3>chandname2name &lt;channel-dname&gt;<a class="headerlink" href="#chandname2name-channel-dname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: these two functions are important to correctly support !channels. The bot differentiates between channel description names (chan dnames) and real channel names (chan names). The chan dnames are what you would normally call the channel, such as “!channel”. The chan names are what the IRC server uses to identify the channel. They consist of the chan dname prefixed with an ID; such as “!ABCDEchannel”.</p>
 <p>For bot functions like isop, isvoice, etc. you need to know the chan dnames. If you communicate with the server, you usually get the chan name, though. That’s what you need the channame2dname function for.</p>
@@ -984,77 +1020,77 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="isbotnick-nick">
-<h3>isbotnick &lt;nick&gt;<a class="headerlink" href="#isbotnick-nick" title="Permalink to this heading">¶</a></h3>
+<h3>isbotnick &lt;nick&gt;<a class="headerlink" href="#isbotnick-nick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the nick matches the botnick; 0 otherwise</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="botisop-channel">
-<h3>botisop [channel]<a class="headerlink" href="#botisop-channel" title="Permalink to this heading">¶</a></h3>
+<h3>botisop [channel]<a class="headerlink" href="#botisop-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the bot has ops on the specified channel (or any channel if no channel is specified); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="botishalfop-channel">
-<h3>botishalfop [channel]<a class="headerlink" href="#botishalfop-channel" title="Permalink to this heading">¶</a></h3>
+<h3>botishalfop [channel]<a class="headerlink" href="#botishalfop-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the bot has halfops on the specified channel (or any channel if no channel is specified); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="botisvoice-channel">
-<h3>botisvoice [channel]<a class="headerlink" href="#botisvoice-channel" title="Permalink to this heading">¶</a></h3>
+<h3>botisvoice [channel]<a class="headerlink" href="#botisvoice-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the bot has a voice on the specified channel (or any channel if no channel is specified); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="botonchan-channel">
-<h3>botonchan [channel]<a class="headerlink" href="#botonchan-channel" title="Permalink to this heading">¶</a></h3>
+<h3>botonchan [channel]<a class="headerlink" href="#botonchan-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the bot is on the specified channel (or any channel if no channel is specified); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="isop-nickname-channel">
-<h3>isop &lt;nickname&gt; [channel]<a class="headerlink" href="#isop-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isop &lt;nickname&gt; [channel]<a class="headerlink" href="#isop-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has ops; 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="ishalfop-nickname-channel">
-<h3>ishalfop &lt;nickname&gt; [channel]<a class="headerlink" href="#ishalfop-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ishalfop &lt;nickname&gt; [channel]<a class="headerlink" href="#ishalfop-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has halfops; 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="wasop-nickname-channel">
-<h3>wasop &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#wasop-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>wasop &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#wasop-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone that just got opped/deopped in the chan had op before the modechange; 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="washalfop-nickname-channel">
-<h3>washalfop &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#washalfop-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>washalfop &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#washalfop-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone that just got halfopped/dehalfopped in the chan had halfop before the modechange; 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="isvoice-nickname-channel">
-<h3>isvoice &lt;nickname&gt; [channel]<a class="headerlink" href="#isvoice-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isvoice &lt;nickname&gt; [channel]<a class="headerlink" href="#isvoice-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone by that nickname is on the channel (or any channel if no channel is specified) and has voice (+v); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="isidentified-nickname-channel">
-<h3>isidentified &lt;nickname&gt; [channel]<a class="headerlink" href="#isidentified-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isidentified &lt;nickname&gt; [channel]<a class="headerlink" href="#isidentified-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: determine if a user is identified to irc services. WARNING: this may not be accurate depending on the server and configuration. For accurate results, the server must support (and Eggdrop must have enabled via CAP) the account-notify and extended-join capabilities, and the server must understand WHOX requests (also known as raw 354 responses)</p>
 <p>Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); 0 otherwise.</p>
@@ -1062,7 +1098,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="isaway-nickname-channel">
-<h3>isaway &lt;nickname&gt; [channel]<a class="headerlink" href="#isaway-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isaway &lt;nickname&gt; [channel]<a class="headerlink" href="#isaway-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: determine if a user is marked as ‘away’ on a server. IMPORTANT: this command is only “mostly” reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn’t add this to your config file, it likely isn’t enabled- you can confirm using the <code class="docutils literal notranslate"><span class="pre">cap</span></code> Tcl command). Additionally, there is no way for Eggdrop (or any client) to capture a user’s away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user’s away status on join (via a JOIN bind), use <code class="docutils literal notranslate"><span class="pre">refreshchan</span> <span class="pre">&lt;channel&gt;</span> <span class="pre">w</span></code> on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.</p>
 <p>Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as ‘away’ (again, see disclaimer above) by an IRC server; 0 otherwise.</p>
@@ -1070,29 +1106,29 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="isircbot-nickname-channel">
-<h3>isircbot &lt;nickname&gt; [channel]<a class="headerlink" href="#isircbot-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isircbot &lt;nickname&gt; [channel]<a class="headerlink" href="#isircbot-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: determine if a user has denoted themselves as a bot via an ircd-defined user flag (declared via BOT in a server’s 005/ISUPPORT line). Due to server implementations, accurately monitoring this is incredibly fragile, as the flag can be added and removed by a user without any notification to other users. To ensure this status is current for use, it is recommended to use <code class="docutils literal notranslate"><span class="pre">refreshchan</span> <span class="pre">&lt;channel&gt;</span> <span class="pre">w</span></code> on a channel the user is on, which will refresh if the user is a bot or not for all users on the channel. If a server does not advertise BOT in its ISUPPORT line but still supports it (currently the case for unrealircd), you can manually set it by adding “BOT=B” (or whatever flag is used) to the isupport-default setting in your eggdrop.conf file.</p>
 <p>Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; 0 otherwise.</p>
 </div></blockquote>
 </section>
 <section id="onchan-nickname-channel">
-<h3>onchan &lt;nickname&gt; [channel]<a class="headerlink" href="#onchan-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>onchan &lt;nickname&gt; [channel]<a class="headerlink" href="#onchan-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
-<section id="monitor-command-nickname">
-<h3>monitor &lt;command&gt; [nickname]<a class="headerlink" href="#monitor-command-nickname" title="Permalink to this heading">¶</a></h3>
+<section id="monitor-add-delete-list-online-offline-status-clear-nickname">
+<h3>monitor &lt;add/delete/list/online/offline/status/clear&gt; [nickname]<a class="headerlink" href="#monitor-add-delete-list-online-offline-status-clear-nickname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The ‘add’ command sends ‘nickname’ to the server to track. The ‘delete’ command removes ‘nickname’ from being tracked by the server (or returns an error if the nickname is not present). The ‘list’ command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The ‘online’ command returns a string of tracked nicknames that are currently online. The ‘offline’ command returns a list of tracked nicknames that are currently offline.</p>
-<p>Returns: The ‘status’ command returns a ‘1’ if ‘nickname’ is online or a 0 if ‘nickname’ is offline. The ‘clear’ command removes all nicknames from the list the server is monitoring.</p>
+<div><p>Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid sub-commands are add, delete, list, online, offline, status, and clear. The ‘add’ command sends ‘nickname’ to the server to track. The ‘delete’ command removes ‘nickname’ from being tracked by the server (or returns an error if the nickname is not present). The ‘list’ command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The ‘online’ command returns a string of tracked nicknames that are currently online. The ‘offline’ command returns a list of tracked nicknames that are currently offline.</p>
+<p>Returns: The ‘add’ sub-command returns a ‘1’ if the nick was succssfully added, a ‘0’ if the nick is already in the monitor list, and a ‘2’ if the nick could not be added. The ‘delete’ sub-command returns a ‘1’ if the nick is removed, or an error if the nick is not found. The ‘status’ sub-command returns a ‘1’ if ‘nickname’ is online or a 0 if ‘nickname’ is offline. The ‘clear’ command removes all nicknames from the list the server is monitoring.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="accounttracking">
-<h3>accounttracking<a class="headerlink" href="#accounttracking" title="Permalink to this heading">¶</a></h3>
+<h3>accounttracking<a class="headerlink" href="#accounttracking" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an “Other” server).</p>
 <p>Returns: a ‘1’ if all three functionalities are present, a ‘0’ if one or more are missing.</p>
@@ -1100,91 +1136,91 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="getaccount-nickname-channel">
-<h3>getaccount &lt;nickname&gt; [channel]<a class="headerlink" href="#getaccount-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>getaccount &lt;nickname&gt; [channel]<a class="headerlink" href="#getaccount-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the services account name associated with nickname, “*” if the user is not logged into services, or “” if eggdrop does not know the account status of the user.</p>
 <p>NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.</p>
 </div></blockquote>
 </section>
 <section id="nick2hand-nickname-channel">
-<h3>nick2hand &lt;nickname&gt; [channel]<a class="headerlink" href="#nick2hand-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>nick2hand &lt;nickname&gt; [channel]<a class="headerlink" href="#nick2hand-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, “” is returned. If the nick is found but does not have a handle, “*” is returned. If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="account2nicks-handle-channel">
-<h3>account2nicks &lt;handle&gt; [channel]<a class="headerlink" href="#account2nicks-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>account2nicks &lt;handle&gt; [channel]<a class="headerlink" href="#account2nicks-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; “” is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="hand2nick-handle-channel">
-<h3>hand2nick &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nick-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>hand2nick &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nick-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user&#64;host matches the given handle; “” is returned if no match is found. If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="hand2nicks-handle-channel">
-<h3>hand2nicks &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nicks-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>hand2nicks &lt;handle&gt; [channel]<a class="headerlink" href="#hand2nicks-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user&#64;host matches the given handle; “” is returned if no match is found. If no channel is specified, all channels are checked.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="handonchan-handle-channel">
-<h3>handonchan &lt;handle&gt; [channel]<a class="headerlink" href="#handonchan-handle-channel" title="Permalink to this heading">¶</a></h3>
+<h3>handonchan &lt;handle&gt; [channel]<a class="headerlink" href="#handonchan-handle-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the the nick!user&#64;host for someone on the channel (or any channel if no channel name is specified) matches for the handle given; 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="ischanban-ban-channel">
-<h3>ischanban &lt;ban&gt; &lt;channel&gt;<a class="headerlink" href="#ischanban-ban-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ischanban &lt;ban&gt; &lt;channel&gt;<a class="headerlink" href="#ischanban-ban-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified ban is on the given channel’s ban list (not the bot’s banlist for the channel)</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="ischanexempt-exempt-channel">
-<h3>ischanexempt &lt;exempt&gt; &lt;channel&gt;<a class="headerlink" href="#ischanexempt-exempt-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ischanexempt &lt;exempt&gt; &lt;channel&gt;<a class="headerlink" href="#ischanexempt-exempt-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified exempt is on the given channel’s exempt list (not the bot’s exemptlist for the channel)</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="ischaninvite-invite-channel">
-<h3>ischaninvite &lt;invite&gt; &lt;channel&gt;<a class="headerlink" href="#ischaninvite-invite-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ischaninvite &lt;invite&gt; &lt;channel&gt;<a class="headerlink" href="#ischaninvite-invite-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the specified invite is on the given channel’s invite list (not the bot’s invitelist for the channel)</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="chanbans-channel">
-<h3>chanbans &lt;channel&gt;<a class="headerlink" href="#chanbans-channel" title="Permalink to this heading">¶</a></h3>
+<h3>chanbans &lt;channel&gt;<a class="headerlink" href="#chanbans-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of the current bans on the channel. Each element is a sublist of the form {&lt;ban&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot’s point of view</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="chanexempts-channel">
-<h3>chanexempts &lt;channel&gt;<a class="headerlink" href="#chanexempts-channel" title="Permalink to this heading">¶</a></h3>
+<h3>chanexempts &lt;channel&gt;<a class="headerlink" href="#chanexempts-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of the current exempts on the channel. Each element is a sublist of the form {&lt;exempts&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot’s point of view</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="chaninvites-channel">
-<h3>chaninvites &lt;channel&gt;<a class="headerlink" href="#chaninvites-channel" title="Permalink to this heading">¶</a></h3>
+<h3>chaninvites &lt;channel&gt;<a class="headerlink" href="#chaninvites-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of the current invites on the channel. Each element is a sublist of the form {&lt;invites&gt; &lt;bywho&gt; &lt;age&gt;}. age is seconds from the bot’s point of view</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="resetbans-channel">
-<h3>resetbans &lt;channel&gt;<a class="headerlink" href="#resetbans-channel" title="Permalink to this heading">¶</a></h3>
+<h3>resetbans &lt;channel&gt;<a class="headerlink" href="#resetbans-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes all bans on the channel that aren’t in the bot’s ban list and refreshes any bans that should be on the channel but aren’t</p>
 <p>Returns: nothing</p>
@@ -1192,7 +1228,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="resetexempts-channel">
-<h3>resetexempts &lt;channel&gt;<a class="headerlink" href="#resetexempts-channel" title="Permalink to this heading">¶</a></h3>
+<h3>resetexempts &lt;channel&gt;<a class="headerlink" href="#resetexempts-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes all exempt on the channel that aren’t in the bot’s exempt list and refreshes any exempts that should be on the channel but aren’t</p>
 <p>Returns: nothing</p>
@@ -1200,7 +1236,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="resetinvites-channel">
-<h3>resetinvites &lt;channel&gt;<a class="headerlink" href="#resetinvites-channel" title="Permalink to this heading">¶</a></h3>
+<h3>resetinvites &lt;channel&gt;<a class="headerlink" href="#resetinvites-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes all invites on the channel that aren’t in the bot’s invite list and refreshes any invites that should be on the channel but aren’t</p>
 <p>Returns: nothing</p>
@@ -1208,7 +1244,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="resetchanidle-nick-channel">
-<h3>resetchanidle [nick] &lt;channel&gt;<a class="headerlink" href="#resetchanidle-nick-channel" title="Permalink to this heading">¶</a></h3>
+<h3>resetchanidle [nick] &lt;channel&gt;<a class="headerlink" href="#resetchanidle-nick-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: resets the channel idle time for the given nick or for all nicks on the channel if no nick is specified.</p>
 <p>Returns: nothing</p>
@@ -1216,7 +1252,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="resetchanjoin-nick-channel">
-<h3>resetchanjoin [nick] &lt;channel&gt;<a class="headerlink" href="#resetchanjoin-nick-channel" title="Permalink to this heading">¶</a></h3>
+<h3>resetchanjoin [nick] &lt;channel&gt;<a class="headerlink" href="#resetchanjoin-nick-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: resets the channel join time for the given nick or for all nicks on the channel if no nick is specified.</p>
 <p>Returns: nothing</p>
@@ -1224,10 +1260,14 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="resetchan-channel-flags">
-<h3>resetchan &lt;channel&gt; [flags]<a class="headerlink" href="#resetchan-channel-flags" title="Permalink to this heading">¶</a></h3>
+<h3>resetchan &lt;channel&gt; [flags]<a class="headerlink" href="#resetchan-channel-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: clears the channel info Eggdrop is currently storing for a channel, then rereads the channel info from the server. Useful if Eggdrop gets into a bad state on a server with respect to a channel userlist, for example. If flags are specified, only the required information will be reset, according to the given flags. Available flags:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>b</p></td>
 <td><p>channel bans</p></td>
@@ -1251,10 +1291,14 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="refreshchan-channel-flags">
-<h3>refreshchan &lt;channel&gt; [flags]<a class="headerlink" href="#refreshchan-channel-flags" title="Permalink to this heading">¶</a></h3>
+<h3>refreshchan &lt;channel&gt; [flags]<a class="headerlink" href="#refreshchan-channel-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updating a user’s away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>b</p></td>
 <td><p>channel bans</p></td>
@@ -1281,28 +1325,28 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="getchanhost-nickname-channel">
-<h3>getchanhost &lt;nickname&gt; [channel]<a class="headerlink" href="#getchanhost-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>getchanhost &lt;nickname&gt; [channel]<a class="headerlink" href="#getchanhost-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: user&#64;host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), “” is returned.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="getchanjoin-nickname-channel">
-<h3>getchanjoin &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#getchanjoin-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>getchanjoin &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#getchanjoin-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: timestamp (unixtime format) of when the specified nickname joined the channel if available, 0 otherwise. Note that after a channel reset this information will be lost, even if previously available.</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="onchansplit-nick-channel">
-<h3>onchansplit &lt;nick&gt; [channel]<a class="headerlink" href="#onchansplit-nick-channel" title="Permalink to this heading">¶</a></h3>
+<h3>onchansplit &lt;nick&gt; [channel]<a class="headerlink" href="#onchansplit-nick-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if that nick is split from the channel (or any channel if no channel is specified); 0 otherwise</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="chanlist-channel-flags-chanflags">
-<h3>chanlist &lt;channel&gt; [flags][&lt;&amp;|&gt;chanflags]<a class="headerlink" href="#chanlist-channel-flags-chanflags" title="Permalink to this heading">¶</a></h3>
+<h3>chanlist &lt;channel&gt; [flags][&lt;&amp;|&gt;chanflags]<a class="headerlink" href="#chanlist-channel-flags-chanflags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: flags are any global flags; the ‘&amp;’ or ‘|’ denotes to look for channel specific flags, where ‘&amp;’ will return users having ALL chanflags and ‘|’ returns users having ANY of the chanflags (See <a class="reference internal" href="#flag-masks">Flag Masks</a> for additional information).</p>
 <p>Returns: Searching for flags optionally preceded with a ‘+’ will return a list of nicknames that have all the flags listed. Searching for flags preceded with a ‘-’ will return a list of nicknames that do not have have any of the flags (differently said, ‘-’ will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.</p>
@@ -1311,21 +1355,21 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="getchanidle-nickname-channel">
-<h3>getchanidle &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#getchanidle-nickname-channel" title="Permalink to this heading">¶</a></h3>
+<h3>getchanidle &lt;nickname&gt; &lt;channel&gt;<a class="headerlink" href="#getchanidle-nickname-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: number of minutes that person has been idle; -1 if the specified user isn’t on the channel</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="getchanmode-channel">
-<h3>getchanmode &lt;channel&gt;<a class="headerlink" href="#getchanmode-channel" title="Permalink to this heading">¶</a></h3>
+<h3>getchanmode &lt;channel&gt;<a class="headerlink" href="#getchanmode-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: string of the type “+ntik key” for the channel specified</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="jump-server-port-password">
-<h3>jump [server [[+]port [password]]]<a class="headerlink" href="#jump-server-port-password" title="Permalink to this heading">¶</a></h3>
+<h3>jump [server [[+]port [password]]]<a class="headerlink" href="#jump-server-port-password" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: jumps to the server specified, or (if none is specified) the next server in the bot’s serverlist. If you prefix the port with a plus sign (e.g. +6697), SSL connection will be attempted.</p>
 <p>Returns: nothing</p>
@@ -1333,7 +1377,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="pushmode-channel-mode-arg">
-<h3>pushmode &lt;channel&gt; &lt;mode&gt; [arg]<a class="headerlink" href="#pushmode-channel-mode-arg" title="Permalink to this heading">¶</a></h3>
+<h3>pushmode &lt;channel&gt; &lt;mode&gt; [arg]<a class="headerlink" href="#pushmode-channel-mode-arg" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends out a channel mode change (ex: pushmode #lame +o goober) through the bot’s queuing system. All the mode changes will be sent out at once (combined into one line as much as possible) after the script finishes, or when ‘flushmode’ is called.</p>
 <p>Returns: nothing</p>
@@ -1341,7 +1385,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="flushmode-channel">
-<h3>flushmode &lt;channel&gt;<a class="headerlink" href="#flushmode-channel" title="Permalink to this heading">¶</a></h3>
+<h3>flushmode &lt;channel&gt;<a class="headerlink" href="#flushmode-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: forces all previously pushed channel mode changes to be sent to the server, instead of when the script is finished (just for the channel specified)</p>
 <p>Returns: nothing</p>
@@ -1349,14 +1393,14 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="topic-channel">
-<h3>topic &lt;channel&gt;<a class="headerlink" href="#topic-channel" title="Permalink to this heading">¶</a></h3>
+<h3>topic &lt;channel&gt;<a class="headerlink" href="#topic-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: string containing the current topic of the specified channel</p>
 <p>Module: irc</p>
 </div></blockquote>
 </section>
 <section id="validchan-channel">
-<h3>validchan &lt;channel&gt;<a class="headerlink" href="#validchan-channel" title="Permalink to this heading">¶</a></h3>
+<h3>validchan &lt;channel&gt;<a class="headerlink" href="#validchan-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if the bot has a channel record for the specified channel. Note that this does not necessarily mean that the bot is ON the channel.</p>
 <p>Returns: 1 if the channel exists, 0 if not</p>
@@ -1364,14 +1408,14 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="isdynamic-channel">
-<h3>isdynamic &lt;channel&gt;<a class="headerlink" href="#isdynamic-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isdynamic &lt;channel&gt;<a class="headerlink" href="#isdynamic-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the channel is a dynamic channel; 0 otherwise</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="setudef-flag-int-str-name">
-<h3>setudef &lt;flag/int/str&gt; &lt;name&gt;<a class="headerlink" href="#setudef-flag-int-str-name" title="Permalink to this heading">¶</a></h3>
+<h3>setudef &lt;flag/int/str&gt; &lt;name&gt;<a class="headerlink" href="#setudef-flag-int-str-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: initializes a user defined channel flag, string or integer setting. You can use it like any other flag/setting. IMPORTANT: Don’t forget to reinitialize your flags/settings after a restart, or it’ll be lost.</p>
 <p>Returns: nothing</p>
@@ -1379,7 +1423,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="renudef-flag-int-str-oldname-newname">
-<h3>renudef &lt;flag/int/str&gt; &lt;oldname&gt; &lt;newname&gt;<a class="headerlink" href="#renudef-flag-int-str-oldname-newname" title="Permalink to this heading">¶</a></h3>
+<h3>renudef &lt;flag/int/str&gt; &lt;oldname&gt; &lt;newname&gt;<a class="headerlink" href="#renudef-flag-int-str-oldname-newname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: renames a user defined channel flag, string, or integer setting.</p>
 <p>Returns: nothing</p>
@@ -1387,7 +1431,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="deludef-flag-int-str-name">
-<h3>deludef &lt;flag/int/str&gt; &lt;name&gt;<a class="headerlink" href="#deludef-flag-int-str-name" title="Permalink to this heading">¶</a></h3>
+<h3>deludef &lt;flag/int/str&gt; &lt;name&gt;<a class="headerlink" href="#deludef-flag-int-str-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: deletes a user defined channel flag, string, or integer setting.</p>
 <p>Returns: nothing</p>
@@ -1395,21 +1439,21 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="getudefs-flag-int-str">
-<h3>getudefs [flag/int/str]<a class="headerlink" href="#getudefs-flag-int-str" title="Permalink to this heading">¶</a></h3>
+<h3>getudefs [flag/int/str]<a class="headerlink" href="#getudefs-flag-int-str" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of user defined channel settings of the given type, or all of them if no type is given.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="chansettype-setting">
-<h3>chansettype &lt;setting&gt;<a class="headerlink" href="#chansettype-setting" title="Permalink to this heading">¶</a></h3>
+<h3>chansettype &lt;setting&gt;<a class="headerlink" href="#chansettype-setting" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: The type of the setting you specify. The possible types are flag, int, str, pair. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.</p>
 <p>Module: channels</p>
 </div></blockquote>
 </section>
 <section id="isupport-get-key">
-<h3>isupport get [key]<a class="headerlink" href="#isupport-get-key" title="Permalink to this heading">¶</a></h3>
+<h3>isupport get [key]<a class="headerlink" href="#isupport-get-key" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description:
 - isupport get: Returns a flat key/value list (dict) of settings.
@@ -1419,7 +1463,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="isupport-isset-key">
-<h3>isupport isset &lt;key&gt;<a class="headerlink" href="#isupport-isset-key" title="Permalink to this heading">¶</a></h3>
+<h3>isupport isset &lt;key&gt;<a class="headerlink" href="#isupport-isset-key" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: Returns 0/1 depending on whether the key has a value.</p>
 <p>Returns: 0 or 1</p>
@@ -1428,17 +1472,25 @@ channel’s invite list is checked as well.</p>
 </section>
 </section>
 <section id="dcc-commands">
-<h2>DCC Commands<a class="headerlink" href="#dcc-commands" title="Permalink to this heading">¶</a></h2>
+<h2>DCC Commands<a class="headerlink" href="#dcc-commands" title="Permalink to this headline">¶</a></h2>
 <section id="putdcc-idx-text-raw">
-<h3>putdcc &lt;idx&gt; &lt;text&gt; [-raw]<a class="headerlink" href="#putdcc-idx-text-raw" title="Permalink to this heading">¶</a></h3>
+<span id="putdcc"></span><h3>putdcc &lt;idx&gt; &lt;text&gt; [-raw]<a class="headerlink" href="#putdcc-idx-text-raw" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends text to the idx specified. If -raw is specified, the text will be sent as is, without forced new lines or limits to line length.</p>
 <p>Returns: nothing</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
+<section id="putidx-idx-text-raw">
+<h3>putidx &lt;idx&gt; &lt;text&gt; -[raw]<a class="headerlink" href="#putidx-idx-text-raw" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Description. Alias for the <a class="reference internal" href="#putdcc">putdcc</a> command.</p>
+<p>Returns: nothing</p>
+<p>Module: core</p>
+</div></blockquote>
+</section>
 <section id="dccbroadcast-message">
-<h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this heading">¶</a></h3>
+<h3>dccbroadcast &lt;message&gt;<a class="headerlink" href="#dccbroadcast-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends a message to everyone on the party line across the botnet, in the form of “*** &lt;message&gt;” for local users, “*** (Bot) &lt;message&gt;” for users on other bots with version below 1.8.4, and “(Bot) &lt;message&gt;” for users on other bots with version 1.8.4+ and console log mode ‘l’ enabled</p>
 <p>Returns: nothing</p>
@@ -1446,7 +1498,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="dccputchan-channel-message">
-<h3>dccputchan &lt;channel&gt; &lt;message&gt;<a class="headerlink" href="#dccputchan-channel-message" title="Permalink to this heading">¶</a></h3>
+<h3>dccputchan &lt;channel&gt; &lt;message&gt;<a class="headerlink" href="#dccputchan-channel-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends your message to everyone on a certain channel on the botnet, in a form exactly like dccbroadcast does. Valid channels are 0 through 99999.</p>
 <p>Returns: nothing</p>
@@ -1454,7 +1506,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="boot-user-bot-reason">
-<h3>boot &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;bot">user<span>&#64;</span>bot</a>&gt; [reason]<a class="headerlink" href="#boot-user-bot-reason" title="Permalink to this heading">¶</a></h3>
+<h3>boot &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;bot">user<span>&#64;</span>bot</a>&gt; [reason]<a class="headerlink" href="#boot-user-bot-reason" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: boots a user from the partyline</p>
 <p>Returns: nothing</p>
@@ -1462,7 +1514,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="dccsimul-idx-text">
-<h3>dccsimul &lt;idx&gt; &lt;text&gt;<a class="headerlink" href="#dccsimul-idx-text" title="Permalink to this heading">¶</a></h3>
+<h3>dccsimul &lt;idx&gt; &lt;text&gt;<a class="headerlink" href="#dccsimul-idx-text" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: simulates text typed in by the dcc user specified. Note that in v0.9, this only simulated commands; now a command must be preceded by a ‘.’ to be simulated.</p>
 <p>Returns: nothing</p>
@@ -1470,35 +1522,35 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="hand2idx-handle">
-<h3>hand2idx &lt;handle&gt;<a class="headerlink" href="#hand2idx-handle" title="Permalink to this heading">¶</a></h3>
+<h3>hand2idx &lt;handle&gt;<a class="headerlink" href="#hand2idx-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the idx (a number greater than or equal to zero) for the user given if the user is on the party line in chat mode (even if she is currently on a channel or in chat off), the file area, or in the control of a script. -1 is returned if no idx is found. If the user is on multiple times, the oldest idx is returned.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="idx2hand-idx">
-<h3>idx2hand &lt;idx&gt;<a class="headerlink" href="#idx2hand-idx" title="Permalink to this heading">¶</a></h3>
+<h3>idx2hand &lt;idx&gt;<a class="headerlink" href="#idx2hand-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: handle of the user with the given idx</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="valididx-idx">
-<h3>valididx &lt;idx&gt;<a class="headerlink" href="#valididx-idx" title="Permalink to this heading">¶</a></h3>
+<h3>valididx &lt;idx&gt;<a class="headerlink" href="#valididx-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the idx currently exists; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="getchan-idx">
-<h3>getchan &lt;idx&gt;<a class="headerlink" href="#getchan-idx" title="Permalink to this heading">¶</a></h3>
+<h3>getchan &lt;idx&gt;<a class="headerlink" href="#getchan-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the current party line channel for a user on the party line; “0” indicates he’s on the group party line, “-1” means he has chat off, and a value from 1 to 99999 is a private channel</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="setchan-idx-channel">
-<h3>setchan &lt;idx&gt; &lt;channel&gt;<a class="headerlink" href="#setchan-idx-channel" title="Permalink to this heading">¶</a></h3>
+<h3>setchan &lt;idx&gt; &lt;channel&gt;<a class="headerlink" href="#setchan-idx-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets a party line user’s channel. The party line user is not notified that she is now on a new channel. A channel name can be used (provided it exists).</p>
 <p>Returns: nothing</p>
@@ -1506,7 +1558,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="console-idx-channel-console-modes">
-<h3>console &lt;idx&gt; [channel] [console-modes]<a class="headerlink" href="#console-idx-channel-console-modes" title="Permalink to this heading">¶</a></h3>
+<h3>console &lt;idx&gt; [channel] [console-modes]<a class="headerlink" href="#console-idx-channel-console-modes" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes a dcc user’s console mode, either to an absolute mode (like “mpj”) or just adding/removing flags (like “+pj” or “-moc” or “+mp-c”). The user’s console channel view can be changed also (as long as the new channel is a valid channel).</p>
 <p>Returns: a list containing the user’s (new) channel view and (new) console modes, or nothing if that user isn’t currently on the partyline</p>
@@ -1514,7 +1566,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="resetconsole-idx">
-<h3>resetconsole &lt;idx&gt;<a class="headerlink" href="#resetconsole-idx" title="Permalink to this heading">¶</a></h3>
+<h3>resetconsole &lt;idx&gt;<a class="headerlink" href="#resetconsole-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes a dcc user’s console mode to the default setting in the configfile.</p>
 <p>Returns: a list containing the user’s channel view and (new) console modes, or nothing if that user isn’t currently on the partyline</p>
@@ -1522,7 +1574,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="echo-idx-status">
-<h3>echo &lt;idx&gt; [status]<a class="headerlink" href="#echo-idx-status" title="Permalink to this heading">¶</a></h3>
+<h3>echo &lt;idx&gt; [status]<a class="headerlink" href="#echo-idx-status" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: turns a user’s echo on or off; the status has to be a 1 or 0</p>
 <p>Returns: new value of echo for that user (or the current value, if status was omitted)</p>
@@ -1530,10 +1582,14 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="strip-idx-strip-flags">
-<h3>strip &lt;idx&gt; [+/-strip-flags]<a class="headerlink" href="#strip-idx-strip-flags" title="Permalink to this heading">¶</a></h3>
+<h3>strip &lt;idx&gt; [+/-strip-flags]<a class="headerlink" href="#strip-idx-strip-flags" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: modifies the strip-flags for a user. The supported strip-flags are:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 91%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>c</p></td>
 <td><p>remove all color codes</p></td>
@@ -1569,7 +1625,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="putbot-bot-nick-message">
-<h3>putbot &lt;bot-nick&gt; &lt;message&gt;<a class="headerlink" href="#putbot-bot-nick-message" title="Permalink to this heading">¶</a></h3>
+<h3>putbot &lt;bot-nick&gt; &lt;message&gt;<a class="headerlink" href="#putbot-bot-nick-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends a message across the botnet to another bot. If no script intercepts the message on the other end, the message is ignored.</p>
 <p>Returns: nothing</p>
@@ -1577,7 +1633,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="putallbots-message">
-<h3>putallbots &lt;message&gt;<a class="headerlink" href="#putallbots-message" title="Permalink to this heading">¶</a></h3>
+<h3>putallbots &lt;message&gt;<a class="headerlink" href="#putallbots-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sends a message across the botnet to all bots. If no script intercepts the message on the other end, the message is ignored.</p>
 <p>Returns: nothing</p>
@@ -1585,7 +1641,7 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="killdcc-idx">
-<h3>killdcc &lt;idx&gt;<a class="headerlink" href="#killdcc-idx" title="Permalink to this heading">¶</a></h3>
+<h3>killdcc &lt;idx&gt;<a class="headerlink" href="#killdcc-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: kills a partyline or file area connection</p>
 <p>Returns: nothing</p>
@@ -1593,17 +1649,21 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="bots">
-<h3>bots<a class="headerlink" href="#bots" title="Permalink to this heading">¶</a></h3>
+<h3>bots<a class="headerlink" href="#bots" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: list of the bots currently connected to the botnet</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="botlist">
-<h3>botlist<a class="headerlink" href="#botlist" title="Permalink to this heading">¶</a></h3>
+<h3>botlist<a class="headerlink" href="#botlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of bots currently on the botnet. Each item in the list is a sublist with four elements: bot, uplink, version, and sharing status:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>bot</p></td>
 <td><p>the bot’s botnetnick</p></td>
@@ -1623,21 +1683,21 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="islinked-bot">
-<h3>islinked &lt;bot&gt;<a class="headerlink" href="#islinked-bot" title="Permalink to this heading">¶</a></h3>
+<h3>islinked &lt;bot&gt;<a class="headerlink" href="#islinked-bot" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: 1 if the bot is currently linked; 0 otherwise</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="dccused">
-<h3>dccused<a class="headerlink" href="#dccused" title="Permalink to this heading">¶</a></h3>
+<h3>dccused<a class="headerlink" href="#dccused" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: number of dcc connections currently in use</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="dcclist-type">
-<h3>dcclist [type]<a class="headerlink" href="#dcclist-type" title="Permalink to this heading">¶</a></h3>
+<h3>dcclist [type]<a class="headerlink" href="#dcclist-type" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of active connections, each item in the list is a sublist containing seven elements:
 {&lt;idx&gt; &lt;handle&gt; &lt;hostname&gt; &lt;[+]port&gt; &lt;type&gt; {&lt;other&gt;} &lt;timestamp&gt;}.</p>
@@ -1646,11 +1706,15 @@ channel’s invite list is checked as well.</p>
 </div></blockquote>
 </section>
 <section id="socklist-type">
-<h3>socklist [type]<a class="headerlink" href="#socklist-type" title="Permalink to this heading">¶</a></h3>
+<h3>socklist [type]<a class="headerlink" href="#socklist-type" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><blockquote>
 <div><p>Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format). The order of items returned should not be considered static or permanent, so it is recommended to access the items as key/value pairs with the dict command, as opposed to something like lindex, to extract values. The possible keys returned are:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 85%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>idx</p></td>
 <td><p>integer value assigned to Eggdrop connections</p></td>
@@ -1691,28 +1755,28 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="whom-chan">
-<h3>whom &lt;chan&gt;<a class="headerlink" href="#whom-chan" title="Permalink to this heading">¶</a></h3>
+<h3>whom &lt;chan&gt;<a class="headerlink" href="#whom-chan" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag (‘-’, ‘&#64;’, ‘+’, or ‘*’), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="getdccidle-idx">
-<h3>getdccidle &lt;idx&gt;<a class="headerlink" href="#getdccidle-idx" title="Permalink to this heading">¶</a></h3>
+<h3>getdccidle &lt;idx&gt;<a class="headerlink" href="#getdccidle-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: number of seconds the dcc chat/file system/script user has been idle</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="getdccaway-idx">
-<h3>getdccaway &lt;idx&gt;<a class="headerlink" href="#getdccaway-idx" title="Permalink to this heading">¶</a></h3>
+<h3>getdccaway &lt;idx&gt;<a class="headerlink" href="#getdccaway-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: away message for a dcc chat user (or “” if the user is not set away)</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="setdccaway-idx-message">
-<h3>setdccaway &lt;idx&gt; &lt;message&gt;<a class="headerlink" href="#setdccaway-idx-message" title="Permalink to this heading">¶</a></h3>
+<h3>setdccaway &lt;idx&gt; &lt;message&gt;<a class="headerlink" href="#setdccaway-idx-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets a party line user’s away message and marks them away. If set to “”, the user is marked as no longer away.</p>
 <p>Returns: nothing</p>
@@ -1720,7 +1784,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="connect-host-port">
-<h3>connect &lt;host&gt; &lt;[+]port&gt;<a class="headerlink" href="#connect-host-port" title="Permalink to this heading">¶</a></h3>
+<h3>connect &lt;host&gt; &lt;[+]port&gt;<a class="headerlink" href="#connect-host-port" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: makes an outgoing connection attempt and creates a dcc entry for it. A ‘control’ command should be used immediately after a successful ‘connect’ so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.</p>
 <p>Returns: idx of the new connection</p>
@@ -1728,7 +1792,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="listen-ip-port-type-options-flag">
-<h3>listen [ip] &lt;port&gt; &lt;type&gt; [options [flag]]<a class="headerlink" href="#listen-ip-port-type-options-flag" title="Permalink to this heading">¶</a></h3>
+<h3>listen [ip] &lt;port&gt; &lt;type&gt; [options [flag]]<a class="headerlink" href="#listen-ip-port-type-options-flag" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: opens a listening port to accept incoming telnets; type must be one of “bots”, “all”, “users”, “script”, or “off”. Prefixing the port with a plus sign will make eggdrop accept SSL connections on it. An IP may optionally be listed before the mandatory port argument. If no IP is specified, all available interfaces are used.</p>
 <blockquote>
@@ -1762,7 +1826,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="dccdumpfile-idx-filename">
-<h3>dccdumpfile &lt;idx&gt; &lt;filename&gt;<a class="headerlink" href="#dccdumpfile-idx-filename" title="Permalink to this heading">¶</a></h3>
+<h3>dccdumpfile &lt;idx&gt; &lt;filename&gt;<a class="headerlink" href="#dccdumpfile-idx-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: dumps out a file from the text directory to a dcc chat user. The flag matching that’s used everywhere else works here, too.</p>
 <p>Returns: nothing</p>
@@ -1771,9 +1835,9 @@ connections.</p></td>
 </section>
 </section>
 <section id="notes-module">
-<h2>Notes Module<a class="headerlink" href="#notes-module" title="Permalink to this heading">¶</a></h2>
+<h2>Notes Module<a class="headerlink" href="#notes-module" title="Permalink to this headline">¶</a></h2>
 <section id="notes-user-numberlist">
-<h3>notes &lt;user&gt; [numberlist]<a class="headerlink" href="#notes-user-numberlist" title="Permalink to this heading">¶</a></h3>
+<h3>notes &lt;user&gt; [numberlist]<a class="headerlink" href="#notes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: -1 if no such user, -2 if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{&lt;from&gt; &lt;timestamp&gt; &lt;note text&gt;}
@@ -1783,7 +1847,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="erasenotes-user-numberlist">
-<h3>erasenotes &lt;user&gt; &lt;numberlist&gt;<a class="headerlink" href="#erasenotes-user-numberlist" title="Permalink to this heading">¶</a></h3>
+<h3>erasenotes &lt;user&gt; &lt;numberlist&gt;<a class="headerlink" href="#erasenotes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: erases some or all stored notes for a user. Use ‘-’ to erase all notes.</p>
 <p>Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, or number of erased notes.</p>
@@ -1791,7 +1855,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="listnotes-user-numberlist">
-<h3>listnotes &lt;user&gt; &lt;numberlist&gt;<a class="headerlink" href="#listnotes-user-numberlist" title="Permalink to this heading">¶</a></h3>
+<h3>listnotes &lt;user&gt; &lt;numberlist&gt;<a class="headerlink" href="#listnotes-user-numberlist" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: lists existing notes according to the numberlist (ex: “2-4;8;16-“)</p>
 <p>Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, list of existing notes.</p>
@@ -1799,7 +1863,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="storenote-from-to-msg-idx">
-<h3>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt; &lt;idx&gt;<a class="headerlink" href="#storenote-from-to-msg-idx" title="Permalink to this heading">¶</a></h3>
+<h3>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt; &lt;idx&gt;<a class="headerlink" href="#storenote-from-to-msg-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: stores a note for later reading, notifies idx of any results (use idx -1 for no notify).</p>
 <p>Returns: 0 on success; non-0 on failure</p>
@@ -1808,9 +1872,9 @@ connections.</p></td>
 </section>
 </section>
 <section id="assoc-module">
-<h2>Assoc Module<a class="headerlink" href="#assoc-module" title="Permalink to this heading">¶</a></h2>
+<h2>Assoc Module<a class="headerlink" href="#assoc-module" title="Permalink to this headline">¶</a></h2>
 <section id="assoc-chan-name">
-<h3>assoc &lt;chan&gt; [name]<a class="headerlink" href="#assoc-chan-name" title="Permalink to this heading">¶</a></h3>
+<h3>assoc &lt;chan&gt; [name]<a class="headerlink" href="#assoc-chan-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets the name associated with a botnet channel, if you specify one</p>
 <p>Returns: current name for that channel, if any</p>
@@ -1818,7 +1882,7 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="killassoc-chan">
-<h3>killassoc &lt;chan&gt;<a class="headerlink" href="#killassoc-chan" title="Permalink to this heading">¶</a></h3>
+<h3>killassoc &lt;chan&gt;<a class="headerlink" href="#killassoc-chan" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes the name associated with a botnet channel, if any exists. Use ‘killassoc &amp;’ to kill all assocs.</p>
 <p>Returns: nothing</p>
@@ -1827,14 +1891,14 @@ connections.</p></td>
 </section>
 </section>
 <section id="compress-module">
-<h2>Compress Module<a class="headerlink" href="#compress-module" title="Permalink to this heading">¶</a></h2>
+<h2>Compress Module<a class="headerlink" href="#compress-module" title="Permalink to this headline">¶</a></h2>
 <section id="compressfile-level-level-src-file-target-file">
-<h3>compressfile [-level &lt;level&gt;] &lt;src-file&gt; [target-file]<a class="headerlink" href="#compressfile-level-level-src-file-target-file" title="Permalink to this heading">¶</a></h3>
+<h3>compressfile [-level &lt;level&gt;] &lt;src-file&gt; [target-file]<a class="headerlink" href="#compressfile-level-level-src-file-target-file" title="Permalink to this headline">¶</a></h3>
 <section id="and">
-<h4>and<a class="headerlink" href="#and" title="Permalink to this heading">¶</a></h4>
+<h4>and<a class="headerlink" href="#and" title="Permalink to this headline">¶</a></h4>
 </section>
 <section id="uncompressfile-src-file-target-file">
-<h4>uncompressfile &lt;src-file&gt; [target-file]<a class="headerlink" href="#uncompressfile-src-file-target-file" title="Permalink to this heading">¶</a></h4>
+<h4>uncompressfile &lt;src-file&gt; [target-file]<a class="headerlink" href="#uncompressfile-src-file-target-file" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><p>Description: compresses or un-compresses files. The level option specifies the compression mode to use when compressing. Available modes are from 0 (minimum CPU usage, minimum compression) all the way up to 9 (maximum CPU usage, maximum compression). If you don’t specify the target-file, the src-file will be overwritten.</p>
 <p>Returns: nothing</p>
@@ -1843,7 +1907,7 @@ connections.</p></td>
 </section>
 </section>
 <section id="iscompressed-filename">
-<h3>iscompressed &lt;filename&gt;<a class="headerlink" href="#iscompressed-filename" title="Permalink to this heading">¶</a></h3>
+<h3>iscompressed &lt;filename&gt;<a class="headerlink" href="#iscompressed-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: determines whether &lt;filename&gt; is gzip compressed.</p>
 <p>Returns: 1 if it is, 0 if it isn’t, and 2 if some kind of error prevented the checks from succeeding.</p>
@@ -1852,9 +1916,9 @@ connections.</p></td>
 </section>
 </section>
 <section id="filesys-module">
-<h2>Filesys Module<a class="headerlink" href="#filesys-module" title="Permalink to this heading">¶</a></h2>
+<h2>Filesys Module<a class="headerlink" href="#filesys-module" title="Permalink to this headline">¶</a></h2>
 <section id="setpwd-idx-dir">
-<h3>setpwd &lt;idx&gt; &lt;dir&gt;<a class="headerlink" href="#setpwd-idx-dir" title="Permalink to this heading">¶</a></h3>
+<h3>setpwd &lt;idx&gt; &lt;dir&gt;<a class="headerlink" href="#setpwd-idx-dir" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes the directory of a file system user, in exactly the same way as a ‘cd’ command would. The directory can be specified relative or absolute.</p>
 <p>Returns: nothing</p>
@@ -1862,32 +1926,36 @@ connections.</p></td>
 </div></blockquote>
 </section>
 <section id="getpwd-idx">
-<h3>getpwd &lt;idx&gt;<a class="headerlink" href="#getpwd-idx" title="Permalink to this heading">¶</a></h3>
+<h3>getpwd &lt;idx&gt;<a class="headerlink" href="#getpwd-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the current directory of a file system user</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="getfiles-dir">
-<h3>getfiles &lt;dir&gt;<a class="headerlink" href="#getfiles-dir" title="Permalink to this heading">¶</a></h3>
+<h3>getfiles &lt;dir&gt;<a class="headerlink" href="#getfiles-dir" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of files in the directory given; the directory is relative to dcc-path</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="getdirs-dir">
-<h3>getdirs &lt;dir&gt;<a class="headerlink" href="#getdirs-dir" title="Permalink to this heading">¶</a></h3>
+<h3>getdirs &lt;dir&gt;<a class="headerlink" href="#getdirs-dir" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of subdirectories in the directory given; the directory is relative to dcc-path</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="dccsend-filename-ircnick">
-<h3>dccsend &lt;filename&gt; &lt;ircnick&gt;<a class="headerlink" href="#dccsend-filename-ircnick" title="Permalink to this heading">¶</a></h3>
+<h3>dccsend &lt;filename&gt; &lt;ircnick&gt;<a class="headerlink" href="#dccsend-filename-ircnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to start a dcc file transfer to the given nick; the filename must be specified either by full pathname or in relation to the bot’s startup directory</p>
 <p>Returns:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 91%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>success</p></td>
@@ -1915,7 +1983,7 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="filesend-idx-filename-ircnick">
-<h3>filesend &lt;idx&gt; &lt;filename&gt; [ircnick]<a class="headerlink" href="#filesend-idx-filename-ircnick" title="Permalink to this heading">¶</a></h3>
+<h3>filesend &lt;idx&gt; &lt;filename&gt; [ircnick]<a class="headerlink" href="#filesend-idx-filename-ircnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: like dccsend, except it operates for a current filesystem user, and the filename is assumed to be a relative path from that user’s current directory</p>
 <p>Returns: 0 on failure; 1 on success (either an immediate send or a queued send)</p>
@@ -1923,7 +1991,7 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="fileresend-idx-filename-ircnick">
-<h3>fileresend &lt;idx&gt; &lt;filename&gt; [ircnick]<a class="headerlink" href="#fileresend-idx-filename-ircnick" title="Permalink to this heading">¶</a></h3>
+<h3>fileresend &lt;idx&gt; &lt;filename&gt; [ircnick]<a class="headerlink" href="#fileresend-idx-filename-ircnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: functions like filesend, only that it sends a DCC RESEND instead of a DCC SEND, which allows people to resume aborted file transfers if their client supports that protocol. ircII/BitchX/etc. support it; mIRC does not.</p>
 <p>Returns: 0 on failure; 1 on success (either an immediate send or a queued send)</p>
@@ -1931,7 +1999,7 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="setdesc-dir-file-desc">
-<h3>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;<a class="headerlink" href="#setdesc-dir-file-desc" title="Permalink to this heading">¶</a></h3>
+<h3>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;<a class="headerlink" href="#setdesc-dir-file-desc" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets the description for a file in a file system directory; the directory is relative to dcc-path</p>
 <p>Returns: nothing</p>
@@ -1939,14 +2007,14 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="getdesc-dir-file">
-<h3>getdesc &lt;dir&gt; &lt;file&gt;<a class="headerlink" href="#getdesc-dir-file" title="Permalink to this heading">¶</a></h3>
+<h3>getdesc &lt;dir&gt; &lt;file&gt;<a class="headerlink" href="#getdesc-dir-file" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the description for a file in the file system, if one exists</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="setowner-dir-file-handle">
-<h3>setowner &lt;dir&gt; &lt;file&gt; &lt;handle&gt;<a class="headerlink" href="#setowner-dir-file-handle" title="Permalink to this heading">¶</a></h3>
+<h3>setowner &lt;dir&gt; &lt;file&gt; &lt;handle&gt;<a class="headerlink" href="#setowner-dir-file-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: changes the owner for a file in the file system; the directory is relative to dcc-path</p>
 <p>Returns: nothing</p>
@@ -1954,14 +2022,14 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="getowner-dir-file">
-<h3>getowner &lt;dir&gt; &lt;file&gt;<a class="headerlink" href="#getowner-dir-file" title="Permalink to this heading">¶</a></h3>
+<h3>getowner &lt;dir&gt; &lt;file&gt;<a class="headerlink" href="#getowner-dir-file" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the owner of a file in the file system</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="setlink-dir-file-link">
-<h3>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;<a class="headerlink" href="#setlink-dir-file-link" title="Permalink to this heading">¶</a></h3>
+<h3>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;<a class="headerlink" href="#setlink-dir-file-link" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: creates or changes a linked file (a file that actually exists on another bot); the directory is relative to dcc-path</p>
 <p>Returns: nothing</p>
@@ -1969,24 +2037,28 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="getlink-dir-file">
-<h3>getlink &lt;dir&gt; &lt;file&gt;<a class="headerlink" href="#getlink-dir-file" title="Permalink to this heading">¶</a></h3>
+<h3>getlink &lt;dir&gt; &lt;file&gt;<a class="headerlink" href="#getlink-dir-file" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the link for a linked file, if it exists</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="getfileq-handle">
-<h3>getfileq &lt;handle&gt;<a class="headerlink" href="#getfileq-handle" title="Permalink to this heading">¶</a></h3>
+<h3>getfileq &lt;handle&gt;<a class="headerlink" href="#getfileq-handle" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: list of files queued by someone; each item in the list will be a sublist with two elements: nickname the file is being sent to and the filename</p>
 <p>Module: transfer</p>
 </div></blockquote>
 </section>
 <section id="getfilesendtime-idx">
-<h3>getfilesendtime &lt;idx&gt;<a class="headerlink" href="#getfilesendtime-idx" title="Permalink to this heading">¶</a></h3>
+<h3>getfilesendtime &lt;idx&gt;<a class="headerlink" href="#getfilesendtime-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the unixtime value from when a file transfer started, or a negative number:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>-1</p></td>
 <td><p>no matching transfer with the specified idx was found</p></td>
@@ -2000,11 +2072,15 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="mkdir-directory-required-flags-channel">
-<h3>mkdir &lt;directory&gt; [&lt;required-flags&gt; [channel]]<a class="headerlink" href="#mkdir-directory-required-flags-channel" title="Permalink to this heading">¶</a></h3>
+<h3>mkdir &lt;directory&gt; [&lt;required-flags&gt; [channel]]<a class="headerlink" href="#mkdir-directory-required-flags-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: creates a directory in the file system. Only users with the required flags may access it.</p>
 <p>Returns:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>success</p></td>
@@ -2024,7 +2100,7 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="rmdir-directory">
-<h3>rmdir &lt;directory&gt;<a class="headerlink" href="#rmdir-directory" title="Permalink to this heading">¶</a></h3>
+<h3>rmdir &lt;directory&gt;<a class="headerlink" href="#rmdir-directory" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a directory from the file system.</p>
 <p>Returns: 0 on success; 1 on failure</p>
@@ -2032,11 +2108,15 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="mv-file-destination">
-<h3>mv &lt;file&gt; &lt;destination&gt;<a class="headerlink" href="#mv-file-destination" title="Permalink to this heading">¶</a></h3>
+<h3>mv &lt;file&gt; &lt;destination&gt;<a class="headerlink" href="#mv-file-destination" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: moves a file from its source to the given destination. The file can also be a mask, such as /incoming/*, provided the destination is a directory.</p>
 <p>Returns: If the command was successful, the number of files moved will be returned. Otherwise, a negative number will be returned:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>-1</p></td>
 <td><p>invalid source file</p></td>
@@ -2056,11 +2136,15 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="cp-file-destination">
-<h3>cp &lt;file&gt; &lt;destination&gt;<a class="headerlink" href="#cp-file-destination" title="Permalink to this heading">¶</a></h3>
+<h3>cp &lt;file&gt; &lt;destination&gt;<a class="headerlink" href="#cp-file-destination" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: copies a file from its source to the given destination. The file can also be a mask, such as /incoming/*, provided the destination is a directory.</p>
 <p>Returns: If the command was successful, the number of files copied will be returned. Otherwise, a negative number will be returned:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>-1</p></td>
 <td><p>invalid source file</p></td>
@@ -2080,14 +2164,14 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="getflags-dir">
-<h3>getflags &lt;dir&gt;<a class="headerlink" href="#getflags-dir" title="Permalink to this heading">¶</a></h3>
+<h3>getflags &lt;dir&gt;<a class="headerlink" href="#getflags-dir" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the flags required to access a directory</p>
 <p>Module: filesys</p>
 </div></blockquote>
 </section>
 <section id="setflags-dir-flags-channel">
-<h3>setflags &lt;dir&gt; [&lt;flags&gt; [channel]]<a class="headerlink" href="#setflags-dir-flags-channel" title="Permalink to this heading">¶</a></h3>
+<h3>setflags &lt;dir&gt; [&lt;flags&gt; [channel]]<a class="headerlink" href="#setflags-dir-flags-channel" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: sets the flags required to access a directory</p>
 <p>Returns: 0 on success; -1 or -3 on failure</p>
@@ -2096,9 +2180,9 @@ directory</p></td>
 </section>
 </section>
 <section id="miscellaneous-commands">
-<h2>Miscellaneous Commands<a class="headerlink" href="#miscellaneous-commands" title="Permalink to this heading">¶</a></h2>
+<h2>Miscellaneous Commands<a class="headerlink" href="#miscellaneous-commands" title="Permalink to this headline">¶</a></h2>
 <section id="bind-type-flags-keyword-mask-proc-name">
-<h3>bind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; [proc-name]<a class="headerlink" href="#bind-type-flags-keyword-mask-proc-name" title="Permalink to this heading">¶</a></h3>
+<h3>bind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; [proc-name]<a class="headerlink" href="#bind-type-flags-keyword-mask-proc-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: You can use the ‘bind’ command to attach Tcl procedures to certain events. flags are the flags the user must have to trigger the event (if applicable). proc-name is the name of the Tcl procedure to call for this command (see below for the format of the procedure call). If the proc-name is omitted, no binding is added. Instead, the current binding is returned (if it’s stackable, a list of the current bindings is returned).</p>
 <p>Returns: name of the command that was added, or (if proc-name was omitted), a list of the current bindings for this command</p>
@@ -2106,7 +2190,7 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="unbind-type-flags-keyword-mask-proc-name">
-<h3>unbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; &lt;proc-name&gt;<a class="headerlink" href="#unbind-type-flags-keyword-mask-proc-name" title="Permalink to this heading">¶</a></h3>
+<h3>unbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt; &lt;proc-name&gt;<a class="headerlink" href="#unbind-type-flags-keyword-mask-proc-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes a previously created bind</p>
 <p>Returns: name of the command that was removed</p>
@@ -2114,7 +2198,7 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="binds-type-mask">
-<h3>binds [type/mask]<a class="headerlink" href="#binds-type-mask" title="Permalink to this heading">¶</a></h3>
+<h3>binds [type/mask]<a class="headerlink" href="#binds-type-mask" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>Returns: a list of Tcl binds, each item in the list is a sublist of five elements:</dt><dd><p>{&lt;type&gt; &lt;flags&gt; &lt;name&gt; &lt;hits&gt; &lt;proc&gt;}</p>
@@ -2124,11 +2208,15 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="logfile-modes-channel-filename">
-<h3>logfile [&lt;modes&gt; &lt;channel&gt; &lt;filename&gt;]<a class="headerlink" href="#logfile-modes-channel-filename" title="Permalink to this heading">¶</a></h3>
+<h3>logfile [&lt;modes&gt; &lt;channel&gt; &lt;filename&gt;]<a class="headerlink" href="#logfile-modes-channel-filename" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: creates a new logfile, which will log the modes given for the channel listed. If no logfile is specified, a list of existing logfiles will be returned. “*” indicates all channels. You can also change the modes and channel of an existing logfile with this command. Entering a blank mode and channel (“”) makes the bot stop logging there.</p>
 <p>Logfile flags:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 93%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>b</p></td>
 <td><p>information about bot linking and userfile sharing</p></td>
@@ -2191,11 +2279,15 @@ directory</p></td>
 </div></blockquote>
 </section>
 <section id="maskhost-nick-user-host-masktype">
-<h3>maskhost &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [masktype]<a class="headerlink" href="#maskhost-nick-user-host-masktype" title="Permalink to this heading">¶</a></h3>
+<h3>maskhost &lt;<a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>&gt; [masktype]<a class="headerlink" href="#maskhost-nick-user-host-masktype" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: masked hostmask for the string given according to the masktype (the default is 3).</p>
 <p>Available types are:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>*!user&#64;host</p></td>
@@ -2238,7 +2330,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="timer-minutes-tcl-command-count-timername">
-<h3>timer &lt;minutes&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#timer-minutes-tcl-command-count-timername" title="Permalink to this heading">¶</a></h3>
+<h3>timer &lt;minutes&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#timer-minutes-tcl-command-count-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it’s removed with killtimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timerName is specified, Eggdrop will assign a timerName in the format of “timer&lt;integer&gt;”.</p>
 <p>Returns: a timerName</p>
@@ -2246,7 +2338,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="utimer-seconds-tcl-command-count-timername">
-<h3>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#utimer-seconds-tcl-command-count-timername" title="Permalink to this heading">¶</a></h3>
+<h3>utimer &lt;seconds&gt; &lt;tcl-command&gt; [count [timerName]]<a class="headerlink" href="#utimer-seconds-tcl-command-count-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it’s removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If timerName is not specified, Eggdrop will assign a timerName in the format of “timer&lt;integer&gt;”.</p>
 <p>Returns: a timerName</p>
@@ -2254,7 +2346,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="timers">
-<h3>timers<a class="headerlink" href="#timers" title="Permalink to this heading">¶</a></h3>
+<h3>timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: lists all active minutely timers.</p>
 <p>Returns: a list of active minutely timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.</p>
@@ -2262,7 +2354,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="utimers">
-<h3>utimers<a class="headerlink" href="#utimers" title="Permalink to this heading">¶</a></h3>
+<h3>utimers<a class="headerlink" href="#utimers" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: lists all active secondly timers.</p>
 <p>Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.</p>
@@ -2270,7 +2362,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="killtimer-timername">
-<h3>killtimer &lt;timerName&gt;<a class="headerlink" href="#killtimer-timername" title="Permalink to this heading">¶</a></h3>
+<h3>killtimer &lt;timerName&gt;<a class="headerlink" href="#killtimer-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes the timerName minutely timer from the timer list.</p>
 <p>Returns: nothing</p>
@@ -2278,7 +2370,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="killutimer-timername">
-<h3>killutimer &lt;timerName&gt;<a class="headerlink" href="#killutimer-timername" title="Permalink to this heading">¶</a></h3>
+<h3>killutimer &lt;timerName&gt;<a class="headerlink" href="#killutimer-timername" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes the timerName secondly timer from the timer list.</p>
 <p>Returns: nothing</p>
@@ -2286,49 +2378,49 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="unixtime">
-<h3>unixtime<a class="headerlink" href="#unixtime" title="Permalink to this heading">¶</a></h3>
+<h3>unixtime<a class="headerlink" href="#unixtime" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a long integer which represents the number of seconds that have passed since 00:00 Jan 1, 1970 (GMT).</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="duration-seconds">
-<h3>duration &lt;seconds&gt;<a class="headerlink" href="#duration-seconds" title="Permalink to this heading">¶</a></h3>
+<h3>duration &lt;seconds&gt;<a class="headerlink" href="#duration-seconds" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the number of seconds converted into years, weeks, days, hours, minutes, and seconds. 804600 seconds is turned into 1 week 2 days 7 hours 30 minutes.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="strftime-formatstring-time">
-<h3>strftime &lt;formatstring&gt; [time]<a class="headerlink" href="#strftime-formatstring-time" title="Permalink to this heading">¶</a></h3>
+<h3>strftime &lt;formatstring&gt; [time]<a class="headerlink" href="#strftime-formatstring-time" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="ctime-unixtime">
-<h3>ctime &lt;unixtime&gt;<a class="headerlink" href="#ctime-unixtime" title="Permalink to this heading">¶</a></h3>
+<h3>ctime &lt;unixtime&gt;<a class="headerlink" href="#ctime-unixtime" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example “Fri Aug 3 11:34:55 1973”</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="myip">
-<h3>myip<a class="headerlink" href="#myip" title="Permalink to this heading">¶</a></h3>
+<h3>myip<a class="headerlink" href="#myip" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a long number representing the bot’s IP address, as it might appear in (for example) a DCC request</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="rand-limit">
-<h3>rand &lt;limit&gt;<a class="headerlink" href="#rand-limit" title="Permalink to this heading">¶</a></h3>
+<h3>rand &lt;limit&gt;<a class="headerlink" href="#rand-limit" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="control-idx-command">
-<h3>control &lt;idx&gt; &lt;command&gt;<a class="headerlink" href="#control-idx-command" title="Permalink to this heading">¶</a></h3>
+<h3>control &lt;idx&gt; &lt;command&gt;<a class="headerlink" href="#control-idx-command" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: removes an idx from the party line and sends all future input to the Tcl command given. The command will be called with two parameters: the idx and the input text. The command should return 0 to indicate success and 1 to indicate that it relinquishes control of the user back to the bot. If the input text is blank (“”), it indicates that the connection has been dropped. Also, if the input text is blank, never call killdcc on it, as it will fail with “invalid idx”.</p>
 <p>Returns: nothing</p>
@@ -2336,11 +2428,15 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="sendnote-from-to-bot-message">
-<h3>sendnote &lt;from&gt; &lt;to[&#64;bot]&gt; &lt;message&gt;<a class="headerlink" href="#sendnote-from-to-bot-message" title="Permalink to this heading">¶</a></h3>
+<h3>sendnote &lt;from&gt; &lt;to[&#64;bot]&gt; &lt;message&gt;<a class="headerlink" href="#sendnote-from-to-bot-message" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: simulates what happens when one user sends a note to another</p>
 <p>Returns:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>the send failed</p></td>
@@ -2366,7 +2462,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="link-via-bot-bot">
-<h3>link [via-bot] &lt;bot&gt;<a class="headerlink" href="#link-via-bot-bot" title="Permalink to this heading">¶</a></h3>
+<h3>link [via-bot] &lt;bot&gt;<a class="headerlink" href="#link-via-bot-bot" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to link to another bot directly. If you specify a via-bot, it tells the via-bot to attempt the link.</p>
 <p>Returns: 1 if the link will be attempted; 0 otherwise</p>
@@ -2374,7 +2470,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="unlink-bot-comment">
-<h3>unlink &lt;bot&gt; [comment]<a class="headerlink" href="#unlink-bot-comment" title="Permalink to this heading">¶</a></h3>
+<h3>unlink &lt;bot&gt; [comment]<a class="headerlink" href="#unlink-bot-comment" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to unlink a bot from the botnet. If you specify a comment, it will appear with the unlink message on the botnet.</p>
 <p>Returns: 1 on success; 0 otherwise</p>
@@ -2382,28 +2478,28 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="encrypt-key-string">
-<h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this heading">¶</a></h3>
+<h3>encrypt &lt;key&gt; &lt;string&gt;<a class="headerlink" href="#encrypt-key-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either “ecb:” or “cbc:”, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </section>
 <section id="decrypt-key-encrypted-base64-string">
-<h3>decrypt &lt;key&gt; &lt;encrypted-base64-string&gt;<a class="headerlink" href="#decrypt-key-encrypted-base64-string" title="Permalink to this heading">¶</a></h3>
+<h3>decrypt &lt;key&gt; &lt;encrypted-base64-string&gt;<a class="headerlink" href="#decrypt-key-encrypted-base64-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with “ecb:” or “cbc:” or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </section>
 <section id="encpass-password">
-<h3>encpass &lt;password&gt;<a class="headerlink" href="#encpass-password" title="Permalink to this heading">¶</a></h3>
+<h3>encpass &lt;password&gt;<a class="headerlink" href="#encpass-password" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: encrypted string (using the currently loaded encryption module)</p>
 <p>Module: encryption</p>
 </div></blockquote>
 </section>
 <section id="die-reason">
-<h3>die [reason]<a class="headerlink" href="#die-reason" title="Permalink to this heading">¶</a></h3>
+<h3>die [reason]<a class="headerlink" href="#die-reason" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: causes the bot to log a fatal error and exit completely. If no reason is given, “EXIT” is used.</p>
 <p>Returns: none</p>
@@ -2411,14 +2507,14 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="unames">
-<h3>unames<a class="headerlink" href="#unames" title="Permalink to this heading">¶</a></h3>
+<h3>unames<a class="headerlink" href="#unames" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the current operating system the bot is using</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="dnslookup-ip-address-hostname-proc-arg1-arg2-argn">
-<h3>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt; [[arg1] [arg2] … [argN]]<a class="headerlink" href="#dnslookup-ip-address-hostname-proc-arg1-arg2-argn" title="Permalink to this heading">¶</a></h3>
+<h3>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt; [[arg1] [arg2] … [argN]]<a class="headerlink" href="#dnslookup-ip-address-hostname-proc-arg1-arg2-argn" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: This issues an asynchronous dns lookup request. The command will block if dns module is not loaded; otherwise it will either return immediately or immediately call the specified proc (e.g. if the lookup is already cached).</p>
 <p>As soon as the request completes, the specified proc will be called as follows:</p>
@@ -2431,14 +2527,14 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="md5-string">
-<h3>md5 &lt;string&gt;<a class="headerlink" href="#md5-string" title="Permalink to this heading">¶</a></h3>
+<h3>md5 &lt;string&gt;<a class="headerlink" href="#md5-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: the 128 bit MD5 message-digest of the specified string</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="callevent-event">
-<h3>callevent &lt;event&gt;<a class="headerlink" href="#callevent-event" title="Permalink to this heading">¶</a></h3>
+<h3>callevent &lt;event&gt;<a class="headerlink" href="#callevent-event" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: triggers the evnt bind manually for a certain event. You can call arbitrary events here, even ones that are not pre-defined by Eggdrop. For example: callevent rehash, or callevent myownevent123.</p>
 <p>Returns: nothing</p>
@@ -2446,21 +2542,21 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="traffic">
-<h3>traffic<a class="headerlink" href="#traffic" title="Permalink to this heading">¶</a></h3>
+<h3>traffic<a class="headerlink" href="#traffic" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of sublists containing information about the bot’s traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="modules">
-<h3>modules<a class="headerlink" href="#modules" title="Permalink to this heading">¶</a></h3>
+<h3>modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Returns: a list of sublists containing information about the bot’s currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="loadmodule-module">
-<h3>loadmodule &lt;module&gt;<a class="headerlink" href="#loadmodule-module" title="Permalink to this heading">¶</a></h3>
+<h3>loadmodule &lt;module&gt;<a class="headerlink" href="#loadmodule-module" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to load the specified module.</p>
 <p>Returns: “Already loaded.” if the module is already loaded, “” if successful, or the reason the module couldn’t be loaded.</p>
@@ -2468,7 +2564,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="unloadmodule-module">
-<h3>unloadmodule &lt;module&gt;<a class="headerlink" href="#unloadmodule-module" title="Permalink to this heading">¶</a></h3>
+<h3>unloadmodule &lt;module&gt;<a class="headerlink" href="#unloadmodule-module" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to unload the specified module.</p>
 <p>Returns: “No such module” if the module is not loaded, “” otherwise.</p>
@@ -2476,7 +2572,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="loadhelp-helpfile-name">
-<h3>loadhelp &lt;helpfile-name&gt;<a class="headerlink" href="#loadhelp-helpfile-name" title="Permalink to this heading">¶</a></h3>
+<h3>loadhelp &lt;helpfile-name&gt;<a class="headerlink" href="#loadhelp-helpfile-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to load the specified help file from the help/ directory.</p>
 <p>Returns: nothing</p>
@@ -2484,7 +2580,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="unloadhelp-helpfile-name">
-<h3>unloadhelp &lt;helpfile-name&gt;<a class="headerlink" href="#unloadhelp-helpfile-name" title="Permalink to this heading">¶</a></h3>
+<h3>unloadhelp &lt;helpfile-name&gt;<a class="headerlink" href="#unloadhelp-helpfile-name" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: attempts to unload the specified help file.</p>
 <p>Returns: nothing</p>
@@ -2492,7 +2588,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="reloadhelp">
-<h3>reloadhelp<a class="headerlink" href="#reloadhelp" title="Permalink to this heading">¶</a></h3>
+<h3>reloadhelp<a class="headerlink" href="#reloadhelp" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: reloads the bot’s help files.</p>
 <p>Returns: nothing</p>
@@ -2500,7 +2596,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="restart">
-<h3>restart<a class="headerlink" href="#restart" title="Permalink to this heading">¶</a></h3>
+<h3>restart<a class="headerlink" href="#restart" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: rehashes the bot, kills all timers, reloads all modules, and reconnects the bot to the next server in its list.</p>
 <p>Returns: nothing</p>
@@ -2508,7 +2604,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="rehash">
-<h3>rehash<a class="headerlink" href="#rehash" title="Permalink to this heading">¶</a></h3>
+<h3>rehash<a class="headerlink" href="#rehash" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: rehashes the bot</p>
 <p>Returns: nothing</p>
@@ -2516,10 +2612,14 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="stripcodes-strip-flags-string">
-<h3>stripcodes &lt;strip-flags&gt; &lt;string&gt;<a class="headerlink" href="#stripcodes-strip-flags-string" title="Permalink to this heading">¶</a></h3>
+<h3>stripcodes &lt;strip-flags&gt; &lt;string&gt;<a class="headerlink" href="#stripcodes-strip-flags-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: strips specified control characters from the string given. strip-flags can be any combination of the following:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>c</p></td>
 <td><p>remove all color codes</p></td>
@@ -2555,7 +2655,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="matchaddr-hostmask-address">
-<h3>matchaddr &lt;hostmask&gt; &lt;address&gt;<a class="headerlink" href="#matchaddr-hostmask-address" title="Permalink to this heading">¶</a></h3>
+<h3>matchaddr &lt;hostmask&gt; &lt;address&gt;<a class="headerlink" href="#matchaddr-hostmask-address" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if the address matches the hostmask given. The address should be in the form nick!user&#64;host.</p>
 <p>Returns: 1 if the address matches the hostmask, 0 otherwise.</p>
@@ -2563,7 +2663,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="matchcidr-block-address-prefix">
-<h3>matchcidr &lt;block&gt; &lt;address&gt; &lt;prefix&gt;<a class="headerlink" href="#matchcidr-block-address-prefix" title="Permalink to this heading">¶</a></h3>
+<h3>matchcidr &lt;block&gt; &lt;address&gt; &lt;prefix&gt;<a class="headerlink" href="#matchcidr-block-address-prefix" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: performs a cidr match on the specified ip addresses. IPv6 is supported, if enabled at compile time.</p>
 <p>Example: matchcidr 192.168.0.0 192.168.1.17 16</p>
@@ -2572,7 +2672,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="matchstr-pattern-string">
-<h3>matchstr &lt;pattern&gt; &lt;string&gt;<a class="headerlink" href="#matchstr-pattern-string" title="Permalink to this heading">¶</a></h3>
+<h3>matchstr &lt;pattern&gt; &lt;string&gt;<a class="headerlink" href="#matchstr-pattern-string" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if pattern matches string. Only two wildcards are supported: ‘*’ and ‘?’. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl’s string match.</p>
 <p>Returns: 1 if the pattern matches the string, 0 if it doesn’t.</p>
@@ -2580,7 +2680,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="rfcequal-string1-string2">
-<h3>rfcequal &lt;string1&gt; &lt;string2&gt;<a class="headerlink" href="#rfcequal-string1-string2" title="Permalink to this heading">¶</a></h3>
+<h3>rfcequal &lt;string1&gt; &lt;string2&gt;<a class="headerlink" href="#rfcequal-string1-string2" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: Checks if two strings are equal. Case is ignored, and this uses RFC1459 matching {}|~ == []^, depending on the rfc_compliant setting.</p>
 <p>Returns: 1 if equal, 0 if not.</p>
@@ -2588,10 +2688,14 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="status-type">
-<h3>status [type]<a class="headerlink" href="#status-type" title="Permalink to this heading">¶</a></h3>
+<h3>status [type]<a class="headerlink" href="#status-type" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: provides eggdrop status information similar to the .status command in partyline. The available types of information are:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 92%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>cpu</p></td>
 <td><p>total cpu time spent by eggdrop</p></td>
@@ -2612,7 +2716,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="istls-idx">
-<h3>istls &lt;idx&gt;<a class="headerlink" href="#istls-idx" title="Permalink to this heading">¶</a></h3>
+<h3>istls &lt;idx&gt;<a class="headerlink" href="#istls-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if a connection is encrypted or cleartext. This command is available on TLS-enabled bots only.</p>
 <p>Returns: 1 if the idx is a TLS connection, 0 if it’s plaintext.</p>
@@ -2620,7 +2724,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="starttls-idx">
-<h3>starttls &lt;idx&gt;<a class="headerlink" href="#starttls-idx" title="Permalink to this heading">¶</a></h3>
+<h3>starttls &lt;idx&gt;<a class="headerlink" href="#starttls-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: establishes a secure (using TLS) connection over idx. The TLS connection should be first negotiated over the plaintext link, or using other means. Both parties must switch to TLS simultaneously. This command is available on TLS-enabled bots only.</p>
 <p>Returns: nothing</p>
@@ -2628,7 +2732,7 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="tlsstatus-idx">
-<h3>tlsstatus &lt;idx&gt;<a class="headerlink" href="#tlsstatus-idx" title="Permalink to this heading">¶</a></h3>
+<h3>tlsstatus &lt;idx&gt;<a class="headerlink" href="#tlsstatus-idx" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Description: provides information about an established TLS connection This includes certificate and cipher information as well as protocol version. This command is available on TLS-enabled bots only.</p>
 <p>Returns: a flat list of name-value pairs</p>
@@ -2637,48 +2741,52 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </section>
 </section>
 <section id="global-variables">
-<h2>Global Variables<a class="headerlink" href="#global-variables" title="Permalink to this heading">¶</a></h2>
+<h2>Global Variables<a class="headerlink" href="#global-variables" title="Permalink to this headline">¶</a></h2>
 <p>NOTE: All config file variables are also global.</p>
 <section id="botnick">
-<h3>botnick<a class="headerlink" href="#botnick" title="Permalink to this heading">¶</a></h3>
+<h3>botnick<a class="headerlink" href="#botnick" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the current nickname the bot is using (for example: “Valis”, “Valis0”, etc.)</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="botname">
-<h3>botname<a class="headerlink" href="#botname" title="Permalink to this heading">¶</a></h3>
+<h3>botname<a class="headerlink" href="#botname" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the current nick!user&#64;host that the server sees (for example: “Valis!valis&#64;crappy.com”)</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="server">
-<h3>server<a class="headerlink" href="#server" title="Permalink to this heading">¶</a></h3>
+<h3>server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the current server’s real name (what server calls itself) and port bot is connected to (for example: “irc.math.ufl.edu:6667”) Note that this does not necessarily match the servers internet address.</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="serveraddress">
-<h3>serveraddress<a class="headerlink" href="#serveraddress" title="Permalink to this heading">¶</a></h3>
+<h3>serveraddress<a class="headerlink" href="#serveraddress" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the current server’s internet address (hostname or IP) and port bot is connected to. This will correspond to the entry in server list (for example: “eu.undernet.org:6667”). Note that this does not necessarily match the name server calls itself.</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="version">
-<h3>version<a class="headerlink" href="#version" title="Permalink to this heading">¶</a></h3>
+<h3>version<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: current bot version “1.1.2+pl1 1010201”; first item is the text version, to include a patch string if present, and second item is a numerical version</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="numversion">
-<h3>numversion*<a class="headerlink" href="#numversion" title="Permalink to this heading">¶</a></h3>
+<h3>numversion*<a class="headerlink" href="#numversion" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the current numeric bot version (for example: “1010201”). Numerical version is in the format of “MNNRRPP”, where:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 87%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>M</p></td>
 <td><p>major release number</p></td>
@@ -2698,56 +2806,56 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </div></blockquote>
 </section>
 <section id="uptime">
-<h3>uptime<a class="headerlink" href="#uptime" title="Permalink to this heading">¶</a></h3>
+<h3>uptime<a class="headerlink" href="#uptime" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the unixtime value for when the bot was started</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="server-online">
-<h3>server-online<a class="headerlink" href="#server-online" title="Permalink to this heading">¶</a></h3>
+<h3>server-online<a class="headerlink" href="#server-online" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the unixtime value when the bot connected to its current server, or ‘0’ if the bot is currently disconnected from a server.</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="lastbind">
-<h3>lastbind<a class="headerlink" href="#lastbind" title="Permalink to this heading">¶</a></h3>
+<h3>lastbind<a class="headerlink" href="#lastbind" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the last command binding which was triggered. This allows you to identify which command triggered a Tcl proc.</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="isjuped">
-<h3>isjuped<a class="headerlink" href="#isjuped" title="Permalink to this heading">¶</a></h3>
+<h3>isjuped<a class="headerlink" href="#isjuped" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: 1 if bot’s nick is juped(437); 0 otherwise</p>
 <p>Module: server</p>
 </div></blockquote>
 </section>
 <section id="handlen">
-<h3>handlen<a class="headerlink" href="#handlen" title="Permalink to this heading">¶</a></h3>
+<h3>handlen<a class="headerlink" href="#handlen" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the value of the HANDLEN define in src/eggdrop.h</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="config">
-<h3>config<a class="headerlink" href="#config" title="Permalink to this heading">¶</a></h3>
+<h3>config<a class="headerlink" href="#config" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: the filename of the config file Eggdrop is currently using</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="configureargs">
-<h3>configureargs<a class="headerlink" href="#configureargs" title="Permalink to this heading">¶</a></h3>
+<h3>configureargs<a class="headerlink" href="#configureargs" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: a string (not list) of configure arguments in shell expansion (single quotes)</p>
 <p>Module: core</p>
 </div></blockquote>
 </section>
 <section id="language">
-<h3>language<a class="headerlink" href="#language" title="Permalink to this heading">¶</a></h3>
+<h3>language<a class="headerlink" href="#language" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file</p>
 <p>Module: core</p>
@@ -2755,24 +2863,28 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 </section>
 </section>
 <section id="binds">
-<h2>Binds<a class="headerlink" href="#binds" title="Permalink to this heading">¶</a></h2>
+<h2>Binds<a class="headerlink" href="#binds" title="Permalink to this headline">¶</a></h2>
 <p>You can use the ‘bind’ command to attach Tcl procedures to certain events. For example, you can write a Tcl procedure that gets called every time a user says “danger” on the channel. When a bind is triggered, ALL of the Tcl procs that are bound to it will be called. Raw binds are triggered before builtin binds, as a builtin bind has the potential to modify args.</p>
 <section id="stackable-binds">
-<h3>Stackable binds<a class="headerlink" href="#stackable-binds" title="Permalink to this heading">¶</a></h3>
+<h3>Stackable binds<a class="headerlink" href="#stackable-binds" title="Permalink to this headline">¶</a></h3>
 <p>Some bind types are marked as “stackable”. That means that you can bind multiple commands to the same trigger. Normally, for example, a bind such as ‘bind msg - stop msg:stop’ (which makes a msg-command “stop” call the Tcl proc “msg:stop”) will overwrite any previous binding you had for the msg command “stop”. With stackable bindings, like ‘msgm’ for example, you can bind the same command to multiple procs.</p>
 </section>
 <section id="removing-a-bind">
-<h3>Removing a bind<a class="headerlink" href="#removing-a-bind" title="Permalink to this heading">¶</a></h3>
+<h3>Removing a bind<a class="headerlink" href="#removing-a-bind" title="Permalink to this headline">¶</a></h3>
 <p>To remove a bind, use the ‘unbind’ command. For example, to remove the
 bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 </section>
 <section id="flag-masks">
-<h3>Flag Masks<a class="headerlink" href="#flag-masks" title="Permalink to this heading">¶</a></h3>
+<h3>Flag Masks<a class="headerlink" href="#flag-masks" title="Permalink to this headline">¶</a></h3>
 <p>In the <a class="reference internal" href="#bind-types">Bind Types</a> section (and other commands, such as <a class="reference internal" href="#matchattr">matchattr</a>), you will see several references to the “flags” argument. The “flags” argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a “-” or “*” can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or &amp; logical operators ( the | means “OR” and the &amp; means “AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a ‘+’ and ‘-’ can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.</p>
 <p>The easiest way to explain how to build a flag mask is by demonstration. A flag mask of “v” by itself means “has a global v flag”. To also check for a channel flag, you would use the flag mask “v|v”. This checks if the user has a global “v” flag, OR a channel “v” flag (again, the | means “OR” and ties the two types of flags together). You could change this mask to be “v&amp;v”, which would check if the user has a global “v” flag AND a channel “v” flag. Lastly, to check if a user ONLY has a channel flag, you would use “*|v” as a mask, which would not check global flags but does check if the user had a channel “v” flag.</p>
 <p>You will commonly see flag masks for global flags written “ov”; this is the same as “|ov” or “*|ov”.</p>
 <p>Some additional examples:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 84%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Flag Mask</p></th>
 <th class="head"><p>Action</p></th>
@@ -2830,7 +2942,7 @@ not have the channel m flag for #foo</p></td>
 <p>As a side note, Tcl scripts historically have used a ‘-’ to skip processing of a flag type (Example: -|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a ‘*’ to skip processing, so as not to confuse a single “-” meaning “skip processing” with a preceding “-ov” which means “not these flags”.</p>
 </section>
 <section id="bind-types">
-<h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this heading">¶</a></h3>
+<h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this headline">¶</a></h3>
 <p>The following is a list of bind types and how they work. Below each bind type is the format of the bind command, the list of arguments sent to the Tcl proc, and an explanation.</p>
 <ol class="arabic simple">
 <li><p>MSG</p></li>
@@ -3078,7 +3190,7 @@ proc mode_proc {nick uhost hand chan mode} { ... }
 <blockquote>
 <div><p>bind chat &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;handle&gt; &lt;channel#&gt; &lt;text&gt;</p>
-<p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (“DronePup”) or on another bot (“Eden&#64;Wilde”) and therefore you can’t rely on a local user record. The mask is checked against the entire line of text and supports wildcards.</p>
+<p>Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot (“DronePup”) or on another bot (“Eden&#64;Wilde”) and therefore you can’t rely on a local user record. The mask is checked against the entire line of text and supports wildcards. Eggdrop passes the partyline channel number the user spoke on to the proc in “channel#”.</p>
 <p>NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.</p>
 <p>Module: core</p>
 </div></blockquote>
@@ -3274,6 +3386,7 @@ preinit-server    - called immediately when we connect to the server
 init-server       - called when we actually get on our IRC server
 disconnect-server - called when we disconnect from our IRC server
 fail-server       - called when an IRC server fails to respond
+hidden-host       - called after the bot&#39;s host is hidden by the server
 </pre></div>
 </div>
 <p>Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.</p>
@@ -3394,9 +3507,17 @@ fail-server       - called when an IRC server fails to respond
 <p>Description: triggered when a server sends a MONITOR status change of a target either coming online or disconnecting (not all servers support MONITOR). flags are ignored, nick is the nickname of the intended MONITOR target and can be used with wildcards. For the proc, nick is the nickname connecting or disconnecting, and online is ‘0’ if the nickname disconnected, or ‘1’ if the nickname connected.</p>
 <p>Module: irc</p>
 </div></blockquote>
+<ol class="arabic simple" start="56">
+<li><p>CHGHOST</p></li>
+</ol>
+<blockquote>
+<div><p>bind chghost &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
+<p>procname &lt;nick&gt; &lt;old <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt; &lt;new <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt;</p>
+<p>Description: triggered when a server sends an IRCv3 spec CHGHOST message to change a user’s hostmask. The new host is matched against mask in the form of “#channel nick!user&#64;host” and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.</p>
+</div></blockquote>
 </section>
 <section id="return-values">
-<h3>Return Values<a class="headerlink" href="#return-values" title="Permalink to this heading">¶</a></h3>
+<h3>Return Values<a class="headerlink" href="#return-values" title="Permalink to this headline">¶</a></h3>
 <p>Several bindings pay attention to the value you return from the proc(using ‘return &lt;value&gt;’). Usually, they expect a 0 or 1, and returning an empty return is interpreted as a 0. Be aware if you omit the return statement, the result of the last Tcl command executed will be returned by the proc. This will not likely produce the results you intended (this is a “feature” of Tcl).</p>
 <p>Here’s a list of the bindings that use the return value from procs they trigger:</p>
 <ol class="arabic">
@@ -3439,7 +3560,7 @@ fail-server       - called when an IRC server fails to respond
 </section>
 </section>
 <section id="control-procedures">
-<h2>Control Procedures<a class="headerlink" href="#control-procedures" title="Permalink to this heading">¶</a></h2>
+<h2>Control Procedures<a class="headerlink" href="#control-procedures" title="Permalink to this headline">¶</a></h2>
 <p>Using the ‘control’ command, you can put a DCC connection (or outgoing
 TCP connection) in control of a script. All text received from the
 connection is sent to the proc you specify. All outgoing text should
@@ -3461,7 +3582,7 @@ call killdcc on the idx when text is blank, it will always fail with
 proc should return 1. Otherwise, return 0 to retain control.</p>
 </section>
 <section id="tcp-connections">
-<h2>TCP Connections<a class="headerlink" href="#tcp-connections" title="Permalink to this heading">¶</a></h2>
+<h2>TCP Connections<a class="headerlink" href="#tcp-connections" title="Permalink to this headline">¶</a></h2>
 <p>Eggdrop allows you to make two types of TCP (“telnet”) connections:
 outgoing and incoming. For an outgoing connection, you specify the
 remote host and port to connect to. For an incoming connection, you
@@ -3522,10 +3643,14 @@ proc listen:grab {newidx} {
 <p>The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.</p>
 </section>
 <section id="match-characters">
-<span id="wildcards"></span><h2>Match Characters<a class="headerlink" href="#match-characters" title="Permalink to this heading">¶</a></h2>
+<span id="wildcards"></span><h2>Match Characters<a class="headerlink" href="#match-characters" title="Permalink to this headline">¶</a></h2>
 <p>Many of the bindings allow match characters in the arguments. Here
 are the four special characters:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 94%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>?</p></td>
 <td><p>matches any single character</p></td>
@@ -3580,8 +3705,8 @@ so a bind would have to use “\*” or {*} for a mask argument</p></td>
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+      Last updated on Jul 08, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
         </div>
         <div class="clearer"></div>
