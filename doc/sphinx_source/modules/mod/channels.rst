@@ -45,15 +45,21 @@ There are also some variables you can set in your config file:
     channel add #channel { SETTINGS }
       This command adds a static channel to your bot (it cannot be removed via the partyline- we recommend using the .+chan command on the partyline instead). This command will add the channel preconfigured with the specified settings. A full list of settings is defined in `Channel Settings`_.
       
-    channel set <chan> +/-<setting>
-      This command modifies a specific channel setting for a channel. There are many different options for channels which you can define. A full list of settings is defined in `Channel Settings`_.
-      Some settings are enabled or disabled by a plus or minus in front of them, and others directly take text or integer values.
-      
 Channel Settings
 ----------------
 
+There are two types of channl settings: value-based settings (where you configure a setting with a number or string), and enable/disable-based settings (where you turn a setting on or off). These settings can be configured via Tcl using the 'channel set' command:
+
+    channel set <chan> <setting>
+      This command modifies a specific channel setting for a channel. There are many different options for channels which you can define.
+      Some settings are enabled or disabled by a plus or minus in front of them, and others directly take text or integer values.
+
 Value-based Channel Settings
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+      chanmode +/-<modes>
+        This setting makes the bot enforce channel modes. It will always enforce
+        the +<modes> and remove the -<modes> modes.
 
       idle-kick 0
         This setting will make the bot check every minute for idle users. Set
@@ -226,17 +232,11 @@ Value-based Channel Settings
 Enable/Disable Channel Settings
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
-        chanmode +/-<modes>
-          This setting makes the bot enforce channel modes. It will always enforce
-          the +<modes> and remove the -<modes> modes.
-
-        channel set <chan> +/-<setting>
-          There are many different options for channels which you can define.
-          They can be enabled or disabled by a plus or minus in front of them.
+These settings should be preceded by a + or - to enable or disable the setting, respctively.
 
         enforcebans
           When a ban is set, kick people who are on the channel and match
-          the ban?
+          the ban
 
         dynamicbans
           Only activate bans on the channel when necessary? This keeps the
@@ -271,7 +271,7 @@ Enable/Disable Channel Settings
           will require all invites to be made through the bot's console.
 
         autoop
-          Op users with the +o flag as soon as they join the channel?
+          Op users with the +o flag as soon as they join the channel
           This is insecure and not recommended.
 
         autohalfop
@@ -279,19 +279,19 @@ Enable/Disable Channel Settings
           This is insecure and not recommended.
 
         bitch
-          Only let users with the +o flag have op on the channel?
+          Only let users with the +o flag have op on the channel
 
         greet
-          Say a user's info line when they join the channel?
+          Say a user's info line when they join the channel
 
         protectops
           Re-op a user with the +o flag if they get deopped?
 
         protecthalfops
-          Re-halfop a user with the +l flag if they get dehalfopped?
+          Re-halfop a user with the +l flag if they get dehalfopped
 
         protectfriends
-          Re-op a user with the +f flag if they get deopped?
+          Re-op a user with the +f flag if they get deopped
 
         statuslog
           Log the channel status line every 5 minutes? This shows the bot's
@@ -342,7 +342,7 @@ Enable/Disable Channel Settings
           setting channel modes without having ops.
 
         static
-          Allow only permanent owners to remove the channel?
+          Allow only permanent owners to remove the channel
 
 Default Channel Values
 ----------------------
