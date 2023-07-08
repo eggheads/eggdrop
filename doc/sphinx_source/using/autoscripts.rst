@@ -45,9 +45,9 @@ clean <script>
 ^^^^^^^^^^^^^^
 This command will delete the script from the filesystem. After running this command, you will have to re-download and re-configure the script if you wish to use it again.
 
-update
-^^^^^^
-This command checks if there is a newer version of autoscript available.
+update [script]
+^^^^^^^^^^^^^^^
+If no script is specified, this command checks if there any downloaded script has a newer version available. If a script is specified, autoscript will fetch and install the updated script.
 
 
 Autoscripts File Structure
@@ -63,6 +63,7 @@ Manifest.json
 Every autoscripts package must have a manifest.json file. This file contains metadata for the script such as version and description information, as well as the user-configurable settings for use with th script. A simple example of a manifest.json file is as follows::
 
   {
+    "schema": 1,
     "name": "woobie",
     "version_major": 1,
     "version_minor": 0,
@@ -93,6 +94,8 @@ Every autoscripts package must have a manifest.json file. This file contains met
     }
   }
 
++-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| schema                            | The schema version of autoscript (currently 1)                                                                                                                                                                                                                         |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | name                              | The name of the script. Must match the script name (if the script is foo.tcl, then this must be foo)                                                                                                                                                                   |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

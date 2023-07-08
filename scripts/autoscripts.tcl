@@ -122,8 +122,10 @@ proc parse_egg {idx text} {
 
     if {$subcmd in {done}} {
       egg_done $idx "parse"
-    } elseif {$subcmd in {update remote list help}} {
+    } elseif {$subcmd in {remote list help}} {
 		egg_$subcmd $idx
+    } elseif {$subcmd in {update}} {
+        egg_$subcmd $idx $arg1
 	} elseif {$subcmd in {config fetch clean}} {
 		if {$arg1 eq ""} {
 		  putdcc $idx "Missing parameter, must be $::lastbind $subcmd scriptName"
@@ -247,17 +249,26 @@ proc egg_set {idx script setting value} {
   global cmdtxt
   global jsondict
   foreach scriptentry $jsondict {
+    set noscript 1
+    set noset 1
     if {[string match $script [dict get $scriptentry name]]} {
+      set noscript 0
       if [dict exists $scriptentry config vars $setting] {
+        set noset 0
         dict set scriptentry config vars $setting value $value
         write_json $script [compile_json {dict config {dict vars {dict * dict}}} $scriptentry]
         putdcc $idx "* ${script}: Variable \"$setting\" set to \"${value}\""
         putdcc $idx "* Use \"load $script\" to enable this change"
-        putidx $idx "$cmdtxt"
         readjsonfile        
       }
     }
   }
+  if $noscript {
+    putdcc $idx "ERROR: Script \"${script}\" not found."
+  } elseif $noset {
+    putdcc $idx "* ${script}: Setting \"$setting\" not found."
+  }
+  putidx $idx "$cmdtxt"
 }
 
 # Pull down remote Tcl file listing
@@ -289,7 +300,7 @@ proc egg_loaded {} {
   return $scriptlist
 }
 
-proc egg_update {idx} {
+proc egg_update {idx tgtscript} {
   global cmdtxt
   global jsondict
   global version
@@ -307,8 +318,14 @@ proc egg_update {idx} {
         if { ([dict get $remotescript minor] > [dict get $localscript version_minor] &&
               [dict get $remotescript major] >= [dict get $localscript version_major]) ||
              ([dict get $remotescript major] > [dict get $localscript version_major]) } {
-          putdcc $idx "* [dict get $localscript name] has an update available."
+          ## If we're looking for a specific script, suppress other found messages
+          if {[string equal -nocase $tgtscript ""]} {
+              putdcc $idx "* [dict get $localscript name] has an update available."
+            }
           set found 1
+          if {[string equal -nocase $tgtscript [dict get $localscript name]]} {
+            putdcc $idx "* Script update feature goes here- coming soon!"
+          }
         }
       }
     }
@@ -434,7 +451,7 @@ proc egg_help {idx} {
   putidx $idx "* unload <script>        : Prevent a script from running when Eggdrop starts"
   putidx $idx "                           (You must restart Eggdrop to stop a currently running script!)"
   putidx $idx "* clean <script>         : Permanently remove a script and any associated settings or files"
-  putidx $idx "* update                 : Check for updates for autoscript"
+  putidx $idx "* update \[script\]      : Check for updates for autoscript, or specify a script to update"
   putidx $idx "* done                   : Return to Eggdrop partyline"
   putidx $idx "----------------------------------------------------------------------------------------------"
   putidx $idx "$cmdtxt"
