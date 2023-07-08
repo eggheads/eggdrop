@@ -55,6 +55,7 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     using/features
     using/core
     using/partyline
+    using/autoscripts
     using/users
     using/bans
     using/botnet
