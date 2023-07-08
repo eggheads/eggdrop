@@ -16,7 +16,7 @@ are helpful in debugging and testing your code.
 
 First, read through the script. Very few commands are listed here intentionally,
 but as you want to develop more advanced scripts, you will definitely want to
-get familiar with the `core Tcl language commands <https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/mainDocs/tcl-commands.html>`_
+get familiar with the `core Tcl language commands <https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/using/tcl-commands.html>`_
 
 If you have the .tcl command enabled, you can load a script by typing
 '.tcl source script/file.tcl' to load it. Otherwise, add it to your config
@@ -83,7 +83,7 @@ Now, let's look start to dissect the actual code!::
 
   bind join - * greet
 
-This is a bind. This sets up an action that Eggdrop will react to. You can read `all the binds that Eggdrop uses here. <https://docs.eggheads.org/mainDocs/tcl-commands.html>`_ Generally, we like to place all binds towards the top of the script so that they are together and easy to find. Now, let's look at documentation of the bind join together.
+This is a bind. This sets up an action that Eggdrop will react to. You can read `all the binds that Eggdrop uses here. <>https://docs.eggheads.org/using/tcl-commands.html`_ Generally, we like to place all binds towards the top of the script so that they are together and easy to find. Now, let's look at documentation of the bind join together.
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------------+
 | bind JOIN                                                                                                                                                |
