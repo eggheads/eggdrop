@@ -48,7 +48,7 @@ There are also some variables you can set in your config file:
 Channel Settings
 ----------------
 
-There are two types of channl settings: value-based settings (where you configure a setting with a number or string), and enable/disable-based settings (where you turn a setting on or off). These settings can be configured via Tcl using the 'channel set' command:
+There are two types of channel settings: value-based settings (where you configure a setting with a number or string), and enable/disable-based settings (where you turn a setting on or off). These settings can be configured via Tcl using the 'channel set' command:
 
     channel set <chan> <setting>
       This command modifies a specific channel setting for a channel. There are many different options for channels which you can define.
