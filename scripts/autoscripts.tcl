@@ -284,7 +284,8 @@ proc egg_remote {idx} {
   putdcc $idx "Scripts available for download:"
   putdcc $idx "-------------------------------"
   foreach scriptentry $datadict {
-    putdcc $idx "* [dict get $scriptentry slug] ([lindex [regexp -inline {\n.*<p>([^<>]*)</p>} [dict get $scriptentry description rendered]] 1])"
+    regsub -all {<[^>]+>} [dict get $scriptentry caption rendered] "" scriptcap
+    putdcc $idx "* [format "%-16s %s" [dict get $scriptentry slug] [string trim $scriptcap "\n"]]"
   }
   putdcc $idx "\n"
   putdcc $idx "* Type 'fetch <scriptname>' to download a script"
@@ -454,7 +455,7 @@ proc egg_help {idx} {
   putidx $idx "* unload <script>        : Prevent a script from running when Eggdrop starts"
   putidx $idx "                           (You must restart Eggdrop to stop a currently running script!)"
   putidx $idx "* clean <script>         : Permanently remove a script and any associated settings or files"
-  putidx $idx "* update \[script\]      : Check for updates for autoscript, or specify a script to update"
+  putidx $idx "* update \[script\]        : Check for updates for autoscript, or specify a script to update"
   putidx $idx "* done                   : Return to Eggdrop partyline"
   putidx $idx "----------------------------------------------------------------------------------------------"
   putidx $idx "$cmdtxt"
