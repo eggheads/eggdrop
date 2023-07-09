@@ -47,9 +47,11 @@ proc readjsonfile {} {
       set fs [open $dirname/manifest.json r]
       set contents [read $fs]
       set jcontents [json::json2dict $contents]
-      if {![string equal [dict get $jcontents schema] "1"]} {
-        putlog "$dirname contains invalid manifest.json format, skipping..."
-        continue
+      if {[dict exists $jcontents schema]} {
+        if {![string equal [dict get $jcontents schema] "1"]} {
+          putlog "$dirname contains invalid manifest.json format, skipping..."
+          continue
+        }
       }
       lappend jsonlist $contents
       close $fs
@@ -96,7 +98,7 @@ proc loadscripts {} {
     if [dict get $scriptentry config loaded] {
       if {[dict exists $scriptentry config vars]} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-          uplevel #0 set $configvar [dict get $scriptentry config vars $configvar value]
+          uplevel #0 [list set $configvar [dict get $scriptentry config vars $configvar value]]
         }
       }
       if {[catch {uplevel #0 source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl} err]} {
@@ -171,6 +173,7 @@ proc egg_list {idx} {
       }
     }
   }
+  putidx $idx "Additional scripts available for download can be viewed with the 'remote' command"
   putidx $idx "$cmdtxt"
 }
 
@@ -187,7 +190,7 @@ proc egg_load {idx script loadme} {
       if {$loadme} {
         if {[dict exists $scriptentry config vars]} {
           foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-            uplevel #0 set $configvar [dict get $scriptentry config vars $configvar value]
+            uplevel #0 [list set $configvar [dict get $scriptentry config vars $configvar value]]
           }
         }
         if {[catch {uplevel #0 source $eggdir/${script}/${script}.tcl} err]} {
@@ -275,9 +278,9 @@ proc egg_set {idx script setting value} {
 # For future eggheads- 100 is the maximum WP supports without doing pagination
 proc egg_remote {idx} {
   global cmdtxt
+  putdcc $idx "* Retrieving script list, please wait..."
   set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip&orderby=slug&per_page=100&order=asc" 0]
   set datadict [json::json2dict $jsondata]
-  putdcc $idx "* Retrieving script list, please wait..."
   putdcc $idx "Scripts available for download:"
   putdcc $idx "-------------------------------"
   foreach scriptentry $datadict {
