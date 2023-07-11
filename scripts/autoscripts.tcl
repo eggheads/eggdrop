@@ -98,7 +98,7 @@ proc loadscripts {} {
     if [dict get $scriptentry config loaded] {
       if {[dict exists $scriptentry config vars]} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-          uplevel #0 [list set $configvar [dict get $scriptentry config vars $configvar value]]
+          set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
         }
       }
       if {[catch {uplevel #0 source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl} err]} {
