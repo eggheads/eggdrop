@@ -56,7 +56,7 @@ An autoscripts package requires (minimum) two files: the Tcl script, and a json 
 
 Tcl File
 ^^^^^^^^
-Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the global namespace. For this reason, it is recommended that variables have unique names to avoid collisions. This is commonly done by prefixing the variable name with the script name or abbreviation. For example, a script called myscript.tcl might avoid using a variable called ``name`` and instead use ``myscript_name`` or ``ms_name``.
+Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the <script> namespace based on the filename. For this reason, the script must use the same namespace as its filename.
 
 Manifest.json
 ^^^^^^^^^^^^^
