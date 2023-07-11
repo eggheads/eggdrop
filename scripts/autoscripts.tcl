@@ -234,9 +234,26 @@ proc egg_config {idx script} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
           putdcc $idx "* $configvar - [dict get $scriptentry config vars $configvar description] (current value: [dict get $scriptentry config vars $configvar value])"
         }
+        # treats udefflag
         if {[dict exists $scriptentry config udefflag]} {
           putdcc $idx ""
-          putdcc $idx "* Enable for a channel via .chanset <channel> +[dict get $scriptentry config udefflag]"
+          foreach udefflag [dict keys [dict get $scriptentry config udefflag]] {
+            putdcc $idx "* [dict get $scriptentry config udefflag $udefflag] .chanset <channel> +$udefflag"
+          }
+        }
+        # treats udefstr
+        if {[dict exists $scriptentry config udefstr]} {
+          putdcc $idx ""
+          foreach udefstr [dict keys [dict get $scriptentry config udefstr]] {
+            putdcc $idx "* [dict get $scriptentry config udefstr $udefstr description] .chanset <channel> $udefstr [dict get $scriptentry config udefstr $udefstr value]"
+          }
+        }
+        # treats udefint
+        if {[dict exists $scriptentry config udefint]} {
+          putdcc $idx ""
+          foreach udefint [dict keys [dict get $scriptentry config udefint]] {
+            putdcc $idx "* [dict get $scriptentry config udefint $udefint description] .chanset <channel> $udefint [dict get $scriptentry config udefint $udefint value]"
+          }
         }
       }
     }
