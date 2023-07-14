@@ -190,7 +190,7 @@ proc egg_load {idx script loadme} {
       if {$loadme} {
         if {[dict exists $scriptentry config vars]} {
           foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-            uplevel #0 [list set $configvar [dict get $scriptentry config vars $configvar value]]
+            set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
           }
         }
         if {[catch {uplevel #0 source $eggdir/${script}/${script}.tcl} err]} {
@@ -234,25 +234,21 @@ proc egg_config {idx script} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
           putdcc $idx "* $configvar - [dict get $scriptentry config vars $configvar description] (current value: [dict get $scriptentry config vars $configvar value])"
         }
-        # treats udefflag
-        if {[dict exists $scriptentry config udefflag]} {
+        # treats udef
+        if {[dict exists $scriptentry config udef]} {
           putdcc $idx ""
-          foreach udefflag [dict keys [dict get $scriptentry config udefflag]] {
-            putdcc $idx "* [dict get $scriptentry config udefflag $udefflag] .chanset <channel> +$udefflag"
-          }
-        }
-        # treats udefstr
-        if {[dict exists $scriptentry config udefstr]} {
-          putdcc $idx ""
-          foreach udefstr [dict keys [dict get $scriptentry config udefstr]] {
-            putdcc $idx "* [dict get $scriptentry config udefstr $udefstr description] .chanset <channel> $udefstr [dict get $scriptentry config udefstr $udefstr value]"
-          }
-        }
-        # treats udefint
-        if {[dict exists $scriptentry config udefint]} {
-          putdcc $idx ""
-          foreach udefint [dict keys [dict get $scriptentry config udefint]] {
-            putdcc $idx "* [dict get $scriptentry config udefint $udefint description] .chanset <channel> $udefint [dict get $scriptentry config udefint $udefint value]"
+          foreach udef [dict keys [dict get $scriptentry config udef]] {
+            set utype [dict get $scriptentry config udef $udef type]
+            set uval null
+            if {[dict exists $scriptentry config udef $udef value]} {
+              set uval [dict get $scriptentry config udef $udef value]
+            }
+            switch -nocase -- $utype {
+              "flag" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> +$udef" }
+              "str" -
+              "int" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> $uval" }
+              default { putdcc $idx "* $udef seems to exists but is not well defined" }
+            }
           }
         }
       }
