@@ -95,6 +95,7 @@ proc loadscripts {} {
   global jsondict
   global eggdir
   foreach scriptentry $jsondict {
+    namespace eval ::[dict get $scriptentry name] {}
     if [dict get $scriptentry config loaded] {
       if {[dict exists $scriptentry config vars]} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
@@ -188,6 +189,7 @@ proc egg_load {idx script loadme} {
     if [string match $script [dict get $scriptentry name]] {
       set found 1
       if {$loadme} {
+        namespace eval ::[dict get $scriptentry name] {}
         if {[dict exists $scriptentry config vars]} {
           foreach configvar [dict keys [dict get $scriptentry config vars] *] {
             set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
@@ -246,7 +248,7 @@ proc egg_config {idx script} {
             switch -nocase -- $utype {
               "flag" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> +$udef" }
               "str" -
-              "int" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> $uval" }
+              "int" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> $udef $uval" }
               default { putdcc $idx "* $udef seems to exists but is not well defined" }
             }
           }
