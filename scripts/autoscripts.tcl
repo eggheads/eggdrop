@@ -189,11 +189,7 @@ proc egg_load {idx script loadme} {
     if [string match $script [dict get $scriptentry name]] {
       set found 1
       if {$loadme} {
-<<<<<<< HEAD
         namespace eval ::[dict get $scriptentry name] {}
-=======
-        set tns [makens $scriptentry [dict get $scriptentry]]
->>>>>>> parent of f3af8c59 (Corrected bug when using default NS)
         if {[dict exists $scriptentry config vars]} {
           foreach configvar [dict keys [dict get $scriptentry config vars] *] {
             set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
@@ -206,10 +202,6 @@ proc egg_load {idx script loadme} {
         dict set scriptentry config loaded 1
         putdcc $idx "* Loaded $script."
       } else {
-<<<<<<< HEAD
-=======
-        delns $scriptentry [dict get $scriptentry]
->>>>>>> parent of f3af8c59 (Corrected bug when using default NS)
         dict set scriptentry config loaded 0
         putdcc $idx "* Removed $script from being loaded. Restart Eggdrop to complete."
         set found 1
@@ -565,36 +557,6 @@ proc compile_json {spec data} {
 	}
 }
 
-<<<<<<< HEAD
-=======
-# Create namespaces for a loaded script
-proc makens {script {ns ""}} {
-   if {$ns eq "" || ![dict exists $ns config namespace]} {
-     namespace eval ::$script {}
-     set tns "::$script"
-   } else {
-     set tns ""
-     foreach sns [split [dict get $ns config namespace] "::"] {
-       if {$sns eq ""} continue;
-       append tns "::$sns"
-       namespace eval $tns {}
-     }
-   }
-   return $tns
-}
-
-# Remove namespace for a script
-proc delns {script {ns ""}} {
-   if {$ns eq "" || ![dict exists $ns config namespace]} {
-     namespace delete ::$script {}
-   } else {
-     set ns [string trim [string map {"::" " "} [dict get $ns config namespace]]]
-     lassign $ns ns
-     namespace delete ::$ns
-   }
-}
-
->>>>>>> parent of f3af8c59 (Corrected bug when using default NS)
 if {![file exists autoscripts]} {file mkdir autoscripts}
 readjsonfile
 loadscripts
