@@ -1066,7 +1066,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
         pthread_mutex_unlock(&dtn->mutex);
       }
       close(dtn->fildes[0]);
-      if (!pthread_join(dtn->thread_id, &res))
+      if (pthread_join(dtn->thread_id, &res))
         putlog(LOG_MISC, "*", "sockread(): pthread_join(): error = %s", strerror(errno));
       dtn_prev->next = dtn->next;
       nfree(dtn);
