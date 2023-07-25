@@ -318,6 +318,7 @@ typedef uint32_t IP;
 
 /* The following functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
+#define egg_inet_aton(src, dst) inet_pton(AF_INET, src, dst)
 #define egg_memcpy memcpy
 #define egg_memset memset
 #define egg_strcasecmp strcasecmp
@@ -340,6 +341,7 @@ typedef int (*IntFunc) ();
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 typedef struct {
   int family;
