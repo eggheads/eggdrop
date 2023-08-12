@@ -102,7 +102,7 @@ proc loadscripts {} {
           set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
         }
       }
-      if {[catch {uplevel #0 source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl} err]} {
+      if {[catch {namespace eval ::${script} [list source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl]} err]} {
         putlog "Error loading [dict get $scriptentry]: $err"
         return
       }
@@ -195,7 +195,7 @@ proc egg_load {idx script loadme} {
             set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
           }
         }
-        if {[catch {uplevel #0 source $eggdir/${script}/${script}.tcl} err]} {
+        if {[catch {namespace eval ::${script} [list source $eggdir/${script}/${script}.tcl]} err]} {
           putdcc $idx "Error loading ${script}: $err"
           return
         }
