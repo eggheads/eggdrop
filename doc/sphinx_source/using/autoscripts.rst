@@ -71,6 +71,27 @@ Every autoscripts package must have a manifest.json file. This file contains met
     "long_description": "This is an example script to help understand the autoscript system. Yeah, it doesn't really do anything, but that's besides the point. It could, and that should be enough for anyone"
     "config": {
       "loaded": 0,
+      "udef": {
+         "myflag": {
+            "type": "flag",
+            "description": "Activate the script on <channel> by doing"
+         },
+         "mystr1": {
+            "type": "str",
+            "description": "Flood limit, modify the channel value for this doing",
+            "value": "{10:6}"
+         },
+         "mystr2": {
+            "type": "str",
+            "description": "Change that with",
+            "value": "Just my string"
+         }
+         "myint1": {
+            "type": "int",
+            "description": "Number of allowed kicks, could be change with",
+            "value": 4
+         }
+      },
       "requires": "tls",
       "vars": {
         "woobie_dict": {
@@ -107,6 +128,12 @@ Every autoscripts package must have a manifest.json file. This file contains met
 | long_description                     | A longer description of what the script does, similar to a README. This will be shown when a script is viewed via .script config.                                                                                                                                      |
 +--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | config-loaded                        | Whether this script is currently loaded or not. It should be default set to 0.                                                                                                                                                                                         |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-udef-<varname>-type           | Type of the user-defined channel setting, could be flag, str or int.                                                                                                                                                                                                   |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-udef-<varname>-description    | Description of user-defined channel setting used by the script. The description is appended with " .chanset <channel> <varname> value" in case of int or str, and with " .channel <channel> +<varname>" when flag                                                      |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-udef-<varname>-value          | Default value of user-defined channel setting used by the script. This is displayed when configuration settings are displayed to the user on the partyline.                                                                                                            |
 +--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | config-requires                      | Any Tcl package required for use by the script, such as tls, http, json, etc.                                                                                                                                                                                          |
 +--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
