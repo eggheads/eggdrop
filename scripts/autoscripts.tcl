@@ -95,15 +95,15 @@ proc loadscripts {} {
   global jsondict
   global eggdir
   foreach scriptentry $jsondict {
-    namespace eval ::[dict get $scriptentry name] {}
     if [dict get $scriptentry config loaded] {
+      namespace eval ::[dict get $scriptentry name] {}
       if {[dict exists $scriptentry config vars]} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
           set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
         }
       }
-      if {[catch {namespace eval ::${script} [list source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl]} err]} {
-        putlog "Error loading [dict get $scriptentry]: $err"
+      if {[catch {namespace eval ::[dict get ${scriptentry} name] [list source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl]} err]} {
+        putlog "Error loading [dict get $scriptentry name]: $err"
         return
       }
     }
@@ -162,14 +162,16 @@ proc egg_list {idx} {
   global cmdtxt
   readjsonfile
   putdcc $idx "\nThe following scripts are available for configuration:"
-  putdcc $idx "------------------------------------------------------"
+  putdcc $idx "-------------------------------------------------------"
   foreach script $jsondict {
     set loaded [expr {[dict get $script config loaded] == 1 ? "\[X\]" : "\[ \]"}]
     putdcc $idx "* $loaded [dict get $script name] (v[dict get $script version_major].[dict get $script version_minor]) - [dict get $script description]"
     if {[dict exists $script config requires] && [string length [dict get $script config requires]]} {
       foreach pkg [dict get $script config requires] {
-        if {[catch {[package require [dict get $script $pkg]]}]} {
-          putdcc $idx "      ( ^ Must install Tcl $pkg package before loading)"
+        if {![string equal $pkg "null"]} {
+          if {![lsearch -exact [package names] $pkg]} {
+            putdcc $idx "      ( ^ Must install Tcl $pkg package on host before loading)"
+          }
         }
       }
     }
@@ -233,12 +235,13 @@ proc egg_config {idx script} {
       } else {
         putdcc $idx "* The following config options are available for $script:"
         putdcc $idx "---------------------------------------------------------"
+        putdcc $idx "Variables available for configuration via the set command: "
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
           putdcc $idx "* $configvar - [dict get $scriptentry config vars $configvar description] (current value: [dict get $scriptentry config vars $configvar value])"
         }
         # treats udef
+        putdcc $idx "\nChannel settings available for configuration via .chanset: "
         if {[dict exists $scriptentry config udef]} {
-          putdcc $idx ""
           foreach udef [dict keys [dict get $scriptentry config udef]] {
             set utype [dict get $scriptentry config udef $udef type]
             set uval null
@@ -252,6 +255,7 @@ proc egg_config {idx script} {
               default { putdcc $idx "* $udef seems to exists but is not well defined" }
             }
           }
+          putdcc $idx ""
         }
       }
     }
