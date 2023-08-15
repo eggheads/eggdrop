@@ -90,19 +90,25 @@ proc send_http {url type} {
   return $data
 }
 
+proc createvarns {varname} {
+  for {set i 0} {$i < [llength [split $varname ::]] - 1} {incr i} {
+    namespace eval [join [lrange [split $varname ::] 0 $i] ::] {}
+  }
+}
+
 # Read all manifest files
 proc loadscripts {} {
   global jsondict
   global eggdir
   foreach scriptentry $jsondict {
     if [dict get $scriptentry config loaded] {
-      namespace eval ::[dict get $scriptentry name] {}
       if {[dict exists $scriptentry config vars]} {
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-          set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
+          uplevel #0 [list createvarns $configvar]
+          set ::$configvar [dict get $scriptentry config vars $configvar value]
         }
       }
-      if {[catch {namespace eval ::[dict get ${scriptentry} name] [list source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl]} err]} {
+      if {[catch {uplevel #0 [list source $eggdir/[dict get $scriptentry name]/[dict get $scriptentry name].tcl]} err]} {
         putlog "Error loading [dict get $scriptentry name]: $err"
         return
       }
@@ -191,13 +197,13 @@ proc egg_load {idx script loadme} {
     if [string match $script [dict get $scriptentry name]] {
       set found 1
       if {$loadme} {
-        namespace eval ::[dict get $scriptentry name] {}
         if {[dict exists $scriptentry config vars]} {
           foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-            set ::[dict get $scriptentry name]::$configvar [dict get $scriptentry config vars $configvar value]
+            uplevel #0 [list createvarns $configvar]
+            set ::$configvar [dict get $scriptentry config vars $configvar value]
           }
         }
-        if {[catch {namespace eval ::${script} [list source $eggdir/${script}/${script}.tcl]} err]} {
+        if {[catch {uplevel #0 [list source $eggdir/${script}/${script}.tcl]} err]} {
           putdcc $idx "Error loading ${script}: $err"
           return
         }
