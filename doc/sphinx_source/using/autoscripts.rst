@@ -56,7 +56,7 @@ An autoscripts package requires (minimum) two files: the Tcl script, and a json 
 
 Tcl File
 ^^^^^^^^
-Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the global namespace. For this reason, we suggest wrapping a custom autoscript in a ``namespace eval <scriptname> {}`` as an autoscript best practice, which will lessen the chance of a variable name colliding with a variable from a separate script.
+Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the global namespace. For this reason, we suggest wrapping a custom autoscript inside a ``namespace eval <scriptname> {}`` statement as an autoscript best practice, which will lessen the chance of a variable name colliding with a variable from a separate script.
 
 Manifest.json
 ^^^^^^^^^^^^^
@@ -153,7 +153,8 @@ Development hints
 
 * An autoscript should not require a user to manually open the script in an editor for any reason. Design your script as such!
 * Use `user defined channel flags <https://docs.eggheads.org/using/tcl-commands.html#setudef-flag-int-str-name>`_ to enable/disable a script for a particular channel, they're easy!
-* Variables used in autoscripts are placed into the global namespace. Make them unique to prevent collisions! We recommend prefixing the script name in front of a variable, such as myscript_setting or ms_setting.
+* Don't use `global` statements. Based on the manifest, variables are created by autoscript in the global namespace before the script is loaded. Instead of the `global` command, use the `variable` command to access a global variable inside a proc. And because Tcl is awesome, each variable must be declared on its own line, not all on a single line like you can do with `global`. Sorry!
+* While we're talking about variables... make them unique to prevent collisions! We recommend prefixing the script name in front of a variable, such as myscript_setting or ms_setting. Alternatively, you can wrap your autoscript inside a ``namespace eval <scriptname> {}`` statement, which create a private namespace for your script to operate within.
 
 Tcl Commands
 ------------
