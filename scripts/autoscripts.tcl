@@ -243,7 +243,38 @@ proc egg_config {idx script} {
         putdcc $idx "---------------------------------------------------------"
         putdcc $idx "Variables available for configuration via the set command: "
         foreach configvar [dict keys [dict get $scriptentry config vars] *] {
-          putdcc $idx "* $configvar - [dict get $scriptentry config vars $configvar description] (current value: [dict get $scriptentry config vars $configvar value])"
+          set printstr "* $configvar - [dict get $scriptentry config vars $configvar description]"
+          if {([string length $printstr] > 110) || ([string first "\n" $printstr] ne -1)} {
+            if {[string first "\n" [string range $printstr 0 110]] ne -1} {
+              set index [string first "\n" [string range $printstr 0 110]]
+            } else {
+              set index [string last { } $printstr 109]
+            }
+            putdcc $idx "[string range $printstr 0 $index]"
+            set printstr [string range $printstr $index+1 end]
+
+            while {[string length $printstr] > 0} {
+              if {([string length $printstr] > 102) || ([string first "\n" $printstr] ne -1)} {
+                if {[string first "\n" [string range $printstr 0 102]] ne -1} {
+                  set index [string first "\n" [string range $printstr 0 102]]
+                } else {
+                  set printstr [string trimleft $printstr]
+                  set index [string last { } $printstr 101]
+                }
+                putdcc $idx "      [string range $printstr 0 $index]"
+                set printstr [string range $printstr $index+1 end]
+              } else {
+                putdcc $idx "      [string trimleft $printstr]"
+                putdcc $idx "      (current value: [dict get $scriptentry config vars $configvar value])"
+                putdcc $idx "\n"
+                break
+              }
+            }
+          } else {
+            putdcc $idx "$printstr"
+            putdcc $idx "      (current value: [dict get $scriptentry config vars $configvar value])"
+            putdcc $idx "\n"
+          }
         }
         # treats udef
         putdcc $idx "\nChannel settings available for configuration via .chanset: "
@@ -258,7 +289,7 @@ proc egg_config {idx script} {
               "flag" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> +$udef" }
               "str" -
               "int" { putdcc $idx "* $udef ($utype) : [dict get $scriptentry config udef $udef description] .chanset <channel> $udef $uval" }
-              default { putdcc $idx "* $udef seems to exists but is not well defined" }
+              default { putdcc $idx "* $udef seems to exist but is not well defined" }
             }
           }
           putdcc $idx ""
@@ -432,7 +463,7 @@ proc egg_fetch {idx script} {
       exec tar -zxf $eggdir/[dict get $scriptentry slug].tgz -C $eggdir/[dict get $scriptentry slug]
       file delete $eggdir/[dict get $scriptentry slug].tgz
       putdcc $idx "* [dict get $scriptentry slug] downloaded."
-      putdcc $idx "* Use 'load [dict get $scriptentry slug]' to load and 'config [dict get $scriptentry slug]' to configure."
+      putdcc $idx "* Use 'config [dict get $scriptentry slug]' to configure and then 'load [dict get $scriptentry slug]' to load."
       putidx $idx "$cmdtxt"
       readjsonfile
     }
