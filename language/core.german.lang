@@ -101,11 +101,11 @@ die mitgelieferte Konfigurationsdatei.\n
 # Ueberarbeiten, brauche kontext:
 0x516,Verbindung getrennt
 0x517,ungueltiger Bot
-0x518,Ring entdeckt: trenne Verbindung
+0x518,Schleife entdeckt: zwei Bots mit Namen
 0x51a,von
 0x51b,veraltet
 0x51c,abgewiesen
-0x51d,Aufdraenger
+0x51d,Betrueger
 0x51e,versuche
 0x51f,MOTD-Datei:
 0x520,Keine MOTD-Datei.
@@ -303,7 +303,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb25,User auf Channel
 0xb26,Kann keine Verbindung dorthin herstellen
 0xb27,Kann die Verbindung nicht trennen zu
-0xb28,Ring entdeckt
+0xb28,Schleife entdeckt
 0xb29,Falsche Verbindungsmitteilung von
 0xb2b,Verbindung getrennt zu den verbliebenen
 0xb2c,Verbunden mit
@@ -433,7 +433,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe2d,*** VORSICHT: TOD EINES SOCKETS (%d), TYP %s WURDE NICHT ABGEFANGEN
 0xe2e,Telnet-Verbindung waehrend des Ident-Vorgangs verloren [%s/%d]
 0xe2f,EOF bei der Ident-Verbindung
-0xe30,Ident-Socket beim Wartern auf die Antwort verloren!!
+0xe30,Ident-Socket beim Warten auf die Antwort verloren!!
 0xe31,Telnet verweigert: %s, Kein Zugriff
 0xe32,Telnet-Verbindung von %s zurueckgewiesen (versuchte, meinen botnetnick zu benutzen)
 0xe33,Telnet-Verbindung von %s waerend Kontrolle auf Duplikat verloren
