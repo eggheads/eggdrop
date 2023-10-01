@@ -518,7 +518,7 @@ void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
   int i, tsl = 0;
-  char s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -582,8 +582,8 @@ void putlog (int type, char *chname, const char *format, ...)
         if (logs[i].f == NULL) {
           /* Open this logfile */
           if (keep_all_logs) {
-            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a");
+            snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
+            logs[i].f = fopen(path, "a");
           } else
             logs[i].f = fopen(logs[i].filename, "a");
         }
