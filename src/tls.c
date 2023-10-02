@@ -109,7 +109,7 @@ static int ssl_seed(void)
   return 0;
 }
 
-void verify_cert_expiry() {
+void verify_cert_expiry(void) {
   X509 *x509;
   if ((x509 = SSL_CTX_get0_certificate(ssl_ctx)) &&
       (ASN1_TIME_cmp_time_t(X509_get0_notAfter(x509), time(NULL)) < 0))
