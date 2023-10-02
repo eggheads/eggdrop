@@ -445,7 +445,7 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
     /* done here to keep expmem happy, as this is accounted in
        irc.mod, not channels.mod where clear_channel() resides */
     nfree(chan->channel.key);
-    chan->channel.key = (char *) channel_malloc (1);
+    chan->channel.key = (char *) channel_malloc(1);
     chan->channel.key[0] = 0;
     chan->status &= ~CHAN_ASKEDMODES;
     dprintf(DP_MODE, "MODE %s\n", chan->name);

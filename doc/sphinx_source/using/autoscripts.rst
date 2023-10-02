@@ -56,7 +56,7 @@ An autoscripts package requires (minimum) two files: the Tcl script, and a json 
 
 Tcl File
 ^^^^^^^^
-Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the global namespace. For this reason, it is recommended that variables have unique names to avoid collisions. This is commonly done by prefixing the variable name with the script name or abbreviation. For example, a script called myscript.tcl might avoid using a variable called ``name`` and instead use ``myscript_name`` or ``ms_name``.
+Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the global namespace. For this reason, we suggest wrapping a custom autoscript inside a ``namespace eval <scriptname> {}`` statement as an autoscript best practice, which will lessen the chance of a variable name colliding with a variable from a separate script.
 
 Manifest.json
 ^^^^^^^^^^^^^
@@ -71,7 +71,27 @@ Every autoscripts package must have a manifest.json file. This file contains met
     "long_description": "This is an example script to help understand the autoscript system. Yeah, it doesn't really do anything, but that's besides the point. It could, and that should be enough for anyone"
     "config": {
       "loaded": 0,
-      "udefflag":"myscript"
+      "udef": {
+         "myflag": {
+            "type": "flag",
+            "description": "Activate the script on <channel> by doing"
+         },
+         "mystr1": {
+            "type": "str",
+            "description": "Flood limit, modify the channel value for this doing",
+            "value": "{10:6}"
+         },
+         "mystr2": {
+            "type": "str",
+            "description": "Change that with",
+            "value": "Just my string"
+         }
+         "myint1": {
+            "type": "int",
+            "description": "Number of allowed kicks, could be change with",
+            "value": 4
+         }
+      },
       "requires": "tls",
       "vars": {
         "woobie_dict": {
@@ -94,31 +114,35 @@ Every autoscripts package must have a manifest.json file. This file contains met
     }
   }
 
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| schema                            | The schema version of autoscript (currently 1)                                                                                                                                                                                                                         |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| name                              | The name of the script. Must match the script name (if the script is foo.tcl, then this must be foo)                                                                                                                                                                   |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| version_major                     | The major version integer (ie, 1 for 1.6)                                                                                                                                                                                                                              |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| version_minor                     | The minor version integer (ie, 6 for 1.6)                                                                                                                                                                                                                              |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| description                       | A one-line summary of what the script does. This will be shown when available scripts are listed on the partyline via .script list.                                                                                                                                    |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| long_description                  | A longer description of what the script does, similar to a README. This will be shown when a script is viewed via .script config.                                                                                                                                      |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| config-loaded                     | Whether this script is currently loaded or not. It should be default set to 0.                                                                                                                                                                                         |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| config-udefflag                   | Any user-defined channel settings used by the script. This is displayed when configuration settings are displayed to the user on the partyline.                                                                                                                        |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| config-requires                   | Any Tcl package required for use by the script, such as tls, http, json, etc.                                                                                                                                                                                          |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| config-vars-<varname>             | A setting intended to be modified by the user. The 'description' field should describe what the setting does, and the 'value' field stores the current value. These settings are displayed when the configuration settings are displayed to the user on the partyline. |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| config-vars-<varname>-description | A description of the setting, displayed in the configuration listing for the script.                                                                                                                                                                                   |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| config-vars-<varname>-value       | The value the setting is set to                                                                                                                                                                                                                                        |
-+-----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| schema                               | The schema version of autoscript (currently 1)                                                                                                                                                                                                                         |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| name                                 | The name of the script. Must match the script name (if the script is foo.tcl, then this must be foo)                                                                                                                                                                   |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| version_major                        | The major version integer (ie, 1 for 1.6)                                                                                                                                                                                                                              |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| version_minor                        | The minor version integer (ie, 6 for 1.6)                                                                                                                                                                                                                              |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| description                          | A one-line summary of what the script does. This will be shown when available scripts are listed on the partyline via .script list.                                                                                                                                    |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| long_description                     | A longer description of what the script does, similar to a README. This will be shown when a script is viewed via .script config.                                                                                                                                      |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-loaded                        | Whether this script is currently loaded or not. It should be default set to 0.                                                                                                                                                                                         |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-udef-<varname>-type           | Type of the user-defined channel setting, could be flag, str or int.                                                                                                                                                                                                   |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-udef-<varname>-description    | Description of user-defined channel setting used by the script. The description is appended with " .chanset <channel> <varname> value" in case of int or str, and with " .channel <channel> +<varname>" when flag                                                      |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-udef-<varname>-value          | Default value of user-defined channel setting used by the script. This is displayed when configuration settings are displayed to the user on the partyline.                                                                                                            |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-requires                      | Any Tcl package required for use by the script, such as tls, http, json, etc.                                                                                                                                                                                          |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-vars-<varname>                | A setting intended to be modified by the user. The 'description' field should describe what the setting does, and the 'value' field stores the current value. These settings are displayed when the configuration settings are displayed to the user on the partyline. |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-vars-<varname>-description    | A description of the setting, displayed in the configuration listing for the script.                                                                                                                                                                                   |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| config-vars-<varname>-value          | The value the setting is set to                                                                                                                                                                                                                                        |
++--------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 File placement
 ^^^^^^^^^^^^^^
@@ -129,7 +153,8 @@ Development hints
 
 * An autoscript should not require a user to manually open the script in an editor for any reason. Design your script as such!
 * Use `user defined channel flags <https://docs.eggheads.org/using/tcl-commands.html#setudef-flag-int-str-name>`_ to enable/disable a script for a particular channel, they're easy!
-* Variables used in autoscripts are placed into the global namespace. Make them unique to prevent collisions! We recommend prefixing the script name in front of a variable, such as myscript_setting or ms_setting.
+* Don't use `global` statements. Based on the manifest, variables are created by autoscript in the global namespace before the script is loaded. Instead of the `global` command, use the `variable` command to access a global variable inside a proc. And because Tcl is awesome, each variable must be declared on its own line, not all on a single line like you can do with `global`. Sorry!
+* While we're talking about variables... make them unique to prevent collisions! We recommend prefixing the script name in front of a variable, such as myscript_setting or ms_setting. Alternatively, you can wrap your autoscript inside a ``namespace eval <scriptname> {}`` statement, which create a private namespace for your script to operate within.
 
 Tcl Commands
 ------------
