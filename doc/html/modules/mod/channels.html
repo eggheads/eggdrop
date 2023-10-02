@@ -1,23 +1,27 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Channels Module &#8212; Eggdrop 1.9.5 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Compress Module" href="compress.html" />
     <link rel="prev" title="Blowfish Module" href="blowfish.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img class="logo" src="../../_static/eggman.png.gif" alt="Logo"/>
+          </a></p>
         <div class="headertitle"><a
           href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
@@ -119,7 +123,7 @@
             
   <p>Last revised: October 25, 2010</p>
 <section id="channels-module">
-<span id="channels"></span><h1>Channels Module<a class="headerlink" href="#channels-module" title="Permalink to this heading">¶</a></h1>
+<span id="channels"></span><h1>Channels Module<a class="headerlink" href="#channels-module" title="Permalink to this headline">¶</a></h1>
 <p>This module provides channel related support for the bot. Without it,
 you won’t be able to make the bot join a channel or save channel specific
 userfile information.</p>
@@ -131,8 +135,7 @@ module:</p>
 </div>
 <p>There are also some variables you can set in your config file:</p>
 <blockquote>
-<div><blockquote>
-<div><dl>
+<div><dl class="simple">
 <dt>set chanfile “LamestBot.chan”</dt><dd><p>Enter here the filename where dynamic channel settings are stored.</p>
 </dd>
 <dt>set force-expire 0</dt><dd><p>Set this setting to 1 if you want your bot to expire bans/exempts/invites
@@ -148,13 +151,19 @@ to be enforced at the same time by the chanmode channel setting.
 Make sure your server supports +ps mixing or you may get endless mode
 floods.</p>
 </dd>
-<dt>channel add #channel { SETTINGS }</dt><dd><p>Add each static channel you want your bot to sit in using this command.
-There are many different possible settings you can insert into this
-command, which are explained below.</p>
-<dl>
-<dt>chanmode +/-&lt;modes&gt;</dt><dd><p>This setting makes the bot enforce channel modes. It will always add
-the +&lt;modes&gt; and remove the -&lt;modes&gt; modes.</p>
+<dt>channel add #channel { SETTINGS }</dt><dd><p>This command adds a static channel to your bot (it cannot be removed via the partyline- we recommend using the .+chan command on the partyline instead). This command will add the channel preconfigured with the specified settings. A full list of settings is defined in <a class="reference internal" href="#channel-settings">Channel Settings</a>.</p>
 </dd>
+<dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt><dd><p>This command modifies a specific channel setting for a channel. There are many different options for channels which you can define. A full list of settings is defined in <a class="reference internal" href="#channel-settings">Channel Settings</a>.
+Some settings are enabled or disabled by a plus or minus in front of them, and others directly take text or integer values.</p>
+</dd>
+</dl>
+</div></blockquote>
+<section id="channel-settings">
+<h2>Channel Settings<a class="headerlink" href="#channel-settings" title="Permalink to this headline">¶</a></h2>
+<section id="value-based-channel-settings">
+<h3>Value-based Channel Settings<a class="headerlink" href="#value-based-channel-settings" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl>
 <dt>idle-kick 0</dt><dd><p>This setting will make the bot check every minute for idle users. Set
 this to 0 to disable idle check.</p>
 </dd>
@@ -162,6 +171,10 @@ this to 0 to disable idle check.</p>
 with serverops. There are seven different modes for this settings:</p>
 <blockquote>
 <div><table class="docutils align-default">
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 95%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>turn off</p></td>
@@ -196,6 +209,10 @@ with serverops. There are seven different modes for this settings:</p>
 revenging. There are four possible settings:</p>
 <blockquote>
 <div><table class="docutils align-default">
+<colgroup>
+<col style="width: 4%" />
+<col style="width: 96%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>Deop the user.</p></td>
@@ -217,6 +234,10 @@ revenging. There are four possible settings:</p>
 +k users or when revenge-mode is 3. Available types are:</p>
 <blockquote>
 <div><table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td colspan="2"><p>0 *!user&#64;host</p></td>
 </tr>
@@ -270,6 +291,10 @@ a channel while another op or voice is pending, the bot will attempt to
 put both modes on one line.</p>
 <blockquote>
 <div><table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>aop-delay 0</p></td>
 <td><p>No delay is used.</p></td>
@@ -337,12 +362,18 @@ protection for the channel, where X is an integer &gt;= 0.</p>
 </dl>
 </dd>
 </dl>
+</div></blockquote>
+</section>
+<section id="enable-disable-channel-settings">
+<h3>Enable/Disable Channel Settings<a class="headerlink" href="#enable-disable-channel-settings" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl>
+<dt>chanmode +/-&lt;modes&gt;</dt><dd><p>This setting makes the bot enforce channel modes. It will always enforce
+the +&lt;modes&gt; and remove the -&lt;modes&gt; modes.</p>
 </dd>
 <dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt><dd><p>There are many different options for channels which you can define.
 They can be enabled or disabled by a plus or minus in front of them.</p>
-<p>A complete list of all available channel settings:</p>
-<blockquote>
-<div><dl>
+</dd>
 <dt>enforcebans</dt><dd><p>When a ban is set, kick people who are on the channel and match
 the ban?</p>
 </dd>
@@ -430,10 +461,14 @@ setting channel modes without having ops.</p>
 </dd>
 </dl>
 </div></blockquote>
-</dd>
-</dl>
-<p>The following settings are used as default values when you .+chan #chan or .tcl
-channel add #chan. Look in the section above for explanation of every option.</p>
+</section>
+</section>
+<section id="default-channel-values">
+<h2>Default Channel Values<a class="headerlink" href="#default-channel-values" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><blockquote>
+<div><p>The following settings are used as default values when you .+chan #chan or .tcl
+channel add #chan. You can modify these default values by adding the below values to your config fil. Look in the <a class="reference internal" href="#channel-settings">Channel Settings</a> for an explanation of each option.</p>
 <blockquote>
 <div><p>set default-flood-chan 15:60</p>
 <p>set default-flood-deop 3:10</p>
@@ -487,6 +522,7 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
 </div></blockquote>
 </section>
+</section>
 
 
             <div class="clearer"></div>
@@ -515,8 +551,8 @@ channel add #chan. Look in the section above for explanation of every option.</p
           
     <div class="footer" role="contentinfo">
         &#169; Copyright 2023, Eggheads.
-      Last updated on Feb 13, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+      Last updated on Jul 08, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
         </div>
         <div class="clearer"></div>

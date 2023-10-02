@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -440,11 +441,16 @@ static int tcl_strftime STDVAR
   else
     t = now;
   tm1 = localtime(&t);
+  if (!tm1) {
+    Tcl_AppendResult(irp, "tcl_strftime(): localtime(): error = ",
+                     strerror(errno), NULL);
+    return TCL_ERROR;
+  }
   if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }
-  Tcl_AppendResult(irp, " error with strftime", NULL);
+  Tcl_AppendResult(irp, "tcl_strftime(): strftime(): error", NULL);
   return TCL_ERROR;
 }
 
@@ -699,26 +705,29 @@ static int tcl_stripcodes STDVAR
   return TCL_OK;
 }
 
-static int tcl_md5(cd, irp, objc, objv)
-ClientData cd;
-Tcl_Interp *irp;
-int objc;
-Tcl_Obj *CONST objv[];
+static int tcl_md5 STDVAR
 {
-  MD5_CTX md5context;
-  char digest_string[33], *string;
+  char digest_string[33];
   unsigned char digest[16];
-  int i, len;
+  int i;
 
-  if (objc != 2) {
-    Tcl_WrongNumArgs(irp, 1, objv, "string");
-    return TCL_ERROR;
-  }
-  string = Tcl_GetStringFromObj(objv[1], &len);
+  BADARGS(2, 2, " string");
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
+  EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+  const EVP_MD *md = EVP_md5();
+  unsigned int md_len;
+  EVP_DigestInit_ex(mdctx, md, NULL);
+  EVP_DigestUpdate(mdctx, argv[1], strlen(argv[1]));
+  EVP_DigestFinal_ex(mdctx, digest, &md_len);
+  EVP_MD_CTX_free(mdctx);
+#else
+  MD5_CTX md5context;
   MD5_Init(&md5context);
-  MD5_Update(&md5context, (unsigned char *) string, len);
+  MD5_Update(&md5context, (unsigned char *) argv[1], strlen(argv[1]));
   MD5_Final(digest, &md5context);
+#endif
+
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   Tcl_AppendResult(irp, digest_string, NULL);
@@ -757,11 +766,6 @@ static int tcl_matchstr STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
-
-tcl_cmds tclmisc_objcmds[] = {
-  {"md5", tcl_md5},
-  {NULL,     NULL}
-};
 
 static int tcl_status STDVAR
 {
@@ -854,5 +858,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchstr",         tcl_matchstr},
   {"status",             tcl_status},
   {"rfcequal",         tcl_rfcequal},
+  {"md5",                   tcl_md5},
   {NULL,                       NULL}
 };

@@ -3,7 +3,7 @@
 # Copyright (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)
 # Copyright (C) 2004-2023 Eggheads Development Team
 #
-# systemd formating contributed by PeGaSuS
+# systemd formatting contributed by PeGaSuS
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -91,7 +91,7 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #              with len > handlen, for (botnet-)nicks with \[ \] and for
 #              $(botnet-)nick used in pidfile, userfile or (botnet-)nick
 #   19Apr2017: Fix running this from a non-eggdrop dir.
-#   28Nov2023: Added -systemd option, to (duh) create a systemd job
+#   28Nov2022: Added -systemd option, to (duh) create a systemd job
 
 if {$argc == 0} {
   puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"

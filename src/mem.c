@@ -63,7 +63,7 @@ int expmem_tcl();
 int expmem_tclhash();
 int expmem_tclmisc();
 int expmem_net();
-int expmem_modules();
+int expmem_modules(int);
 int expmem_language();
 int expmem_tcldcc();
 int expmem_dns();
