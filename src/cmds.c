@@ -590,14 +590,14 @@ static void cmd_status(struct userrec *u, int idx, char *par)
       return;
     }
     putlog(LOG_CMDS, "*", "#%s# status all", dcc[idx].nick);
-    tell_verbose_status(idx);
+    tell_status(idx, 1);
     tell_mem_status_dcc(idx);
     dprintf(idx, "\n");
     tell_settings(idx);
     do_module_report(idx, 1, NULL);
   } else {
     putlog(LOG_CMDS, "*", "#%s# status", dcc[idx].nick);
-    tell_verbose_status(idx);
+    tell_status(idx, 0);
     tell_mem_status_dcc(idx);
     do_module_report(idx, 0, NULL);
   }

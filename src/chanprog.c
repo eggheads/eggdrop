@@ -269,7 +269,7 @@ void tell_verbose_uptime(int idx)
 
 /* Dump status info out to dcc
  */
-void tell_verbose_status(int idx)
+void tell_status(int idx, int details)
 {
   char s[256], s1[121], s2[81], *sysrel;
   int i;
@@ -368,7 +368,7 @@ void tell_verbose_status(int idx)
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 
-  if (!getrlimit(RLIMIT_NOFILE, &rlp))
+  if (details && !getrlimit(RLIMIT_NOFILE, &rlp))
     dprintf(idx, "Maximum number of open files (sockets): soft limit %ju hard limit %ju\n",
             (uintmax_t) rlp.rlim_cur, (uintmax_t) rlp.rlim_max);
 }

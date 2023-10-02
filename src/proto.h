@@ -99,7 +99,7 @@ char *int_to_base64(unsigned int);
 
 /* chanprog.c */
 void tell_verbose_uptime(int);
-void tell_verbose_status(int);
+void tell_status(int, int);
 void tell_settings(int);
 int logmodes(char *);
 int isowner(char *);
