@@ -1530,13 +1530,10 @@ AC_DEFUN([EGG_TLS_ENABLE],
 [
   AC_MSG_CHECKING([whether to enable TLS support])
   AC_ARG_ENABLE(tls,
-    [  --enable-tls            enable TLS support (autodetect)],
-    [enable_tls="$enableval"])
-  AC_ARG_ENABLE(tls,
-    [  --disable-tls           disable TLS support ], [enable_tls="$enableval"],
-    [enable_tls="autodetect"])
+    [  --disable-tls           disable TLS support ], [tls_enabled="$enableval"],
+    [tls_enabled="$enableval"])
 
-  AC_MSG_RESULT([$enable_tls])
+  AC_MSG_RESULT([$tls_enabled])
 ])
 
 
@@ -1546,14 +1543,14 @@ AC_DEFUN(EGG_TLS_WITHSSL,
 [
   save_LIBS="$LIBS"
   AC_ARG_WITH(sslinc, [  --with-sslinc=PATH      Path to OpenSSL headers], [
-    if test "$enable_tls" != "no"; then
+    if test "$tls_enabled" != "no"; then
       if test -d "$withval"; then
         save_CC="$CC"
         save_CPP="$CPP"
         CC="$CC -I$withval"
         CPP="$CPP -I$withval"
         AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], [sslinc="-I$withval"], [
-          AC_MSG_WARN([Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files.])
+          AC_MSG_ERROR([Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files.])
           sslinc=""
           break
         ], [[
@@ -1567,25 +1564,25 @@ AC_DEFUN(EGG_TLS_WITHSSL,
         CC="$save_CC"
         CPP="$save_CPP"
       else
-        AC_MSG_WARN([Invalid path to OpenSSL headers. $withval is not a directory.])
+        AC_MSG_ERROR([Invalid path to OpenSSL headers. $withval is not a directory.])
       fi
     fi
   ])
 
   AC_ARG_WITH(ssllib, [  --with-ssllib=PATH      Path to OpenSSL libraries],
   [
-    if test "$enable_tls" != "no"; then
+    if test "$tls_enabled" != "no"; then
       if test -d "$withval"; then
         AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
         AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         if test "$havessllib" = "no"; then
-          AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
+          AC_MSG_ERROR([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
         else
           AC_SUBST(SSL_LIBS, [-L$withval])
           LDFLAGS="${LDFLAGS} -L$withval"
         fi
       else
-        AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
+        AC_MSG_ERROR([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
       fi
     fi
   ])
@@ -1596,8 +1593,7 @@ dnl EGG_TLS_DETECT
 dnl
 AC_DEFUN([EGG_TLS_DETECT],
 [
-  tls_enabled="no"
-  if test "$enable_tls" != "no"; then
+  if test "$tls_enabled" != "no"; then
     if test -z "$SSL_INCLUDES"; then
       AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
         #ifdef CYGWIN_HACKS
@@ -1632,20 +1628,18 @@ AC_DEFUN([EGG_TLS_DETECT],
           break
       ]])
     )
-    if test "$enable_tls" = "yes"; then
-      if test "$havesslinc" = "no"; then
-        AC_MSG_WARN([Cannot find OpenSSL headers.])
-        AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
-      fi
-      if test "$havessllib" = "no"; then
-        AC_MSG_WARN([Cannot find OpenSSL libraries.])
-        AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
-      fi
+    if test "$havesslinc" = "no"; then
+      AC_MSG_WARN([Cannot find OpenSSL headers.])
+      AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
+    fi
+    if test "$havessllib" = "no"; then
+      AC_MSG_WARN([Cannot find OpenSSL libraries.])
+      AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
     fi
     AC_MSG_CHECKING([for OpenSSL])
     if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
-      AC_MSG_RESULT([no (make sure you have version 0.9.8 or higher installed)])
-      LIBS="$save_LIBS"
+      AC_MSG_RESULT([no])
+      AC_MSG_ERROR([make sure you have version 0.9.8 or higher installed)])
     else
       AC_MSG_RESULT([yes])
       if test "$EGG_CYGWIN" = "yes"; then
@@ -1660,7 +1654,6 @@ AC_DEFUN([EGG_TLS_DETECT],
       )
       dnl EVP_PKEY_get1_EC_KEY: OpenSSL without EC (SunOS 5.11 Solaris 11.3 I love you Oracle)
       AC_CHECK_FUNCS([EVP_PKEY_get1_EC_KEY])
-      tls_enabled="yes"
       EGG_MD5_COMPAT
     fi
   fi
