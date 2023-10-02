@@ -193,7 +193,7 @@ logfile <logflags> <channel> "logs/logfile"
   set timestamp-format "[%H:%M:%S]"
     Set the following to the timestamp for the logfile entries. Popular times
     might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec).
-    Read 'man strftime' for more formatting options.  Keep it below 32 chars.
+    Read 'man strftime' for more formatting options. Keep it below 32 chars.
 
   set keep-all-logs 0
     If you want to keep your logfiles forever, turn this setting on. All
@@ -218,8 +218,7 @@ logfile <logflags> <channel> "logs/logfile"
     If keep-all-logs is 1, this setting will define the suffix of the
     logfiles. The default will result in a suffix like "04May2000". "%Y%m%d"
     will produce the often used yyyymmdd format. Read the strftime manpages
-    for more options. NOTE: On systems which don't support strftime, the
-    default format will always be used.
+    for more options.
 
 Console Settings
 ----------------
@@ -639,4 +638,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

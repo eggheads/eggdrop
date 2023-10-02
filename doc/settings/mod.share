@@ -52,4 +52,4 @@ There are also some variables you can set in your config file:
       shared, only ports and address are added to sharing procedure.
       This only works with hubs that are v1.5.1 or higher.
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

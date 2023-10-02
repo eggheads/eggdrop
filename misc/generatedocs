@@ -4,7 +4,7 @@
 # reStructuredText format files. -Geo
 #
 #
-# Copyright (C) 2004 - 2022 Eggheads Development Team
+# Copyright (C) 2004 - 2023 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -144,6 +144,7 @@ mv tmpdocs/tricks.txt $BASEDIR/../doc/TRICKS
 mv tmpdocs/twitchinfo.txt $BASEDIR/../doc/TWITCH
 mv tmpdocs/users.txt $BASEDIR/../doc/USERS
 mv tmpdocs/accounts.txt $BASEDIR/../doc/ACCOUNTS
+mv tmpdocs/autoscripts.txt $BASEDIR/../doc/AUTOSCRIPTS
 rm -rf tmpdocs
 rm -rf $BASEDIR/../doc/html/_sources
 rm -rf $BASEDIR/../doc/doctrees/

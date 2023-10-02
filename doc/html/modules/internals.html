@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Eggdrop Bind Internals &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="About Eggdrop" href="../about/about.html" />
+    <link rel="prev" title="How to Write an Eggdrop Module" href="writing.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="writing.html" title="How to Write an Eggdrop Module"
+             accesskey="P">previous</a> |
+          <a href="../about/about.html" title="About Eggdrop"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Bind Internals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bind-table-creation">Bind Table Creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stackable-binds-ht-stackable">Stackable Binds: HT_STACKABLE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tcl-binding">Tcl Binding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#triggering-the-bind">Triggering the Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#triggering-any-bind">Triggering any Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#c-binding">C Binding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#c-handler">C Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="eggdrop-bind-internals">
+<h1>Eggdrop Bind Internals<a class="headerlink" href="#eggdrop-bind-internals" title="Permalink to this heading">¶</a></h1>
+<p>This document is intended for C developers who want to understand how Eggdrop’s Tcl binds or C binds work.</p>
+<p>For documentation purposes the “dcc” bind type is used as an example.</p>
+<p>It already exists and is suitable to illustrate the details of bind handling in Eggdrop.</p>
+<p>Note: All code snippets are altered for brevity and simplicity, see original source code for the full and current versions.</p>
+<section id="bind-table-creation">
+<h2>Bind Table Creation<a class="headerlink" href="#bind-table-creation" title="Permalink to this heading">¶</a></h2>
+<p>The bind table is added by calling, either at module initialization or startup:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span> <span class="n">Global</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">available</span> <span class="n">to</span> <span class="n">other</span> <span class="n">C</span> <span class="n">files</span> <span class="k">with</span>
+ <span class="o">*</span> <span class="n">extern</span> <span class="n">p_tcl_bind_list</span> <span class="n">H_dcc</span><span class="p">;</span>
+ <span class="o">*/</span>
+<span class="n">p_tcl_bind_list</span> <span class="n">H_dcc</span><span class="p">;</span>
+
+<span class="o">/*</span> <span class="n">Creating</span> <span class="n">the</span> <span class="n">bind</span> <span class="n">table</span><span class="p">:</span>
+ <span class="o">*</span> <span class="nd">@param</span><span class="p">[</span><span class="ow">in</span><span class="p">]</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span> <span class="n">Limited</span> <span class="ow">in</span> <span class="n">length</span><span class="p">,</span> <span class="n">see</span> <span class="n">tclhash</span><span class="o">.</span><span class="n">h</span>
+ <span class="o">*</span> <span class="nd">@param</span><span class="p">[</span><span class="ow">in</span><span class="p">]</span> <span class="nb">int</span> <span class="n">flags</span>        <span class="n">HT_STACKABLE</span> <span class="ow">or</span> <span class="mi">0</span>
+ <span class="o">*</span> <span class="nd">@param</span><span class="p">[</span><span class="ow">in</span><span class="p">]</span> <span class="n">IntFunc</span>          <span class="n">Function</span> <span class="n">pointer</span> <span class="n">to</span> <span class="n">C</span> <span class="n">handler</span>
+ <span class="o">*</span> <span class="nd">@return</span>    <span class="n">p_tcl_bind_list</span>  <span class="n">aka</span> <span class="p">(</span><span class="n">tcl_bind_list_t</span> <span class="o">*</span><span class="p">)</span>
+ <span class="o">*/</span>
+<span class="n">H_dcc</span> <span class="o">=</span> <span class="n">add_bind_table</span><span class="p">(</span><span class="s2">&quot;dcc&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">builtin_dcc</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>What the <code class="code docutils literal notranslate"><span class="pre">C</span> <span class="pre">handler</span></code> does is explained later, because a lot happens before it is actually called. <code class="code docutils literal notranslate"><span class="pre">IntFunc</span></code> is a generic function pointer that returns an <code class="code docutils literal notranslate"><span class="pre">int</span></code> with arbitrary arguments.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">H_dcc</span></code> can be exported from core and imported into modules as any other variable or function. That should be explained in a separate document.</p>
+</section>
+<section id="stackable-binds-ht-stackable">
+<h2>Stackable Binds: HT_STACKABLE<a class="headerlink" href="#stackable-binds-ht-stackable" title="Permalink to this heading">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">HT_STACKABLE</span></code> means that multiple binds can exist for the same mask.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">dcc</span> <span class="o">-</span> <span class="n">test</span> <span class="n">proc1</span><span class="p">;</span> <span class="c1"># not stackable</span>
+<span class="n">bind</span> <span class="n">dcc</span> <span class="o">-</span> <span class="n">test</span> <span class="n">proc2</span><span class="p">;</span> <span class="c1"># overwrites the first one, only proc2 will be called</span>
+</pre></div>
+</div>
+<p>It does not automatically call multiple binds that match, see later in the <a class="reference internal" href="#triggering-any-bind">Triggering any Bind</a> section for details.</p>
+</section>
+<section id="tcl-binding">
+<h2>Tcl Binding<a class="headerlink" href="#tcl-binding" title="Permalink to this heading">¶</a></h2>
+<p>After the bind table is created with <code class="code docutils literal notranslate"><span class="pre">add_bind_table</span></code>, Tcl procs can already be registered to this bind by calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">dcc</span> <span class="o">-|-</span> <span class="n">test</span> <span class="n">myproc</span>
+<span class="n">proc</span> <span class="n">myproc</span> <span class="p">{</span><span class="n">args</span><span class="p">}</span> <span class="p">{</span>
+  <span class="n">putlog</span> <span class="s2">&quot;myproc was called, argument list: &#39;[join $args &#39;,&#39;]&#39;&quot;</span>
+  <span class="k">return</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Of course it is not clear so far:</p>
+<ul class="simple">
+<li><p>If flags <code class="code docutils literal notranslate"><span class="pre">-|-</span></code> matter for this bind at all and what they are checked against</p></li>
+<li><p>If channel flags have a meaning or global/bot only</p></li>
+<li><p>What <code class="code docutils literal notranslate"><span class="pre">test</span></code> is matched against to see if the bind should trigger</p></li>
+<li><p>Which arguments <code class="code docutils literal notranslate"><span class="pre">myproc</span></code> receives, the example just accepts all arguments</p></li>
+</ul>
+</section>
+<section id="triggering-the-bind">
+<h2>Triggering the Bind<a class="headerlink" href="#triggering-the-bind" title="Permalink to this heading">¶</a></h2>
+<p>To trigger the bind and call it with the desired arguments, a function is created.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">check_tcl_dcc</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">int</span> <span class="n">idx</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">struct</span> <span class="n">flag_record</span> <span class="n">fr</span> <span class="o">=</span> <span class="p">{</span> <span class="n">FR_GLOBAL</span> <span class="o">|</span> <span class="n">FR_CHAN</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">};</span>
+  <span class="nb">int</span> <span class="n">x</span><span class="p">;</span>
+  <span class="n">char</span> <span class="n">s</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
+
+  <span class="n">get_user_flagrec</span><span class="p">(</span><span class="n">dcc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">fr</span><span class="p">,</span> <span class="n">dcc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">chat</span><span class="o">-&gt;</span><span class="n">con_chan</span><span class="p">);</span>
+  <span class="n">egg_snprintf</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">sizeof</span> <span class="n">s</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%ld</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dcc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">sock</span><span class="p">);</span>
+  <span class="n">Tcl_SetVar</span><span class="p">(</span><span class="n">interp</span><span class="p">,</span> <span class="s2">&quot;_dcc1&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">dcc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">nick</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">Tcl_SetVar</span><span class="p">(</span><span class="n">interp</span><span class="p">,</span> <span class="s2">&quot;_dcc2&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">Tcl_SetVar</span><span class="p">(</span><span class="n">interp</span><span class="p">,</span> <span class="s2">&quot;_dcc3&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">check_tcl_bind</span><span class="p">(</span><span class="n">H_dcc</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">fr</span><span class="p">,</span> <span class="s2">&quot; $_dcc1 $_dcc2 $_dcc3&quot;</span><span class="p">,</span>
+                  <span class="n">MATCH_PARTIAL</span> <span class="o">|</span> <span class="n">BIND_USE_ATTR</span> <span class="o">|</span> <span class="n">BIND_HAS_BUILTINS</span><span class="p">);</span>
+  <span class="o">/*</span> <span class="n">snip</span> <span class="o">...</span><span class="p">,</span> <span class="k">return</span> <span class="n">code</span> <span class="n">handling</span> <span class="o">*/</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The global Tcl variables <code class="code docutils literal notranslate"><span class="pre">$_dcc1</span> <span class="pre">$_dcc2</span> <span class="pre">$_dcc3</span></code> are used as temporary string variables and passed as arguments to the registered Tcl proc.</p>
+<p>This shows which arguments the callbacks in Tcl get:</p>
+<ul class="simple">
+<li><p>the nickname of the DCC chat user (handle of the user)</p></li>
+<li><p>the IDX (socket id) of the partyline so <code class="code docutils literal notranslate"><span class="pre">[putdcc]</span></code> can respond back</p></li>
+<li><p>another string argument that depends on the caller</p></li>
+</ul>
+<p>The call to <code class="code docutils literal notranslate"><span class="pre">check_tcl_dcc</span></code> can be found in the DCC parsing in <cite>src/dcc.c</cite>.</p>
+</section>
+<section id="triggering-any-bind">
+<h2>Triggering any Bind<a class="headerlink" href="#triggering-any-bind" title="Permalink to this heading">¶</a></h2>
+<p><cite>check_tcl_bind</cite> is used by all binds and does the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/* Generic function to call one/all matching binds
+ * @param[in] tcl_bind_list_t *tl      Bind table (e.g. H_dcc)
+ * @param[in] const char *match        String to match the bind-masks against
+ * @param[in] struct flag_record *atr  Flags of the user calling the bind
+ * @param[in] const char *param        Arguments to add to the bind callback proc (e.g. &quot; $_dcc1 $_dcc2 $_dcc3&quot;)
+ * @param[in] int match_type           Matchtype and various flags
+ * @returns   int                      Match result code
+ */
+
+/* Source code changed, only illustrative */
+int check_tcl_bind(tcl_bind_list_t *tl, const char *match, struct flag_record *atr, const char *param, int match_type) {
+  int x = BIND_NOMATCH;
+  for (tm = tl-&gt;first; tm &amp;&amp; !finish; tm_last = tm, tm = tm-&gt;next) {
+    /* Check if bind mask matches */
+    if (!check_bind_match(match, tm-&gt;mask, match_type))
+      continue;
+    for (tc = tm-&gt;first; tc; tc = tc-&gt;next) {
+      /* Check if the provided flags suffice for this command. */
+      if (check_bind_flags(&amp;tc-&gt;flags, atr, match_type)) {
+        tc-&gt;hits++;
+        /* not much more than Tcl_Eval(interp, &quot;&lt;procname&gt; &lt;arguments&gt;&quot;); and grab the result */
+        x = trigger_bind(tc-&gt;func_name, param, tm-&gt;mask);
+      }
+    }
+  }
+  return x;
+}
+</pre></div>
+</div>
+<p>The supplied flags to <code class="code docutils literal notranslate"><span class="pre">check_tcl_bind</span></code> in <cite>check_tcl_dcc</cite> are what defines how matching is performed.</p>
+<p>In the case of a DCC bind we had:</p>
+<ul class="simple">
+<li><p>Matchtype <code class="code docutils literal notranslate"><span class="pre">MATCH_PARTIAL</span></code>: Prefix-Matching if the command can be uniquely identified (e.g. dcc .help calls .help)</p></li>
+<li><p>Additional flag <code class="code docutils literal notranslate"><span class="pre">BIND_USE_ATTR</span></code>: Flags are checked</p></li>
+<li><p>Additional flag <code class="code docutils literal notranslate"><span class="pre">BIND_HAS_BUILTINS</span></code>: Something with flag matching, unsure</p></li>
+</ul>
+<p>For details on the available match types (wildcard matching, exact matching, etc.) see <code class="code docutils literal notranslate"><span class="pre">src/tclegg.h</span></code>. Additional flags are also described there as well as the return codes of <code class="code docutils literal notranslate"><span class="pre">check_tcl_bind</span></code> (e.g. <code class="code docutils literal notranslate"><span class="pre">BIND_NOMATCH</span></code>).</p>
+<p>Note: For a bind type to be stackable it needs to be registered with <code class="code docutils literal notranslate"><span class="pre">HT_STACKABLE</span></code> AND <code class="code docutils literal notranslate"><span class="pre">check_tcl_bind</span></code> must be called with <code class="code docutils literal notranslate"><span class="pre">BIND_STACKABLE</span></code>.</p>
+</section>
+<section id="c-binding">
+<h2>C Binding<a class="headerlink" href="#c-binding" title="Permalink to this heading">¶</a></h2>
+<p>To create a C function that is called by the bind, Eggdrop provides the <code class="code docutils literal notranslate"><span class="pre">add_builtins</span></code> function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/* Add a list of C function callbacks to a bind
+ * @param[in] tcl_bind_list_t *  the bind type (e.g. H_dcc)
+ * @param[in] cmd_t *            a NULL-terminated table of binds:
+ * cmd_t *mycmds = {
+ *   {char *name, char *flags, IntFunc function, char *tcl_name},
+ *   ...,
+ *   {NULL, NULL, NULL, NULL}
+ * };
+ */
+void add_builtins(tcl_bind_list_t *tl, cmd_t *cc) {
+  char p[1024];
+  cd_tcl_cmd tclcmd;
+
+  tclcmd.name = p;
+  tclcmd.callback = tl-&gt;func;
+  for (i = 0; cc[i].name; i++) {
+    /* Create Tcl command with automatic or given names *&lt;bindtype&gt;:&lt;funcname&gt;, e.g.
+     * - H_raw {&quot;324&quot;, &quot;&quot;, got324, &quot;irc:324&quot;} =&gt; *raw:irc:324
+     * - H_dcc {&quot;boot&quot;, &quot;t&quot;, cmd_boot, NULL} =&gt; *dcc:boot
+     */
+    egg_snprintf(p, sizeof p, &quot;*%s:%s&quot;, tl-&gt;name, cc[i].funcname ? cc[i].funcname : cc[i].name);
+    /* arbitrary void * can be included, we include C function pointer */
+    tclcmd.cdata = (void *) cc[i].func;
+    add_cd_tcl_cmd(tclcmd);
+    bind_bind_entry(tl, cc[i].flags, cc[i].name, p);
+  }
+}
+</pre></div>
+</div>
+<p>It automatically creates Tcl commands (e.g. <code class="code docutils literal notranslate"><span class="pre">*dcc:cmd_boot</span></code>) that will call the <cite>C handler</cite> from <cite>add_bind_table</cite> in the first section <a class="reference internal" href="#bind-table-creation">Bind Table Creation</a> and it gets a context (void *) argument with the C function it is supposed to call (e.g. <cite>cmd_boot()</cite>).</p>
+<p>Now we can actually look at the C function handler for dcc as an example and what it has to implement.</p>
+</section>
+<section id="c-handler">
+<h2>C Handler<a class="headerlink" href="#c-handler" title="Permalink to this heading">¶</a></h2>
+<p>The example handler for DCC looks as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span> <span class="n">Typical</span> <span class="n">Tcl_Command</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">just</span> <span class="n">like</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">tcl_putdcc</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">Tcl</span><span class="o">/</span><span class="n">C</span> <span class="n">command</span> <span class="k">for</span> <span class="p">[</span><span class="n">putdcc</span><span class="p">]</span> <span class="o">*/</span>
+<span class="n">static</span> <span class="nb">int</span> <span class="n">builtin_dcc</span> <span class="p">(</span><span class="n">ClientData</span> <span class="n">cd</span><span class="p">,</span> <span class="n">Tcl_Interp</span> <span class="o">*</span><span class="n">irp</span><span class="p">,</span> <span class="nb">int</span> <span class="n">argc</span><span class="p">,</span> <span class="n">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">idx</span><span class="p">;</span>
+  <span class="o">/*</span> <span class="n">F</span><span class="p">:</span> <span class="n">The</span> <span class="n">C</span> <span class="n">function</span> <span class="n">we</span> <span class="n">want</span> <span class="n">to</span> <span class="n">call</span><span class="p">,</span> <span class="k">if</span> <span class="n">the</span> <span class="n">bind</span> <span class="ow">is</span> <span class="n">okay</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">cmd_boot</span><span class="p">()</span> <span class="o">*/</span>
+  <span class="n">Function</span> <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">cd</span><span class="p">;</span>
+
+  <span class="o">/*</span> <span class="n">Task</span> <span class="n">of</span> <span class="n">C</span> <span class="n">function</span><span class="p">:</span> <span class="n">verify</span> <span class="n">argument</span> <span class="n">count</span> <span class="ow">and</span> <span class="n">syntax</span> <span class="k">as</span> <span class="nb">any</span> <span class="n">Tcl</span> <span class="n">command</span> <span class="o">*/</span>
+  <span class="n">BADARGS</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; hand idx param&quot;</span><span class="p">);</span>
+
+  <span class="o">/*</span> <span class="n">C</span> <span class="n">Macro</span> <span class="n">only</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">C</span> <span class="n">handlers</span> <span class="k">for</span> <span class="n">bind</span> <span class="n">types</span><span class="p">,</span> <span class="n">sanity</span> <span class="n">checks</span> <span class="n">the</span> <span class="n">Tcl</span> <span class="n">proc</span> <span class="n">name</span>
+   <span class="o">*</span> <span class="k">for</span> <span class="o">*&lt;</span><span class="n">bindtype</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span> <span class="ow">and</span> <span class="n">that</span> <span class="n">we</span> <span class="n">are</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">right</span> <span class="n">C</span> <span class="n">handler</span>
+   <span class="o">*/</span>
+  <span class="n">CHECKVALIDITY</span><span class="p">(</span><span class="n">builtin_dcc</span><span class="p">);</span>
+
+  <span class="n">idx</span> <span class="o">=</span> <span class="n">findidx</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">Tcl_AppendResult</span><span class="p">(</span><span class="n">irp</span><span class="p">,</span> <span class="s2">&quot;invalid idx&quot;</span><span class="p">,</span> <span class="n">NULL</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">TCL_ERROR</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="o">/*</span> <span class="n">Call</span> <span class="n">the</span> <span class="n">desired</span> <span class="n">C</span> <span class="n">function</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">cmd_boot</span><span class="p">()</span> <span class="k">with</span> <span class="n">their</span> <span class="n">arguments</span> <span class="o">*/</span>
+  <span class="n">F</span><span class="p">(</span><span class="n">dcc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+  <span class="n">Tcl_ResetResult</span><span class="p">(</span><span class="n">irp</span><span class="p">);</span>
+  <span class="n">Tcl_AppendResult</span><span class="p">(</span><span class="n">irp</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">NULL</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">TCL_OK</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is finally the part where we see the arguments a C function gets for a DCC bind as opposed to a Tcl proc.</p>
+<p>code:<cite>F(dcc[idx].user, idx, argv[3])</cite>:</p>
+<ul class="simple">
+<li><p>User information as struct userrec *</p></li>
+<li><p>IDX as int</p></li>
+<li><p>The 3rd string argument from the Tcl call to *dcc:cmd_boot, which was <code class="code docutils literal notranslate"><span class="pre">$_dcc3</span></code> which was <code class="code docutils literal notranslate"><span class="pre">args</span></code> to <code class="code docutils literal notranslate"><span class="pre">check_tcl_dcc</span></code> which was everything after the dcc command</p></li>
+</ul>
+<p>So this is how we register C callbacks for binds with the correct arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span> <span class="n">We</span> <span class="n">know</span> <span class="n">the</span> <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">ignored</span> <span class="n">because</span> <span class="n">the</span> <span class="k">return</span> <span class="n">value</span> <span class="n">of</span> <span class="n">F</span>
+ <span class="o">*</span> <span class="ow">in</span> <span class="n">builtin_dcc</span> <span class="ow">is</span> <span class="n">ignored</span><span class="p">,</span> <span class="n">so</span> <span class="n">it</span> <span class="n">can</span> <span class="n">be</span> <span class="n">void</span><span class="p">,</span> <span class="n">but</span> <span class="k">for</span> <span class="n">other</span> <span class="n">binds</span>
+ <span class="o">*</span> <span class="n">it</span> <span class="n">could</span> <span class="n">be</span> <span class="n">something</span> <span class="k">else</span> <span class="ow">and</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">C</span> <span class="n">handler</span> <span class="k">for</span> <span class="n">the</span> <span class="n">bind</span><span class="o">.</span>
+ <span class="o">*/</span>
+<span class="n">void</span> <span class="n">cmd_boot</span><span class="p">(</span><span class="n">struct</span> <span class="n">userrec</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="nb">int</span> <span class="n">idx</span><span class="p">,</span> <span class="n">char</span> <span class="o">*</span><span class="n">par</span><span class="p">)</span> <span class="p">{</span> <span class="o">/*</span> <span class="n">snip</span> <span class="o">*/</span> <span class="p">}</span>
+
+<span class="n">cmd_t</span> <span class="o">*</span><span class="n">mycmds</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="s2">&quot;boot&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">IntFunc</span><span class="p">)</span> <span class="n">cmd_boot</span><span class="p">,</span> <span class="n">NULL</span> <span class="o">/*</span> <span class="n">automatic</span> <span class="n">name</span><span class="p">:</span> <span class="o">*</span><span class="n">dcc</span><span class="p">:</span><span class="n">boot</span> <span class="o">*/</span><span class="p">},</span>
+  <span class="p">{</span><span class="n">NULL</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">NULL</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">add_builtins</span><span class="p">(</span><span class="n">H_dcc</span><span class="p">,</span> <span class="n">mycmds</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
+<p>In summary, this is how the dcc bind is called:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">check_tcl_dcc()</span></code> creates Tcl variables <code class="code docutils literal notranslate"><span class="pre">$_dcc1</span> <span class="pre">$_dcc2</span> <span class="pre">$_dcc3</span></code> and lets <code class="code docutils literal notranslate"><span class="pre">check_tcl_bind</span></code> call the binds</p></li>
+<li><p>Tcl binds are done at this point</p></li>
+<li><p>C binds mean the Tcl command associated with the bind is <code class="code docutils literal notranslate"><span class="pre">*dcc:boot</span></code> which calls <code class="code docutils literal notranslate"><span class="pre">builtin_dcc</span></code> which gets <code class="code docutils literal notranslate"><span class="pre">cmd_boot</span></code> as ClientData cd argument</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">gbuildin_dcc</span></code> performs some sanity checking to avoid crashes and then calls <code class="code docutils literal notranslate"><span class="pre">cmd_boot()</span></code> aka <code class="code docutils literal notranslate"><span class="pre">F()</span></code> with the arguments it wants C callbacks to have</p></li>
+</ul>
+<p>Example edited and annotated gdb backtrace in :code::<cite>cmd_boot</cite> after doing <code class="code docutils literal notranslate"><span class="pre">.boot</span> <span class="pre">test</span></code> on the partyline as user <code class="code docutils literal notranslate"><span class="pre">thommey</span></code> with typical owner flags.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#0  cmd_boot (u=0x55e8bd8a49b0, idx=4, par=0x55e8be6a0010 &quot;test&quot;) at cmds.c:614
+    *u = {next = 0x55e8bd8aec90, handle = &quot;thommey&quot;, flags = 8977024, flags_udef = 0, chanrec = 0x55e8bd8aeae0, entries = 0x55e8bd8a4a10}
+#1  builtin_dcc (cd=0x55e8bbf002d0 &lt;cmd_boot&gt;, irp=0x55e8bd59b1c0, argc=4, argv=0x55e8bd7e3e00) at tclhash.c:678
+    idx = 4
+    argv = {0x55e8be642fa0 &quot;*dcc:boot&quot;, 0x55e8be9f6bd0 &quot;thommey&quot;, 0x55e8be7d9020 &quot;4&quot;, 0x55e8be6a0010 &quot;test&quot;, 0x0}
+    F = 0x55e8bbf002d0 &lt;cmd_boot&gt;
+#5  Tcl_Eval (interp=0x55e8bd59b1c0, script = &quot;*dcc:boot $_dcc1 $_dcc2 $_dcc3&quot;) from /usr/lib/x86_64-linux-gnu/libtcl8.6.so
+    Tcl: return $_dcc1 = &quot;thommey&quot;
+    Tcl: return $_dcc2 = &quot;4&quot;
+    Tcl: return $_dcc3 = &quot;test&quot;
+    Tcl: return $lastbind = &quot;boot&quot; (set automatically by trigger_bind)
+#8  trigger_bind (proc=proc@entry=0x55e8bd5efda0 &quot;*dcc:boot&quot;, param=param@entry=0x55e8bbf4112b &quot; $_dcc1 $_dcc2 $_dcc3&quot;, mask=mask@entry=0x55e8bd5efd40 &quot;boot&quot;) at tclhash.c:742
+#9  check_tcl_bind (tl=0x55e8bd5eecb0 &lt;H_dcc&gt;, match=match@entry=0x7ffcf3f9dac1 &quot;boot&quot;, atr=atr@entry=0x7ffcf3f9d100, param=param@entry=0x55e8bbf4112b &quot; $_dcc1 $_dcc2 $_dcc3&quot;, match_type=match_type@entry=80) at tclhash.c:942
+    proc = 0x55e8bd5efda0 &quot;*dcc:boot&quot;
+    mask = 0x55e8bd5efd40 &quot;boot&quot;
+    brkt = 0x7ffcf3f9dac6 &quot;test&quot;
+#10 check_tcl_dcc (cmd=cmd@entry=0x7ffcf3f9dac1 &quot;boot&quot;, idx=idx@entry=4, args=0x7ffcf3f9dac6 &quot;test&quot;) at tclhash.c:974
+    fr = {match = 5, global = 8977024, udef_global = 0, bot = 0, chan = 0, udef_chan = 0}
+#11 dcc_chat (idx=idx@entry=4, buf=&lt;optimized out&gt;, i=&lt;optimized out&gt;) at dcc.c:1068
+    v = 0x7ffcf3f9dac1 &quot;boot&quot;
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="writing.html" title="How to Write an Eggdrop Module"
+              >previous</a> |
+            <a href="../about/about.html" title="About Eggdrop"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -191,7 +191,7 @@
 ###  %bset timestamp-format%b <format>
    Set the following to the timestamp for the logfile entries. Popular
    times might be "[%H:%M]" (hour,min), or "[%H:%M:%S]" (hour, min, sec).
-   Read `man strftime' for more formatting options.  Keep it below 32
+   Read `man strftime' for more formatting options. Keep it below 32
    chars.
 %{help=set max-logsize}%{+n}
 ###  %bset max-logsize%b <filesize>
@@ -211,8 +211,7 @@
    If keep-all-logs is 1, this setting will define the suffix of the
    logfiles. The default will result in a suffix like "04May2000".
    "%Y%m%d" will produce the often used yyyymmdd format. Read the
-   strftime manpages for more options. NOTE: On systems which don't
-   support strftime, the default format will be used _always_.
+   strftime manpages for more options.
 %{help=set quiet-save}%{+n}
 ###  %bset quiet-save%b <0/1/2/3>
    "Writing user file..." and "Writing channel file..." messages won't
