@@ -96,7 +96,7 @@ This creates a function table that is exported to Eggdrop. In other words, these
     (Function) woobie_report,
   };
 
-At this point, you should have a module that compiles and can be loaded by Eggdrop- but dosen't really do anything yet. We'll change that in the next section!
+At this point, you should have a module that compiles and can be loaded by Eggdrop- but doesn't really do anything yet. We'll change that in the next section!
 
 Adding a Partyline Command
 --------------------------
@@ -138,7 +138,7 @@ Eggdrop uses the Tcl C API library to interact with the Tcl interpreter. Learnin
     }
   }
 
-  A few notes on this example. BADARGS is a macro that checks the input provided to the Tcl command. The first argument BADARGS accepts is the minimum number of paramters the Tcl command must accept (including the command itself). The second argument is the maximum number of parameters that BADARGS will accept. The third argument is the help text that will be displayed if these boundaries are exceeded. For example, BADARGS(2, 4, " name ?date? ?place?") requires at least one argument to be passed, and a maximum of three arguments. Eggdrop code style is to enclose optional arguments between qusetion marks in the help text.
+  A few notes on this example. BADARGS is a macro that checks the input provided to the Tcl command. The first argument BADARGS accepts is the minimum number of parameters the Tcl command must accept (including the command itself). The second argument is the maximum number of parameters that BADARGS will accept. The third argument is the help text that will be displayed if these boundaries are exceeded. For example, BADARGS(2, 4, " name ?date? ?place?") requires at least one argument to be passed, and a maximum of three arguments. Eggdrop code style is to enclose optional arguments between qusetion marks in the help text.
 
 Similar to adding a partyline command, you also have to create a function table for a new Tcl command::
 

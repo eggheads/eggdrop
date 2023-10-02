@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2022 Eggheads Development Team
+ * Copyright (C) 2020 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -546,7 +546,7 @@ static int gotusernotice(char *from, char *msg, Tcl_Obj *tags) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a reward gift", login);
   } else if (!strcmp(msgid, "anongiftpaidupgrade")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:ANONGIFTPAIDUPGRADE");
-    putlog(LOG_SERV, "*", "* TWITCH: Someone anonomously gifted a subscription upgrade to %s", value);
+    putlog(LOG_SERV, "*", "* TWITCH: Someone anonymously gifted a subscription upgrade to %s", value);
   } else if (!strcmp(msgid, "raid")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-viewerCount", value, "USERNOTICE:RAID");
     putlog(LOG_SERV, "*", "* TWITCH: %s raided %s with %s users", login, chan, value);

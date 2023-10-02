@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,8 +96,8 @@ int handlen = HANDLEN;
 
 extern Tcl_VarTraceProc traced_myiphostname, traced_natip, traced_remove_pass;
 
-/* Unicode workaround for Tcl versions that only support BMP characters (3 byte utf-8) */
-#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 5 && TCL_MINOR_VERSION <= 6 && TCL_UTF_MAX < 4
+/* Unicode workaround for Tcl versions (8.5/8.6) that only support BMP characters (3 byte utf-8) */
+#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 6 && TCL_UTF_MAX < 4
 #  define TCL_WORKAROUND_UNICODESUP 1
 struct tcl_unicodesup_info {
   const char *subcmd;
@@ -548,7 +548,6 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
 extern tcl_cmds tcltls_cmds[];
 #endif
 
-#ifdef REPLACE_NOTIFIER
 /* The tickle_*() functions replace the Tcl Notifier
  * The tickle_*() functions can be called by Tcl threads
  */
@@ -601,8 +600,16 @@ ClientData tickle_InitNotifier()
 
 void tickle_AlertNotifier(ClientData cd)
 {
-  if (cd)
-    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
+  if (cd) {
+    fatal("Error calling Tcl_AlertNotifier", 0);
+  }
+}
+
+void tickle_ServiceModeHook(int mode)
+{
+  if (mode != TCL_SERVICE_ALL) {
+    fatal("Tcl_ServiceModeHook called with unsupported mode", 0);
+  }
 }
 
 int tclthreadmainloop(int zero)
@@ -618,18 +625,6 @@ struct threaddata *threaddata()
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
   return td;
 }
-
-#else /* REPLACE_NOTIFIER */
-
-int tclthreadmainloop() { return 0; }
-
-struct threaddata *threaddata()
-{
-  static struct threaddata tsd;
-  return &tsd;
-}
-
-#endif /* REPLACE_NOTIFIER */
 
 void init_threaddata(int mainthread)
 {
@@ -915,15 +910,12 @@ void init_unicodesup(void)
  */
 void init_tcl(int argc, char **argv)
 {
-#ifdef REPLACE_NOTIFIER
   Tcl_NotifierProcs notifierprocs;
-#endif /* REPLACE_NOTIFIER */
 
   const char *encoding;
   int i, j;
   char *langEnv, pver[1024] = "";
 
-#ifdef REPLACE_NOTIFIER
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -932,9 +924,9 @@ void init_tcl(int argc, char **argv)
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
   notifierprocs.alertNotifierProc = tickle_AlertNotifier;
+  notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-#endif /* REPLACE_NOTIFIER */
 
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
@@ -1051,7 +1043,6 @@ resetPath:
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
-  add_tcl_objcommands(tclmisc_objcmds);
   add_tcl_commands(tcldns_cmds);
 #ifdef TLS
   add_tcl_commands(tcltls_cmds);
@@ -1247,11 +1238,7 @@ int tcl_threaded()
 */
 int fork_before_tcl()
 {
-#ifndef REPLACE_NOTIFIER
-  return tcl_threaded();
-#else
   return 0;
-#endif
 }
 
 time_t get_expire_time(Tcl_Interp * irp, const char *s) {

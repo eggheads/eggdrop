@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2022 Eggheads Development Team
+ * Copyright (C) 2019 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -107,7 +107,7 @@ static void ident_oidentd()
   FILE *fd;
   long filesize;
   char *data = NULL;
-  char path[121], line[256], buf[256], identstr[256];
+  char path[PATH_MAX], line[256], buf[256], identstr[256];
   char s[EGG_INET_ADDRSTRLEN];
   int ret, prevtime, servidx, i;
   socklen_t namelen;

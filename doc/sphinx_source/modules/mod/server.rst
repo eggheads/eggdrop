@@ -237,5 +237,5 @@ There are additional settings for 'net-type' Efnet.
       your network. The default setting is 9. The maximum supported length by
       Eggdrop is 32.
 
-  Copyright (C) 2000 - 2022 Eggheads Development Team
+  Copyright (C) 2000 - 2023 Eggheads Development Team
 

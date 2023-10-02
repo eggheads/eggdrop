@@ -113,7 +113,6 @@ See also: kickban, console
    channel the bot monitors. Appending a prefix of - or @ to a nickname
    changes the banmask used:
 
-
      For example, with a hostmask of nick!ident@host.name.domain:
 
         Command         Banmask

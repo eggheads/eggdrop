@@ -52,4 +52,4 @@ You can use variables in your config file, since it's really just a normal Tcl f
       set chanfile "$myvar.chan"
 
 
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team
