@@ -680,7 +680,6 @@ static void core_secondly()
             logs[j].f = NULL;
           }
         }
-        verify_cert_expiry();
       }
     }
     if (nowtm.tm_min == notify_users_at)
@@ -706,6 +705,7 @@ static void core_secondly()
             movefile(logs[i].filename, s);
           }
       }
+      verify_cert_expiry(0);
     }
   }
 }
