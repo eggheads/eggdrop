@@ -541,7 +541,7 @@ static int gotusernotice(char *from, char *msg, Tcl_Obj *tags) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift", login);
   } else if (!strcmp(msgid, "giftpaidupgrade")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:GIFTPAIDUPGRADE");
-    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s", login, value);
+    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subscription upgrade to %s", login, value);
   } else if (!strcmp(msgid, "rewardgift")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a reward gift", login);
   } else if (!strcmp(msgid, "anongiftpaidupgrade")) {
