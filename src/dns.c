@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +86,7 @@ static void eof_dcc_dnswait(int idx)
 
 static void display_dcc_dnswait(int idx, char *buf)
 {
-  sprintf(buf, "dns   waited %lis", (long) (now - dcc[idx].timeval));
+  sprintf(buf, "dns   waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_dnswait(void *x)
@@ -503,6 +503,7 @@ void *thread_dns_hostbyip(void *arg)
   i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
                   dtn->host, sizeof dtn->host, NULL, 0, 0);
   if (i) {
+    debug1("dns: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
 #ifdef IPV6
     if (addr->family == AF_INET6)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
@@ -520,13 +521,13 @@ void *thread_dns_hostbyip(void *arg)
 void *thread_dns_ipbyhost(void *arg)
 {
   struct dns_thread_node *dtn = (struct dns_thread_node *) arg;
-  struct addrinfo *res0, *res;
-  int i;
+  struct addrinfo *res0 = NULL, *res;
+  int error;
   sockname_t *addr = &dtn->addr;
 
-  i = getaddrinfo(dtn->host, NULL, NULL, &res0);
+  error = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
-  if (!i) {
+  if (!error) {
 #ifdef IPV6
     for (res = res0; res; res = res->ai_next) {
       if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
@@ -538,21 +539,27 @@ void *thread_dns_ipbyhost(void *arg)
       }
     }
 #else
-    i = 1;
+    error = 1;
     for (res = res0; res; res = res->ai_next) {
       if (res->ai_family == AF_INET) {
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-        i = 0;
+        error = 0;
         break;
       }
     }
 #endif
-    freeaddrinfo(res0);
+    if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+               * 2553 and 3493. Avoid to be compatible with all OSes. */
+      freeaddrinfo(res0);
   }
+  else if (error == EAI_NONAME)
+    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s not known", dtn->host);
+  else
+    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(error));
   pthread_mutex_lock(&dtn->mutex);
-  dtn->ok = !i;
+  dtn->ok = !error;
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
@@ -661,7 +668,7 @@ void core_dns_hostbyip(sockname_t *addr)
                       sizeof (struct sockaddr_in), host, sizeof host, NULL, 0, 0);
       alarm(0);
       if (i)
-        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+        debug1("dns: core_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
     }
     if (i)
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, host, sizeof host);
@@ -673,7 +680,7 @@ void core_dns_hostbyip(sockname_t *addr)
                       sizeof (struct sockaddr_in6), host, sizeof host, NULL, 0, 0);
       alarm(0);
       if (i)
-        debug1("dns: getnameinfo(): error = %s", gai_strerror(i));
+        debug1("dns: core_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
     }
     if (i)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, host, sizeof host);

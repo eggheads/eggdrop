@@ -37,7 +37,7 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
      and will enlarge the binary a bit, but it's worth it if you want to
      support Eggdrop development.
 
-4. Eggdrop must be installed in a directory somewhere.  This is
+4. Eggdrop must be installed in a directory somewhere. This is
      accomplished by entering the UNIX command::
 
        make install
@@ -56,8 +56,6 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
      Note that you must use full path for every file to be correctly
      installed.
 
-     [The following is performed from the directory installed above.]
-
 5. Since version 1.8, Eggdrop can use SSL to protect botnet links. If you intend on protecting botnet traffic between Eggdrops, you must generate SSL certificates by running::
 
         make sslcert
@@ -73,6 +71,8 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
        make sslsilent
 
      Read docs/TLS for more info on this process.
+
+[The following steps are performed in the directory you just installed Eggdrop into from the previous step]
 
 6. Edit your config file completely.
 
@@ -96,7 +96,11 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
 9. It's advisable to run your bot via crontab, so that it will
      automatically restart if the machine goes down or (heaven forbid)
-     the bot should crash. Eggdrop includes a helper script to generate a proper crontab script and entry. You can run this script by typing::
+     the bot should crash. Eggdrop includes a helper script to auto-generate either a systemd or crontab entry. To add a systemd job, run::
+
+        ./scripts/autobotchk [yourconfig.conf] -systemd
+
+    or to add a crontab job, run::
 
         ./scripts/autobotchk [yourconfig.conf]
 
@@ -139,4 +143,4 @@ the README file. If not, then READ IT!&@#%@!
 Have fun with Eggdrop!
 
   Copyright (C) 1997 Robey Pointer
-  Copyright (C) 1999 - 2022 Eggheads Development Team
+  Copyright (C) 1999 - 2023 Eggheads Development Team

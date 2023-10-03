@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1232,7 +1232,8 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%" PRId64 ".users", botnetnick,
+           (int64_t) now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -2038,8 +2039,8 @@ static void start_sending_users(int idx)
   struct chanset_t *cst;
   char s[EGG_INET_ADDRSTRLEN];
 
-  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
-               now);
+  snprintf(share_file, sizeof share_file, ".share.%s.%" PRId64, dcc[idx].nick,
+           (int64_t) now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
            dcc[idx].nick);

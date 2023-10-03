@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Twitch Tcl Commands &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Eggdrop Twitch Tcl Commands &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Patching Eggdrop" href="patch.html" />
     <link rel="prev" title="Eggdrop Tcl Commands" href="tcl-commands.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="tcl-commands.html" title="Eggdrop Tcl Commands"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -68,20 +64,22 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -104,8 +102,8 @@
             
   <p>Eggdrop Twitch Tcl Commands
 Last revised: April 25, 2020</p>
-<div class="section" id="eggdrop-twitch-tcl-commands">
-<h1>Eggdrop Twitch Tcl Commands<a class="headerlink" href="#eggdrop-twitch-tcl-commands" title="Permalink to this headline">¶</a></h1>
+<section id="eggdrop-twitch-tcl-commands">
+<h1>Eggdrop Twitch Tcl Commands<a class="headerlink" href="#eggdrop-twitch-tcl-commands" title="Permalink to this heading">¶</a></h1>
 <p>This is an exhaustive list of all the Twitch-specific Tcl commands added to
 Eggdrop. These commands are held separate from the traditional tcl-commands.doc
 due to the unique nature of Twitch and the fact that these commands WILL NOT
@@ -120,10 +118,10 @@ LONG tag message lines that are sent by a server. This means if you view a
 variable that has stored all the tag messages sent by the server, it may
 appear truncated. Rest assured, the variable does contain the full set of tags,
 they just aren’t being displayed.</p>
-<div class="section" id="commands">
-<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="twcmd-chan-cmd-arg">
-<h3>twcmd &lt;chan&gt; &lt;cmd&gt; [arg]<a class="headerlink" href="#twcmd-chan-cmd-arg" title="Permalink to this headline">¶</a></h3>
+<section id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h2>
+<section id="twcmd-chan-cmd-arg">
+<h3>twcmd &lt;chan&gt; &lt;cmd&gt; [arg]<a class="headerlink" href="#twcmd-chan-cmd-arg" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: sends cmd to the server, prefixed with a ‘/’. This is replicates
 the web UI functionality of sending commands such as /vip or /subscribers. Do
@@ -131,52 +129,52 @@ not include a ‘/’ in the cmd. arg, if required, is a single argument, so
 enclose multiple strings in quotes. Example: twcmd timeout “badguy 100”</p>
 <p>Returns: 0 if command is successfully sent to the Twitch server, 1 on failure</p>
 </div></blockquote>
-</div>
-<div class="section" id="userstate-channel">
-<h3>userstate &lt;channel&gt;<a class="headerlink" href="#userstate-channel" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="userstate-channel">
+<h3>userstate &lt;channel&gt;<a class="headerlink" href="#userstate-channel" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: provides current userstate for the Eggdrop on the given channel.</p>
 <p>Returns: a dict containing key/value pairs for userstate values.</p>
 </div></blockquote>
-</div>
-<div class="section" id="roomstate-channel">
-<h3>roomstate &lt;channel&gt;<a class="headerlink" href="#roomstate-channel" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="roomstate-channel">
+<h3>roomstate &lt;channel&gt;<a class="headerlink" href="#roomstate-channel" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: provides current roomstate of a channel Eggdrop is on.</p>
 <p>Returns: a dict containing key/value pairs for roomstate values.</p>
 </div></blockquote>
-</div>
-<div class="section" id="twitchmods-channel">
-<h3>twitchmods &lt;channel&gt;<a class="headerlink" href="#twitchmods-channel" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="twitchmods-channel">
+<h3>twitchmods &lt;channel&gt;<a class="headerlink" href="#twitchmods-channel" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: maintains a list of usernames provided by Twitch as those that have moderator status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to issue a /mods Twitch command. This list is a comprehensive list, the user does not need to be present on the channel to be included on this list.</p>
 <p>Returns: A list of usernames designated as having moderator status by Twitch.</p>
 </div></blockquote>
-</div>
-<div class="section" id="twitchvips-channel">
-<h3>twitchvips &lt;channel&gt;<a class="headerlink" href="#twitchvips-channel" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="twitchvips-channel">
+<h3>twitchvips &lt;channel&gt;<a class="headerlink" href="#twitchvips-channel" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: maintains a list of usernames provided by Twitch as those that have VIP status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to issue a /vips Twitch command. This list is a comprehensive list, the user does not need to be present on the channel to be included on this list.</p>
 <p>Returns: A list of usernames designated as having VIP status by Twitch.</p>
 </div></blockquote>
-</div>
-<div class="section" id="ismod-nick-channel">
-<h3>ismod &lt;nick&gt; [channel]<a class="headerlink" href="#ismod-nick-channel" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="ismod-nick-channel">
+<h3>ismod &lt;nick&gt; [channel]<a class="headerlink" href="#ismod-nick-channel" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if a user is on the moderator list maintained by Twitch (the same list accessible by the /mods command entered via the Twith web GUI). This differs from the other “normal” is* Eggdrop Tcl cmds, as this does NOT check if the user is currently on the channel (that status is unreliable on Twitch IRC).</p>
 <p>Returns: 1 if someone by the specified nickname is on the moderator list for the channel (or any channel if no channel name is specified); 0 otherwise.</p>
 </div></blockquote>
-</div>
-<div class="section" id="isvip-nick-channel">
-<h3>isvip &lt;nick&gt; [channel]<a class="headerlink" href="#isvip-nick-channel" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="isvip-nick-channel">
+<h3>isvip &lt;nick&gt; [channel]<a class="headerlink" href="#isvip-nick-channel" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if a user is on the VIP list maintained by Twitch (the same list accessible by the /vips command entered via the Twith web GUI). This differs from the other “normal” is* Eggdrop Tcl cmds, as this does NOT check if the user is currently on the channel (that status is unreliable on Twitch IRC).</p>
 <p>Returns: 1 if someone by the specified nickname is on the VIP list for the channel (or any channel if no channel name is specified); 0 otherwise.</p>
 </div></blockquote>
-</div>
-</div>
-<div class="section" id="binds">
-<h2>Binds<a class="headerlink" href="#binds" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="binds">
+<h2>Binds<a class="headerlink" href="#binds" title="Permalink to this heading">¶</a></h2>
 <p>You can use the ‘bind’ command to attach Tcl procedures to certain events. The
 binds listed here are in addition to the binds listed in tcl-commands.doc.</p>
 <p>Because Twitch offers an IRC gateway that significantly reduces traditional IRC
@@ -185,38 +183,34 @@ compatible with Twitch. If they are in an existing script you are running that
 is fine, they just likely won’t do anything.</p>
 <p>To remove a bind, use the ‘unbind’ command. For example, to remove the
 bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
-<div class="section" id="flags">
-<h3>Flags<a class="headerlink" href="#flags" title="Permalink to this headline">¶</a></h3>
+<section id="flags">
+<h3>Flags<a class="headerlink" href="#flags" title="Permalink to this heading">¶</a></h3>
 <p>Most of the following binds have “flags” listed as an argument for the bind. Flags represents a flagmask that the user, if found, must match in order for the bind to trigger. Example flag masks are:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="7%" />
-<col width="93%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>-</td>
-<td>Matches any user existing in Eggdrop’s internal user list (added to the bot)</td>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>-</p></td>
+<td><p>Matches any user existing in Eggdrop’s internal user list (added to the bot)</p></td>
 </tr>
-<tr class="row-even"><td>*</td>
-<td>Matches any user, doesn’t need to be added to Eggdrop</td>
+<tr class="row-even"><td><p>*</p></td>
+<td><p>Matches any user, doesn’t need to be added to Eggdrop</p></td>
 </tr>
-<tr class="row-odd"><td>+o</td>
-<td>Matches a user with the global ‘o’ flag added to their handle on the Eggdrop</td>
+<tr class="row-odd"><td><p>+o</p></td>
+<td><p>Matches a user with the global ‘o’ flag added to their handle on the Eggdrop</p></td>
 </tr>
-<tr class="row-even"><td>|+f</td>
-<td>Matches a user with the ‘f’ flag added on a channel to their handle on the Eggdrop</td>
+<tr class="row-even"><td><p>|+f</p></td>
+<td><p>Matches a user with the ‘f’ flag added on a channel to their handle on the Eggdrop</p></td>
 </tr>
-<tr class="row-odd"><td>+m|+m</td>
-<td>Matches a user with the ‘m’ flag added either globally or on a channel on the Eggdrop</td>
+<tr class="row-odd"><td><p>+m|+m</p></td>
+<td><p>Matches a user with the ‘m’ flag added either globally or on a channel on the Eggdrop</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="bind-types">
-<h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="bind-types">
+<h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this heading">¶</a></h3>
 <p>The following is a list of bind types and how they work. Below each bind type is the format of the bind command, the list of arguments sent to the Tcl proc, and an explanation.</p>
 <ol class="arabic simple">
-<li>CCHT  (CLEARCHAT)</li>
+<li><p>CCHT  (CLEARCHAT)</p></li>
 </ol>
 <blockquote>
 <div><p>bind ccht &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
@@ -224,7 +218,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Called when the chat history for the channel or a user on the channel is cleared. The value of <code class="docutils literal notranslate"><span class="pre">mask</span></code> specified in the bind is matched against <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">nick!nick&#64;nick.tmi.twitch.tv</span></code> and can use wildcards. If a user is found that matches <code class="docutils literal notranslate"><span class="pre">mask</span></code>, they must also match the <code class="docutils literal notranslate"><span class="pre">flags</span></code> mask. If the CLEARCHAT is only targeted at a specific user and not the channel, that user’s nickname will appear in <code class="docutils literal notranslate"><span class="pre">nick</span></code>, otherwise <code class="docutils literal notranslate"><span class="pre">nick</span></code> is empty. <code class="docutils literal notranslate"><span class="pre">chan</span></code> will contain the channel the CLEARCHAT was used on.</p>
 </div></blockquote>
 <ol class="arabic simple" start="2">
-<li>CMSG (CLEARMSG)</li>
+<li><p>CMSG (CLEARMSG)</p></li>
 </ol>
 <blockquote>
 <div><p>bind cmsg &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
@@ -232,7 +226,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Called when a specific message on the channel is cleared. The value of <code class="docutils literal notranslate"><span class="pre">mask</span></code> specified in the bind is matched against <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">nick!nick&#64;nick.tmi.twitch.tv</span></code> and can use wildcards. If a user is found that matches <code class="docutils literal notranslate"><span class="pre">mask</span></code>, they must also match the <code class="docutils literal notranslate"><span class="pre">flags</span></code> mask. <code class="docutils literal notranslate"><span class="pre">nick</span></code> contains the user’s nickname, and <code class="docutils literal notranslate"><span class="pre">chan</span></code> will contain the channel the CLEARMSG was used on.</p>
 </div></blockquote>
 <ol class="arabic simple" start="3">
-<li>HTGT (HOSTTARGET)</li>
+<li><p>HTGT (HOSTTARGET)</p></li>
 </ol>
 <blockquote>
 <div><p>bind htgt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
@@ -240,7 +234,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Called when a broadcaster starts or stops hosting another Twitch channel. <code class="docutils literal notranslate"><span class="pre">mask</span></code> is in the format “#channel target”, where #channel is the hosting channel and target is the name of the broadcaster being hosted by #channel. Similarly for the proc, <code class="docutils literal notranslate"><span class="pre">target</span></code> is the name of the Twitch channel being hosted by <code class="docutils literal notranslate"><span class="pre">chan</span></code>. A value of <code class="docutils literal notranslate"><span class="pre">-</span></code> in <code class="docutils literal notranslate"><span class="pre">target</span></code> indicates that the broadcaster has stopped hosting another channel. <code class="docutils literal notranslate"><span class="pre">viewers</span></code> contains the number of viewers in <code class="docutils literal notranslate"><span class="pre">chan</span></code> that are now watching <code class="docutils literal notranslate"><span class="pre">target</span></code> when hosting starts, but has been found to not be reliably provided by Twitch (often arbitrarily set to 0).</p>
 </div></blockquote>
 <ol class="arabic simple" start="4">
-<li>WSPR (WHISPER)</li>
+<li><p>WSPR (WHISPER)</p></li>
 </ol>
 <blockquote>
 <div><p>bind wspr &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</p>
@@ -248,7 +242,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Checks the first word of a whisper Eggdrop receives from another Twitch user. The first word of the whisper is matched against <code class="docutils literal notranslate"><span class="pre">command</span></code>, and the remainder of the text is passed to <code class="docutils literal notranslate"><span class="pre">msg</span></code>. <code class="docutils literal notranslate"><span class="pre">nick</span></code> is populated with the login name of the user messaging the Eggdrop, <code class="docutils literal notranslate"><span class="pre">userhost</span></code> contains nick’s userhost in the format <a class="reference external" href="mailto:nick!nick&#37;&#52;&#48;nick&#46;tmi&#46;twitch&#46;tv">nick!nick<span>&#64;</span>nick<span>&#46;</span>tmi<span>&#46;</span>twitch<span>&#46;</span>tv</a>. <code class="docutils literal notranslate"><span class="pre">handle</span></code> will match the user’s handle on the bot if present, otherwise it will return a <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p>
 </div></blockquote>
 <ol class="arabic simple" start="5">
-<li>WSPM (WHISPER)</li>
+<li><p>WSPM (WHISPER)</p></li>
 </ol>
 <blockquote>
 <div><p>bind wspm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
@@ -256,7 +250,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Checks the entire contents of a whisper Eggdrop receives from another Twitch user. The contents of the whisper are matched against <code class="docutils literal notranslate"><span class="pre">mask</span></code>, which can contain wildcards. <code class="docutils literal notranslate"><span class="pre">nick</span></code> is populated with the login name of the user messaging the Eggdrop, <code class="docutils literal notranslate"><span class="pre">userhost</span></code> contains nick’s userhost in the format <a class="reference external" href="mailto:nick!nick&#37;&#52;&#48;nick&#46;tmi&#46;twitch&#46;tv">nick!nick<span>&#64;</span>nick<span>&#46;</span>tmi<span>&#46;</span>twitch<span>&#46;</span>tv</a>. <code class="docutils literal notranslate"><span class="pre">handle</span></code> will match the user’s handle on the bot if present, otherwise it will return a <code class="docutils literal notranslate"><span class="pre">*</span></code>. The full text of the whisper is stored in <code class="docutils literal notranslate"><span class="pre">msg</span></code>.</p>
 </div></blockquote>
 <ol class="arabic simple" start="6">
-<li>RMST (ROOMSTATE)</li>
+<li><p>RMST (ROOMSTATE)</p></li>
 </ol>
 <blockquote>
 <div><p>bind rmst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
@@ -264,7 +258,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Called when Eggdrop receives a ROOMSTATE message. <code class="docutils literal notranslate"><span class="pre">mask</span></code> is in the format of <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">keys</span></code> and can use wildcards. For example, to trigger this bind on #eggdrop for any change, you would use <code class="docutils literal notranslate"><span class="pre">#eggdroptest</span> <span class="pre">*</span></code> as the mask, or to trigger on #eggdrop specifically for the emote-only setting, you would use <code class="docutils literal notranslate"><span class="pre">&quot;#eggdrop</span> <span class="pre">*emote-only*&quot;</span></code> as the mask. Due to the nature of multiple keys per roomstate and uncertainty of ordering, it is recommended to use multiple binds if you wish to specify multiple key values. <code class="docutils literal notranslate"><span class="pre">chan</span></code> is the channel Eggdrop received the ROOMSTATE message for, and <code class="docutils literal notranslate"><span class="pre">tags</span></code> is a list of key/value pairs provided by the ROOMSTATE message, suitable for use as a Tcl dict. <code class="docutils literal notranslate"><span class="pre">flags</span></code> is ignored.</p>
 </div></blockquote>
 <ol class="arabic simple" start="7">
-<li>USST (USERSTATE)</li>
+<li><p>USST (USERSTATE)</p></li>
 </ol>
 <blockquote>
 <div><p>bind usst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
@@ -272,18 +266,19 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <p>Description: Called when Eggdrop receives a USERSTATE message. <code class="docutils literal notranslate"><span class="pre">mask</span></code> is in the format of <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">keys</span></code> and can use wildcards (see the RMST bind for additional details on format). <code class="docutils literal notranslate"><span class="pre">chan</span></code> is the channel Eggdrop received the USERSTATE message for, and <code class="docutils literal notranslate"><span class="pre">tags</span></code> is a list of key/value pairs provided in the USERSTATE message, suitable for use as a Tcl dict. <code class="docutils literal notranslate"><span class="pre">flags</span></code> is ignored.</p>
 </div></blockquote>
 <ol class="arabic simple" start="8">
-<li>USRNTC (USERNOTICE)</li>
+<li><p>USRNTC (USERNOTICE)</p></li>
 </ol>
 <blockquote>
 <div><p>bind usrntc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p>
 <p>procname &lt;chan&gt; &lt;tags&gt;</p>
 <p>Description: Called when Eggdrop received a USERNOTICE message. <cite>mask`</cite> is in the format of <code class="docutils literal notranslate"><span class="pre">#channel</span> <span class="pre">keys</span></code> and can use wildcards (see the RMST bind for additional details on format). <code class="docutils literal notranslate"><span class="pre">chan</span></code> is the channel Eggdrop received the USERNOTICE message for, and <code class="docutils literal notranslate"><span class="pre">tags</span></code> is a list of key/value pairs provided in the USERNOTICE message, suitable for use as a Tcl dict. <code class="docutils literal notranslate"><span class="pre">flags</span></code> is ignored.</p>
 </div></blockquote>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -308,9 +303,9 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

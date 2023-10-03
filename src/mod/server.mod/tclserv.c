@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -353,6 +353,80 @@ static int tcl_cap STDVAR {
   return TCL_OK;
 }
 
+static int tcl_monitor STDVAR
+{
+  Tcl_Obj *monitorlist;
+  int ret;
+  BADARGS(2, 3, " command ?nick?");
+
+  monitorlist = Tcl_NewListObj(0, NULL);
+  if (!strcmp(argv[1], "add")) {
+    if (argc == 3) {
+      ret = monitor_add(argv[2], 1);
+      if (!ret) {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      } else if (ret == 1) {
+        Tcl_AppendResult(irp, "nickname already present in monitor list", NULL);
+        return TCL_OK;
+        /* ret = 2 */
+      } else {
+        Tcl_AppendResult(irp,
+                "maximum number of nicknames allowed by server reached", NULL);
+        return TCL_ERROR;
+      }
+    } else {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_ERROR;
+    }
+  } else if (!strcmp(argv[1], "delete")) {
+    if (argc == 3) {
+      ret = monitor_del(argv[2]);
+      if (ret) {
+        Tcl_AppendResult(irp, "nickname not found", NULL);
+        return TCL_ERROR;
+      } else {
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
+      }
+    } else {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_ERROR;
+    }
+  } else if (!strcmp(argv[1], "list")) {
+    monitor_show(monitorlist, 0, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "online")) {
+    monitor_show(monitorlist, 1, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "offline")) {
+    monitor_show(monitorlist, 2, NULL);
+    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+    return TCL_OK;
+  } else if (!strcmp(argv[1], "status")) {
+    if (argc < 3) {
+      Tcl_AppendResult(irp, "nickname required", NULL);
+      return TCL_OK;
+    }
+    ret = monitor_show(monitorlist, 3, argv[2]);
+    if (!ret) {
+      Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
+      return TCL_OK;
+    } else {
+      Tcl_AppendResult(irp, "nickname not found", NULL);
+      return TCL_ERROR;
+    }
+  } else if (!strcasecmp(argv[1], "clear")) {
+    monitor_clear();
+    Tcl_AppendResult(irp, "MONITOR list cleared.", NULL);
+    return TCL_OK;
+  } else {
+    Tcl_AppendResult(irp, "command must be add, delete, list, clear, online, offline, status", NULL);
+    return TCL_ERROR;
+  }
+}
 
 static int tcl_jump STDVAR
 {
@@ -379,7 +453,7 @@ static int tcl_jump STDVAR
   }
   cycle_time = 0;
 
-  nuke_server("changing servers\n");
+  nuke_server(IRC_CHANGINGSERV);
   return TCL_OK;
 }
 
@@ -580,5 +654,6 @@ static tcl_cmds my_tcl_cmds[] = {
   {"server",        tcl_server},
   {"getaccount",    tcl_getaccount},
   {"isidentified",  tcl_isidentified},
+  {"monitor",       tcl_monitor},
   {NULL,         NULL}
 };

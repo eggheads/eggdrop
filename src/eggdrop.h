@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -182,6 +182,10 @@
 #  else
 #    define NAME_MAX    255
 #  endif
+#endif
+
+#ifndef PATH_MAX
+#  define PATH_MAX 4096
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */

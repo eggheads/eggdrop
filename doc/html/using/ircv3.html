@@ -1,34 +1,29 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>IRCv3 support &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>IRCv3 support &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Encryption/Hashing" href="pbkdf2info.html" />
+    <link rel="next" title="Account tracking in Eggdrop" href="accounts.html" />
     <link rel="prev" title="TLS support" href="tls.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="tls.html" title="TLS support"
              accesskey="P">previous</a> |
-          <a href="pbkdf2info.html" title="Encryption/Hashing"
+          <a href="accounts.html" title="Account tracking in Eggdrop"
              accesskey="N">next</a>
         </div>
        </div>
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -61,6 +56,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#supported-cap-capabilities">Supported CAP capabilities</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -69,20 +65,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -105,45 +103,46 @@
             
   <p>IRCv3 support
 Last revised: November 27, 2021</p>
-<div class="section" id="ircv3-support">
-<h1>IRCv3 support<a class="headerlink" href="#ircv3-support" title="Permalink to this headline">¶</a></h1>
+<section id="ircv3-support">
+<h1>IRCv3 support<a class="headerlink" href="#ircv3-support" title="Permalink to this heading">¶</a></h1>
 <p>This document provides information about IRCv3 capabilities, as defined via specifications documented by the IRCv3 working group (<a class="reference external" href="https://ircv3.net/">https://ircv3.net/</a>). Support for some of these specifications was added starting with version 1.9.0, and more capabilities are added as possible with new versions.</p>
-<div class="section" id="about">
-<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<section id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this heading">¶</a></h2>
 <p>As more and more IRC servers began to develop and implement their own versions of the IRC protocol (generally defined in RFC1459 and RFC2812), a working group comprised of server, client, and bot developers decided to work together to document these features to make their implementation defined and standardized across servers. What emerged was the IRCv3 set of standards. The specifications developed by the IRCv3 working group was designed to be backwards compatible and are generally implemented via a CAP (capability) request sent at the initialization of an IRC session. A client can optinoally request these “extra” capabilities be enabled through the CAP request, with the assumption that the client can then support the capability requested and enabled. Not all servers or clients support the same capabilities, a general support list can be via the appropriate support table link at <a class="reference external" href="https://ircv3.net/">https://ircv3.net/</a>.</p>
-</div>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>Within eggdrop.conf, several common IRCv3-defined capabilities are enabled simply changing their setting to ‘1’. Other capabilities without explicit settings in eggdrop.conf may be requested by adding them in a space-separated list to the cap-request setting. For more information on what a specific IRCv3-defined capability does, please consult <a class="reference external" href="https://ircv3.net/irc/">https://ircv3.net/irc/</a>.</p>
-</div>
-<div class="section" id="supported-cap-capabilities">
-<h2>Supported CAP capabilities<a class="headerlink" href="#supported-cap-capabilities" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="supported-cap-capabilities">
+<h2>Supported CAP capabilities<a class="headerlink" href="#supported-cap-capabilities" title="Permalink to this heading">¶</a></h2>
 <p>The following capabilities are supported by Eggdrop:</p>
 <blockquote>
 <div><ul class="simple">
-<li>CAP/CAP 302 requests</li>
-<li>SASL 3.2</li>
-<li>account-notify</li>
-<li>account-tag</li>
-<li>away-notify</li>
-<li>BOT 005 mode</li>
-<li>cap-notify</li>
-<li>chghost</li>
-<li>echo-message</li>
-<li>extended-join</li>
-<li>invite-notify</li>
-<li>message-tags</li>
-<li>Monitor</li>
-<li>server-time</li>
-<li>setname</li>
-<li>+typing</li>
+<li><p>CAP/CAP 302 requests</p></li>
+<li><p>SASL 3.2</p></li>
+<li><p>account-notify</p></li>
+<li><p>account-tag</p></li>
+<li><p>away-notify</p></li>
+<li><p>BOT 005 mode</p></li>
+<li><p>cap-notify</p></li>
+<li><p>chghost</p></li>
+<li><p>echo-message</p></li>
+<li><p>extended-join</p></li>
+<li><p>invite-notify</p></li>
+<li><p>message-tags</p></li>
+<li><p>Monitor</p></li>
+<li><p>server-time</p></li>
+<li><p>setname</p></li>
+<li><p>+typing</p></li>
 </ul>
 </div></blockquote>
-<p>Copyright (C) 2010 - 2022 Eggheads Development Team</p>
-</div>
-</div>
+<p>Copyright (C) 2010 - 2023 Eggheads Development Team</p>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -158,7 +157,7 @@ Last revised: November 27, 2021</p>
           <div role="navigation" aria-label="related navigaton">
             <a href="tls.html" title="TLS support"
               >previous</a> |
-            <a href="pbkdf2info.html" title="Encryption/Hashing"
+            <a href="accounts.html" title="Account tracking in Eggdrop"
               >next</a>
           </div>
           <div role="note" aria-label="source link">
@@ -168,9 +167,9 @@ Last revised: November 27, 2021</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

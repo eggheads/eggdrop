@@ -66,8 +66,6 @@ there).
 
 1.  Ensure
 
-::
-
     loadmodule pbkdf2
 
 is uncommented in the config file (or added, if this is a config file
@@ -140,4 +138,4 @@ where 'PBK method' is the method specified in the configuration file,
 'salt' is the value used for the salt, and 'password hash' is the output
 of the hashing algorithm.
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

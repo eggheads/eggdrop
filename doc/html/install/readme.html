@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>README &#8212; Eggdrop 1.9.2 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>README &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installing Eggdrop" href="install.html" />
     <link rel="prev" title="Eggdrop, an open source IRC bot" href="../index.html" /> 
@@ -24,7 +23,7 @@
             <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../index.html" title="Eggdrop, an open source IRC bot"
              accesskey="P">previous</a> |
@@ -39,7 +38,7 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">README</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#notice">Notice</a></li>
@@ -49,7 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#quick-startup">Quick Startup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#upgrading">Upgrading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line">Command Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-a-crontab">Setting up a Crontab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#auto-starting-eggdrop">Auto-starting Eggdrop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#obtaining-help">Obtaining Help</a></li>
 </ul>
@@ -57,7 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
@@ -68,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
@@ -76,20 +76,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -110,19 +112,21 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="readme">
+  <section id="readme">
 <h1>README<a class="headerlink" href="#readme" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Please, at least SKIM this document before asking questions. In fact,
-READ IT if you’ve never successfully set up an Eggdrop bot before.</div></blockquote>
-<div class="section" id="notice">
+<div><p>Please, at least SKIM this document before asking questions. In fact,
+READ IT if you’ve never successfully set up an Eggdrop bot before.</p>
+</div></blockquote>
+<section id="notice">
 <h2>Notice<a class="headerlink" href="#notice" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div>Make SURE that you select your +n (owner) users wisely. They have 100%
+<div><p>Make SURE that you select your +n (owner) users wisely. They have 100%
 access to your bot and account. ONLY GIVE THIS POWER TO SOMEONE YOU
-TRUST COMPLETELY!</div></blockquote>
-</div>
-<div class="section" id="what-is-eggdrop">
+TRUST COMPLETELY!</p>
+</div></blockquote>
+</section>
+<section id="what-is-eggdrop">
 <h2>What is Eggdrop?<a class="headerlink" href="#what-is-eggdrop" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Eggdrop is the world’s most popular Internet Relay Chat (IRC) bot; it is
@@ -158,16 +162,17 @@ older versions, a list of frequently asked questions, how to set up a
 crontab, some boring legal stuff, some basics
 about git usage and some channels where you might get help with Eggdrop.</p>
 </div></blockquote>
-</div>
-<div class="section" id="how-to-get-eggdrop">
+</section>
+<section id="how-to-get-eggdrop">
 <h2>How to Get Eggdrop<a class="headerlink" href="#how-to-get-eggdrop" title="Permalink to this headline">¶</a></h2>
 <p>There are two official methods to download Eggdrop source code. Alternately, Eggdrop also comes as a docker image.</p>
-<div class="section" id="ftp">
+<section id="ftp">
 <h3>FTP<a class="headerlink" href="#ftp" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>The latest Eggdrop stable source code is always located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. You can also download the current stable, previous stable, and development snapshot via FTP at <a class="reference external" href="ftp.eggheads.org/pub/Eggdrop/source">ftp.eggheads.org/pub/Eggdrop/source</a></div></blockquote>
-</div>
-<div class="section" id="git-development-snapshot">
+<div><p>The latest Eggdrop stable source code is always located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. You can also download the current stable, previous stable, and development snapshot via FTP at <a class="reference external" href="ftp://ftp.eggheads.org/pub/eggdrop/source">ftp://ftp.eggheads.org/pub/eggdrop/source</a></p>
+</div></blockquote>
+</section>
+<section id="git-development-snapshot">
 <h3>Git Development Snapshot<a class="headerlink" href="#git-development-snapshot" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>Eggdrop development has moved from a CVS-based version control system to
@@ -184,10 +189,11 @@ either clone the repository via git or download a development snapshot.</p>
 <p>Otherwise, you can download the development snapshot as a tar archive
 from:</p>
 <blockquote>
-<div><a class="reference external" href="https://github.com/eggheads/eggdrop/archive/develop.tar.gz">https://github.com/eggheads/eggdrop/archive/develop.tar.gz</a></div></blockquote>
+<div><p><a class="reference external" href="https://github.com/eggheads/eggdrop/archive/develop.tar.gz">https://github.com/eggheads/eggdrop/archive/develop.tar.gz</a></p>
 </div></blockquote>
-</div>
-<div class="section" id="docker">
+</div></blockquote>
+</section>
+<section id="docker">
 <h3>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><p>You can pull the official Eggdrop Docker image via:</p>
@@ -196,26 +202,28 @@ from:</p>
 </div>
 <p>Additional Eggdrop Docker documentation can be found at <a class="reference external" href="https://hub.docker.com/_/eggdrop">https://hub.docker.com/_/eggdrop</a></p>
 </div></blockquote>
-</div>
-</div>
-<div class="section" id="system-pre-requisites">
+</section>
+</section>
+<section id="system-pre-requisites">
 <h2>System Pre-Requisites<a class="headerlink" href="#system-pre-requisites" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Before you can compile Eggdrop, Tcl must be installed on your system. Many systems have Tcl installed on them by default (you can check by trying the command “tclsh”; if you are given a ‘%’ for a prompt, it is, and you can type ‘exit’ to exit the Tcl shell. However, Eggdrop also requires the Tcl development header files to be installed. They can often be installed via an OS package manager, usually called something similar to ‘tcl-dev’ for the package name. You can also download Tcl source from <a class="reference external" href="https://www.tcl.tk/software/tcltk/download.html">https://www.tcl.tk/software/tcltk/download.html</a>.</p>
 <p>It is also strongly recommended to install openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to ‘libssl-dev’.</p>
 </div></blockquote>
-</div>
-<div class="section" id="quick-startup">
+</section>
+<section id="quick-startup">
 <h2>Quick Startup<a class="headerlink" href="#quick-startup" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div>Please see the <a class="reference external" href="install/install.html">Install</a> file after you finish reading this file.</div></blockquote>
-</div>
-<div class="section" id="upgrading">
+<div><p>Please see the <a class="reference external" href="install/install.html">Install</a> file after you finish reading this file.</p>
+</div></blockquote>
+</section>
+<section id="upgrading">
 <h2>Upgrading<a class="headerlink" href="#upgrading" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div>The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see <a class="reference external" href="install/upgrading.html">Upgrading</a> for full details.</div></blockquote>
-</div>
-<div class="section" id="command-line">
+<div><p>The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see <a class="reference external" href="install/upgrading.html">Upgrading</a> for full details.</p>
+</div></blockquote>
+</section>
+<section id="command-line">
 <h2>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Eggdrop has some command line options - not many, because most things
@@ -227,17 +235,17 @@ options let you do that. Basically, the command line for Eggdrop is:</p>
 </div>
 <p>The options available are:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>-t: Don’t background, use terminal. Your console will drop into an</dt>
-<dd>interactive partyline session, similar to a DCC chat with the bot.
-This is useful for troubleshooting connection issues with the bot.</dd>
-<dt>-c: Don’t background, show channel info. Every 10 seconds your screen</dt>
-<dd>will clear and you will see the current channel status, sort of
-like “top”.</dd>
-<dt>-m: Create userfile. If you don’t have a userfile, this will make Eggdrop</dt>
-<dd>create one and give owner status to the first person that introduces
+<div><dl class="simple">
+<dt>-t: Don’t background, use terminal. Your console will drop into an</dt><dd><p>interactive partyline session, similar to a DCC chat with the bot.
+This is useful for troubleshooting connection issues with the bot.</p>
+</dd>
+<dt>-c: Don’t background, show channel info. Every 10 seconds your screen</dt><dd><p>will clear and you will see the current channel status, sort of
+like “top”.</p>
+</dd>
+<dt>-m: Create userfile. If you don’t have a userfile, this will make Eggdrop</dt><dd><p>create one and give owner status to the first person that introduces
 himself or herself to it. You’ll need to do this when you first set
-up your bot.</dd>
+up your bot.</p>
+</dd>
 </dl>
 <p>-h: Show help, then quit.</p>
 <p>-v: Show version info, then quit.</p>
@@ -245,62 +253,68 @@ up your bot.</dd>
 <p>Most people never use any of the options except -m and you usually only
 need to use that once.</p>
 </div></blockquote>
-</div>
-<div class="section" id="setting-up-a-crontab">
-<h2>Setting up a Crontab<a class="headerlink" href="#setting-up-a-crontab" title="Permalink to this headline">¶</a></h2>
-<p>Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use your host’s crontab system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script creates that both checks if your Eggdrop is still running, and a crontab entry to run the botchk script every 10 minutes.</p>
+</section>
+<section id="auto-starting-eggdrop">
+<h2>Auto-starting Eggdrop<a class="headerlink" href="#auto-starting-eggdrop" title="Permalink to this headline">¶</a></h2>
+<p>Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use features of the operating system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script that can create either a systemd or crontab entry. The systemd option will monitor your Eggdrop and a) start it when the machine boots and b) restart the Eggdrop if it crashes for any reason. The (older) crontab option will check (by default) every 10 minutes to see if your Eggdrop is still running, and attempt to restart it if it is not.</p>
 <blockquote>
-<div><p>Using autobotchk is probably the fastest way of creating your botchk and adding a crontab entry. From the install directory, simply run:</p>
+<div><p>To auto-generate a systemd job, from the Eggdrop install directory, simply run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="o">&lt;</span><span class="n">Eggdrop</span> <span class="n">config</span> <span class="n">file</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">systemd</span>
+</pre></div>
+</div>
+<p>To auto-geneerate a script to check Eggdrop’s status and run it via a crontab entry, simply run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="o">&lt;</span><span class="n">Eggdrop</span> <span class="n">config</span> <span class="n">file</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>This will crontab your bot using the default setup. If you want a list of autobotchk options, type ‘./autobotchk’. An example with options would be:</p>
+<p>This will crontab your bot using the default setup. If you want a list of autobotchk options, type ‘./autobotchk’. A crontab example with options would be:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="o">&lt;</span><span class="n">Eggdrop</span> <span class="n">config</span> <span class="n">file</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">noemail</span> <span class="o">-</span><span class="mi">5</span>
 </pre></div>
 </div>
-<p>This would setup crontab to run the botchk every 5 minutes and also to not send you email saying that it restarted your bot.</p>
+<p>This would setup crontab to run the botchk every 5 minutes and not send you an email saying that it restarted your bot.</p>
 </div></blockquote>
-</div>
-<div class="section" id="documentation">
+</section>
+<section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div>We’re trying to keep the documentation up to date. If you feel that
+<div><p>We’re trying to keep the documentation up to date. If you feel that
 anything is missing here or that anything should be added, etc, please
 create an issue, or better yet a pull request, at
-<a class="reference external" href="https://www.github.com/eggheads/eggdrop">https://www.github.com/eggheads/eggdrop</a> Thank you!</div></blockquote>
-</div>
-<div class="section" id="obtaining-help">
+<a class="reference external" href="https://www.github.com/eggheads/eggdrop">https://www.github.com/eggheads/eggdrop</a> Thank you!</p>
+</div></blockquote>
+</section>
+<section id="obtaining-help">
 <h2>Obtaining Help<a class="headerlink" href="#obtaining-help" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>You can obtain help with Eggdrop in the following IRC channels:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Libera Chat - #eggdrop (official channel), #eggheads (development discussion)</li>
-<li>DALnet - #eggdrop</li>
-<li>EFnet - #egghelp</li>
-<li>IRCnet - #eggdrop</li>
-<li>QuakeNet - #eggdrop.support</li>
-<li>Undernet - #eggdrop</li>
+<li><p>Libera Chat - #eggdrop (official channel), #eggheads (development discussion)</p></li>
+<li><p>DALnet - #eggdrop</p></li>
+<li><p>EFnet - #egghelp</p></li>
+<li><p>IRCnet - #eggdrop</p></li>
+<li><p>QuakeNet - #eggdrop.support</p></li>
+<li><p>Undernet - #eggdrop</p></li>
 </ul>
 </div></blockquote>
 <p>If you plan to ask questions in any of the above channels, you should be
 familiar with and follow IRC etiquette:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Don’t type using CAPITAL letters, colors or bold.</li>
-<li>Don’t use  “!” and “?” excessively.</li>
-<li>Don’t /msg people without their permission.</li>
-<li>Don’t repeat or paste more than 4 lines of text to the channel.</li>
-<li>Don’t ask to ask- just state your question, along with any relevant details and error messages</li>
+<li><p>Don’t type using CAPITAL letters, colors or bold.</p></li>
+<li><p>Don’t use  “!” and “?” excessively.</p></li>
+<li><p>Don’t /msg people without their permission.</p></li>
+<li><p>Don’t repeat or paste more than 4 lines of text to the channel.</p></li>
+<li><p>Don’t ask to ask- just state your question, along with any relevant details and error messages</p></li>
 </ul>
 </div></blockquote>
 </div></blockquote>
 <p>Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2022 Eggheads Development Team</p>
-</div>
-</div>
+Copyright (C) 1999 - 2023 Eggheads Development Team</p>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -325,9 +339,9 @@ Copyright (C) 1999 - 2022 Eggheads Development Team</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on May 26, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Jul 08, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
         </div>
         <div class="clearer"></div>

@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Features &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Eggdrop Features &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Core Settings" href="core.html" />
     <link rel="prev" title="Upgrading Eggdrop" href="../install/upgrading.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../install/upgrading.html" title="Upgrading Eggdrop"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -64,20 +60,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -98,53 +96,54 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="eggdrop-features">
-<h1>Eggdrop Features<a class="headerlink" href="#eggdrop-features" title="Permalink to this headline">¶</a></h1>
+  <section id="eggdrop-features">
+<h1>Eggdrop Features<a class="headerlink" href="#eggdrop-features" title="Permalink to this heading">¶</a></h1>
 <blockquote>
 <div><p>Eggdrop is the most advanced IRC robot available. It has been under
 development since December 1993, and unlike most other bots, it is still
 regularly updated. Some of its features include:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Capability (CAP) support used to enable IRCv3 features. Eggdrop currently supports the following IRCv3 capability sets: account-notify, account-tag, away-notify, cap-notify, chghost, echo-message, extended-join, invite-notify, message-tags, monitor, SASL, server-time, setname, WHOX, and +typing.</li>
-<li>Support for SSL-enabled IRC servers</li>
-<li>Support for IPv6 users</li>
-<li>Support for Twitch servers</li>
-<li>Completely separate channel user lists like having a separate bot for
-each channel.</li>
-<li>A “party line” available through dcc chat or telnet, with multiple
+<li><p>Capability (CAP) support used to enable IRCv3 features. Eggdrop currently supports the following IRCv3 capability sets: account-notify, account-tag, away-notify, cap-notify, chghost, echo-message, extended-join, invite-notify, message-tags, monitor, SASL, server-time, setname, WHOX, and +typing.</p></li>
+<li><p>Support for SSL-enabled IRC servers</p></li>
+<li><p>Support for IPv6 users</p></li>
+<li><p>Support for Twitch servers</p></li>
+<li><p>Completely separate channel user lists like having a separate bot for
+each channel.</p></li>
+<li><p>A “party line” available through dcc chat or telnet, with multiple
 channels, giving you the ability to talk to people without being
-affected by netsplits.</li>
-<li>A “botnet”. A botnet consists of one or more bots linked together. This
+affected by netsplits.</p></li>
+<li><p>A “botnet”. A botnet consists of one or more bots linked together. This
 can allow bots to op each other securely, control floods efficiently,
 and share user lists, ban lists, exempt/invite lists, and ignore lists
-(if sharing is enabled).</li>
-<li>User records are saved on disk and alterable via dcc chat. Each user
+(if sharing is enabled).</p></li>
+<li><p>User records are saved on disk and alterable via dcc chat. Each user
 can have a password (encrypted), a list of valid hostmasks, a set of
-access flags, etc.</li>
-<li>The ability to “learn” new users (if you choose to let the bot do so)
+access flags, etc.</p></li>
+<li><p>The ability to “learn” new users (if you choose to let the bot do so)
 by letting users /MSG the bot “hello”. The bot will grant them automatic
-access of whatever type you specify (or even no access at all).</li>
-<li>A file system where users can upload and download files in an
+access of whatever type you specify (or even no access at all).</p></li>
+<li><p>A file system where users can upload and download files in an
 environment that looks and acts (for the most part) like a typical
 UNIX system. It also has the ability to mark files and directories
-as hidden – unaccessible to people without certain user flags.</li>
-<li>Console mode: you can view each channel through dcc chat or telnet,
+as hidden – unaccessible to people without certain user flags.</p></li>
+<li><p>Console mode: you can view each channel through dcc chat or telnet,
 selectively looking at mode changes, joins and parts, channel talk,
-or any combination of the above.</li>
-<li>A scripting language: commands and features can be easily added to
+or any combination of the above.</p></li>
+<li><p>A scripting language: commands and features can be easily added to
 the bot by means of the Tcl scripting language, giving you the power
-of TOTAL customization of your bot.</li>
-<li>Module support: you can remove/add features to your bot by adding or
-removing modules.</li>
+of TOTAL customization of your bot.</p></li>
+<li><p>Module support: you can remove/add features to your bot by adding or
+removing modules.</p></li>
 </ul>
 </div></blockquote>
 </div></blockquote>
 <p>Copyright (C) 1997 Robey Pointer</p>
-<p>Copyright (C) 2000 - 2022 Eggheads Development Team</p>
-</div>
+<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -169,9 +168,9 @@ removing modules.</li>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

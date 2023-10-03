@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@
  * FILE FORMAT: language.lang
  *              <textidx>,<text>
  * TEXT MESSAGE USAGE:
- *              get_language(<textidx> [,<PARMS>])
+ *              get_language(<textidx> [,<PARAMS>])
  *
  * ADDING LANGUAGES:
  *              o       Copy an existing <section>.<oldlanguage>.lang to a

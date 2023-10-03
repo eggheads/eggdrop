@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Transfer Module &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Transfer Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Twitch Module" href="twitch.html" />
     <link rel="prev" title="Share Module" href="share.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../../index.html">
-            <img class="logo" src="../../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="share.html" title="Share Module"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tricks.html">Advanced Tips</a></li>
@@ -64,14 +60,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../included.html">Modules included with Eggdrop</a><ul class="current">
@@ -96,9 +93,10 @@
 <li class="toctree-l2"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../about/legal.html">Boring legal stuff</a></li>
@@ -120,8 +118,8 @@
           <div class="body" role="main">
             
   <p>Last revised: January 1, 2002</p>
-<div class="section" id="transfer-module">
-<span id="transfer"></span><h1>Transfer Module<a class="headerlink" href="#transfer-module" title="Permalink to this headline">¶</a></h1>
+<section id="transfer-module">
+<span id="transfer"></span><h1>Transfer Module<a class="headerlink" href="#transfer-module" title="Permalink to this heading">¶</a></h1>
 <p>The transfer module provides DCC SEND/GET support and userfile transfer
 support for userfile sharing.</p>
 <p>This module requires: none</p>
@@ -132,34 +130,35 @@ module:</p>
 </div>
 <p>There are also some variables you can set in your config file:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set max-dloads 3</dt>
-<dd>Set here the maximum number of simultaneous downloads to allow for
-each user.</dd>
-<dt>set dcc-block 0</dt>
-<dd>Set here the block size for dcc transfers. ircII uses 512 bytes,
+<div><dl class="simple">
+<dt>set max-dloads 3</dt><dd><p>Set here the maximum number of simultaneous downloads to allow for
+each user.</p>
+</dd>
+<dt>set dcc-block 0</dt><dd><p>Set here the block size for dcc transfers. ircII uses 512 bytes,
 but admits that may be too small. 1024 is standard these days.
-Set this to 0 to use turbo-dcc (recommended).</dd>
-<dt>set copy-to-tmp 1</dt>
-<dd>Enable this setting if you want to copy files to a temporary location
+Set this to 0 to use turbo-dcc (recommended).</p>
+</dd>
+<dt>set copy-to-tmp 1</dt><dd><p>Enable this setting if you want to copy files to a temporary location
 before sending or receiving them. This might be useful for file
 stability, but if your directories are NFS mounted, it’s a pain.
 Setting this to 1 is not advised for big files or if you’re low on
-disk space.</dd>
-<dt>set xfer-timeout 30</dt>
-<dd>Set here the time (in seconds) to wait before an inactive transfer
-times out.</dd>
-<dt>set sharefail-unlink 1</dt>
-<dd>By default, Eggdrop will abort the linking process if userfile sharing is
+disk space.</p>
+</dd>
+<dt>set xfer-timeout 30</dt><dd><p>Set here the time (in seconds) to wait before an inactive transfer
+times out.</p>
+</dd>
+<dt>set sharefail-unlink 1</dt><dd><p>By default, Eggdrop will abort the linking process if userfile sharing is
 enabled but the userfile transfer fails. Set this to 0 to keep the bots
 linked if the userfile transfer fails and retry every minute (both bots must
-be v1.9.0 or higher).</dd>
+be v1.9.0 or higher).</p>
+</dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2022 Eggheads Development Team</p>
-</div>
+<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -184,9 +183,9 @@ be v1.9.0 or higher).</dd>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

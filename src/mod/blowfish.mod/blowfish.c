@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -153,7 +153,7 @@ static void blowfish_report(int idx, int details)
       dprintf(idx, "      %d of %d boxes in use:", tot, BOXES);
       for (i = 0; i < BOXES; i++)
         if (box[i].P != NULL) {
-          dprintf(idx, " (age: %f)", difftime(now, box[i].lastuse));
+          dprintf(idx, " (age: %" PRId64 ")", (int64_t) (now - box[i].lastuse));
         }
       dprintf(idx, "\n");
     }

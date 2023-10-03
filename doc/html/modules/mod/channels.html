@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Channels Module &#8212; Eggdrop 1.9.2 documentation</title>
-    <link rel="stylesheet" href="../../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Channels Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Compress Module" href="compress.html" />
     <link rel="prev" title="Blowfish Module" href="blowfish.html" /> 
@@ -24,7 +23,7 @@
             <img class="logo" src="../../_static/eggman.png.gif" alt="Logo"/>
           </a></p>
         <div class="headertitle"><a
-          href="../../index.html">Eggdrop 1.9.2 documentation</a></div>
+          href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="blowfish.html" title="Blowfish Module"
              accesskey="P">previous</a> |
@@ -39,13 +38,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tricks.html">Advanced Tips</a></li>
@@ -64,14 +64,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../included.html">Modules included with Eggdrop</a><ul class="current">
@@ -96,9 +97,10 @@
 <li class="toctree-l2"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../about/legal.html">Boring legal stuff</a></li>
@@ -120,7 +122,7 @@
           <div class="body" role="main">
             
   <p>Last revised: October 25, 2010</p>
-<div class="section" id="channels-module">
+<section id="channels-module">
 <span id="channels"></span><h1>Channels Module<a class="headerlink" href="#channels-module" title="Permalink to this headline">¶</a></h1>
 <p>This module provides channel related support for the bot. Without it,
 you won’t be able to make the bot join a channel or save channel specific
@@ -133,331 +135,340 @@ module:</p>
 </div>
 <p>There are also some variables you can set in your config file:</p>
 <blockquote>
-<div><blockquote>
-<div><dl class="docutils">
-<dt>set chanfile “LamestBot.chan”</dt>
-<dd>Enter here the filename where dynamic channel settings are stored.</dd>
-<dt>set force-expire 0</dt>
-<dd>Set this setting to 1 if you want your bot to expire bans/exempts/invites
-set by other opped bots on the channel.</dd>
-<dt>set share-greet 0</dt>
-<dd>Set this setting to 1 if you want your bot to share user greets with
-other bots on the channel if sharing user data.</dd>
-<dt>set use-info 1</dt>
-<dd>Set this setting to 1 if you want to allow users to store an info line.</dd>
-<dt>set allow-ps 0</dt>
-<dd>Set this setting to 1 if you want to allow both +p and +s channel modes
+<div><dl class="simple">
+<dt>set chanfile “LamestBot.chan”</dt><dd><p>Enter here the filename where dynamic channel settings are stored.</p>
+</dd>
+<dt>set force-expire 0</dt><dd><p>Set this setting to 1 if you want your bot to expire bans/exempts/invites
+set by other opped bots on the channel.</p>
+</dd>
+<dt>set share-greet 0</dt><dd><p>Set this setting to 1 if you want your bot to share user greets with
+other bots on the channel if sharing user data.</p>
+</dd>
+<dt>set use-info 1</dt><dd><p>Set this setting to 1 if you want to allow users to store an info line.</p>
+</dd>
+<dt>set allow-ps 0</dt><dd><p>Set this setting to 1 if you want to allow both +p and +s channel modes
 to be enforced at the same time by the chanmode channel setting.
 Make sure your server supports +ps mixing or you may get endless mode
-floods.</dd>
-<dt>channel add #channel { SETTINGS }</dt>
-<dd><p class="first">Add each static channel you want your bot to sit in using this command.
-There are many different possible settings you can insert into this
-command, which are explained below.</p>
-<dl class="last docutils">
-<dt>chanmode +/-&lt;modes&gt;</dt>
-<dd>This setting makes the bot enforce channel modes. It will always add
-the +&lt;modes&gt; and remove the -&lt;modes&gt; modes.</dd>
-<dt>idle-kick 0</dt>
-<dd>This setting will make the bot check every minute for idle users. Set
-this to 0 to disable idle check.</dd>
-<dt>stopnethack-mode 0</dt>
-<dd><p class="first">This setting will make the bot de-op anyone who enters the channel
+floods.</p>
+</dd>
+<dt>channel add #channel { SETTINGS }</dt><dd><p>This command adds a static channel to your bot (it cannot be removed via the partyline- we recommend using the .+chan command on the partyline instead). This command will add the channel preconfigured with the specified settings. A full list of settings is defined in <a class="reference internal" href="#channel-settings">Channel Settings</a>.</p>
+</dd>
+<dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt><dd><p>This command modifies a specific channel setting for a channel. There are many different options for channels which you can define. A full list of settings is defined in <a class="reference internal" href="#channel-settings">Channel Settings</a>.
+Some settings are enabled or disabled by a plus or minus in front of them, and others directly take text or integer values.</p>
+</dd>
+</dl>
+</div></blockquote>
+<section id="channel-settings">
+<h2>Channel Settings<a class="headerlink" href="#channel-settings" title="Permalink to this headline">¶</a></h2>
+<section id="value-based-channel-settings">
+<h3>Value-based Channel Settings<a class="headerlink" href="#value-based-channel-settings" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl>
+<dt>idle-kick 0</dt><dd><p>This setting will make the bot check every minute for idle users. Set
+this to 0 to disable idle check.</p>
+</dd>
+<dt>stopnethack-mode 0</dt><dd><p>This setting will make the bot de-op anyone who enters the channel
 with serverops. There are seven different modes for this settings:</p>
-<blockquote class="last">
-<div><table border="1" class="docutils">
+<blockquote>
+<div><table class="docutils align-default">
 <colgroup>
-<col width="5%" />
-<col width="95%" />
+<col style="width: 5%" />
+<col style="width: 95%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>0</td>
-<td>turn off</td>
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>turn off</p></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>isoptest (allow serverop if registered op)</td>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>isoptest (allow serverop if registered op)</p></td>
 </tr>
-<tr class="row-odd"><td>2</td>
-<td>wasoptest (allow serverop if user had op before split)</td>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>wasoptest (allow serverop if user had op before split)</p></td>
 </tr>
-<tr class="row-even"><td>3</td>
-<td>allow serverop if isop or wasop</td>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>allow serverop if isop or wasop</p></td>
 </tr>
-<tr class="row-odd"><td>4</td>
-<td>allow serverop if isop and wasop.</td>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>allow serverop if isop and wasop.</p></td>
 </tr>
-<tr class="row-even"><td rowspan="2">5</td>
-<td>If the channel is -bitch, see stopnethack-mode 3</td>
+<tr class="row-even"><td rowspan="2"><p>5</p></td>
+<td><p>If the channel is -bitch, see stopnethack-mode 3</p></td>
 </tr>
-<tr class="row-odd"><td>If the channel is +bitch, see stopnethack-mode 1</td>
+<tr class="row-odd"><td><p>If the channel is +bitch, see stopnethack-mode 1</p></td>
 </tr>
-<tr class="row-even"><td rowspan="2">6</td>
-<td>If the channel is -bitch, see stopnethack-mode 2</td>
+<tr class="row-even"><td rowspan="2"><p>6</p></td>
+<td><p>If the channel is -bitch, see stopnethack-mode 2</p></td>
 </tr>
-<tr class="row-odd"><td>If the channel is +bitch, see stopnethack-mode 4</td>
+<tr class="row-odd"><td><p>If the channel is +bitch, see stopnethack-mode 4</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
 </dd>
-<dt>revenge-mode 0</dt>
-<dd><p class="first">This settings defines how the bot should punish bad users when
+<dt>revenge-mode 0</dt><dd><p>This settings defines how the bot should punish bad users when
 revenging. There are four possible settings:</p>
-<blockquote class="last">
-<div><table border="1" class="docutils">
+<blockquote>
+<div><table class="docutils align-default">
 <colgroup>
-<col width="4%" />
-<col width="96%" />
+<col style="width: 4%" />
+<col style="width: 96%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>0</td>
-<td>Deop the user.</td>
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>Deop the user.</p></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>Deop the user and give them the +d flag for the channel.</td>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Deop the user and give them the +d flag for the channel.</p></td>
 </tr>
-<tr class="row-odd"><td>2</td>
-<td>Deop the user, give them the +d flag for the channel, and kick them.</td>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Deop the user, give them the +d flag for the channel, and kick them.</p></td>
 </tr>
-<tr class="row-even"><td>3</td>
-<td>Deop the user, give them the +d flag for the channel, kick, and ban them.</td>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Deop the user, give them the +d flag for the channel, kick, and ban them.</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
 </dd>
-<dt>ban-type 3</dt>
-<dd><p class="first">This setting defines what type of bans should eggdrop place for
+<dt>ban-type 3</dt><dd><p>This setting defines what type of bans should eggdrop place for
 +k users or when revenge-mode is 3. Available types are:</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="89%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td colspan="2">0 *!user&#64;host</td>
+<tbody>
+<tr class="row-odd"><td colspan="2"><p>0 *!user&#64;host</p></td>
 </tr>
-<tr class="row-even"><td colspan="2">1 *!*user&#64;host</td>
+<tr class="row-even"><td colspan="2"><p>1 *!*user&#64;host</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2">2 *!*&#64;host</td>
+<tr class="row-odd"><td colspan="2"><p>2 *!*&#64;host</p></td>
 </tr>
-<tr class="row-even"><td colspan="2">3 *!*user&#64;*.host</td>
+<tr class="row-even"><td colspan="2"><p>3 *!*user&#64;*.host</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2">4 *!*&#64;*.host</td>
+<tr class="row-odd"><td colspan="2"><p>4 *!*&#64;*.host</p></td>
 </tr>
-<tr class="row-even"><td colspan="2">5 nick!user&#64;host</td>
+<tr class="row-even"><td colspan="2"><p>5 nick!user&#64;host</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2">6 nick!*user&#64;host</td>
+<tr class="row-odd"><td colspan="2"><p>6 nick!*user&#64;host</p></td>
 </tr>
-<tr class="row-even"><td colspan="2">7 nick!*&#64;host</td>
+<tr class="row-even"><td colspan="2"><p>7 nick!*&#64;host</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2">8 nick!*user&#64;*.host</td>
+<tr class="row-odd"><td colspan="2"><p>8 nick!*user&#64;*.host</p></td>
 </tr>
-<tr class="row-even"><td colspan="2">9 nick!*&#64;*.host</td>
+<tr class="row-even"><td colspan="2"><p>9 nick!*&#64;*.host</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
-<p class="last">You can also specify types from 10 to 19 which correspond to types
+<p>You can also specify types from 10 to 19 which correspond to types
 0 to 9, but instead of using a * wildcard to replace portions of the
 host, only numbers in hostnames are replaced with the ‘?’ wildcard.
 Same is valid for types 20-29, but instead of ‘?’, the ‘*’ wildcard
 will be used. Types 30-39 set the host to ‘*’.</p>
 </dd>
-<dt>ban-time 120</dt>
-<dd>Set here how long temporary bans will last (in minutes). If you
-set this setting to 0, the bot will never remove them.</dd>
-<dt>exempt-time 60</dt>
-<dd>Set here how long temporary exempts will last (in minutes). If you set
+<dt>ban-time 120</dt><dd><p>Set here how long temporary bans will last (in minutes). If you
+set this setting to 0, the bot will never remove them.</p>
+</dd>
+<dt>exempt-time 60</dt><dd><p>Set here how long temporary exempts will last (in minutes). If you set
 this setting to 0, the bot will never remove them. The bot will check
 the exempts every X minutes, but will not remove the exempt if a ban is
 set on the channel that matches that exempt. Once the ban is removed,
 then the exempt will be removed the next time the bot checks. Please
-note that this is an IRCnet feature.</dd>
-<dt>invite-time 60</dt>
-<dd>Set here how long temporary invites will last (in minutes). If you set
+note that this is an IRCnet feature.</p>
+</dd>
+<dt>invite-time 60</dt><dd><p>Set here how long temporary invites will last (in minutes). If you set
 this setting to 0, the bot will never remove them. The bot will check
 the invites every X minutes, but will not remove the invite if a
 channel is set to +i. Once the channel is -i then the invite will be
 removed the next time the bot checks. Please note that this is an
-IRCnet feature.</dd>
-<dt>aop-delay (minimum:maximum)</dt>
-<dd><blockquote class="first">
+IRCnet feature.</p>
+</dd>
+<dt>aop-delay (minimum:maximum)</dt><dd><blockquote>
 <div><p>This is used for autoop, autohalfop, autovoice. If an op or voice joins
 a channel while another op or voice is pending, the bot will attempt to
 put both modes on one line.</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>aop-delay 0</td>
-<td>No delay is used.</td>
+<tbody>
+<tr class="row-odd"><td><p>aop-delay 0</p></td>
+<td><p>No delay is used.</p></td>
 </tr>
-<tr class="row-even"><td>aop-delay X</td>
-<td>An X second delay is used.</td>
+<tr class="row-even"><td><p>aop-delay X</p></td>
+<td><p>An X second delay is used.</p></td>
 </tr>
-<tr class="row-odd"><td>aop-delay X:Y</td>
-<td>A random delay between X and Y is used.</td>
+<tr class="row-odd"><td><p>aop-delay X:Y</p></td>
+<td><p>A random delay between X and Y is used.</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
 </div></blockquote>
-<dl class="last docutils">
-<dt>need-op { putserv “PRIVMSG #lamest :op me cos i’m lame!” }</dt>
-<dd>This setting will make the bot run the script enclosed in braces
+<dl class="simple">
+<dt>need-op { putserv “PRIVMSG #lamest :op me cos i’m lame!” }</dt><dd><p>This setting will make the bot run the script enclosed in braces
 if it does not have ops. This must be shorter than 120 characters.
 If you use scripts like getops.tcl or botnetop.tcl, you don’t need
-to set this setting.</dd>
-<dt>need-invite { putserv “PRIVMSG #lamest :let me in!” }</dt>
-<dd>This setting will make the bot run the script enclosed in braces
+to set this setting.</p>
+</dd>
+<dt>need-invite { putserv “PRIVMSG #lamest :let me in!” }</dt><dd><p>This setting will make the bot run the script enclosed in braces
 if it needs an invite to the channel. This must be shorter than 120
 characters. If you use scripts like getops.tcl or botnetop.tcl, you
-don’t need to set this setting.</dd>
-<dt>need-key { putserv “PRIVMSG #lamest :let me in!” }</dt>
-<dd>This setting will make the bot run the script enclosed in braces
+don’t need to set this setting.</p>
+</dd>
+<dt>need-key { putserv “PRIVMSG #lamest :let me in!” }</dt><dd><p>This setting will make the bot run the script enclosed in braces
 if it needs the key to the channel. This must be shorter than 120
 characters. If you use scripts like getops.tcl or botnetop.tcl, you
-don’t need to set this setting.</dd>
-<dt>need-unban { putserv “PRIVMSG #lamest :let me in!” }</dt>
-<dd>This setting will make the bot run the script enclosed in braces
+don’t need to set this setting.</p>
+</dd>
+<dt>need-unban { putserv “PRIVMSG #lamest :let me in!” }</dt><dd><p>This setting will make the bot run the script enclosed in braces
 if it needs to be unbanned on the channel. This must be shorter than
 120 characters. If you use scripts like getops.tcl or botnetop.tcl,
-you don’t need to set this setting.</dd>
-<dt>need-limit { putserv “PRIVMSG #lamest :let me in!” }</dt>
-<dd>This setting will make the bot run the script enclosed in braces
+you don’t need to set this setting.</p>
+</dd>
+<dt>need-limit { putserv “PRIVMSG #lamest :let me in!” }</dt><dd><p>This setting will make the bot run the script enclosed in braces
 if it needs the limit to be raised on the channel. This must be
 shorter than 120 characters. If you use scripts like getops.tcl or
-botnetop.tcl, you don’t need to set this setting.</dd>
-<dt>flood-chan 15:60</dt>
-<dd>Set here how many channel messages in how many seconds from one
+botnetop.tcl, you don’t need to set this setting.</p>
+</dd>
+<dt>flood-chan 15:60</dt><dd><p>Set here how many channel messages in how many seconds from one
 host constitutes a flood. Setting this to 0, 0:X or X:0 disables text
-flood protection for the channel, where X is an integer &gt;= 0.</dd>
-<dt>flood-deop 3:10</dt>
-<dd>Set here how many deops in how many seconds from one host constitutes
+flood protection for the channel, where X is an integer &gt;= 0.</p>
+</dd>
+<dt>flood-deop 3:10</dt><dd><p>Set here how many deops in how many seconds from one host constitutes
 a flood. Setting this to 0, 0:X or X:0 disables deop flood protection for
-the channel, where X is an integer &gt;= 0.</dd>
-<dt>flood-kick 3:10</dt>
-<dd>Set here how many kicks in how many seconds from one host constitutes
+the channel, where X is an integer &gt;= 0.</p>
+</dd>
+<dt>flood-kick 3:10</dt><dd><p>Set here how many kicks in how many seconds from one host constitutes
 a flood. Setting this to 0, 0:X or X:0 disables kick flood protection for
-the channel, where X is an integer &gt;= 0.</dd>
-<dt>flood-join 5:60</dt>
-<dd>Set here how many joins in how many seconds from one host constitutes
+the channel, where X is an integer &gt;= 0.</p>
+</dd>
+<dt>flood-join 5:60</dt><dd><p>Set here how many joins in how many seconds from one host constitutes
 a flood. Setting this to 0, 0:X or X:0 disables join flood protection for
-the channel, where X is an integer &gt;= 0.</dd>
-<dt>flood-ctcp 3:60</dt>
-<dd>Set here how many channel ctcps in how many seconds from one host
+the channel, where X is an integer &gt;= 0.</p>
+</dd>
+<dt>flood-ctcp 3:60</dt><dd><p>Set here how many channel ctcps in how many seconds from one host
 constitutes a flood. Setting this to 0, 0:X or X:0 disables ctcp flood
-protection for the channel, where X is an integer &gt;= 0.</dd>
-<dt>flood-nick 5:60</dt>
-<dd>Set here how many nick changes in how many seconds from one host
+protection for the channel, where X is an integer &gt;= 0.</p>
+</dd>
+<dt>flood-nick 5:60</dt><dd><p>Set here how many nick changes in how many seconds from one host
 constitutes a flood. Setting this to 0, 0:X or X:0 disables nick flood
-protection for the channel, where X is an integer &gt;= 0.</dd>
-</dl>
+protection for the channel, where X is an integer &gt;= 0.</p>
 </dd>
 </dl>
 </dd>
-<dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt>
-<dd><p class="first">There are many different options for channels which you can define.
+</dl>
+</div></blockquote>
+</section>
+<section id="enable-disable-channel-settings">
+<h3>Enable/Disable Channel Settings<a class="headerlink" href="#enable-disable-channel-settings" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl>
+<dt>chanmode +/-&lt;modes&gt;</dt><dd><p>This setting makes the bot enforce channel modes. It will always enforce
+the +&lt;modes&gt; and remove the -&lt;modes&gt; modes.</p>
+</dd>
+<dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt><dd><p>There are many different options for channels which you can define.
 They can be enabled or disabled by a plus or minus in front of them.</p>
-<p>A complete list of all available channel settings:</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt>enforcebans</dt>
-<dd>When a ban is set, kick people who are on the channel and match
-the ban?</dd>
-<dt>dynamicbans</dt>
-<dd>Only activate bans on the channel when necessary? This keeps the
+</dd>
+<dt>enforcebans</dt><dd><p>When a ban is set, kick people who are on the channel and match
+the ban?</p>
+</dd>
+<dt>dynamicbans</dt><dd><p>Only activate bans on the channel when necessary? This keeps the
 channel’s ban list from getting excessively long. The bot still
 remembers every ban, but it only activates a ban on the channel
-when it sees someone join who matches that ban.</dd>
-<dt>userbans</dt>
-<dd>Allow bans to be made by users directly? If turned off, the bot will
-require all bans to be made through the bot’s console.</dd>
-<dt>dynamicexempts</dt>
-<dd>Only activate exempts on the channel when necessary? This keeps the
+when it sees someone join who matches that ban.</p>
+</dd>
+<dt>userbans</dt><dd><p>Allow bans to be made by users directly? If turned off, the bot will
+require all bans to be made through the bot’s console.</p>
+</dd>
+<dt>dynamicexempts</dt><dd><p>Only activate exempts on the channel when necessary? This keeps the
 channel’s exempt list from getting excessively long. The bot still
 remembers every exempt, but it only activates a exempt on the channel
 when it sees a ban set that matches the exempt. The exempt remains
-active on the channel for as long as the ban is still active.</dd>
-<dt>userexempts</dt>
-<dd>Allow exempts to be made by users directly? If turned off, the bot will
-require all exempts to be made through the bot’s console.</dd>
-<dt>dynamicinvites</dt>
-<dd>Only activate invites on the channel when necessary? This keeps the
+active on the channel for as long as the ban is still active.</p>
+</dd>
+<dt>userexempts</dt><dd><p>Allow exempts to be made by users directly? If turned off, the bot will
+require all exempts to be made through the bot’s console.</p>
+</dd>
+<dt>dynamicinvites</dt><dd><p>Only activate invites on the channel when necessary? This keeps the
 channel’s invite list from getting excessively long. The bot still
 remembers every invite, but the invites are only activated when the
 channel is set to invite only and a user joins after requesting an
-invite. Once set, the invite remains until the channel goes to -i.</dd>
-<dt>userinvites</dt>
-<dd>Allow invites to be made by users directly? If turned off, the bot
-will require all invites to be made through the bot’s console.</dd>
-<dt>autoop</dt>
-<dd>Op users with the +o flag as soon as they join the channel?
-This is insecure and not recommended.</dd>
-<dt>autohalfop</dt>
-<dd>Halfop users with the +l flag as soon as they join the channel?
-This is insecure and not recommended.</dd>
-<dt>bitch</dt>
-<dd>Only let users with the +o flag have op on the channel?</dd>
-<dt>greet</dt>
-<dd>Say a user’s info line when they join the channel?</dd>
-<dt>protectops</dt>
-<dd>Re-op a user with the +o flag if they get deopped?</dd>
-<dt>protecthalfops</dt>
-<dd>Re-halfop a user with the +l flag if they get dehalfopped?</dd>
-<dt>protectfriends</dt>
-<dd>Re-op a user with the +f flag if they get deopped?</dd>
-<dt>statuslog</dt>
-<dd><p class="first">Log the channel status line every 5 minutes? This shows the bot’s
+invite. Once set, the invite remains until the channel goes to -i.</p>
+</dd>
+<dt>userinvites</dt><dd><p>Allow invites to be made by users directly? If turned off, the bot
+will require all invites to be made through the bot’s console.</p>
+</dd>
+<dt>autoop</dt><dd><p>Op users with the +o flag as soon as they join the channel?
+This is insecure and not recommended.</p>
+</dd>
+<dt>autohalfop</dt><dd><p>Halfop users with the +l flag as soon as they join the channel?
+This is insecure and not recommended.</p>
+</dd>
+<dt>bitch</dt><dd><p>Only let users with the +o flag have op on the channel?</p>
+</dd>
+<dt>greet</dt><dd><p>Say a user’s info line when they join the channel?</p>
+</dd>
+<dt>protectops</dt><dd><p>Re-op a user with the +o flag if they get deopped?</p>
+</dd>
+<dt>protecthalfops</dt><dd><p>Re-halfop a user with the +l flag if they get dehalfopped?</p>
+</dd>
+<dt>protectfriends</dt><dd><p>Re-op a user with the +f flag if they get deopped?</p>
+</dd>
+<dt>statuslog</dt><dd><p>Log the channel status line every 5 minutes? This shows the bot’s
 status on the channel (op, voice, etc.), the channel’s modes, and
 the total number of members, ops, voices, regular users, and +b,
 +e, and +I modes on the channel. A sample status line follows:</p>
-<blockquote class="last">
-<div>[01:40] &#64;#lamest (+istn) : [m/1 o/1 v/4 n/7 b/1 e/5 I/7]</div></blockquote>
-</dd>
-<dt>revenge</dt>
-<dd>Remember people who deop/kick/ban the bot, valid ops, or friends
-and punish them? Users with the +f flag are exempt from revenge.</dd>
-<dt>revengebot</dt>
-<dd>This is similar to to the ‘revenge’ option, but it only triggers
-if a bot gets deopped, kicked or banned.</dd>
-<dt>autovoice</dt>
-<dd>Voice users with the +v flag when they join the channel?</dd>
-<dt>secret</dt>
-<dd>Prevent this channel from being listed on the botnet?</dd>
-<dt>shared</dt>
-<dd>Share channel-related user info for this channel?</dd>
-<dt>cycle</dt>
-<dd>Cycle the channel when it has no ops?</dd>
-<dt>dontkickops</dt>
-<dd>Do you want the bot not to be able to kick users who have the +o
-flag, letting them kick-flood for instance to protect the channel
-against clone attacks?</dd>
-<dt>inactive</dt>
-<dd>This prevents the bot from joining the channel (or makes it leave the
-channel if it is already there). It can be useful to make the bot leave
-a channel without losing its settings, channel-specific user flags,
-channel bans, and without affecting sharing.</dd>
-<dt>seen</dt>
-<dd>Respond to seen requests in the channel?  The seen module must be
-loaded for this to work.</dd>
-<dt>nodesynch</dt>
-<dd>Allow non-ops to perform channel modes? This can stop the bot from
-fighting with services such as ChanServ, or from kicking IRCops when
-setting channel modes without having ops.</dd>
-<dt>static</dt>
-<dd>Allow only permanent owners to remove the channel?</dd>
-</dl>
+<blockquote>
+<div><p>[01:40] &#64;#lamest (+istn) : [m/1 o/1 v/4 n/7 b/1 e/5 I/7]</p>
 </div></blockquote>
 </dd>
+<dt>revenge</dt><dd><p>Remember people who deop/kick/ban the bot, valid ops, or friends
+and punish them? Users with the +f flag are exempt from revenge.</p>
+</dd>
+<dt>revengebot</dt><dd><p>This is similar to to the ‘revenge’ option, but it only triggers
+if a bot gets deopped, kicked or banned.</p>
+</dd>
+<dt>autovoice</dt><dd><p>Voice users with the +v flag when they join the channel?</p>
+</dd>
+<dt>secret</dt><dd><p>Prevent this channel from being listed on the botnet?</p>
+</dd>
+<dt>shared</dt><dd><p>Share channel-related user info for this channel?</p>
+</dd>
+<dt>cycle</dt><dd><p>Cycle the channel when it has no ops?</p>
+</dd>
+<dt>dontkickops</dt><dd><p>Do you want the bot not to be able to kick users who have the +o
+flag, letting them kick-flood for instance to protect the channel
+against clone attacks?</p>
+</dd>
+<dt>inactive</dt><dd><p>This prevents the bot from joining the channel (or makes it leave the
+channel if it is already there). It can be useful to make the bot leave
+a channel without losing its settings, channel-specific user flags,
+channel bans, and without affecting sharing.</p>
+</dd>
+<dt>seen</dt><dd><p>Respond to seen requests in the channel?  The seen module must be
+loaded for this to work.</p>
+</dd>
+<dt>nodesynch</dt><dd><p>Allow non-ops to perform channel modes? This can stop the bot from
+fighting with services such as ChanServ, or from kicking IRCops when
+setting channel modes without having ops.</p>
+</dd>
+<dt>static</dt><dd><p>Allow only permanent owners to remove the channel?</p>
+</dd>
 </dl>
-<p>The following settings are used as default values when you .+chan #chan or .tcl
-channel add #chan. Look in the section above for explanation of every option.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="default-channel-values">
+<h2>Default Channel Values<a class="headerlink" href="#default-channel-values" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><blockquote>
+<div><p>The following settings are used as default values when you .+chan #chan or .tcl
+channel add #chan. You can modify these default values by adding the below values to your config fil. Look in the <a class="reference internal" href="#channel-settings">Channel Settings</a> for an explanation of each option.</p>
 <blockquote>
 <div><p>set default-flood-chan 15:60</p>
 <p>set default-flood-deop 3:10</p>
@@ -474,9 +485,8 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <p>set default-ban-time 120</p>
 <p>set default-exempt-time 60</p>
 <p>set default-invite-time 60</p>
-<dl class="docutils">
-<dt>set default-chanset {</dt>
-<dd><div class="first last line-block">
+<dl>
+<dt>set default-chanset {</dt><dd><div class="line-block">
 <div class="line">-autoop</div>
 <div class="line">-autovoice</div>
 <div class="line">-bitch</div>
@@ -509,11 +519,13 @@ channel add #chan. Look in the section above for explanation of every option.</p
 <p>}</p>
 </div></blockquote>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2022 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
 </div></blockquote>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -538,9 +550,9 @@ channel add #chan. Look in the section above for explanation of every option.</p
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on May 26, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Jul 08, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
         </div>
         <div class="clearer"></div>

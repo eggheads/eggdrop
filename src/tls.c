@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2022 Eggheads Development Team
+ * Copyright (C) 2010 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -228,27 +228,49 @@ int ssl_init()
 #endif
   /* Let advanced users specify dhparam */
   if (tls_dhparam[0]) {
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+    BIO *pbio = BIO_new_file(tls_dhparam, "r");
+    if (pbio) {
+      EVP_PKEY *param = PEM_read_bio_Parameters(pbio, NULL);
+      BIO_free(pbio);
+      if (param) {
+        if (SSL_CTX_set0_tmp_dh_pkey(ssl_ctx, param) == 1)
+          debug1("TLS: setting ssl dhparam %s successful", tls_dhparam);
+        else {
+          EVP_PKEY_free(param);
+          putlog(LOG_MISC, "*", "ERROR: TLS: SSL_CTX_set0_tmp_dh_pkey(%s): %s",
+                 tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+        }
+      }
+      else
+        putlog(LOG_MISC, "*", "ERROR: TLS: PEM_read_bio_Parameters(%s): %s",
+               tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+    }
+    else
+      putlog(LOG_MISC, "*", "ERROR: TLS: BIO_new_file(%s): %s", tls_dhparam,
+            ERR_error_string(ERR_get_error(), NULL));
+#else
     DH *dh;
     FILE *paramfile = fopen(tls_dhparam, "r");
     if (paramfile) {
       dh = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
       fclose(paramfile);
       if (dh) {
-        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) != 1) {
-          putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
+        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) == 1)
+          debug1("TLS: setting ssl dhparam %s successful", tls_dhparam);
+        else
+          putlog(LOG_MISC, "*", "ERROR: TLS: SSL_CTX_set_tmp_dh(%s): %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
-        }
         DH_free(dh);
       }
-      else {
-        putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
+      else
+        putlog(LOG_MISC, "*", "ERROR: TLS: PEM_read_DHparams(%s): %s",
                tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
-      }
     }
-    else {
+    else
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to open %s: %s",
              tls_dhparam, strerror(errno));
-    }
+#endif
   }
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {

@@ -15,6 +15,65 @@ Last revised: December 4, 2021
 
      _________________________________________________________________
 
+Eggdrop v1.9.5:
+
+ General changes:
+    - Implemented a workaround for a Tcl issue parsing emojis that can cause a
+      crash
+    - Fixed an improper change to the display of bind flags that caused issues
+      with Tcl scripts that parse bind flags
+    - Added SSL header information to .status to help diagnose ./configure
+      mismatches
+    - Lots of under-the-hood bug fixes
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Tcl minimum required version is now 8.5! This actually happened in version
+      1.9.0; we just forgot to tell people. Oops! :)
+
+ Module changes:
+    - Updated woobie.mod with additional example code
+
+ Eggdrop config changes:
+    - None
+
+ Documentation changes:
+    - Added additional documentation to help write modules
+    - Updated botnet docs to include reference to TLS docs for secure links
+    - Updated Tcl repo from unmaintained FTP to HTTP repository
+
+Eggdrop v1.9.4:
+
+ General changes:
+    - Fixed a DNS bug causing Eggdrop to often hang on DCC or telnet
+      connections
+    - BETA: Added -systemd option to autobotchk script to restart Eggdrop via
+      systemd instead of cron
+    - Reverted matchattr match syntax to previous functionality. Matching
+      against "-" as a flag will once again successfully match against "no"
+      flags, instead of returning an error.
+    - Fixed some inaccurate log messages
+    - Fixed some format specifiers that could cause crashes in certain
+      situations
+    - Fixed logging of TAGMSG messages
+    - Fixed unspecified behavior of freeaddrinfo() on some BSD systems
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Moved the 'gotmsg' function back as a raw bind. It was inadvertently
+      moved to a rawt bind in 1.9.3, causing issuse with scripts attempting to
+      unbind this internal reference
+ Module changes:
+    - None
+
+Eggdrop config changes:
+    - None
+    
+
 Eggdrop v1.9.3:
 
  General changes:
@@ -151,7 +210,7 @@ Eggdrop v1.9.0:
     - Added CAP support, allowing Eggdrop to extend IRC server capabilities
     - Added support for SASL authentication
     - Added a BETA threaded DNS capability, enabled with the --enable-tdns
-      configure flag. This allows asynchronus DNS requests similar to the what
+      configure flag. This allows asynchronous DNS requests similar to the what
       the current DNS module offers, but using host system capability instead
       of rewriting it from scratch. Using this means you no longer have to use
       the DNS module.
@@ -204,7 +263,7 @@ Eggdrop v1.9.0:
       with 'refreshchan w', described above.
     - Added the hand2nicks command, an alternative to the hand2nick command.
       hand2nicks returns ALL nicks matching a handle, not just the first one.
-    - Aded the socklist command, an update to the dcclist command. Returns
+    - Added the socklist command, an update to the dcclist command. Returns
       similar info as a Tcl dict, and adds the IP to the information.
     - Use the system's strftime formatting instead of Eggdrop-provided
       GNU version/extensions. This could cause formatting differences
@@ -258,4 +317,4 @@ Eggdrop v1.9.0:
   ________________________________________________________________________
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2021 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team
