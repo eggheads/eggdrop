@@ -41,21 +41,21 @@ p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_note, H_filt, H_event, H_die, H_cron, H_log = NULL;
 #ifdef TLS
 p_tcl_bind_list H_tls = NULL;
-static int builtin_idx();
+static int builtin_idx STDVAR;
 #endif
 
-static int builtin_2char();
-static int builtin_3char();
-static int builtin_5int();
-static int builtin_cron();
-static int builtin_char();
-static int builtin_chpt();
-static int builtin_chjn();
-static int builtin_idxchar();
-static int builtin_charidx();
-static int builtin_chat();
-static int builtin_dcc();
-static int builtin_log();
+static int builtin_2char STDVAR;
+static int builtin_3char STDVAR;
+static int builtin_5int STDVAR;
+static int builtin_cron STDVAR;
+static int builtin_char STDVAR;
+static int builtin_chpt STDVAR;
+static int builtin_chjn STDVAR;
+static int builtin_idxchar STDVAR;
+static int builtin_charidx STDVAR;
+static int builtin_chat STDVAR;
+static int builtin_dcc STDVAR;
+static int builtin_log STDVAR;
 
 #ifdef DEBUG_CONTEXT
 char last_bind_called[512] = "";
@@ -206,9 +206,8 @@ int expmem_tclhash(void)
   return tot;
 }
 
-
 extern cmd_t C_dcc[];
-static int tcl_bind();
+static int tcl_bind STDVAR;
 
 static cd_tcl_cmd cd_cmd_table[] = {
   {"bind",   tcl_bind, (void *) 0},
