@@ -91,7 +91,7 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #              with len > handlen, for (botnet-)nicks with \[ \] and for
 #              $(botnet-)nick used in pidfile, userfile or (botnet-)nick
 #   19Apr2017: Fix running this from a non-eggdrop dir.
-#   28Nov2023: Added -systemd option, to (duh) create a systemd job
+#   28Nov2022: Added -systemd option, to (duh) create a systemd job
 
 if {$argc == 0} {
   puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"

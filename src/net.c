@@ -1199,7 +1199,7 @@ int sockgets(char *s, int *len)
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & SOCK_BUFFER) {
-    socklist[ret].handler.sock.inbuf = (char *) nrealloc(socklist[ret].handler.sock.inbuf,
+    socklist[ret].handler.sock.inbuf = nrealloc(socklist[ret].handler.sock.inbuf,
                                             socklist[ret].handler.sock.inbuflen + *len + 1);
     memcpy(socklist[ret].handler.sock.inbuf + socklist[ret].handler.sock.inbuflen, xx, *len);
     socklist[ret].handler.sock.inbuflen += *len;
@@ -1325,7 +1325,7 @@ void tputs(int z, char *s, unsigned int len)
 
       if (socklist[i].handler.sock.outbuf != NULL) {
         /* Already queueing: just add it */
-        p = (char *) nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
+        p = nrealloc(socklist[i].handler.sock.outbuf, socklist[i].handler.sock.outbuflen + len);
         memcpy(p + socklist[i].handler.sock.outbuflen, s, len);
         socklist[i].handler.sock.outbuf = p;
         socklist[i].handler.sock.outbuflen += len;
@@ -1410,6 +1410,21 @@ void dequeue_sockets()
   for (i = 0; i < threaddata()->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
+#ifdef CYGWIN_HACKS
+      int res;
+      socklen_t res_len;
+      if (socklist[i].flags == SOCK_CONNECT) {
+        res_len = sizeof(res);
+        getsockopt(socklist[i].sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+        if (res == ECONNREFUSED) { /* Connection refused */
+          int idx = findanyidx(socklist[i].sock);
+          putlog(LOG_MISC, "*", "Connection refused: %s:%i", dcc[idx].host,
+                 dcc[idx].port);
+          socklist[i].flags |= SOCK_EOFD;
+          return ;
+        }
+      }
+#endif
       /* Trick tputs into doing the work */
       errno = 0;
 #ifdef TLS

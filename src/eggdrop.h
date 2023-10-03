@@ -184,6 +184,10 @@
 #  endif
 #endif
 
+#ifndef PATH_MAX
+#  define PATH_MAX 4096
+#endif
+
 /* Almost every module needs some sort of time thingy, so... */
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>

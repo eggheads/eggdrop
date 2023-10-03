@@ -28,11 +28,7 @@ Modules included with Eggdrop
     botnet.
 
 :ref:`blowfish`
-    Eggdrop can encrypt your userfile, so users can have secure
-    passwords. Please note that when you change your encryption
-    method later (i.e. using other modules like a md5 module),
-    you can't use your current userfile anymore. Eggdrop will not
-    start without an encryption module.
+    This module has been deprecated in favor of the pbkdf2 module for hashing purposes, such as passwords in the userfile. However, it is still required for encrypting/decrypting strings.
 
 :ref:`channels`
     This module provides channel related support for the bot.
@@ -63,6 +59,9 @@ Modules included with Eggdrop
     and manage files. With this module, the bot is usable as a file
     server.
 
+:ref:`ident`
+    This module adds Eggdrop support for the externally-provided oident service, or alternatively the ability for Eggdrop to act as its own ident daemon.
+
 :ref:`irc`
     This module provides basic IRC support for your bot. You have to
     load this if you want your bot to come on IRC.
@@ -72,6 +71,9 @@ Modules included with Eggdrop
     each other. Note sending between currently online users is
     supported in the core, this is only for storing the notes for
     later retrieval.
+
+:ref:`pbkdf2`
+    This modules updates Eggdrop to use PBKDF2 for hashing purposes, such as for userfile passwords. It was specifically designed to work with the blowfish module to make the transition from blowfish to pbkdf2 password hashing as easy as possible. If you are transitioning a userfile from 1.8 or earlier, you should load this AND the blowfish module. By doing so, Eggdrop will seamlessly update the old blowfish hashes to the new PBKDF2 hashes once a user logs in for the first time, and allow you to (eventually) remove the blowfish module altogether. For new bots, you should load this module by itself and not use the blowfish module. The blowfish module is still required for encrypting/decrypting strings. Eggdrop will not start without an encryption module loaded.
 
 :ref:`seen`
     This module provides very basic seen commands via msg, on channel

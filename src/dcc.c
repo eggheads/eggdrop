@@ -325,15 +325,26 @@ static void cont_link(int idx, char *buf, int i)
  */
 static void dcc_bot_digest(int idx, char *challenge, char *password)
 {
-  MD5_CTX md5context;
   char digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
   int i;
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5) 
+  EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+  const EVP_MD *md = EVP_md5();
+  unsigned int md_len;
+  EVP_DigestInit_ex(mdctx, md, NULL);
+  EVP_DigestUpdate(mdctx, challenge, strlen(challenge));
+  EVP_DigestUpdate(mdctx, password, strlen(password));
+  EVP_DigestFinal_ex(mdctx, digest, &md_len);
+  EVP_MD_CTX_free(mdctx);
+#else
+  MD5_CTX md5context;
   MD5_Init(&md5context);
   MD5_Update(&md5context, (unsigned char *) challenge, strlen(challenge));
   MD5_Update(&md5context, (unsigned char *) password, strlen(password));
   MD5_Final(digest, &md5context);
+#endif
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
@@ -582,7 +593,6 @@ struct dcc_table DCC_FORK_BOT = {
  */
 static int dcc_bot_check_digest(int idx, char *remote_digest)
 {
-  MD5_CTX md5context;
   char digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
   int i, ret;
@@ -590,22 +600,32 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   if (!password)
     return 1;
-
+  snprintf(digest_string, 33, "<%lx%lx@", (long) getpid(),
+           (unsigned long) dcc[idx].timeval);
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
+  EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+  const EVP_MD *md = EVP_md5();
+  unsigned int md_len;
+  EVP_DigestInit_ex(mdctx, md, NULL);
+  EVP_DigestUpdate(mdctx, digest_string, strlen(digest_string));
+  EVP_DigestUpdate(mdctx, botnetnick, strlen(botnetnick));
+  EVP_DigestUpdate(mdctx, ">", 1);
+  EVP_DigestUpdate(mdctx, password, strlen(password));
+  EVP_DigestFinal_ex(mdctx, digest, &md_len);
+  EVP_MD_CTX_free(mdctx);
+#else
+  MD5_CTX md5context;
   MD5_Init(&md5context);
-
-  egg_snprintf(digest_string, 33, "<%lx%lx@", (long) getpid(),
-               (unsigned long) dcc[idx].timeval);
   MD5_Update(&md5context, (unsigned char *) digest_string,
              strlen(digest_string));
   MD5_Update(&md5context, (unsigned char *) botnetnick, strlen(botnetnick));
   MD5_Update(&md5context, (unsigned char *) ">", 1);
   MD5_Update(&md5context, (unsigned char *) password, strlen(password));
-
   MD5_Final(digest, &md5context);
+#endif
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
-
   ret = strcmp(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
@@ -1401,6 +1421,9 @@ static void dcc_telnet_hostresolved(int i)
   strcpy(dcc[j].nick, "*");
   dcc[j].u.ident_sock = dcc[i].sock;
   dcc[j].timeval = now;
+#ifdef CYGWIN_HACKS
+  threaddata()->socklist[findsock(dcc[j].sock)].flags = SOCK_CONNECT;
+#endif
   dprintf(j, "%d, %d\n", dcc[i].port, dcc[idx].port);
 }
 
