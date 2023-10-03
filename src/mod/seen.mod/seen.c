@@ -11,7 +11,7 @@
  * 1.2a    1997-08-24      Minor fixes. [BB]
  */
 /*
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -395,7 +395,7 @@ targetcont:
             prefix, whoredirect, whotarget);
     return;
   }
-  /* Target not on this channel.   Check other channels */
+  /* Target not on this channel. Check other channels */
   chan = chanset;
   while (chan) {
     m = ismember(chan, whotarget);
@@ -442,7 +442,7 @@ targetcont:
       }
     }
   }
-  /* Target known, but nowhere to be seen.  Give last IRC and botnet time */
+  /* Target known, but nowhere to be seen. Give last IRC and botnet time */
   wordshift(word1, text);
   if (!strcasecmp(word1, "anywhere"))
     cr = NULL;

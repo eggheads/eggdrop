@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -853,21 +853,21 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %fs\n",
-              chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
-              m->account, s, atrflag, difftime(now, m->split));
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %" PRId64 "s\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
+                m->account, s, atrflag, (int64_t) (now - m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n", chanflag,
-              maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
-              s, atrflag);
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
+                m->account, s, atrflag);
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
-          egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
+          snprintf(s1, sizeof s1, "%2" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
         else if (now - (m->last) > 3600)
-          egg_snprintf(s1, sizeof s1, "%2luh", ((now - (m->last)) / 3600));
+          snprintf(s1, sizeof s1, "%2" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
         else if (now - (m->last) > 180)
-          egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
+          snprintf(s1, sizeof s1, "%2" PRId64 "m", ((int64_t) (now - m->last)) / 60);
         else
           strlcpy(s1, "   ", sizeof s1);
         if (chan_ircaway(m)) {

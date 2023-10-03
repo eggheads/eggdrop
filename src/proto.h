@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -302,7 +302,7 @@ void safe_write(int, const void *, size_t);
 
 /* tcl.c */
 struct threaddata *threaddata(void);
-int init_threaddata(int);
+void init_threaddata(int);
 void protect_tcl(void);
 void unprotect_tcl(void);
 void do_tcl(char *, char *);

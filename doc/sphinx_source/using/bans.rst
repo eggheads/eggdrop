@@ -73,4 +73,4 @@ Bans, Invites, and Exempts
              (defined in config file) or until the channel goes -i again,
              whichever happens last.
 
-  Copyright (C) 1999 - 2022 Eggheads Development Team
+  Copyright (C) 1999 - 2023 Eggheads Development Team

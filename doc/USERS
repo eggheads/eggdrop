@@ -97,4 +97,4 @@ global flag applies to all channels. The standard global flags are:
   user-defined flags (Capital letters A through Z). These are used by
   scripts, and their uses vary depending on the script that uses them.
 
-Copyright (C) 2002 - 2022 Eggheads Development Team
+Copyright (C) 2002 - 2023 Eggheads Development Team

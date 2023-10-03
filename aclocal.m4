@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2022 Eggheads Development Team
+dnl Copyright (C) 1999 - 2023 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -1087,14 +1087,14 @@ dnl
 AC_DEFUN([EGG_TCL_CHECK_VERSION],
 [
 
-  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 3; then
+  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 5; then
     cat << EOF >&2
 configure: error:
 
   Your Tcl version is much too old for Eggdrop to use. You should
   download and compile a more recent version. The most reliable
   current version is $tclrecommendver and can be downloaded from
-  ${tclrecommendsite}. We require at least Tcl 8.3.
+  ${tclrecommendsite}. We require at least Tcl 8.5.
 
   See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
@@ -1112,16 +1112,6 @@ dnl Unsets a certain cache item. Typically called before using the AC_CACHE_*()
 dnl macros.
 dnl
 AC_DEFUN([EGG_CACHE_UNSET], [unset $1])
-
-
-dnl EGG_TCL_CHECK_NOTIFIER_INIT
-dnl
-AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
-[
-  if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 4; then
-    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotifierProcs struct member initNotifierProc (8.4 and later).])
-  fi
-])
 
 
 dnl EGG_SUBST_EGGVERSION()
@@ -1432,7 +1422,6 @@ dnl
 AC_DEFUN([EGG_IPV6_COMPAT],
 [
 if test "$enable_ipv6" = "yes"; then
-  AC_CHECK_FUNCS([gethostbyname2])
   AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes", egg_cv_var_have_in6_addr="no", [
     #include <sys/types.h>
     #include <netinet/in.h>
@@ -1621,11 +1610,12 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
+      AC_CHECK_FUNCS([EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break
       ]])
     fi
+    AC_CHECK_FUNCS([EVP_md5])
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
           AC_DEFINE([OPENSSL_buf2hexstr], [hex_to_string], [Define this to hex_to_string when using OpenSSL < 1.1.0])

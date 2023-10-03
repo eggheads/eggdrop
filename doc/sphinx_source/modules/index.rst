@@ -44,4 +44,4 @@ Do I still need to 'loadmodule' modules?
 
 YES, when you compile statically, all the modules are linked into the main executable. HOWEVER, they are not enabled until you use loadmodule to enable them, hence you get nearly the same functionality with static modules as with dynamic modules.
 
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

@@ -60,7 +60,7 @@ There are two official methods to download Eggdrop source code. Alternately, Egg
 FTP
 ^^^
 
-  The latest Eggdrop stable source code is always located at `<https://geteggdrop.com>`_. You can also download the current stable, previous stable, and development snapshot via FTP at `<ftp.eggheads.org/pub/Eggdrop/source>`_
+  The latest Eggdrop stable source code is always located at `<https://geteggdrop.com>`_. You can also download the current stable, previous stable, and development snapshot via FTP at `<ftp://ftp.eggheads.org/pub/eggdrop/source>`_
 
 Git Development Snapshot
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -142,21 +142,24 @@ Command Line
     Most people never use any of the options except -m and you usually only
     need to use that once.
 
-Setting up a Crontab
---------------------
+Auto-starting Eggdrop
+---------------------
 
-Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use your host's crontab system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script creates that both checks if your Eggdrop is still running, and a crontab entry to run the botchk script every 10 minutes.
+Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use features of the operating system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script that can create either a systemd or crontab entry. The systemd option will monitor your Eggdrop and a) start it when the machine boots and b) restart the Eggdrop if it crashes for any reason. The (older) crontab option will check (by default) every 10 minutes to see if your Eggdrop is still running, and attempt to restart it if it is not.
 
-    Using autobotchk is probably the fastest way of creating your botchk and adding a crontab entry. From the install directory, simply run::
+    To auto-generate a systemd job, from the Eggdrop install directory, simply run::
+
+      ./scripts/autobotchk <Eggdrop config file> -systemd
+
+    To auto-geneerate a script to check Eggdrop's status and run it via a crontab entry, simply run::
 
       ./scripts/autobotchk <Eggdrop config file>
 
-
-    This will crontab your bot using the default setup. If you want a list of autobotchk options, type './autobotchk'. An example with options would be::
+    This will crontab your bot using the default setup. If you want a list of autobotchk options, type './autobotchk'. A crontab example with options would be::
 
       ./scripts/autobotchk <Eggdrop config file> -noemail -5
 
-    This would setup crontab to run the botchk every 5 minutes and also to not send you email saying that it restarted your bot.
+    This would setup crontab to run the botchk every 5 minutes and not send you an email saying that it restarted your bot.
 
 Documentation
 -------------
@@ -188,4 +191,4 @@ Obtaining Help
       * Don't ask to ask- just state your question, along with any relevant details and error messages
 
 Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

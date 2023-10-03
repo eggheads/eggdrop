@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ static int flud_ctcp_thr;       /* ctcp flood threshold */
 static int flud_ctcp_time;      /* ctcp flood time */
 static char initserver[121];    /* what, if anything, to send to the
                                  * server on connection */
-static char botuserhost[121];   /* bot's user@host (refreshed whenever the
+static char botuserhost[UHOSTMAX];/* bot's user@host (refreshed whenever the
                                  * bot joins a channel) */
                                 /* may not be correct user@host BUT it's
                                  * how the server sees it */
@@ -99,13 +99,17 @@ static int msgrate;             /* Number of seconds between sending
 static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servers */
 #endif
-
 #ifndef TLS
 static char sslserver = 0;
 #endif
+static int monitor005 = 0;      /* Monitor */
+static int max_monitor = 0;     /* Maximum # of monitored nicks, from server */
+static int monitor732 = 0;      /* Monitor */
+static struct monitor_list *monitor = NULL;
+
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt;
+                       H_ctcp, H_out, H_rawt, H_monitor;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -1232,6 +1236,123 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
     pass[0] = 0;
 }
 
+/* Add nickname to monitor list *
+ * Returns 0 on success
+ * Returns 1 if duplicate nick found
+ * Returns 2 if maximum number of nicks to be monitored reached
+ */
+static int monitor_add(char * nick, int send) {
+  struct monitor_list *entry = nmalloc(sizeof(struct monitor_list));
+  struct monitor_list *current = monitor;
+  int count = 0;
+
+  memset(entry, 0, sizeof *entry);
+
+  /* Check for duplicates before adding */
+  while (current != NULL) {
+    count++;
+    if (!rfc_casecmp(current->nick, nick)) {
+      return 1;
+    }
+    current=current->next;
+  }
+  if (count >= max_monitor) {
+    return 2;
+  }
+  strlcpy(entry->nick, nick, NICKLEN);
+  entry->next = monitor;
+  monitor = entry;
+  if (send) {
+    dprintf(DP_SERVER, "MONITOR + %s\n", nick);
+  }
+
+  return 0;
+}
+
+/* Remove nickname from monitor list */
+static int monitor_del (char *nick) {
+  struct monitor_list *current = monitor;
+  struct monitor_list *previous = NULL;
+
+  if (monitor == NULL) {
+    return 1;
+  }
+  while (rfc_casecmp(current->nick, nick)) {
+    if (current->next == NULL) {
+      return 1;
+    } else {
+      previous = current;
+      current = current->next;
+    }
+  }
+  if (current == monitor) {
+    monitor = monitor->next;
+  } else {
+    previous->next = current->next;
+  }
+  dprintf(DP_SERVER, "MONITOR - %s\n", nick);
+  return 0;
+}
+
+/* Show nicknames being monitored with MONITOR.
+ * Mode can be 0 (all nicks), 1 (online nicks), 2 (offline nicks)
+ * 3 (check status of nick)
+ */
+static int monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
+  struct monitor_list *current = monitor;
+  int found = 0;
+
+  if (current == NULL) {
+    return 0;
+  }
+
+  while (current != NULL) {
+    if (!mode) {
+      Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
+    } else if (mode == 1) {
+      if (current->online) {
+        Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
+      }
+    } else if (mode == 2) {
+      if (!current->online) {
+        Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
+      }
+    } else if (mode == 3) {
+      if(!rfc_casecmp(current->nick, nick)) {
+        found = 1;
+        if (current->online) {
+          Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("1", 1));
+        } else {
+          Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("0", 1));
+        }
+      }
+    }
+    current = current->next;
+  }
+  if ((!found) && (mode == 3)) {
+    return 1;
+  }
+  return 0;
+}
+
+
+static void monitor_clear()
+{
+  struct monitor_list *current = monitor;
+  struct monitor_list *next = NULL;
+
+  monitor = NULL;
+  dprintf(DP_SERVER, "MONITOR C");
+  /* Clear local linked list */
+  while (current != NULL) {
+    next = current->next;
+    nfree(current);
+    current = next;
+  }
+
+  return;
+}
+
 static int server_6char STDVAR
 {
   IntFunc F = (IntFunc) cd;
@@ -1319,6 +1440,17 @@ static int server_out STDVAR
 
   CHECKVALIDITY(server_out);
   F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+static int monitor_2char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, "nick online");
+
+  CHECKVALIDITY(monitor_2char);
+  F(argv[1], argv[2]);
   return TCL_OK;
 }
 
@@ -2138,6 +2270,7 @@ static char *server_close()
   del_bind_table(H_ctcr);
   del_bind_table(H_ctcp);
   del_bind_table(H_out);
+  del_bind_table(H_monitor);
   rem_tcl_coups(my_tcl_coups);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
@@ -2242,11 +2375,13 @@ static Function server_table[] = {
   (Function) & account_notify,  /* int                                  */
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
-  /* 48 - 52 */
+  /* 48 - 51 */
   (Function) & isupport_parseint,/*                                     */
   (Function) NULL,               /* was check_tcl_account, now irc.mod  */
   (Function) & find_capability,
-  (Function) encode_msgtags
+  (Function) encode_msgtags,
+  /* 52 - 55 */
+  (Function) & H_monitor
 };
 
 char *server_start(Function *global_funcs)
@@ -2356,6 +2491,7 @@ char *server_start(Function *global_funcs)
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
+  H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
   isupport_init();
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_rawt, my_rawt_binds);

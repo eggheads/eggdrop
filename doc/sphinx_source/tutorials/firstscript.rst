@@ -16,7 +16,7 @@ are helpful in debugging and testing your code.
 
 First, read through the script. Very few commands are listed here intentionally,
 but as you want to develop more advanced scripts, you will definitely want to
-get familiar with the `core Tcl language commands <https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/mainDocs/tcl-commands.html>`_
+get familiar with the `core Tcl language commands <https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/using/tcl-commands.html>`_
 
 If you have the .tcl command enabled, you can load a script by typing
 '.tcl source script/file.tcl' to load it. Otherwise, add it to your config
@@ -83,7 +83,7 @@ Now, let's look start to dissect the actual code!::
 
   bind join - * greet
 
-This is a bind. This sets up an action that Eggdrop will react to. You can read `all the binds that Eggdrop uses here. <https://docs.eggheads.org/mainDocs/tcl-commands.html>`_ Generally, we like to place all binds towards the top of the script so that they are together and easy to find. Now, let's look at documentation of the bind join together.
+This is a bind. This sets up an action that Eggdrop will react to. You can read `all the binds that Eggdrop uses here. <https://docs.eggheads.org/using/tcl-commands.html>`_ Generally, we like to place all binds towards the top of the script so that they are together and easy to find. Now, let's look at documentation of the bind join together.
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------------+
 | bind JOIN                                                                                                                                                |
@@ -92,7 +92,7 @@ This is a bind. This sets up an action that Eggdrop will react to. You can read 
 +----------------------------------------------------------------------------------------------------------------------------------------------------------+
 | procname <nick> <user@host> <handle> <channel>                                                                                                           |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Description: triggered by someone joining the channel. The mask in the bind is matched against "#channel nick!user@host" |br| and can contain wildcards. |
+| Description: triggered by someone joining the channel. The mask in the bind is matched against "#channel nick!user@host" and can contain wildcards.      |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 So here, we can start to match the bind listed in the code to how it is described in the documentation. The first term after the bind command is 'join', showing that it is a join bind, which means the action we define here will take place each time a user joins a channel. The next term is 'mask', and it says it is in the form "#channel nick!user@host". This is where we can start to refine exactly when this bind is triggered. If we want it to work for every person joining every channel Eggdrop is on, then a simple '*' will suffice here- that will match everything. If we wanted this bind to only work in #foo, then the mask would be "#foo \*". If we wanted to greet users on every channel, but only those who are on AOL, the mask would be "* \*!*@*.aol.com". Finally the 'proc' argument is the name of the Tcl proc we want to call, where the code that actually *does stuff* is located. 
@@ -143,4 +143,4 @@ If you want to try these out, join #eggdrop on Libera and check your answers (an
 
     <br>
 
-Copyright (C) 2003 - 2022 Eggheads Development Team
+Copyright (C) 2003 - 2023 Eggheads Development Team

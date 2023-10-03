@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -73,7 +74,7 @@ int expmem_tclmisc()
 static int tcl_logfile STDVAR
 {
   int i;
-  char s[151];
+  char s[256];
 
   BADARGS(1, 4, " ?logModes channel logFile?");
 
@@ -81,7 +82,7 @@ static int tcl_logfile STDVAR
     /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
       if (logs[i].filename != NULL) {
-        egg_snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
+        snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
                  logs[i].chname, logs[i].filename);
         Tcl_AppendElement(interp, s);
       }
@@ -404,12 +405,12 @@ static int tcl_duration STDVAR
 
 static int tcl_unixtime STDVAR
 {
-  char s[11];
+  char s[21];
   time_t now2 = time(NULL);
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%li", (long) now2);
+  snprintf(s, sizeof s, "%" PRId64, (int64_t) now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -440,11 +441,16 @@ static int tcl_strftime STDVAR
   else
     t = now;
   tm1 = localtime(&t);
+  if (!tm1) {
+    Tcl_AppendResult(irp, "tcl_strftime(): localtime(): error = ",
+                     strerror(errno), NULL);
+    return TCL_ERROR;
+  }
   if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }
-  Tcl_AppendResult(irp, " error with strftime", NULL);
+  Tcl_AppendResult(irp, "tcl_strftime(): strftime(): error", NULL);
   return TCL_ERROR;
 }
 
@@ -699,26 +705,29 @@ static int tcl_stripcodes STDVAR
   return TCL_OK;
 }
 
-static int tcl_md5(cd, irp, objc, objv)
-ClientData cd;
-Tcl_Interp *irp;
-int objc;
-Tcl_Obj *CONST objv[];
+static int tcl_md5 STDVAR
 {
-  MD5_CTX md5context;
-  char digest_string[33], *string;
+  char digest_string[33];
   unsigned char digest[16];
-  int i, len;
+  int i;
 
-  if (objc != 2) {
-    Tcl_WrongNumArgs(irp, 1, objv, "string");
-    return TCL_ERROR;
-  }
-  string = Tcl_GetStringFromObj(objv[1], &len);
+  BADARGS(2, 2, " string");
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
+  EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+  const EVP_MD *md = EVP_md5();
+  unsigned int md_len;
+  EVP_DigestInit_ex(mdctx, md, NULL);
+  EVP_DigestUpdate(mdctx, argv[1], strlen(argv[1]));
+  EVP_DigestFinal_ex(mdctx, digest, &md_len);
+  EVP_MD_CTX_free(mdctx);
+#else
+  MD5_CTX md5context;
   MD5_Init(&md5context);
-  MD5_Update(&md5context, (unsigned char *) string, len);
+  MD5_Update(&md5context, (unsigned char *) argv[1], strlen(argv[1]));
   MD5_Final(digest, &md5context);
+#endif
+
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   Tcl_AppendResult(irp, digest_string, NULL);
@@ -757,11 +766,6 @@ static int tcl_matchstr STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
-
-tcl_cmds tclmisc_objcmds[] = {
-  {"md5", tcl_md5},
-  {NULL,     NULL}
-};
 
 static int tcl_status STDVAR
 {
@@ -854,5 +858,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchstr",         tcl_matchstr},
   {"status",             tcl_status},
   {"rfcequal",         tcl_rfcequal},
+  {"md5",                   tcl_md5},
   {NULL,                       NULL}
 };

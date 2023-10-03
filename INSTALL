@@ -115,8 +115,12 @@ Eggdrop into from the previous step]
 
         automatically restart if the machine goes down or (heaven
         forbid) the bot should crash. Eggdrop includes a helper script
-        to generate a proper crontab script and entry. You can run this
-        script by typing:
+        to auto-generate either a systemd or crontab entry. To add a
+        systemd job, run:
+
+            ./scripts/autobotchk [yourconfig.conf] -systemd
+
+        or to add a crontab job, run:
 
             ./scripts/autobotchk [yourconfig.conf]
 
@@ -154,5 +158,5 @@ the README file. If not, then READ IT!&@#%@!
 
 Have fun with Eggdrop!
 
-  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2022 Eggheads
+  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2023 Eggheads
   Development Team

@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -336,22 +336,22 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
           ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
           tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-          tcl_resultstring() : "*unknown*", MISC_TCLHVERSION, TCL_PATCH_LEVEL);
+          tcl_resultstring() : "*unknown*", MISC_HEADERVERSION, TCL_PATCH_LEVEL);
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
 #ifdef TLS
   dprintf(idx, "TLS support is enabled.\n"
   #if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n             (no elliptic curve support)\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve support)\n",
   #elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n             (no MD5 support)\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no MD5 support)\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n             (no elliptic curve or MD5 support)\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
-          SSLeay_version(SSLEAY_VERSION));
+          SSLeay_version(SSLEAY_VERSION), MISC_HEADERVERSION);
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
@@ -484,9 +484,9 @@ void chanprog()
 
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile) {
-      char tmp[178];
+      char tmp[256];
 
-      egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
+      snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
       fatal(tmp, 0);
     }
     printf("\n\n%s\n", MISC_NOUSERFILE2);
