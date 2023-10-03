@@ -2199,20 +2199,20 @@ static void connect_server(void)
 
 #ifdef IPV6
     if (inet_pton(AF_INET6, botserver, buf)) {
-      len += egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
+      len += snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
     } else {
 #endif
-     len += egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
+     len += snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
 #ifdef IPV6
     }
 #endif
 
 #ifdef TLS
-    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
+    snprintf(s + len, sizeof s - len, ":%s%d",
             use_ssl ? "+" : "", botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
+    snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
     putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;
