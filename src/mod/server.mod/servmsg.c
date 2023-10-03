@@ -2208,11 +2208,11 @@ static void connect_server(void)
 #endif
 
 #ifdef TLS
-    snprintf(s + len, sizeof s - len, ":%s%d",
+    snprintf(s + len, sizeof s - len, ":%s%u",
             use_ssl ? "+" : "", botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    snprintf(s + len, sizeof s - len, ":%d", botserverport);
+    snprintf(s + len, sizeof s - len, ":%u", botserverport);
 #endif
     putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;
