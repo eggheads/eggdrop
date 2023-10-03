@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Users and Flags &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bans, Invites, and Exempts" href="bans.html" />
+    <link rel="prev" title="The Party Line" href="partyline.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="partyline.html" title="The Party Line"
+             accesskey="P">previous</a> |
+          <a href="bans.html" title="Bans, Invites, and Exempts"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Last revised: March 07, 2002</p>
+<section id="users-and-flags">
+<h1>Users and Flags<a class="headerlink" href="#users-and-flags" title="Permalink to this heading">¶</a></h1>
+<p>People on IRC are recognized by the bot according to their nick!user&#64;host. That is, if I am on IRC as:</p>
+<blockquote>
+<div><p>*** Robey is robey&#64;hubcap.clemson.edu (i hate milk)</p>
+</div></blockquote>
+<p>Eggdrop will identify me according to “Robey!robey&#64;hubcap.clemson.edu” and not only by my nickname.</p>
+<p>Eggdrop does not have access levels like some bots. There are no meaningless numbers or titles. Instead, each user has “flags” that entitle them to certain privileges. Think of a flag as a badge. Any user can have any number of flags – you can have no flags, or you can have all of them. Some flags are good, some are bad. Each flag is identified by a letter. A channel flag applies only to a specific channel, and a global flag applies to all channels. The standard global flags are:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Flag</p></th>
+<th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>n</p></td>
+<td><p>owner</p></td>
+<td><p>user has absolute control. Only give this flag to
+people you trust completely.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>master</p></td>
+<td><p>user has access to almost every feature of the bot.</p></td>
+</tr>
+<tr class="row-even"><td><p>t</p></td>
+<td><p>botnet-master</p></td>
+<td><p>user has access to all features dealing with the
+botnet.</p></td>
+</tr>
+<tr class="row-odd"><td><p>a</p></td>
+<td><p>auto-op</p></td>
+<td><p>user is opped automatically upon joining a channel.</p></td>
+</tr>
+<tr class="row-even"><td><p>o</p></td>
+<td><p>op</p></td>
+<td><p>user has op access to all of the bot’s channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p>y</p></td>
+<td><p>auto-halfop</p></td>
+<td><p>user is halfopped automatically upon joining a channel</p></td>
+</tr>
+<tr class="row-even"><td><p>l</p></td>
+<td><p>halfop</p></td>
+<td><p>user has halfop access to all of the bot’s channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p>g</p></td>
+<td><p>auto-voice</p></td>
+<td><p>user is voiced automatically upon joining a channel.</p></td>
+</tr>
+<tr class="row-even"><td><p>v</p></td>
+<td><p>voice</p></td>
+<td><p>user gets +v automatically on +autovoice channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p>f</p></td>
+<td><p>friend</p></td>
+<td><p>user is not punished for flooding, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>p</p></td>
+<td><p>party</p></td>
+<td><p>user has access to the partyline.</p></td>
+</tr>
+<tr class="row-odd"><td><p>q</p></td>
+<td><p>quiet</p></td>
+<td><p>user does not get voice on +autovoice channels.</p></td>
+</tr>
+<tr class="row-even"><td><p>r</p></td>
+<td><p>dehalfop</p></td>
+<td><p>user cannot gain halfops on any of the bot’s channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p>d</p></td>
+<td><p>deop</p></td>
+<td><p>user cannot gain ops on any of the bot’s channels.</p></td>
+</tr>
+<tr class="row-even"><td><p>k</p></td>
+<td><p>auto-kick</p></td>
+<td><p>user is kicked and banned automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>xfer</p></td>
+<td><p>user has access to the file transfer area of the bot
+the bot.</p></td>
+</tr>
+<tr class="row-even"><td><p>j</p></td>
+<td><p>janitor</p></td>
+<td><p>user can perform maintenance in the file area of the
+bot (if it exists) – like a “master” of the file
+area. Janitors have complete access to the filesystem.</p></td>
+</tr>
+<tr class="row-odd"><td><p>c</p></td>
+<td><p>common</p></td>
+<td><p>this marks a user who is connecting from a public site
+from which any number of people can use IRC. The user
+will now be recognized by NICKNAME.</p></td>
+</tr>
+<tr class="row-even"><td><p>b</p></td>
+<td><p>bot</p></td>
+<td><p>user is a bot.</p></td>
+</tr>
+<tr class="row-odd"><td><p>w</p></td>
+<td><p>wasop-test</p></td>
+<td><p>user needs wasop test for +stopnethack procedure.</p></td>
+</tr>
+<tr class="row-even"><td><p>z</p></td>
+<td><p>washalfop-test</p></td>
+<td><p>user needs washalfop test for +stopnethack procedure.</p></td>
+</tr>
+<tr class="row-odd"><td><p>e</p></td>
+<td><p>nethack-exempt</p></td>
+<td><p>user is exempted from stopnethack protection.</p></td>
+</tr>
+<tr class="row-even"><td><p>u</p></td>
+<td><p>unshared</p></td>
+<td><p>user record is not sent to other bots.</p></td>
+</tr>
+<tr class="row-odd"><td><p>h</p></td>
+<td><p>highlight</p></td>
+<td><p>use bold text in help/text files.</p></td>
+</tr>
+</tbody>
+</table>
+<p>All global flags other then u, h, b, c, x, j, and p are also
+channel-specific flags. Flags are set with the chattr command.
+The syntax for this command is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chattr</span> <span class="o">&lt;</span><span class="n">nickname</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">attributes</span><span class="p">]</span> <span class="p">[</span><span class="n">channel</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>There are also 26 global user-defined flags and 26 channel user-defined flags (Capital letters A through Z). These are used by scripts, and their uses vary depending on the script that uses them.</p>
+</div></blockquote>
+<p>Copyright (C) 2002 - 2023 Eggheads Development Team</p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="partyline.html" title="The Party Line"
+              >previous</a> |
+            <a href="bans.html" title="Bans, Invites, and Exempts"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

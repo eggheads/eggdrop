@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,6 +104,7 @@ typedef struct timer_str {
   unsigned int interval;        /* Time to elapse                       */
   char *cmd;                    /* Command linked to                    */
   unsigned long id;             /* Used to remove timers                */
+  char *name;                   /* User-specified name for timer        */
 } tcl_timer_t;
 
 
@@ -135,8 +136,9 @@ typedef struct timer_str {
         }                                                               \
 } while (0)
 
-unsigned long add_timer(tcl_timer_t **, int, int, char *, unsigned long);
-int remove_timer(tcl_timer_t **, unsigned long);
+char * add_timer(tcl_timer_t **, int, int, char *, char *, unsigned long);
+int find_timer(tcl_timer_t *, char *);
+int remove_timer(tcl_timer_t **, char *);
 void list_timers(Tcl_Interp *, tcl_timer_t *);
 void wipe_timers(Tcl_Interp *, tcl_timer_t **);
 void do_check_timers(tcl_timer_t **);
@@ -181,11 +183,11 @@ void add_tcl_coups(tcl_coups *);
 void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
-const char *tcl_resultstring();
-int tcl_resultint();
-int tcl_resultempty();
-int tcl_threaded();
-int fork_before_tcl();
+const char *tcl_resultstring(void);
+int tcl_resultint(void);
+int tcl_resultempty(void);
+int tcl_threaded(void);
+int fork_before_tcl(void);
 time_t get_expire_time(Tcl_Interp *, const char *);
 
 /* From Tcl's tclUnixInit.c */

@@ -86,155 +86,146 @@ eggdrop.h:
 bg.o: bg.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h bg.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ bg.h
 botcmd.o: botcmd.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- tandem.h modules.h mod/modvals.h
+ compat/explicit_bzero.h compat/strlcpy.h tandem.h modules.h \
+ mod/modvals.h
 botmsg.o: botmsg.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- tandem.h
+ compat/explicit_bzero.h compat/strlcpy.h tandem.h
 botnet.o: botnet.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- tandem.h
+ compat/explicit_bzero.h compat/strlcpy.h tandem.h
 chanprog.o: chanprog.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h
 cmds.o: cmds.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h tandem.h modules.h \
- mod/modvals.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ tandem.h modules.h mod/modvals.h
 dcc.o: dcc.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
- tandem.h md5/md5.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ modules.h mod/modvals.h tandem.h md5/md5.h
 dccutil.o: dccutil.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h tandem.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
+ tandem.h
 dns.o: dns.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h dns.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ dns.h
 flags.o: flags.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h
+ compat/explicit_bzero.h compat/strlcpy.h
 language.o: language.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h
+ compat/explicit_bzero.h compat/strlcpy.h
 main.o: main.c ../config.h main.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h version.h modules.h \
- mod/modvals.h tandem.h bg.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ version.h modules.h mod/modvals.h tandem.h bg.h
 match.o: match.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h
+ compat/explicit_bzero.h compat/strlcpy.h
 mem.o: mem.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h mod/modvals.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ mod/modvals.h
 misc.o: misc.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h tandem.h modules.h \
- mod/modvals.h stat.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ tandem.h modules.h mod/modvals.h stat.h
 misc_file.o: misc_file.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h stat.h
+ compat/explicit_bzero.h compat/strlcpy.h stat.h
 modules.o: modules.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h tandem.h md5/md5.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
+ tandem.h md5/md5.h
 net.o: net.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h mod/server.mod/server.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ mod/server.mod/server.h
 rfc1459.o: rfc1459.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h
+ compat/explicit_bzero.h compat/strlcpy.h
 tcl.o: tcl.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h
 tcldcc.o: tcldcc.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- tandem.h modules.h mod/modvals.h
+ compat/explicit_bzero.h compat/strlcpy.h tandem.h modules.h \
+ mod/modvals.h
 tclhash.o: tclhash.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h
+ compat/explicit_bzero.h compat/strlcpy.h
 tclmisc.o: tclmisc.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h tandem.h md5/md5.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
+ tandem.h md5/md5.h
 tcluser.o: tcluser.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- tandem.h modules.h mod/modvals.h
+ compat/explicit_bzero.h compat/strlcpy.h tandem.h modules.h \
+ mod/modvals.h
 tls.o: tls.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/gethostbyname2.h \
- compat/explicit_bzero.h compat/strlcpy.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h
 userent.o: userent.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h
+ compat/explicit_bzero.h compat/strlcpy.h
 userrec.o: userrec.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h tandem.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
+ tandem.h
 users.o: users.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/gethostbyname2.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h tandem.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
+ tandem.h

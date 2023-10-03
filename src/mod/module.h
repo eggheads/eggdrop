@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,6 +79,11 @@
 /* Version checks for modules. */
 #define EGG_IS_MIN_VER(ver)             ((ver) <= EGG_VERSION)
 #define EGG_IS_MAX_VER(ver)             ((ver) >= EGG_VERSION)
+
+typedef void (*putlogfunc)(int, char*, const char*, ...) ATTRIBUTE_FORMAT(printf,3,4);
+typedef void (*dprintffunc)(int, const char *, ...) ATTRIBUTE_FORMAT(printf,2,3);
+typedef void (*chatoutfunc)(const char *, ...) ATTRIBUTE_FORMAT(printf,1,2);
+typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(printf,3,4);
 
 /* Redefine for module-relevance */
 
@@ -172,10 +177,10 @@
 #define flagrec_eq ((int(*)(struct flag_record*,struct flag_record *))global[66])
 #define flagrec_ok ((int(*)(struct flag_record*,struct flag_record *))global[67])
 /* 68 - 71 */
-#define shareout (*(Function *)(global[68]))
-#define dprintf (global[69])
-#define chatout (global[70])
-#define chanout_but ((void(*)())global[71])
+#define shareout (*(Function*)(global[68]))
+#define dprintf ((dprintffunc)(global[69]))
+#define chatout ((chatoutfunc)(global[70]))
+#define chanout_but ((chanout_butfunc)(global[71]))
 /* 72 - 75 */
 #define check_validity ((int (*) (char *,IntFunc))global[72])
 #define egg_list_delete ((int (*)( struct list_type **, struct list_type *))global[73])
@@ -347,7 +352,7 @@
 #define USERENTRY_COMMENT (*(struct user_entry_type *)(global[195]))
 /* 196 - 199 */
 #define USERENTRY_LASTON (*(struct user_entry_type *)(global[196]))
-#define putlog (global[197])
+#define putlog ((putlogfunc)(global[197]))
 #define botnet_send_chan ((void(*)(int,char*,char*,int,char*))global[198])
 #define list_type_kill ((void(*)(struct list_type *))global[199])
 /* 200 - 203 */
@@ -518,6 +523,12 @@
 #define crypto_verify ((int ( *) (const char *, const char *))global[313])
 #define egg_uname ((char *(*) ())global[314])
 #define get_expire_time ((time_t (*) (Tcl_Interp *, const char *))global[315])
+/* 316 - 319 */
+#define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
+#define get_user_by_account ((struct userrec * (*)(char *))global[317])
+#define delaccount_by_handle ((int(*)(char *,char *))global[318])
+
+
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

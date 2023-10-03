@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@
 
 struct chanset_t;               /* keeps the compiler warnings down :) */
 struct userrec;
+struct user_entry;
 struct maskrec;
 struct igrec;
 struct flag_record;
@@ -75,7 +76,7 @@ void updatebot(int, char *, char, int);
 void rembot(char *);
 struct tand_t_struct *findbot(char *);
 void unvia(int, struct tand_t_struct *);
-void check_botnet_pings();
+void check_botnet_pings(void);
 int partysock(char *, char *);
 int addparty(char *, char *, int, char, int, char *, int *);
 void remparty(char *, int);
@@ -90,8 +91,8 @@ int getparty(char *, int);
 
 /* botmsg.c */
 int add_note(char *, char *, char *, int, int);
-int simple_sprintf EGG_VARARGS(char *, arg1);
-void tandout_but EGG_VARARGS(int, arg1);
+int simple_sprintf(char *buf, const char *formatt, ...);
+void tandout_but(int, const char *format, ...) ATTRIBUTE_FORMAT(printf,2,3);
 char *int_to_base10(int);
 char *unsigned_int_to_base10(unsigned int);
 char *int_to_base64(unsigned int);
@@ -104,19 +105,19 @@ int logmodes(char *);
 int isowner(char *);
 char *masktype(int);
 char *maskname(int);
-void reaffirm_owners();
-void add_hq_user();
-void rehash();
-void reload();
-void chanprog();
-void check_timers();
-void check_utimers();
+void reaffirm_owners(void);
+void add_hq_user(void);
+void rehash(void);
+void reload(void);
+void chanprog(void);
+void check_timers(void);
+void check_utimers(void);
 void rmspace(char *s);
-void check_timers();
+void check_timers(void);
 void set_chanlist(const char *host, struct userrec *rec);
 void clear_chanlist(void);
 void clear_chanlist_member(const char *nick);
-float getcputime();
+float getcputime(void);
 
 /* cmds.c */
 int check_dcc_attrs(struct userrec *, int);
@@ -136,16 +137,16 @@ int dcc_fingerprint(int);
 #endif
 
 /* dccutil.c */
-int increase_socks_max();
+int increase_socks_max(void);
 int findidx(int);
 int findanyidx(int);
 char *add_cr(char *);
 void dprint(int, char *, int);
-void dprintf EGG_VARARGS(int, arg1);
-void chatout EGG_VARARGS(char *, arg1);
+void dprintf (int, const char *format, ...) ATTRIBUTE_FORMAT(printf,2,3);
+void chatout (const char *format, ...) ATTRIBUTE_FORMAT(printf,1,2);
 extern void (*shareout) ();
 extern void (*sharein) (int, char *);
-void chanout_but EGG_VARARGS(int, arg1);
+void chanout_but(int x, int chan, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 void dcc_chatter(int);
 void lostdcc(int);
 void killtransfer(int);
@@ -190,7 +191,6 @@ void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
-int mainloop(int);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
@@ -227,9 +227,9 @@ void debug_mem_to_dcc(int);
 /* misc.c */
 int egg_strcatn(char *, const char *, size_t);
 int my_strcpy(char *, char *);
-void putlog EGG_VARARGS(int, arg1);
-void flushlogs();
-void check_logsize();
+void putlog(int type, char *chname, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
+void flushlogs(void);
+void check_logsize(void);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);
 void remove_crlf(char **);
@@ -240,7 +240,7 @@ void dumplots(int, const char *, const char *);
 void daysago(time_t, time_t, char *);
 void days(time_t, time_t, char *);
 void daysdur(time_t, time_t, char *);
-char *egg_uname();
+char *egg_uname(void);
 void help_subst(char *, char *, struct flag_record *, int, char *);
 void sub_lang(int, char *);
 void show_motd(int);
@@ -271,7 +271,6 @@ int crypto_verify(const char *, const char *);
 
 /* net.c */
 IP my_atoul(char *);
-unsigned long iptolong(IP);
 void setsock(int, int);
 int allocsock(int, int);
 int alloctclsock(int, int, Tcl_FileProc *, ClientData);
@@ -288,7 +287,7 @@ int answer(int, sockname_t *, uint16_t *, int);
 int getdccaddr(sockname_t *, char *, size_t);
 int getdccfamilyaddr(sockname_t *, char *, size_t, int);
 void tputs(int, char *, unsigned int);
-void dequeue_sockets();
+void dequeue_sockets(void);
 int sockread(char *, int *, sock_list *, int, int);
 int sockgets(char *, int *);
 void tell_netdebug(int);
@@ -302,10 +301,10 @@ int findsock(int sock);
 void safe_write(int, const void *, size_t);
 
 /* tcl.c */
-struct threaddata *threaddata();
-int init_threaddata(int);
-void protect_tcl();
-void unprotect_tcl();
+struct threaddata *threaddata(void);
+void init_threaddata(int);
+void protect_tcl(void);
+void unprotect_tcl(void);
 void do_tcl(char *, char *);
 int readtclprog(char *fname);
 
@@ -320,15 +319,17 @@ char *ssl_getfp(int sock);
 /* userent.c */
 void list_type_kill(struct list_type *);
 int list_type_expmem(struct list_type *);
-int xtra_set();
+int xtra_set(struct userrec *,struct user_entry *, void *);
 
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
 void addhost_by_handle(char *, char *);
+void addaccount_by_handle(char *, char *);
 void clear_masks(struct maskrec *);
 void clear_userlist(struct userrec *);
 int u_pass_match(struct userrec *, char *);
 int delhost_by_handle(char *, char *);
+int delaccount_by_handle(char *, char *);
 int ishost_for_handle(char *, char *);
 int count_users(struct userrec *);
 int deluser(char *);
@@ -348,7 +349,7 @@ void addignore(char *, char *, char *, time_t);
 int delignore(char *);
 void tell_ignores(int, char *);
 int match_ignore(char *);
-void check_expired_ignores();
+void check_expired_ignores(void);
 void autolink_cycle(char *);
 void tell_file_stats(int, char *);
 void tell_user_ident(int, char *);

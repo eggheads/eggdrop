@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -184,6 +184,10 @@
 #  endif
 #endif
 
+#ifndef PATH_MAX
+#  define PATH_MAX 4096
+#endif
+
 /* Almost every module needs some sort of time thingy, so... */
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -332,7 +336,10 @@ typedef intptr_t (*Function) ();
 typedef int (*IntFunc) ();
 
 #ifdef IPV6
-#include "compat/in6.h"
+  #include "compat/in6.h"
+  #define EGG_INET_ADDRSTRLEN INET6_ADDRSTRLEN
+#else
+  #define EGG_INET_ADDRSTRLEN INET_ADDRSTRLEN
 #endif
 
 #include <sys/socket.h>
@@ -376,6 +383,7 @@ struct userrec;
 
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
+                                /* ^-- Disagreed with, but changing back to int would break ABI */
   IP addr;                      /* IP address in host network byte order. */
   sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */
   unsigned int port;
@@ -783,11 +791,13 @@ enum {
 #endif
 
 #ifdef EGG_TDNS
+#include <pthread.h>
 #define DTN_TYPE_HOSTBYIP 0
 #define DTN_TYPE_IPBYHOST 1
 
 /* linked list instead of array because of multi threading */
 struct dns_thread_node {
+  pthread_mutex_t mutex;
   int fildes[2];
   int type;
   sockname_t addr;

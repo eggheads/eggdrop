@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +26,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/time.h>
 #include <sys/resource.h>
 #include "main.h"
-#include "chan.h"
-#include "users.h"
 
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
@@ -44,22 +41,21 @@ p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_note, H_filt, H_event, H_die, H_cron, H_log = NULL;
 #ifdef TLS
 p_tcl_bind_list H_tls = NULL;
-static int builtin_idx();
+static int builtin_idx STDVAR;
 #endif
 
-static int builtin_2char();
-static int builtin_3char();
-static int builtin_5int();
-static int builtin_cron();
-static int builtin_char();
-static int builtin_chpt();
-static int builtin_chjn();
-static int builtin_idxchar();
-static int builtin_charidx();
-static int builtin_chat();
-static int builtin_dcc();
-static int builtin_log();
-
+static int builtin_2char STDVAR;
+static int builtin_3char STDVAR;
+static int builtin_5int STDVAR;
+static int builtin_cron STDVAR;
+static int builtin_char STDVAR;
+static int builtin_chpt STDVAR;
+static int builtin_chjn STDVAR;
+static int builtin_idxchar STDVAR;
+static int builtin_charidx STDVAR;
+static int builtin_chat STDVAR;
+static int builtin_dcc STDVAR;
+static int builtin_log STDVAR;
 
 /* Allocate and initialise a chunk of memory.
  */
@@ -206,9 +202,8 @@ int expmem_tclhash(void)
   return tot;
 }
 
-
 extern cmd_t C_dcc[];
-static int tcl_bind();
+static int tcl_bind STDVAR;
 
 static cd_tcl_cmd cd_cmd_table[] = {
   {"bind",   tcl_bind, (void *) 0},
@@ -709,11 +704,8 @@ static int builtin_idx STDVAR
 #endif
 
 /* Trigger (execute) a Tcl proc
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int trigger_bind(const char *proc, const char *param,
-                               char *mask)
+static int trigger_bind(const char *proc, const char *param, char *mask)
 {
   int x;
   struct rusage ru1, ru2;
@@ -777,11 +769,8 @@ static int trigger_bind(const char *proc, const char *param,
 
 /* Find out whether this bind matches the mask or provides the
  * requested attributes, depending on the specified requirements.
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int check_bind_match(const char *match, char *mask,
-                                   int match_type)
+static int check_bind_match(const char *match, char *mask, int match_type)
 {
   switch (match_type & 0x07) {
   case MATCH_PARTIAL:
@@ -811,11 +800,9 @@ static int check_bind_match(const char *match, char *mask,
 
 
 /* Check if the provided flags suffice for this command/trigger.
- *
- * Note: This is INLINE code for check_tcl_bind().
  */
-static int check_bind_flags(struct flag_record *flags,
-                                   struct flag_record *atr, int match_type)
+static int check_bind_flags(struct flag_record *flags, struct flag_record *atr,
+                            int match_type)
 {
   if (match_type & BIND_USE_ATTR) {
     if (match_type & BIND_HAS_BUILTINS)
@@ -946,7 +933,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   if (tm_p && tm_p->next) {
     tm = tm_p->next;            /* Move mask to front of bind's mask list. */
     tm_p->next = tm->next;      /* Unlink mask from list. */
-    tm->next = tl->first;       /* Readd mask to front of list. */
+    tm->next = tl->first;       /* Re-add mask to front of list. */
     tl->first = tm;
   }
 
@@ -985,11 +972,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   x = check_tcl_bind(H_dcc, cmd, &fr, " $_dcc1 $_dcc2 $_dcc3",
                      MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
   if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, MISC_AMBIGUOUS);
+    dprintf(idx, "%s", MISC_AMBIGUOUS);
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return 0;
   }
 
@@ -1311,8 +1298,8 @@ void tell_binds(int idx, char *par)
       }
     }
   }
-  dprintf(idx, MISC_CMDBINDS);
-  dprintf(idx, "  %+*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
+  dprintf(idx, "%s", MISC_CMDBINDS);
+  dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
@@ -1327,6 +1314,10 @@ void tell_binds(int idx, char *par)
           continue;
         proc = tc->func_name;
         build_flags(flg, &(tc->flags), NULL);
+        if (!strcmp(flg, "-|-")) {
+          flg[0] = '*';
+          flg[1] = '\0';
+        }
         if (showall || proc[0] != '*') {
           int ok = 0;
 

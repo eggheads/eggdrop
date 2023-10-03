@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,15 +86,18 @@
 /* 40 - 43 */
 #define H_out (*(p_tcl_bind_list *)(server_funcs[40]))
 #define net_type_int (*(int *)(server_funcs[41]))
-#define cap (*(capability_t *)(server_funcs[42]))
-#define H_account (*(p_tcl_bind_list *)(server_funcs[43]))
+/* #define H_account unused */
+#define cap (*(capability_t **)(server_funcs[43]))
 /* 44 - 47 */
 #define extended_join (*(int *)(server_funcs[44]))
 #define account_notify (*(int *)(server_funcs[45]))
 #define H_isupport (*(p_tcl_bind_list *)(server_funcs[46]))
 #define isupport_get ((struct isupport *(*)(const char *, size_t))(server_funcs[47]))
-/* 48 - 52 */
+/* 48 - 51 */
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
+/* #define check_tcl_account NULL */
+#define find_capability ((struct capability *(*)(char *))(server_funcs[50]))
+#define encode_msgtags ((char *(*)(Tcl_Obj *))(server_funcs[51]))
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -124,6 +127,12 @@ typedef struct capability {
   int enabled;      /* Is the capability currently negotiated with the server */
   int requested;    /* Does Eggdrop  want this capability, if available?      */
 } capability_t;
+
+typedef struct monitor_list {
+  char nick[NICKLEN];         /* List of nicks to monitor,                */
+  int online;                 /* Flag if nickname is currently online     */
+  struct monitor_list *next;  /* Linked list y'all                        */
+} monitor_list_t;
 
 /* Available net types. */
 enum {

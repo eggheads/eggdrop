@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -659,7 +659,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && chan_hasop(m)) {
-    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n",
+    dprintf(idx, "I can't help you now because halfops cannot kick ops (on %s).\n",
             chan->dname);
     return;
   }
@@ -757,14 +757,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    if (use_354 && extended_join && account_notify) {
-      dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s %s\n", maxnicklen, "NICKNAME",
-                maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", "JOIN", "IDLE",
-                "USER@HOST");
-    } else {
-      dprintf(idx, " %-*s %-*s  %-6s %-5s %s\n", maxnicklen, "NICKNAME",
-                maxhandlen, "HANDLE", "JOIN", "IDLE", "USER@HOST");
-    }
+    dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s        %s\n", maxnicklen, "NICKNAME",
+              maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", "JOIN", "IDLE",
+              "USER@HOST");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
         if ((now - (m->joined)) > 86400)
@@ -858,47 +853,31 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        if (use_354 && extended_join && account_notify) {
-          dprintf(idx, "%c%-*s %-*s %-*s %-6s %-5s <- netsplit, %lus\n",
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %" PRId64 "s\n",
                 chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
-                m->account, s, atrflag, now- (m->split));
-        } else {
-          dprintf(idx, "%c%-*s %-*s %-6s %-5s <- netsplit, %lus\n", chanflag,
-                maxnicklen, m->nick, maxhandlen, handle, s, atrflag,
-                now- (m->split));
-        }
+                m->account, s, atrflag, (int64_t) (now - m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        if (use_354 && extended_join && account_notify) {
-          dprintf(idx, "%c%-*s %-*s %-*s %-6s %c     <- it's me!\n", chanflag,
-                maxnicklen, m->nick, maxhandlen, handle, maxnicklen, m->account,
-                s, atrflag);
-        } else {
-          dprintf(idx, "%c%-*s %-*s %-6s %c     <- it's me!\n", chanflag,
-                maxnicklen, m->nick, maxhandlen, handle, s, atrflag);
-        }
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
+                m->account, s, atrflag);
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
-          egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
+          snprintf(s1, sizeof s1, "%2" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
         else if (now - (m->last) > 3600)
-          egg_snprintf(s1, sizeof s1, "%2luh", ((now - (m->last)) / 3600));
+          snprintf(s1, sizeof s1, "%2" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
         else if (now - (m->last) > 180)
-          egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
+          snprintf(s1, sizeof s1, "%2" PRId64 "m", ((int64_t) (now - m->last)) / 60);
         else
           strlcpy(s1, "   ", sizeof s1);
         if (chan_ircaway(m)) {
-          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), " (away)");
+          strlcpy(s1+strlen(s1), " (away)", ((sizeof s1)-strlen(s1)));
         } else {
-          egg_snprintf(s1+strlen(s1), ((sizeof s1)-strlen(s1)), "       ");
+          strlcpy(s1+strlen(s1), "       ", ((sizeof s1)-strlen(s1)));
         }
-        if (use_354 && extended_join && account_notify) {
-          dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
-                m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
-                s1, m->userhost);
-        } else {
-          dprintf(idx, "%c%-*s %-*s %-6s %c %-5s  %s\n", chanflag, maxnicklen,
-                m->nick, maxhandlen, handle, s, atrflag, s1, m->userhost);
-        }
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
+              m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
+              s1, m->userhost);
       }
       if (chan_fakeop(m))
         dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);

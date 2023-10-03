@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1494,5 +1494,6 @@ struct user_entry_type USERENTRY_BOTFL = {
   botfl_tcl_set,
   botfl_expmem,
   botfl_display,
-  "BOTFL"
+  "BOTFL",
+  NULL
 };
