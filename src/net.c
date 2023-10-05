@@ -1588,6 +1588,16 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   return 1;
 }
 
+/* This will return a pointer to the first character after the last @ in the
+ * string given it.
+ */
+static char *extracthostname(char *hostmask)
+{
+  char *p = strrchr(hostmask, '@');
+
+  return p ? p + 1 : "";
+}
+
 int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
                         char *prt)
 {
@@ -1601,12 +1611,12 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
-  strlcpy(badaddress, iptostr(&ip->addr.sa), sizeof badaddress);
   strlcpy(hostn, extracthostname(from), sizeof hostn);
   if (!strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
   }
+  strlcpy(badaddress, iptostr(&ip->addr.sa), sizeof badaddress);
   if (!strcmp(badaddress, dnsname))
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP "
            "information of %s port %s. %s does not resolve to %s!", nick, from,

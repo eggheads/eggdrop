@@ -252,7 +252,6 @@ void rem_help_reference(char *);
 void add_help_reference(char *);
 void debug_help(int);
 void reload_help_data(void);
-char *extracthostname(char *);
 void show_banner(int i);
 void make_rand_str_from_chars(char *, int, char *);
 void make_rand_str(char *, int);
