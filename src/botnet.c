@@ -1141,6 +1141,7 @@ static void failed_tandem_relay(int idx)
     lostdcc(idx);
     return;
   }
+  dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
   dcc[uidx].status = dcc[uidx].u.relay->old_status;
   struct chat_info *ci = dcc[uidx].u.relay->chat;
   nfree(dcc[uidx].u.relay);
