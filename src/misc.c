@@ -614,7 +614,8 @@ void putlog (int type, char *chname, const char *format, ...)
     }
   }
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
+    if (((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) ||
+        ((dcc[i].type == &DCC_PRE_RELAY) && (dcc[i].u.relay->chat->con_flags & type))) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
           !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
         dprintf(i, "%s", out);
