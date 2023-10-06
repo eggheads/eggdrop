@@ -88,7 +88,7 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
+extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, log_interval,
            quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
@@ -141,6 +141,7 @@ char ver[41];        /* Version info (short form) */
 volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
+int log_elapsed = 1;
 
 /* Moved here for n flag warning, put back in do_arg if removed */
 unsigned char cliflags = 0;
@@ -637,6 +638,13 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
+  if (log_elapsed < log_interval)
+    log_elapsed++;
+  else {
+    flushlogs();
+    check_logsize();
+    log_elapsed = 1;
+  }
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
     memcpy(&nowtm, localtime(&now), sizeof(struct tm));
@@ -662,10 +670,6 @@ static void core_secondly()
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      if (!quick_logs) {
-        flushlogs();
-        check_logsize();
-      }
       if (!miltime) {           /* At midnight */
         char s[25];
         int j;
@@ -713,10 +717,6 @@ static void core_minutely()
 {
   check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
-  if (quick_logs != 0) {
-    flushlogs();
-    check_logsize();
-  }
 }
 
 static void core_hourly()

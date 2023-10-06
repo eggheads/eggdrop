@@ -43,8 +43,7 @@ extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
             motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
-extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-            quick_logs;
+extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
 extern Tcl_Interp *interp;
@@ -707,9 +706,8 @@ void flushlogs()
    */
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f != NULL) {
-      if ((logs[i].repeats > 0) && quick_logs) {
-        /* Repeat.. if quicklogs used then display 'last message
-         * repeated x times' and reset repeats.
+      if (logs[i].repeats > 0) {
+        /* Repeat.. display 'last message repeated x times' and reset repeats.
          */
         char stamp[33];
 
