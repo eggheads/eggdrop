@@ -1639,7 +1639,9 @@ AC_DEFUN([EGG_TLS_DETECT],
     AC_MSG_CHECKING([for OpenSSL])
     if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
       AC_MSG_RESULT([no])
-      AC_MSG_ERROR([make sure you have version 0.9.8 or higher installed)])
+      AC_MSG_RESULT([* We tried, but couldn't find TLS libraries. If installed, please specify their paths using the configure flags above])
+      AC_MSG_RESULT([* While not recommended, you can continue without TLS protection by specifying the --disable-tls configure flag])
+      AC_MSG_ERROR([TLS Libraries not found])
     else
       AC_MSG_RESULT([yes])
       if test "$EGG_CYGWIN" = "yes"; then
