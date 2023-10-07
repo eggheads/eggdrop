@@ -794,7 +794,7 @@ int deluser(char *handle)
   return 1;
 }
 
-int del_host_or_account(char *handle, char *host, int type)
+static int del_host_or_account(char *handle, char *host, int type)
 {
   struct userrec *u;
   struct list_type *q, *qnext, *qprev;
@@ -866,7 +866,7 @@ int delaccount_by_handle(char *handle, char *acct)
 }
 
 
-void add_host_or_account(char *handle, char *arg, int type)
+static void add_host_or_account(char *handle, char *arg, int type)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
 

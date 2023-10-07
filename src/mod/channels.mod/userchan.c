@@ -394,7 +394,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 }
 
 /* Add a !* and/or @* if lacking in a usermask, copying to newmask */
-void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
+static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 {
   char *strat, *strbang;
 
