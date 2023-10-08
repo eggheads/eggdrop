@@ -205,7 +205,6 @@ int expmem_botnet();
 int expmem_tcl();
 int expmem_tclhash();
 int expmem_net();
-int expmem_modules(int);
 int expmem_language();
 int expmem_tcldcc();
 int expmem_tclmisc();
@@ -779,8 +778,8 @@ int init_userent();
 int init_misc();
 int init_bots();
 int init_modules();
-int init_tcl(int, char **);
-int init_language(int);
+void init_tcl(int, char **);
+void init_language(int);
 #ifdef TLS
 int ssl_init();
 #endif

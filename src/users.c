@@ -144,7 +144,7 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
 }
 
 /* take host entry from ignore list and display it ignore-style */
-void display_ignore(int idx, int number, struct igrec *ignore)
+static void display_ignore(int idx, int number, struct igrec *ignore)
 {
   char dates[81], s[41];
 

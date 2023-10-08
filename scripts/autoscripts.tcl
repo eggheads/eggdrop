@@ -307,9 +307,9 @@ proc egg_config {idx script} {
 proc egg_set {idx script setting value} {
   global cmdtxt
   global jsondict
+  set noscript 1
+  set noset 1
   foreach scriptentry $jsondict {
-    set noscript 1
-    set noset 1
     if {[string match $script [dict get $scriptentry name]]} {
       set noscript 0
       if [dict exists $scriptentry config vars $setting] {

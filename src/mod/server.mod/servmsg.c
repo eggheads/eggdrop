@@ -1657,7 +1657,7 @@ struct capability *find_capability(char *capname) {
 }
 
 /* Set capability to be requested by Eggdrop */
-void add_req(char *cape) {
+static void add_req(char *cape) {
   struct capability *current = 0;
 
   putlog(LOG_DEBUG, "*", "Adding %s to CAP request list", cape);
