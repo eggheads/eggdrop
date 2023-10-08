@@ -99,7 +99,6 @@ extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
 
-int cmd_die();
 int xtra_kill();
 int xtra_unpack();
 static int module_rename(char *name, char *newname);
