@@ -1,0 +1,41 @@
+on: 
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Test configure flags'
+
+jobs:
+  configure-nosslflag:
+    name: Configure, --disable-tls
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install tcl tcl-dev
+      - run: ./configure --disable-tls
+      - run: make config
+      - run: make
+      - run: make install
+  
+  
+  configure-noipv6:
+    name: Configure, --disable-ipv6
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install tcl tcl-dev
+      - run: ./configure --disable-ipv6
+      - run: make config
+      - run: make
+      - run: make install
+      
+      
+  configure-notdns:
+    name: Configure, --disable-tdns
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install tcl tcl-dev
+      - run: ./configure --disable-tdns
+      - run: make config
+      - run: make
+      - run: make install

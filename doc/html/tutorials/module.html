@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Writing a Basic Eggdrop Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Eggdrop Module Information" href="../modules/index.html" />
+    <link rel="prev" title="Writing an Eggdrop Script" href="firstscript.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="firstscript.html" title="Writing an Eggdrop Script"
+             accesskey="P">previous</a> |
+          <a href="../modules/index.html" title="Eggdrop Module Information"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Writing a Basic Eggdrop Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-header">Module Header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#required-code">Required Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-a-partyline-command">Adding a Partyline Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-a-tcl-command">Adding a Tcl Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-a-tcl-bind">Adding a Tcl Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporting-the-bind">Exporting the Bind</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="writing-a-basic-eggdrop-module">
+<h1>Writing a Basic Eggdrop Module<a class="headerlink" href="#writing-a-basic-eggdrop-module" title="Permalink to this heading">¶</a></h1>
+<p>An Eggdrop module is a piece of C code that can be loaded (or unloaded) onto the core Eggdrop code. A module differs from a Tcl script in that modules must be compiled and then loaded, whereas scripts can be edited and loaded directly. Importantly, a module can be written to create new Eggdrop-specific Tcl commands and binds that a user can then use in a Tcl script. For example, the server module loaded by Eggdrop is what creates the “jump” Tcl command, which causes tells the Eggdrop to jump to the next server in its server list.</p>
+<p>There are a few required functions a module must perform in order to properly work with Eggdrop</p>
+<section id="module-header">
+<h2>Module Header<a class="headerlink" href="#module-header" title="Permalink to this heading">¶</a></h2>
+<p>A module should include license information. This tells other open source users how they are allowed to use the code. Eggdrop uses GPL 2.0 licensing, and our license information looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span>
+<span class="o">*</span> <span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="p">;</span> <span class="n">you</span> <span class="n">can</span> <span class="n">redistribute</span> <span class="n">it</span> <span class="ow">and</span><span class="o">/</span><span class="ow">or</span>
+<span class="o">*</span> <span class="n">modify</span> <span class="n">it</span> <span class="n">under</span> <span class="n">the</span> <span class="n">terms</span> <span class="n">of</span> <span class="n">the</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span>
+<span class="o">*</span> <span class="k">as</span> <span class="n">published</span> <span class="n">by</span> <span class="n">the</span> <span class="n">Free</span> <span class="n">Software</span> <span class="n">Foundation</span><span class="p">;</span> <span class="n">either</span> <span class="n">version</span> <span class="mi">2</span>
+<span class="o">*</span> <span class="n">of</span> <span class="n">the</span> <span class="n">License</span><span class="p">,</span> <span class="ow">or</span> <span class="p">(</span><span class="n">at</span> <span class="n">your</span> <span class="n">option</span><span class="p">)</span> <span class="nb">any</span> <span class="n">later</span> <span class="n">version</span><span class="o">.</span>
+<span class="o">*</span>
+<span class="o">*</span> <span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">distributed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">hope</span> <span class="n">that</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">useful</span><span class="p">,</span>
+<span class="o">*</span> <span class="n">but</span> <span class="n">WITHOUT</span> <span class="n">ANY</span> <span class="n">WARRANTY</span><span class="p">;</span> <span class="n">without</span> <span class="n">even</span> <span class="n">the</span> <span class="n">implied</span> <span class="n">warranty</span> <span class="n">of</span>
+<span class="o">*</span> <span class="n">MERCHANTABILITY</span> <span class="ow">or</span> <span class="n">FITNESS</span> <span class="n">FOR</span> <span class="n">A</span> <span class="n">PARTICULAR</span> <span class="n">PURPOSE</span><span class="o">.</span>  <span class="n">See</span> <span class="n">the</span>
+<span class="o">*</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="o">.</span>
+<span class="o">*</span>
+<span class="o">*</span> <span class="n">You</span> <span class="n">should</span> <span class="n">have</span> <span class="n">received</span> <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span>
+<span class="o">*</span> <span class="n">along</span> <span class="k">with</span> <span class="n">this</span> <span class="n">program</span><span class="p">;</span> <span class="k">if</span> <span class="ow">not</span><span class="p">,</span> <span class="n">write</span> <span class="n">to</span> <span class="n">the</span> <span class="n">Free</span> <span class="n">Software</span>
+<span class="o">*</span> <span class="n">Foundation</span><span class="p">,</span> <span class="n">Inc</span><span class="o">.</span><span class="p">,</span> <span class="mi">59</span> <span class="n">Temple</span> <span class="n">Place</span> <span class="o">-</span> <span class="n">Suite</span> <span class="mi">330</span><span class="p">,</span> <span class="n">Boston</span><span class="p">,</span> <span class="n">MA</span>  <span class="mi">02111</span><span class="o">-</span><span class="mi">1307</span><span class="p">,</span> <span class="n">USA</span><span class="o">.</span>
+<span class="o">*/</span>
+</pre></div>
+</div>
+</section>
+<section id="required-code">
+<h2>Required Code<a class="headerlink" href="#required-code" title="Permalink to this heading">¶</a></h2>
+<p>For this section, you don’t necessarily need to understand what it is doing, but this code is required for a module to function. If you want to learn more about this, check out <a class="reference internal" href="../modules/writing.html#writing-module"><span class="std std-ref">How to Write an Eggdrop Module</span></a></p>
+<p>You’ll next want to name your module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define MODULE_NAME &quot;woobie&quot;</span>
+</pre></div>
+</div>
+<p>Declare your own function tables (again, you don’t need to understand this part; you just need to copy/paste it):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#undef global</span>
+<span class="n">static</span> <span class="n">Function</span> <span class="o">*</span><span class="k">global</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="o">*</span><span class="n">server_funcs</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">;</span>
+<span class="n">EXPORT_SCOPE</span> <span class="n">char</span> <span class="o">*</span><span class="n">woobie_start</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Next are two memory-related functions used by the core Eggdrop .status and .module commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>static int woobie_expmem()
+{
+  int size = 0;
+
+  return size;
+}
+
+static void woobie_report(int idx, int details)
+{
+  if (details) {
+    int size = woobie_expmem();
+
+    dprintf(idx, &quot;    Using %d byte%s of memory\n&quot;, size,
+            (size != 1) ? &quot;s&quot; : &quot;&quot;);
+  }
+}
+</pre></div>
+</div>
+<p>This function is called when Eggdrop loads the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>char *woobie_start(Function *global_funcs)
+{
+  global = global_funcs;
+
+  /* Register the module. */
+  module_register(MODULE_NAME, woobie_table, 2, 1);
+  /*                                            ^--- minor module version
+   *                                         ^------ major module version
+   *                           ^-------------------- module function table
+   *              ^--------------------------------- module name
+   */
+
+  if (!module_depend(MODULE_NAME, &quot;eggdrop&quot;, 108, 0)) {
+    module_undepend(MODULE_NAME);
+    return &quot;This module requires Eggdrop 1.8.0 or later.&quot;;
+  }
+</pre></div>
+</div>
+<p>This next function is used to unload the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">char</span> <span class="o">*</span><span class="n">woobie_close</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">module_undepend</span><span class="p">(</span><span class="n">MODULE_NAME</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This creates a function table that is exported to Eggdrop. In other words, these are commands that are made available to the Eggdrop core and other modules. At minimum, the following functions must be exported:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">Function</span> <span class="n">woobie_table</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">woobie_start</span><span class="p">,</span>
+  <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">woobie_close</span><span class="p">,</span>
+  <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">woobie_expmem</span><span class="p">,</span>
+  <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">woobie_report</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>At this point, you should have a module that compiles and can be loaded by Eggdrop- but doesn’t really do anything yet. We’ll change that in the next section!</p>
+</section>
+<section id="adding-a-partyline-command">
+<h2>Adding a Partyline Command<a class="headerlink" href="#adding-a-partyline-command" title="Permalink to this heading">¶</a></h2>
+<p>A partyline command function accepts three arguments- a pointer to the user record of the user that called the command; the idx the user was on when calling the command; and a pointer to the arguments appended to the command. A command should immediately log that it was called to the LOG_CMDS log level, and then run its desired code. This simple example prints “WOOBIE” to the partyline idx of the user that called it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">cmd_woobie</span><span class="p">(</span><span class="n">struct</span> <span class="n">userrec</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="nb">int</span> <span class="n">idx</span><span class="p">,</span> <span class="n">char</span> <span class="o">*</span><span class="n">par</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">putlog</span><span class="p">(</span><span class="n">LOG_CMDS</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;#</span><span class="si">%s</span><span class="s2"># woobie&quot;</span><span class="p">,</span> <span class="n">dcc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">nick</span><span class="p">);</span>
+  <span class="n">dprintf</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;WOOBIE!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you add partyline commands, you need to create a table which links the new command name to the function it should call. This can be done like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">cmd_t</span> <span class="n">mywoobie</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="o">/*</span> <span class="n">command</span>  <span class="n">flags</span>  <span class="n">function</span>     <span class="n">tcl</span><span class="o">-</span><span class="n">name</span> <span class="o">*/</span>
+  <span class="p">{</span><span class="s2">&quot;woobie&quot;</span><span class="p">,</span>  <span class="s2">&quot;&quot;</span><span class="p">,</span>    <span class="n">cmd_woobie</span><span class="p">,</span>  <span class="n">NULL</span><span class="p">},</span>
+  <span class="p">{</span><span class="n">NULL</span><span class="p">,</span>      <span class="n">NULL</span><span class="p">,</span>  <span class="n">NULL</span><span class="p">,</span>        <span class="n">NULL</span><span class="p">}</span>  <span class="o">/*</span> <span class="n">Mark</span> <span class="n">end</span><span class="o">.</span> <span class="o">*/</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The tcl-name field can be a name for a Tcl command that will also call the partyline command, or it can be left as NULL.</p>
+</section>
+<section id="adding-a-tcl-command">
+<h2>Adding a Tcl Command<a class="headerlink" href="#adding-a-tcl-command" title="Permalink to this heading">¶</a></h2>
+<p>Eggdrop uses the Tcl C API library to interact with the Tcl interpreter. Learning this API is outside the scope of this tutorial, but this example Tcl command will echo the provided argument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">tcl_echome</span> <span class="n">STDVAR</span> <span class="p">{</span>
+  <span class="n">BADARGS</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot; arg&quot;</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;llama&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Tcl_AppendResult</span><span class="p">(</span><span class="n">irp</span><span class="p">,</span> <span class="s2">&quot;You said: &quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">NULL</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">TCL_OK</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">Tcl_AppendResult</span><span class="p">(</span><span class="n">irp</span><span class="p">,</span> <span class="s2">&quot;illegal word!&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">TCL_ERROR</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">A</span> <span class="n">few</span> <span class="n">notes</span> <span class="n">on</span> <span class="n">this</span> <span class="n">example</span><span class="o">.</span> <span class="n">BADARGS</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">macro</span> <span class="n">that</span> <span class="n">checks</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">provided</span> <span class="n">to</span> <span class="n">the</span> <span class="n">Tcl</span> <span class="n">command</span><span class="o">.</span> <span class="n">The</span> <span class="n">first</span> <span class="n">argument</span> <span class="n">BADARGS</span> <span class="n">accepts</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">parameters</span> <span class="n">the</span> <span class="n">Tcl</span> <span class="n">command</span> <span class="n">must</span> <span class="n">accept</span> <span class="p">(</span><span class="n">including</span> <span class="n">the</span> <span class="n">command</span> <span class="n">itself</span><span class="p">)</span><span class="o">.</span> <span class="n">The</span> <span class="n">second</span> <span class="n">argument</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">maximum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">parameters</span> <span class="n">that</span> <span class="n">BADARGS</span> <span class="n">will</span> <span class="n">accept</span><span class="o">.</span> <span class="n">The</span> <span class="n">third</span> <span class="n">argument</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">help</span> <span class="n">text</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">displayed</span> <span class="k">if</span> <span class="n">these</span> <span class="n">boundaries</span> <span class="n">are</span> <span class="n">exceeded</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">BADARGS</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; name ?date? ?place?&quot;</span><span class="p">)</span> <span class="n">requires</span> <span class="n">at</span> <span class="n">least</span> <span class="n">one</span> <span class="n">argument</span> <span class="n">to</span> <span class="n">be</span> <span class="n">passed</span><span class="p">,</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">maximum</span> <span class="n">of</span> <span class="n">three</span> <span class="n">arguments</span><span class="o">.</span> <span class="n">Eggdrop</span> <span class="n">code</span> <span class="n">style</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">enclose</span> <span class="n">optional</span> <span class="n">arguments</span> <span class="n">between</span> <span class="n">qusetion</span> <span class="n">marks</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">help</span> <span class="n">text</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Similar to adding a partyline command, you also have to create a function table for a new Tcl command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">tcl_cmds</span> <span class="n">mytcl</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="s2">&quot;echome&quot;</span><span class="p">,</span>           <span class="n">tcl_echome</span><span class="p">},</span>
+  <span class="p">{</span><span class="n">NULL</span><span class="p">,</span>                   <span class="n">NULL</span><span class="p">}</span>   <span class="o">/*</span> <span class="n">Required</span> <span class="n">to</span> <span class="n">mark</span> <span class="n">end</span> <span class="n">of</span> <span class="n">table</span> <span class="o">*/</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>And now the newly-created Tcl command ‘echome’ is available for use in a script!</p>
+</section>
+<section id="adding-a-tcl-bind">
+<h2>Adding a Tcl Bind<a class="headerlink" href="#adding-a-tcl-bind" title="Permalink to this heading">¶</a></h2>
+<p>A Tcl bind is a command that is activated when a certain condition is met. With Eggdrop, these are usually linked to receiving messages or other IRC events. To create a bind, you must first register the bind type with Eggdrop when the module is loaded (you added the woobie_start() and woobie_close functions earlier, you still need all that earlier code in here as well):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">p_tcl_bind_list</span> <span class="n">H_woob</span><span class="p">;</span>
+
+<span class="o">...</span>
+
+<span class="n">char</span> <span class="o">*</span><span class="n">woobie_start</span><span class="p">(</span><span class="n">Function</span> <span class="o">*</span><span class="n">global_funcs</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="o">...</span>
+  <span class="n">H_woob</span> <span class="o">=</span> <span class="n">add_bind_table</span><span class="p">(</span><span class="s2">&quot;woobie&quot;</span><span class="p">,</span> <span class="n">HT_STACKABLE</span><span class="p">,</span> <span class="n">woobie_2char</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>And then remove the binds when the module is unloaded:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">char</span> <span class="o">*</span><span class="n">woobie_close</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="o">...</span>
+  <span class="n">del_bind_table</span><span class="p">(</span><span class="n">H_woob</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, “woobie” is the name of the bind (similar to the PUB, MSG, JOIN types of binds you already see in tcl-commands.doc). HT_STACKABLE means you can have multiple binds of this type. “woobie_2char” defines how many arguments the bind will take, and we’ll talk about that next.</p>
+<section id="defining-bind-arguments">
+<h3>Defining bind arguments<a class="headerlink" href="#defining-bind-arguments" title="Permalink to this heading">¶</a></h3>
+<p>The following code example defines a bind that will take two arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">woobie_2char</span> <span class="n">STDVAR</span>
+<span class="p">{</span>
+  <span class="n">Function</span> <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">cd</span><span class="p">;</span>
+
+  <span class="n">BADARGS</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot; nick chan&quot;</span><span class="p">);</span>
+
+  <span class="n">CHECKVALIDITY</span><span class="p">(</span><span class="n">woobie_2char</span><span class="p">);</span>
+  <span class="n">F</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+  <span class="k">return</span> <span class="n">TCL_OK</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>And this example defines a bind that will take three arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">woobie_3char</span> <span class="n">STDVAR</span>
+<span class="p">{</span>
+  <span class="n">Function</span> <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">Function</span><span class="p">)</span> <span class="n">cd</span><span class="p">;</span>
+
+  <span class="n">BADARGS</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; foo bar moo&quot;</span><span class="p">);</span>
+
+  <span class="n">CHECKVALIDITY</span><span class="p">(</span><span class="n">woobie_3char</span><span class="p">);</span>
+  <span class="n">F</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+  <span class="k">return</span> <span class="n">TCL_OK</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Like before, BADARGS still checks that the number of arguments passed is correct, and outputs help text if it is not. The rest is boilerplate code to pass the arguments when the bind is called.</p>
+</section>
+<section id="calling-the-bind">
+<h3>Calling the Bind<a class="headerlink" href="#calling-the-bind" title="Permalink to this heading">¶</a></h3>
+<p>To call the bind, Eggdrop coding style it to name that function “check_tcl_bindname”. So here, whenever we reach a point in code that should trigger the bind, we’ll call check_tcl_woobie() and pass the arguments we defined- in this case, two arguments that woobie_2char was created to handle. Here is some sample code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>check_tcl_woobie(chan, nick);
+
+
+static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
+  int x;
+  char mask[1024];
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+
+  snprintf(mask, sizeof mask, &quot;%s %s!%s&quot;,
+                                chan, nick, userhost);
+  Tcl_SetVar(interp, &quot;_woob1&quot;, nick ? (char *) nick : &quot;&quot;, 0);
+  Tcl_SetVar(interp, &quot;_woob2&quot;, chan, 0);
+  x = check_tcl_bind(H_woob, mask, &amp;fr, &quot; $_woob1 $_woob2&quot;,
+        MATCH_MASK | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+</pre></div>
+</div>
+<p>Now that we have encountered a condition that triggers the bind, we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with check_tcl_bind(), called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options.</p>
+</section>
+</section>
+<section id="exporting-the-bind">
+<h2>Exporting the Bind<a class="headerlink" href="#exporting-the-bind" title="Permalink to this heading">¶</a></h2>
+<p>Do we need to do this?</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="firstscript.html" title="Writing an Eggdrop Script"
+              >previous</a> |
+            <a href="../modules/index.html" title="Eggdrop Module Information"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

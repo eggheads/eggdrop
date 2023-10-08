@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Writing an Eggdrop Script &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Writing a Basic Eggdrop Module" href="module.html" />
+    <link rel="prev" title="Enabling TLS Security on Eggdrop" href="tlssetup.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="tlssetup.html" title="Enabling TLS Security on Eggdrop"
+             accesskey="P">previous</a> |
+          <a href="module.html" title="Writing a Basic Eggdrop Module"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="writing-an-eggdrop-script">
+<h1>Writing an Eggdrop Script<a class="headerlink" href="#writing-an-eggdrop-script" title="Permalink to this headline">¶</a></h1>
+<p>So you want to write an Eggdrop script, but you don’t really know where
+to begin. This file will give you a very basic idea about what Eggdrop
+scripting is like, using a <em>very</em> simple script that may help you get
+started with your own scripts.</p>
+<p>This guide assumes you know a bit about Eggdrops and IRC. You should have
+already installed Eggdrop. The bot should not be on any important or busy
+channels (development bots can be annoying if your script has bugs). If you
+plan on doing a lot of development, enable the .tcl and .set commands, and
+make sure nobody else has access to your bot. The .tcl and .set commands
+are helpful in debugging and testing your code.</p>
+<p>First, read through the script. Very few commands are listed here intentionally,
+but as you want to develop more advanced scripts, you will definitely want to
+get familiar with the <a class="reference external" href="https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm">core Tcl language commands</a>, especially the string- and list-related commands, as well as Eggdrop’s own library of custom Tcl commands, located in <a class="reference external" href="https://docs.eggheads.org/using/tcl-commands.html">tcl-commands.doc</a></p>
+<p>If you have the .tcl command enabled, you can load a script by typing
+‘.tcl source script/file.tcl’ to load it. Otherwise, add it to your config
+file like normal (examples to do so are at the bottom of the config file) and
+‘.rehash’ or ‘.restart’ your bot.</p>
+<p>Let’s look at a very basic example script that greets users as they join a channel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># GreetScript.tcl
+# Version: 1.0
+# Author: Geo &lt;geo@eggheads.org&gt;
+#
+# Description:
+# A simple script that greets users as they join a channel
+#
+### Config Section ###
+# How would you like the bot to gree users?
+# 0 - via public message to channel
+# 1 - via private message
+set pmsg 0
+# What message would you like to send to users when they join?
+set greetmsg &quot;Hi! Welcome to the channel!&quot;
+### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING! ###
+
+bind join - * greet
+
+proc greet {nick uhost hand chan} {
+  global pmsg
+  global greetmsg
+  if {$pmsg} {
+    putserv &quot;PRIVMSG $nick :$greetmsg&quot;
+  } else {
+    putserv &quot;PRIVMSG $chan :$greetmsg&quot;
+  }
+}
+
+putlog &quot;greetscript.tcl v1.0 by Geo&quot;
+</pre></div>
+</div>
+<p>Whew! There’s a lot going on here. You’ll generally see scripts broken into a few key parts- the header, the config section, and the code section. Ok, let’s go over this piece by piece. First, the header of the script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># GreetScript.tcl</span>
+<span class="c1"># Version: 1.0</span>
+<span class="c1"># Author: Geo &lt;geo@eggheads.org&gt; or #eggdrop on Libera</span>
+<span class="c1">#</span>
+<span class="c1"># Description:</span>
+<span class="c1"># A simple script that greets users as they join a channel</span>
+</pre></div>
+</div>
+<p>Any line prefixed by a # means it is comment, and thus ignored. You can type whatever you want, and it won’t matter. When writing scripts (especially if you want to give them to other people, it is good to use comments in the code to show what you’re doing. Here though, we use it to describe what the script is and, most importantly, who wrote it! Let’s give credit where credit is due, right? You may want to give users a way to contact you as well.</p>
+<p>Next, let’s look at the configuration section:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">### Config Section ###</span>
+<span class="c1"># How would you like the bot to gree users?</span>
+<span class="c1"># 0 - via public message to channel</span>
+<span class="c1"># 1 - via private message</span>
+<span class="nb">set</span> <span class="n">pmsg</span> <span class="mi">0</span>
+<span class="c1"># What message would you like to send to users when they join?</span>
+<span class="nb">set</span> <span class="n">greetmsg</span> <span class="s2">&quot;Hi! Welcome to the channel!&quot;</span>
+<span class="c1">### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING! ###</span>
+</pre></div>
+</div>
+<p>To make scripts easy to use, you’ll want to have a section that allows users to easily change the way the script operates, without having to edit the script itself. Here, we have two settings: one that controls which method the Eggdrop uses to greet a user, and a second with the message to greet the user with. Sure, we could hard-code that into the code section below, but in larger scripts that makes things harder to find, and also forces you to potentially have to make the same change multiple times in code. Why not make it simple and do it once, up top? Notice the settings do not have #s in front of them- they are variables that will be used by the script later on. And of course, the standard ominous warning not to change anything below!</p>
+<p>Now, let’s look start to dissect the actual code!:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bind</span> <span class="n">join</span> <span class="o">-</span> <span class="o">*</span> <span class="n">greet</span>
+</pre></div>
+</div>
+<p>This is a bind. This sets up an action that Eggdrop will react to. You can read <a class="reference external" href="https://docs.eggheads.org/using/tcl-commands.html">all the binds that Eggdrop uses here.</a> Generally, we like to place all binds towards the top of the script so that they are together and easy to find. Now, let’s look at documentation of the bind join together.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head" colspan="2"><p>bind JOIN</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="2"><p>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;</p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p>procname &lt;nick&gt; &lt;<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>&gt; &lt;handle&gt; &lt;channel&gt;</p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p>Description: triggered by someone joining the channel. The mask in the bind is matched against “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>” and can contain wildcards.</p></td>
+</tr>
+</tbody>
+</table>
+<p>So here, we can start to match the bind listed in the code to how it is described in the documentation. The first term after the bind command is ‘join’, showing that it is a join bind, which means the action we define here will take place each time a user joins a channel. The next term is ‘mask’, and it says it is in the form “#channel <a class="reference external" href="mailto:nick!user&#37;&#52;&#48;host">nick!user<span>&#64;</span>host</a>”. This is where we can start to refine exactly when this bind is triggered. If we want it to work for every person joining every channel Eggdrop is on, then a simple ‘*’ will suffice here- that will match everything. If we wanted this bind to only work in #foo, then the mask would be “#foo *”. If we wanted to greet users on every channel, but only those who are on AOL, the mask would be “* <a class="reference external" href="mailto:*!*&#37;&#52;&#48;*&#46;aol&#46;com">*!*<span>&#64;</span>*<span>&#46;</span>aol<span>&#46;</span>com</a>”. Finally the ‘proc’ argument is the name of the Tcl proc we want to call, where the code that actually <em>does stuff</em> is located.</p>
+<p>So to sum up this line from the example script: When a user joins on any channel and with any hostmask, run the code located in proc ‘greet’.</p>
+<p>Now that we told the Eggdrop what action to look for, we need to tell it what to do when that action occurs!:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">proc</span> <span class="n">greet</span> <span class="p">{</span><span class="n">nick</span> <span class="n">uhost</span> <span class="n">hand</span> <span class="n">chan</span><span class="p">}</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>This is how we declare a Tcl proc. As we said above, this is where the magic happens. To set up the proc (this will look differently for different binds), lets refer back to the bind JOIN documentation. The second line shows <code class="docutils literal notranslate"><span class="pre">procname</span> <span class="pre">&lt;nick&gt;</span> <span class="pre">&lt;user&#64;host&gt;</span> <span class="pre">&lt;handle&gt;</span> <span class="pre">&lt;channel&gt;</span></code>. Eggdrop does a lot of stuff in the background when a bind is triggered, and this is telling you how Eggdrop will present that information to you. Here, Eggdrop is telling you it is going to pass the proc you created four variables: One that contains the nickname of the person who triggered the bind (in this case, the user who joined), the <a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a> of that user, the handle of that user (if the user has one on the bot), and the channel that the bind was triggered on.</p>
+<p>So let’s say someone with the nickname Geo with a hostmask of <a class="reference external" href="mailto:awesome&#37;&#52;&#48;aol&#46;com">awesome<span>&#64;</span>aol<span>&#46;</span>com</a> joined #sexystuff and that person is not added to the bot as a user. Eggdrop will pass 4 values to the variables you set up in that proc: The first variable will get the value “Geo”, the second “<a class="reference external" href="mailto:awesome&#37;&#52;&#48;aol&#46;com">awesome<span>&#64;</span>aol<span>&#46;</span>com</a>”, the third “*”, and the fourth “#sexystuff”. (That third value was a trick, we didn’t talk about that- if the user is not added to the bot, handle will get a “*” as a value). Now, let’s use those variables!:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">global</span> <span class="n">pmsg</span>
+<span class="k">global</span> <span class="n">greetmsg</span>
+</pre></div>
+</div>
+<p>This is a simple one- because we’re using variables declared in the main body of the script (remember way up top?), we have to tell this proc to use that variable, not not create a new local variable for this proc.</p>
+<p>And finally, let’s actually send a message to the user:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">{</span><span class="n">pmsg</span><span class="p">}</span>
+  <span class="n">putserv</span> <span class="s2">&quot;PRIVMSG $nick :$greetmsg&quot;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="n">putserv</span> <span class="s2">&quot;PRIVMSG $chan :$greetmsg&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, we’re going to check if pmsg is true (any value that is not 0) and, if yes, send a private message to the user. If pmsg is not true (it is 0), then we will send the message to the channel. You can see that the first putserv message sends a PRIVMSG message to $nick - this is the nickname of the user that joined, and that Eggdrop stored for us in the first variable of the proc, which we called ‘nick’. The second putserv message will send a PRIVMSG message to the $chan - this is the channel the user joined, and that Eggdrop stored for us in the fourth variable of the proc, which we called ‘chan’.</p>
+<p>And finally: get the credit you deserve when the script loads!:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">putlog</span> <span class="s2">&quot;greetscript.tcl v1.0 by Geo&quot;</span>
+</pre></div>
+</div>
+<p>Like your variables at the top of the script, this line is not inside a Tcl proc and will execute when the script is loaded. You can put this or any other initialization code you want to run.</p>
+<p>And there you have it- your first script! Take this, modify it and experiment. A few challenges for you:</p>
+<ul class="simple">
+<li><p>How can you configure which channel it should run on, without hard-coding it into the bind? (Maybe with a variable…)</p></li>
+<li><p>How can you configure it to only message a user with the nickname “FancyPants”? (Sounds like something a bind could handle)</p></li>
+<li><p>How can you delay the message from sending by 5 seconds? (Hint: utimer)</p></li>
+<li><p>How can you send different messages to different channels? (A new setting may be in order…)</p></li>
+<li><p>How can you get the bot to not greet itself when it joins the channel? (Eggdrop stores its own nickname in a variable called $botnick)</p></li>
+<li><p>How can you add the person joining the channel’s nickname to the greet message? (You can put variables inside variables…)</p></li>
+</ul>
+<p>If you want to try these out, join #eggdrop on Libera and check your answers (and remember, there are dozens of ways to do this, so a) don’t be defensive of your choices, and b) take others’ answers with a grain of salt!)</p>
+<p>Copyright (C) 2003 - 2023 Eggheads Development Team</p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="tlssetup.html" title="Enabling TLS Security on Eggdrop"
+              >previous</a> |
+            <a href="module.html" title="Writing a Basic Eggdrop Module"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Jul 08, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

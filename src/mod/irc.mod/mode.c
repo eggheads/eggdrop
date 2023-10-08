@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,9 +42,9 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
  * channel still exists and will refresh the user and victim flag records,
  * in case users were also modified.
  */
-struct chanset_t *modebind_refresh(char *chname,
-                                   char *usrhost, struct flag_record *usr,
-                                   char *vcrhost, struct flag_record *vcr)
+static struct chanset_t *modebind_refresh(char *chname,
+                                          char *usrhost, struct flag_record *usr,
+                                          char *vcrhost, struct flag_record *vcr)
 {
   struct userrec *u;
   struct chanset_t *chan;

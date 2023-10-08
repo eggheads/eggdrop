@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -466,6 +466,55 @@ static int tcl_isaway STDVAR
   return TCL_OK;
 }
 
+/* Checks if user is registered with the server as a bot. This requires the
+ * server to have the 005 BOT feature advertised, and the user to have set
+ * the corresponding usermode.
+ */
+static int tcl_isircbot STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *m;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircbot(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_accounttracking STDVAR
+{
+  struct capability *current =0;
+  int extjoin = 0, acctnotify = 0;
+
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    extjoin = 1;
+  }
+  current = find_capability("account-notify");
+  if (current->enabled) {
+    acctnotify = 1;
+  }
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_getchanhost STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
@@ -566,13 +615,13 @@ static int tcl_getchanidle STDVAR
 
 static int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
-  char work[20], *p;
+  char work[21], *p;
   EGG_CONST char *list[3];
 
   for (; m && m->mask && m->mask[0]; m = m->next) {
     list[0] = m->mask;
     list[1] = m->who;
-    simple_sprintf(work, "%d", now - m->timer);
+    snprintf(work, sizeof work, "%" PRId64, (int64_t) (now - m->timer));
     list[2] = work;
     p = Tcl_Merge(3, list);
     Tcl_AppendElement(irp, p);
@@ -1177,6 +1226,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"maskhost",       tcl_maskhost},
   {"getchanidle",    tcl_getchanidle},
   {"isaway",         tcl_isaway},
+  {"isircbot",       tcl_isircbot},
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},
@@ -1200,5 +1250,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"putkick",        tcl_putkick},
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
+  {"accounttracking",tcl_accounttracking},
   {NULL,             NULL}
 };

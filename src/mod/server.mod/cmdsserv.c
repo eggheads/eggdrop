@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   char buf[sizeof(struct in6_addr)];
 #endif
   char s[1024];
-  char setpass[11];
+  char setpass[12];
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
@@ -86,7 +86,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 static void cmd_dump(struct userrec *u, int idx, char *par)
 {
   if (!(isowner(dcc[idx].nick)) && (must_be_owner == 2)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   if (!par[0]) {
@@ -137,7 +137,7 @@ server, but Eggdrop was not compiled with SSL libraries. Skipping...");
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
   dprintf(idx, "%s...\n", IRC_JUMP);
   cycle_time = 0;
-  nuke_server("changing servers");
+  nuke_server(IRC_CHANGINGSERV);
 }
 
 static void cmd_clearqueue(struct userrec *u, int idx, char *par)

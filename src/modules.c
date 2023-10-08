@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,7 +75,8 @@ extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
-            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
+            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[],
+            pid_file[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
@@ -98,10 +99,8 @@ extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
 
-int cmd_die();
 int xtra_kill();
 int xtra_unpack();
-char *check_validpass();
 static int module_rename(char *name, char *newname);
 
 #ifndef STATIC
@@ -157,6 +156,8 @@ static void null_share(int idx, char *x)
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
+char *(*encrypt_pass2) (char *) = 0;
+char *(*verify_pass2) (char *, char *) = 0;
 char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
 void (*shareout) () = null_func;
@@ -169,8 +170,8 @@ int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
 int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
 int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
-void (*dns_hostbyip) (sockname_t *) = block_dns_hostbyip;
-void (*dns_ipbyhost) (char *) = block_dns_ipbyhost;
+void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
+void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -342,7 +343,7 @@ Function global_table[] = {
   (Function) & tls_vfyclients,    /* int                                 */
   (Function) & tls_vfydcc,        /* int                                 */
 #else
-  (Function) 0,                   /* was natip -- use getmyip() instead  */
+  (Function) 0,                   /* was natip                           */
   (Function) 0,                   /* was myip -- use getvhost() instead  */
 #endif
   (Function) origbotname,         /* char *                              */
@@ -609,7 +610,22 @@ Function global_table[] = {
   (Function) check_validpass,
   /* 308 - 311 */
   (Function) make_rand_str_from_chars,
-  (Function) add_tcl_objcommands
+  (Function) add_tcl_objcommands,
+  (Function) pid_file,            /* char                                */
+#ifndef HAVE_EXPLICIT_BZERO
+  (Function) explicit_bzero,
+#else
+  (Function) 0,
+#endif
+/* 312 - 315 */    
+  (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
+  (Function) crypto_verify,
+  (Function) egg_uname,
+  (Function) get_expire_time,
+/* 316 - 319 */
+  (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
+  (Function) get_user_by_account,
+  (Function) delhost_by_handle
 };
 
 void init_modules(void)
@@ -1034,6 +1050,12 @@ void add_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
       break;
+    case HOOK_ENCRYPT_PASS2:
+      encrypt_pass2 = (char *(*)(char *)) func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      verify_pass2 = (char *(*)(char *, char*)) func;
+      break;
     case HOOK_ENCRYPT_STRING:
       encrypt_string = (char *(*)(char *, char *)) func;
       break;
@@ -1074,11 +1096,11 @@ void add_hook(int hook_num, Function func)
         match_noterej = (int (*)(struct userrec *, char *)) func;
       break;
     case HOOK_DNS_HOSTBYIP:
-      if (dns_hostbyip == block_dns_hostbyip)
+      if (dns_hostbyip == core_dns_hostbyip)
         dns_hostbyip = (void (*)(sockname_t *)) func;
       break;
     case HOOK_DNS_IPBYHOST:
-      if (dns_ipbyhost == block_dns_ipbyhost)
+      if (dns_ipbyhost == core_dns_ipbyhost)
         dns_ipbyhost = (void (*)(char *)) func;
       break;
     }
@@ -1106,6 +1128,14 @@ void del_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)
         encrypt_pass = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_ENCRYPT_PASS2:
+      if (encrypt_pass2 == (char *(*)(char *)) func)
+        encrypt_pass2 = (char *(*)(char *)) null_func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      if (verify_pass2 == (char *(*)(char *, char *)) func)
+        verify_pass2 = (char *(*)(char *, char *)) null_func;
       break;
     case HOOK_ENCRYPT_STRING:
       if (encrypt_string == (char *(*)(char *, char *)) func)
@@ -1137,11 +1167,11 @@ void del_hook(int hook_num, Function func)
       break;
     case HOOK_DNS_HOSTBYIP:
       if (dns_hostbyip == (void (*)(sockname_t *)) func)
-        dns_hostbyip = block_dns_hostbyip;
+        dns_hostbyip = core_dns_hostbyip;
       break;
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == (void (*)(char *)) func)
-        dns_ipbyhost = block_dns_ipbyhost;
+        dns_ipbyhost = core_dns_ipbyhost;
       break;
     }
 }

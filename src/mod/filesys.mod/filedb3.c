@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -249,8 +249,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 
   /* No existing entries, so create new entry at end of DB instead. */
   fdbe = malloc_fdbe();
-  fseek(fdb, 0L, SEEK_END);
-  fdbe->pos = ftell(fdb);
+  fseeko(fdb, 0, SEEK_END);
+  fdbe->pos = ftello(fdb);
   return fdbe;
 }
 
@@ -652,7 +652,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
    */
   dir = opendir(path);
   if (dir == NULL) {
-    putlog(LOG_MISC, "*", FILES_NOUPDATE);
+    putlog(LOG_MISC, "*", "%s", FILES_NOUPDATE);
     return;
   }
   dd = readdir(dir);
@@ -840,7 +840,7 @@ static FILE *filedb_open(char *path, int sort)
 static void filedb_close(FILE *fdb)
 {
   filedb_timestamp(fdb);
-  fseek(fdb, 0L, SEEK_END);
+  fseeko(fdb, 0, SEEK_END);
   count--;
   unlockfile(fdb);
   fclose(fdb);
@@ -903,8 +903,8 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     if (ok) {
       /* Display it! */
       if (cnt == 0) {
-        dprintf(idx, FILES_LSHEAD1);
-        dprintf(idx, FILES_LSHEAD2);
+        dprintf(idx, "%s", FILES_LSHEAD1);
+        dprintf(idx, "%s", FILES_LSHEAD2);
       }
       filelist_add(flist, fdbe->filename);
       if (fdbe->stat & FILE_DIR) {
@@ -1012,9 +1012,9 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     fdbe = filedb_getfile(fdb, ftell(fdb), GET_FULL);
   }
   if (is == 0)
-    dprintf(idx, FILES_NOFILES);
+    dprintf(idx, "%s", FILES_NOFILES);
   else if (cnt == 0)
-    dprintf(idx, FILES_NOMATCH);
+    dprintf(idx, "%s", FILES_NOMATCH);
   else {
     filelist_sort(flist);
     filelist_idxshow(flist, idx);
@@ -1025,8 +1025,8 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 
 static void remote_filereq(int idx, char *from, char *file)
 {
-  char *p = NULL, *what = NULL, *dir = NULL,
-    *s1 = NULL, *reject = NULL, *s = NULL;
+  char *p = NULL, *what = NULL, *dir = NULL, *reject = NULL, *s1 = NULL,
+       s[EGG_INET_ADDRSTRLEN], s2[128];
   FILE *fdb = NULL;
   int i = 0;
   filedb_entry *fdbe = NULL;
@@ -1076,18 +1076,11 @@ static void remote_filereq(int idx, char *from, char *file)
   }
   /* Grab info from dcc struct and bounce real request across net */
   i = dcc_total - 1;
-#ifdef IPV6
-  s = nmalloc(INET6_ADDRSTRLEN);
-  getdccaddr(&dcc[i].sockname, s, INET6_ADDRSTRLEN);
-#else
-  s = nmalloc(INET_ADDRSTRLEN);
-  getdccaddr(&dcc[i].sockname, s, INET_ADDRSTRLEN);
-#endif
-  simple_sprintf(s, "%s %u %d", s, dcc[i].port, dcc[i].u.xfer->length);
-  botnet_send_filesend(idx, s1, from, s);
+  getdccaddr(&dcc[i].sockname, s, sizeof s);
+  snprintf(s2, sizeof s2, "%s %u %lu", s, dcc[i].port, dcc[i].u.xfer->length);
+  botnet_send_filesend(idx, s1, from, s2);
   putlog(LOG_FILES, "*", FILES_REMOTEREQ, dir, dir[0] ? "/" : "", what);
   my_free(s1);
-  my_free(s);
   my_free(what);
   my_free(dir);
 }
