@@ -1028,7 +1028,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
-  struct addrinfo hint, *ipaddr = NULL;
+  struct addrinfo hint, *res0 = NULL;
 #ifdef IPV6
   struct in6_addr ipaddr6;
 #endif
@@ -1049,22 +1049,22 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   } else {
     strlcpy(newip, ip, sizeof newip);
   }
-  /* Return addrinfo struct ipaddr containing family... */
-  error = getaddrinfo(newip, NULL, &hint, &ipaddr);
+  /* Return addrinfo struct containing family... */
+  error = getaddrinfo(newip, NULL, &hint, &res0);
   if (!error) {
-  /* Load network address to in(6)_addr struct for later byte comparisons */
-    if (ipaddr->ai_family == AF_INET) {
+    if (!res0)
+      putlog(LOG_MISC, "*", "setlisten(): getaddrinfo() returned no address for ip %s", newip);
+    /* Load network address to in(6)_addr struct for later byte comparisons */
+    if (res0->ai_family == AF_INET) {
       inet_pton(AF_INET, newip, &ipaddr4);
     }
 #ifdef IPV6
-    else if (ipaddr->ai_family == AF_INET6) {
+    else if (res0->ai_family == AF_INET6) {
       inet_pton(AF_INET6, newip, &ipaddr6);
       ipv4 = 0;
     }
 #endif
-    if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
-                 * 2553 and 3493. Avoid to be compatible with all OSes. */
-      freeaddrinfo(ipaddr);
+    freeaddrinfo(res0);
   }
   else if (error == EAI_NONAME)
     /* currently setlisten() handles only ip not hostname */
