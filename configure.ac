@@ -43,10 +43,6 @@ EGG_SAVE_PARAMETERS
 # Check for a working C compiler
 AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
-m4_warn([obsolete],
-[AC_PROG_CC_C99 is obsolete; use AC_PROG_CC
-])dnl
-AC_REQUIRE(AC_PROG_CC)
 EGG_CHECK_CC_C99
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
@@ -95,19 +91,7 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-m4_warn([obsolete],
-[Update your code to rely only on HAVE_SYS_TIME_H,
-then remove this warning and the obsolete code below it.
-All current systems provide time.h; it need not be checked for.
-Not all systems provide sys/time.h, but those that do, all allow
-you to include it and time.h simultaneously.])dnl
 AC_CHECK_HEADERS_ONCE([sys/time.h])
-# Obsolete code to be removed.
-if test $ac_cv_header_sys_time_h = yes; then
-  AC_DEFINE([TIME_WITH_SYS_TIME],[1],[Define to 1 if you can safely include both <sys/time.h>
-	     and <time.h>.  This macro is obsolete.])
-fi
-# End of obsolete code.
 
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
 
