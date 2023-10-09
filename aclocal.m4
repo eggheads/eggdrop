@@ -192,12 +192,12 @@ dnl Check for a working C99 C compiler.
 dnl
 AC_DEFUN([EGG_CHECK_CC_C99],
 [
-  if test "$ac_cv_prog_cc_c99" = no; then
+  if test "$ac_cv_prog_cc_c11" = no && test "$ac_cv_prog_cc_c99" = no; then
     cat << 'EOF' >&2
 configure: error:
 
-  This C compiler does not appear to have a working C99 mode.
-  A working C99 C compiler is required to compile Eggdrop.
+  This C compiler does not appear to have a working C99/C11 mode.
+  A working C99/C11 C compiler is required to compile Eggdrop.
 
 EOF
     exit 1
@@ -313,32 +313,24 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
-  AC_TRY_LINK(
-    [
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <resolv.h>
-    ],
-    [b64_ntop(NULL, 0, NULL, 0);],
-    found_b64_ntop=yes,
-    found_b64_ntop=no
-  )
+    ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+  ])
   if test "x$found_b64_ntop" = xno; then
     AC_MSG_RESULT(no)
 
     AC_MSG_CHECKING(for b64_ntop with -lresolv)
     OLD_LIBS="$LIBS"
     LIBS="$LIBS -lresolv"
-    AC_TRY_LINK(
-      [
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
-      ],
-      [b64_ntop(NULL, 0, NULL, 0);],
-      found_b64_ntop=yes,
-      found_b64_ntop=no
-    )
+      ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+    ])
     if test "x$found_b64_ntop" = xno; then
       LIBS="$OLD_LIBS"
       AC_MSG_RESULT(no)
@@ -346,16 +338,12 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
       AC_MSG_CHECKING(for b64_ntop with -lnetwork)
       OLD_LIBS="$LIBS"
       LIBS="-lnetwork"
-      AC_TRY_LINK(
-      [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
-        ],
-        [b64_ntop(NULL, 0, NULL, 0);],
-        found_b64_ntop=yes,
-        found_b64_ntop=no
-      )
+        ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+      ])
       if test "x$found_b64_ntop" = xno; then
         LIBS="$OLD_LIBS"
         AC_MSG_RESULT(no)
@@ -1429,22 +1417,20 @@ if test "$enable_ipv6" = "yes"; then
   if test "$egg_cv_var_have_in6_addr" = "yes"; then
     # Check for in6addr_any
     AC_CACHE_CHECK([for the in6addr_any constant], [egg_cv_var_have_in6addr_any], [
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
-      ], [struct in6_addr i6 = in6addr_any;],
-      [egg_cv_var_have_in6addr_any="yes"], [egg_cv_var_have_in6addr_any="no"])
+      ]], [[struct in6_addr i6 = in6addr_any;]])],[egg_cv_var_have_in6addr_any="yes"],[egg_cv_var_have_in6addr_any="no"])
     ])
     if test "$egg_cv_var_have_in6addr_any" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_ANY, 1, [Define to 1 if you have the in6addr_any constant.])
     fi
     # Check for in6addr_loopback
     AC_CACHE_CHECK([for the in6addr_loopback constant], [egg_cv_var_have_in6addr_loopback], [
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
-      ], [struct in6_addr i6 = in6addr_loopback;],
-      [egg_cv_var_have_in6addr_loopback="yes"], [egg_cv_var_have_in6addr_loopback="no"])
+      ]], [[struct in6_addr i6 = in6addr_loopback;]])],[egg_cv_var_have_in6addr_loopback="yes"],[egg_cv_var_have_in6addr_loopback="no"])
     ])
     if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_LOOPBACK, 1, [Define to 1 if you have the in6addr_loopback constant.])
