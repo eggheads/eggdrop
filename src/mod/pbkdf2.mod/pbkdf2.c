@@ -319,7 +319,7 @@ char *pbkdf2_start(Function *global_funcs)
   #ifdef TLS
     return "Initialization failure: compiled with openssl version < 1.0.0";
   #else
-    return "Initialization failure: configured with --disable-TLS or openssl not found";
+    return "Initialization failure: configured with --disable-tls or openssl not found";
   #endif
 #endif
 }
