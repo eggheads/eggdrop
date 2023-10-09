@@ -1052,19 +1052,20 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
   /* Return addrinfo struct containing family... */
   error = getaddrinfo(newip, NULL, &hint, &res0);
   if (!error) {
-    if (!res0)
-      putlog(LOG_MISC, "*", "setlisten(): getaddrinfo() returned no address for ip %s", newip);
-    /* Load network address to in(6)_addr struct for later byte comparisons */
-    if (res0->ai_family == AF_INET) {
-      inet_pton(AF_INET, newip, &ipaddr4);
-    }
+    if (res0) {
+      /* Load network address to in(6)_addr struct for later byte comparisons */
+      if (res0->ai_family == AF_INET) {
+        inet_pton(AF_INET, newip, &ipaddr4);
+      }
 #ifdef IPV6
-    else if (res0->ai_family == AF_INET6) {
-      inet_pton(AF_INET6, newip, &ipaddr6);
-      ipv4 = 0;
-    }
+      else if (res0->ai_family == AF_INET6) {
+        inet_pton(AF_INET6, newip, &ipaddr6);
+        ipv4 = 0;
+      }
 #endif
-    freeaddrinfo(res0);
+      freeaddrinfo(res0);
+    } else
+      putlog(LOG_MISC, "*", "setlisten(): getaddrinfo() returned no address for ip %s", newip);
   }
   else if (error == EAI_NONAME)
     /* currently setlisten() handles only ip not hostname */
