@@ -989,7 +989,7 @@ char *channels_start(Function *global_funcs)
          "-autohalfop "
          "-nodesynch "
          "-static ");
-  module_register(MODULE_NAME, channels_table, 1, 3);
+  module_register(MODULE_NAME, channels_table, 1, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
