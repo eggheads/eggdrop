@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.5"
-#define EGG_NUMVER 1090503
-#define EGG_PATCH "autoscript"
+#define EGG_NUMVER 1090504
+#define EGG_PATCH "needtls"
