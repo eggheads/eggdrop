@@ -903,6 +903,14 @@ static void queue_server(int which, char *msg, int len)
   }
 
   if (h->tot < maxqmsg) {
+    /* Don't queue msg if it's a WHOIS msg already queued as last msg */
+    if (DP_SERVER && tempq.last &&
+        !strncasecmp(tempq.last->msg, "WHOIS", 5) &&
+        !strcasecmp(tempq.last->msg, buf)) {
+      debug1("WHOIS Message already queued as last message; skipping: %s",
+             buf);
+      return;
+    }
     /* Don't queue msg if it's already queued?  */
     if (!doublemsg) {
       for (tq = tempq.head; tq; tq = tqq) {
