@@ -88,8 +88,7 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, log_interval,
-           quiet_save;
+extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern struct chanset_t *chanset;
@@ -141,7 +140,6 @@ char ver[41];        /* Version info (short form) */
 volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
-int log_elapsed = 1;
 
 /* Moved here for n flag warning, put back in do_arg if removed */
 unsigned char cliflags = 0;
@@ -188,7 +186,6 @@ void fatal(const char *s, int recoverable)
   int i;
 
   putlog(LOG_MISC, "*", "* %s", s);
-  flushlogs();
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
@@ -638,18 +635,10 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  if (log_elapsed < log_interval)
-    log_elapsed++;
-  else {
-    flushlogs();
-    check_logsize();
-    log_elapsed = 1;
-  }
   nowmins = time(NULL) / 60;
   if (nowmins > lastmin) {
     memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
-
     /* Once a minute */
     ++lastmin;
     call_hook(HOOK_MINUTELY);
@@ -670,6 +659,7 @@ static void core_secondly()
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
+
       if (!miltime) {           /* At midnight */
         char s[25];
         int j;
@@ -717,6 +707,7 @@ static void core_minutely()
 {
   check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
+  check_logsize();
 }
 
 static void core_hourly()
@@ -953,7 +944,6 @@ static void mainloop(int toplevel)
         putlog(LOG_MISC, "*", "%s", MOD_STAGNANT);
       }
 
-      flushlogs();
       kill_tcl();
       init_tcl(argc, argv);
       init_language(0);

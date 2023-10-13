@@ -107,13 +107,6 @@ the logfile of the next day.
     reaches the size of 550 kilobytes. Note that this only works if you
     have keep-all-logs set to 0 (OFF).
 
-  set quick-logs 0
-    This could be good if you have had a problem with logfiles filling
-    your quota/hard disk or if you log +p and publish it to the web, and
-    you need more up-to-date info. Note that this setting might increase
-    the CPU usage of your bot (on the other hand it will decrease your RAM
-    usage).
-
   set raw-log 0
     This setting allows you the logging of raw incoming server traffic via
     console/log flag 'r', raw outgoing server traffic via console/log mode

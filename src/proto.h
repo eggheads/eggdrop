@@ -228,7 +228,6 @@ void debug_mem_to_dcc(int);
 int egg_strcatn(char *, const char *, size_t);
 int my_strcpy(char *, char *);
 void putlog(int type, char *chname, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
-void flushlogs(void);
 void check_logsize(void);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);
