@@ -2094,9 +2094,13 @@ static void server_postrehash()
 
 static void server_die()
 {
+  char msg[MSGMAX];
   cycle_time = 100;
   if (server_online) {
-    dprintf(-serv, "QUIT :%s\n", quit_msg[0] ? quit_msg : "");
+    snprintf(msg, sizeof msg, "QUIT :%s\n", quit_msg[0] ? quit_msg : "");
+    dprintf(-serv, msg);
+    if (raw_log)
+      putlog(LOG_SRVOUT, "*", "[->] %s", msg);
     sleep(3);                   /* Give the server time to understand */
   }
   nuke_server(NULL);
