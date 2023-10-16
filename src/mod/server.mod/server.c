@@ -595,8 +595,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         } else
           snprintf(newnicks, sizeof newnicks, ",%s", nick);
       }
-      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
-                   newnicks + 1, msg);
+
     }
     if (changed) {
       if (newnicks[0] == 0) {
@@ -611,9 +610,11 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         if (!q->head)
           q->last = 0;
       } else {
+        len = egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+                     newnicks + 1, msg);
         nfree(m->msg);
-        m->msg = nmalloc(strlen(newmsg) + 1);
-        m->len = strlen(newmsg);
+        m->msg = nmalloc(len + 1);
+        m->len = len;
         strcpy(m->msg, newmsg);
       }
     }
