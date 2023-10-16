@@ -3269,33 +3269,20 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# traffic", dcc[idx].nick);
 }
 
-static char traffictxt[20];
 static char *btos(unsigned long bytes)
 {
-  const char *unit;
-  float xbytes;
+  static char traffictxt[20];
 
-  xbytes = bytes;
-  if (xbytes > 1024.0) {
-    unit = "KBytes";
-    xbytes = xbytes / 1024.0;
-  }
-  if (xbytes > 1024.0) {
-    unit = "MBytes";
-    xbytes = xbytes / 1024.0;
-  }
-  if (xbytes > 1024.0) {
-    unit = "GBytes";
-    xbytes = xbytes / 1024.0;
-  }
-  if (xbytes > 1024.0) {
-    unit = "TBytes";
-    xbytes = xbytes / 1024.0;
-  }
-  if (bytes > 1024)
-    sprintf(traffictxt, "%.2f %s", xbytes, unit);
-  else
+  if (bytes <= 1024)
     sprintf(traffictxt, "%lu Bytes", bytes);
+  else if (bytes <= (1024 * 1024))
+    sprintf(traffictxt, "%.2f KBytes", (float) bytes / 1024);
+  else if (bytes <= (1024 * 1024 * 1024))
+    sprintf(traffictxt, "%.2f MBytes", (float) bytes / 1024 / 1024);
+  else if (bytes <= (1024u * 1024 * 1024 * 1024))
+    sprintf(traffictxt, "%.2f GBytes", (float) bytes / 1024 / 1024 / 1024);
+  else if (bytes <= (1024u * 1024 * 1024 * 1024 * 1024))
+    sprintf(traffictxt, "%.2f TBytes", (float) bytes / 1024 / 1024 / 1024 / 1024);
   return traffictxt;
 }
 
