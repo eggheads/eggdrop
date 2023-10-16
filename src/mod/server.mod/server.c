@@ -568,7 +568,7 @@ static void check_queues(char *oldnick, char *newnick)
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm = NULL;
-  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX],
+  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX - 8],
        newmsg[SENDLINEMAX];
   int changed;
   size_t len;
@@ -610,8 +610,8 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         if (!q->head)
           q->last = 0;
       } else {
-        len = egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
-                     newnicks + 1, msg);
+        len = snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+                       newnicks + 1, msg);
         nfree(m->msg);
         m->msg = nmalloc(len + 1);
         m->len = len;
