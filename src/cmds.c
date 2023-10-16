@@ -3281,7 +3281,7 @@ static char *btos(unsigned long bytes)
     sprintf(traffictxt, "%.2f MBytes", (float) bytes / 1024 / 1024);
   else if (bytes <= (1024u * 1024 * 1024 * 1024))
     sprintf(traffictxt, "%.2f GBytes", (float) bytes / 1024 / 1024 / 1024);
-  else if (bytes <= (1024u * 1024 * 1024 * 1024 * 1024))
+  else
     sprintf(traffictxt, "%.2f TBytes", (float) bytes / 1024 / 1024 / 1024 / 1024);
   return traffictxt;
 }
