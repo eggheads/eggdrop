@@ -273,6 +273,34 @@ static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
   return;
 }
 
+static void cmd_pyfile(struct userrec *u, int idx, char *par) {
+  char *result;
+  PyObject *pobj, *pstr;
+  FILE *fp;
+
+  if (!par[0]) {
+    dprintf(idx, "Usage: pyfile <file>\n");
+    return;
+  }
+  if (!(fp = fopen(par, "r"))) {
+    dprintf(idx, "Error: could not open file %s: %s\n", par, strerror(errno));
+    return;
+  }
+
+  PyErr_Clear();
+  pobj = PyRun_FileEx(fp, par, 0, Py_file_input, pglobals, pglobals);
+  if (pobj) {
+    pstr = PyObject_Str(pobj);
+
+    dprintf(idx, "%s\n", PyUnicode_AsUTF8(pstr));
+    Py_DECREF(pstr);
+    Py_DECREF(pobj);
+  } else if (PyErr_Occurred()) {
+    PyErr_Print();
+  }
+  return;
+}
+
 static void cmd_pysource(struct userrec *u, int idx, char *par) {
   if (!par[0]) {
     dprintf(idx, "Usage: pysource <file> <method> [args]\n");
@@ -304,6 +332,7 @@ static cmd_t mydcc[] = {
   {"pysource",  "",     (IntFunc) cmd_pysource, NULL},
   {"python",    "",     (IntFunc) cmd_python,   NULL},
   {"pyexpr",    "",     (IntFunc) cmd_pyexpr,   NULL},
+  {"pyfile",    "",     (IntFunc) cmd_pyfile,   NULL},
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 
