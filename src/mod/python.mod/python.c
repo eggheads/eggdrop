@@ -288,7 +288,7 @@ static void cmd_pyfile(struct userrec *u, int idx, char *par) {
   }
 
   PyErr_Clear();
-  pobj = PyRun_FileEx(fp, par, 0, Py_file_input, pglobals, pglobals, 1);
+  pobj = PyRun_FileEx(fp, par, Py_file_input, pglobals, pglobals, 1);
   if (pobj) {
     pstr = PyObject_Str(pobj);
 
