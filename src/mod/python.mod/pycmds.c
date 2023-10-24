@@ -125,7 +125,6 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
 }
 
 static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwargs) {
-  size_t written = 0;
   TclFunc *tf = (TclFunc *)self;
   Py_ssize_t argc = PyTuple_Size(args);
   Tcl_DString ds;
@@ -153,7 +152,6 @@ static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
   Tcl_Command tclcmd;
   char *cmdname;
   TclFunc *result;
-  struct py_tcl_func *entry;
 
   if (!PyArg_ParseTuple(args, "s", &cmdname)) {
     PyErr_SetString(EggdropError, "wrong arguments");

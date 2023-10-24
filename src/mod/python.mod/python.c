@@ -203,7 +203,6 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
 }
 
 static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
-//  char *result;
   PyObject *pobj, *pstr;
 
   PyErr_Clear();
@@ -222,7 +221,6 @@ static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
 }
 
 static void cmd_pyfile(struct userrec *u, int idx, char *par) {
-  char *result;
   PyObject *pobj, *pstr;
   FILE *fp;
 
