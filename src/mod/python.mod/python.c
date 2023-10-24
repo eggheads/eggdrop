@@ -63,58 +63,6 @@ static int python_expmem()
   return size;
 }
 
-int py_pubm (char *nick, char *host, char *hand, char *chan, char *text) {
-  PyObject *pArgs;
-  char buf[UHOSTLEN];
-  struct chanset_t *ch;
-  struct userrec *u;
-  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
-
-  if (!(ch = findchan_by_dname(chan))) {
-    putlog(LOG_MISC, "*", "Python: Cannot find pubm channel %s", chan);
-    return 1;
-  }
-  snprintf(buf, sizeof buf, "%s!%s", nick, host);
-  if ((u = get_user_by_host(buf))) {
-    get_user_flagrec(u, &fr, chan);
-  }
-  if (!(pArgs = Py_BuildValue("(skkksssss)", "pubm", (unsigned long)fr.global, (unsigned long)fr.chan, (unsigned long)fr.bot, nick, host, hand, chan, text))) {
-    putlog(LOG_MISC, "*", "Python: Cannot convert pubm arguments");
-    return 1;
-  }
-  return runPythonPyArgs("eggdroppy.binds", "on_event", pArgs);
-}
-
-int py_join (char *nick, char *host, char *hand, char *chan) {
-  PyObject *pArgs;
-  char buf[UHOSTLEN];
-  struct chanset_t *ch;
-  struct userrec *u;
-  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
-
-  if (!(ch = findchan_by_dname(chan))) {
-    putlog(LOG_MISC, "*", "Python: Cannot find pubm channel %s", chan);
-    return 1;
-  }
-  snprintf(buf, sizeof buf, "%s!%s", nick, host);
-  if ((u = get_user_by_host(buf))) {
-    get_user_flagrec(u, &fr, chan);
-  }
-  if (!(pArgs = Py_BuildValue("(skkkssss)", "join", (unsigned long)fr.global, (unsigned long)fr.chan, (unsigned long)fr.bot, nick, host, hand, chan))) {
-    putlog(LOG_MISC, "*", "Python: Cannot convert join arguments");
-    return 1;
-  }
-  return runPythonPyArgs("eggdroppy.binds", "on_event", pArgs);
-}
-
-int py_msgm (char *nick, char *hand, char *host, char *text) {
-//  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
-  char *argv[] = {"msgm", nick, host, hand, text};
-
-  runPythonArgs("eggdroppy.binds", "on_event", ARRAYCOUNT(argv), argv);
-  return 0;
-}
-
 static void init_python() {
   PyObject *pmodule;
   wchar_t *program = Py_DecodeLocale("eggdrop", NULL);
@@ -133,7 +81,7 @@ static void init_python() {
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
     PyErr_Print();
-    fprintf(stderr, "Error: could not import module 'spam'\n");
+    fprintf(stderr, "Error: could not import module 'eggdrop'\n");
   }
 
   pirp = PyImport_AddModule("__main__");
