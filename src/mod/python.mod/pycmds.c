@@ -22,6 +22,8 @@ static struct py_bind *py_bindlist;
 
 static PyObject *EggdropError;      //create static Python Exception object
 
+static Tcl_Obj *py_to_tcl_obj(PyObject *o); // generic conversion function
+
 static PyObject *py_ircsend(PyObject *self, PyObject *args) {
   char *text;
   int queuenum;
@@ -86,6 +88,63 @@ static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *co
   return TCL_OK;
 }
 
+static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
+  int max;
+  const char *str;
+  Tcl_Obj *strobj;
+  PyObject *result;
+
+  if (!PyArg_ParseTuple(args, "s", &str)) {
+    PyErr_SetString(PyExc_TypeError, "Argument is not a unicode string");
+    return NULL;
+  }
+  strobj = Tcl_NewStringObj(str, -1);
+  Tcl_IncrRefCount(strobj);
+  if (Tcl_ListObjLength(tclinterp, strobj, &max) != TCL_OK) {
+    Tcl_DecrRefCount(strobj);
+    PyErr_SetString(EggdropError, "Supplied string is not a Tcl list");
+  }
+  result = PyList_New(max);
+  for (int i = 0; i < max; i++) {
+    Tcl_Obj *tclobj;
+    const char *tclstr;
+    int tclstrlen;
+
+    Tcl_ListObjIndex(tclinterp, strobj, i, &tclobj);
+    tclstr = Tcl_GetStringFromObj(tclobj, &tclstrlen);
+    PyList_SetItem(result, i, PyUnicode_DecodeUTF8(tclstr, tclstrlen, NULL));
+  }
+  Tcl_DecrRefCount(strobj);
+  return result;
+}
+
+static PyObject *py_parse_tcl_dict(PyObject *self, PyObject *args) {
+  int done;
+  const char *str;
+  Tcl_Obj *strobj, *key, *value;
+  Tcl_DictSearch search;
+  PyObject *result;
+
+  if (!PyArg_ParseTuple(args, "s", &str)) {
+    PyErr_SetString(PyExc_TypeError, "Argument is not a unicode string");
+    return NULL;
+  }
+  strobj = Tcl_NewStringObj(str, -1);
+  if (Tcl_DictObjFirst(tclinterp, strobj, &search, &key, &value, &done) != TCL_OK) {
+    PyErr_SetString(EggdropError, "Supplied string is not a Tcl dictionary");
+  }
+  result = PyDict_New();
+  while (!done) {
+    int len;
+    const char *valstr = Tcl_GetStringFromObj(value, &len);
+    PyObject *pyval = PyUnicode_DecodeUTF8(valstr, len, NULL);
+    PyDict_SetItemString(result, Tcl_GetString(key), pyval);
+    Tcl_DictObjNext(&search, &key, &value, &done);
+  }
+  Tcl_DictObjDone(&search);
+  return result;
+}
+
 static PyObject *py_bind(PyObject *self, PyObject *args) {
   PyObject *callback;
   char *bindtype, *mask, *flags;
@@ -124,6 +183,59 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+static Tcl_Obj *py_list_to_tcl_obj(PyObject *o) {
+  int max = PyList_GET_SIZE(o);
+  Tcl_Obj *result = Tcl_NewListObj(0, NULL);
+
+  for (int i = 0; i < max; i++) {
+    Tcl_ListObjAppendElement(tclinterp, result, py_to_tcl_obj(PyList_GET_ITEM(o, i)));
+  }
+  return result;
+}
+
+static Tcl_Obj *py_tuple_to_tcl_obj(PyObject *o) {
+  int max = PyTuple_GET_SIZE(o);
+  Tcl_Obj *result = Tcl_NewListObj(0, NULL);
+
+  for (int i = 0; i < max; i++) {
+    Tcl_ListObjAppendElement(tclinterp, result, py_to_tcl_obj(PyTuple_GET_ITEM(o, i)));
+  }
+  return result;
+}
+
+static Tcl_Obj *py_dict_to_tcl_obj(PyObject *o) {
+  int max;
+  Tcl_Obj *result = Tcl_NewDictObj();
+
+  /* operate on list of (key, value) tuples instead */
+  o = PyDict_Items(o);
+  max = PyList_GET_SIZE(o);
+  for (int i = 0; i < max; i++) {
+    PyObject *key = PyTuple_GET_ITEM(PyList_GET_ITEM(o, i), 0);
+    PyObject *val = PyTuple_GET_ITEM(PyList_GET_ITEM(o, i), 1);
+    Tcl_Obj *keyobj = py_to_tcl_obj(key);
+    Tcl_Obj *valobj = py_to_tcl_obj(val);
+    Tcl_DictObjPut(tclinterp, result, keyobj, valobj);
+  }
+  return result;
+}
+
+static Tcl_Obj *py_str_to_tcl_obj(PyObject *o) {
+    return Tcl_NewStringObj(PyUnicode_AsUTF8(o), -1);
+}
+
+static Tcl_Obj *py_to_tcl_obj(PyObject *o) {
+  if (PyList_Check(o)) {
+    return py_list_to_tcl_obj(o);
+  } else if (PyDict_Check(o)) {
+    return py_dict_to_tcl_obj(o);
+  } else if (PyTuple_Check(o)) {
+    return py_tuple_to_tcl_obj(o);
+  } else {
+    return py_str_to_tcl_obj(o);
+  }
+}
+
 static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwargs) {
   TclFunc *tf = (TclFunc *)self;
   Py_ssize_t argc = PyTuple_Size(args);
@@ -134,7 +246,8 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
   Tcl_DStringInit(&ds);
   Tcl_DStringAppendElement(&ds, tf->tclcmdname);
   for (int i = 0; i < argc; i++) {
-    Tcl_DStringAppendElement(&ds, PyUnicode_AsUTF8(PyTuple_GetItem(args, i)));
+    PyObject *o = PyTuple_GetItem(args, i);
+    Tcl_DStringAppendElement(&ds, Tcl_GetString(py_to_tcl_obj(o)));
   }
   retcode = Tcl_Eval(tclinterp, Tcl_DStringValue(&ds));
 
@@ -171,19 +284,27 @@ static PyMethodDef MyPyMethods[] = {
     {"ircsend", py_ircsend, METH_VARARGS, "Send message to server"},
     {"bind", py_bind, METH_VARARGS, "register an eggdrop python bind"},
     {"findircuser", py_findircuser, METH_VARARGS, "find an IRC user by nickname and optional channel"},
-    {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
-    // TODO: __dict__ with all valid Tcl commands
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
+static PyMethodDef EggTclMethods[] = {
+    // TODO: __dict__ with all valid Tcl commands?
+    {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
+    {"parse_tcl_list", py_parse_tcl_list, METH_VARARGS, "convert a Tcl list string to a Python list"},
+    {"parse_tcl_dict", py_parse_tcl_dict, METH_VARARGS, "convert a Tcl dict string to a Python dict"},
+    {NULL, NULL, 0, NULL}
+};  
+
 static struct PyModuleDef eggdrop = {
     PyModuleDef_HEAD_INIT,
-    "eggdrop",   /* name of module */
+    "eggdrop",      /* name of module */
     0,              /* module documentation, may be NULL */
     -1,             /* size of per-interpreter state of the module,
                     or -1 if the module keeps state in global variables. */
     MyPyMethods
 };
+
+static struct PyModuleDef eggdrop_tcl = { PyModuleDef_HEAD_INIT, "eggdrop.tcl", NULL, -1, EggTclMethods };
 
 static PyTypeObject TclFuncType = {
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -197,7 +318,7 @@ static PyTypeObject TclFuncType = {
 };
 
 PyMODINIT_FUNC PyInit_eggdrop(void) {
-  PyObject *pymodobj;
+  PyObject *pymodobj, *eggtclmodobj, *pymoddict;
 
   pymodobj = PyModule_Create(&eggdrop);
   if (pymodobj == NULL)
@@ -211,6 +332,15 @@ PyMODINIT_FUNC PyInit_eggdrop(void) {
     Py_DECREF(pymodobj);
     return NULL;
   }
+  eggtclmodobj = PyModule_Create(&eggdrop_tcl);
+  PyModule_AddObject(pymodobj, "tcl", eggtclmodobj);
+
+  pymoddict = PyModule_GetDict(pymodobj);
+  PyDict_SetItemString(pymoddict, "tcl", eggtclmodobj);
+
+  pymoddict = PyImport_GetModuleDict();
+  PyDict_SetItemString(pymoddict, "eggdrop.tcl", eggtclmodobj);
+
   PyType_Ready(&TclFuncType);
 
   return pymodobj;
