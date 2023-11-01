@@ -15,10 +15,10 @@ static: ../python.o
 modules: ../../../python.$(MOD_EXT)
 
 ../python.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(PYTHON_CFLAGS) -DMAKING_MODS -c $(srcdir)/python.c && mv -f python.o ../
+	$(CC) $(PYTHON_CFLAGS) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/python.c && mv -f python.o ../
 
 ../../../python.$(MOD_EXT): ../python.o
-	$(LD) $(CFLAGS) -o ../../../python.$(MOD_EXT) ../python.o $(PYTHON_CFLAGS) $(PYTHON_LDFLAGS) $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../python.$(MOD_EXT)
+	$(LD) $(PYTHON_CFLAGS) $(CFLAGS) -o ../../../python.$(MOD_EXT) ../python.o $(PYTHON_LDFLAGS) $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../python.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/python.c -MT ../python.o > .depend
