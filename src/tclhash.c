@@ -51,6 +51,7 @@ static int builtin_cron STDVAR;
 static int builtin_char STDVAR;
 static int builtin_chpt STDVAR;
 static int builtin_chjn STDVAR;
+static int builtin_evnt STDVAR;
 static int builtin_idxchar STDVAR;
 static int builtin_charidx STDVAR;
 static int builtin_chat STDVAR;
@@ -235,7 +236,7 @@ void init_bind(void)
   H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
-  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
+  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_evnt);
   H_die = add_bind_table("die", HT_STACKABLE, builtin_char);
   H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
 #ifdef TLS
@@ -590,6 +591,21 @@ static int builtin_chjn STDVAR
   CHECKVALIDITY(builtin_chjn);
   F(argv[1], argv[2], atoi(argv[3]), argv[4][0],
     argv[4][0] ? atoi(argv[4] + 1) : 0, argv[5]);
+  return TCL_OK;
+}
+
+static int builtin_evnt STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(2, 3, " event ?arg?");
+
+  CHECKVALIDITY(builtin_evnt);
+  if (argc==2) {
+    F(argv[1]);
+  } else {
+    F(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 
@@ -1210,6 +1226,14 @@ void check_tcl_event(const char *event)
   Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
   check_tcl_bind(H_event, event, 0, " $::_event1",
                  MATCH_EXACT | BIND_STACKABLE);
+}
+
+void check_tcl_event_arg(const char *event, const char *arg)
+{
+    Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "_event2", (char *) arg, TCL_GLOBAL_ONLY);
+    check_tcl_bind(H_event, event, 0, " $::_event1 $::_event2",
+                   MATCH_EXACT | BIND_STACKABLE);
 }
 
 int check_tcl_signal(const char *event)

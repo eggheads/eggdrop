@@ -646,9 +646,13 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_callevent STDVAR
 {
-  BADARGS(2, 2, " event");
+  BADARGS(2, 3, " event ?arg?");
 
-  check_tcl_event(argv[1]);
+  if (argc == 2) {
+    check_tcl_event(argv[1]);
+  } else {
+    check_tcl_event_arg(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 
