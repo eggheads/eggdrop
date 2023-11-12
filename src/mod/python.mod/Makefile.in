@@ -43,4 +43,5 @@ distclean: clean
  ../../../src/mod/modvals.h ../../../src/tandem.h \
  ../../../src/mod/irc.mod/irc.h ../../../src/mod/server.mod/server.h \
  ../../../src/mod/python.mod/python.h \
+ ../../../src/mod/python.mod/tclpython.c \
  ../../../src/mod/python.mod/pycmds.c

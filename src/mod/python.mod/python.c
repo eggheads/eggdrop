@@ -39,6 +39,7 @@
 #include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
 #include "src/mod/python.mod/python.h"
+#include "src/mod/python.mod/tclpython.c"
 
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
@@ -287,6 +288,7 @@ static char *python_close()
   Context;
   kill_python();
   rem_builtins(H_dcc, mydcc);
+  rem_tcl_commands(my_tcl_cmds);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -330,5 +332,6 @@ char *python_start(Function *global_funcs)
 
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
+  add_tcl_commands(my_tcl_cmds);
   return NULL;
 }
