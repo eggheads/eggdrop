@@ -24,9 +24,29 @@ To load a python script from your config file, place the .py file in the scripts
 Partyline Commands
 ------------------
 
-You can run a python command from the partyline with the .py command, such as::
+^^^^^^^^^^^^^^^^^^^
+python <expression>
+^^^^^^^^^^^^^^^^^^^
 
-  .py print('Hello world!')
+You can run a python command from the partyline with the .python command, such as::
+
+  .python print('Hello world!')
+
+^^^^^^^^^^^^^
+.binds python
+^^^^^^^^^^^^^
+
+The python module extends the core ``.binds`` command by adding a ``python`` mask. This command will list all binds for python scripts.
+
+------------
+Tcl Commands
+------------
+
+^^^^^^^^^^^^^^^^^^^^^^^
+pysource <path/to/file>
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``pysource`` command is analgous to the Tcl ``source`` command, except that it loads a Python script into Eggdrop instead of a Tcl script.
 
 ----------------
 Config variables
@@ -45,5 +65,34 @@ Eggdrop Python Commands
 -----------------------
 
   The Python module is built to use the existing core Tcl commands integrated into Eggdrop via the ``eggdrop`` module. To use 
+
+--------------------------------
+Writing an Eggdrop Python script
+--------------------------------
+
+  This is how to write a python script for Eggdrop. 
+
+^^^^^^^^^^^^^^
+Header section
+^^^^^^^^^^^^^^
+
+An Eggdrop python script requires you to import X Y and Z, in this format. 
+
+^^^^^^^^^^^^
+Code Section
+^^^^^^^^^^^^
+
+Normal python code works here. To run a command from the Eggdrop Tcl library, use this format.
+
+Use this format all over.
+
+-------------------------------------
+Writing a module for use with Eggdrop
+-------------------------------------
+
+This is how you import a module for use with an egg python script.
+
+
+
 
 Copyright (C) 2000 - 2023 Eggheads Development Team
