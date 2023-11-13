@@ -37,6 +37,24 @@ static PyObject *py_ircsend(PyObject *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+static void cmd_python(struct userrec *u, int idx, char *par) {
+  PyObject *pobj, *pstr;
+
+  PyErr_Clear();
+
+  pobj = PyRun_String(par, Py_eval_input, pglobals, pglobals);
+  if (pobj) {
+    pstr = PyObject_Str(pobj);
+
+    dprintf(idx, "%s\n", PyUnicode_AsUTF8(pstr));
+    Py_DECREF(pstr);
+    Py_DECREF(pobj);
+  } else if (PyErr_Occurred()) {
+    PyErr_Print();
+  }
+  return;
+}
+
 static PyObject *make_ircuser_dict(memberlist *m) {
   PyObject *result = PyDict_New();
   PyDict_SetItemString(result, "nick", PyUnicode_FromString(m->nick));
@@ -294,6 +312,12 @@ static PyMethodDef EggTclMethods[] = {
     {"parse_tcl_dict", py_parse_tcl_dict, METH_VARARGS, "convert a Tcl dict string to a Python dict"},
     {NULL, NULL, 0, NULL}
 };  
+
+static cmd_t mydcc[] = {
+  /* command  flags  function     tcl-name */
+  {"python",    "",     (IntFunc) cmd_python,   NULL},
+  {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
+};
 
 static struct PyModuleDef eggdrop = {
     PyModuleDef_HEAD_INIT,

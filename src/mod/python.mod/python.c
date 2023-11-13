@@ -163,100 +163,6 @@ int runPythonArgs(const char *script, const char *method, int argc, char **argv)
   return runPythonPyArgs(script, method, pArgs);
 }
 
-static void runPython(char *par) {
-  int maxargc = 16;
-  char **argv = NULL;
-  char *script = NULL, *method = NULL;
-  int argvidx = -2;
-  char *word;
-
-  if (!argv) {
-    argv = nmalloc(maxargc * sizeof *argv);
-  }
-  for (word = strtok(par, " "); word; word = strtok(NULL, " ")) {
-    if (argvidx == -2) {
-      script = word;
-    } else if (argvidx == -1) {
-      method = word;
-    } else {
-      if (argvidx >= maxargc) {
-        maxargc += 16;
-        argv = nrealloc(argv, maxargc * sizeof *argv);
-      }
-      argv[argvidx] = word;
-    }
-    argvidx++;
-  }
-  if (argvidx < 0) {
-    fprintf(stderr, "Missing script/method for runPython\n");
-    return;
-  }
-  runPythonArgs(script, method, argvidx, argv);
-}
-
-static void cmd_python(struct userrec *u, int idx, char *par) {
-  PyErr_Clear();
-  PyRun_String(par, Py_file_input, pglobals, pglobals);
-  if (PyErr_Occurred()) {
-    PyErr_Print();
-  }
-  return;
-}
-
-static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
-  PyObject *pobj, *pstr;
-
-  PyErr_Clear();
-
-  pobj = PyRun_String(par, Py_eval_input, pglobals, pglobals);
-  if (pobj) {
-    pstr = PyObject_Str(pobj);
-
-    dprintf(idx, "%s\n", PyUnicode_AsUTF8(pstr));
-    Py_DECREF(pstr);
-    Py_DECREF(pobj);
-  } else if (PyErr_Occurred()) {
-    PyErr_Print();
-  }
-  return;
-}
-
-static void cmd_pyfile(struct userrec *u, int idx, char *par) {
-  FILE *fp;
-  PyObject *pobj, *pstr;
-
-  if (!par[0]) {
-    dprintf(idx, "Usage: pyfile <file>\n");
-    return;
-  }
-  if (!(fp = fopen(par, "r"))) {
-    dprintf(idx, "Error: could not open file %s: %s\n", par, strerror(errno));
-    return;
-  }
-  PyErr_Clear();
-  pobj = PyRun_FileEx(fp, par, Py_file_input, pglobals, pglobals, 1);
-  if (pobj) {
-    pstr = PyObject_Str(pobj);
-
-    dprintf(idx, "%s\n", PyUnicode_AsUTF8(pstr));
-    Py_DECREF(pstr);
-    Py_DECREF(pobj);
-  } else if (PyErr_Occurred()) {
-    PyErr_Print();
-  }
-  return;
-}
-
-static void cmd_pysource(struct userrec *u, int idx, char *par) {
-  if (!par[0]) {
-    dprintf(idx, "Usage: pysource <file> <method> [args]\n");
-    return;
-  }
-  runPython(par);
-
-  return;
-}
-
 /* A report on the module status.
  *
  * details is either 0 or 1:
@@ -272,15 +178,6 @@ static void python_report(int idx, int details)
             (size != 1) ? "s" : "");
   }
 }
-
-static cmd_t mydcc[] = {
-  /* command  flags  function     tcl-name */
-  {"pysource",  "",     (IntFunc) cmd_pysource, NULL},
-  {"python",    "",     (IntFunc) cmd_python,   NULL},
-  {"pyexpr",    "",     (IntFunc) cmd_pyexpr,   NULL},
-  {"pyfile",    "",     (IntFunc) cmd_pyfile,   NULL},
-  {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
-};
 
 static char *python_close()
 {
