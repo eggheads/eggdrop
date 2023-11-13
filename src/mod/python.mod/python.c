@@ -39,14 +39,14 @@
 #include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
 #include "src/mod/python.mod/python.h"
-#include "src/mod/python.mod/tclpython.c"
+
+//static PyObject *pymodobj;
+static PyObject *pirp, *pglobals;
 
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
 #include "src/mod/python.mod/pycmds.c"
-
-//static PyObject *pymodobj;
-static PyObject *pirp, *pglobals;
+#include "src/mod/python.mod/tclpython.c"
 
 //extern p_tcl_bind_list H_pubm;
 
@@ -222,8 +222,8 @@ static void cmd_pyexpr(struct userrec *u, int idx, char *par) {
 }
 
 static void cmd_pyfile(struct userrec *u, int idx, char *par) {
-  PyObject *pobj, *pstr;
   FILE *fp;
+  PyObject *pobj, *pstr;
 
   if (!par[0]) {
     dprintf(idx, "Usage: pyfile <file>\n");
@@ -233,7 +233,6 @@ static void cmd_pyfile(struct userrec *u, int idx, char *par) {
     dprintf(idx, "Error: could not open file %s: %s\n", par, strerror(errno));
     return;
   }
-
   PyErr_Clear();
   pobj = PyRun_FileEx(fp, par, Py_file_input, pglobals, pglobals, 1);
   if (pobj) {

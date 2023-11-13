@@ -25,8 +25,24 @@ static int tcl_pysource STDVAR
 {
   BADARGS(2, 2, " script");
 
-  putlog(LOG_MISC, "*", "mebbe trying to load %s", argv[1]);
-//  PyImport_ImportModule(argv[1]);
+  FILE *fp;
+  PyObject *pobj, *pstr;
+
+  if (!(fp = fopen(argv[1], "r"))) {
+    Tcl_AppendResult(irp, "Error: could not open file ", argv[1],": ", strerror(errno), NULL);
+    return TCL_ERROR;
+  }
+  PyErr_Clear();
+  pobj = PyRun_FileEx(fp, argv[1], Py_file_input, pglobals, pglobals, 1);
+  if (pobj) {
+    pstr = PyObject_Str(pobj);
+    Tcl_AppendResult(irp, PyUnicode_AsUTF8(pstr), NULL);
+    Py_DECREF(pstr);
+    Py_DECREF(pobj);
+  } else if (PyErr_Occurred()) {
+    PyErr_Print();
+  }
+  return TCL_OK;
 }
 
 static tcl_cmds my_tcl_cmds[] = {
