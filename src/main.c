@@ -1001,7 +1001,7 @@ static void init_random(void) {
 
 int main(int arg_c, char **arg_v)
 {
-  int i, j,  xx;
+  int i, j, xx;
   char s[25];
   FILE *f;
   struct sigaction sv;
