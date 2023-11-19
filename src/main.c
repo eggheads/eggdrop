@@ -1136,12 +1136,13 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channel%s, %d user%s.",
-         botnetnick, i, (i == 1) ? "" : "s", count_users(userlist), (count_users(userlist) == 1) ? "" : "s");
+  putlog(LOG_MISC, "*", "=== %s: %d channel%s, %d user%s.", botnetnick, i,
+         (i == 1) ? "" : "s", count_users(userlist),
+         (count_users(userlist) == 1) ? "" : "s");
   if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
-    printf("\n");
-    printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
-    printf("      without Chewie\n");
+    printf("\n"
+           "NOTE: The -n flag is no longer used, it is as effective as Han\n"
+           "      without Chewie\n");
   }
 #ifdef TLS
   ssl_init();
