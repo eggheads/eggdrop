@@ -891,7 +891,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 {
   struct timeval t;
   fd_set fdr, fdw, fde;
-  int i, x, maxfd_r, maxfd_w, maxfd_e;
+  int i, x = 0, maxfd_r, maxfd_w, maxfd_e;
   int grab = 511, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int maxfd;
@@ -900,33 +900,47 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct dns_thread_node *dtn, *dtn_prev;
 #endif
 
-  maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
+  /* For each sock, first check for SSL_pending(), the check for select() */
+#ifdef TLS
+  if ((x == 0) && !tclonly)
+      for (i = 0; i < slistmax; i++)
+        if (!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL)) && slist[i].ssl && SSL_pending(slist[i].ssl)) {
+          x = i;
+          break;
+        }
+  if (!x) {
+#endif
+
+    maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
 #ifdef EGG_TDNS
-  for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
-    fd = dtn->fildes[0];
-    FD_SET(fd, &fdr);
-    if (fd > maxfd_r)
-      maxfd_r = fd;
+    for (dtn = dns_thread_head->next; dtn; dtn = dtn->next) {
+      fd = dtn->fildes[0];
+      FD_SET(fd, &fdr);
+      if (fd > maxfd_r)
+        maxfd_r = fd;
+    }
+#endif
+    maxfd_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
+    maxfd_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
+
+    maxfd = maxfd_r;
+    if (maxfd_w > maxfd)
+      maxfd = maxfd_w;
+    if (maxfd_e > maxfd)
+      maxfd = maxfd_e;
+
+    /* select() may modify the timeval argument - copy it */
+    t.tv_sec = td->blocktime.tv_sec;
+    t.tv_usec = td->blocktime.tv_usec;
+
+    x = select((SELECT_TYPE_ARG1) maxfd + 1,
+               SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
+               SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
+               SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
+               SELECT_TYPE_ARG5 &t);
+#ifdef TLS
   }
 #endif
-  maxfd_w = preparefdset(&fdw, slist, slistmax, 1, TCL_WRITABLE);
-  maxfd_e = preparefdset(&fde, slist, slistmax, 1, TCL_EXCEPTION);
-
-  maxfd = maxfd_r;
-  if (maxfd_w > maxfd)
-    maxfd = maxfd_w;
-  if (maxfd_e > maxfd)
-    maxfd = maxfd_e;
-
-  /* select() may modify the timeval argument - copy it */
-  t.tv_sec = td->blocktime.tv_sec;
-  t.tv_usec = td->blocktime.tv_usec;
-
-  x = select((SELECT_TYPE_ARG1) maxfd + 1,
-             SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
-             SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
-             SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
-             SELECT_TYPE_ARG5 &t);
   if (x == -1)
     return -2;                  /* socket error */
   if (x == 0)
