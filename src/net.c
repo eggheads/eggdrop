@@ -902,7 +902,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
   /* For each sock, first check for SSL_pending(), the check for select() */
 #ifdef TLS
-  if ((x == 0) && !tclonly)
+  if (!tclonly)
       for (i = 0; i < slistmax; i++)
         if (!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL)) && slist[i].ssl && SSL_pending(slist[i].ssl)) {
           x = i;
