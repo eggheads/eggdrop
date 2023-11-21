@@ -900,7 +900,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct dns_thread_node *dtn, *dtn_prev;
 #endif
 
-  /* For each sock, first check for SSL_pending(), the check for select() */
+  /* For each sock, first check SSL_pending(), the check select() */
 #ifdef TLS
   if (!tclonly)
       for (i = 0; i < slistmax; i++)
