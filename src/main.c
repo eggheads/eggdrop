@@ -78,6 +78,8 @@
 #  include <sys/random.h>
 #endif
 
+#include "mod/server.mod/server.h" /* RECVLINEMAX */
+
 #ifndef _POSIX_SOURCE
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
