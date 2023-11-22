@@ -892,7 +892,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct timeval t;
   fd_set fdr, fdw, fde;
   int i, x = 0, maxfd_r, maxfd_w, maxfd_e;
-  int grab = 511, tclsock = -1, events = 0;
+  int grab = RECVLINEMAX - 1, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int maxfd;
 #ifdef EGG_TDNS
