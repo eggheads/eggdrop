@@ -26,6 +26,7 @@
 
 #include "src/mod/module.h"
 
+#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
@@ -1244,9 +1245,11 @@ static void share_ufsend(int idx, char *par)
     zapfbot(idx);
   } else if (copy_to_tmp && !(f = tmpfile())) {
     putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
+    debug1("share: tmpfile(): %s", strerror(errno));
     zapfbot(idx);
   } else if (!copy_to_tmp && !(f = fopen(s, "wb"))) {
     putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
+    debug2("share: fopen(%s): %s", s, strerror(errno));
     zapfbot(idx);
   } else {
     /* Ignore longip and use botaddr, arg kept for backward compat for pre 1.8.3 */
