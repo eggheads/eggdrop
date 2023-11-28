@@ -42,7 +42,6 @@
 #  include <unistd.h>
 #endif
 #include <setjmp.h>
-#include "mod/server.mod/server.h"
 
 #ifdef TLS
 #  include <openssl/err.h>
@@ -892,7 +891,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct timeval t;
   fd_set fdr, fdw, fde;
   int i, x, maxfd_r, maxfd_w, maxfd_e;
-  int grab = 511, tclsock = -1, events = 0;
+  int grab = READMAX, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int maxfd;
 #ifdef EGG_TDNS
@@ -936,8 +935,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
         ((FD_ISSET(slist[i].sock, &fdr)) ||
 #ifdef TLS
-        (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
-         !SSL_is_init_finished(slist[i].ssl))) ||
+        (slist[i].ssl && !SSL_is_init_finished(slist[i].ssl)) ||
 #endif
         ((slist[i].sock == STDOUT) && (!backgrd) &&
          (FD_ISSET(STDIN, &fdr)))))) {
@@ -1100,7 +1098,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 
 int sockgets(char *s, int *len)
 {
-  char xx[RECVLINEMAX], *p, *px, *p2;
+  char xx[READMAX + 2], *p, *px, *p2;
   int ret, i, data = 0;
   size_t len2;
 
@@ -1126,7 +1124,7 @@ int sockgets(char *s, int *len)
             p++;
           *p2 = 0;
 
-          strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
+          strlcpy(s, socklist[i].handler.sock.inbuf, READMAX + 1);
           if (*p) {
             len2 = strlen(p) + 1;
             px = nmalloc(len2);
@@ -1142,15 +1140,15 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
-        if (socklist[i].handler.sock.inbuflen <= RECVLINEMAX-2) {
+        if (socklist[i].handler.sock.inbuflen <= READMAX) {
           *len = socklist[i].handler.sock.inbuflen;
           memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
         } else {
-          /* Split up into chunks of RECVLINEMAX-2 bytes. */
-          *len = RECVLINEMAX-2;
+          /* Split up into chunks of READMAX bytes. */
+          *len = READMAX;
           memcpy(s, socklist[i].handler.sock.inbuf, *len);
           memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
@@ -1215,17 +1213,17 @@ int sockgets(char *s, int *len)
     strcpy(socklist[ret].handler.sock.inbuf, p);
     strcat(socklist[ret].handler.sock.inbuf, xx);
     nfree(p);
-    if (strlen(socklist[ret].handler.sock.inbuf) < RECVLINEMAX) {
+    if (strlen(socklist[ret].handler.sock.inbuf) < READMAX + 2) {
       strcpy(xx, socklist[ret].handler.sock.inbuf);
       nfree(socklist[ret].handler.sock.inbuf);
       socklist[ret].handler.sock.inbuf = NULL;
       socklist[ret].handler.sock.inbuflen = 0;
     } else {
       p = socklist[ret].handler.sock.inbuf;
-      socklist[ret].handler.sock.inbuflen = strlen(p) - RECVLINEMAX-2;
+      socklist[ret].handler.sock.inbuflen = strlen(p) - READMAX;
       socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-      strcpy(socklist[ret].handler.sock.inbuf, p + RECVLINEMAX-2);
-      *(p + RECVLINEMAX-2) = 0;
+      strcpy(socklist[ret].handler.sock.inbuf, p + READMAX);
+      *(p + READMAX) = 0;
       strcpy(xx, p);
       nfree(p);
       /* (leave the rest to be post-pended later) */
@@ -1246,7 +1244,7 @@ int sockgets(char *s, int *len)
 /* if (!s[0]) strcpy(s," ");  */
   if (!data) { 
     s[0] = 0;
-    if (strlen(xx) >= RECVLINEMAX-2) {
+    if (strlen(xx) >= READMAX) {
       /* String is too long, so just insert fake \n */
       strcpy(s, xx);
       xx[0] = 0;
