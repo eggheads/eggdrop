@@ -314,7 +314,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
   OLD_CFLAGS="$CFLAGS"
-  CFLAGS+="$CFLAGS -fno-sanitize=address"
+  CFLAGS="$CFLAGS -fno-sanitize=address"
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
