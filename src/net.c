@@ -976,13 +976,26 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
-            else if (err == SSL_ERROR_SYSCALL) {
-              debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
-              putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
+            else {
+              if (err == SSL_ERROR_SYSCALL) {
+                err = ERR_get_error();
+                if (err)
+                  debug1("net: sockread(): SSL_read() error = SSL_ERROR_SYSCALL: %s", ERR_reason_error_string(err));
+                else if (errno)
+                  debug1("net: sockread(): SSL_read() error = SSL_ERROR_SYSCALL: %s", strerror(errno));
+                else
+                  /* On an unexpected EOF, versions before OpenSSL 3.0
+                   * returned SSL_ERROR_SYSCALL, nothing was added to the
+                   * error stack, and errno was 0. Since OpenSSL 3.0 the
+                   * returned error is SSL_ERROR_SSL with a meaningful error
+                   * on the error stack.
+                   */
+                  debug0("net: sockread(): SSL_read() error = SSL_ERROR_SYSCALL: unexpected EOF");
+              } else
+                debug2("net: sockread(): SSL_read() error = %s (%i)",
+                       ERR_error_string(ERR_get_error(), 0), err);
+              putlog(LOG_MISC, "*", "NET: SSL read failed. Unexpected EOF or Non-SSL connection?");
             }
-            else
-              debug2("net: sockread(): SSL_read() error = %s (%i)",
-                     ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
         } else
