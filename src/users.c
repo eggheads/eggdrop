@@ -30,15 +30,14 @@
  */
 
 #include <errno.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "main.h"
 #include "users.h"
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
-
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
