@@ -29,6 +29,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
+
 #include "main.h"
 #include "users.h"
 #include "chan.h"
@@ -698,9 +700,10 @@ int readuserfile(char *file, struct userrec **ret)
     global_invites = NULL;
   }
   lasthand[0] = 0;
-  f = fopen(file, "r");
-  if (f == NULL)
+  if (!(f = fopen(file, "r"))) {
+    debug2("users: fopen(%s): %s", file, strerror(errno));
     return 0;
+  }
   noshare = noxtra = 1;
   /* read opening comment */
   s = buf;
