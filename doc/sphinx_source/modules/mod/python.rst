@@ -48,6 +48,23 @@ pysource <path/to/file>
 
 The ``pysource`` command is analgous to the Tcl ``source`` command, except that it loads a Python script into Eggdrop instead of a Tcl script.
 
+---------------
+Python Commands
+---------------
+
+^^^^^^^^^^^^^^^^^^^^^^^
+parse_tcl_list <string>
+^^^^^^^^^^^^^^^^^^^^^^^
+
+When a python script calls a Tcl command that returns a list via the eggdrop.tcl module, the return value will be a Tcl-formatted list- also simply known as a string. The ``parse_tcl_list`` command will convert the Tcl-formatted list into a Python list, which can then freely be used within the Python script.
+
+^^^^^^^^^^^^^^^^^^^^^^^
+parse_tcl_dict <string>
+^^^^^^^^^^^^^^^^^^^^^^^
+
+When a python script calls a Tcl command that returns a dict via the eggdrop.tcl module, the return value will be a Tcl-formatted dict- also simply known as a string. The ``parse_tcl_dict`` command will c
+onvert the Tcl-formatted dict into a Python list, which can then freely be used within the Python script.
+
 ----------------
 Config variables
 ----------------
@@ -91,8 +108,6 @@ Writing a module for use with Eggdrop
 -------------------------------------
 
 This is how you import a module for use with an egg python script.
-
-
 
 
 Copyright (C) 2000 - 2023 Eggheads Development Team
