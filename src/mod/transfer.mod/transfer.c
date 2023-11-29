@@ -291,10 +291,9 @@ static void eof_dcc_send(int idx)
                   + strlen(dcc[idx].u.xfer->origname) + 1);
     sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname);
 
-    if (copy_to_tmp && (l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
-      putlog(LOG_MISC | LOG_FILES, "*", TRANSFER_FAILED_MOVE, nfn);
-    }
-    /* Only close now in case it was a tmpfile, as it's deleted upon close */
+    /* Only close now in case it was a tmpfile, as it's deleted upon close
+     * TODO: This comment could be checked after copy-to-tmp was removed
+     */
     fclose(dcc[idx].u.xfer->f);
 
     /* lookup handle */
@@ -302,17 +301,14 @@ static void eof_dcc_send(int idx)
     u = get_user_by_host(s);
     hand = u ? u->handle : "*";
 
-    /* Add to file database if not tmpfile or if copyfile succeeded */
-    if (!copy_to_tmp || !l) {
-      module_entry *fs = module_find("filesys", 0, 0);
-
-      if (fs != NULL) {
-        Function f = fs->funcs[FILESYS_ADDFILE];
-        f(dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname, hand);
-      }
-      stats_add_upload(u, dcc[idx].u.xfer->length);
-      check_tcl_sentrcvd(u, dcc[idx].nick, nfn, H_rcvd);
+    /* Add to file database */
+    module_entry *fs = module_find("filesys", 0, 0);
+    if (fs != NULL) {
+      Function f = fs->funcs[FILESYS_ADDFILE];
+      f(dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname, hand);
     }
+    stats_add_upload(u, dcc[idx].u.xfer->length);
+    check_tcl_sentrcvd(u, dcc[idx].nick, nfn, H_rcvd);
     nfree(nfn);
 
     ok = 0;
@@ -988,18 +984,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   else
     nfn++;
 
-  if (copy_to_tmp) {
-    f = tmpfile();
-    if (!f)
-      return DCCSEND_BADFN;
-    if (copyfilef(filename, f)) {
-      fclose(f);
-      return DCCSEND_FCOPY;
-    }
-  } else
-    f = fopen(filename, "r");
-
-  if (!f)
+  if (!(f = fopen(filename, "r")))
     return DCCSEND_BADFN;
 
   if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1) {

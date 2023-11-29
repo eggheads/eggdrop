@@ -392,13 +392,6 @@ static int _dcc_send(int idx, char *filename, char *nick, int resend)
            dcc[idx].nick);
     return 0;
   }
-  if (x == DCCSEND_FCOPY) {
-    dprintf(idx, "Can't make temporary copy of file!\n");
-    putlog(LOG_FILES | LOG_MISC, "*",
-           "Refused dcc %sget %s: copy to temporary location FAILED!",
-           resend ? "re" : "", filename);
-    return 0;
-  }
   nfn = strrchr(filename, '/');
   if (nfn == NULL)
     nfn = filename;

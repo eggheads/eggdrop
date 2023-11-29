@@ -1242,10 +1242,7 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (copy_to_tmp && !(f = tmpfile())) {
-    putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
-    zapfbot(idx);
-  } else if (!copy_to_tmp && !(f = fopen(s, "wb"))) {
+  } else if (!(f = fopen(s, "wb"))) {
     putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
@@ -2353,7 +2350,7 @@ char *share_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, share_table, 2, 4);
+  module_register(MODULE_NAME, share_table, 2, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
