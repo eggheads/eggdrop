@@ -2925,6 +2925,8 @@ modify args.
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+.. _tcl_binds:
+
 ^^^^^^^^^^
 Bind Types
 ^^^^^^^^^^

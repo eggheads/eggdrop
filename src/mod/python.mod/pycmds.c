@@ -302,14 +302,14 @@ static PyMethodDef MyPyMethods[] = {
     {"ircsend", py_ircsend, METH_VARARGS, "Send message to server"},
     {"bind", py_bind, METH_VARARGS, "register an eggdrop python bind"},
     {"findircuser", py_findircuser, METH_VARARGS, "find an IRC user by nickname and optional channel"},
+    {"parse_tcl_list", py_parse_tcl_list, METH_VARARGS, "convert a Tcl list string to a Python list"},
+    {"parse_tcl_dict", py_parse_tcl_dict, METH_VARARGS, "convert a Tcl dict string to a Python dict"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 static PyMethodDef EggTclMethods[] = {
     // TODO: __dict__ with all valid Tcl commands?
     {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
-    {"parse_tcl_list", py_parse_tcl_list, METH_VARARGS, "convert a Tcl list string to a Python list"},
-    {"parse_tcl_dict", py_parse_tcl_dict, METH_VARARGS, "convert a Tcl dict string to a Python dict"},
     {NULL, NULL, 0, NULL}
 };  
 

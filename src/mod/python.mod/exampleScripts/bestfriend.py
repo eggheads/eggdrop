@@ -2,11 +2,10 @@
 
 # Load bind from eggdrop, not eggdrop.tcl. Loading it from eggdrop.tcl would cause
 # the bind to call a Tcl proc, not the python method.
-from eggdrop import bind
+from eggdrop import bind, parse_tcl_list
 
 # Load any Tcl commands you want to use from the eggdrop.tcl module.
-# Note we also import the non-standard 'parse_tcl_list' 
-from eggdrop.tcl import putmsg, putlog, chanlist, parse_tcl_list
+from eggdrop.tcl import putmsg, putlog, chanlist
 
 # And now, a totally normal python module
 import random
@@ -21,7 +20,7 @@ def pickAFriend(nick, user, hand, chan, text, **kwargs):
   # into a python list. Without this, you just have a long space-separated string
   userlist = parse_tcl_list(users)
   putlog(f"This is a python list of the users: {userlist}")
-  bestFriend = random.choice(userslist)
+  bestFriend = random.choice(userlist)
   putmsg(chan, f"The first user I found was {userlist[0]}")
   putmsg(chan, f"But {bestFriend} is my new best friend!")
 

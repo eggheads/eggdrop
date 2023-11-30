@@ -2,11 +2,10 @@
 
 # Load bind from eggdrop, not eggdrop.tcl. Loading it from eggdrop.tcl would cause
 # the bind to call a Tcl proc, not the python method.
-from eggdrop import bind
+from eggdrop import bind, parse_tcl_list, parse_tcl_dict
 
 # Load any Tcl commands you want to use from the eggdrop.tcl module.
-# Note we also import the non-standard 'parse_tcl_list' 
-from eggdrop.tcl import putmsg, putlog, socklist, parse_tcl_list, parse_tcl_dict
+from eggdrop.tcl import putmsg, putlog, socklist
 
 # This is a proc that calls the putmsg Tcl command. Note that, slightly different than Tcl,
 # each argument is separated by a comma instead of just a space
@@ -18,7 +17,7 @@ def listInsecureSockets(nick, user, hand, chan, text, **kwargs):
   # convert this to a Python list using parse_tcl_list().
   socketlist = parse_tcl_list(sockets)
   # Now socklist contains a Python list of Tcl-formatted dicts (again, strings), so now we have
-  # to format each list item into a Python dict
+  # to format each list item into a Python dict using parse_tcl_dict().
   for socket in socketlist:
     socketdict = parse_tcl_dict(socket)
     i = socketdict.get("idx")
