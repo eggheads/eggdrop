@@ -61,7 +61,8 @@ static time_t lastpingcheck;    /* set when i unidle myself, cleared when
 static time_t server_online;    /* server connection time */
 static time_t server_cycle_wait;        /* seconds to wait before
                                          * re-beginning the server list */
-static char botrealname[81];    /* realname of bot */
+static char botrealname[REALNAMELEN + 1];          /* realname of bot */
+static char onlinebotrealname[sizeof botrealname]; /* online realname of bot */
 static int server_timeout;      /* server timeout for connecting */
 static struct server_list *serverlist;  /* old-style queue, still used by
                                          * server list */
@@ -1736,7 +1737,7 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
 static tcl_strings my_tcl_strings[] = {
   {"botnick",             NULL,           0,       STR_PROTECT},
   {"altnick",             altnick,        NICKMAX,           0},
-  {"realname",            botrealname,    80,                0},
+  {"realname",            botrealname,    REALNAMELEN,       0},
   {"init-server",         initserver,     120,               0},
   {"connect-server",      connectserver,  120,               0},
   {"stackable-commands",  stackablecmds,  510,               0},
@@ -2160,7 +2161,7 @@ static void server_report(int idx, int details)
 
   if (server_online) {
     dprintf(idx, "    Online as: %s%s%s (%s)\n", botname, botuserhost[0] ?
-            "!" : "", botuserhost[0] ? botuserhost : "", botrealname);
+            "!" : "", botuserhost[0] ? botuserhost : "", onlinebotrealname);
     if (nick_juped)
       dprintf(idx, "    NICK IS JUPED: %s%s\n", origbotname,
               keepnick ? " (trying)" : "");
@@ -2414,7 +2415,8 @@ char *server_start(Function *global_funcs)
   lastpingcheck = 0;
   server_online = 0;
   server_cycle_wait = 60;
-  strcpy(botrealname, "A deranged product of evil coders");
+  botrealname[0] = 0;
+  onlinebotrealname[0] = 0;
   server_timeout = 60;
   serverlist = NULL;
   cycle_time = 0;

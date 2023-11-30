@@ -1330,7 +1330,7 @@ static int got311(char *from, char *msg)
 static int gotsetname(char *from, char *msg)
 {
   fixcolon(msg);
-  strlcpy(botrealname, msg, sizeof botrealname);
+  strlcpy(onlinebotrealname, msg, sizeof onlinebotrealname);
   return 0;
 }
 
@@ -2313,9 +2313,11 @@ static void server_resolve_success(int servidx)
   dprintf(DP_MODE, "NICK %s\n", botname);
 
   rmspace(botrealname);
-  if (botrealname[0] == 0)
-    strcpy(botrealname, "/msg LamestBot hello");
-  dprintf(DP_MODE, "USER %s . . :%s\n", botuser, botrealname);
+  if (botrealname[0])
+    strcpy(onlinebotrealname, botrealname);
+  else
+    snprintf(onlinebotrealname, sizeof onlinebotrealname, "/msg %s hello", botname);
+  dprintf(DP_MODE, "USER %s . . :%s\n", botuser, onlinebotrealname);
 
   /* Wait for async result now. */
 }
