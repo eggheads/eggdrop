@@ -1523,7 +1523,7 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
-/* Got 900: RPL_LOGGEDIN, is sent when the users account name is set (whether by SASL or otherwise) */
+/* Got 900: RPL_LOGGEDIN, users account name is set (whether by SASL or otherwise) */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
