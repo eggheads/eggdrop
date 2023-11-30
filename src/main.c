@@ -631,7 +631,7 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  nowmins = time(NULL) / 60;
+  nowmins = now / 60;
   if (nowmins > lastmin) {
     memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
