@@ -159,7 +159,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (x == BIND_NOMATCH)
     return 0;
   if (x == BIND_EXEC_LOG)
-    return 2;fff
+    return 2;
 
   return 1;
 }
