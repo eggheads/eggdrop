@@ -159,7 +159,7 @@ static int check_tcl_msgm(char *cmd, char *nick, char *uhost,
   if (x == BIND_NOMATCH)
     return 0;
   if (x == BIND_EXEC_LOG)
-    return 2;
+    return 2;fff
 
   return 1;
 }
@@ -1530,7 +1530,7 @@ static int got900(char *from, char *msg)
   newsplit(&msg); /* nick!ident@host */
   newsplit(&msg); /* account */
   fixcolon(msg);
-  putlog(LOG_SERV, "RPL_LOGGEDIN: %s", msg);
+  putlog(LOG_SERV, "%s: %s", from, msg);
   return 0;
 }
 
@@ -1540,7 +1540,7 @@ static int got901(char *from, char *msg)
   newsplit(&msg); /* nick */
   newsplit(&msg); /* nick!ident@host */
   fixcolon(msg);
-  putlog(LOG_SERV, "RPL_LOGGEDOUT: %s", msg);
+  putlog(LOG_SERV, "%s: %s", from, msg);
   return 0;
 }
 
