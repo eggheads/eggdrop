@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Setting Up Eggdrop &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Setting Up Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Common First Steps" href="firststeps.html" />
     <link rel="prev" title="Patching Eggdrop" href="../using/patch.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../using/patch.html" title="Patching Eggdrop"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
@@ -64,7 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Setting Up Eggdrop</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
@@ -78,14 +74,16 @@
 <li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -106,11 +104,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="setting-up-eggdrop">
-<h1>Setting Up Eggdrop<a class="headerlink" href="#setting-up-eggdrop" title="Permalink to this headline">¶</a></h1>
+  <section id="setting-up-eggdrop">
+<h1>Setting Up Eggdrop<a class="headerlink" href="#setting-up-eggdrop" title="Permalink to this heading">¶</a></h1>
 <p><em>This guide was based off perhaps the most helpful Eggdrop website ever written, egghelp.org by slennox. As happens with life, slennox has moved on and no longer updates it, but the information here is still incredibly useful. We have updated his setup page here and hope it will continue to prove useful to our users</em></p>
-<div class="section" id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">¶</a></h2>
 <p>Make sure Tcl AND it’s dev packages are installed on your system. On Debian-based systems, this is done with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">tcl</span> <span class="n">tcl</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
@@ -119,60 +117,60 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openssl</span> <span class="n">libssl</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="the-super-short-version">
-<h2>The super-short version<a class="headerlink" href="#the-super-short-version" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="the-super-short-version">
+<h2>The super-short version<a class="headerlink" href="#the-super-short-version" title="Permalink to this heading">¶</a></h2>
 <p>You can read the <a class="reference internal" href="#installation">Installation</a> section for a more detailed explanation of these steps.</p>
 <ol class="arabic simple">
-<li>Download the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.9.1.tar.gz">latest stable Eggdrop release</a> to your shell via FTP, or simply type <code class="docutils literal notranslate"><span class="pre">wget</span> <span class="pre">geteggdrop.com</span> <span class="pre">-O</span> <span class="pre">eggdrop-1.9.1.tar.gz</span></code></li>
-<li>From the commadline of your shell, type <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.1.tar.gz</span></code></li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.9.1</span></code></li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code></li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">config</span></code></li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">make</span></code></li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~/eggdrop</span></code></li>
-<li>For a quick start, edit the eggdrop-basic.conf file. To take advantage of all Eggdrop’s features, we recommend using eggdrop.conf instead. It is also a good idea to rename the file to something easy to remember and specific to your bot, like botnick.conf.</li>
-<li>Type ./eggdrop -m &lt;config file&gt;</li>
+<li><p>Download the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/stable/eggdrop-1.9.5.tar.gz">latest stable Eggdrop release</a> to your shell via FTP, or simply type <code class="docutils literal notranslate"><span class="pre">wget</span> <span class="pre">geteggdrop.com</span> <span class="pre">-O</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code></p></li>
+<li><p>From the commadline of your shell, type <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code></p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.9.5</span></code></p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code></p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">config</span></code></p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span></code></p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~/eggdrop</span></code></p></li>
+<li><p>For a quick start, edit the eggdrop-basic.conf file. To take advantage of all Eggdrop’s features, we recommend using eggdrop.conf instead. It is also a good idea to rename the file to something easy to remember and specific to your bot, like botnick.conf.</p></li>
+<li><p>Type ./eggdrop -m &lt;config file&gt;</p></li>
 </ol>
-</div>
-<div class="section" id="getting-the-source">
-<h2>Getting the source<a class="headerlink" href="#getting-the-source" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="history">
-<h3>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="getting-the-source">
+<h2>Getting the source<a class="headerlink" href="#getting-the-source" title="Permalink to this heading">¶</a></h2>
+<section id="history">
+<h3>History<a class="headerlink" href="#history" title="Permalink to this heading">¶</a></h3>
 <p>The current supported version of Eggdrop is the 1.9.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.</p>
-<p>The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you’re just starting out with Eggdrop, you should use 1.9.1</p>
+<p>The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you’re just starting out with Eggdrop, you should use 1.9.5</p>
 <p>Prior to that, the 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. 1.6.21, which is now over 10 years old, was the last release of the 1.6 series and is still used by users who have become comfortable with that version and may have spent much time applying their own modifications to make it work the way they want, and therefore don’t wish to move to a newer version. The majority of Tcl scripts out there were written for 1.6 bots, but those scripts usually work on 1.8 and 1.9 bots as well.</p>
-<p>The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the <a class="reference external" href="https://github.com/issues">Eggheads GitHub issues page.</a></p>
-</div>
-<div class="section" id="download-locations">
-<h3>Download locations<a class="headerlink" href="#download-locations" title="Permalink to this headline">¶</a></h3>
-<p>The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.1 source, for example, would be named eggdrop-1.9.1.tar.gz.</p>
-<p><a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/">The Eggheads FTP</a> is a repository for the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop1.9.1.tar.gz">current</a> version of Eggdrop, as well as the most current development snapshot and previous stable releases.</p>
+<p>The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the <a class="reference external" href="https://github.com/eggheads/eggdrop/issues">Eggheads GitHub issues page.</a></p>
+</section>
+<section id="download-locations">
+<h3>Download locations<a class="headerlink" href="#download-locations" title="Permalink to this heading">¶</a></h3>
+<p>The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.5 source, for example, would be named eggdrop-1.9.5.tar.gz.</p>
+<p><a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/">The Eggheads FTP</a> is a repository for the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop1.9.5.gz">current</a> version of Eggdrop, as well as the most current development snapshot and previous stable releases.</p>
 <p>Eggdrop also maintains a <a class="reference external" href="https://github.com/eggheads/eggdrop">GitHub page</a> where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/eggheads/eggdrop.git</span></code>, then <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop</span></code>. This gives you the development version. To switch to the most recent stable version, type <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">stable/1.9</span></code>. You can then skip to step 4 in the Installation section below.</p>
-</div>
-</div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <p>Installing Eggdrop is a relatively simple process provided your shell has the required tools for successful compilation. On most commercial shell accounts which allow Eggdrop bots you won’t have any problems with installation, but on some private boxes or a shell on your ISP you may experience errors during compilation.</p>
-<p>Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing eggdrop-1.9.1.tar.gz, so just change the numbers if you are installing another version.</p>
+<p>Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing eggdrop-1.9.5.tar.gz, so just change the numbers if you are installing another version.</p>
 <ol class="arabic simple">
-<li>Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.1.tar.gz">eggdrop-1.9.1.tar.gz</a> file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell’s FTP client, git, wget, or curl. You don’t need to put the .tar.gz file in its own directory (it’ll be done automatically in the next step).</li>
-<li>SSH to the shell (if you haven’t already), and type <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.1.tar.gz</span></code> (if this doesn’t work, try <code class="docutils literal notranslate"><span class="pre">gunzip</span> <span class="pre">eggdrop-1.9.1.tar.gz</span></code> then <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xvf</span> <span class="pre">eggdrop-1.9.1.tar</span></code>). This will extract the Eggdrop source into its installation directory, named ‘eggdrop-1.9.1’.</li>
-<li>Type cd eggdrop-1.9.1 to switch to the directory the Eggdrop source was extracted to.</li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code> (that’s a period followed by a slash followed by the word ‘configure’).  This makes sure the shell has all the right tools for compiling Eggdrop, and helps Eggdrop figure out how to compile on the shell.</li>
-<li>When configure is done, type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">config</span></code>. This sets up which modules are to be compiled. For a more efficient installation, you can use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">iconfig</span></code> to select the modules to compile, but if you’re not sure just use make config.</li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">make</span></code>. This compiles the Eggdrop. The process takes a brief moment on fast systems, longer on slow systems.</li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span> <span class="pre">DEST=~/botdir</span></code>. This will install Eggdrop into a directory named ‘botdir’ in your home directory. You can change ‘botdir’ to anything you like. Note that in some cases you may need to specify the full path, e.g. <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span> <span class="pre">DEST=/home/cooldude/botdir</span></code>, using the ~ character in make install won’t always work. You can get the full path by typing <code class="docutils literal notranslate"><span class="pre">pwd</span></code>.</li>
-<li>You can safely delete the installation directory named ‘eggdrop-1.9.1’ (to do this, type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~</span></code> then <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">eggdrop-1.9.1</span></code>) that was created previously, although some people may find it handy to keep that directory for performing additional or future installations of the same version without recompiling.</li>
+<li><p>Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.5.gz">eggdrop-1.9.5.tar.gz</a> file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell’s FTP client, git, wget, or curl. You don’t need to put the .tar.gz file in its own directory (it’ll be done automatically in the next step).</p></li>
+<li><p>SSH to the shell (if you haven’t already), and type <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code> (if this doesn’t work, try <code class="docutils literal notranslate"><span class="pre">gunzip</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code> then <code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xvf</span> <span class="pre">eggdrop-1.9.5.tar</span></code>). This will extract the Eggdrop source into its installation directory, named ‘eggdrop-1.9.5’.</p></li>
+<li><p>Type cd eggdrop-1.9.5 switch to the directory the Eggdrop source was extracted to.</p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code> (that’s a period followed by a slash followed by the word ‘configure’).  This makes sure the shell has all the right tools for compiling Eggdrop, and helps Eggdrop figure out how to compile on the shell.</p></li>
+<li><p>When configure is done, type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">config</span></code>. This sets up which modules are to be compiled. For a more efficient installation, you can use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">iconfig</span></code> to select the modules to compile, but if you’re not sure just use make config.</p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span></code>. This compiles the Eggdrop. The process takes a brief moment on fast systems, longer on slow systems.</p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span> <span class="pre">DEST=~/botdir</span></code>. This will install Eggdrop into a directory named ‘botdir’ in your home directory. You can change ‘botdir’ to anything you like. Note that in some cases you may need to specify the full path, e.g. <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span> <span class="pre">DEST=/home/cooldude/botdir</span></code>, using the ~ character in make install won’t always work. You can get the full path by typing <code class="docutils literal notranslate"><span class="pre">pwd</span></code>.</p></li>
+<li><p>You can safely delete the installation directory named ‘eggdrop-1.9.5’ (to do this, type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~</span></code> then <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">eggdrop-1.9.5</span></code>) that was created previously, although some people may find it handy to keep that directory for performing additional or future installations of the same version without recompiling.</p></li>
 </ol>
 <p>That’s it! Eggdrop is now installed into its own directory on the shell. It’s time to edit the configuration files to make Eggdrop work the way you want it to.</p>
-</div>
-<div class="section" id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h2>
 <p>You will need to edit the configuration file before you can start up your Eggdrop. You can find the example configuration file in the directory you extracted the Eggdrop source to, under the name ‘eggdrop.conf’. If you downloaded Eggdrop to your system, you can unzip the tarball (.tar.gz) file to its own directory using 7-Zip or a similar program, and view the example config file, botchk file, and all the documentation files locally. You can use Notepad to edit these files, although it’s sometimes desirable to use an editor that supports the Unix file format such as EditPlus. To edit the file once it is on your shell, a program such as ‘nano’ or ‘vim’ is recommended.</p>
-<div class="section" id="editing-the-config-file">
-<h3>Editing the config file<a class="headerlink" href="#editing-the-config-file" title="Permalink to this headline">¶</a></h3>
+<section id="editing-the-config-file">
+<h3>Editing the config file<a class="headerlink" href="#editing-the-config-file" title="Permalink to this heading">¶</a></h3>
 <p>Eggdrop comes with two versions of the configuration file- eggdrop.conf and eggdrop-basic.conf. While it is recommended that users edit a copy of eggdrop.conf to take advantage of all the features Eggdrop has to offer, using eggdrop-basic.conf to start will be a quicker path for some. Still, it is recommended that you come back to the full config file at some point to see what you are missing.</p>
 <p>It is first recommended to rename the sample config to something other than “eggdrop.conf”. Giving it the name of the bot’s nick (e.g. NiceBot.conf) is quite common. In the config file, you set up the IRC servers you want the bot to use and set Eggdrop’s options to suit your needs. Eggdrop has many options to configure, and editing the configuration file can take some time. I recommend you go over the entire config file to ensure the bot will be configured properly for your needs. All of the options in the config file have written explanations - be sure to read them carefully. Some of them can be a little bit vague, though.</p>
 <p>To comment out a line (prevent the bot from reading that line), you can add a ‘#’ in front of a line. When you come to a line that you need to edit, one popular option is to comment out the original and add your new line right below it. This preserves the original line as an example. For example:</p>
@@ -183,86 +181,90 @@
 </pre></div>
 </div>
 <p>Below are some of the common settings used for Eggdrop:</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">set username:</th><td class="field-body">if your shell runs identd (most do), then you should set this to your account login name.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">set vhost4:</th><td class="field-body">you’ll need to set this if you want your bot to use a vhost. This setting lets you choose which IP to use if your shell has multiple. Use vhost4 for an IPv4 address (ie, 1.2.3.4) See also: vhost6</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">set vhost6:</th><td class="field-body">the same as vhost4, only for IPv6 addresses (ie, 5254:dead:b33f::1337:f270).</td>
-</tr>
-<tr class="field-even field"><th class="field-name">logfile:</th><td class="field-body">keeping logs is a good idea. Generally, you should have one log for bot stuff, and one log for each of your channels. To capture bot stuff, add the line <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">mcobxs</span> <span class="pre">*</span> <span class="pre">&quot;botnick.log&quot;</span></code> to the config. To capture channel stuff, add <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">jkp</span> <span class="pre">#donkeys</span> <span class="pre">&quot;#donkeys.log&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">jkp</span> <span class="pre">#horses</span> <span class="pre">&quot;#horses.log&quot;</span></code>, etc. Make sure you remove the sample logfile lines for the channel #lamest. If you’d like to put your logfiles in their own directory, specify the directory in the log name (e.g. <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">jkp</span> <span class="pre">#donkeys</span> <span class="pre">&quot;logs/#donkeys.log&quot;</span></code> to write the logfiles in the /logs directory).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">listen 3333 all:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">you will almost certainly want to change this, as 3333 will probably be in use if there are other Eggdrops running on the machine. Generally, you can choose any port from 1024 to 65535, but the 49152-65535 range is best as these are the private/dynamic ports least likely to be reserved by other processes. You can choose not to have a port by commenting this line out, but that will prevent any telnet connections to the bot (you won’t be able to use the bot as a hub, won’t be able to telnet to the bot yourself, and the bot won’t respond to /ctcp botnick CHAT requests).</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">set protect-telnet:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">setting this to 1 is strongly recommended for security reasons.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">set require-p:</th><td class="field-body">this is a useful feature allowing you to give party line access on a user-specific basis. I recommend setting it to 1.</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">set stealth-telnets:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">when you telnet to your bot, it will usually display the bot’s nickname and version information. You probably don’t want people seeing this info if they do a port scan on the bot’s shell. Setting this to 1 will prevent the bot from displaying its nickname and version when someone telnets to it.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">set notify-newusers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">set this to the nick you will have on the bot. This setting isn’t really used if you have learn-users switched off.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">set owner:</th><td class="field-body">you should only put one person in this list - yourself. Set it to the nick you will have on the bot. Do NOT leave it set to the default “MrLame, MrsLame”.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">set default-flags:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">these are the flags automatically given to a user when they introduce themselves to the bot (if learn-users is on) or when they’re added using .adduser. If you don’t want the user to be given any flags initially, set this to “” or “-“.</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">set must-be-owner:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">if you have the .tcl and .set commands enabled, you should definitely set this to 1. In 1.3.26 and later, you can set it to 2 for even better security.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">set chanfile:</th><td class="field-body">the chanfile allows you to store ‘dynamic’ channels so that the bot rejoins the channel if restarted. Dynamic channels are those you make the bot join using the .+chan command - they aren’t defined in the config file. The chanfile is good if you frequently add/remove channels from the bot, but can be a pain if you only like to add/remove channels using the config file since settings stored in the chanfile with overwrite those set in the config. You can choose not to use a chanfile by setting it to “”.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">set nick:</th><td class="field-body">this is what you use to specify your bot’s nickname. I recommend against using [ ] { } character’s in the bot’s nick, since these can cause problems with some Tcl scripts, but if you’d like to use them, you’ll need to precede each of those characters with a backslash in the setting, e.g. if you wanted your bot to have the nick [NiceBot], use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">nick</span> <span class="pre">&quot;\[NiceBot\]&quot;</span></code>.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">set altnick:</th><td class="field-body">if you want to use [ ] { } characters in the bot’s alternate nick, follow the backslash rule described previously.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">server add:</th><td class="field-body">you should specify multiple servers in this list, in case the bot is unable to connect to the first server. The format for this list is shown below:</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nv">server</span> add you.need.to.change.this:6667
-<span class="nv">server</span> add another.example.com:7000:password
-<span class="nv">server</span> add <span class="k">[</span><span class="nv">2001</span><span class="o">:</span>db8:618:5c0:263::<span class="k">]</span><span class="o">:</span><span class="mi">6669</span><span class="o">:</span>password
-<span class="nv">server</span> add ssl.example.net:<span class="o">+</span><span class="mi">6697</span>
+<dl class="field-list simple">
+<dt class="field-odd">set username<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if your shell runs identd (most do), then you should set this to your account login name.</p>
+</dd>
+<dt class="field-even">set vhost4<span class="colon">:</span></dt>
+<dd class="field-even"><p>you’ll need to set this if you want your bot to use a vhost. This setting lets you choose which IP to use if your shell has multiple. Use vhost4 for an IPv4 address (ie, 1.2.3.4) See also: vhost6</p>
+</dd>
+<dt class="field-odd">set vhost6<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the same as vhost4, only for IPv6 addresses (ie, 5254:dead:b33f::1337:f270).</p>
+</dd>
+<dt class="field-even">logfile<span class="colon">:</span></dt>
+<dd class="field-even"><p>keeping logs is a good idea. Generally, you should have one log for bot stuff, and one log for each of your channels. To capture bot stuff, add the line <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">mcobxs</span> <span class="pre">*</span> <span class="pre">&quot;botnick.log&quot;</span></code> to the config. To capture channel stuff, add <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">jkp</span> <span class="pre">#donkeys</span> <span class="pre">&quot;#donkeys.log&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">jkp</span> <span class="pre">#horses</span> <span class="pre">&quot;#horses.log&quot;</span></code>, etc. Make sure you remove the sample logfile lines for the channel #lamest. If you’d like to put your logfiles in their own directory, specify the directory in the log name (e.g. <code class="docutils literal notranslate"><span class="pre">logfile</span> <span class="pre">jkp</span> <span class="pre">#donkeys</span> <span class="pre">&quot;logs/#donkeys.log&quot;</span></code> to write the logfiles in the /logs directory).</p>
+</dd>
+<dt class="field-odd">listen 3333 all<span class="colon">:</span></dt>
+<dd class="field-odd"><p>you will almost certainly want to change this, as 3333 will probably be in use if there are other Eggdrops running on the machine. Generally, you can choose any port from 1024 to 65535, but the 49152-65535 range is best as these are the private/dynamic ports least likely to be reserved by other processes. You can choose not to have a port by commenting this line out, but that will prevent any telnet connections to the bot (you won’t be able to use the bot as a hub, won’t be able to telnet to the bot yourself, and the bot won’t respond to /ctcp botnick CHAT requests).</p>
+</dd>
+<dt class="field-even">set protect-telnet<span class="colon">:</span></dt>
+<dd class="field-even"><p>setting this to 1 is strongly recommended for security reasons.</p>
+</dd>
+<dt class="field-odd">set require-p<span class="colon">:</span></dt>
+<dd class="field-odd"><p>this is a useful feature allowing you to give party line access on a user-specific basis. I recommend setting it to 1.</p>
+</dd>
+<dt class="field-even">set stealth-telnets<span class="colon">:</span></dt>
+<dd class="field-even"><p>when you telnet to your bot, it will usually display the bot’s nickname and version information. You probably don’t want people seeing this info if they do a port scan on the bot’s shell. Setting this to 1 will prevent the bot from displaying its nickname and version when someone telnets to it.</p>
+</dd>
+<dt class="field-odd">set notify-newusers<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set this to the nick you will have on the bot. This setting isn’t really used if you have learn-users switched off.</p>
+</dd>
+<dt class="field-even">set owner<span class="colon">:</span></dt>
+<dd class="field-even"><p>you should only put one person in this list - yourself. Set it to the nick you will have on the bot. Do NOT leave it set to the default “MrLame, MrsLame”.</p>
+</dd>
+<dt class="field-odd">set default-flags<span class="colon">:</span></dt>
+<dd class="field-odd"><p>these are the flags automatically given to a user when they introduce themselves to the bot (if learn-users is on) or when they’re added using .adduser. If you don’t want the user to be given any flags initially, set this to “” or “-“.</p>
+</dd>
+<dt class="field-even">set must-be-owner<span class="colon">:</span></dt>
+<dd class="field-even"><p>if you have the .tcl and .set commands enabled, you should definitely set this to 1. In 1.3.26 and later, you can set it to 2 for even better security.</p>
+</dd>
+<dt class="field-odd">set chanfile<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the chanfile allows you to store ‘dynamic’ channels so that the bot rejoins the channel if restarted. Dynamic channels are those you make the bot join using the .+chan command - they aren’t defined in the config file. The chanfile is good if you frequently add/remove channels from the bot, but can be a pain if you only like to add/remove channels using the config file since settings stored in the chanfile with overwrite those set in the config. You can choose not to use a chanfile by setting it to “”.</p>
+</dd>
+<dt class="field-even">set nick<span class="colon">:</span></dt>
+<dd class="field-even"><p>this is what you use to specify your bot’s nickname. I recommend against using [ ] { } character’s in the bot’s nick, since these can cause problems with some Tcl scripts, but if you’d like to use them, you’ll need to precede each of those characters with a backslash in the setting, e.g. if you wanted your bot to have the nick [NiceBot], use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">nick</span> <span class="pre">&quot;\[NiceBot\]&quot;</span></code>.</p>
+</dd>
+<dt class="field-odd">set altnick<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if you want to use [ ] { } characters in the bot’s alternate nick, follow the backslash rule described previously.</p>
+</dd>
+<dt class="field-even">server add<span class="colon">:</span></dt>
+<dd class="field-even"><p>you should specify multiple servers in this list, in case the bot is unable to connect to the first server. The format for this list is shown below:</p>
+</dd>
+</dl>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nv">server</span><span class="w"> </span>add<span class="w"> </span>you.need.to.change.this:6667
+<span class="nv">server</span><span class="w"> </span>add<span class="w"> </span>another.example.com:7000:password
+<span class="nv">server</span><span class="w"> </span>add<span class="w"> </span><span class="k">[</span><span class="nv">2001</span><span class="o">:</span>db8:618:5c0:263::<span class="k">]</span><span class="o">:</span><span class="mi">6669</span><span class="o">:</span>password
+<span class="nv">server</span><span class="w"> </span>add<span class="w"> </span>ssl.example.net:<span class="o">+</span><span class="mi">6697</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">set learn-users:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">this is an important setting that determines how users will be added to your Eggdrop. If set to 1, people can add themselves to the bot by sending ‘hello’ to it (the user will be added with the flags set in default-flags). If set to 0, users cannot add themselves - a master or owner must add them using the .adduser command.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">set dcc-block:</th><td class="field-body">although the example config file recommends you set this to 0 (turbo-dcc), this may cause DCC transfers to abort prematurely. If you’ll be using DCC transfers a lot, set this to 1024.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">set learn-users<span class="colon">:</span></dt>
+<dd class="field-odd"><p>this is an important setting that determines how users will be added to your Eggdrop. If set to 1, people can add themselves to the bot by sending ‘hello’ to it (the user will be added with the flags set in default-flags). If set to 0, users cannot add themselves - a master or owner must add them using the .adduser command.</p>
+</dd>
+<dt class="field-even">set dcc-block<span class="colon">:</span></dt>
+<dd class="field-even"><p>although the example config file recommends you set this to 0 (turbo-dcc), this may cause DCC transfers to abort prematurely. If you’ll be using DCC transfers a lot, set this to 1024.</p>
+</dd>
+</dl>
 <p>Finally, be sure to remove the ‘die’ commands from the config (there are two of them ‘hidden’ in various places), or the bot won’t start. Once you’ve finished editing the config file, make sure you rename it to something other than
 “eggdrop.conf” if you haven’t already. Then, if you edited the config file locally, upload the config file to the directory you installed the bot.</p>
-</div>
-</div>
-<div class="section" id="starting-the-eggdrop">
-<h2>Starting the Eggdrop<a class="headerlink" href="#starting-the-eggdrop" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="starting-the-eggdrop">
+<h2>Starting the Eggdrop<a class="headerlink" href="#starting-the-eggdrop" title="Permalink to this heading">¶</a></h2>
 <p>Phew! Now that you’ve compiled, installed, and configured Eggdrop, it’s time to start it up. Switch to the directory to which you installed the bot, cross your fingers, and type <code class="docutils literal notranslate"><span class="pre">./eggdrop</span> <span class="pre">-m</span> <span class="pre">&lt;config&gt;</span></code> (where &lt;config&gt; is the name you gave to the config file). Eggdrop should start up, and the bot should appear on IRC within a few minutes. The -m option creates a new userfile for your bot, and is only needed the first time you start your Eggdrop. In future, you will only need to type ./eggdrop &lt;config&gt; to start the bot. Make sure you take the time to read what it tells you when you start it up!</p>
 <p>Once your bot is on IRC, it’s important that you promptly introduce yourself to the bot. Msg it the ‘hello’ command you specified in the config file, e.g. <code class="docutils literal notranslate"><span class="pre">/msg</span> <span class="pre">&lt;botnick&gt;</span> <span class="pre">hello</span></code>. This will make you the bot’s owner. Once that’s done, you need to set a password using <code class="docutils literal notranslate"><span class="pre">/msg</span> <span class="pre">&lt;botnick&gt;</span> <span class="pre">pass</span> <span class="pre">&lt;password&gt;</span></code>. You can then DCC chat to the bot.</p>
 <p>Now that your Eggdrop is on IRC and you’ve introduced yourself as owner, it’s time to learn how to use your Eggdrop!</p>
-<div class="section" id="no-show">
-<h3>No show?<a class="headerlink" href="#no-show" title="Permalink to this headline">¶</a></h3>
+<section id="no-show">
+<h3>No show?<a class="headerlink" href="#no-show" title="Permalink to this heading">¶</a></h3>
 <p>If your bot didn’t appear on IRC, you should log in to the shell and view the bot’s logfile (the default in the config file is “logs/eggdrop.log”). Note that logfile entries are not written to disk immediately unless quick-logs is enabled, so you may have to wait a few minutes before the logfile appears, or contains messages that indicate why your bot isn’t showing up.</p>
 <p>Additionally, you can kill the bot via the command line (<code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">pid</span></code>, the pid is shown to you when you started the bot or can be viewed by running <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">x</span></code>) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -nt flag, the bot will not persist and you will kill it once you quit the partyline.</p>
 <p>If you’re still unsure what the problem is, try asking in #eggdrop on Libera, and be sure to include any relevant information from the logfile. Good luck!</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -287,9 +289,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

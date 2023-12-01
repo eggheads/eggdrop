@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.3. Scripts written for v1.3, v1.4,
+This list is accurate for Eggdrop v1.9.5. Scripts written for v1.3, v1.4,
 1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -367,6 +367,8 @@ botattr <handle> [changes [channel]]
 
   Module: core
 
+.. _matchattr:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 matchattr <handle> <flags> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -375,43 +377,7 @@ matchattr <handle> <flags> [channel]
 
       [+/-]<global flags>[&/|<channel flags>[&/|<bot flags>]]
 
-  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags.
-
-+------------+-----------------------------------------------------------------+
-| Flag Mask  | Action                                                          |
-+============+=================================================================+
-| +m         + Checks if the user has the m global flag                        |
-+------------+-----------------------------------------------------------------+
-| +mn        | Checks if the user has the m OR n global flag                   |
-+------------+-----------------------------------------------------------------+
-| \|+mn      | Checks if the user has the m OR n global flag                   |
-+------------+-----------------------------------------------------------------+
-| \|+mn #foo | Checks if the user has the m OR n channel flag for #foo         |
-+------------+-----------------------------------------------------------------+
-| &+mn       | Checks if the user has the m AND n global flag                  |
-+------------+-----------------------------------------------------------------+
-| &mn #foo   | Checks if the user has the m AND n channel flag for #foo        |
-+------------+-----------------------------------------------------------------+
-| \|+o #foo  | Checks if the user has the o channel flag for #foo              |
-+------------+-----------------------------------------------------------------+
-| +o|+n #foo | Checks if the user has the o global flag OR the n channel flag  |
-|            | for #foo                                                        |
-+------------+-----------------------------------------------------------------+
-| +m&+v #foo | Checks if the user has the m global flag AND the v channel flag |
-|            | for #foo                                                        |
-+------------+-----------------------------------------------------------------+
-| -m         | Checks if the user does not have the m global flag              |
-+------------+-----------------------------------------------------------------+
-| \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
-+------------+-----------------------------------------------------------------+
-| +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
-|            | channel n flag for #foo                                         |
-+------------+-----------------------------------------------------------------+
-| -n&-m #foo | Checks if the user does not have the global n flag AND does     |
-|            | not have the channel m flag for #foo                            |
-+------------+-----------------------------------------------------------------+
-| ||+b       | Checks if the user has the bot flag b                           |
-+------------+-----------------------------------------------------------------+
+  Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags. Please see `Flag Masks`_ for additional information on flag usage.
 
   Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
 
@@ -1113,7 +1079,7 @@ isidentified <nickname> [channel]
 isaway <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command).  Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
+  Description: determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
 
   Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
 
@@ -1134,12 +1100,12 @@ onchan <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-monitor <command> [nickname]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+monitor <add/delete/list/online/offline/status/clear> [nickname]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid sub-commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
 
-  Returns: The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Returns: The 'add' sub-command returns a '1' if the nick was succssfully added, a '0' if the nick is already in the monitor list, and a '2' if the nick could not be added. The 'delete' sub-command returns a '1' if the nick is removed, or an error if the nick is not found. The 'status' sub-command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
 
   Module: irc
 
@@ -1157,7 +1123,9 @@ accounttracking
 getaccount <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: the services account name associated with nickname (if Eggdrop is configured to track account status), and  "" if they are not logged in or Eggdrop is not able to determine the account status. WARNING: this account list may not be accurate depending on the server and configuration. This command is only accurate if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses).
+  Returns: the services account name associated with nickname, "*" if the user is not logged into services, or "" if eggdrop does not know the account status of the user.
+
+  NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 nick2hand <nickname> [channel]
@@ -1370,7 +1338,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See matchattr above for additional examples).
+  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See `Flag Masks`_ for additional information).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -1522,6 +1490,8 @@ isupport isset <key>
 DCC Commands
 ------------
 
+.. _putdcc:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 putdcc <idx> <text> [-raw]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1531,6 +1501,16 @@ putdcc <idx> <text> [-raw]
   Returns: nothing
 
   Module: core
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+putidx <idx> <text> -[raw]
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Description. Alias for the putdcc_ command.
+
+    Returns: nothing
+
+    Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^
 dccbroadcast <message>
@@ -2357,8 +2337,7 @@ timer <minutes> <tcl-command> [count [timerName]]
 utimer <seconds> <tcl-command> [count [timerName]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timer
-Name is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
+  Description: executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If timerName is not specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
   Returns: a timerName
 
@@ -2723,7 +2702,7 @@ matchcidr <block> <address> <prefix>
 matchstr <pattern> <string>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.  
+  Description: checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.
 
   Returns: 1 if the pattern matches the string, 0 if it doesn't.
 
@@ -2908,24 +2887,69 @@ language
 Binds
 -----
 
-You can use the 'bind' command to attach Tcl procedures to certain events.
-For example, you can write a Tcl procedure that gets called every time a
-user says "danger" on the channel.
+You can use the 'bind' command to attach Tcl procedures to certain events. For example, you can write a Tcl procedure that gets called every time a user says "danger" on the channel. When a bind is triggered, ALL of the Tcl procs that are bound to it will be called. Raw binds are triggered before builtin binds, as a builtin bind has the potential to modify args.
 
-Some bind types are marked as "stackable". That means that you can bind
-multiple commands to the same trigger. Normally, for example, a bind such
-as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the
-Tcl proc "msg:stop") will overwrite any previous binding you had for the
-msg command "stop". With stackable bindings, like 'msgm' for example,
-you can bind the same command to multiple procs. When the bind is triggered,
-ALL of the Tcl procs that are bound to it will be called. Raw binds are
-triggered before builtin binds, as a builtin bind has the potential to
-modify args.
+^^^^^^^^^^^^^^^
+Stackable binds
+^^^^^^^^^^^^^^^
+Some bind types are marked as "stackable". That means that you can bind multiple commands to the same trigger. Normally, for example, a bind such as 'bind msg - stop msg:stop' (which makes a msg-command "stop" call the Tcl proc "msg:stop") will overwrite any previous binding you had for the msg command "stop". With stackable bindings, like 'msgm' for example, you can bind the same command to multiple procs.
 
+^^^^^^^^^^^^^^^
+Removing a bind
+^^^^^^^^^^^^^^^
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
 .. _tcl_binds:
+
+^^^^^^^^^^
+Flag Masks
+^^^^^^^^^^
+In the `Bind Types`_ section (and other commands, such as `matchattr`_), you will see several references to the "flags" argument. The "flags" argument takes a flag mask, which is a value that represents the type of user that is allowed to trigger the procedure associated to that bind. The flags can be any of the standard Eggdrop flags (o, m, v, etc). Additionally, when used by itself, a "-" or "*" can be used to skip processing for a flag type. A flag mask has three sections to it- global, channel, and bot flag sections. Each section is separated by the | or & logical operators ( the | means "OR" and the & means "AND; if nothing proceeds the flag then Eggdrop assumes it to be an OR). Additionally, a '+' and '-' can be used in front of a flag to check if the user does (+) have it, or does not (-) have it.
+
+The easiest way to explain how to build a flag mask is by demonstration. A flag mask of "v" by itself means "has a global v flag". To also check for a channel flag, you would use the flag mask "v\|v". This checks if the user has a global "v" flag, OR a channel "v" flag (again, the | means "OR" and ties the two types of flags together). You could change this mask to be "v&v", which would check if the user has a global "v" flag AND a channel "v" flag. Lastly, to check if a user ONLY has a channel flag, you would use "\*|v" as a mask, which would not check global flags but does check if the user had a channel "v" flag.
+
+You will commonly see flag masks for global flags written "ov"; this is the same as "\|ov" or "\*\|ov".
+
+Some additional examples:
+
++------------+-----------------------------------------------------------------+
+| Flag Mask  | Action                                                          |
++============+=================================================================+
+| m, +m, m|* | Checks if the user has the m global flag                        |
++------------+-----------------------------------------------------------------+
+| +mn        | Checks if the user has the m OR n global flag                   |
++------------+-----------------------------------------------------------------+
+| \|+mn      | Checks if the user has the m OR n channel flag                  |
++------------+-----------------------------------------------------------------+
+| \|+mn #foo | Checks if the user has the m OR n channel flag for #foo         |
++------------+-----------------------------------------------------------------+
+| &+mn       | Checks if the user has the m AND n channel flag                 |
++------------+-----------------------------------------------------------------+
+| &mn #foo   | Checks if the user has the m AND n channel flag for #foo        |
++------------+-----------------------------------------------------------------+
+| \|+o #foo  | Checks if the user has the o channel flag for #foo              |
++------------+-----------------------------------------------------------------+
+| +o|+n #foo | Checks if the user has the o global flag OR the n channel flag  |
+|            | for #foo                                                        |
++------------+-----------------------------------------------------------------+
+| +m&+v #foo | Checks if the user has the m global flag AND the v channel flag |
+|            | for #foo                                                        |
++------------+-----------------------------------------------------------------+
+| -m         | Checks if the user does not have the m global flag              |
++------------+-----------------------------------------------------------------+
+| \|-n #foo  | Checks if the user does not have the n channel flag for #foo    |
++------------+-----------------------------------------------------------------+
+| +m|-n #foo | Checks if the user has the global m flag OR does not have a     |
+|            | channel n flag for #foo                                         |
++------------+-----------------------------------------------------------------+
+| -n&-m #foo | Checks if the user does not have the global n flag AND does     |
+|            | not have the channel m flag for #foo                            |
++------------+-----------------------------------------------------------------+
+| ||+b       | Checks if the user has the bot flag b                           |
++------------+-----------------------------------------------------------------+
+
+As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
 
 ^^^^^^^^^^
 Bind Types
@@ -3139,13 +3163,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
 (17) RAW (stackable)
 
-  bind raw <flags> <keyword> <proc>
+  bind raw <flags> <mask> <proc>
 
   procname <from> <keyword> <text>
 
-  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind as of 1.9.0. You probably want to be using RAWT, not RAW.
+  IMPORTANT: While not necessarily deprecated, this bind has been supplanted by the RAWT bind, which supports the IRCv3 message-tags capability, as of 1.9.0. You probably want to be using RAWT, not RAW.
 
-  Description: previous versions of Eggdrop required a special compile option to enable this binding, but it's now standard. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. The order of the arguments is identical to the order that the IRC server sends to the bot. The pre-processing only splits it apart enough to determine the keyword. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind). The RAW bind does not support the IRCv3 message-tags capability, please see RAWT for more information.
+  Description: The mask can contain wildcards and is matched against the keyword, which is either a numeric, like "368", or a keyword, such as "PRIVMSG". "from" will be the server name or the source nick!ident@host (depending on the keyword); flags are ignored. If the proc returns 1, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind).
 
   Module: server
 
@@ -3205,7 +3229,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <handle> <channel#> <text>
 
-  Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.
+  Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards. Eggdrop passes the partyline channel number the user spoke on to the proc in "channel#".
 
   NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.
 
@@ -3423,6 +3447,7 @@ The following is a list of bind types and how they work. Below each bind type is
           init-server       - called when we actually get on our IRC server
           disconnect-server - called when we disconnect from our IRC server
           fail-server       - called when an IRC server fails to respond 
+          hidden-host       - called after the bot's host is hidden by the server
 
   Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.
 
@@ -3518,11 +3543,11 @@ The following is a list of bind types and how they work. Below each bind type is
 
 (52) RAWT (stackable)
 
-  bind rawt <flags> <keyword> <proc>
+  bind rawt <flags> <mask> <proc>
 
-  procname <from> <keyword> <text> <tag>
+  procname <from> <keyword> <text> <tags>
 
-  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The keyword is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source user (depending on the keyword); flags are ignored. "tag" will be the contents, if any, of the entire tag message prefixed to the server message in a dict format, such as "msgid 890157217279768 aaa bbb". The order of the arguments is identical to the order that the IRC server sends to the bot. If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
+  Description: similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The mask can contain wildcards and is matched against the keyword which is either a numeric, like "368", or a keyword, such as "PRIVMSG" or "TAGMSG". "from" will be the server name or the source nick!ident@host (depending on the keyword); flags are ignored. "tag" is a dictionary (flat key/value list) of the message tags with "" for empty values (e.g. "account eggdrop realname LamestBot"). If the proc returns 1, Eggdrop will not process the line any further, to include not being processed by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
 (53) ACCOUNT (stackable)
 
@@ -3530,7 +3555,9 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <nick> <user> <hand> <chan> <account>
 
-  Description: triggered when Eggdrop detects a change in a service account status. The change could be initiated by receiving an IRCv3 ACCOUNT message, receiving IRCv3 extended-join information when a user on an existing channel joins a new channel, or detecting an IRCv3 account-tag in a PRIVMSG. The mask for the bind is in the format "#channel nick!user@hostname.com account" where channel is the channel the user was found on when the bind was triggered, the hostmask is the user's hostmask, and account is the account name the user is logging in to, or "" for logging out. The mask argument can accept wildcards. For the proc, nick is the nickname of the user logging into/out of an account, user is the user@host.com hostmask, hand is the handle of the user (or * if none), and account is the name of the account the user logged in to (or "" if the user logged out of an account).
+  Description: this bind will trigger when eggdrop detects a change in the authentication status of a user's service account. The mask for the bind is in the format "#channel nick!user@hostname.com account" and accepts wildcards_. account is either the account name the user is logging in to or "*" if the user is not logged in to an account.
+
+  NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking but this bind could be triggered late or never on account changes. Please see doc/ACCOUNTS for additional information.
 
 (54) ISUPPORT (stackable)
 
@@ -3552,6 +3579,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: irc
 
+(56) CHGHOST
+
+  bind chghost <flags> <mask> <proc>
+
+  procname <nick> <old user@host> <handle> <channel> <new user@host>
+
+  Description: triggered when a server sends an IRCv3 spec CHGHOST message to change a user's hostmask. The new host is matched against mask in the form of "#channel nick!user\@host" and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
 ^^^^^^^^^^^^^
 Return Values
@@ -3702,6 +3736,8 @@ Secure connection can be also established after a connection is active. You can 
 
 The best way to learn how to use these commands is to find a script that uses them and follow it carefully. However, hopefully this has given you a good start.
 
+.. _wildcards:
+
 Match Characters
 ----------------
 
@@ -3719,5 +3755,8 @@ are the four special characters:
 | ~   | matches 1 or more space characters (can be used for whitespace between   |
 |     | words) (This char only works in binds, not in regular matching)          |
 +-----+--------------------------------------------------------------------------+
+| \\* | matches a literal \*, but please note that Tcl needs escaping as well,   |
+|     | so a bind would have to use "\\*" or {\*} for a mask argument            |
++-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2022 Eggheads Development Team
+  Copyright (C) 1999 - 2023 Eggheads Development Team

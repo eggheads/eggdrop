@@ -55,5 +55,5 @@ This module adds the following commands to the partyline:
 * roomsstate - Lists current roomstate for a channel
 * twcmd - Issues a traditional Twitch web interface command to the Twitch server (/ban, /block, /host, etc)
 
-  Copyright (C) 2020 - 2022 Eggheads Development Team
+  Copyright (C) 2020 - 2023 Eggheads Development Team
 

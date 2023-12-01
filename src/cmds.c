@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2605,30 +2605,21 @@ char *stripmasktype(int x)
 
 static char *stripmaskname(int x)
 {
-  static char s[161];
-  int i = 0;
+  static char s[128];
+  int i;
 
-  s[i] = 0;
-  if (x & STRIP_COLOR)
-    i += my_strcpy(s + i, "color, ");
-  if (x & STRIP_BOLD)
-    i += my_strcpy(s + i, "bold, ");
-  if (x & STRIP_REVERSE)
-    i += my_strcpy(s + i, "reverse, ");
-  if (x & STRIP_UNDERLINE)
-    i += my_strcpy(s + i, "underline, ");
-  if (x & STRIP_ANSI)
-    i += my_strcpy(s + i, "ansi, ");
-  if (x & STRIP_BELLS)
-    i += my_strcpy(s + i, "bells, ");
-  if (x & STRIP_ORDINARY)
-    i += my_strcpy(s + i, "ordinary, ");
-  if (x & STRIP_ITALICS)
-    i += my_strcpy(s + i, "italics, ");
-  if (!i)
-    strcpy(s, "none");
-  else
+  if ((i = snprintf(s, sizeof s, "%s%s%s%s%s%s%s%s",
+                    (x & STRIP_COLOR) ? "color, " : "",
+                    (x & STRIP_BOLD) ? "bold, " : "",
+                    (x & STRIP_REVERSE) ? "reverse, " : "",
+                    (x & STRIP_UNDERLINE) ? "underline, " : "",
+                    (x & STRIP_ANSI) ? "ansi, " : "",
+                    (x & STRIP_BELLS) ? "bells, " : "",
+                    (x & STRIP_ORDINARY) ? "ordinary, " : "",
+                    (x & STRIP_ITALICS) ? "italics, " : "")))
     s[i - 2] = 0;
+  else
+    strcpy(s, "none");
   return s;
 }
 
@@ -2848,7 +2839,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   Tcl_DString dstr;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   debug1("tcl: evaluate (.tcl): %s", msg);
@@ -2876,7 +2867,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   Tcl_DString dstr;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
@@ -2916,7 +2907,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
   const char *p;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   if (!par[0]) {
@@ -2938,7 +2929,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
   char *p;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
   if (!par[0])
@@ -3145,6 +3136,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
 static void cmd_pls_host(struct userrec *u, int idx, char *par)
 
 {
+  int ret;
   char *handle, *host;
   module_entry *me;
 
@@ -3160,13 +3152,14 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     host = handle;
     handle = dcc[idx].nick;
   }
-  add_to_handle(u, idx, handle, host, 0);
-  putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
-  dprintf(idx, "Added '%s' to %s.\n", host, handle);
-  if ((me = module_find("irc", 0, 0))) {
-    Function *func = me->funcs;
-
-    (func[IRC_CHECK_THIS_USER]) (handle, 0, NULL);
+  ret = add_to_handle(u, idx, handle, host, 0);
+  if (!ret) {
+    putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
+    dprintf(idx, "Added '%s' to %s.\n", host, handle);
+    if ((me = module_find("irc", 0, 0))) {
+      Function *func = me->funcs;
+      (func[IRC_CHECK_THIS_USER]) (handle, 0, NULL);
+    }
   }
 }
 
@@ -3204,7 +3197,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
   } else {
     bot = newsplit(&par);
     if ((ptr = nextbot(bot)) >= 0)
-      dprintf(ptr, "v %s %s %d:%s\n", botnetnick, bot, dcc[idx].sock,
+      dprintf(ptr, "v %s %s %ld:%s\n", botnetnick, bot, dcc[idx].sock,
               dcc[idx].nick);
     else
       dprintf(idx, "No such bot online.\n");

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,15 +53,10 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 #ifdef STOP_UAC                         /* OSF/1 complains a lot */
@@ -209,7 +204,6 @@ int expmem_botnet();
 int expmem_tcl();
 int expmem_tclhash();
 int expmem_net();
-int expmem_modules(int);
 int expmem_language();
 int expmem_tcldcc();
 int expmem_tclmisc();
@@ -275,8 +269,7 @@ static void write_debug()
       setsock(x, SOCK_NONSOCK);
       strlcpy(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
-      dprintf(-x, "Please report problem to bugs@eggheads.org\n");
-      dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
+      dprintf(-x, "Please report problem to https://github.com/eggheads/eggdrop/issues\n");
 #ifdef EGG_PATCH
       dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
@@ -651,13 +644,14 @@ static void core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug2("timer: drift (lastmin=%d, nowmins=%d)", lastmin, nowmins);
+      debug1("timer: drift (%" PRId64 " seconds)", (int64_t) (nowmins - lastmin));
       i++;
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
     if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
+      putlog(LOG_MISC, "*", "(!) timer drift -- spun %" PRId64 " minutes",
+             ((int64_t) (nowmins - lastmin)) / 60);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
@@ -691,7 +685,7 @@ static void core_secondly()
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
         if (quiet_save < 3)
-          putlog(LOG_MISC, "*", MISC_LOGSWITCH);
+          putlog(LOG_MISC, "*", "%s", MISC_LOGSWITCH);
         for (i = 0; i < max_logs; i++)
           if (logs[i].filename) {
             char s[1024];
@@ -777,14 +771,14 @@ void check_static(char *, char *(*)());
 
 #include "mod/static.h"
 #endif
-int init_threaddata(int);
+void init_threaddata(int);
 int init_mem();
 int init_userent();
 int init_misc();
 int init_bots();
 int init_modules();
-int init_tcl(int, char **);
-int init_language(int);
+void init_tcl(int, char **);
+void init_language(int);
 #ifdef TLS
 int ssl_init();
 #endif
@@ -856,7 +850,7 @@ static void mainloop(int toplevel)
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
-          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %d",
+          putlog(LOG_MISC, "*", "ERROR: untrapped dcc activity: type %s, sock %ld",
                  dcc[idx].type ? dcc[idx].type->name : "UNKNOWN", dcc[idx].sock);
         break;
       }
@@ -889,8 +883,8 @@ static void mainloop(int toplevel)
     for (i = 0; i < dcc_total; i++) {
       if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
         putlog(LOG_MISC, "*",
-               "DCC socket %d (type %d, name '%s') expired -- pfft",
-               dcc[i].sock, dcc[i].type, dcc[i].nick);
+               "DCC socket %ld (type %s, name '%s') expired -- pfft",
+               dcc[i].sock, dcc[i].type->name, dcc[i].nick);
         killsock(dcc[i].sock);
         lostdcc(i);
         i--;
@@ -950,7 +944,7 @@ static void mainloop(int toplevel)
         }
       }
       if (f != 0) {
-        putlog(LOG_MISC, "*", MOD_STAGNANT);
+        putlog(LOG_MISC, "*", "%s", MOD_STAGNANT);
       }
 
       flushlogs();
@@ -980,11 +974,7 @@ static void mainloop(int toplevel)
 
   if (!eggbusy) {
 /* Process all pending tcl events */
-#  ifdef REPLACE_NOTIFIER
     Tcl_ServiceAll();
-#  else
-    while (Tcl_DoOneEvent(TCL_DONT_WAIT | TCL_ALL_EVENTS));
-#  endif /* REPLACE_NOTIFIER */
   }
 }
 
@@ -1050,13 +1040,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2022 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2022 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
                 EGG_STRINGVER);
 #endif
 
@@ -1118,9 +1108,6 @@ int main(int arg_c, char **arg_v)
     fatal("ERROR: Eggdrop will not run as root!", 0);
 #endif
 
-#ifndef REPLACE_NOTIFIER
-  init_threaddata(1);
-#endif
   init_userent();
   init_misc();
   init_bots();

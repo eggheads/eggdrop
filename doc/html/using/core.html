@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Core Settings &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Eggdrop Core Settings &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Party Line" href="partyline.html" />
     <link rel="prev" title="Eggdrop Features" href="features.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="features.html" title="Eggdrop Features"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Core Settings</a><ul>
@@ -68,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -76,20 +72,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -111,13 +109,13 @@
           <div class="body" role="main">
             
   <p>Last revised: October 25, 2010</p>
-<div class="section" id="eggdrop-core-settings">
-<h1>Eggdrop Core Settings<a class="headerlink" href="#eggdrop-core-settings" title="Permalink to this headline">¶</a></h1>
+<section id="eggdrop-core-settings">
+<h1>Eggdrop Core Settings<a class="headerlink" href="#eggdrop-core-settings" title="Permalink to this heading">¶</a></h1>
 <p>This file describes the syntax and all the settings of your Eggdrop
 configuration file. Please note that you don’t need to set all of these
 variables to make your bot work properly.</p>
-<div class="section" id="executable-path">
-<h2>Executable Path<a class="headerlink" href="#executable-path" title="Permalink to this headline">¶</a></h2>
+<section id="executable-path">
+<h2>Executable Path<a class="headerlink" href="#executable-path" title="Permalink to this heading">¶</a></h2>
 <p>The first line in an Eggdrop configuration file should contain
 a fully qualified path to your Eggdrop executable. It has to be
 implemented in the way the example shows to make the config file
@@ -126,36 +124,36 @@ work as a shell script.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#! /path/to/eggdrop</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="basic-settings">
-<h2>Basic Settings<a class="headerlink" href="#basic-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="basic-settings">
+<h2>Basic Settings<a class="headerlink" href="#basic-settings" title="Permalink to this heading">¶</a></h2>
 <p>You can change the basic Eggdrop appearance and behavior in this section.</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set username “lamest”</dt>
-<dd>This setting defines the username the bot uses on IRC. This setting has
-no effect if an ident daemon is running on your bot’s machine.</dd>
-<dt>set admin “Lamer &lt;email: <a class="reference external" href="mailto:lamer&#37;&#52;&#48;lamest&#46;lame&#46;org">lamer<span>&#64;</span>lamest<span>&#46;</span>lame<span>&#46;</span>org</a>&gt;”</dt>
-<dd>This setting defines which contact person should be shown in .status,
-/msg help, and other places. You really should include this information.</dd>
-<dt>set network “SomeIrcNetwork”</dt>
-<dd>This setting is used only for info to share with others on your botnet.
-Set this to the IRC network your bot is connected to.</dd>
-<dt>set timezone “EST”</dt>
-<dd>This setting defines which timezone is your bot in. It’s used for internal
+<div><dl class="simple">
+<dt>set username “lamest”</dt><dd><p>This setting defines the username the bot uses on IRC. This setting has
+no effect if an ident daemon is running on your bot’s machine.</p>
+</dd>
+<dt>set admin “Lamer &lt;email: <a class="reference external" href="mailto:lamer&#37;&#52;&#48;lamest&#46;lame&#46;org">lamer<span>&#64;</span>lamest<span>&#46;</span>lame<span>&#46;</span>org</a>&gt;”</dt><dd><p>This setting defines which contact person should be shown in .status,
+/msg help, and other places. You really should include this information.</p>
+</dd>
+<dt>set network “SomeIrcNetwork”</dt><dd><p>This setting is used only for info to share with others on your botnet.
+Set this to the IRC network your bot is connected to.</p>
+</dd>
+<dt>set timezone “EST”</dt><dd><p>This setting defines which timezone is your bot in. It’s used for internal
 routines as well as for logfile timestamping and scripting purposes.
 The timezone string specifies the name of the timezone and must be three
 or more alphabetic characters. For example, Central European Time(UTC+1)
-should be “CET”.</dd>
-<dt>set offset “5”</dt>
-<dd>The offset setting specifies the time value to be added to the local
+should be “CET”.</p>
+</dd>
+<dt>set offset “5”</dt><dd><p>The offset setting specifies the time value to be added to the local
 time to get Coordinated Universal Time (UTC aka GMT). The offset is
 positive if the local timezone is west of the Prime Meridian and
 negative if it is east. The value (in hours) must be between -23 and
-23. For example, if the timezone is UTC+1, the offset is -1.</dd>
-<dt>set env(TZ) “$timezone $offset” (disabled by default)</dt>
-<dd>If you don’t want to use the timezone setting for scripting purposes
-only, but instead everywhere possible, then use this setting.</dd>
+23. For example, if the timezone is UTC+1, the offset is -1.</p>
+</dd>
+<dt>set env(TZ) “$timezone $offset” (disabled by default)</dt><dd><p>If you don’t want to use the timezone setting for scripting purposes
+only, but instead everywhere possible, then use this setting.</p>
+</dd>
 </dl>
 <div class="line-block">
 <div class="line">set vhost4 “99.99.0.0”</div>
@@ -177,125 +175,119 @@ Note that this is not used for listening. Use the ‘listen’ command
 to specify the listening address.</div>
 </div>
 </div>
-<dl class="docutils">
-<dt>set prefer-ipv6 “1”</dt>
-<dd>Prefer IPv6 over IPv4 for connections and dns resolution.
+<dl>
+<dt>set prefer-ipv6 “1”</dt><dd><p>Prefer IPv6 over IPv4 for connections and dns resolution.
 If the preferred protocol family is not supported, other possible
-families will be tried.</dd>
-<dt>addlang “english”</dt>
-<dd><p class="first">If you want to have your Eggdrop messages displayed in another language,
+families will be tried.</p>
+</dd>
+<dt>addlang “english”</dt><dd><p>If you want to have your Eggdrop messages displayed in another language,
 change this command to match your preferences. An alternative would be
 to set the environment variable EGG_LANG to that value.</p>
-<p class="last">Languages included with Eggdrop: Danish, English, French, Finnish,
+<p>Languages included with Eggdrop: Danish, English, French, Finnish,
 German.</p>
 </dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="log-files">
-<h2>Log Files<a class="headerlink" href="#log-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="log-files">
+<h2>Log Files<a class="headerlink" href="#log-files" title="Permalink to this heading">¶</a></h2>
 <p>Eggdrop is capable of logging various things, from channel chatter to
 partyline commands and file transfers.</p>
 <p>Logfiles are normally kept for 24 hours. Afterwards, they will be renamed
 to “(logfilename).yesterday”. After 48 hours, they will be overwritten by
 the logfile of the next day.</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set max-logs 20</dt>
-<dd>This is the maximum number of concurrent logfiles that can be opened
+<div><dl class="simple">
+<dt>set max-logs 20</dt><dd><p>This is the maximum number of concurrent logfiles that can be opened
 for writing at one time. At most, this value should be the maximum
 number of channels you expect to create log files for. There is no
 value for ‘infinity’; very few cases should ever require more than 20.
 A decrease to this value while running will require a restart (not rehash)
-of the bot. However, don’t decrease it below 5.</dd>
-<dt>set max-logsize 0</dt>
-<dd>This is the maximum size of your logfiles. Set it to 0 to disable.
+of the bot. However, don’t decrease it below 5.</p>
+</dd>
+<dt>set max-logsize 0</dt><dd><p>This is the maximum size of your logfiles. Set it to 0 to disable.
 This value is in kilobytes, so ‘550’ would mean cycle logs when it
 reaches the size of 550 kilobytes. Note that this only works if you
-have keep-all-logs set to 0 (OFF).</dd>
-<dt>set quick-logs 0</dt>
-<dd>This could be good if you have had a problem with logfiles filling
+have keep-all-logs set to 0 (OFF).</p>
+</dd>
+<dt>set quick-logs 0</dt><dd><p>This could be good if you have had a problem with logfiles filling
 your quota/hard disk or if you log +p and publish it to the web, and
 you need more up-to-date info. Note that this setting might increase
 the CPU usage of your bot (on the other hand it will decrease your RAM
-usage).</dd>
-<dt>set raw-log 0</dt>
-<dd>This setting allows you the logging of raw incoming server traffic via
+usage).</p>
+</dd>
+<dt>set raw-log 0</dt><dd><p>This setting allows you the logging of raw incoming server traffic via
 console/log flag ‘r’, raw outgoing server traffic via console/log mode
 ‘v’, raw incoming botnet traffic via console/log mode ‘t’, raw outgoing
 botnet traffic via console/log mode ‘u’, raw outgoing share traffic via
 console/log mode ‘g’, and raw incoming share traffic via console/log
 mode ‘h’. These flags can create a large security hole, allowing people
 to see user passwords. This is now restricted to +n users only. Please
-choose your owners with care.</dd>
+choose your owners with care.</p>
+</dd>
 </dl>
 </div></blockquote>
-<dl class="docutils">
-<dt>logfile &lt;logflags&gt; &lt;channel&gt; “logs/logfile”</dt>
-<dd><blockquote class="first">
+<dl>
+<dt>logfile &lt;logflags&gt; &lt;channel&gt; “logs/logfile”</dt><dd><blockquote>
 <div><p>This setting tells the bot what should be logged, from where, and to
 which file.</p>
 <p>Logfile flags:</p>
 <blockquote>
-<div><table border="1" class="docutils">
-<colgroup>
-<col width="5%" />
-<col width="95%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>b</td>
-<td>information about bot linking and userfile sharing</td>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>b</p></td>
+<td><p>information about bot linking and userfile sharing</p></td>
 </tr>
-<tr class="row-even"><td>c</td>
-<td>commands</td>
+<tr class="row-even"><td><p>c</p></td>
+<td><p>commands</p></td>
 </tr>
-<tr class="row-odd"><td>d</td>
-<td>misc debug information</td>
+<tr class="row-odd"><td><p>d</p></td>
+<td><p>misc debug information</p></td>
 </tr>
-<tr class="row-even"><td>g</td>
-<td>raw outgoing share traffic</td>
+<tr class="row-even"><td><p>g</p></td>
+<td><p>raw outgoing share traffic</p></td>
 </tr>
-<tr class="row-odd"><td>h</td>
-<td>raw incoming share traffic</td>
+<tr class="row-odd"><td><p>h</p></td>
+<td><p>raw incoming share traffic</p></td>
 </tr>
-<tr class="row-even"><td>j</td>
-<td>joins, parts, quits, and netsplits on the channel</td>
+<tr class="row-even"><td><p>j</p></td>
+<td><p>joins, parts, quits, and netsplits on the channel</p></td>
 </tr>
-<tr class="row-odd"><td>k</td>
-<td>kicks, bans, and mode changes on the channel</td>
+<tr class="row-odd"><td><p>k</p></td>
+<td><p>kicks, bans, and mode changes on the channel</p></td>
 </tr>
-<tr class="row-even"><td>l</td>
-<td>linked bot messages</td>
+<tr class="row-even"><td><p>l</p></td>
+<td><p>linked bot messages</p></td>
 </tr>
-<tr class="row-odd"><td>m</td>
-<td>private msgs, notices and ctcps to the bot</td>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>private msgs, notices and ctcps to the bot</p></td>
 </tr>
-<tr class="row-even"><td>o</td>
-<td>misc info, errors, etc (IMPORTANT STUFF)</td>
+<tr class="row-even"><td><p>o</p></td>
+<td><p>misc info, errors, etc (IMPORTANT STUFF)</p></td>
 </tr>
-<tr class="row-odd"><td>p</td>
-<td>public text on the channel</td>
+<tr class="row-odd"><td><p>p</p></td>
+<td><p>public text on the channel</p></td>
 </tr>
-<tr class="row-even"><td>r</td>
-<td>raw incoming server traffic</td>
+<tr class="row-even"><td><p>r</p></td>
+<td><p>raw incoming server traffic</p></td>
 </tr>
-<tr class="row-odd"><td>s</td>
-<td>server connects, disconnects, and notices</td>
+<tr class="row-odd"><td><p>s</p></td>
+<td><p>server connects, disconnects, and notices</p></td>
 </tr>
-<tr class="row-even"><td>t</td>
-<td>raw incoming botnet traffic</td>
+<tr class="row-even"><td><p>t</p></td>
+<td><p>raw incoming botnet traffic</p></td>
 </tr>
-<tr class="row-odd"><td>u</td>
-<td>raw outgoing botnet traffic</td>
+<tr class="row-odd"><td><p>u</p></td>
+<td><p>raw outgoing botnet traffic</p></td>
 </tr>
-<tr class="row-even"><td>v</td>
-<td>raw outgoing server traffic</td>
+<tr class="row-even"><td><p>v</p></td>
+<td><p>raw outgoing server traffic</p></td>
 </tr>
-<tr class="row-odd"><td>w</td>
-<td>wallops (make sure the bot sets +w in init-server)</td>
+<tr class="row-odd"><td><p>w</p></td>
+<td><p>wallops (make sure the bot sets +w in init-server)</p></td>
 </tr>
-<tr class="row-even"><td>x</td>
-<td>file transfers and file-area commands</td>
+<tr class="row-even"><td><p>x</p></td>
+<td><p>file transfers and file-area commands</p></td>
 </tr>
 </tbody>
 </table>
@@ -316,74 +308,72 @@ from any channel.</p>
 <p>In ‘lamest.log’, log all joins, parts, kicks, bans, public chatter, and
 mode changes from #lamest.</p>
 </div></blockquote>
-<dl class="last docutils">
-<dt>set log-time 1</dt>
-<dd>Use this feature to timestamp entries in the log file.</dd>
-<dt>set timestamp-format “[%H:%M:%S]”</dt>
-<dd>Set the following to the timestamp for the logfile entries. Popular times
+<dl class="simple">
+<dt>set log-time 1</dt><dd><p>Use this feature to timestamp entries in the log file.</p>
+</dd>
+<dt>set timestamp-format “[%H:%M:%S]”</dt><dd><p>Set the following to the timestamp for the logfile entries. Popular times
 might be “[%H:%M]” (hour, min), or “[%H:%M:%S]” (hour, min, sec).
-Read ‘man strftime’ for more formatting options.  Keep it below 32 chars.</dd>
-<dt>set keep-all-logs 0</dt>
-<dd>If you want to keep your logfiles forever, turn this setting on. All
+Read ‘man strftime’ for more formatting options. Keep it below 32 chars.</p>
+</dd>
+<dt>set keep-all-logs 0</dt><dd><p>If you want to keep your logfiles forever, turn this setting on. All
 logfiles will get the suffix
 “.[day, 2 digits][month, 3 letters][year, 4 digits]”. Note that your
 quota/hard-disk might be filled by this, so check your logfiles
-often and download them.</dd>
-<dt>set switch-logfiles-at 300</dt>
-<dd>You can specify when Eggdrop should switch logfiles and start fresh.
+often and download them.</p>
+</dd>
+<dt>set switch-logfiles-at 300</dt><dd><p>You can specify when Eggdrop should switch logfiles and start fresh.
 use military time for this setting. 300 is the default, and describes
-03:00 (AM).</dd>
-<dt>set quiet-save 0</dt>
-<dd>“Writing user file…” and “Writing channel file…” messages won’t be
+03:00 (AM).</p>
+</dd>
+<dt>set quiet-save 0</dt><dd><p>“Writing user file…” and “Writing channel file…” messages won’t be
 logged anymore if this option is enabled. If you set it to 2, the
 “Backing up user file…” and “Backing up channel file…” messages will
 also not be logged. In addition to this, you can disable the “Switching
-logfiles…” and the new date message at midnight, by setting this to 3.</dd>
-<dt>set logfile-suffix “.%d%b%Y”</dt>
-<dd>If keep-all-logs is 1, this setting will define the suffix of the
+logfiles…” and the new date message at midnight, by setting this to 3.</p>
+</dd>
+<dt>set logfile-suffix “.%d%b%Y”</dt><dd><p>If keep-all-logs is 1, this setting will define the suffix of the
 logfiles. The default will result in a suffix like “04May2000”. “%Y%m%d”
 will produce the often used yyyymmdd format. Read the strftime manpages
-for more options. NOTE: On systems which don’t support strftime, the
-default format will always be used.</dd>
+for more options.</p>
+</dd>
 </dl>
 </dd>
 </dl>
-</div>
-<div class="section" id="console-settings">
-<h2>Console Settings<a class="headerlink" href="#console-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="console-settings">
+<h2>Console Settings<a class="headerlink" href="#console-settings" title="Permalink to this heading">¶</a></h2>
 <blockquote>
-<div><dl class="docutils">
-<dt>set console “mkcoblxs”</dt>
-<dd>This is the default console mode. It uses the same event flags as the
+<div><dl class="simple">
+<dt>set console “mkcoblxs”</dt><dd><p>This is the default console mode. It uses the same event flags as the
 log files do. The console channel is automatically set to your “primary”
 channel, which is set in the modules section of the config file. Masters
-can change their console channel and modes with the ‘.console’ command.</dd>
+can change their console channel and modes with the ‘.console’ command.</p>
+</dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="file-and-directory-settings">
-<h2>File and Directory Settings<a class="headerlink" href="#file-and-directory-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="file-and-directory-settings">
+<h2>File and Directory Settings<a class="headerlink" href="#file-and-directory-settings" title="Permalink to this heading">¶</a></h2>
 <blockquote>
-<div><dl class="docutils">
-<dt>set userfile “LamestBot.user”</dt>
-<dd>Specify here the filename your userfile should be saved as.</dd>
-<dt>set pidfile “pid.LamestBot”</dt>
-<dd>Specify here the filename Eggdrop will save its pid to. If no pidfile is
-specified, pid.(botnet-nick) will be used.</dd>
-<dt>set help-path “help/”</dt>
-<dd>Specify here where Eggdrop should look for help files. Don’t modify this
-setting unless you know what you’re doing!</dd>
-<dt>set text-path “text/”</dt>
-<dd>Specify here where Eggdrop should look for text files. This is used for
-certain Tcl and DCC commands.</dd>
-<dt>set motd “text/motd”</dt>
-<dd>The MOTD (Message Of The day) is displayed when people dcc chat or telnet
-to the bot. Look at doc/TEXT-SUBSTITUTIONS for options.</dd>
-<dt>set telnet-banner “text/banner”</dt>
-<dd>This banner will be displayed on telnet connections. Look at
-doc/text-substitutions.doc for options.</dd>
-<dt>set userfile-perm 0600</dt>
-<dd><p class="first">This specifies what permissions the user, channel, and notes files should
+<div><dl>
+<dt>set userfile “LamestBot.user”</dt><dd><p>Specify here the filename your userfile should be saved as.</p>
+</dd>
+<dt>set pidfile “pid.LamestBot”</dt><dd><p>Specify here the filename Eggdrop will save its pid to. If no pidfile is
+specified, pid.(botnet-nick) will be used.</p>
+</dd>
+<dt>set help-path “help/”</dt><dd><p>Specify here where Eggdrop should look for help files. Don’t modify this
+setting unless you know what you’re doing!</p>
+</dd>
+<dt>set text-path “text/”</dt><dd><p>Specify here where Eggdrop should look for text files. This is used for
+certain Tcl and DCC commands.</p>
+</dd>
+<dt>set motd “text/motd”</dt><dd><p>The MOTD (Message Of The day) is displayed when people dcc chat or telnet
+to the bot. Look at doc/TEXT-SUBSTITUTIONS for options.</p>
+</dd>
+<dt>set telnet-banner “text/banner”</dt><dd><p>This banner will be displayed on telnet connections. Look at
+doc/text-substitutions.doc for options.</p>
+</dd>
+<dt>set userfile-perm 0600</dt><dd><p>This specifies what permissions the user, channel, and notes files should
 be set to. The octal values are the same as for the chmod system command.</p>
 <p>To remind you:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span>      <span class="n">u</span>  <span class="n">g</span>  <span class="n">o</span>           <span class="n">u</span>  <span class="n">g</span>  <span class="n">o</span>           <span class="n">u</span>  <span class="n">g</span>  <span class="n">o</span>
@@ -392,31 +382,30 @@ be set to. The octal values are the same as for the chmod system command.</p>
 <span class="o">|</span><span class="mi">0666</span>  <span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span>   <span class="mi">0444</span>  <span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span>   <span class="mi">0222</span>  <span class="o">-</span><span class="n">w</span><span class="o">--</span><span class="n">w</span><span class="o">--</span><span class="n">w</span><span class="o">-</span>    <span class="n">o</span> <span class="o">-</span> <span class="n">others</span>
 </pre></div>
 </div>
-<p class="last">Note that the default 0600 is the most secure one and should only be
+<p>Note that the default 0600 is the most secure one and should only be
 changed if you need your files for shell scripting or other external
 applications.</p>
 </dd>
-<dt>set mod-path “modules/”</dt>
-<dd>This path specifies the path were Eggdrop should look for its modules.
+<dt>set mod-path “modules/”</dt><dd><p>This path specifies the path were Eggdrop should look for its modules.
 If you run the bot from the compilation directory, you will want to set
 this to “”. If you use ‘make install’ (like all good kiddies do ;), this
-is a fine default. Otherwise, use your head :).</dd>
+is a fine default. Otherwise, use your head :).</p>
+</dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="botnet-dcc-telnet-settings">
-<h2>Botnet/Dcc/Telnet Settings<a class="headerlink" href="#botnet-dcc-telnet-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="botnet-dcc-telnet-settings">
+<h2>Botnet/Dcc/Telnet Settings<a class="headerlink" href="#botnet-dcc-telnet-settings" title="Permalink to this heading">¶</a></h2>
 <p>Settings in this section should be unimportant for you until you deal with
 botnets (multiple Eggdrops connected together to maximize efficiency). You
 should read doc/BOTNET before modifying these settings.</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set botnet-nick “LlamaBot” (disabled by default)</dt>
-<dd>If you want to use a different nickname on the botnet than you use on
+<div><dl>
+<dt>set botnet-nick “LlamaBot” (disabled by default)</dt><dd><p>If you want to use a different nickname on the botnet than you use on
 IRC (i.e. if you’re on an un-trusted botnet), un-comment this line
-and set it to the nick you would like to use.</dd>
-<dt>listen &lt;port&gt; &lt;mode&gt;</dt>
-<dd><p class="first">This opens a telnet port by which you and other bots can interact with
+and set it to the nick you would like to use.</p>
+</dd>
+<dt>listen &lt;port&gt; &lt;mode&gt;</dt><dd><p>This opens a telnet port by which you and other bots can interact with
 the Eggdrop by telneting in.</p>
 <p>There are more options for the listen command in doc/tcl-commands.doc.
 Note that if you are running more than one bot on the same machine, you
@@ -438,175 +427,167 @@ use the following format:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">5555</span> <span class="nb">all</span>
 </pre></div>
 </div>
-<p class="last">You need to un-comment this line and change the port number in order to
+<p>You need to un-comment this line and change the port number in order to
 open the listen port. You should not keep this set to 3333.</p>
 </dd>
-<dt>set remote-boots 2</dt>
-<dd><p class="first">This setting defines whether or not people can boot users on the Eggdrop
+<dt>set remote-boots 2</dt><dd><p>This setting defines whether or not people can boot users on the Eggdrop
 from other bots in your botnet. Valid settings are:</p>
-<table border="1" class="last docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>0</td>
-<td>allow <em>no</em> outside boots</td>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>allow <em>no</em> outside boots</p></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>allow boots from sharebots</td>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>allow boots from sharebots</p></td>
 </tr>
-<tr class="row-odd"><td>2</td>
-<td>allow any boots</td>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>allow any boots</p></td>
 </tr>
 </tbody>
 </table>
 </dd>
-<dt>set share-unlinks 1</dt>
-<dd>This setting prohibits Eggdrop to unlink from share bots if an remote
-bots tells so.</dd>
-<dt>set protect-telnet 0</dt>
-<dd>This setting will drop telnet connections not matching a known host.</dd>
-<dt>set dcc-sanitycheck 0</dt>
-<dd>This setting will make the bot ignore DCC chat requests which appear to
+<dt>set share-unlinks 1</dt><dd><p>This setting prohibits Eggdrop to unlink from share bots if an remote
+bots tells so.</p>
+</dd>
+<dt>set protect-telnet 0</dt><dd><p>This setting will drop telnet connections not matching a known host.</p>
+</dd>
+<dt>set dcc-sanitycheck 0</dt><dd><p>This setting will make the bot ignore DCC chat requests which appear to
 have bogus information on the grounds that the user may have been trying
 to make the bot connect to somewhere that will get it into trouble, or
 that the user has a broken client, in which case the connect wouldn’t
-work anyway.</dd>
-<dt>set ident-timeout 5</dt>
-<dd>This setting defines the time in seconds the bot should wait for ident reply
-before the lookup fails. The default ident on timeout is ‘telnet’.</dd>
-<dt>set require-p 0</dt>
-<dd>Define here whether or not a +o user still needs the +p flag to dcc the
-bot.</dd>
-<dt>set open-telnets 0</dt>
-<dd>If you want people allow to telnet in and type ‘NEW’ to become a new user,
+work anyway.</p>
+</dd>
+<dt>set ident-timeout 5</dt><dd><p>This setting defines the time in seconds the bot should wait for ident reply
+before the lookup fails. The default ident on timeout is ‘telnet’.</p>
+</dd>
+<dt>set require-p 0</dt><dd><p>Define here whether or not a +o user still needs the +p flag to dcc the
+bot.</p>
+</dd>
+<dt>set open-telnets 0</dt><dd><p>If you want people allow to telnet in and type ‘NEW’ to become a new user,
 set this to 1. This is similar to the ‘hello’ msg command. The
-protect-telnet setting must be set to 0 to use this.</dd>
-<dt>set stealth-telnets 0</dt>
-<dd>If you don’t want Eggdrop to identify itself as an Eggdrop on a telnet
+protect-telnet setting must be set to 0 to use this.</p>
+</dd>
+<dt>set stealth-telnets 0</dt><dd><p>If you don’t want Eggdrop to identify itself as an Eggdrop on a telnet
 connection, set this setting to 1. Eggdrop will display ‘Nickname’
-instead.</dd>
-<dt>set use-telnet-banner 0</dt>
-<dd>If you want Eggdrop to display a banner when telneting in, set this
-setting to 1. The telnet banner is set by ‘set telnet-banner’.</dd>
-<dt>set connect-timeout 15</dt>
-<dd>This setting defines a time in seconds that the bot should wait before
-a dcc chat, telnet, or relay connection times out.</dd>
-<dt>set dcc-flood-thr 3</dt>
-<dd>Specify here the number of lines to accept from a user on the partyline
+instead.</p>
+</dd>
+<dt>set use-telnet-banner 0</dt><dd><p>If you want Eggdrop to display a banner when telneting in, set this
+setting to 1. The telnet banner is set by ‘set telnet-banner’.</p>
+</dd>
+<dt>set connect-timeout 15</dt><dd><p>This setting defines a time in seconds that the bot should wait before
+a dcc chat, telnet, or relay connection times out.</p>
+</dd>
+<dt>set dcc-flood-thr 3</dt><dd><p>Specify here the number of lines to accept from a user on the partyline
 within 1 second before they are considered to be flooding and therefore
-get booted.</dd>
-<dt>set telnet-flood 5:60</dt>
-<dd>Define here how many telnet connection attempts in how many seconds from
-the same host constitute a flood. The correct format is Attempts:Seconds.</dd>
-<dt>set paranoid-telnet-flood 1</dt>
-<dd>If you want telnet-flood to apply even to +f users, set this setting
-to 1.</dd>
-<dt>set resolve-timeout 15</dt>
-<dd>Set here the amount of seconds before giving up on hostname/address
-lookup (you might want to increase this if you are on a slow network).</dd>
+get booted.</p>
+</dd>
+<dt>set telnet-flood 5:60</dt><dd><p>Define here how many telnet connection attempts in how many seconds from
+the same host constitute a flood. The correct format is Attempts:Seconds.</p>
+</dd>
+<dt>set paranoid-telnet-flood 1</dt><dd><p>If you want telnet-flood to apply even to +f users, set this setting
+to 1.</p>
+</dd>
+<dt>set resolve-timeout 15</dt><dd><p>Set here the amount of seconds before giving up on hostname/address
+lookup (you might want to increase this if you are on a slow network).</p>
+</dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="advanced-settings">
-<h2>Advanced Settings<a class="headerlink" href="#advanced-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="advanced-settings">
+<h2>Advanced Settings<a class="headerlink" href="#advanced-settings" title="Permalink to this heading">¶</a></h2>
 <blockquote>
-<div><dl class="docutils">
-<dt>set firewall “!sun-barr.ebay:3666”</dt>
-<dd>Set this to your socks host if your Eggdrop sits behind a firewall. If
-you use a Sun “telnet passthru” firewall, prefix the host with a “!”.</dd>
-<dt>set nat-ip “127.0.0.1”</dt>
-<dd>If you have a NAT firewall (you box has an IP in one of the following
+<div><dl>
+<dt>set firewall “!sun-barr.ebay:3666”</dt><dd><p>Set this to your socks host if your Eggdrop sits behind a firewall. If
+you use a Sun “telnet passthru” firewall, prefix the host with a “!”.</p>
+</dd>
+<dt>set nat-ip “127.0.0.1”</dt><dd><p>If you have a NAT firewall (you box has an IP in one of the following
 ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
 10.0.0.0-10.255.255.255 and your firewall transparently changes your
 address to a unique address for your box) or you have IP masquerading
 between you and the rest of the world, and /dcc chat, /ctcp chat or
 userfile sharing aren’t working, enter your outside IP here. This IP
 is used for transfers only, and has nothing to do with the vhost4/6 or
-listen settings. You may still need to set them.</dd>
-<dt>set reserved-portrange 2010:2020</dt>
-<dd>If you want all dcc file transfers to use a particular portrange either
+listen settings. You may still need to set them.</p>
+</dd>
+<dt>set reserved-portrange 2010:2020</dt><dd><p>If you want all dcc file transfers to use a particular portrange either
 because you’re behind a firewall, or for other security reasons, set it
-here.</dd>
-<dt>set ignore-time 15</dt>
-<dd>Set the time in minutes that temporary ignores should last.</dd>
-<dt>set hourly-updates 00</dt>
-<dd><p class="first">Define here what Eggdrop considers ‘hourly’. All calls to it, including
+here.</p>
+</dd>
+<dt>set ignore-time 15</dt><dd><p>Set the time in minutes that temporary ignores should last.</p>
+</dd>
+<dt>set hourly-updates 00</dt><dd><p>Define here what Eggdrop considers ‘hourly’. All calls to it, including
 such things as note notifying or userfile saving, are affected by this.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">hourly</span><span class="o">-</span><span class="n">updates</span> <span class="mi">15</span>
 </pre></div>
 </div>
-<p class="last">The bot will save its userfile 15 minutes past every hour.</p>
+<p>The bot will save its userfile 15 minutes past every hour.</p>
 </dd>
-<dt>set owner “MrLame, MrsLame”</dt>
-<dd>Un-comment this line and set the list of owners of the bot.
-You NEED to change this setting.</dd>
-<dt>set notify-newusers “$owner”</dt>
-<dd>Who should a note be sent to when new users are learned?</dd>
-<dt>set default-flags “hp”</dt>
-<dd>Enter the flags that all new users should get by default. See ‘.help
-whois’ on the partyline for a list of flags and their descriptions.</dd>
-<dt>set whois-fields “url birthday”</dt>
-<dd>Enter all user-defined fields that should be displayed in a ‘.whois’.
+<dt>set owner “MrLame, MrsLame”</dt><dd><p>Un-comment this line and set the list of owners of the bot.
+You NEED to change this setting.</p>
+</dd>
+<dt>set notify-newusers “$owner”</dt><dd><p>Who should a note be sent to when new users are learned?</p>
+</dd>
+<dt>set default-flags “hp”</dt><dd><p>Enter the flags that all new users should get by default. See ‘.help
+whois’ on the partyline for a list of flags and their descriptions.</p>
+</dd>
+<dt>set whois-fields “url birthday”</dt><dd><p>Enter all user-defined fields that should be displayed in a ‘.whois’.
 This will only be shown if the user has one of these extra fields.
 You might prefer to comment this out and use the userinfo1.0.tcl script
-which provides commands for changing all of these.</dd>
+which provides commands for changing all of these.</p>
+</dd>
 </dl>
 <p>#unbind dcc n tcl *dcc:tcl</p>
-<dl class="docutils">
-<dt>#unbind dcc n set *dcc:set</dt>
-<dd>Uncomment these two lines if you wish to disable the .tcl and .set commands.
-If you select your owners wisely, you should be okay leaving these enabled.</dd>
-<dt>set must-be-owner 1</dt>
-<dd>If you enable this setting, only permanent owners (owner setting) will
+<dl class="simple">
+<dt>#unbind dcc n set *dcc:set</dt><dd><p>Uncomment these two lines if you wish to disable the .tcl and .set commands.
+If you select your owners wisely, you should be okay leaving these enabled.</p>
+</dd>
+<dt>set must-be-owner 1</dt><dd><p>If you enable this setting, only permanent owners (owner setting) will
 be able to use .tcl and .set. Moreover, if you want to only let permanent
-owners use .dump, then set this to 2.</dd>
-<dt>unbind dcc n simul *dcc:simul</dt>
-<dd>Comment out this line to add the ‘simul’ partyline command (owners
+owners use .dump, then set this to 2.</p>
+</dd>
+<dt>unbind dcc n simul *dcc:simul</dt><dd><p>Comment out this line to add the ‘simul’ partyline command (owners
 can manipulate other people on the party line). Please select owners
-wisely and use this command ethically!</dd>
-<dt>set max-dcc 50</dt>
-<dd>Set here the maximum number of dcc connections you will allow. You can
-increase this later, but never decrease it.</dd>
-<dt>set allow-dk-cmds 1</dt>
-<dd>Enable this setting if you want +d &amp; +k users to use commands bound
-as -|-.</dd>
-<dt>set dupwait-timeout 5</dt>
-<dd>If your Eggdrop rejects bots that actually have already disconnected
+wisely and use this command ethically!</p>
+</dd>
+<dt>set max-dcc 50</dt><dd><p>Set here the maximum number of dcc connections you will allow. You can
+increase this later, but never decrease it.</p>
+</dd>
+<dt>set allow-dk-cmds 1</dt><dd><p>Enable this setting if you want +d &amp; +k users to use commands bound
+as -|-.</p>
+</dd>
+<dt>set dupwait-timeout 5</dt><dd><p>If your Eggdrop rejects bots that actually have already disconnected
 from another hub, but the disconnect information has not yet spread
 over the botnet due to lag, use this setting. The bot will wait
 dupwait-timeout seconds before it checks again and then finally
-reject the bot.</dd>
-<dt>set cidr-support 0</dt>
-<dd>Enables cidr support for b/e/I modes if set to 1. This means the bot
+reject the bot.</p>
+</dd>
+<dt>set cidr-support 0</dt><dd><p>Enables cidr support for b/e/I modes if set to 1. This means the bot
 will understand and match modes in cidr notation, and will be able to
 put and enforce such bans or unban itself, if banned with a cidr mask.
-Do NOT set this, if your network/server does not support cidr!</dd>
+Do NOT set this, if your network/server does not support cidr!</p>
+</dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="ssl-settings">
-<h2>SSL Settings<a class="headerlink" href="#ssl-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="ssl-settings">
+<h2>SSL Settings<a class="headerlink" href="#ssl-settings" title="Permalink to this heading">¶</a></h2>
 <p>Settings in this section take effect when eggdrop is compiled with TLS
 support.</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set ssl-privatekey “eggdrop.key”</dt>
-<dd><p class="first">File containing your private key, needed for the SSL certificate
+<div><dl>
+<dt>set ssl-privatekey “eggdrop.key”</dt><dd><p>File containing your private key, needed for the SSL certificate
 (see below). You can create one issuing the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">genrsa</span> <span class="o">-</span><span class="n">out</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">key</span> <span class="mi">4096</span>
 </pre></div>
 </div>
-<p class="last">It will create a 4096 bit RSA key, strong enough for eggdrop.
+<p>It will create a 4096 bit RSA key, strong enough for eggdrop.
 This is required for SSL hubs/listen ports, secure file transfer and
 /ctcp botnick schat
 For your convenience, you can type ‘make sslcert’ after ‘make install’
 and you’ll get a key and a certificate in your DEST directory.</p>
 </dd>
-<dt>set ssl-certificate “eggdrop.crt”</dt>
-<dd><p class="first">Specify the filename where your SSL certificate is located. If you
+<dt>set ssl-certificate “eggdrop.crt”</dt><dd><p>Specify the filename where your SSL certificate is located. If you
 don’t set this, eggdrop will not be able to act as a server in SSL
 connections, as with most ciphers a certificate and a private key
 are required on the server side. Must be in PEM format.
@@ -614,15 +595,15 @@ If you don’t have one, you can create it using the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">key</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">out</span> <span class="n">eggdrop</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">days</span> <span class="mi">365</span>
 </pre></div>
 </div>
-<p class="last">This is required for SSL hubs/listen ports, secure file transfer and
+<p>This is required for SSL hubs/listen ports, secure file transfer and
 /ctcp botnick schat
 For your convenience, you can type ‘make sslcert’ after ‘make install’
 and you’ll get a key and a certificate in your DEST directory.</p>
 </dd>
-<dt>set ssl-verify-depth 9</dt>
-<dd>Sets the maximum depth for the certificate chain verification that shall
+<dt>set ssl-verify-depth 9</dt><dd><p>Sets the maximum depth for the certificate chain verification that shall
 be allowed for ssl. When certificate verification is enabled, any chain
-exceeding this depth will fail verification.</dd>
+exceeding this depth will fail verification.</p>
+</dd>
 </dl>
 <div class="line-block">
 <div class="line">set ssl-capath “/etc/ssl/”</div>
@@ -633,9 +614,8 @@ are located. These certificates are trusted. If you don’t set this,
 certificate verification will not work.</div>
 </div>
 </div>
-<dl class="docutils">
-<dt>set ssl-ciphers “”</dt>
-<dd><p class="first">Specify the list of ciphers (in order of preference) allowed for use with
+<dl>
+<dt>set ssl-ciphers “”</dt><dd><p>Specify the list of ciphers (in order of preference) allowed for use with
 ssl. The cipher list is one or more cipher strings separated by colons,
 commas or spaces. Unavailable ciphers are silently ignored unless no
 usable cipher could be found. For the list of possible cipher strings
@@ -652,17 +632,17 @@ DH ciphers.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">ssl</span><span class="o">-</span><span class="n">ciphers</span> <span class="s2">&quot;ALL&quot;</span>
 </pre></div>
 </div>
-<p class="last">… will make eggdrop allow all ciphers supported by OpenSSL, in a
+<p>… will make eggdrop allow all ciphers supported by OpenSSL, in a
 reasonable order.</p>
 </dd>
-<dt>set ssl-cert-auth 0</dt>
-<dd>Enable certificate authorization. Set to 1 to allow users and bots to
+<dt>set ssl-cert-auth 0</dt><dd><p>Enable certificate authorization. Set to 1 to allow users and bots to
 identify automatically by their certificate fingerprints. Setting it
 to 2 to will force fingerprint logins. With a value of 2, users without
 a fingerprint set or with a certificate UID not matching their handle
 won’t be allowed to login on SSL enabled telnet ports. Fingerprints
 must be set in advance with the .fprint and .chfinger commands.
-NOTE: this setting has no effect on plain-text ports.</dd>
+NOTE: this setting has no effect on plain-text ports.</p>
+</dd>
 </dl>
 <p>You can control SSL certificate verification using the following variables.
 All of them are flag-based. You can set them by adding together the numbers
@@ -670,49 +650,45 @@ for all exceptions you want to enable. By default certificate verification
 is disabled and all certificates are assumed to be valid.</p>
 <p>The options are the following:</p>
 <blockquote>
-<div><table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="94%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>0</td>
-<td>disable verification</td>
+<div><table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>disable verification</p></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>enable certificate verification</td>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>enable certificate verification</p></td>
 </tr>
-<tr class="row-odd"><td>2</td>
-<td>allow self-signed certificates</td>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>allow self-signed certificates</p></td>
 </tr>
-<tr class="row-even"><td>4</td>
-<td>don’t check peer common or alt names</td>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>don’t check peer common or alt names</p></td>
 </tr>
-<tr class="row-odd"><td>8</td>
-<td>allow expired certificates</td>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>allow expired certificates</p></td>
 </tr>
-<tr class="row-even"><td>16</td>
-<td>allow certificates which are not valid yet</td>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>allow certificates which are not valid yet</p></td>
 </tr>
-<tr class="row-odd"><td>32</td>
-<td>allow revoked certificates</td>
+<tr class="row-odd"><td><p>32</p></td>
+<td><p>allow revoked certificates</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
-<dl class="docutils">
-<dt>set ssl-verify-dcc 0</dt>
-<dd>Control certificate verification for DCC chats (only /dcc chat botnick)</dd>
-<dt>set ssl-verify-bots 0</dt>
-<dd>Control certificate verification for linking to hubs</dd>
-<dt>set ssl-verify-clients 0</dt>
-<dd>Control certificate verification for SSL listening ports. This includes
-leaf bots connecting, users telneting in and /ctcp bot chat.</dd>
+<dl class="simple">
+<dt>set ssl-verify-dcc 0</dt><dd><p>Control certificate verification for DCC chats (only /dcc chat botnick)</p>
+</dd>
+<dt>set ssl-verify-bots 0</dt><dd><p>Control certificate verification for linking to hubs</p>
+</dd>
+<dt>set ssl-verify-clients 0</dt><dd><p>Control certificate verification for SSL listening ports. This includes
+leaf bots connecting, users telneting in and /ctcp bot chat.</p>
+</dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="modules">
-<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this heading">¶</a></h2>
 <p>After the core settings, you should start loading modules. Modules are
 loaded by the command “loadmodule &lt;module&gt;”. Eggdrop looks for modules
 in the directory you specified by the module-path setting in the files
@@ -720,48 +696,48 @@ and directories section.</p>
 <p>Please note that for different configurations, different modules are needed.
 Four examples:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>Channel Security Bot:</dt>
-<dd>This bot needs the channels, blowfish, console, dns, irc, and (if you
-like) ctcp modules loaded. More is not needed and makes the bot slower.</dd>
-<dt>Public IRC Bot:</dt>
-<dd>A public bot should have all modules available loaded since they provide
-all functions for everyday use.</dd>
-<dt>Secure Filesys Bot:</dt>
-<dd>This bot needs all normal IRC operating modules, but not the notes, seen,
-ctcp or share modules.</dd>
-<dt>Limbo Bot:</dt>
-<dd>A limbo bot (serves as a botnet hub outside IRC) just needs the
+<div><dl class="simple">
+<dt>Channel Security Bot:</dt><dd><p>This bot needs the channels, blowfish, console, dns, irc, and (if you
+like) ctcp modules loaded. More is not needed and makes the bot slower.</p>
+</dd>
+<dt>Public IRC Bot:</dt><dd><p>A public bot should have all modules available loaded since they provide
+all functions for everyday use.</p>
+</dd>
+<dt>Secure Filesys Bot:</dt><dd><p>This bot needs all normal IRC operating modules, but not the notes, seen,
+ctcp or share modules.</p>
+</dd>
+<dt>Limbo Bot:</dt><dd><p>A limbo bot (serves as a botnet hub outside IRC) just needs the
 channels, console, dns, and maybe notes or share modules loaded. Of
-course, blowfish needs to be loaded here, too.</dd>
+course, blowfish needs to be loaded here, too.</p>
+</dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="scripts">
-<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this heading">¶</a></h2>
 <p>The scripts section should be placed at the end of the config file. All
 modules should be loaded and their variables should be set at this point.</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>source scripts/script.tcl</dt>
-<dd><p class="first">This line loads script.tcl from the scripts directory inside your
+<div><dl>
+<dt>source scripts/script.tcl</dt><dd><p>This line loads script.tcl from the scripts directory inside your
 Eggdrop’s directory. All scripts should be put there, although you can
 place them where you like as long as you can supply a fully qualified
 path to them.</p>
 <p>Some commonly loaded scripts are alltools.tcl and action.fix.tcl.</p>
 <p>The appropriate source lines are:</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">scripts</span><span class="o">/</span><span class="n">alltools</span><span class="o">.</span><span class="n">tcl</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">scripts</span><span class="o">/</span><span class="n">alltools</span><span class="o">.</span><span class="n">tcl</span>
 <span class="n">source</span> <span class="n">scripts</span><span class="o">/</span><span class="n">action</span><span class="o">.</span><span class="n">fix</span><span class="o">.</span><span class="n">tcl</span>
 </pre></div>
 </div>
 </dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2022 Eggheads Development Team</p>
-</div>
-</div>
+<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -786,9 +762,9 @@ path to them.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

@@ -1,32 +1,27 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Eggdrop Module Information &#8212; Eggdrop 1.9.2 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Eggdrop Module Information &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Modules included with Eggdrop" href="included.html" />
-    <link rel="prev" title="Writing an Eggdrop Script" href="../tutorials/firstscript.html" /> 
+    <link rel="prev" title="Writing a Basic Eggdrop Module" href="../tutorials/module.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
-          <a href="../tutorials/firstscript.html" title="Writing an Eggdrop Script"
+          <a href="../tutorials/module.html" title="Writing a Basic Eggdrop Module"
              accesskey="P">previous</a> |
           <a href="included.html" title="Modules included with Eggdrop"
              accesskey="N">next</a>
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
@@ -64,14 +60,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Module Information</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-are-modules">What are modules?</a></li>
@@ -80,9 +77,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -105,44 +103,45 @@
             
   <p>Eggdrop Module Information
 Last revised: Jul 25, 2016</p>
-<div class="section" id="eggdrop-module-information">
-<h1>Eggdrop Module Information<a class="headerlink" href="#eggdrop-module-information" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="what-are-modules">
-<h2>What are modules?<a class="headerlink" href="#what-are-modules" title="Permalink to this headline">¶</a></h2>
+<section id="eggdrop-module-information">
+<h1>Eggdrop Module Information<a class="headerlink" href="#eggdrop-module-information" title="Permalink to this heading">¶</a></h1>
+<section id="what-are-modules">
+<h2>What are modules?<a class="headerlink" href="#what-are-modules" title="Permalink to this heading">¶</a></h2>
 <p>Modules are independent portions of code that are loaded separately from the main core code of Eggdrop. This allows users to only implement the features they desire without adding the extra overhead or “bloat” of those they don’t, or even write their own module to add an enhancement not currently implemented by the Eggdrop development team. For example, the transfer module provides the ability to transfer files to and from the Eggdrop, and the ident module provides the ability to run an ident server to answer ident requests.</p>
-</div>
-<div class="section" id="how-to-install-a-module">
-<h2>How to install a module<a class="headerlink" href="#how-to-install-a-module" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="how-to-install-a-module">
+<h2>How to install a module<a class="headerlink" href="#how-to-install-a-module" title="Permalink to this heading">¶</a></h2>
 <p>Please note that these are only basic instructions for compiling and installing a module. Please read any and all directions included with the module you wish to install.</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>Download and un-tar the Eggdrop source code.</li>
-<li>Place the new module in its own directory (in the format of
-(modulename).mod) in src/mod.</li>
-<li>Run ./configure (from eggdrop1.9.x/).</li>
-<li>Type ‘make config’ or ‘make iconfig’.</li>
-<li>Type ‘make’.</li>
-<li>Copy the compiled module file (modulename.so) into your bot’s
-modules folder.</li>
-<li>Add ‘loadmodule modulename’ to your eggdrop.conf file (do not
-add the .so suffix).</li>
-<li>Rehash or restart your bot.</li>
+<li><p>Download and un-tar the Eggdrop source code.</p></li>
+<li><p>Place the new module in its own directory (in the format of
+(modulename).mod) in src/mod.</p></li>
+<li><p>Run ./configure (from eggdrop1.9.x/).</p></li>
+<li><p>Type ‘make config’ or ‘make iconfig’.</p></li>
+<li><p>Type ‘make’.</p></li>
+<li><p>Copy the compiled module file (modulename.so) into your bot’s
+modules folder.</p></li>
+<li><p>Add ‘loadmodule modulename’ to your eggdrop.conf file (do not
+add the .so suffix).</p></li>
+<li><p>Rehash or restart your bot.</p></li>
 </ol>
 </div></blockquote>
 <p>To view your currently loaded modules, type ‘.module’.</p>
-</div>
-<div class="section" id="can-i-compile-eggdrop-without-dynamic-modules-static-compile">
-<h2>Can I compile Eggdrop without dynamic modules? (Static compile)<a class="headerlink" href="#can-i-compile-eggdrop-without-dynamic-modules-static-compile" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="can-i-compile-eggdrop-without-dynamic-modules-static-compile">
+<h2>Can I compile Eggdrop without dynamic modules? (Static compile)<a class="headerlink" href="#can-i-compile-eggdrop-without-dynamic-modules-static-compile" title="Permalink to this heading">¶</a></h2>
 <p>Yes, you can. If the configure script detects that your system CAN’T run modules, it will setup ‘make’ to link the modules in statically for you. You can choose this option yourself by using ‘make static’. You can also try to compile dynamic modules on a static-only system by using ‘make eggdrop’.</p>
-<div class="section" id="do-i-still-need-to-loadmodule-modules">
-<h3>Do I still need to ‘loadmodule’ modules?<a class="headerlink" href="#do-i-still-need-to-loadmodule-modules" title="Permalink to this headline">¶</a></h3>
+<section id="do-i-still-need-to-loadmodule-modules">
+<h3>Do I still need to ‘loadmodule’ modules?<a class="headerlink" href="#do-i-still-need-to-loadmodule-modules" title="Permalink to this heading">¶</a></h3>
 <p>YES, when you compile statically, all the modules are linked into the main executable. HOWEVER, they are not enabled until you use loadmodule to enable them, hence you get nearly the same functionality with static modules as with dynamic modules.</p>
-<p>Copyright (C) 1999 - 2022 Eggheads Development Team</p>
-</div>
-</div>
-</div>
+<p>Copyright (C) 1999 - 2023 Eggheads Development Team</p>
+</section>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -155,7 +154,7 @@ add the .so suffix).</li>
       <div class="footer">
         <div class="left">
           <div role="navigation" aria-label="related navigaton">
-            <a href="../tutorials/firstscript.html" title="Writing an Eggdrop Script"
+            <a href="../tutorials/module.html" title="Writing a Basic Eggdrop Module"
               >previous</a> |
             <a href="included.html" title="Modules included with Eggdrop"
               >next</a>
@@ -167,9 +166,9 @@ add the .so suffix).</li>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on May 26, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

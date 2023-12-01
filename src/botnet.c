@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -359,7 +359,7 @@ void remparty(char *bot, int sock)
 
 /* Cancel every user that was on a certain bot
  */
-void rempartybot(char *bot)
+static void rempartybot(char *bot)
 {
   int i;
 
@@ -750,12 +750,12 @@ void tell_bottree(int idx, int showver)
             more = 1;
             this = last[lev];
           }
-          dprintf(idx, "------------------------------------------------\n");
         }
       }
     }
   }
   /* Hop information: (9d) */
+  dprintf(idx, "------------------------------------------------\n");
   dprintf(idx, "Average hops: %3.1f, total bots: %d\n",
           ((float) tothops) / ((float) tands), tands + 1);
 }
@@ -1135,39 +1135,21 @@ static void failed_tandem_relay(int idx)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
   }
-  if (dcc[idx].port >= dcc[idx].u.relay->port + 3) {
-    struct chat_info *ci = dcc[uidx].u.relay->chat;
-
-    dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
-    dcc[uidx].status = dcc[uidx].u.relay->old_status;
-    nfree(dcc[uidx].u.relay);
-    dcc[uidx].u.chat = ci;
-    dcc[uidx].type = &DCC_CHAT;
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-    return;
-  }
+  dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
+  dcc[uidx].status = dcc[uidx].u.relay->old_status;
+  struct chat_info *ci = dcc[uidx].u.relay->chat;
+  nfree(dcc[uidx].u.relay);
+  dcc[uidx].u.chat = ci;
+  dcc[uidx].type = &DCC_CHAT;
   killsock(dcc[idx].sock);
-  if (!dcc[idx].sockname.addrlen)
-    (void) setsockname(&dcc[idx].sockname, dcc[idx].host, dcc[idx].port, 0);
-  dcc[idx].sock = getsock(dcc[idx].sockname.family, SOCK_STRONGCONN);
-  dcc[uidx].u.relay->sock = dcc[idx].sock;
-  dcc[idx].port++;
-  dcc[idx].timeval = now;
-  if (dcc[idx].sock < 0 ||
-      open_telnet_raw(dcc[idx].sock, &dcc[idx].sockname) < 0)
-    failed_tandem_relay(idx);
-#ifdef TLS
-  else if (dcc[idx].ssl && ssl_handshake(dcc[idx].sock, TLS_CONNECT,
-           tls_vfybots, LOG_BOTS, dcc[idx].host, NULL))
-    failed_tandem_relay(idx);
-#endif
+  lostdcc(idx);
+  return;
 }
 
 
@@ -1258,7 +1240,7 @@ static void tandem_relay_resolve_failure(int idx)
       break;
     }
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1331,7 +1313,7 @@ static void pre_relay(int idx, char *buf, int i)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1377,7 +1359,7 @@ static void failed_pre_relay(int idx)
       }
   }
   if (tidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[idx].sock, dcc[idx].u.relay->sock);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1411,7 +1393,7 @@ static void cont_tandem_relay(int idx, char *buf, int i)
         (dcc[i].u.relay->sock == dcc[idx].sock))
       uidx = i;
   if (uidx < 0) {
-    putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
+    putlog(LOG_MISC, "*", "%s  %ld -> %d", BOT_CANTFINDRELAYUSER,
            dcc[i].sock, dcc[i].u.relay->sock);
     killsock(dcc[i].sock);
     lostdcc(i);

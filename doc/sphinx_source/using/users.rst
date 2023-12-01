@@ -79,4 +79,4 @@ Eggdrop does not have access levels like some bots. There are no meaningless num
 
   There are also 26 global user-defined flags and 26 channel user-defined flags (Capital letters A through Z). These are used by scripts, and their uses vary depending on the script that uses them.
 
-Copyright (C) 2002 - 2022 Eggheads Development Team
+Copyright (C) 2002 - 2023 Eggheads Development Team

@@ -4,7 +4,7 @@
  *
  * Written by thommey and Michael Ortmann
  *
- * Copyright (C) 2017 - 2022 Eggheads Development Team
+ * Copyright (C) 2017 - 2023 Eggheads Development Team
  */
 
 #include "src/mod/module.h"
@@ -85,8 +85,8 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
            strlen("$rounds=4294967295$i") + B64_NTOP_CALCULATE_SIZE(saltlen) +
            1 + B64_NTOP_CALCULATE_SIZE(digestlen);
   if ((outlen + 1) > sizeof out) {
-    putlog(LOG_MISC, "*", "PBKDF2 error: outlen %i > sizeof out %i.", outlen,
-           sizeof out);
+    putlog(LOG_MISC, "*", "PBKDF2 error: outlen %i > sizeof out %ld.", outlen,
+           (long)sizeof out);
     return NULL;
   }
   out2 = out;
@@ -319,7 +319,7 @@ char *pbkdf2_start(Function *global_funcs)
   #ifdef TLS
     return "Initialization failure: compiled with openssl version < 1.0.0";
   #else
-    return "Initialization failure: configured with --disable-TLS or openssl not found";
+    return "Initialization failure: configured with --disable-tls or openssl not found";
   #endif
 #endif
 }

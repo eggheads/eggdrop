@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 #include "../channels.mod/channels.h"
 #include "server.h"
 
+char *encode_msgtags(Tcl_Obj *msgtagdict);
+static char *encode_msgtag(char *key, char *value);
 static int del_capabilities(char *);
 static int del_capability(char *name);
 static time_t last_ctcp = (time_t) 0L;
@@ -38,7 +40,11 @@ static int multistatus = 0, count_ctcp = 0;
 static char altnick_char = 0;
 struct capability *cap;
 struct capability *find_capability(char *capname);
-int account_notify, extended_join;
+static int monitor_add(char * nick, int send);
+static int monitor_del (char *nick);
+static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
+static void monitor_clear();
+int account_notify = 1, extended_join = 1, account_tag = 0;
 Tcl_Obj *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
@@ -194,7 +200,7 @@ static int check_tcl_raw(char *from, char *code, char *msg)
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
-                     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
 
   /* Return 1 if processed */
   return (x == BIND_EXEC_LOG);
@@ -210,7 +216,7 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagdict)
   Tcl_SetVar(interp, "_rawt3", msg, 0);
   Tcl_SetVar(interp, "_rawt4", tagdict, 0);
   x = check_tcl_bind(H_rawt, code, 0, " $_rawt1 $_rawt2 $_rawt3 $_rawt4",
-                    MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
+                    MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
   return (x == BIND_EXEC_LOG);
 }
 
@@ -255,22 +261,6 @@ static int check_tcl_wall(char *from, char *msg)
     return 2;
 
   return 1;
-}
-
-static int check_tcl_account(char *nick, char *uhost, char *mask,
-                            struct userrec *u, char *chan,  char *account)
-{
-  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
-  int x;
-
-  Tcl_SetVar(interp, "_acnt1", nick, 0);
-  Tcl_SetVar(interp, "_acnt2", uhost, 0);
-  Tcl_SetVar(interp, "_acnt3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_acnt4", chan, 0);
-  Tcl_SetVar(interp, "_acnt5", account, 0);
-  x = check_tcl_bind(H_account, mask, &fr,
-       " $_acnt1 $_acnt2 $_acnt3 $_acnt4 $_acnt5", MATCH_MASK | BIND_STACKABLE);
-  return (x == BIND_EXEC_LOG);
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
@@ -320,9 +310,44 @@ static int check_tcl_out(int which, char *msg, int sent)
   return (x == BIND_EXEC_LOG);
 }
 
+static int check_tcl_monitor(char *nick, int online)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_monitor1", nick, 0);
+  Tcl_SetVar(interp, "_monitor2", online ? "1" : "0", 0);
+  x = check_tcl_bind(H_monitor, nick, 0, " $_monitor1 $_monitor2",
+                    MATCH_MASK | BIND_STACKABLE);
+
+  return (x == BIND_EXEC_LOG);
+}
+
 static int match_my_nick(char *nick)
 {
   return (!rfc_casecmp(nick, botname));
+}
+
+char *encode_msgtags(Tcl_Obj *msgtagdict) {
+  int done = 0;
+  Tcl_DictSearch s;
+  Tcl_Obj *value, *key;
+  static Tcl_DString ds;
+  static int ds_initialized = 0;
+
+  if (!ds_initialized) {
+    Tcl_DStringInit(&ds);
+    ds_initialized = 1;
+  } else {
+    Tcl_DStringFree(&ds);
+  }
+  for (Tcl_DictObjFirst(interp, msgtagdict, &s, &key, &value, &done); !done; Tcl_DictObjNext(&s, &key, &value, &done)) {
+    if (Tcl_DStringLength(&ds)) {
+      Tcl_DStringAppend(&ds, ";", -1);
+    }
+    Tcl_DStringAppend(&ds, encode_msgtag(Tcl_GetString(key), Tcl_GetString(value)), -1);
+  }
+
+  return Tcl_DStringValue(&ds);
 }
 
 /* 001: welcome to IRC (use it to fix the server name) */
@@ -529,7 +554,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg, char *tag)
+static int gotmsg(char *from, char *msg)
 {
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
@@ -753,14 +778,17 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
-static int gottagmsg(char *from, char *msg) {
-  char *nick;
+static int gottagmsg(char *from, char *msg, Tcl_Obj *tagdict) {
+  char *nick, *dictstring;
+
+  dictstring = encode_msgtags(tagdict);
+
   fixcolon(msg);
   if (strchr(from, '!')) {
     nick = splitnick(&from);
-    putlog(LOG_SERV, "*", "[#]%s(%s)[#] %s", nick, from, msg);
+    putlog(LOG_SERV, "*", "[#]%s(%s)[#] TAGMSG: %s", nick, from, dictstring);
   } else {
-    putlog(LOG_SERV, "*", "[#]%s[#] %s");
+    putlog(LOG_SERV, "*", "[#]%s[#] TAGMSG: %s", from, dictstring);
   }
   return 0;
 }
@@ -865,7 +893,7 @@ static int got432(char *from, char *msg)
     putlog(LOG_MISC, "*", "NICK IS INVALID: '%s' (keeping '%s').", erroneous,
            botname);
   else {
-    putlog(LOG_MISC, "*", IRC_BADBOTNICK);
+    putlog(LOG_MISC, "*", "%s", IRC_BADBOTNICK);
     if (!strcmp(erroneous, origbotname)) {
       strlcpy(nick, get_altbotnick(), sizeof nick);
     } else {
@@ -1122,6 +1150,37 @@ static struct dcc_table SERVER_SOCKET = {
   NULL
 };
 
+static char *encode_msgtag_value(char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+  size_t written = 0;
+
+  /* empty value and no value is identical, Tcl dict always has empty string as no-value, looks better to encode without = */
+  if (!value || !*value) {
+    return "";
+  }
+  buf[written++] = '=';
+
+  while (*value && written < sizeof buf - 1) {
+    if (*value == ';' || *value == ' ' || *value == '\\' || *value == '\r' || *value == '\n') {
+      buf[written++] = '\\';
+    }
+    buf[written++] = *value++;
+  }
+  buf[written] = '\0';
+
+  return buf;
+}
+
+/* TODO: validity enforcement on used characters in key? */
+static char *encode_msgtag(char *key, char *value)
+{
+  static char buf[TOTALTAGMAX+1];
+
+  snprintf(buf, sizeof buf, "%s%s", key, encode_msgtag_value(value));
+  return buf;
+}
+
 static char *decode_msgtag_value(char *value, char **endptr)
 {
   static char valuebuf[TOTALTAGMAX+1];
@@ -1204,10 +1263,8 @@ static void server_activity(int idx, char *tagmsg, int len)
   /* Check both raw and rawt, to allow backwards compatibility with older
    * scripts. If rawt returns 1 (blocking), don't process raw binds.*/
   /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
-  //Tcl_IncrRef(tagdict);
   strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
   ret = check_tcl_rawt(from, code, msgptr, rawmsg);
-  //Tcl_DecrRef(tagdict);
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
@@ -1267,54 +1324,6 @@ static int got311(char *from, char *msg)
   if (match_my_nick(n2))
     egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", u, h);
 
-  return 0;
-}
-
-static int got396orchghost(char *nick, char *user, char *uhost)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next) {
-    m = ismember(chan, nick);
-    if (m) {
-      snprintf(m->userhost, sizeof m->userhost, "%s@%s", user, uhost);
-      strcpy(botuserhost, m->userhost);
-    }
-  }
-  return 0;
-}
-
-
-/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
- * ident of the user. Format:
- * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
- * changes user hostmask to tehgeo@foo.io
- */
-static int gotchghost(char *from, char *msg){
-  char *nick, *user;
-
-  nick = splitnick(&from); /* Get the nick */
-  user = newsplit(&msg);  /* Get the user */
-  got396orchghost(nick, user, msg);
-  return 0;
-}
-
-/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
- * successfully set. Format:
- * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
- */
-static int got396(char *from, char *msg)
-{
-  char *nick, *uhost, *user, userbuf[UHOSTLEN];
-
-  nick = newsplit(&msg);
-  if (match_my_nick(nick)) {  /* Double check this really is for me */
-    uhost = newsplit(&msg);
-    strlcpy(userbuf, botuserhost, sizeof userbuf);
-    user = strtok(userbuf, "@");
-    got396orchghost(nick, user, uhost);
-  }
   return 0;
 }
 
@@ -1383,23 +1392,24 @@ static int tryauthenticate(char *from, char *msg)
       }
     }
 #else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs missing EC support, try PLAIN or "
-                "EXTERNAL method");
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs not present or missing EC support."
+                " Try the PLAIN or EXTERNAL method instead");
       return 1;
     }
 #endif
     else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
-#ifdef TLS          /* TLS required for EXTERNAL sasl */ 
+#ifdef TLS          /* TLS required for EXTERNAL sasl */
       dst[0] = '+';
       dst[1] = 0;
     }
-    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
-    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #else
-    putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
+      putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
             "installed, try PLAIN method");
+      return 1;
     }
 #endif /* TLS */
+    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
+    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
   } else {      /* Only EC-challenges get extra auth messages w/o a + */
 #ifdef TLS
 #ifdef HAVE_EVP_PKEY_GET1_EC_KEY
@@ -1478,7 +1488,7 @@ static int tryauthenticate(char *from, char *msg)
     ret = ECDSA_sign(0, dst, olen, sig, &siglen, eckey);
     EC_KEY_free(eckey);
     if (!ret) {
-      printf("SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
+      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
              ERR_error_string(ERR_get_error(), 0));
       nfree(sig);
       return 1;
@@ -1494,8 +1504,8 @@ static int tryauthenticate(char *from, char *msg)
     dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
 #endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
 #else /* TLS */
-    dprintf(LOG_DEBUG, "*", "SASL: Received EC message, but no TLS EC libs "
-                "present. Try PLAIN method");
+    putlog(LOG_SERV, "*", "SASL: Received EC message, but no TLS EC libs "
+           "present. Try PLAIN method");
     return 1;
 #endif /* TLS */
   }
@@ -1588,34 +1598,6 @@ static int handle_sasl_timeout()
   return sasl_error("timeout");
 }
 
-/* Got ACCOUNT message; only valid for account-notify capability */
-static int gotaccount(char *from, char *msg) {
-  struct chanset_t *chan;
-  struct userrec *u;
-  memberlist *m;
-  char *nick, *chname, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
-
-  u = get_user_by_host(from);
-  nick = splitnick(&from);
-  for (chan = chanset; chan; chan = chan->next) {
-    chname = chan->dname;
-    if ((m = ismember(chan, nick))) {
-      strlcpy (m->account, msg[0] == '*' ? "" : msg, sizeof m->account);
-      snprintf(mask, sizeof mask, "%s %s", chname, from);
-      if (!strcasecmp(msg, "*")) {
-        msg[0] = '\0';
-        putlog(LOG_JOIN, chname, "%s!%s has logged out of their "
-                "account", nick, from);
-      } else {
-        putlog(LOG_JOIN, chname, "%s!%s has logged into account %s",
-                nick, from, msg);
-      }
-      check_tcl_account(nick, from, mask, u, chname, msg[0] == '*' ? "" : msg);
-    }
-  }
-  return 0;
-}
-
 /*
  * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
  */
@@ -1675,7 +1657,7 @@ struct capability *find_capability(char *capname) {
 }
 
 /* Set capability to be requested by Eggdrop */
-void add_req(char *cape) {
+static void add_req(char *cape) {
   struct capability *current = 0;
 
   putlog(LOG_DEBUG, "*", "Adding %s to CAP request list", cape);
@@ -1829,6 +1811,9 @@ static int gotcap(char *from, char *msg) {
       } else if (!strcmp(current->name, "account-notify") && (account_notify)
                 && (!current->enabled)) {
         add_req(current->name);
+      } else if (!strcmp(current->name, "account-tag") && (account_tag)
+                && (!current->enabled)) {
+        add_req(current->name);
       } else if (!strcmp(current->name, "extended-join") && (extended_join) 
                 && (!current->enabled)) {
         add_req(current->name);
@@ -1978,17 +1963,132 @@ static int gotcap(char *from, char *msg) {
   return 0;
 }
 
+/* Got 730/RPL_MONONLINE
+ * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
+ */
+static int got730or1(char *from, char *msg, int code)
+{
+  char *nick, *tok;
+  struct monitor_list *current = monitor;
+
+  newsplit(&msg);               /* Get rid of nick */
+  fixcolon(msg);                /* Get rid of :    */
+
+  for (tok = strtok(msg, ","); tok; tok = strtok(NULL, " ")) {
+    if (strchr(tok, '!')) {
+      nick = splitnick(&tok);
+    } else {
+      nick = tok;
+    }
+    while (current != NULL) {
+      if (!rfc_casecmp(current->nick, nick)) {
+        if (code == 1) {
+          current->online = 1;
+          check_tcl_monitor(nick, 1);
+          putlog(LOG_SERV, "*", "%s is now online", nick);
+        } else if (code == 0) {
+          current->online = 0;
+          check_tcl_monitor(nick, 0);
+          putlog(LOG_SERV, "*", "%s is now offline", nick);
+        }
+      }
+      current = current->next;
+    }
+  }
+  return 0;
+}
+
+/* Got 730/RPL_MONONLINE
+ * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
+ */
+static int got730(char *from, char *msg)
+{
+  got730or1(from, msg, 1);
+  return 0;
+}
+
+/* Got 731/RPL_MONOFFLINE
+ * :<server> 731 <nick> :target[,target2]*
+ */
+static int got731(char *from, char *msg)
+{
+  got730or1(from, msg, 0);
+  return 0;
+}
+
+/* Got 732/RPL_MONLIST
+ * :<server> 732 <nick> :target[,target2]*
+ *
+ * Clear the existing list, replace it with what the server sends us, as
+ * that is what is 100% accurate
+ */
+static int got732(char *from, char *msg)
+{
+  char *tok, *nick;
+  struct monitor_list *current = monitor;
+  struct monitor_list *next = NULL;
+
+/* Did we already get a 732? If no, clear the existing list, otherwise leave
+ * it for appending
+ */
+  if (!monitor732) {
+    while (current != NULL) {
+      next = current->next;
+      nfree(current);
+      current = next;
+    }
+    monitor = NULL;
+  }
+
+  newsplit(&msg);               /* Get rid of nick */
+  fixcolon(msg);                /* Get rid of :    */
+
+  for (tok = strtok(msg, ","); tok && *tok; tok = strtok(NULL, ",")) {
+    /* returned target could be in nick!u@host format */
+    if (strchr(tok, '!')) {
+      nick = splitnick(&tok);
+    } else {
+      nick = tok;
+    }
+    monitor_add(nick, 0);
+  }
+  monitor732 = 1;
+  return 0;
+}
+
+/* Got 733/RPL_ENDOFMONLIST
+ * :<server> 733 <nick> :End of MONITOR list
+ */
+static int got733(char *from, char *msg)
+{
+  monitor732 = 0;
+  return 0;
+}
+
+/* Got 734/RPL_MONLISTFULL
+ * :<server> 734 <nick> <limit> <targets> :Monitor list is full.
+ */
+static int got734(char *from, char *msg)
+{
+  putlog(LOG_SERV, "*", "Server monitor list is full, nickname not added");
+  return 0;
+}
+
 static int server_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
 
   if (!strcmp(key, "NICKLEN") || !strcmp(key, "MAXNICKLEN")) {
     isupport_parseint(key, isset ? value : NULL, 9, NICKMAX, 1, 9, &nick_len);
+  } else if (!strcmp(key, "MONITOR")) {
+    monitor005 = isset;
+    isupport_parseint(key, isset ? value : NULL, 1, 500, 1, 0, &max_monitor);
   }
   return 0;
 }
 
 static cmd_t my_raw_binds[] = {
+  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {"NOTICE",       "",   (IntFunc) gotnotice,       NULL},
   {"MODE",         "",   (IntFunc) gotmode,         NULL},
   {"PING",         "",   (IntFunc) gotping,         NULL},
@@ -1999,7 +2099,6 @@ static cmd_t my_raw_binds[] = {
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},
   {"318",          "",   (IntFunc) whoispenalty,    NULL},
-  {"396",          "",   (IntFunc) got396,          NULL},
   {"410",          "",   (IntFunc) got410,          NULL},
   {"417",          "",   (IntFunc) got417,          NULL},
   {"421",          "",   (IntFunc) got421,          NULL},
@@ -2010,6 +2109,11 @@ static cmd_t my_raw_binds[] = {
   {"451",          "",   (IntFunc) got451,          NULL},
   {"442",          "",   (IntFunc) got442,          NULL},
   {"465",          "",   (IntFunc) got465,          NULL},
+  {"730",          "",   (IntFunc) got730,          NULL},
+  {"731",          "",   (IntFunc) got731,          NULL},
+  {"732",          "",   (IntFunc) got732,          NULL},
+  {"733",          "",   (IntFunc) got733,          NULL},
+  {"734",          "",   (IntFunc) got734,          NULL},
   {"900",          "",   (IntFunc) got900,          NULL},
   {"901",          "",   (IntFunc) got901,          NULL},
   {"902",          "",   (IntFunc) gotsasl90X,      NULL},
@@ -2026,15 +2130,12 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
-  {"ACCOUNT",      "",   (IntFunc) gotaccount,      NULL},
-  {"CHGHOST",      "",   (IntFunc) gotchghost,      NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
 static cmd_t my_rawt_binds[] = {
   {"TAGMSG",       "",   (IntFunc) gottagmsg,       NULL},
-  {"PRIVMSG",      "",   (IntFunc) gotmsg,          NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 

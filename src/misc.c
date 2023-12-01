@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -232,11 +232,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   if (first != NULL)
     strlcpy(first, rest, max);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 char *splitnick(char **blah)
@@ -430,7 +426,7 @@ void dumplots(int idx, const char *prefix, const char *data)
     n = strchr(p, '\n');
     if (n && n < q) {
       /* Great! dump that first line then start over */
-      dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
       p = n + 1;
     } else {
       /* Search backwards for the last space */
@@ -438,7 +434,7 @@ void dumplots(int idx, const char *prefix, const char *data)
         q--;
       if (q == p)
         q = p + max_data_len;
-      dprintf(idx, "%s%.*s\n", prefix, q - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(q - p), p);
       p = q;
       if (*q == ' ')
         p++;
@@ -447,7 +443,7 @@ void dumplots(int idx, const char *prefix, const char *data)
   /* Last trailing bit: split by linefeeds if possible */
   n = strchr(p, '\n');
   while (n) {
-    dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+    dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
     p = n + 1;
     n = strchr(p, '\n');
   }
@@ -513,11 +509,12 @@ void daysdur(time_t now, time_t then, char *out)
 /* Log something
  * putlog(level,channel_name,format,...);
  */
-void putlog EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
-  int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  int i, tsl = 0;
+  char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -528,9 +525,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     t = localtime(&now2);
   }
 
-  type = EGG_VARARGS_START(int, arg1, va);
-  chname = va_arg(va, char *);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   /* Create the timestamp */
   if (shtime) {
@@ -583,8 +578,8 @@ void putlog EGG_VARARGS_DEF(int, arg1)
         if (logs[i].f == NULL) {
           /* Open this logfile */
           if (keep_all_logs) {
-            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a");
+            snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
+            logs[i].f = fopen(path, "a");
           } else
             logs[i].f = fopen(logs[i].filename, "a");
         }
@@ -619,7 +614,8 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     }
   }
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
+    if (((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) ||
+        ((dcc[i].type == &DCC_PRE_RELAY) && (dcc[i].u.relay->chat->con_flags & type))) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
           !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
         dprintf(i, "%s", out);

@@ -1,5 +1,4 @@
 Botnet Sharing and Linking
-Last revised: Nov 09, 2017
 
 ==========================
 Botnet Sharing and Linking
@@ -12,7 +11,7 @@ Botnet Sharing and Linking
 What is a botnet?
 -----------------
 
-  A botnet consists of one or more bots linked together. This can allow bots to op each other securely, control floods efficiently, and share user lists, ban lists, exempt/invite lists, and ignore lists (if sharing is enabled).
+  A botnet consists of two or more bots linked together. This can allow bots to op each other securely, control floods efficiently, and share user lists, ban lists, exempt/invite lists, and ignore lists (if sharing is enabled).
 
 Terms
 -----
@@ -20,7 +19,7 @@ Terms
 The following are some common terms used in this document:
 
 **Botnet**
-  A botnet consists of one or more bots connected together.
+  A botnet consists of two or more bots connected together.
 
 **Link**
   Link is the term used to describe a bot connecting to another bot.
@@ -149,6 +148,10 @@ Here is an example scenario:
       command. On BotB, you would type '.+bot BotA lame.org 3333'.
 
 At this point, you can link the two bots by typing '.link BotA' on BotB (or '.link BotB' on BotA). The bots will now give themselves random passwords which are *not* stored encrypted in the userfile. Note that you can link as many bots as you wish to your botnet.
+
+Secure (TLS) Links
+^^^^^^^^^^^^^^^^^^
+Since Eggdrop 1.8.0, the ability to encrypt bot links using TLS is possible. On the hub bot you would prefix the port given in the `listen` command with a +, and when you add the hub bot to the leaf, you would prefix the port used in the `.+bot` command with a +. In other words, you would set `listen +5555` in the hub config and use `.+bot hubbot 1.2.3.4 +5555` on the leaf bot. These settings are explained more thoroughly in the `TLS botnet documentation. <https://docs.eggheads.org/using/tls.html#botnet>`_
 
 
 Using botflags
@@ -315,4 +318,8 @@ Making bots share user records
       |-+beldin
       `-+Lameshare
 
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Using certificates to authenticate Eggdrops
+-------------------------------------------
+Eggdrops can use certificates to authenticate when linking to each other instead of a password. First, you must ensure you have set the appropriate certificates in the `ssl-privatekey` and `ssl-certificate` settings in the config file, and then enable the `ssl-cert-auth` setting. Next, add the certificate on the partyline by using `.fprint +` to add the fingerprint for the certificate currently in use, or `.fprint <SHA1 fingerprint>` to manually add a fingerprint. Once the config file settings are set 0and fingerprints are added on the partyline, Eggdrops will attempt to use their certificates instead of passwords for authentication.
+
+Copyright (C) 1999 - 2023 Eggheads Development Team

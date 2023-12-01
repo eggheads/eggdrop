@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,15 +48,10 @@
 #  endif
 #endif
 
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 #include "filedb3.h"
@@ -290,8 +285,8 @@ static void tell_file_stats(int idx, char *hand)
   if (!(fs = get_user(&USERENTRY_FSTAT, u))) {
     dprintf(idx, "No file statistics for %s.\n", hand);
   } else {
-    dprintf(idx, "  uploads: %4u / %6luk\n", fs->uploads, fs->upload_ks);
-    dprintf(idx, "downloads: %4u / %6luk\n", fs->dnloads, fs->dnload_ks);
+    dprintf(idx, "  uploads: %4u / %6uk\n", fs->uploads, fs->upload_ks);
+    dprintf(idx, "downloads: %4u / %6uk\n", fs->dnloads, fs->dnload_ks);
     if (fs->uploads)
       fr = ((float) fs->dnloads / (float) fs->uploads);
     if (fs->upload_ks)
@@ -949,11 +944,11 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  putlog(LOG_MISC, "*", "Unloading filesystem; killing all filesystem "
+  putlog(LOG_MISC, "*", "%s", "Unloading filesystem; killing all filesystem "
          "connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
-      dprintf(i, DCC_BOOTED1);
+      dprintf(i, "%s", DCC_BOOTED1);
       dprintf(i, "You have been booted from the filesystem, module "
               "unloaded.\n");
       killsock(dcc[i].sock);

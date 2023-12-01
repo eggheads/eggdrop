@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,7 +73,7 @@ tandbuf *tbuf;
 
 /* Prototypes */
 static void start_sending_users(int);
-static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
+static void shareout_but(struct chanset_t *chan, int x, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 static int flush_tbuf(char *);
 static int can_resync(char *);
 static void dump_resync(int);
@@ -1232,7 +1232,8 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%" PRId64 ".users", botnetnick,
+           (int64_t) now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -1462,18 +1463,15 @@ static void sharein_mod(int idx, char *msg)
   }
 }
 
-static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+static void shareout_mod(struct chanset_t *chan, const char *format, ...)
 {
   int i, l;
-  char *format;
   char s[601];
-  struct chanset_t *chan;
   va_list va;
 
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
-
   if (!chan || channel_shared(chan)) {
-    format = va_arg(va, char *);
+    va_start(va, format);
 
     strcpy(s, "s ");
     if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1492,21 +1490,18 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
         }
       }
     q_resync(s, chan);
+    va_end(va);
   }
-  va_end(va);
 }
 
-static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+static void shareout_but(struct chanset_t *chan, int x, const char *format, ...)
 {
-  int i, x, l;
-  char *format;
+  int i, l;
   char s[601];
-  struct chanset_t *chan;
   va_list va;
 
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
-  x = va_arg(va, int);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   strcpy(s, "s ");
   if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1780,7 +1775,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     fclose(f);
   }
   if (!ok)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE2);
   return ok;
 }
 
@@ -2044,8 +2039,8 @@ static void start_sending_users(int idx)
   struct chanset_t *cst;
   char s[EGG_INET_ADDRSTRLEN];
 
-  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
-               now);
+  snprintf(share_file, sizeof share_file, ".share.%s.%" PRId64, dcc[idx].nick,
+           (int64_t) now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
            dcc[idx].nick);

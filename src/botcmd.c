@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -837,8 +837,8 @@ static void bot_traced(int idx, char *par)
               if (*c == ':')
                 j++;
           }
-          dprintf(i, "%s -> %s (%lu secs, %d hop%s)\n", BOT_TRACERESULT, p,
-                  now - t, j, (j != 1) ? "s" : "");
+          dprintf(i, "%s -> %s (%" PRId64 " secs, %d hop%s)\n", BOT_TRACERESULT,
+                  p, (int64_t) (now - t), j, (j != 1) ? "s" : "");
         } else
           dprintf(i, "%s -> %s\n", BOT_TRACERESULT, p);
       }
@@ -1130,7 +1130,7 @@ static void bot_filereq(int idx, char *tobot)
       module_entry *fs = module_find("filesys", 0, 0);
 
       if (fs == NULL)
-        botnet_send_priv(idx, botnetnick, from, NULL, MOD_NOFILESYSMOD);
+        botnet_send_priv(idx, botnetnick, from, NULL, "%s", MOD_NOFILESYSMOD);
       else {
         Function f = fs->funcs[FILESYS_REMOTE_REQ];
 

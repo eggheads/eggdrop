@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -394,7 +394,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 }
 
 /* Add a !* and/or @* if lacking in a usermask, copying to newmask */
-void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
+static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 {
   char *strat, *strbang;
 
@@ -429,7 +429,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
     if (match_addr(host, s)) {
-      putlog(LOG_MISC, "*", IRC_IBANNEDME);
+      putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
       return 0;
     }
   }
@@ -1211,7 +1211,7 @@ static void channels_writeuserfile(void)
     fclose(f);
   }
   if (ret < 3)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE);
   write_channels();
 }
 

@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Advanced Tips &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Advanced Tips &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Textfile Substitutions" href="text-sub.html" />
     <link rel="prev" title="Twitch" href="twitchinfo.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="twitchinfo.html" title="Twitch"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Tips</a><ul>
@@ -72,20 +68,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -108,47 +106,48 @@
             
   <p>Eggdrop Tricks
 Last revised: Jun 02, 2021</p>
-<div class="section" id="advanced-tips">
-<h1>Advanced Tips<a class="headerlink" href="#advanced-tips" title="Permalink to this headline">¶</a></h1>
+<section id="advanced-tips">
+<h1>Advanced Tips<a class="headerlink" href="#advanced-tips" title="Permalink to this heading">¶</a></h1>
 <p>Here are some little tricks that you may or may not know about, which aren’t documented in other areas.</p>
-<div class="section" id="renaming-commands">
-<h2>Renaming commands<a class="headerlink" href="#renaming-commands" title="Permalink to this headline">¶</a></h2>
+<section id="renaming-commands">
+<h2>Renaming commands<a class="headerlink" href="#renaming-commands" title="Permalink to this heading">¶</a></h2>
 <p>You can rename a built-in command by binding over it. To rename ‘.status’ to ‘.report’, you’d do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unbind</span> <span class="n">dcc</span> <span class="o">-</span> <span class="n">status</span> <span class="o">*</span><span class="n">dcc</span><span class="p">:</span><span class="n">status</span>
 <span class="n">bind</span> <span class="n">dcc</span> <span class="n">m</span> <span class="n">report</span> <span class="o">*</span><span class="n">dcc</span><span class="p">:</span><span class="n">status</span>
 </pre></div>
 </div>
 <p>The first line removes the built-in binding on ‘.status’, and the second line binds ‘.report’ to the built-in status function.</p>
-</div>
-<div class="section" id="keeping-logs">
-<h2>Keeping Logs<a class="headerlink" href="#keeping-logs" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="keeping-logs">
+<h2>Keeping Logs<a class="headerlink" href="#keeping-logs" title="Permalink to this heading">¶</a></h2>
 <p>If you don’t want your logfiles to be deleted after two days and don’t want the bot to create a new logfile each new day, then set ‘keep-all-logs’ to 0 and ‘switch-logfiles-at’ to 2500 in your bot’s config file to make it keeping one logfile all the time. This is not recommended on high traffic channels.</p>
-</div>
-<div class="section" id="self-logging">
-<h2>Self-logging<a class="headerlink" href="#self-logging" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="self-logging">
+<h2>Self-logging<a class="headerlink" href="#self-logging" title="Permalink to this heading">¶</a></h2>
 <p>Because of how traditional IRC works, Eggdrop doesn’t capture outgoing messages to its logfile. However, if the server you are on supports the IRCv3 capability “echo-message”, you can request this capability to be enabled by the server in your config file. This will cause the server to send Eggdrop’d public messages back, thereby allowing those messages to be logged.</p>
-</div>
-<div class="section" id="modifying-default-strings">
-<h2>Modifying Default Strings<a class="headerlink" href="#modifying-default-strings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="modifying-default-strings">
+<h2>Modifying Default Strings<a class="headerlink" href="#modifying-default-strings" title="Permalink to this heading">¶</a></h2>
 <p>You can modify Eggdrop’s output in the partyline, kick messages, and other texts by editing core.english.lang in the language directory.</p>
-</div>
-<div class="section" id="modularizing-your-config-file">
-<h2>Modularizing Your Config File<a class="headerlink" href="#modularizing-your-config-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="modularizing-your-config-file">
+<h2>Modularizing Your Config File<a class="headerlink" href="#modularizing-your-config-file" title="Permalink to this heading">¶</a></h2>
 <p>You can export parts of your config file to separate files. For example, if you have several config files which differ from themselves only by the nickname and the used servers, you can export them to an own file and link it with the ‘source’ Tcl command, similar to a script. The advantage of this is that you have to edit/upload only the small file instead of the big one. This technique is also useful if you want to maintain the same channel settings, etc across your botnet.</p>
-</div>
-<div class="section" id="variables-in-your-config">
-<h2>Variables in Your Config<a class="headerlink" href="#variables-in-your-config" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="variables-in-your-config">
+<h2>Variables in Your Config<a class="headerlink" href="#variables-in-your-config" title="Permalink to this heading">¶</a></h2>
 <p>You can use variables in your config file, since it’s really just a normal Tcl file. For example, you can set ‘userfile’ and ‘chanfile’ to “yourbot.user” and “yourbot.chan” using the following method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">myvar</span> <span class="s2">&quot;yourbot&quot;</span>
 <span class="nb">set</span> <span class="n">userfile</span> <span class="s2">&quot;$myvar.user&quot;</span>
 <span class="nb">set</span> <span class="n">chanfile</span> <span class="s2">&quot;$myvar.chan&quot;</span>
 </pre></div>
 </div>
-<p>Copyright (C) 1999 - 2022 Eggheads Development Team</p>
-</div>
-</div>
+<p>Copyright (C) 1999 - 2023 Eggheads Development Team</p>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -173,9 +172,9 @@ Last revised: Jun 02, 2021</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

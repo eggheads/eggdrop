@@ -1,7 +1,7 @@
 /*
  * transferqueue.c -- part of transfer.mod
  *
- * Copyright (C) 2003 - 2022 Eggheads Development Team
+ * Copyright (C) 2003 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -209,7 +209,7 @@ static void show_queued_files(int idx)
     }
   }
   if (!cnt)
-    dprintf(idx, TRANSFER_QUEUED_UP);
+    dprintf(idx, "%s", TRANSFER_QUEUED_UP);
   else
     dprintf(idx, TRANSFER_TOTAL, cnt);
 }
@@ -279,7 +279,7 @@ static void fileq_cancel(int idx, char *par)
     }
   }
   if (!matches)
-    dprintf(idx, TRANSFER_NO_MATCHES);
+    dprintf(idx, "%s", TRANSFER_NO_MATCHES);
   else
     dprintf(idx, TRANSFER_CANCELLED_FILE, matches, (matches != 1) ? "s" : "");
   for (i = 0; i < atot; i++)

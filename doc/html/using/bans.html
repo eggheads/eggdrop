@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Bans, Invites, and Exempts &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Bans, Invites, and Exempts &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Botnet Sharing and Linking" href="botnet.html" />
     <link rel="prev" title="Users and Flags" href="users.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="users.html" title="Users and Flags"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -64,20 +60,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -100,8 +98,8 @@
             
   <p>Bans, Invites and Exempts
 Last revised: March 07, 2002</p>
-<div class="section" id="bans-invites-and-exempts">
-<h1>Bans, Invites, and Exempts<a class="headerlink" href="#bans-invites-and-exempts" title="Permalink to this headline">¶</a></h1>
+<section id="bans-invites-and-exempts">
+<h1>Bans, Invites, and Exempts<a class="headerlink" href="#bans-invites-and-exempts" title="Permalink to this heading">¶</a></h1>
 <blockquote>
 <div><p>I assume that you know how bans work on IRC. Eggdrop handles bans, exempts
 and invites in various ways, and this file is intended to help clarify how
@@ -109,73 +107,74 @@ these modes are used within the bot. From here on, ‘mode’ applies to all
 three modes (bans, exempts, and invites) unless otherwise specified. There
 are three types of modes:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>Global modes</dt>
-<dd>These modes will be active on every channel the bot
+<div><dl class="simple">
+<dt>Global modes</dt><dd><p>These modes will be active on every channel the bot
 monitors. Some will “expire” after a while (be removed
 automatically). Others are considered “permanent” and
-can only be removed by a master.</dd>
-<dt>Channel modes</dt>
-<dd>These modes are active only on one channel, and are almost
+can only be removed by a master.</p>
+</dd>
+<dt>Channel modes</dt><dd><p>These modes are active only on one channel, and are almost
 always temporary modes that expire after an hour or so
 (depending on how long you’ve specified in the config
 file). Usually they’re created by a Tcl script of some
-sort.</dd>
-<dt>Non-bot modes</dt>
-<dd>These are modes that were not placed by the bot. They
+sort.</p>
+</dd>
+<dt>Non-bot modes</dt><dd><p>These are modes that were not placed by the bot. They
 can be removed by anyone on the channel. The other two
 types of modes are protected by the bot (unless the
 channel settings specify otherwise), and have to be
-removed via the bot.</dd>
+removed via the bot.</p>
+</dd>
 </dl>
 </div></blockquote>
 <p>Bans can also be either sticky or unsticky:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>Sticky</dt>
-<dd>These modes are usually set by a user using the “.stick”
+<div><dl class="simple">
+<dt>Sticky</dt><dd><p>These modes are usually set by a user using the “.stick”
 command. Modes with this attribute are attempted to be kept
 active on the channel at all times by the bot, even if the
 channel is set to use dynamic modes. Obviously, if the channel
-isn’t set to use dynamic modes, this won’t have any effect.</dd>
-<dt>Un-sticky</dt>
-<dd>These modes are the style that Eggdrop sets by default when
+isn’t set to use dynamic modes, this won’t have any effect.</p>
+</dd>
+<dt>Un-sticky</dt><dd><p>These modes are the style that Eggdrop sets by default when
 a user uses one of the commands that result in a mode. This
 attribute means that the ban will be removed if using dynamic
 modes after a certain time. If a mode is “sticky” and you wish
-to set it to be “un-sticky”, use the “.unstick” command.</dd>
+to set it to be “un-sticky”, use the “.unstick” command.</p>
+</dd>
 </dl>
 </div></blockquote>
 <p>Mode behavior:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>Bans</dt>
-<dd>If the channel is supporting dynamic bans, then the ban is
+<div><dl class="simple">
+<dt>Bans</dt><dd><p>If the channel is supporting dynamic bans, then the ban is
 set when a user with a matching hostmask joins the channel;
 otherwise, the modes are permanently set. On a channel with
 dynamic bans, the ban expires after ‘ban-time’ minutes (which
-is specified in the config file).</dd>
-<dt>Exempts</dt>
-<dd>If the channel is not supporting dynamic exempts, then they
+is specified in the config file).</p>
+</dd>
+<dt>Exempts</dt><dd><p>If the channel is not supporting dynamic exempts, then they
 are set at all times. Otherwise, the exemption is set when a
 ban is placed whose host includes that covered by the exempt.
 The exempt will remain in place for at least ‘exempt-time’
 minutes (defined in config file) or until after the
-corresponding ban has been removed, whichever happens last.</dd>
-<dt>Invites</dt>
-<dd>If the channel does not support dynamic invites, then they
+corresponding ban has been removed, whichever happens last.</p>
+</dd>
+<dt>Invites</dt><dd><p>If the channel does not support dynamic invites, then they
 are set at all times. Otherwise, the invite is set when the
 channel is +i and a user requests an invite into the channel.
 The invite then remains set for ‘invite-time’ minutes
 (defined in config file) or until the channel goes -i again,
-whichever happens last.</dd>
+whichever happens last.</p>
+</dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 1999 - 2022 Eggheads Development Team</p>
+<p>Copyright (C) 1999 - 2023 Eggheads Development Team</p>
 </div></blockquote>
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -200,9 +199,9 @@ whichever happens last.</dd>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

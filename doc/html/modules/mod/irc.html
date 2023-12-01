@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>IRC Module &#8212; Eggdrop 1.9.2 documentation</title>
-    <link rel="stylesheet" href="../../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>IRC Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Notes Module" href="notes.html" />
     <link rel="prev" title="Ident Module" href="ident.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../../index.html">
-            <img class="logo" src="../../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../../index.html">Eggdrop 1.9.2 documentation</a></div>
+          href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="ident.html" title="Ident Module"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tricks.html">Advanced Tips</a></li>
@@ -64,14 +60,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../included.html">Modules included with Eggdrop</a><ul class="current">
@@ -96,9 +93,10 @@
 <li class="toctree-l2"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../about/legal.html">Boring legal stuff</a></li>
@@ -120,13 +118,14 @@
           <div class="body" role="main">
             
   <p>Last revised: August 21, 2004</p>
-<div class="section" id="irc-module">
-<span id="irc"></span><h1>IRC Module<a class="headerlink" href="#irc-module" title="Permalink to this headline">¶</a></h1>
+<section id="irc-module">
+<span id="irc"></span><h1>IRC Module<a class="headerlink" href="#irc-module" title="Permalink to this heading">¶</a></h1>
 <p>This module controls the bots interaction on IRC. It allows the bot to
 join channels, etc. You have to load this if you want your bot to come on
 irc.</p>
 <blockquote>
-<div>This module requires: server, channels</div></blockquote>
+<div><p>This module requires: server, channels</p>
+</div></blockquote>
 <p>Put this line into your Eggdrop configuration file to load the irc
 module:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">irc</span>
@@ -134,94 +133,98 @@ module:</p>
 </div>
 <p>There are also some variables you can set in your config file:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set bounce-bans 1</dt>
-<dd>Set this to 1 if you want to bounce all server bans.</dd>
-<dt>set bounce-exempts 0</dt>
-<dd>Set this to 1 if you want to bounce all server exemptions (+e modes).
-This is disabled if use-exempts is disabled.</dd>
-<dt>set bounce-invites 0</dt>
-<dd>Set this to 1 if you want to bounce all server invitations (+I modes).
-This is disabled if use-invites is disabled.</dd>
-<dt>set bounce-modes 0</dt>
-<dd>Set this to 1 if you want to bounce all server modes.</dd>
-<dt>set max-modes 30</dt>
-<dd>There is a global limit for +b/+e/+I modes. This limit should be set to
-the same value as max-bans for networks that do not support +e/+I.</dd>
-<dt>set max-bans 30</dt>
-<dd>Set here the maximum number of bans you want the bot to set on a channel.
+<div><dl class="simple">
+<dt>set bounce-bans 1</dt><dd><p>Set this to 1 if you want to bounce all server bans.</p>
+</dd>
+<dt>set bounce-exempts 0</dt><dd><p>Set this to 1 if you want to bounce all server exemptions (+e modes).
+This is disabled if use-exempts is disabled.</p>
+</dd>
+<dt>set bounce-invites 0</dt><dd><p>Set this to 1 if you want to bounce all server invitations (+I modes).
+This is disabled if use-invites is disabled.</p>
+</dd>
+<dt>set bounce-modes 0</dt><dd><p>Set this to 1 if you want to bounce all server modes.</p>
+</dd>
+<dt>set max-modes 30</dt><dd><p>There is a global limit for +b/+e/+I modes. This limit should be set to
+the same value as max-bans for networks that do not support +e/+I.</p>
+</dd>
+<dt>set max-bans 30</dt><dd><p>Set here the maximum number of bans you want the bot to set on a channel.
 Eggdrop will not place any more bans if this limit is reached. Undernet
 currently allows 45 bans, IRCnet allows 30, EFnet allows 100, and DALnet
-allows 100.</dd>
-<dt>set max-exempts 20</dt>
-<dd>Set here the maximum number of exempts you want Eggdrop to set on a
+allows 100.</p>
+</dd>
+<dt>set max-exempts 20</dt><dd><p>Set here the maximum number of exempts you want Eggdrop to set on a
 channel. Eggdrop will not place any more exempts if this limit is
-reached.</dd>
-<dt>set max-invites 20</dt>
-<dd>Set here the maximum number of invites you want Eggdrop to set on a
+reached.</p>
+</dd>
+<dt>set max-invites 20</dt><dd><p>Set here the maximum number of invites you want Eggdrop to set on a
 channel. Eggdrop will not place any more invites if this limit is
-reached.</dd>
+reached.</p>
+</dd>
 </dl>
 <div class="line-block">
 <div class="line">set use-exempts 0</div>
 <div class="line">set use-invites 0</div>
 </div>
 <blockquote>
-<div>These settings should be left commented unless the default values are
+<div><p>These settings should be left commented unless the default values are
 being overridden. By default, exempts and invites are on for EFnet and
 IRCnet, but off for all other large networks. This behavior can be
 modified with the following 2 flags. If your network doesn’t support
-+e/+I modes then you will be unable to use these features.</div></blockquote>
-<dl class="docutils">
-<dt>set learn-users 0</dt>
-<dd>If you want people to be able to add themselves to the bot’s userlist
++e/+I modes then you will be unable to use these features.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>set learn-users 0</dt><dd><p>If you want people to be able to add themselves to the bot’s userlist
 with the default userflags (defined above in the config file) via the
-‘hello’ msg command, set this to 1.</dd>
-<dt>set wait-split 600</dt>
-<dd>Set here the time (in seconds) to wait for someone to return from a
+‘hello’ msg command, set this to 1.</p>
+</dd>
+<dt>set wait-split 600</dt><dd><p>Set here the time (in seconds) to wait for someone to return from a
 netsplit (i.e. wasop will expire afterwards). Set this to 1500 on IRCnet
-since its nick delay stops after 30 minutes.</dd>
-<dt>set wait-info 180</dt>
-<dd>Set here the time (in seconds) that someone must have been off-channel
-before re-displaying their info line.</dd>
-<dt>set mode-buf-length 200</dt>
-<dd>Set this to the maximum number of bytes to send in the arguments of
-modes sent to the server. Most servers default this to 200.</dd>
+since its nick delay stops after 30 minutes.</p>
+</dd>
+<dt>set wait-info 180</dt><dd><p>Set here the time (in seconds) that someone must have been off-channel
+before re-displaying their info line.</p>
+</dd>
+<dt>set mode-buf-length 200</dt><dd><p>Set this to the maximum number of bytes to send in the arguments of
+modes sent to the server. Most servers default this to 200.</p>
+</dd>
 </dl>
 <div class="line-block">
 <div class="line">unbind msg - hello *msg:hello</div>
 <div class="line">bind msg - myword *msg:hello</div>
 </div>
 <blockquote>
-<div>Many IRCops find bots by seeing if they reply to ‘hello’ in a msg. You
-can change this to another word by un-commenting thse two lines and
+<div><p>Many IRCops find bots by seeing if they reply to ‘hello’ in a msg. You
+can change this to another word by un-commenting these two lines and
 changing “myword” to the word wish to use instead of’hello’. It must be
-a single word.</div></blockquote>
+a single word.</p>
+</div></blockquote>
 <div class="line-block">
 <div class="line">unbind msg - ident *msg:ident</div>
 <div class="line">unbind msg - addhost *msg:addhost
 Many takeover attempts occur due to lame users blindly /msg ident’ing to</div>
 </div>
 <blockquote>
-<div>the bot and attempting to guess passwords. We now unbind this command by
+<div><p>the bot and attempting to guess passwords. We now unbind this command by
 default to discourage them. You can enable this command by un-commenting
-these two lines.</div></blockquote>
+these two lines.</p>
+</div></blockquote>
 <div class="line-block">
 <div class="line">set opchars “&#64;”</div>
 <div class="line">#set opchars “&#64;&amp;~”</div>
 </div>
 <blockquote>
-<div>Some IRC servers are using some non-standard op-like channel
+<div><p>Some IRC servers are using some non-standard op-like channel
 prefixes/modes. Define them here so the bot can recognize them. Just
 “&#64;” should be fine for most networks. Un-comment the second line for
-some UnrealIRCds.</div></blockquote>
-<dl class="docutils">
-<dt>set no-chanrec-info 0</dt>
-<dd>If you are so lame you want the bot to display peoples info lines, even
+some UnrealIRCds.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>set no-chanrec-info 0</dt><dd><p>If you are so lame you want the bot to display peoples info lines, even
 when you are too lazy to add their chanrecs to a channel, set this to 1.
 <em>NOTE</em> This means <em>every</em> user with an info line will have their info
 line displayed on EVERY channel they join (provided they have been gone
-longer than wait-info).</dd>
+longer than wait-info).</p>
+</dd>
 </dl>
 </div></blockquote>
 <p>These were the core irc module settings. There are more settings for
@@ -229,41 +232,42 @@ longer than wait-info).</dd>
 section.</p>
 <p>Use the following settings only if you set ‘net-type’ to IRCnet!</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>set prevent-mixing 1</dt>
-<dd>At the moment, the current IRCnet IRCd version (2.10) doesn’t support the
+<div><dl class="simple">
+<dt>set prevent-mixing 1</dt><dd><p>At the moment, the current IRCnet IRCd version (2.10) doesn’t support the
 mixing of b, o and v modes with e and I modes. This might be changed in
-the future, so use 1 at the moment for this setting.</dd>
+the future, so use 1 at the moment for this setting.</p>
+</dd>
 </dl>
 <p>Use the following settings only if you set ‘net-type’ to Efnet!</p>
-<dl class="docutils">
-<dt>set kick-method 1</dt>
-<dd>If your network supports more users per kick command then 1, you can
+<dl class="simple">
+<dt>set kick-method 1</dt><dd><p>If your network supports more users per kick command then 1, you can
 change this behavior here. Set this to the number of users to kick at
-once, or set this to 0 for all at once.</dd>
-<dt>set modes-per-line 3</dt>
-<dd>Some networks allow you to stack lots of channel modes into one line.
+once, or set this to 0 for all at once.</p>
+</dd>
+<dt>set modes-per-line 3</dt><dd><p>Some networks allow you to stack lots of channel modes into one line.
 They’re all guaranteed to support at least 3, so that’s the default.
 If you know your network supports more, you may want to adjust this.
 This setting is limited to 6, although if you want to use a higher
 value, you can modify this by changing the value of MODES_PER_LINE_MAX
-in src/chan.h and recompiling the bot.</dd>
-<dt>set include-lk 1</dt>
-<dd>Some networks don’t include the +l limit and +k or -k key modes in the
+in src/chan.h and recompiling the bot.</p>
+</dd>
+<dt>set include-lk 1</dt><dd><p>Some networks don’t include the +l limit and +k or -k key modes in the
 modes-per-line (see above) limitation. Set include-lk to 0 for these
-networks.</dd>
-<dt>set use-354 0</dt>
-<dd>Set this to 1 if your network uses IRCu2.10.01 specific /who requests.
-Eggdrop can, therefore, ask only for exactly what’s needed.</dd>
-<dt>set rfc-compliant 1</dt>
-<dd>If your network doesn’t use rfc 1459 compliant string matching routines,
-set this to 0.</dd>
+networks.</p>
+</dd>
+<dt>set use-354 0</dt><dd><p>Set this to 1 if your network uses IRCu2.10.01 specific /who requests.
+Eggdrop can, therefore, ask only for exactly what’s needed.</p>
+</dd>
+<dt>set rfc-compliant 1</dt><dd><p>If your network doesn’t use rfc 1459 compliant string matching routines,
+set this to 0.</p>
+</dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2022 Eggheads Development Team</p>
-</div>
+<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -288,9 +292,9 @@ set this to 0.</dd>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on May 26, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

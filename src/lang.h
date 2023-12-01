@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -122,7 +122,7 @@
 #define MISC_JUPED              get_language(0x542)
 #define MISC_NOFREESOCK         get_language(0x543)
 #define MISC_TCLVERSION         get_language(0x544)
-#define MISC_TCLHVERSION        get_language(0x545)
+#define MISC_HEADERVERSION      get_language(0x545)
 
 /* IRC */
 #define IRC_BANNED              get_language(0x600)
