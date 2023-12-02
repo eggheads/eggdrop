@@ -625,7 +625,9 @@ Function global_table[] = {
 /* 316 - 319 */
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
   (Function) get_user_by_account,
-  (Function) delhost_by_handle
+  (Function) delhost_by_handle,
+  (Function) check_tcl_event_arg
+/* 320 - 323 */
 };
 
 void init_modules(void)
