@@ -1,5 +1,9 @@
-DESC:The blowfish module provides encryption support for eggdrop. You always
-DESC:need to load an encryption module to run eggdrop. Currently, blowfish
-DESC:is the only encryption module, so you don't have much choice.
+DESC:The blowfish module provides encryption and hashing support for eggdrop.
+DESC:Eggdrop requires a module that provides hashing in order to run.
+DESC:While the PBKDF2 module is the current recommended module for hashing,
+DESC:you should still run this module if you want to use functions such as the
+DESC:Tcl 'encrypt' command.
 DESC:
-DESC:ENABLE this module.
+DESC:Enable this module if you are transitioning from userfiles previously
+DESC:created with the blowfish module, or are using Tcl scripts that use
+DESC:the encrypt function.
