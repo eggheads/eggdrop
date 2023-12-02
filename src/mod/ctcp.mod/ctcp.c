@@ -27,7 +27,6 @@
 #include "ctcp.h"
 #include "src/mod/module.h"
 #include "server.mod/server.h"
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
 static Function *global = NULL, *server_funcs = NULL;
