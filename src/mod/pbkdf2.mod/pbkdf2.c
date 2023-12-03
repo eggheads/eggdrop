@@ -74,7 +74,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
   unsigned char *buf;
   struct rusage ru1, ru2;
   double utime, stime;
-  /* log only once as long as rounds aint changed */
+  /* log only once as long as rounds are not changed */
   static int rounds_last, responsiveness;
 
   digest = EVP_get_digestbyname(digest_name);
@@ -128,7 +128,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
       responsiveness = 0;
     }
     if (((utime + stime) > 100.0) && !responsiveness) {
-      putlog(LOG_MISC, "*", "PBKDF2 warning: pbkdf2 method %s rounds %i took more than 100ms (user %.3fms sys %.3fms). Consider lowering pbkdf2-rounds for eggdrops responsiveness.",
+      putlog(LOG_MISC, "*", "PBKDF2 warning: pbkdf2 method %s rounds %i took more than 100ms (user %.3fms sys %.3fms). Consider lowering pbkdf2-rounds for eggdrop's responsiveness.",
              digest_name, rounds, utime, stime);
       responsiveness = 1;
     }
