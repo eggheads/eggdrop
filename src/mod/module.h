@@ -527,9 +527,11 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
 #define get_user_by_account ((struct userrec * (*)(char *))global[317])
 #define delaccount_by_handle ((int(*)(char *,char *))global[318])
-#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[319])
+#define check_tcl_event_arg ((void (*) (const char *,const char *))global[319])
 /* 320 - 323 */
-#define findsock ((int(*)(int))global[320])
+#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[320])
+#define findsock ((int(*)(int))global[321])
+
 
 
 

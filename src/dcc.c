@@ -1271,7 +1271,7 @@ static void dcc_telnet(int idx, char *buf, int i)
     putlog(LOG_MISC, "*", DCC_FAILED, strerror(errno));
     return;
   }
-  /* Buffer data received on this socket.  */
+  /* Buffer data received on this socket. */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
   if (port < 1024) {

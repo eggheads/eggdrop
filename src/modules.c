@@ -629,8 +629,9 @@ Function global_table[] = {
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
   (Function) get_user_by_account,
   (Function) delhost_by_handle,
-  (Function) dcc_telnet_hostresolved2,
+  (Function) check_tcl_event_arg,
 /* 320 - 323 */
+  (Function) dcc_telnet_hostresolved2,
   (Function) findsock
 };
 

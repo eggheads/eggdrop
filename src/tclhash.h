@@ -97,6 +97,7 @@ void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);
 void check_tcl_chatactbcst(const char *, int, const char *, tcl_bind_list_t *);
 void check_tcl_event(const char *);
+void check_tcl_event_arg(const char *, const char *);
 int check_tcl_signal(const char *);
 void check_tcl_die(char *);
 void check_tcl_log(int, char *, char *);
