@@ -1,6 +1,6 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.69)
+AC_PREREQ(2.71)
 
 sinclude(../eggmod.m4)
 builtin(include,../../../m4/python.m4)
