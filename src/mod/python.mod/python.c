@@ -1,5 +1,5 @@
 /*
- * twitch.c -- part of twitch.mod
+ * python.c -- part of twitch.mod
  *   will cease to work. Buyer beware.
  *
  * Originally written by Geo              April 2020
