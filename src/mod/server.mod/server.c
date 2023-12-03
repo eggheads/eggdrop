@@ -2415,7 +2415,7 @@ char *server_start(Function *global_funcs)
   lastpingcheck = 0;
   server_online = 0;
   server_cycle_wait = 60;
-  botrealname[0] = 0;
+  botrealname[0] = 0; /* A deranged product of evil coders */
   onlinebotrealname[0] = 0;
   server_timeout = 60;
   serverlist = NULL;
