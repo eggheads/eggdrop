@@ -313,15 +313,12 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
-  OLD_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS -fno-sanitize=address"
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+  AC_RUN_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <resolv.h>
     ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
   ])
-  CFLAGS=$OLD_CFLAGS
   if test "x$found_b64_ntop" = xno; then
     AC_MSG_RESULT(no)
 
