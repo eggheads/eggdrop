@@ -42,7 +42,7 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
 
   PyErr_Clear();
 
-  pobj = PyRun_String(par, Py_eval_input, pglobals, pglobals);
+  pobj = PyRun_String(par, Py_single_input, pglobals, pglobals);
   if (pobj) {
     pstr = PyObject_Str(pobj);
 
