@@ -17,6 +17,7 @@ typedef struct {
 } TclFunc;
   
 static PyTypeObject TclFuncType;
+static int eval_idx = -1;
 
 static struct py_bind *py_bindlist;
 
@@ -37,17 +38,29 @@ static PyObject *py_ircsend(PyObject *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+static void py_displayhook(PyObject *self, PyObject *o) {
+  PyObject *pstr;
+
+  if (o) {
+    pstr = PyObject_Repr(o);
+    if (pstr) {
+      dprintf(eval_idx, "Python: %s\n", PyUnicode_AsUTF8(pstr));
+      Py_DECREF(pstr);
+    }
+  }
+}
+
 static void cmd_python(struct userrec *u, int idx, char *par) {
-  PyObject *pobj, *pstr;
+  PyObject *pobj;
 
   PyErr_Clear();
 
+  // Expression output redirection via sys.displayhook
+  eval_idx = idx;
   pobj = PyRun_String(par, Py_single_input, pglobals, pglobals);
-  if (pobj) {
-    pstr = PyObject_Str(pobj);
 
-    dprintf(idx, "%s\n", PyUnicode_AsUTF8(pstr));
-    Py_DECREF(pstr);
+  if (pobj) {
+    // always None
     Py_DECREF(pobj);
   } else if (PyErr_Occurred()) {
     PyErr_Print();
@@ -304,6 +317,7 @@ static PyMethodDef MyPyMethods[] = {
     {"findircuser", py_findircuser, METH_VARARGS, "find an IRC user by nickname and optional channel"},
     {"parse_tcl_list", py_parse_tcl_list, METH_VARARGS, "convert a Tcl list string to a Python list"},
     {"parse_tcl_dict", py_parse_tcl_dict, METH_VARARGS, "convert a Tcl dict string to a Python dict"},
+    {"__displayhook__", py_displayhook, METH_O, "display hook for python expressions"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
