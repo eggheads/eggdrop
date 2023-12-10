@@ -259,7 +259,7 @@ static Tcl_Obj *py_str_to_tcl_obj(PyObject *o) {
     ret = Tcl_NewStringObj(PyUnicode_AsUTF8(strobj), -1);
     Py_DECREF(strobj);
   } else {
-    ret = Tcl_NewStringObj("", -1);
+    ret = Tcl_NewObj();
   }
   return ret;
 }
@@ -271,6 +271,8 @@ static Tcl_Obj *py_to_tcl_obj(PyObject *o) {
     return py_dict_to_tcl_obj(o);
   } else if (PyTuple_Check(o)) {
     return py_tuple_to_tcl_obj(o);
+  } else if (o == Py_None) {
+    return Tcl_NewObj();
   } else {
     return py_str_to_tcl_obj(o);
   }
