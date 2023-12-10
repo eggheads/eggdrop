@@ -252,7 +252,16 @@ static Tcl_Obj *py_dict_to_tcl_obj(PyObject *o) {
 }
 
 static Tcl_Obj *py_str_to_tcl_obj(PyObject *o) {
-    return Tcl_NewStringObj(PyUnicode_AsUTF8(o), -1);
+  Tcl_Obj *ret;
+  PyObject *strobj = PyObject_Str(o);
+
+  if (strobj) {
+    ret = Tcl_NewStringObj(PyUnicode_AsUTF8(strobj), -1);
+    Py_DECREF(strobj);
+  } else {
+    ret = Tcl_NewStringObj("", -1);
+  }
+  return ret;
 }
 
 static Tcl_Obj *py_to_tcl_obj(PyObject *o) {
@@ -287,7 +296,12 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
     return NULL;
   }
   result = Tcl_GetStringResult(tclinterp);
-  putlog(LOG_MISC, "*", "Python called '%s' -> '%s'", Tcl_DStringValue(&ds), result);
+  //putlog(LOG_MISC, "*", "Python called '%s' -> '%s'", Tcl_DStringValue(&ds), result);
+
+  if (!*result) {
+    // Empty string means okay
+    Py_RETURN_NONE;
+  }
 
   return PyUnicode_DecodeUTF8(result, strlen(result), NULL);
 }
