@@ -626,8 +626,9 @@ Function global_table[] = {
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
   (Function) get_user_by_account,
   (Function) delhost_by_handle,
-  (Function) bind_bind_entry,
+  (Function) check_tcl_event_arg,
 /* 320 - 323 */
+  (Function) bind_bind_entry,
   (Function) unbind_bind_entry
 };
 
