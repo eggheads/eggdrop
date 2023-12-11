@@ -38,7 +38,7 @@ static PyObject *py_ircsend(PyObject *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
-static void py_displayhook(PyObject *self, PyObject *o) {
+static PyObject *py_displayhook(PyObject *self, PyObject *o) {
   PyObject *pstr;
 
   if (o) {
@@ -48,6 +48,7 @@ static void py_displayhook(PyObject *self, PyObject *o) {
       Py_DECREF(pstr);
     }
   }
+  Py_RETURN_NONE;
 }
 
 static void cmd_python(struct userrec *u, int idx, char *par) {
