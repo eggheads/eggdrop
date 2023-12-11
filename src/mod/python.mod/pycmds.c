@@ -52,7 +52,10 @@ static PyObject *py_displayhook(PyObject *self, PyObject *o) {
 }
 
 static void cmd_python(struct userrec *u, int idx, char *par) {
-  PyObject *pobj;
+  PyObject *pobj, *ptype, *pvalue, *ptraceback;
+  PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
+  Py_ssize_t n;
+  int i;
 
   PyErr_Clear();
 
@@ -64,7 +67,31 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
     // always None
     Py_DECREF(pobj);
   } else if (PyErr_Occurred()) {
-    PyErr_Print();
+    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+    pystr = PyObject_Str(pvalue);
+    // Get "pretty" error result
+    dprintf(eval_idx, "Python Error: %s\n", PyUnicode_AsUTF8(pystr));
+    module_name = PyUnicode_FromString("traceback");
+    pymodule = PyImport_Import(module_name);
+    Py_DECREF(module_name);
+    // format backtrace and print
+    pyfunc = PyObject_GetAttrString(pymodule, "format_exception");
+    if (pyfunc && PyCallable_Check(pyfunc)) {
+      pyval = PyObject_CallFunctionObjArgs(pyfunc, ptype, pvalue, ptraceback, NULL);
+      // Check if traceback is a list and handle as such
+      if (PyList_Check(pyval)) {
+        n = PyList_Size(pyval);
+        for (i = 0; i < n; i++) {
+          item = PyList_GetItem(pyval, i);
+          pystr = PyObject_Str(item);
+          dprintf(idx, "%s", PyUnicode_AsUTF8(pystr));
+        }
+      } else {
+        pystr = PyObject_Str(pyval);
+        dprintf(idx, "%s", PyUnicode_AsUTF8(pystr));
+      }
+      Py_DECREF(pyval);
+    }
   }
   return;
 }
