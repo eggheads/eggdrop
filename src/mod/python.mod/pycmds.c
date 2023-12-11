@@ -309,7 +309,6 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
 }
 
 static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
-  Tcl_Command tclcmd;
   char *cmdname;
   TclFunc *result;
 
@@ -318,7 +317,7 @@ static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
     return NULL;
   }
   // TODO: filter a bit better what is available to Python, specify return types ("list of string"), etc.
-  if (!(tclcmd = Tcl_FindCommand(tclinterp, cmdname, NULL, TCL_GLOBAL_ONLY))) {
+  if (!(Tcl_FindCommand(tclinterp, cmdname, NULL, TCL_GLOBAL_ONLY))) {
     PyErr_SetString(PyExc_AttributeError, cmdname);
     return NULL;
   }
