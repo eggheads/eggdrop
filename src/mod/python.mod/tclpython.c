@@ -26,7 +26,11 @@ static int tcl_pysource STDVAR
   BADARGS(2, 2, " script");
 
   FILE *fp;
-  PyObject *pobj, *pstr;
+  PyObject *pobj, *pstr, *ptype, *pvalue, *ptraceback;
+  PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
+  Py_ssize_t n;
+  char *res = NULL;
+  int i;
 
   if (!(fp = fopen(argv[1], "r"))) {
     Tcl_AppendResult(irp, "Error: could not open file ", argv[1],": ", strerror(errno), NULL);
@@ -40,7 +44,35 @@ static int tcl_pysource STDVAR
     Py_DECREF(pstr);
     Py_DECREF(pobj);
   } else if (PyErr_Occurred()) {
-    PyErr_Print();
+    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+    pystr = PyObject_Str(pvalue);
+    Tcl_AppendResult(irp, "Error loading python: ", PyUnicode_AsUTF8(pystr), NULL);
+    module_name = PyUnicode_FromString("traceback");
+    pymodule = PyImport_Import(module_name);
+    Py_DECREF(module_name);
+    // format backtrace and print
+    pyfunc = PyObject_GetAttrString(pymodule, "format_exception");
+    if (pyfunc && PyCallable_Check(pyfunc)) {
+      pyval = PyObject_CallFunctionObjArgs(pyfunc, ptype, pvalue, ptraceback, NULL);
+      // Check if traceback is a list and handle as such
+      if (PyList_Check(pyval)) {
+        n = PyList_Size(pyval);
+        for (i = 0; i < n; i++) {
+          item = PyList_GetItem(pyval, i);
+          pystr = PyObject_Str(item);
+          res = PyUnicode_AsUTF8(pystr);
+          if (res[strlen(res) - 1]) {
+            res[strlen(res) - 1] = '\0';
+          }
+          putlog(LOG_MISC, "*", "%s", res);
+        }
+      } else {
+        pystr = PyObject_Str(pyval);
+        Tcl_AppendResult(irp, PyUnicode_AsUTF8(pystr), NULL);
+      }
+      Py_DECREF(pyval);
+    }
+    return TCL_ERROR;
   }
   return TCL_OK;
 }
