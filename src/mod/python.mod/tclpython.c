@@ -63,13 +63,13 @@ static int tcl_pysource STDVAR
           pystr = PyObject_Str(item);
           //Python returns a const char but we need to remove the \n
           res = PyUnicode_AsUTF8(pystr);
-          if (res[strlen(res) - 1]) {
-            res2 = (char*) nmalloc(strlen(res)+1);
-            strncpy(res2, res, strlen(res));
-            res2[strlen(res) - 1] = '\0';
+          if (strlen(res)) {
+            res2 = (char*) nmalloc(strlen(res));
+            // Remove trailing \n
+            strlcpy(res2, res, strlen(res)-1);
           }
-          putlog(LOG_MISC, "*", "%s", res);
-          if (res2) {
+          putlog(LOG_MISC, "*", "%s", res2);
+          if (res2 != NULL) {
             nfree(res2);
           }
         }
