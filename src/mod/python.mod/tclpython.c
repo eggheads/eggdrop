@@ -30,7 +30,7 @@ static int tcl_pysource STDVAR
   PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
   Py_ssize_t n;
   const char *res = NULL;
-  char *res2;
+  char *res2 = NULL;
   int i;
 
   if (!(fp = fopen(argv[1], "r"))) {
