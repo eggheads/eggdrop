@@ -95,6 +95,7 @@ extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
 static char **argv;
+char *argv0;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -1034,6 +1035,7 @@ int main(int arg_c, char **arg_v)
 
   argc = arg_c;
   argv = arg_v;
+  argv0 = argv[0];
 
   /* Version info! */
 #ifdef EGG_PATCH

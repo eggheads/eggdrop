@@ -29,7 +29,8 @@ static int tcl_pysource STDVAR
   PyObject *pobj, *pstr, *ptype, *pvalue, *ptraceback;
   PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
   Py_ssize_t n;
-  char *res = NULL;
+  const char *res = NULL;
+  char *res2;
   int i;
 
   if (!(fp = fopen(argv[1], "r"))) {
@@ -60,11 +61,17 @@ static int tcl_pysource STDVAR
         for (i = 0; i < n; i++) {
           item = PyList_GetItem(pyval, i);
           pystr = PyObject_Str(item);
+          //Python returns a const char but we need to remove the \n
           res = PyUnicode_AsUTF8(pystr);
           if (res[strlen(res) - 1]) {
-            res[strlen(res) - 1] = '\0';
+            res2 = (char*) nmalloc(strlen(res)+1);
+            strncpy(res2, res, strlen(res));
+            res2[strlen(res) - 1] = '\0';
           }
           putlog(LOG_MISC, "*", "%s", res);
+          if (res2) {
+            nfree(res2);
+          }
         }
       } else {
         pystr = PyObject_Str(pyval);

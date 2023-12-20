@@ -98,6 +98,8 @@ extern time_t now, online_since;
 extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
+extern char argv0;
+
 
 int xtra_kill();
 int xtra_unpack();
@@ -629,7 +631,8 @@ Function global_table[] = {
   (Function) check_tcl_event_arg,
 /* 320 - 323 */
   (Function) bind_bind_entry,
-  (Function) unbind_bind_entry
+  (Function) unbind_bind_entry,
+  (Function) & argv0
 };
 
 void init_modules(void)

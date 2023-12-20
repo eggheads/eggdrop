@@ -66,18 +66,37 @@ static int python_expmem()
 
 static void init_python() {
   PyObject *pmodule;
-  wchar_t *program = Py_DecodeLocale("eggdrop", NULL);
+  PyStatus status;
+  PyConfig config;
+  wchar_t *program;
 
-  if (program == NULL) {
-    fprintf(stderr, "Python: Fatal error: This should never happen\n");
+  if (PY_VERSION_HEX < 0x0308) {
+    fprintf(stderr, "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
+    return;
+  }
+  PyConfig_InitPythonConfig(&config);
+  program = Py_DecodeLocale(argv0, NULL);
+  if (!program) {
+    PyConfig_Clear(&config);
+   fprintf(stderr, "Python: Fatal error: This should never happen\n");
     fatal(1);
   }
-  Py_SetProgramName(program);  /* optional but recommended */
+  status = PyConfig_SetString(&config, &config.program_name, program);
+  if (PyStatus_Exception(status)) {
+    PyConfig_Clear(&config);
+    fprintf(stderr, "Python: Fatal error: Could not set program base path\n");
+    fatal(1);
+  }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
     fprintf(stderr, "Error: could not extend in-built modules table\n");
     exit(1);
   }
-  Py_Initialize();
+  status = Py_InitializeFromConfig(&config);
+  if (PyStatus_Exception(status)) {
+    PyConfig_Clear(&config);
+    fprintf(stderr, "Python: Fatal error: Could not initialize config\n");
+    fatal(1);
+  }
   PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
