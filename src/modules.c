@@ -85,7 +85,7 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            quiet_reject;
 extern volatile sig_atomic_t do_restart;
 
-int copy_to_tmp = 0; /* TODO: remove from module API for eggdrop 2.0 */
+int copy_to_tmp = 1; /* TODO: remove from module API for eggdrop 2.0 */
 
 #ifdef IPV6
 extern int pref_af;
