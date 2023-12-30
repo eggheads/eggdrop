@@ -127,11 +127,7 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 /* Default recommended flags for this user, use | as splitter */
 #define EGG_BG_CONMASK LOG_MISC /* "o" */
 
-/* Stringify macros */
-#define EGG_MACRO_STR(x) EGG_STR(x)
-#define EGG_STR(x) #x
-
-#define EGG_AC_ARGS EGG_MACRO_STR(EGG_AC_ARGS_RAW)
+#define EGG_AC_ARGS STRINGIFY(EGG_AC_ARGS_RAW)
 
 #define ARRAY_SIZE(x) (sizeof (x) / sizeof *(x))
 
