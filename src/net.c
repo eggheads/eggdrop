@@ -483,6 +483,7 @@ static int proxy_connect(int sock, sockname_t *addr)
   sockname_t name;
   char host[121], s[256];
   int i, port, proxy;
+  struct threaddata *td = threaddata();
 
   if (!firewall[0])
     return -2;
@@ -505,7 +506,7 @@ static int proxy_connect(int sock, sockname_t *addr)
   if (connect(sock, &name.addr.sa, name.addrlen) < 0 && errno != EINPROGRESS)
     return -1;
   if (proxy == PROXY_SOCKS) {
-    for (i = 0; i < threaddata()->MAXSOCKS; i++)
+    for (i = 0; i < td->MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
     memcpy(host, &addr->addr.s4.sin_addr.s_addr, 4);
@@ -547,6 +548,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   fd_set sockset;
   struct timeval tv;
   int i, j, rc, res;
+  struct threaddata *td = threaddata();
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
@@ -563,7 +565,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   if (bind(sock, &name.addr.sa, name.addrlen) < 0) {
     return -1;
   }
-  for (j = 0; j < threaddata()->MAXSOCKS; j++) {
+  for (j = 0; j < td->MAXSOCKS; j++) {
     if (!(socklist[j].flags & SOCK_UNUSED) && (socklist[j].sock == sock))
       socklist[j].flags = (socklist[j].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
@@ -1103,8 +1105,9 @@ int sockgets(char *s, int *len)
   char xx[RECVLINEMAX], *p, *px, *p2;
   int ret, i, data = 0;
   size_t len2;
+  struct threaddata *td = threaddata();
 
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+  for (i = 0; i < td->MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL | SOCK_BUFFER)) &&
         (socklist[i].handler.sock.inbuf != NULL)) {
@@ -1168,7 +1171,7 @@ int sockgets(char *s, int *len)
   }
   /* No pent-up data of any worth -- down to business */
   *len = 0;
-  ret = sockread(xx, len, socklist, threaddata()->MAXSOCKS, 0);
+  ret = sockread(xx, len, socklist, td->MAXSOCKS, 0);
   if (ret < 0) {
     s[0] = 0;
     return ret;
@@ -1290,6 +1293,7 @@ void tputs(int z, char *s, unsigned int len)
   int i, x, idx;
   char *p;
   static int inhere = 0;
+  struct threaddata *td = threaddata();
 
   if (z < 0) /* um... HELLO?! sanity check please! */
     return;
@@ -1299,7 +1303,7 @@ void tputs(int z, char *s, unsigned int len)
     return;
   }
 
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+  for (i = 0; i < td->MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
       for (idx = 0; idx < dcc_total; idx++) {
         if ((dcc[idx].sock == z) && dcc[idx].type && dcc[idx].type->name) {
@@ -1382,13 +1386,14 @@ void dequeue_sockets()
   fd_set wfds;
   struct timeval tv;
   int maxfd = -1;
+  struct threaddata *td = threaddata();
 
 /* ^-- start poptix test code, this should avoid writes to sockets not ready to be written to. */
 
   FD_ZERO(&wfds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
-  for (i = 0; i < threaddata()->MAXSOCKS; i++)
+  for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL)) {
       if (socklist[i].sock > maxfd)
@@ -1407,7 +1412,7 @@ void dequeue_sockets()
   if (x <= 0)
     return;
 
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+  for (i = 0; i < td->MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
         (socklist[i].handler.sock.outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
 #ifdef CYGWIN_HACKS
@@ -1497,9 +1502,10 @@ void tell_netdebug(int idx)
 {
   int i;
   char s[80];
+  struct threaddata *td = threaddata();
 
   dprintf(idx, "Open sockets:");
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+  for (i = 0; i < td->MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED)) {
       sprintf(s, " %d", socklist[i].sock);
       if (socklist[i].flags & SOCK_BINARY)
@@ -1625,11 +1631,12 @@ int hostsanitycheck_dcc(char *nick, char *from, sockname_t *ip, char *dnsname,
 int sock_has_data(int type, int sock)
 {
   int ret = 0, i;
+  struct threaddata *td = threaddata();
 
-  for (i = 0; i < threaddata()->MAXSOCKS; i++)
+  for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
       break;
-  if (i < threaddata()->MAXSOCKS) {
+  if (i < td->MAXSOCKS) {
     switch (type) {
     case SOCK_DATA_OUTGOING:
       ret = (socklist[i].handler.sock.outbuf != NULL);
@@ -1657,9 +1664,10 @@ int flush_inbuf(int idx)
 {
   int i, len;
   char *inbuf;
+  struct threaddata *td = threaddata();
 
   Assert((idx >= 0) && (idx < dcc_total));
-  for (i = 0; i < threaddata()->MAXSOCKS; i++) {
+  for (i = 0; i < td->MAXSOCKS; i++) {
     if ((dcc[idx].sock == socklist[i].sock) &&
         !(socklist[i].flags & SOCK_UNUSED)) {
       len = socklist[i].handler.sock.inbuflen;
