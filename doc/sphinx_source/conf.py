@@ -260,6 +260,9 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 rst_prolog = """
-.. |dlink| replace:: ftp://ftp.eggheads.org/pub/eggdrop/source/%s/eggdrop-%s.tar.gz
+.. role:: raw-html(raw)
+   :format: html
+
+.. |dlink| replace:: :raw-html:`<a href=https://ftp.eggheads.org/pub/eggdrop/source/%s/eggdrop-%s.tar.gz>the current version of Eggdrop</a>`
 .. |majversion| replace:: %s
 """ % (maj_version, version, maj_version)

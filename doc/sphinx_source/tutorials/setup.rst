@@ -50,9 +50,9 @@ Download locations
 
 The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop |version| source, for example, would be named eggdrop-|version|.tar.gz.
 
-`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/|majversion|/eggdrop-|version|.tar.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
+`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for |dlink|, as well as the most current development snapshot and previous stable releases.
 
-Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type ``git checkout stable/|majversion|``. You can then skip to step 4 in the Installation section below.
+Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type :substitution-code:`git checkout stable/|majversion|`. You can then skip to step 4 in the Installation section below.
 
 Installation
 ------------
