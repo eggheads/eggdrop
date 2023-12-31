@@ -430,5 +430,5 @@ Telnet to the bot and enter 'NEW' as your handle.
 0xe33,Lost telnet connection from %s while checking for duplicate
 0xe34,TIMEOUT ident connection
 0xe35,Please remove the #comment from your listen setting and try again
-0xe36,This telnet port is for bots only.
-0xe37,This telnet port is for users only (no bots).
+0xe36,This port is for bots only
+0xe37,This port is for users only (no bots)
