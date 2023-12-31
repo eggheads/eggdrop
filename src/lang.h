@@ -490,5 +490,7 @@
 #define DCC_LOSTDUP             get_language(0xe33)
 #define DCC_TIMEOUTIDENT        get_language(0xe34)
 #define DCC_BADLISTEN           get_language(0xe35)
+#define DCC_NONBOT2             get_language(0xe36)
+#define DCC_NONUSER2            get_language(0xe37)
 
 #endif /* _EGG_LANG_H */

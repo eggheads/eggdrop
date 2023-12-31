@@ -278,7 +278,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x90b,Missbrauch eines Desync
 0x90c,Flood
 
-0xa00,keine ignorierten User
+0xa00,keine ignorierten Benutzer 
 0xa01,Im Moment werden ignoriert
 0xa02,Ignoriere nicht mehr
 
@@ -438,3 +438,5 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe33,Telnet-Verbindung von %s waerend Kontrolle auf Duplikat verloren
 0xe34,Zeitueberschreitung bei der Ident-Verbindung
 0xe35,Bitte entferne den #Kommentar im listen-Befehl und versuche es erneut
+0xe36,Dieser Port ist nur fuer Bots
+0xe37,Dieser Port ist nur fuer Benutzer (keine Bots)
