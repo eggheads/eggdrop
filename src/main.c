@@ -1143,6 +1143,7 @@ int main(int arg_c, char **arg_v)
     printf("\n");
     printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
     printf("      without Chewie\n");
+  }
 #ifdef TLS
   ssl_init();
 #endif
