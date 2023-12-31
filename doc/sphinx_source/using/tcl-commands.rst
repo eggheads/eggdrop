@@ -1100,12 +1100,12 @@ onchan <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-monitor <command> [nickname]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+monitor <add/delete/list/online/offline/status/clear> [nickname]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid sub-commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
 
-  Returns: The 'status' command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Returns: The 'add' sub-command returns a '1' if the nick was successfully added, a '0' if the nick is already in the monitor list, and a '2' if the nick could not be added. The 'delete' sub-command returns a '1' if the nick is removed, or an error if the nick is not found. The 'status' sub-command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
 
   Module: irc
 
@@ -1113,7 +1113,7 @@ monitor <command> [nickname]
 accounttracking
 ^^^^^^^^^^^^^^^
 
-  Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an "Other" server).
+  Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when selecting an "Other" server).
 
   Returns: a '1' if all three functionalities are present, a '0' if one or more are missing.
 
@@ -1338,7 +1338,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See `Flag Masks`_ for additional information).
+  Description: lists all users on a channel Eggdrop has joined. flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See `Flag Masks`_ for additional information).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -1490,6 +1490,8 @@ isupport isset <key>
 DCC Commands
 ------------
 
+.. _putdcc:
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 putdcc <idx> <text> [-raw]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1499,6 +1501,16 @@ putdcc <idx> <text> [-raw]
   Returns: nothing
 
   Module: core
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+putidx <idx> <text> -[raw]
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    Description. Alias for the putdcc_ command.
+
+    Returns: nothing
+
+    Module: core
 
 ^^^^^^^^^^^^^^^^^^^^^^
 dccbroadcast <message>
@@ -3214,7 +3226,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <handle> <channel#> <text>
 
-  Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards.
+  Description: when a user says something on the botnet, it invokes this binding. Flags are ignored; handle could be a user on this bot ("DronePup") or on another bot ("Eden\@Wilde") and therefore you can't rely on a local user record. The mask is checked against the entire line of text and supports wildcards. Eggdrop passes the partyline channel number the user spoke on to the proc in "channel#".
 
   NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.
 
@@ -3412,7 +3424,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   bind evnt <flags> <type> <proc>
 
-  procname <type>
+  procname <type> [arg]
 
   Description: triggered whenever one of these events happen. flags are ignored. Pre-defined events triggered by Eggdrop are::
 
@@ -3432,6 +3444,8 @@ The following is a list of bind types and how they work. Below each bind type is
           init-server       - called when we actually get on our IRC server
           disconnect-server - called when we disconnect from our IRC server
           fail-server       - called when an IRC server fails to respond 
+          hidden-host       - called after the bot's host is hidden by the server
+          got-chanlist      - called after Eggdrop receives the channel userlist from the server. Passes a second [arg] value to the Tcl proc
 
   Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.
 
@@ -3563,6 +3577,13 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Module: irc
 
+(56) CHGHOST
+
+  bind chghost <flags> <mask> <proc>
+
+  procname <nick> <old user@host> <handle> <channel> <new user@host>
+
+  Description: triggered when a server sends an IRCv3 spec CHGHOST message to change a user's hostmask. The new host is matched against mask in the form of "#channel nick!user\@host" and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
 ^^^^^^^^^^^^^
 Return Values

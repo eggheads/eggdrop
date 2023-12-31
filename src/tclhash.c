@@ -41,22 +41,22 @@ p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_note, H_filt, H_event, H_die, H_cron, H_log = NULL;
 #ifdef TLS
 p_tcl_bind_list H_tls = NULL;
-static int builtin_idx();
+static int builtin_idx STDVAR;
 #endif
 
-static int builtin_2char();
-static int builtin_3char();
-static int builtin_5int();
-static int builtin_cron();
-static int builtin_char();
-static int builtin_chpt();
-static int builtin_chjn();
-static int builtin_idxchar();
-static int builtin_charidx();
-static int builtin_chat();
-static int builtin_dcc();
-static int builtin_log();
-
+static int builtin_2char STDVAR;
+static int builtin_3char STDVAR;
+static int builtin_5int STDVAR;
+static int builtin_cron STDVAR;
+static int builtin_char STDVAR;
+static int builtin_chpt STDVAR;
+static int builtin_chjn STDVAR;
+static int builtin_evnt STDVAR;
+static int builtin_idxchar STDVAR;
+static int builtin_charidx STDVAR;
+static int builtin_chat STDVAR;
+static int builtin_dcc STDVAR;
+static int builtin_log STDVAR;
 
 /* Allocate and initialise a chunk of memory.
  */
@@ -203,9 +203,8 @@ int expmem_tclhash(void)
   return tot;
 }
 
-
 extern cmd_t C_dcc[];
-static int tcl_bind();
+static int tcl_bind STDVAR;
 
 static cd_tcl_cmd cd_cmd_table[] = {
   {"bind",   tcl_bind, (void *) 0},
@@ -237,7 +236,7 @@ void init_bind(void)
   H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
-  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
+  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_evnt);
   H_die = add_bind_table("die", HT_STACKABLE, builtin_char);
   H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
 #ifdef TLS
@@ -592,6 +591,21 @@ static int builtin_chjn STDVAR
   CHECKVALIDITY(builtin_chjn);
   F(argv[1], argv[2], atoi(argv[3]), argv[4][0],
     argv[4][0] ? atoi(argv[4] + 1) : 0, argv[5]);
+  return TCL_OK;
+}
+
+static int builtin_evnt STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(2, 3, " event ?arg?");
+
+  CHECKVALIDITY(builtin_evnt);
+  if (argc==2) {
+    F(argv[1]);
+  } else {
+    F(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 
@@ -1212,6 +1226,14 @@ void check_tcl_event(const char *event)
   Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
   check_tcl_bind(H_event, event, 0, " $::_event1",
                  MATCH_EXACT | BIND_STACKABLE);
+}
+
+void check_tcl_event_arg(const char *event, const char *arg)
+{
+    Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "_event2", (char *) arg, TCL_GLOBAL_ONLY);
+    check_tcl_bind(H_event, event, 0, " $::_event1 $::_event2",
+                   MATCH_EXACT | BIND_STACKABLE);
 }
 
 int check_tcl_signal(const char *event)
