@@ -227,61 +227,7 @@ To call the bind, Eggdrop coding style is to name that function "check_tcl_bindn
     return (x == BIND_EXEC_LOG);
   }
 
-Now that we have encountered a condition that triggers the bind type (in code by calling check_tcl_woobie() ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with check_tcl_bind(), called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from check_tcl_bind() to take additional action by Eggdrop.
-
-Bind Configuration Settings
-"""""""""""""""""""""""""""
-The last argument to check_tcl_bind sets additional configurations for the bind, these are the defined values:
-
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| **Value**         | **Description**                                                                                                               |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_PARTIAL     | Check the triggering value against the beginning of the bind mask, ie DIR triggers a mask for DIRECTORY (case insensitive)    |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_EXACT       | Check the triggering value exactly against the bind mask value (case insensitive)                                             |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_CASE        | Check the triggering value exactly against the bind mask value (case sensitive)                                               |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_MASK        | Check if the bind mask is contained within the triggering value, as a wildcarded value                                        |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_MODE        | Check if the triggering value is contained within the bind mask, as a wildcarded value                                        |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_CRON        | Check the triggering value against a bind mask formatted as a cron entry, ie "30 7 6 7 * " triggers a mask for "30 7 * * * "  |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_USE_ATTR     | Check the flags of the user match the flags required to trigger the bind                                                      |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_STACKABLE    | Allow multiple binds to call the same Tcl proc                                                                                |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_WANTRET      | With stacked binds, if the called Tcl proc called returns a '1', halt processing any further binds triggered by the action    |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_STACKRET     | Used with BIND_WANTRET; allow stacked binds to continue despite receiving a '1'                                               |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_ALTER_ARGS   | Replaces arguments (which ones?) with the result returned from the called Tcl proc                                            |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-
-The value returned by the bind is often matched against a desired value to return a '1' (often used with BIND_WANTRET and BIND_STACKRET) to the calling function. 
-
-Bind Return Values
-""""""""""""""""""
-
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| **Value**      | **Description**                                                                                              |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_NOMATCH   | The bind was not triggered due to not meeting the criteria set for the bind                                  |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_AMBIGUOUS | The triggering action matched multiple non-stackable binds                                                   |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_MATCHED   | The bind criteria was met, but the Tcl proc it tried to call could not be found                              |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_EXECUTED  | The bind criteria was met and the Tcl proc was called                                                        |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_EXEC_LOG  | The bind criteria was met, the Tcl proc was called, and Eggdrop logged the bind being called                 |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_QUIT      | The bind was triggered in conjunction with the target leaving the partyline or filesys area (?)              |
-+----------------+--------------------------------------------------------------------------------------------------------------+
-
-
-
+Now that we have encountered a condition that triggers the bind type (in code by calling ``check_tcl_woobie()`` ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with ``check_tcl_bind()``, called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from ``check_tcl_bind()`` to take additional action by Eggdrop. You can read more about the specific calues used in ``check_tcl_bind`` in :ref:`triggering_any_bind`
 
 Exporting the Bind
 ------------------
