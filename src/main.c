@@ -1140,10 +1140,9 @@ int main(int arg_c, char **arg_v)
   putlog(LOG_MISC, "*", "=== %s: %d channel%s, %d user%s.",
          botnetnick, i, (i == 1) ? "" : "s", j, (j == 1) ? "" : "s");
   if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
-    printf("\n"
-           "NOTE: The -n flag is no longer used, it is as effective as Han\n"
-           "      without Chewie\n");
-  }
+    printf("\n");
+    printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
+    printf("      without Chewie\n");
 #ifdef TLS
   ssl_init();
 #endif
