@@ -269,7 +269,7 @@ Bind Return Values
 +----------------+--------------------------------------------------------------------------------------------------------------+
 | BIND_NOMATCH   | The bind was not triggered due to not meeting the criteria set for the bind                                  |
 +----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_AMBIGUOUS | The bind was ambiguous, similar to this explanation                                                          |
+| BIND_AMBIGUOUS | The triggering action matched multiple non-stackable binds                                                   |
 +----------------+--------------------------------------------------------------------------------------------------------------+
 | BIND_MATCHED   | The bind criteria was met, but the Tcl proc it tried to call could not be found                              |
 +----------------+--------------------------------------------------------------------------------------------------------------+
