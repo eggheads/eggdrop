@@ -9,6 +9,13 @@ It already exists and is suitable to illustrate the details of bind handling in 
 
 Note: All code snippets are altered for brevity and simplicity, see original source code for the full and current versions.
 
+General Workflow To Create a New Bind
+-------------------------------------
+
+To create a new type of bind, there are generally three steps. First, you must add the new bind type to the `Bind Table`_. Once you have registered the bind type with the bind table, you must create a `C Function`_ that will be called to perform the functionality you wish to occur when the bind is triggered. Finally, once the C code supporting the new bind has been finished, the new `Tcl Binding`_ is ready to be used in a Tcl script.
+
+.. _Bind Table:
+
 Bind Table Creation
 -------------------
 
@@ -33,42 +40,26 @@ What the :code:`C handler` does is explained later, because a lot happens before
 
 :code:`H_dcc` can be exported from core and imported into modules as any other variable or function. That should be explained in a separate document.
 
-Stackable Binds: HT_STACKABLE
------------------------------
+.. _HT_STACKABLE:
 
-:code:`HT_STACKABLE` means that multiple binds can exist for the same mask.
+Stackable Binds: HT_STACKABLE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:code:`HT_STACKABLE` means that multiple binds can exist for the same mask. An example of what happens when NOT using this flag shown in the code block below.
 
 .. code-block:: Tcl
 
   bind dcc - test proc1; # not stackable
   bind dcc - test proc2; # overwrites the first one, only proc2 will be called
 
-It does not automatically call multiple binds that match, see later in the `Triggering any Bind`_ section for details.
+To enable this feature, you must set the second argument to ``add_bind_table()`` with ``HT_STACKABLE``. Using ``HT_STACKABLE`` does not automatically call all the binds that match, see the bind flags listed in `Triggering any Bind`_ section for details on the partner flags ``BIND_STACKABLE`` and ``BIND_WANTRET`` used in ``check_tcl_bind()``.
 
-Tcl Binding
------------
-
-After the bind table is created with :code:`add_bind_table`, Tcl procs can already be registered to this bind by calling
-
-.. code-block:: Tcl
-
-  bind dcc -|- test myproc
-  proc myproc {args} {
-    putlog "myproc was called, argument list: '[join $args ',']'"
-    return 0
-  }
-
-Of course it is not clear so far:
-
-* If flags :code:`-|-` matter for this bind at all and what they are checked against
-* If channel flags have a meaning or global/bot only
-* What :code:`test` is matched against to see if the bind should trigger
-* Which arguments :code:`myproc` receives, the example just accepts all arguments
+.. _C Function:
 
 Triggering the Bind
 -------------------
 
-To trigger the bind and call it with the desired arguments, a function is created.
+A C function must created that will be called when the bind is triggered. Importantly, the function is designed to accept specific arguments passed by Tcl.
 
 .. code-block:: C
 
@@ -97,6 +88,26 @@ This shows which arguments the callbacks in Tcl get:
 * another string argument that depends on the caller
 
 The call to :code:`check_tcl_dcc` can be found in the DCC parsing in `src/dcc.c`.
+
+Tcl Binding
+-----------
+
+After the bind table is created with :code:`add_bind_table`, Tcl procs can already be registered to this bind by calling
+
+.. code-block:: Tcl
+
+  bind dcc -|- test myproc
+  proc myproc {args} {
+    putlog "myproc was called, argument list: '[join $args ',']'"
+    return 0
+  }
+
+Of course it is not clear so far:
+
+* If flags :code:`-|-` matter for this bind at all and what they are checked against
+* If channel flags have a meaning or global/bot only
+* What :code:`test` is matched against to see if the bind should trigger
+* Which arguments :code:`myproc` receives, the example just accepts all arguments
 
 .. _triggering_any_bind:
 
@@ -157,7 +168,7 @@ The last argument to :code:`check_tcl_bind` in `check_tcl_dcc` sets additional c
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | BIND_USE_ATTR     | Check the flags of the user match the flags required to trigger the bind                                                      |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_STACKABLE    | Allow multiple binds to call the same Tcl proc                                                                                |
+| BIND_STACKABLE    | Allow one mask to be re-used to call multiple Tcl proc. Must be used with HT_STACKABLE_                                       |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | BIND_WANTRET      | With stacked binds, if the called Tcl proc called returns a '1', halt processing any further binds triggered by the action    |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
