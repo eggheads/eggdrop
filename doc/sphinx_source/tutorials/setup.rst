@@ -37,31 +37,31 @@ Getting the source
 History
 ~~~~~~~
 
-The current supported version of Eggdrop is the 1.9.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.
+The current supported version of Eggdrop is the |majversion|.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.
 
-The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you're just starting out with Eggdrop, you should use |version|.
+The most current version of Eggdrop, and the one appropriate for most users, is the current |majversion| series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you're just starting out with Eggdrop, you should use |version|.
 
 Prior to that, the 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. 1.6.21, which is now over 10 years old, was the last release of the 1.6 series and is still used by users who have become comfortable with that version and may have spent much time applying their own modifications to make it work the way they want, and therefore don't wish to move to a newer version. The majority of Tcl scripts out there were written for 1.6 bots, but those scripts usually work on 1.8 and 1.9 bots as well.
 
-The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the `Eggheads GitHub issues page. <https://github.com/eggheads/eggdrop/issues>`_
+The |majversion| Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the `Eggheads GitHub issues page. <https://github.com/eggheads/eggdrop/issues>`_
 
 Download locations
 ~~~~~~~~~~~~~~~~~~
 
 The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop |version| source, for example, would be named eggdrop-|version|.tar.gz.
 
-`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-|version|.tar.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
+`The Eggheads FTP <https://ftp.eggheads.org/pub/eggdrop/>`_ is a repository for the `current <https://ftp.eggheads.org/pub/eggdrop/source/|majversion|/eggdrop-|version|.tar.gz>`_ version of Eggdrop, as well as the most current development snapshot and previous stable releases.
 
-Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type ``git checkout stable/1.9``. You can then skip to step 4 in the Installation section below.
+Eggdrop also maintains a `GitHub page <https://github.com/eggheads/eggdrop>`_ where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type ``git clone https://github.com/eggheads/eggdrop.git``, then ``cd eggdrop``. This gives you the development version. To switch to the most recent stable version, type ``git checkout stable/|majversion|``. You can then skip to step 4 in the Installation section below.
 
 Installation
 ------------
 
 Installing Eggdrop is a relatively simple process provided your shell has the required tools for successful compilation. On most commercial shell accounts which allow Eggdrop bots you won't have any problems with installation, but on some private boxes or a shell on your ISP you may experience errors during compilation.
 
-Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing eggdrop-|version|.tar.gz, so just change the numbers if you are installing another version.
+Below is a step by step guide to the installation process. These instructions apply to |majversion| bots. It assumes you will be installing eggdrop-|version|.tar.gz, so just change the numbers if you are installing another version.
 
-1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-|version|.tar.gz <https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-|version|.tar.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
+1. Put the Eggdrop source on your shell using one of the specified download locations, either by downloading the `eggdrop-|version|.tar.gz <https://ftp.eggheads.org/pub/eggdrop/source/|majversion|/eggdrop-|version|.tar.gz>`_ file to your system then uploading it to the shell via FTP, or downloading it directly to the shell via the shell's FTP client, git, wget, or curl. You don't need to put the .tar.gz file in its own directory (it'll be done automatically in the next step).
 
 2. SSH to the shell (if you haven't already), and type ``tar zxvf eggdrop-|version|.tar.gz`` (if this doesn't work, try ``gunzip eggdrop-|version|.tar.gz`` then ``tar xvf eggdrop-|version|.tar``). This will extract the Eggdrop source into its installation directory, named 'eggdrop-|version|'.
 
