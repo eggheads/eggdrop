@@ -16,10 +16,10 @@ To create a new type of bind, there are generally three steps. First, you must a
 
 .. _Bind Table:
 
-Bind Table Creation
--------------------
+Adding a New Bind Type to the Bind Table
+----------------------------------------
 
-The bind table is added by calling, either at module initialization or startup
+The bind is added to the bind table is by calling, either at module initialization or startup
 
 .. code-block:: C
 
@@ -56,8 +56,8 @@ To enable this feature, you must set the second argument to ``add_bind_table()``
 
 .. _C Function:
 
-Triggering the Bind
--------------------
+Adding Bind Functionality
+-------------------------
 
 A C function must created that will be called when the bind is triggered. Importantly, the function is designed to accept specific arguments passed by Tcl.
 
@@ -89,8 +89,8 @@ This shows which arguments the callbacks in Tcl get:
 
 The call to :code:`check_tcl_dcc` can be found in the DCC parsing in `src/dcc.c`.
 
-Tcl Binding
------------
+Using the Bind in Tcl
+---------------------
 
 After the bind table is created with :code:`add_bind_table`, Tcl procs can already be registered to this bind by calling
 
