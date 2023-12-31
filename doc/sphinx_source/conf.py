@@ -53,7 +53,7 @@ copyright = u'2023, Eggheads'
 # The short X.Y version.
 version = '1.9.5'
 # The full version, including alpha/beta/rc tags.
-release = '1.9.5a'
+release = '1.9.5'
 # Just X.Y, for use in doc links (Geo)
 maj_version = ".".join(version.split(".")[:2])
 
@@ -265,4 +265,5 @@ rst_prolog = """
 
 .. |dlink| replace:: :raw-html:`<a href=https://ftp.eggheads.org/pub/eggdrop/source/%s/eggdrop-%s.tar.gz>the current version of Eggdrop</a>`
 .. |majversion| replace:: %s
-""" % (maj_version, version, maj_version)
+.. |fullversion| replace:: %s
+""" % (maj_version, version, maj_version, version)
