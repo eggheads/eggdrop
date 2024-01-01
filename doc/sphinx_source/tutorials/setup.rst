@@ -37,7 +37,7 @@ Getting the source
 History
 ~~~~~~~
 
-The current supported version of Eggdrop is the |majversion|.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.
+The current supported version of Eggdrop is the |majversion|.x tree. Only the current major version (|majversion|.x) is supported; earlier major versions are not.
 
 The most current version of Eggdrop, and the one appropriate for most users, is the current |majversion| series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you're just starting out with Eggdrop, you should use |version|.
 
