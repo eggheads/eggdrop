@@ -1344,15 +1344,15 @@ static int got354(char *from, char *msg)
  */
 static int got353(char *from, char *msg)
 {
-  char *nameptr, *chname, *uhost, *nick;
+  char *nameptr, *chname, *uhost, *nick, *p, *host;
   struct chanset_t *chan;
-  memberlist *m;
   int i;
 
   if (find_capability("userhost-in-names")) {
+    newsplit(&msg);
+    newsplit(&msg); /* Get rid of =/@ prefix */
     chname = newsplit(&msg);
-    /* use this instead of newsplit(), because sometimes there's a = in a 353 */
-    nameptr = strchr(msg, ':');
+    nameptr = newsplit(&msg);
     while ((uhost = newsplit(&nameptr))) {
       if (!strcmp(uhost, "")) {
         break;
@@ -1369,9 +1369,13 @@ static int got353(char *from, char *msg)
         nick=nick+1;
       }
       for (chan = chanset; chan; chan = chan->next) {
-        m = ismember(chan, nick);
-        if (m) {
-          strlcpy(m->userhost, uhost, UHOSTLEN);
+        p = strchr(uhost, '@');
+        if (p) {
+          *p = 0;
+          host = p+1;
+        }
+        if (uhost && host) {
+          got352or4(chan, uhost, host, nick, "", NULL);
         }
       }
     }
@@ -1380,8 +1384,14 @@ static int got353(char *from, char *msg)
      * a WHO to do it
      */
     chan = findchan(chname);
-    chan->status |= CHAN_ACTIVE;
-    chan->status &= ~CHAN_PEND;
+    /* From painful troubleshooting experience, servers that deny WHO also like
+     * to force joins, so let's make sure we have an internal record for the
+     * channel we just joined
+     */
+    if (chan) {
+      chan->status |= CHAN_ACTIVE;
+      chan->status &= ~CHAN_PEND;
+    }
   }
   return 0;
 }
