@@ -1368,25 +1368,19 @@ static int got353(char *from, char *msg)
       if ((nick[0] == '+') || (nick[0] == '%')) {
         nick=nick+1;
       }
-      for (chan = chanset; chan; chan = chan->next) {
-        p = strchr(uhost, '@');
-        if (p) {
-          *p = 0;
-          host = p+1;
-        }
-        if (uhost && host) {
-          got352or4(chan, uhost, host, nick, "", NULL);
-        }
+      p = strchr(uhost, '@');
+      if (p) {
+        *p = 0;
+        host = p+1;
+      }
+      chan = findchan(chname);      /* See if I'm on channel */
+      if (chan && uhost && host) {
+        got352or4(chan, uhost, host, nick, "", NULL);
       }
     }
     /* The assumption here is the user enabled userhost-in-names because WHO
      * is disabled. We remove the pending flag here because we'll never get a
      * a WHO to do it
-     */
-    chan = findchan(chname);
-    /* From painful troubleshooting experience, servers that deny WHO also like
-     * to force joins, so let's make sure we have an internal record for the
-     * channel we just joined
      */
     if (chan) {
       chan->status |= CHAN_ACTIVE;
