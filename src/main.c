@@ -787,7 +787,7 @@ static void mainloop(int toplevel)
 {
   static int cleanup = 5;
   int xx, i, eggbusy = 1;
-  char buf[8702];
+  char buf[READMAX + 2];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
