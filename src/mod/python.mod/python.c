@@ -1,8 +1,5 @@
 /*
- * twitch.c -- part of twitch.mod
- *   will cease to work. Buyer beware.
- *
- * Originally written by Geo              April 2020
+ * python.c -- part of python.mod
  */
 
 /*
@@ -25,6 +22,7 @@
 
 #define MODULE_NAME "python"
 #define MAKING_PYTHON
+#define PY_SSIZE_T_CLEAN /* Not required for 3.13+ but here for back compat */
 
 #define ARRAYCOUNT(x) (sizeof (x) / sizeof *(x))
 
@@ -68,24 +66,17 @@ static void init_python() {
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
-  wchar_t *program;
 
   if (PY_VERSION_HEX < 0x0308) {
     fprintf(stderr, "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
     return;
   }
   PyConfig_InitPythonConfig(&config);
-  program = Py_DecodeLocale(argv0, NULL);
-  if (!program) {
-    PyConfig_Clear(&config);
-   fprintf(stderr, "Python: Fatal error: This should never happen\n");
-    fatal(1);
-  }
-  status = PyConfig_SetString(&config, &config.program_name, program);
+  status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
     fprintf(stderr, "Python: Fatal error: Could not set program base path\n");
-    fatal(1);
+    Py_ExitStatusException(status);
   }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
     fprintf(stderr, "Error: could not extend in-built modules table\n");
@@ -97,6 +88,7 @@ static void init_python() {
     fprintf(stderr, "Python: Fatal error: Could not initialize config\n");
     fatal(1);
   }
+  PyConfig_Clear(&config);
   PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
@@ -119,7 +111,6 @@ static void kill_python() {
   if (Py_FinalizeEx() < 0) {
     exit(120);
   }
-  PyMem_RawFree(Py_DecodeLocale("eggdrop", NULL));
   return;
 }
 
