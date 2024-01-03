@@ -34,6 +34,7 @@
 #define MAKING_UPTIME
 
 #include <fcntl.h>
+#include <netdb.h>
 #include <sys/stat.h>
 #include "uptime.h"
 #include "../module.h"
