@@ -2097,7 +2097,7 @@ static void server_die()
   char msg[MSGMAX];
   cycle_time = 100;
   if (server_online) {
-    snprintf(msg, sizeof msg, "QUIT :%s", quit_msg[0] ? quit_msg : "");
+    snprintf(msg, sizeof msg, "QUIT :%s", quit_msg);
     dprintf(-serv, "%s\n", msg);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[->] %s", msg);
