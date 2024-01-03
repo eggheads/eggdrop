@@ -37,4 +37,4 @@ They are: ctcp-version, ctcp-finger, and ctcp-userinfo. You can use set
 to set them to values you'd like.
 
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

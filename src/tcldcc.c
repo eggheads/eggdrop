@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
  */
 
 #include "main.h"
+#include <netdb.h>
 #include "tandem.h"
 #include "modules.h"
 #include <errno.h>
@@ -702,9 +703,8 @@ static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
 /* Gather information for dcclist or socklist */
 static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
   int i;
-  char idxstr[10], timestamp[11], other[160];
+  char idxstr[10], timestamp[21], other[160];
   char portstring[7]; /* ssl + portmax + NULL */
-  long tv;
   char s[EGG_INET_ADDRSTRLEN];
   socklen_t namelen;
   struct sockaddr_storage ss;
@@ -718,8 +718,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
         !strcasecmp(dcc[i].type->name, type)))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
-      tv = dcc[i].timeval;
-      egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
+      snprintf(timestamp, sizeof timestamp, "%" PRId64, (int64_t) dcc[i].timeval);
       if (dcc[i].type && dcc[i].type->display)
         dcc[i].type->display(i, other);
       else {
@@ -785,8 +784,7 @@ static int tcl_dcclist STDVAR
 static int tcl_whom STDVAR
 {
   int chan, i;
-  char c[2], idle[32], work[20], *p;
-  long tv = 0;
+  char c[2], idle[21], work[20], *p;
   EGG_CONST char *list[7];
 
   BADARGS(2, 2, " chan");
@@ -815,8 +813,7 @@ static int tcl_whom STDVAR
       if (dcc[i].u.chat->channel == chan || chan == -1) {
         c[0] = geticon(i);
         c[1] = 0;
-        tv = (now - dcc[i].timeval) / 60;
-        egg_snprintf(idle, sizeof idle, "%li", tv);
+        snprintf(idle, sizeof idle, "%" PRId64, (int64_t) ((now - dcc[i].timeval) / 60));
         list[0] = dcc[i].nick;
         list[1] = botnetnick;
         list[2] = dcc[i].host;
@@ -838,10 +835,8 @@ static int tcl_whom STDVAR
       c[1] = 0;
       if (party[i].timer == 0L)
         strcpy(idle, "0");
-      else {
-        tv = (now - party[i].timer) / 60;
-        egg_snprintf(idle, sizeof idle, "%li", tv);
-      }
+      else
+        snprintf(idle, sizeof idle, "%" PRId64, (int64_t) ((now - party[i].timer) / 60));
       list[0] = party[i].nick;
       list[1] = party[i].bot;
       list[2] = party[i].from ? party[i].from : "";
@@ -1028,13 +1023,12 @@ static int tcl_connect STDVAR
 }
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
-  int i, idx = -1, port, realport, found=0, ipv4=1;
+  int i, idx = -1, port, realport, found=0, ipv4=1, error;
   char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
   struct addrinfo hint, *ipaddr = NULL;
-  int ret;
 #ifdef IPV6
   struct in6_addr ipaddr6;
 #endif
@@ -1056,8 +1050,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strlcpy(newip, ip, sizeof newip);
   }
   /* Return addrinfo struct ipaddr containing family... */
-  ret = getaddrinfo(newip, NULL, &hint, &ipaddr);
-  if (!ret) {
+  error = getaddrinfo(newip, NULL, &hint, &ipaddr);
+  if (!error) {
   /* Load network address to in(6)_addr struct for later byte comparisons */
     if (ipaddr->ai_family == AF_INET) {
       inet_pton(AF_INET, newip, &ipaddr4);
@@ -1068,8 +1062,17 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       ipv4 = 0;
     }
 #endif
+    if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+                 * 2553 and 3493. Avoid to be compatible with all OSes. */
+      freeaddrinfo(ipaddr);
   }
-  freeaddrinfo(ipaddr);
+  else if (error == EAI_NONAME)
+    /* currently setlisten() handles only ip not hostname */
+    putlog(LOG_MISC, "*",
+           "tcldcc: setlisten(): getaddrinfo(): ip %s not known", newip);
+  else
+    putlog(LOG_MISC, "*", "tcldcc: setlisten(): getaddrinfo(): error = %s",
+           gai_strerror(error));
   port = realport = atoi(portp);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {
@@ -1282,7 +1285,7 @@ static int tcl_listen STDVAR
       strlcpy(ip, argv[1], sizeof(ip));
       i++;
     } else {
-      Tcl_AppendResult(irp, "invalid ip address", NULL);
+      Tcl_AppendResult(irp, "invalid IP address argument", NULL);
       return TCL_ERROR;
     }
   }

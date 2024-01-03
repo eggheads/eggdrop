@@ -222,7 +222,7 @@ rm <file> [files] ...
   Cleans up the current directory's database. If you have a large
   directory with many files you may want to use this command if
   you experience slow-downs/delays over time. Normally, the db
-  should clean up itsself though.
+  should clean up itself though.
 
 ^^^^^^^
 .unhide
@@ -252,4 +252,4 @@ rm <file> [files] ...
 
 
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

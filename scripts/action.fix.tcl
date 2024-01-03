@@ -1,6 +1,6 @@
 # action.fix.tcl
 #
-# Copyright (C) 2002 - 2022 Eggheads Development Team
+# Copyright (C) 2002 - 2023 Eggheads Development Team
 #
 # Tothwolf  25May1999: cleanup
 # Tothwolf  04Oct1999: changed proc names slightly

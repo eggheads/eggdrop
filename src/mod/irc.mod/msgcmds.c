@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1101,7 +1101,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP", nick, host, u->handle);
     dprintf(-serv, "NOTICE %s :%s\n", nick, IRC_JUMP);
     cycle_time = 0;
-    nuke_server("changing servers");
+    nuke_server(IRC_CHANGINGSERV);
   } else
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
   return 1;

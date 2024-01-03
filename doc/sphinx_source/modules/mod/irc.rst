@@ -84,7 +84,7 @@ There are also some variables you can set in your config file:
   | bind msg - myword \*msg:hello
 
     Many IRCops find bots by seeing if they reply to 'hello' in a msg. You
-    can change this to another word by un-commenting thse two lines and
+    can change this to another word by un-commenting these two lines and
     changing "myword" to the word wish to use instead of'hello'. It must be
     a single word.
 
@@ -151,4 +151,4 @@ Use the following settings only if you set 'net-type' to IRCnet!
     If your network doesn't use rfc 1459 compliant string matching routines,
     set this to 0.
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2023 Eggheads Development Team

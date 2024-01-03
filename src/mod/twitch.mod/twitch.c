@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2022 Eggheads Development Team
+ * Copyright (C) 2020 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,7 @@ static int twitch_expmem()
 }
 
 /* Find a twitch channel by it's display name */
-twitchchan_t *findtchan_by_dname(char *name)
+static twitchchan_t *findtchan_by_dname(char *name)
 {
   twitchchan_t *chan;
 
@@ -87,7 +87,7 @@ twitchchan_t *findtchan_by_dname(char *name)
 }
 
 /* Remove given characters from a string */
-void remove_chars(char* str, char c) {
+static void remove_chars(char* str, char c) {
     char *pr = str, *pw = str;
     while (*pr) {
         *pw = *pr++;
@@ -541,12 +541,12 @@ static int gotusernotice(char *from, char *msg, Tcl_Obj *tags) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift", login);
   } else if (!strcmp(msgid, "giftpaidupgrade")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:GIFTPAIDUPGRADE");
-    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s", login, value);
+    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subscription upgrade to %s", login, value);
   } else if (!strcmp(msgid, "rewardgift")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a reward gift", login);
   } else if (!strcmp(msgid, "anongiftpaidupgrade")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:ANONGIFTPAIDUPGRADE");
-    putlog(LOG_SERV, "*", "* TWITCH: Someone anonomously gifted a subscription upgrade to %s", value);
+    putlog(LOG_SERV, "*", "* TWITCH: Someone anonymously gifted a subscription upgrade to %s", value);
   } else if (!strcmp(msgid, "raid")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-viewerCount", value, "USERNOTICE:RAID");
     putlog(LOG_SERV, "*", "* TWITCH: %s raided %s with %s users", login, chan, value);
@@ -843,6 +843,7 @@ static char *twitch_close()
   del_bind_table(H_rmst);
   del_bind_table(H_usst);
   del_bind_table(H_usrntc);
+  Tcl_UntraceVar(interp, "keep-nick", TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_keepnick, NULL);
   module_undepend(MODULE_NAME);
   return NULL;
 }

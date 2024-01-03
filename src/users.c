@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -144,7 +144,7 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
 }
 
 /* take host entry from ignore list and display it ignore-style */
-void display_ignore(int idx, int number, struct igrec *ignore)
+static void display_ignore(int idx, int number, struct igrec *ignore)
 {
   char dates[81], s[41];
 

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -99,10 +99,8 @@ extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
 
-int cmd_die();
 int xtra_kill();
 int xtra_unpack();
-char *check_validpass();
 static int module_rename(char *name, char *newname);
 
 #ifndef STATIC
@@ -627,7 +625,9 @@ Function global_table[] = {
 /* 316 - 319 */
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
   (Function) get_user_by_account,
-  (Function) delhost_by_handle
+  (Function) delhost_by_handle,
+  (Function) check_tcl_event_arg
+/* 320 - 323 */
 };
 
 void init_modules(void)

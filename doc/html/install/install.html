@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Installing Eggdrop &#8212; Eggdrop 1.9.2 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Installing Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Upgrading Eggdrop" href="upgrading.html" />
     <link rel="prev" title="README" href="readme.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.2 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="readme.html" title="README"
              accesskey="P">previous</a> |
@@ -39,7 +34,7 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="readme.html">README</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing Eggdrop</a><ul>
@@ -50,7 +45,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
@@ -61,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
@@ -69,20 +65,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -103,36 +101,33 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="installing-eggdrop">
-<span id="id1"></span><h1>Installing Eggdrop<a class="headerlink" href="#installing-eggdrop" title="Permalink to this headline">¶</a></h1>
+  <section id="installing-eggdrop">
+<span id="id1"></span><h1>Installing Eggdrop<a class="headerlink" href="#installing-eggdrop" title="Permalink to this heading">¶</a></h1>
 <p>This is the quick install guide; if you have had little or no experience
 with UNIX or Eggdrop, READ THE README FILE NOW! This file is best for
 experienced users.</p>
 <p>For more information on compiling Eggdrop, see the Compile Guide in
 doc/COMPILE-GUIDE (and of course, the README FILE).</p>
-<div class="section" id="quick-startup">
-<h2>Quick Startup<a class="headerlink" href="#quick-startup" title="Permalink to this headline">¶</a></h2>
+<section id="quick-startup">
+<h2>Quick Startup<a class="headerlink" href="#quick-startup" title="Permalink to this heading">¶</a></h2>
 <p>Eggdrop uses the GNU autoconfigure scripts to make things easier.</p>
 <ol class="arabic">
-<li><dl class="first docutils">
-<dt>Type ‘./configure’ from the Eggdrop directory. The configure script</dt>
-<dd><p class="first last">will determine how your system is set up and figure out how to
+<li><dl class="simple">
+<dt>Type ‘./configure’ from the Eggdrop directory. The configure script</dt><dd><p>will determine how your system is set up and figure out how to
 correctly compile Eggdrop. It will also try to find Tcl, which is
 required to compile.</p>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Type either ‘make config’ or ‘make iconfig’ to determine which</dt>
-<dd><p class="first last">modules will be compiled. ‘make config’ compiles the default modules
+<li><dl class="simple">
+<dt>Type either ‘make config’ or ‘make iconfig’ to determine which</dt><dd><p>modules will be compiled. ‘make config’ compiles the default modules
 (everything but woobie.mod). If you want to choose which modules to
 compile, use ‘make iconfig’.</p>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Type ‘make’ from the Eggdrop directory, or to force a statically</dt>
-<dd><p class="first last">linked module bot, type ‘make static’. Otherwise, the Makefile will
+<li><dl class="simple">
+<dt>Type ‘make’ from the Eggdrop directory, or to force a statically</dt><dd><p>linked module bot, type ‘make static’. Otherwise, the Makefile will
 compile whatever type of bot the configure script determined your
 system will support. Dynamic is always the better way to go if
 possible. There are also the ‘debug’ and ‘sdebug’ (static-debug)
@@ -144,9 +139,8 @@ support Eggdrop development.</p>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Eggdrop must be installed in a directory somewhere.  This is</dt>
-<dd><p class="first">accomplished by entering the UNIX command:</p>
+<li><dl>
+<dt>Eggdrop must be installed in a directory somewhere. This is</dt><dd><p>accomplished by entering the UNIX command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">install</span>
 </pre></div>
 </div>
@@ -162,11 +156,10 @@ called ‘eggdrop’ (i.e. /home/user/eggdrop).</p>
 </div>
 <p>Note that you must use full path for every file to be correctly
 installed.</p>
-<p class="last">[The following is performed from the directory installed above.]</p>
 </dd>
 </dl>
 </li>
-<li><p class="first">Since version 1.8, Eggdrop can use SSL to protect botnet links. If you intend on protecting botnet traffic between Eggdrops, you must generate SSL certificates by running:</p>
+<li><p>Since version 1.8, Eggdrop can use SSL to protect botnet links. If you intend on protecting botnet traffic between Eggdrops, you must generate SSL certificates by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">make</span> <span class="n">sslcert</span>
 
  <span class="n">Or</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">installed</span> <span class="n">your</span> <span class="n">eggdrop</span> <span class="n">to</span> <span class="n">a</span> <span class="n">different</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">step</span> <span class="mi">4</span><span class="p">,</span> <span class="n">you</span>
@@ -183,16 +176,17 @@ installed.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Edit your config file completely.</p>
-</li>
-<li><p class="first">Start the bot with the “-m” option to create a user file, i.e.</p>
+</ol>
+<p>[The following steps are performed in the directory you just installed Eggdrop into from the previous step]</p>
+<ol class="arabic" start="6">
+<li><p>Edit your config file completely.</p></li>
+<li><p>Start the bot with the “-m” option to create a user file, i.e.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">eggdrop</span> <span class="o">-</span><span class="n">m</span> <span class="n">LamestBot</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
 </li>
-<li><dl class="first docutils">
-<dt>When starting the bot in the future, drop the “-m”. If you have edited</dt>
-<dd><p class="first">your config file correctly, you can type:</p>
+<li><dl>
+<dt>When starting the bot in the future, drop the “-m”. If you have edited</dt><dd><p>your config file correctly, you can type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chmod</span> <span class="n">u</span><span class="o">+</span><span class="n">x</span> <span class="o">&lt;</span><span class="n">my</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -200,29 +194,33 @@ installed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chmod</span> <span class="n">u</span><span class="o">+</span><span class="n">x</span> <span class="n">LamestBot</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
-<p class="last">From then on, you will be able to use your config file as a shell
+<p>From then on, you will be able to use your config file as a shell
 script. You can just type “./LamestBot.conf” from your shell prompt
 to start up your bot. For this to work, the top line of your script
 MUST contain the correct path to the Eggdrop executable.</p>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>It’s advisable to run your bot via crontab, so that it will</dt>
-<dd><p class="first">automatically restart if the machine goes down or (heaven forbid)
-the bot should crash. Eggdrop includes a helper script to generate a proper crontab script and entry. You can run this script by typing:</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="p">[</span><span class="n">yourconfig</span><span class="o">.</span><span class="n">conf</span><span class="p">]</span>
+<li><dl>
+<dt>It’s advisable to run your bot via crontab, so that it will</dt><dd><blockquote>
+<div><p>automatically restart if the machine goes down or (heaven forbid)
+the bot should crash. Eggdrop includes a helper script to auto-generate either a systemd or crontab entry. To add a systemd job, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="p">[</span><span class="n">yourconfig</span><span class="o">.</span><span class="n">conf</span><span class="p">]</span> <span class="o">-</span><span class="n">systemd</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>or to add a crontab job, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">scripts</span><span class="o">/</span><span class="n">autobotchk</span> <span class="p">[</span><span class="n">yourconfig</span><span class="o">.</span><span class="n">conf</span><span class="p">]</span>
 </pre></div>
 </div>
 </dd>
 </dl>
 </li>
-<li><p class="first">Smile. You have an Eggdrop!</p>
-</li>
+<li><p>Smile. You have an Eggdrop!</p></li>
 </ol>
-</div>
-<div class="section" id="cygwin-requirements-windows">
-<h2>Cygwin Requirements (Windows)<a class="headerlink" href="#cygwin-requirements-windows" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="cygwin-requirements-windows">
+<h2>Cygwin Requirements (Windows)<a class="headerlink" href="#cygwin-requirements-windows" title="Permalink to this heading">¶</a></h2>
 <p>Eggdrop requires the following packages to be added from the Cygwin
 installation tool prior to compiling:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Interpreters</span><span class="p">:</span> <span class="n">tcl</span><span class="p">,</span> <span class="n">tcl</span><span class="o">-</span><span class="n">devel</span>
@@ -231,9 +229,9 @@ installation tool prior to compiling:</p>
 <span class="n">Utils</span><span class="p">:</span>        <span class="n">diffutils</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="modules">
-<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this heading">¶</a></h2>
 <p>Modules are small pieces of code that can either be compiled into the
 binary or can be compiled separately into a file. This allows for a much
 smaller binary.</p>
@@ -250,12 +248,14 @@ bot.</p>
 the README file. If not, then READ IT!&amp;&#64;#%&#64;!</p>
 <p>Have fun with Eggdrop!</p>
 <blockquote>
-<div>Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2022 Eggheads Development Team</div></blockquote>
-</div>
-</div>
+<div><p>Copyright (C) 1997 Robey Pointer
+Copyright (C) 1999 - 2023 Eggheads Development Team</p>
+</div></blockquote>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -280,9 +280,9 @@ Copyright (C) 1999 - 2022 Eggheads Development Team</div></blockquote>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on May 26, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Twitch &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Twitch &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Advanced Tips" href="tricks.html" />
     <link rel="prev" title="Encryption/Hashing" href="pbkdf2info.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="pbkdf2info.html" title="Encryption/Hashing"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -56,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Twitch</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
@@ -71,20 +67,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -105,29 +103,29 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="twitch">
-<h1>Twitch<a class="headerlink" href="#twitch" title="Permalink to this headline">¶</a></h1>
+  <section id="twitch">
+<h1>Twitch<a class="headerlink" href="#twitch" title="Permalink to this heading">¶</a></h1>
 <p>This module <em>attempts</em> to provide connectivity with the Twitch gaming platform. While Twitch provides an IRC gateway to connect with it’s streaming service, it does not claim to (and certainly does not) follow the IRC RFC in any meaningful way. The intent of this module is not to provide the full spectrum of management functions typically associated with Eggdrop; instead it focuses around the following key functions:</p>
 <ul class="simple">
-<li>Logging of general and Twitch-specific events (raids, blocks, bit donations)</li>
-<li>Tracking userstate and roomstate values</li>
-<li>Adding Tcl event binds for a number of Twitch events</li>
+<li><p>Logging of general and Twitch-specific events (raids, blocks, bit donations)</p></li>
+<li><p>Tracking userstate and roomstate values</p></li>
+<li><p>Adding Tcl event binds for a number of Twitch events</p></li>
 </ul>
-<div class="section" id="disclaimer">
-<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this headline">¶</a></h2>
+<section id="disclaimer">
+<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this heading">¶</a></h2>
 <p>We should also make clear that Eggdrop is in no way affiliated with Twitch in any way, and Twitch fully controls their own platform, to include the IRC gateway. This was just a fun project implemented at the request of some users to interact with the Twitch IRC development gateway as it existed at the time of development. At any time, Twitch could choose to alter or discontinue their IRC connectivity, thereby rendering this Eggdrop module useless. Eggdrop developers are also unable to offer technical support for Twitch-specific issues encountered while using this module.</p>
-</div>
-<div class="section" id="registering-with-twitch">
-<h2>Registering with Twitch<a class="headerlink" href="#registering-with-twitch" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="registering-with-twitch">
+<h2>Registering with Twitch<a class="headerlink" href="#registering-with-twitch" title="Permalink to this heading">¶</a></h2>
 <ol class="arabic simple">
-<li>Register an account with Twitch. At the time of writing, this is done by visiting <a class="reference external" href="http://twitch.tv/">Twitch</a> and clicking on the Sign Up button.</li>
-<li>Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the <a class="reference external" href="https://twitchapps.com/tmi/">Twitch OAuth generator</a> while logged in to the account you just created. The token will be an alphanumeric string and should be treated like a password (…because it is). Make note of it, and keep it safe!</li>
+<li><p>Register an account with Twitch. At the time of writing, this is done by visiting <a class="reference external" href="http://twitch.tv/">Twitch</a> and clicking on the Sign Up button.</p></li>
+<li><p>Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the <a class="reference external" href="https://twitchapps.com/tmi/">Twitch OAuth generator</a> while logged in to the account you just created. The token will be an alphanumeric string and should be treated like a password (…because it is). Make note of it, and keep it safe!</p></li>
 </ol>
-</div>
-<div class="section" id="editing-the-config-file">
-<h2>Editing the config file<a class="headerlink" href="#editing-the-config-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="editing-the-config-file">
+<h2>Editing the config file<a class="headerlink" href="#editing-the-config-file" title="Permalink to this heading">¶</a></h2>
 <ol class="arabic">
-<li><p class="first">Find the options to add a server in the server section of the config file. Remove the sample servers listed and add the following line in their place, replacing the alphanumeric string after ‘oauth:’ with the token you created when registering with Twitch in the previous section. Pretending your Twitch token from the previous step is ‘j9irk4vs28b0obz9easys4w2ystji3u’, it should look like this:</p>
+<li><p>Find the options to add a server in the server section of the config file. Remove the sample servers listed and add the following line in their place, replacing the alphanumeric string after ‘oauth:’ with the token you created when registering with Twitch in the previous section. Pretending your Twitch token from the previous step is ‘j9irk4vs28b0obz9easys4w2ystji3u’, it should look like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="n">add</span> <span class="n">irc</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">twitch</span><span class="o">.</span><span class="n">tv</span> <span class="mi">6667</span> <span class="n">oauth</span><span class="p">:</span><span class="n">j9irk4vs28b0obz9easys4w2ystji3u</span>
 </pre></div>
 </div>
@@ -135,35 +133,34 @@
 </ol>
 <p>Make sure you leave the ‘oauth:’ there, including the ‘:’.</p>
 <ol class="arabic">
-<li><p class="first">Spoiler alert- this step tells you to do nothing, but we’re including it for the sake of thoroughness. We know you are the ideal IRC user and have read all the docs for Twitch already, and noticed that Eggdrop has to request capabilities from the Twitch via a CAP request, something that is normally set in the config file. Good news! The Twitch module does this for you already, automatically. No need to edit the <code class="docutils literal notranslate"><span class="pre">cap-request</span></code> setting in the config. Moving on!</p>
-</li>
-<li><p class="first">Find the Twitch section of the config file, and enable the loading of the twitch module by removing the ‘#’ in front of the loadmodule command. It should look like this when you are done:</p>
+<li><p>Spoiler alert- this step tells you to do nothing, but we’re including it for the sake of thoroughness. We know you are the ideal IRC user and have read all the docs for Twitch already, and noticed that Eggdrop has to request capabilities from the Twitch via a CAP request, something that is normally set in the config file. Good news! The Twitch module does this for you already, automatically. No need to edit the <code class="docutils literal notranslate"><span class="pre">cap-request</span></code> setting in the config. Moving on!</p></li>
+<li><p>Find the Twitch section of the config file, and enable the loading of the twitch module by removing the ‘#’ in front of the loadmodule command. It should look like this when you are done:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">twitch</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Start your bot as usual, and good luck!</p>
-</li>
+<li><p>Start your bot as usual, and good luck!</p></li>
 </ol>
-</div>
-<div class="section" id="twitch-web-ui-functions">
-<h2>Twitch web UI functions<a class="headerlink" href="#twitch-web-ui-functions" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="twitch-web-ui-functions">
+<h2>Twitch web UI functions<a class="headerlink" href="#twitch-web-ui-functions" title="Permalink to this heading">¶</a></h2>
 <p>Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the partyline command <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command <code class="docutils literal notranslate"><span class="pre">.twcmd</span> <span class="pre">vip</span> <span class="pre">username</span></code>. or to restrict chat to subscribers, you would use <code class="docutils literal notranslate"><span class="pre">.twcmd</span> <span class="pre">subscribers</span></code> (Note: no . or / is needed as a prefix to the Twitch command). In other words, <code class="docutils literal notranslate"><span class="pre">.twcmd</span></code> in Tcl is the interface to the standard Twitch set of commands available through the web UI (Also available as a Tcl command).</p>
-</div>
-<div class="section" id="twitch-irc-limitations">
-<h2>Twitch IRC limitations<a class="headerlink" href="#twitch-irc-limitations" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="twitch-irc-limitations">
+<h2>Twitch IRC limitations<a class="headerlink" href="#twitch-irc-limitations" title="Permalink to this heading">¶</a></h2>
 <p>There are a few things you should know about how Twitch provides service through the IRC gateway that affects how well Eggdrop can function:</p>
 <ul class="simple">
-<li>Twitch does not broadcast JOINs or PARTs for channels over 1,000 users. This renders tracking users on a channel unreliable.</li>
-<li>Twitch does not broadcast MODE changes for moderator status. This (mostly) renders tracking the status of users infeasible.</li>
-<li>Twitch stores bans on its servers (and does not accept MODE +b), making the Eggdrop ban list (and exempts/invites) mostly useless</li>
-<li>Twitch does not allow clients to issue MODE +o/-o commands, preventing Eggdrop from op’ing users through the traditional method</li>
+<li><p>Twitch does not broadcast JOINs or PARTs for channels over 1,000 users. This renders tracking users on a channel unreliable.</p></li>
+<li><p>Twitch does not broadcast MODE changes for moderator status. This (mostly) renders tracking the status of users infeasible.</p></li>
+<li><p>Twitch stores bans on its servers (and does not accept MODE +b), making the Eggdrop ban list (and exempts/invites) mostly useless</p></li>
+<li><p>Twitch does not allow clients to issue MODE +o/-o commands, preventing Eggdrop from op’ing users through the traditional method</p></li>
 </ul>
 <p>In light of these limitations, Eggdrop developers made an intentional decision to leave some non-compatible capabilities present with the Twitch module, most notably on the Tcl side. For example, if functionality such as the Tcl topic bind were to be removed, already-written scripts that had that feature in them would simply not load, rendering the entire Tcl script useless. By leaving these capabilities in, the hope is that existing Tcl scripts can still be used with Twitch, even if in a degraded capacity. As such, do be careful with the scripts you load as you may face errors you had not encountered before.</p>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -188,9 +185,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

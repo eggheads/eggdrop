@@ -1,30 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>TLS support &#8212; Eggdrop 1.9.3 documentation</title>
-    <link rel="stylesheet" href="../_static/eggdrop.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>TLS support &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="IRCv3 support" href="ircv3.html" />
     <link rel="prev" title="IPv6 support" href="ipv6.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.3 documentation</a></div>
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="ipv6.html" title="IPv6 support"
              accesskey="P">previous</a> |
@@ -39,13 +34,13 @@
         <div class="sidebar">
           
           <h3>Table of Contents</h3>
-          <p class="caption"><span class="caption-text">Installing Eggdrop</span></p>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Using Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
@@ -63,6 +58,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
@@ -71,20 +67,22 @@
 <li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Eggdrop Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About Eggdrop</span></p>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
@@ -107,19 +105,19 @@
             
   <p>TLS support
 Last revised: Jan 26, 2020</p>
-<div class="section" id="tls-support">
-<h1>TLS support<a class="headerlink" href="#tls-support" title="Permalink to this headline">¶</a></h1>
+<section id="tls-support">
+<h1>TLS support<a class="headerlink" href="#tls-support" title="Permalink to this heading">¶</a></h1>
 <p>This document provides information about TLS support which is a new
 eggdrop feature since version 1.8.0.</p>
-<div class="section" id="about">
-<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<section id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this heading">¶</a></h2>
 <p>Eggdrop can be optionally compiled with TLS support. This requires OpenSSL
 0.9.8 or more recent installed on your system.
 TLS support includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.</p>
-</div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <p>./configure and install as usual, the configure script will detect if your
 system meets the requirements and will enable TLS automatically. You can
 override the autodetection and manually disable TLS with
@@ -130,9 +128,9 @@ home directory, you’ll need to specify the paths to header and library
 files with the –with-sslinc and –with-ssllib options. You can also use
 these if you want to override the default OpenSSL installation with a
 custom one, as they take precedence over any system-wide paths.</p>
-</div>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>As of v1.9.0, TLS support must be requested explicitly for botnet links.
 To create a TLS-enabled listening port or connect to a TLS-enabled listening
 port, you must prefix the port with a plus sign (+). If a port number could
@@ -144,72 +142,67 @@ using the starttls Tcl command.</p>
 plain connection to an encrypted connection for botnet links, without any
 additional configuration (This was changed to provide users the flexibility
 to configure their own environments and assist in debugging).</p>
-<div class="section" id="irc">
-<h3>IRC<a class="headerlink" href="#irc" title="Permalink to this headline">¶</a></h3>
+<section id="irc">
+<h3>IRC<a class="headerlink" href="#irc" title="Permalink to this heading">¶</a></h3>
 <p>To connect to IRC using SSL, specify the port number and prefix it with
 a plus sign. Example: .jump irc.server.com +6697. The same goes for
 the server list in the config file.</p>
 <p>Some NickServ services allow you to authenticate with a certificate.
 Eggdrop will use the certificte pair specified in ssl-privatekey/
 ssl-certificate for authentication.</p>
-</div>
-<div class="section" id="botnet">
-<h3>Botnet<a class="headerlink" href="#botnet" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="botnet">
+<h3>Botnet<a class="headerlink" href="#botnet" title="Permalink to this heading">¶</a></h3>
 <p>Eggdrop can use TLS connections to protect botnet links if it is compiled with TLS support. As of version 1.9.0, only raw TLS sockets are used to protect a connection. By prefixing a listen port in the Eggdrop configuration with a plus (+), that specifies that port as a TLS-enabled port, and will only accept TLS connections (no plain text connections will be allowed). With two TLS-enabled Eggdrops, it graphically looks like this:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="34%" />
-<col width="31%" />
-<col width="35%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Leaf bot sets hub port as…</td>
-<td>and Hub bot config uses…</td>
-<td>the connection will…</td>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Leaf bot sets hub port as…</p></td>
+<td><p>and Hub bot config uses…</p></td>
+<td><p>the connection will…</p></td>
 </tr>
-<tr class="row-even"><td>port</td>
-<td>listen port</td>
-<td>be plain, but can be upgraded
+<tr class="row-even"><td><p>port</p></td>
+<td><p>listen port</p></td>
+<td><p>be plain, but can be upgraded
 to TLS manually with the
-starttls Tcl/bot command</td>
+starttls Tcl/bot command</p></td>
 </tr>
-<tr class="row-odd"><td>+port</td>
-<td>listen +port</td>
-<td>connect with TLS</td>
+<tr class="row-odd"><td><p>+port</p></td>
+<td><p>listen +port</p></td>
+<td><p>connect with TLS</p></td>
 </tr>
-<tr class="row-even"><td>port</td>
-<td>listen +port</td>
-<td>fail as hub only wants TLS</td>
+<tr class="row-even"><td><p>port</p></td>
+<td><p>listen +port</p></td>
+<td><p>fail as hub only wants TLS</p></td>
 </tr>
-<tr class="row-odd"><td>+port</td>
-<td>listen port</td>
-<td>fail as leaf only wants TLS</td>
+<tr class="row-odd"><td><p>+port</p></td>
+<td><p>listen port</p></td>
+<td><p>fail as leaf only wants TLS</p></td>
 </tr>
 </tbody>
 </table>
 <p>In short, a bot added to your Eggdrop with a +port in the address can only connect to a bot listening with a +port in the config. Conversely, a bot added to your eggdrop without a + prefix can only connect to a bot listening without a + prefix in the config.</p>
 <p>If TLS negotiation fails, the connection is deliberately aborted and no clear text is ever sent by the TLS-requiring party.</p>
 <p>Eggdrop can also upgrade a plaintext connection with the starttls Tcl command. To use this, a plaintext connection is first made to a non-TLS port (ie, one that is not prefixed with a plus), then the starttls command is issued to upgrade that link to a TLS connection. In the Eggdrop 1.8 series, Eggdrop automatically attempted a starttls upgrade on all botnet connections. As such, if a 1.8 Eggdrop connects to a plain listening port on a 1.9.0 or later Eggdrop, it will automatically attempt to upgrade the link to TLS.</p>
-</div>
-<div class="section" id="secure-dcc">
-<h3>Secure DCC<a class="headerlink" href="#secure-dcc" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="secure-dcc">
+<h3>Secure DCC<a class="headerlink" href="#secure-dcc" title="Permalink to this heading">¶</a></h3>
 <p>Eggdrop supports the SDCC protocol, allowing you to establish DCC chat
 and file transfers over SSL. Example: /ctcp bot schat
 Note, that currently the only IRC client supporting SDCC is KVIrc. For
 information on how to initiate secure DCC chat from KVIrc (rather than
 from the bot with /ctcp bot chat), consult the KVIrc documentation.</p>
-</div>
-<div class="section" id="scripts">
-<h3>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="scripts">
+<h3>Scripts<a class="headerlink" href="#scripts" title="Permalink to this heading">¶</a></h3>
 <p>Scripts can open or connect to TLS ports the usual way specifying the
 port with a plus sign. Alternatively, the connection could be
 established as plaintext and later switched on with the starttls Tcl
 command. (Note that the other side should also switch to TLS at the same
 time - the synchronization is the script’s job, not eggdrop’s.)</p>
-</div>
-</div>
-<div class="section" id="keys-certificates-and-authentication">
-<h2>Keys, certificates and authentication<a class="headerlink" href="#keys-certificates-and-authentication" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="keys-certificates-and-authentication">
+<h2>Keys, certificates and authentication<a class="headerlink" href="#keys-certificates-and-authentication" title="Permalink to this heading">¶</a></h2>
 <p>You need a private key and a digital certificate whenever your bot will
 act as a server in a connection of any type. Common examples are hub
 bots and TLS listening ports. General information about certificates and
@@ -238,37 +231,42 @@ ssl client:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">s_client</span> <span class="o">-</span><span class="n">cert</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">key</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">connect</span> <span class="n">host</span><span class="p">:</span><span class="n">sslport</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="ssl-tls-settings">
-<h2>SSL/TLS Settings<a class="headerlink" href="#ssl-tls-settings" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="ssl-tls-settings">
+<h2>SSL/TLS Settings<a class="headerlink" href="#ssl-tls-settings" title="Permalink to this heading">¶</a></h2>
 <p>There are some new settings allowing control over certificate
 verification and authorization.</p>
 <blockquote>
 <div><p>ssl-privatekey</p>
 <blockquote>
-<div>file containing Eggdrop’s private key, required for the certificate.</div></blockquote>
+<div><p>file containing Eggdrop’s private key, required for the certificate.</p>
+</div></blockquote>
 <p>ssl-certificate</p>
 <blockquote>
-<div>Specify the filename where your SSL certificate is located.
-if your bot will accept SSL connections, it must have a certificate.</div></blockquote>
+<div><p>Specify the filename where your SSL certificate is located.
+if your bot will accept SSL connections, it must have a certificate.</p>
+</div></blockquote>
 <p>ssl-verify-depth</p>
 <blockquote>
-<div>maximum verification depth when checking certificate validity.
-Determines the maximum certificate chain length to allow.</div></blockquote>
+<div><p>maximum verification depth when checking certificate validity.
+Determines the maximum certificate chain length to allow.</p>
+</div></blockquote>
 <div class="line-block">
 <div class="line">ssl-capath</div>
 <div class="line">ssl-cafile</div>
 </div>
 <blockquote>
-<div>specify the location of certificate authorities certificates. These
+<div><p>specify the location of certificate authorities certificates. These
 are used for verification. Both can be active at the same time.
 If you don’t set this, validation of the issuer won’t be possible and
 depending on verification settings, the peer certificate might fail
-verification.</div></blockquote>
+verification.</p>
+</div></blockquote>
 <p>ssl-ciphers</p>
 <blockquote>
-<div>specify the list of ciphers (in order of preference) allowed for
-use with ssl.</div></blockquote>
+<div><p>specify the list of ciphers (in order of preference) allowed for
+use with ssl.</p>
+</div></blockquote>
 <p>ssl-cert-auth</p>
 <blockquote>
 <div><p>enables or disables certificate authorization for partyline/botnet.
@@ -290,16 +288,18 @@ handle of the user/bot.</p>
 <div class="line">ssl-verify-clients</div>
 </div>
 <blockquote>
-<div>control ssl certificate verification. A value of 0 disables
+<div><p>control ssl certificate verification. A value of 0 disables
 verification completely. A value of 1 enables full verification.
 Higher values enable specific exceptions like allowing self-signed
-or expired certificates. Details are documented in eggdrop.conf.</div></blockquote>
+or expired certificates. Details are documented in eggdrop.conf.</p>
 </div></blockquote>
-<p>Copyright (C) 2010 - 2022 Eggheads Development Team</p>
-</div>
-</div>
+</div></blockquote>
+<p>Copyright (C) 2010 - 2023 Eggheads Development Team</p>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -324,9 +324,9 @@ or expired certificates. Details are documented in eggdrop.conf.</div></blockquo
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Eggheads.
-      Last updated on Jul 12, 2022.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2023, Eggheads.
+      Last updated on Mar 11, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
         </div>
         <div class="clearer"></div>

@@ -26,7 +26,7 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 1) INFORMATION ABOUT YOUR EGGDROP
 
 1.1) Eggdrop version:
-     1.8.__
+     1.9._
 
 1.2) Make type:
      ( ) dynamic
@@ -42,17 +42,11 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
 2) INFORMATION ABOUT TCL
 
 2.1) Tcl library version:
-     ( ) 8.3
-     ( ) 8.4
-     ( ) 8.5
-     ( ) 8.6
+     ( ) 8.5._
+     ( ) 8.6._
      ( ) Other - Which? ____
 
-2.2) Tcl library patchlevel: ___
-  eg; p1, p2, etc for Tcl versions up to 8.0p2
-      or the 3rd part of the version number for 8.0.3 and newer
-
-2.3) Tcl scripts used:
+2.2) Tcl scripts used:
      [ ] alltools
      [ ] sentinel
      [ ] getops
@@ -81,6 +75,7 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
      ( ) SINIX
      ( ) Solaris/SunOS/OpenIndiana
      ( ) Ultrix
+     ( ) Windows Subsystem for Linux (WSL)
      ( ) Other - Which? _____________
 
 3.2) OS Version/Release: _____________
@@ -110,8 +105,10 @@ DO NOT SEND HTML E-MAIL TO THE LISTS.
      useful if you could paste gdb's output during the following steps:
      First call gdb
          $ gdb eggdrop -c core
+     (systemd users could try coredumpctl)
      and then enter 'bt' on gdb's command line:
          (gdb) bt
+     (even more information could be obtained with 'bt full')
      Keep your core file for at least one week, so that the dev team
      can ask for further information if needed. However, don't send
      us the core file unless we ask for it.

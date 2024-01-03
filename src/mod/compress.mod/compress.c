@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2022 Eggheads Development Team
+ * Copyright (C) 2000 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
