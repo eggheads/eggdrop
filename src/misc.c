@@ -578,10 +578,9 @@ void putlog (int type, char *chname, const char *format, ...)
           /* Open this logfile */
           if (keep_all_logs) {
             snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(path, "a");
-            setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
-          } else
-            logs[i].f = fopen(logs[i].filename, "a");
+            if ((logs[i].f = fopen(path, "a")))
+              setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
+          } else if ((logs[i].f = fopen(logs[i].filename, "a")))
             setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
         }
         if (logs[i].f != NULL) {
