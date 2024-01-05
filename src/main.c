@@ -631,7 +631,7 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  nowmins = time(NULL) / 60;
+  nowmins = now / 60;
   if (nowmins > lastmin) {
     memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
@@ -787,7 +787,7 @@ static void mainloop(int toplevel)
 {
   static int cleanup = 5;
   int xx, i, eggbusy = 1;
-  char buf[8702];
+  char buf[READMAX + 2];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
@@ -1001,7 +1001,7 @@ static void init_random(void) {
 
 int main(int arg_c, char **arg_v)
 {
-  int i, xx;
+  int i, j, xx;
   char s[25];
   FILE *f;
   struct sigaction sv;
@@ -1136,8 +1136,9 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
-         botnetnick, i, count_users(userlist));
+  j = count_users(userlist);
+  putlog(LOG_MISC, "*", "=== %s: %d channel%s, %d user%s.",
+         botnetnick, i, (i == 1) ? "" : "s", j, (j == 1) ? "" : "s");
   if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
     printf("\n");
     printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");
