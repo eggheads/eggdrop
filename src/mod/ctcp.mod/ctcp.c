@@ -134,7 +134,7 @@ static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
     return 1;
   ctime_r(&now, s);
   s[24] = 0;
-  sprintf(ctcp_reply, "%s\001TIME %s\001", ctcp_reply, s);
+  simple_sprintf(ctcp_reply, "%s\001TIME %s\001", ctcp_reply, s);
   return 1;
 }
 
