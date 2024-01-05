@@ -430,3 +430,5 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0xe33,Telnet yhteys hukattu %s silläaikaa kun tarkistettiin tuplausta
 0xe34,Kadotettu ident yhteys
 0xe35,Please remove the #comment from your listen setting and try again
+0xe36,This port is for bots only
+0xe37,This port is for users only (no bots)

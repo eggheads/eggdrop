@@ -107,7 +107,7 @@ static void ident_oidentd()
   FILE *fd;
   long filesize;
   char *data = NULL;
-  char path[121], line[256], buf[256], identstr[256];
+  char path[PATH_MAX], line[256], buf[256], identstr[256];
   char s[EGG_INET_ADDRSTRLEN];
   int ret, prevtime, servidx, i;
   socklen_t namelen;
@@ -292,7 +292,7 @@ char *ident_start(Function *global_funcs)
 {
   global = global_funcs;
 
-  module_register(MODULE_NAME, ident_table, 0, 9);
+  module_register(MODULE_NAME, ident_table, 1, 0);
 
   if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);

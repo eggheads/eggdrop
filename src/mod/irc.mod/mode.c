@@ -42,9 +42,9 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
  * channel still exists and will refresh the user and victim flag records,
  * in case users were also modified.
  */
-struct chanset_t *modebind_refresh(char *chname,
-                                   char *usrhost, struct flag_record *usr,
-                                   char *vcrhost, struct flag_record *vcr)
+static struct chanset_t *modebind_refresh(char *chname,
+                                          char *usrhost, struct flag_record *usr,
+                                          char *vcrhost, struct flag_record *vcr)
 {
   struct userrec *u;
   struct chanset_t *chan;

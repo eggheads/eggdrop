@@ -232,11 +232,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   if (first != NULL)
     strlcpy(first, rest, max);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 char *splitnick(char **blah)
@@ -518,7 +514,7 @@ void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
   int i, tsl = 0;
-  char s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -582,8 +578,8 @@ void putlog (int type, char *chname, const char *format, ...)
         if (logs[i].f == NULL) {
           /* Open this logfile */
           if (keep_all_logs) {
-            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a");
+            snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
+            logs[i].f = fopen(path, "a");
           } else
             logs[i].f = fopen(logs[i].filename, "a");
         }
@@ -618,7 +614,8 @@ void putlog (int type, char *chname, const char *format, ...)
     }
   }
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
+    if (((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) ||
+        ((dcc[i].type == &DCC_PRE_RELAY) && (dcc[i].u.relay->chat->con_flags & type))) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
           !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
         dprintf(i, "%s", out);

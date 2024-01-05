@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Eggdrop Autoscripts &#8212; Eggdrop 1.9.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Users and Flags" href="users.html" />
+    <link rel="prev" title="The Party Line" href="partyline.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.4 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="partyline.html" title="The Party Line"
+             accesskey="P">previous</a> |
+          <a href="users.html" title="Users and Flags"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eggdrop Autoscripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#autoscripts-usage">Autoscripts usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autoscripts-file-structure">Autoscripts File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-hints">Development hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tcl-commands">Tcl Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">Writing an Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="eggdrop-autoscripts">
+<h1>Eggdrop Autoscripts<a class="headerlink" href="#eggdrop-autoscripts" title="Permalink to this heading">¶</a></h1>
+<p>Since it’s inception, users have needed to load a Tcl script into Eggdrop by downloading a Tcl file, editing the file to customize settings, and then sourceing that file in the config file. In v1.10, the Autoscripts system was added to make this process a little more user-friendly. The autoscripts system helps by:</p>
+<ul class="simple">
+<li><p>Centralizing commonly-used scripts in a single location</p></li>
+<li><p>Allowing scripts to be downloaded via the partyline</p></li>
+<li><p>Allowing script settings to be configured via the partyline</p></li>
+<li><p>Allowing user-written scripts to be managed by the autoscripts system</p></li>
+<li><p>Providing a documented API to write autoscripts-compatible scripts</p></li>
+</ul>
+<section id="autoscripts-usage">
+<h2>Autoscripts usage<a class="headerlink" href="#autoscripts-usage" title="Permalink to this heading">¶</a></h2>
+<p>To view available autoscript commands, type <code class="docutils literal notranslate"><span class="pre">.script</span></code> on the partyline. The following sub-commands are available for use with script:</p>
+<section id="remote">
+<h3>remote<a class="headerlink" href="#remote" title="Permalink to this heading">¶</a></h3>
+<p>This command will list scripts hosted on the Eggdrop website that are available to be downloaded and installed on your Eggdrop.</p>
+</section>
+<section id="fetch-script">
+<h3>fetch &lt;script&gt;<a class="headerlink" href="#fetch-script" title="Permalink to this heading">¶</a></h3>
+<p>This command will download the specified script from the Eggdrop website and place it into the autoscript/ directory.</p>
+</section>
+<section id="list">
+<h3>list<a class="headerlink" href="#list" title="Permalink to this heading">¶</a></h3>
+<p>This command will list scripts locallt present in the autoscripts/ directory, available to be configured and loaded.</p>
+</section>
+<section id="config-script">
+<h3>config &lt;script&gt;<a class="headerlink" href="#config-script" title="Permalink to this heading">¶</a></h3>
+<p>This command will list settings available for configuration for the provided script.</p>
+</section>
+<section id="set-script-setting">
+<h3>set &lt;script&gt; &lt;setting&gt;<a class="headerlink" href="#set-script-setting" title="Permalink to this heading">¶</a></h3>
+<p>This command will set <code class="docutils literal notranslate"><span class="pre">setting</span></code> for <code class="docutils literal notranslate"><span class="pre">script</span></code> to the provided value.</p>
+</section>
+<section id="load-script">
+<h3>load &lt;script&gt;<a class="headerlink" href="#load-script" title="Permalink to this heading">¶</a></h3>
+<p>This command will activate the script for use.</p>
+</section>
+<section id="unload-script">
+<h3>unload &lt;script&gt;<a class="headerlink" href="#unload-script" title="Permalink to this heading">¶</a></h3>
+<p>This command will prevent the script from being loaded the next time Eggdrop starts. To fully unload a script, Eggdrop must be restarted!</p>
+</section>
+<section id="clean-script">
+<h3>clean &lt;script&gt;<a class="headerlink" href="#clean-script" title="Permalink to this heading">¶</a></h3>
+<p>This command will delete the script from the filesystem. After running this command, you will have to re-download and re-configure the script if you wish to use it again.</p>
+</section>
+</section>
+<section id="autoscripts-file-structure">
+<h2>Autoscripts File Structure<a class="headerlink" href="#autoscripts-file-structure" title="Permalink to this heading">¶</a></h2>
+<p>An autoscripts package requires (minimum) two files: the Tcl script, and a json manifest file.</p>
+<section id="tcl-file">
+<h3>Tcl File<a class="headerlink" href="#tcl-file" title="Permalink to this heading">¶</a></h3>
+<p>Nothing new or novel here; this is where your Tcl code goes. The one change to this file is that any setting intended should now be located in the manifest.json file, not the Tcl script file. All variables will be added to the global namespace. For this reason, it is recommended that variables have unique names to avoid collisions. This is commonly done by prefixing the variable name with the script name or abbreviation. For example, a script called myscript.tcl might avoid using a variable calld <code class="docutils literal notranslate"><span class="pre">name</span></code> and instead use <code class="docutils literal notranslate"><span class="pre">myscript_name</span></code> or <code class="docutils literal notranslate"><span class="pre">ms_name</span></code>.</p>
+</section>
+<section id="manifest-json">
+<h3>Manifest.json<a class="headerlink" href="#manifest-json" title="Permalink to this heading">¶</a></h3>
+<p>Every autoscripts package must have a manifest.json file. This file contains metadata for the script such as version and description information, as well as the user-configurable settings for use with th script. A simple example of a manifest.json file is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;woobie&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version_major&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;version_minor&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An example script to help developers write autoscript packages&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;long_description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is an example script to help understand the autoscript system. Yeah, it doesn&#39;t really do anything, but that&#39;s besides the point. It could, and that should be enough for anyone&quot;</span>
+  <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;loaded&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;udefflag&quot;</span><span class="p">:</span><span class="s2">&quot;myscript&quot;</span>
+    <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;vars&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;woobie_dict&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A setting that accepts a dict as a value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;{quiet q}&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;woobie_setting&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A normal setting to enable or disable something&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;woobie_string&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A setting taking a string, like a filename or something&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;woobie&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;woobie(array)&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A setting that is set as an array&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span><span class="s2">&quot;another string&quot;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>The name of the script. Must match the script name (if the script is foo.tcl, then this must be foo)</p></td>
+</tr>
+<tr class="row-even"><td><p>version_major</p></td>
+<td><p>The major version integer (ie, 1 for 1.6)</p></td>
+</tr>
+<tr class="row-odd"><td><p>version_minor</p></td>
+<td><p>The minor version integer (ie, 6 for 1.6)</p></td>
+</tr>
+<tr class="row-even"><td><p>description</p></td>
+<td><p>A one-line summary of what the script does. This will be shown when available scripts are listed on the partyline via .script list.</p></td>
+</tr>
+<tr class="row-odd"><td><p>long_description</p></td>
+<td><p>A longer description of what the script does, similar to a README. This will be shown when a script is viewed via .script config.</p></td>
+</tr>
+<tr class="row-even"><td><p>config-loaded</p></td>
+<td><p>Whether this script is currently loaded or not. It should be default set to 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>config-udefflag</p></td>
+<td><p>Any user-defined channel settings used by the script. This is displayed when configuration settings are displayed to the user on the partyline.</p></td>
+</tr>
+<tr class="row-even"><td><p>config-requires</p></td>
+<td><p>Any Tcl package required for use by the script, such as tcllib or json.</p></td>
+</tr>
+<tr class="row-odd"><td><p>config-vars-&lt;varname&gt;</p></td>
+<td><p>A setting intended to be modified by the user. The ‘description’ field should describe what the setting does, and the ‘value’ field stores the current value. These settings are displayed when the configuration settings are displayed to the user on the partyline.</p></td>
+</tr>
+<tr class="row-even"><td><p>config-vars-&lt;varname&gt;-description</p></td>
+<td><p>A description of the setting, displayed in the configuration listing for the script.</p></td>
+</tr>
+<tr class="row-odd"><td><p>config-vars-&lt;varname&gt;-value</p></td>
+<td><p>The value the setting is set to</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The name of the script. Must match the script name (if the script is foo.tcl, then this must be foo)</p>
+</dd>
+<dt class="field-even">version_major<span class="colon">:</span></dt>
+<dd class="field-even"><p>The major version integer (ie, 1 for 1.6)</p>
+</dd>
+<dt class="field-odd">version_minor<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The minor version integer (ie, 6 for 1.6)</p>
+</dd>
+<dt class="field-even">description<span class="colon">:</span></dt>
+<dd class="field-even"><p>A one-line summary of what the script does. This will be shown when available scripts are listed on the partyline via .script list.</p>
+</dd>
+<dt class="field-odd">long_description<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A longer description of what the script does, similar to a README. This will be shown when a script is viewed via .script config.</p>
+</dd>
+<dt class="field-even">config-loaded<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether this script is currently loaded or not. It should be default set to 0.</p>
+</dd>
+<dt class="field-odd">config-udefflag<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any user-defined channel settings used by the script. This is displayed when configuration settings are displayed to the user on the partyline.</p>
+</dd>
+<dt class="field-even">config-requires<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any Tcl package required for use by the script, such as tcllib or json.</p>
+</dd>
+<dt class="field-odd">config-vars-&lt;varname&gt;<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A setting intended to be modified by the user. The ‘description’ field should describe what the setting does, and the ‘value’ field stores the current value. These settings are displayed when the configuration settings are displayed to the user on the partyline.</p>
+</dd>
+<dt class="field-even">config-vars-&lt;varname&gt;-description<span class="colon">:</span></dt>
+<dd class="field-even"><p>A description of the setting, displayed in the configuration listing for the script</p>
+</dd>
+<dt class="field-odd">config-vars-&lt;varname&gt;-value<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value thee setting is set to</p>
+</dd>
+</dl>
+</section>
+<section id="file-placement">
+<h3>File placement<a class="headerlink" href="#file-placement" title="Permalink to this heading">¶</a></h3>
+<p>Autoscript files are stored in the autoscript directory. The path structure is eggdrop/autoscript/&lt;scriptname&gt;/[script files]. If the autoscript <code class="docutils literal notranslate"><span class="pre">fetch</span></code> command is used, a .tgz file will be downloaded and extracted to the proper location automatically. If you wish to manually add a script, create a directory with the same name as the script, and then place the script and manifest files inside the directory. The directory name must exactly match the script name (without the .tcl extension)! If the Tcl script to be loaded is called <code class="docutils literal notranslate"><span class="pre">myscript_goodversion_specialfeature.tcl</span></code>, then the directory must also called <code class="docutils literal notranslate"><span class="pre">myscript_goodversion_specialfeature</span></code>.</p>
+</section>
+</section>
+<section id="development-hints">
+<h2>Development hints<a class="headerlink" href="#development-hints" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>An autoscript should not require a user to manually open the script in an editor for any reason. Design your script as such!</p></li>
+<li><p>Use <a class="reference external" href="https://docs.eggheads.org/using/tcl-commands.html#setudef-flag-int-str-name">user defined channel flags</a> to enable/disable a script for a particular channel, they’re easy!</p></li>
+<li><p>Variables used in autoscripts are placed into the global namespace. Make them unique to prevent collisions! We recommend prefixing the script name in front of a variable, such as myscript_setting or ms_setting.</p></li>
+</ul>
+</section>
+<section id="tcl-commands">
+<h2>Tcl Commands<a class="headerlink" href="#tcl-commands" title="Permalink to this heading">¶</a></h2>
+<p>The autoscripts Tcl script adds three new commands for use with Tcl scripts:</p>
+<section id="egg-loaded">
+<h3>egg_loaded<a class="headerlink" href="#egg-loaded" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><p>Description: lists all scripts currently loaded via the autoscripts system</p>
+<p>Returns: A Tcl list of script names currently loaded via autoscripts</p>
+</div></blockquote>
+</section>
+<section id="egg-unloaded">
+<h3>egg_unloaded<a class="headerlink" href="#egg-unloaded" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><p>Description: lists all scripts downloaded to the local machine via the autoscripts system but not currently loaded by Eggdrop</p>
+<p>Returns: A Tcl list of script names downloaded but not currently loaded via autoscripts</p>
+</div></blockquote>
+</section>
+<section id="egg-all">
+<h3>egg_all<a class="headerlink" href="#egg-all" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><p>Description: lists all script downloaded to the localm machine via the autoscripts system, regardless if they are running or not</p>
+<p>Returns: A Tcl list of all script namees download via autoscripts</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="partyline.html" title="The Party Line"
+              >previous</a> |
+            <a href="users.html" title="Users and Flags"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Eggheads.
+      Last updated on Feb 05, 2023.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
