@@ -1,4 +1,4 @@
-Last revised: October 25, 2010
+Last revised: August 29, 2023
 
 =====================
 Eggdrop Core Settings
@@ -617,7 +617,7 @@ Four examples:
   Limbo Bot:
     A limbo bot (serves as a botnet hub outside IRC) just needs the
     channels, console, dns, and maybe notes or share modules loaded. Of
-    course, blowfish needs to be loaded here, too.
+    course, an encryption module needs to be loaded here, too.
 
 Scripts
 -------
