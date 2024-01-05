@@ -19,7 +19,7 @@ Please note that these are only basic instructions for compiling and installing 
   2. Place the new module in its own directory (in the format of
      (modulename).mod) in src/mod.
 
-  3. Run ./configure (from eggdrop1.9.x/).
+  3. Run ./configure (from eggdrop-|version|/).
 
   4. Type 'make config' or 'make iconfig'.
 
@@ -44,4 +44,4 @@ Do I still need to 'loadmodule' modules?
 
 YES, when you compile statically, all the modules are linked into the main executable. HOWEVER, they are not enabled until you use loadmodule to enable them, hence you get nearly the same functionality with static modules as with dynamic modules.
 
-Copyright (C) 1999 - 2022 Eggheads Development Team
+Copyright (C) 1999 - 2023 Eggheads Development Team

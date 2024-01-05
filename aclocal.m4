@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2022 Eggheads Development Team
+dnl Copyright (C) 1999 - 2023 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -192,12 +192,12 @@ dnl Check for a working C99 C compiler.
 dnl
 AC_DEFUN([EGG_CHECK_CC_C99],
 [
-  if test "$ac_cv_prog_cc_c99" = no; then
+  if test "$ac_cv_prog_cc_c11" = no && test "$ac_cv_prog_cc_c99" = no; then
     cat << 'EOF' >&2
 configure: error:
 
-  This C compiler does not appear to have a working C99 mode.
-  A working C99 C compiler is required to compile Eggdrop.
+  This C compiler does not appear to have a working C99/C11 mode.
+  A working C99/C11 C compiler is required to compile Eggdrop.
 
 EOF
     exit 1
@@ -313,32 +313,24 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
-  AC_TRY_LINK(
-    [
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <resolv.h>
-    ],
-    [b64_ntop(NULL, 0, NULL, 0);],
-    found_b64_ntop=yes,
-    found_b64_ntop=no
-  )
+    ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+  ])
   if test "x$found_b64_ntop" = xno; then
     AC_MSG_RESULT(no)
 
     AC_MSG_CHECKING(for b64_ntop with -lresolv)
     OLD_LIBS="$LIBS"
     LIBS="$LIBS -lresolv"
-    AC_TRY_LINK(
-      [
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
-      ],
-      [b64_ntop(NULL, 0, NULL, 0);],
-      found_b64_ntop=yes,
-      found_b64_ntop=no
-    )
+      ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+    ])
     if test "x$found_b64_ntop" = xno; then
       LIBS="$OLD_LIBS"
       AC_MSG_RESULT(no)
@@ -346,16 +338,12 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
       AC_MSG_CHECKING(for b64_ntop with -lnetwork)
       OLD_LIBS="$LIBS"
       LIBS="-lnetwork"
-      AC_TRY_LINK(
-      [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
-        ],
-        [b64_ntop(NULL, 0, NULL, 0);],
-        found_b64_ntop=yes,
-        found_b64_ntop=no
-      )
+        ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+      ])
       if test "x$found_b64_ntop" = xno; then
         LIBS="$OLD_LIBS"
         AC_MSG_RESULT(no)
@@ -1082,14 +1070,14 @@ dnl
 AC_DEFUN([EGG_TCL_CHECK_VERSION],
 [
 
-  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 3; then
+  if test "x$TCL_MAJOR_VERSION" = x || test "x$TCL_MINOR_VERSION" = x || test $TCL_MAJOR_VERSION -lt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -lt 5; then
     cat << EOF >&2
 configure: error:
 
   Your Tcl version is much too old for Eggdrop to use. You should
   download and compile a more recent version. The most reliable
   current version is $tclrecommendver and can be downloaded from
-  ${tclrecommendsite}. We require at least Tcl 8.3.
+  ${tclrecommendsite}. We require at least Tcl 8.5.
 
   See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
@@ -1107,16 +1095,6 @@ dnl Unsets a certain cache item. Typically called before using the AC_CACHE_*()
 dnl macros.
 dnl
 AC_DEFUN([EGG_CACHE_UNSET], [unset $1])
-
-
-dnl EGG_TCL_CHECK_NOTIFIER_INIT
-dnl
-AC_DEFUN([EGG_TCL_CHECK_NOTIFIER_INIT],
-[
-  if test $TCL_MAJOR_VERSION -gt 8 || test $TCL_MAJOR_VERSION -eq 8 -a $TCL_MINOR_VERSION -ge 4; then
-    AC_DEFINE(HAVE_TCL_NOTIFIER_INIT, 1, [Define for Tcl that has the Tcl_NotifierProcs struct member initNotifierProc (8.4 and later).])
-  fi
-])
 
 
 dnl EGG_SUBST_EGGVERSION()
@@ -1427,7 +1405,6 @@ dnl
 AC_DEFUN([EGG_IPV6_COMPAT],
 [
 if test "$enable_ipv6" = "yes"; then
-  AC_CHECK_FUNCS([gethostbyname2])
   AC_CHECK_TYPES([struct in6_addr], egg_cv_var_have_in6_addr="yes", egg_cv_var_have_in6_addr="no", [
     #include <sys/types.h>
     #include <netinet/in.h>
@@ -1435,22 +1412,20 @@ if test "$enable_ipv6" = "yes"; then
   if test "$egg_cv_var_have_in6_addr" = "yes"; then
     # Check for in6addr_any
     AC_CACHE_CHECK([for the in6addr_any constant], [egg_cv_var_have_in6addr_any], [
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
-      ], [struct in6_addr i6 = in6addr_any;],
-      [egg_cv_var_have_in6addr_any="yes"], [egg_cv_var_have_in6addr_any="no"])
+      ]], [[struct in6_addr i6 = in6addr_any;]])],[egg_cv_var_have_in6addr_any="yes"],[egg_cv_var_have_in6addr_any="no"])
     ])
     if test "$egg_cv_var_have_in6addr_any" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_ANY, 1, [Define to 1 if you have the in6addr_any constant.])
     fi
     # Check for in6addr_loopback
     AC_CACHE_CHECK([for the in6addr_loopback constant], [egg_cv_var_have_in6addr_loopback], [
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
-      ], [struct in6_addr i6 = in6addr_loopback;],
-      [egg_cv_var_have_in6addr_loopback="yes"], [egg_cv_var_have_in6addr_loopback="no"])
+      ]], [[struct in6_addr i6 = in6addr_loopback;]])],[egg_cv_var_have_in6addr_loopback="yes"],[egg_cv_var_have_in6addr_loopback="no"])
     ])
     if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_LOOPBACK, 1, [Define to 1 if you have the in6addr_loopback constant.])
@@ -1536,13 +1511,10 @@ AC_DEFUN([EGG_TLS_ENABLE],
 [
   AC_MSG_CHECKING([whether to enable TLS support])
   AC_ARG_ENABLE(tls,
-    [  --enable-tls            enable TLS support (autodetect)],
-    [enable_tls="$enableval"])
-  AC_ARG_ENABLE(tls,
-    [  --disable-tls           disable TLS support ], [enable_tls="$enableval"],
-    [enable_tls="autodetect"])
+    [  --disable-tls           disable TLS support ], [tls_enabled="$enableval"],
+    [tls_enabled="$enableval"])
 
-  AC_MSG_RESULT([$enable_tls])
+  AC_MSG_RESULT([$tls_enabled])
 ])
 
 
@@ -1552,14 +1524,14 @@ AC_DEFUN(EGG_TLS_WITHSSL,
 [
   save_LIBS="$LIBS"
   AC_ARG_WITH(sslinc, [  --with-sslinc=PATH      Path to OpenSSL headers], [
-    if test "$enable_tls" != "no"; then
+    if test "$tls_enabled" != "no"; then
       if test -d "$withval"; then
         save_CC="$CC"
         save_CPP="$CPP"
         CC="$CC -I$withval"
         CPP="$CPP -I$withval"
         AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], [sslinc="-I$withval"], [
-          AC_MSG_WARN([Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files.])
+          AC_MSG_ERROR([Invalid path to OpenSSL headers. $withval/openssl/ doesn't contain the required files.])
           sslinc=""
           break
         ], [[
@@ -1573,25 +1545,25 @@ AC_DEFUN(EGG_TLS_WITHSSL,
         CC="$save_CC"
         CPP="$save_CPP"
       else
-        AC_MSG_WARN([Invalid path to OpenSSL headers. $withval is not a directory.])
+        AC_MSG_ERROR([Invalid path to OpenSSL headers. $withval is not a directory.])
       fi
     fi
   ])
 
   AC_ARG_WITH(ssllib, [  --with-ssllib=PATH      Path to OpenSSL libraries],
   [
-    if test "$enable_tls" != "no"; then
+    if test "$tls_enabled" != "no"; then
       if test -d "$withval"; then
         AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-L$withval -lssl])
         AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-L$withval -lcrypto])
         if test "$havessllib" = "no"; then
-          AC_MSG_WARN([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
+          AC_MSG_ERROR([Invalid path to OpenSSL libs. $withval doesn't contain the required files.])
         else
           AC_SUBST(SSL_LIBS, [-L$withval])
           LDFLAGS="${LDFLAGS} -L$withval"
         fi
       else
-        AC_MSG_WARN([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
+        AC_MSG_ERROR([You have specified an invalid path to OpenSSL libs. $withval is not a directory.])
       fi
     fi
   ])
@@ -1602,8 +1574,7 @@ dnl EGG_TLS_DETECT
 dnl
 AC_DEFUN([EGG_TLS_DETECT],
 [
-  tls_enabled="no"
-  if test "$enable_tls" != "no"; then
+  if test "$tls_enabled" != "no"; then
     if test -z "$SSL_INCLUDES"; then
       AC_CHECK_HEADERS([openssl/ssl.h openssl/x509v3.h], , [havesslinc="no"], [
         #ifdef CYGWIN_HACKS
@@ -1616,11 +1587,12 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
-      AC_CHECK_FUNCS([EVP_md5 EVP_sha1 a2i_IPADDRESS], , [[
+      AC_CHECK_FUNCS([EVP_sha1 a2i_IPADDRESS], , [[
         havessllib="no"
         break
       ]])
     fi
+    AC_CHECK_FUNCS([EVP_md5])
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
           AC_DEFINE([OPENSSL_buf2hexstr], [hex_to_string], [Define this to hex_to_string when using OpenSSL < 1.1.0])
@@ -1637,20 +1609,20 @@ AC_DEFUN([EGG_TLS_DETECT],
           break
       ]])
     )
-    if test "$enable_tls" = "yes"; then
-      if test "$havesslinc" = "no"; then
-        AC_MSG_WARN([Cannot find OpenSSL headers.])
-        AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
-      fi
-      if test "$havessllib" = "no"; then
-        AC_MSG_WARN([Cannot find OpenSSL libraries.])
-        AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
-      fi
+    if test "$havesslinc" = "no"; then
+      AC_MSG_WARN([Cannot find OpenSSL headers.])
+      AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
+    fi
+    if test "$havessllib" = "no"; then
+      AC_MSG_WARN([Cannot find OpenSSL libraries.])
+      AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
     fi
     AC_MSG_CHECKING([for OpenSSL])
     if test "$havesslinc" = "no" || test "$havessllib" = "no"; then
-      AC_MSG_RESULT([no (make sure you have version 0.9.8 or higher installed)])
-      LIBS="$save_LIBS"
+      AC_MSG_RESULT([no])
+      AC_MSG_RESULT([* We tried, but couldn't find TLS libraries. If installed, please specify their paths using the configure flags above])
+      AC_MSG_RESULT([* While not recommended, you can continue without TLS protection by specifying the --disable-tls configure flag])
+      AC_MSG_ERROR([TLS Libraries not found])
     else
       AC_MSG_RESULT([yes])
       if test "$EGG_CYGWIN" = "yes"; then
@@ -1665,7 +1637,6 @@ AC_DEFUN([EGG_TLS_DETECT],
       )
       dnl EVP_PKEY_get1_EC_KEY: OpenSSL without EC (SunOS 5.11 Solaris 11.3 I love you Oracle)
       AC_CHECK_FUNCS([EVP_PKEY_get1_EC_KEY])
-      tls_enabled="yes"
       EGG_MD5_COMPAT
     fi
   fi

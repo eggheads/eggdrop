@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -95,6 +95,17 @@ int strtot = 0;
 int handlen = HANDLEN;
 
 extern Tcl_VarTraceProc traced_myiphostname, traced_natip, traced_remove_pass;
+
+/* Unicode workaround for Tcl versions (8.5/8.6) that only support BMP characters (3 byte utf-8) */
+#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 6 && TCL_UTF_MAX < 4
+#  define TCL_WORKAROUND_UNICODESUP 1
+struct tcl_unicodesup_info {
+  const char *subcmd;
+  Tcl_Obj *cmd;
+};
+#endif
+
+
 
 int expmem_tcl()
 {
@@ -537,7 +548,6 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
 extern tcl_cmds tcltls_cmds[];
 #endif
 
-#ifdef REPLACE_NOTIFIER
 /* The tickle_*() functions replace the Tcl Notifier
  * The tickle_*() functions can be called by Tcl threads
  */
@@ -590,8 +600,16 @@ ClientData tickle_InitNotifier()
 
 void tickle_AlertNotifier(ClientData cd)
 {
-  if (cd)
-    putlog(LOG_MISC, "*", "stub tickle_AlertNotifier");
+  if (cd) {
+    fatal("Error calling Tcl_AlertNotifier", 0);
+  }
+}
+
+void tickle_ServiceModeHook(int mode)
+{
+  if (mode != TCL_SERVICE_ALL) {
+    fatal("Tcl_ServiceModeHook called with unsupported mode", 0);
+  }
 }
 
 int tclthreadmainloop(int zero)
@@ -608,19 +626,7 @@ struct threaddata *threaddata()
   return td;
 }
 
-#else /* REPLACE_NOTIFIER */
-
-int tclthreadmainloop() { return 0; }
-
-struct threaddata *threaddata()
-{
-  static struct threaddata tsd;
-  return &tsd;
-}
-
-#endif /* REPLACE_NOTIFIER */
-
-int init_threaddata(int mainthread)
+void init_threaddata(int mainthread)
 {
   struct threaddata *td = threaddata();
 /* Nested evaluation (vwait/update) of the event loop only
@@ -636,23 +642,280 @@ int init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
+}
+
+/* workaround for Tcl that does not support unicode outside BMP (3 byte utf-8 characters) */
+#ifdef TCL_WORKAROUND_UNICODESUP
+
+/* Based on https://github.com/skeeto/branchless-utf8 which is released into the public domain */
+/* 0 means not utf-8, so the length is still 1 but we can distinguish that case,
+ * that's why len = len + !len is used, to convert 0 to 1 and leave the rest as-is
+ */
+static const char utf8lengths[] = {
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 3, 4, 0
+};
+
+/* quick check if tricks are needed, only if 4-byte utf-8 characters are used */
+int needs_unicodesup(const char *str)
+{
+  while (*str) {
+    int len = utf8lengths[((unsigned char)str[0]) >> 3] + !utf8lengths[((unsigned char)str[0]) >> 3];
+
+    if (len == 4) {
+      return 1;
+    }
+    while (len--) {
+      if (*str++ == '\0') {
+        break;
+      }
+    }
+  }
   return 0;
 }
+
+/* return a new Tcl_StringObj with 4-byte utf-8 characters replaced by surrogate pairs
+ * - decode 4-byte utf-8 into unicode codepoint c
+ * - calculate high and low surrogate unicode codepoints high/low
+ * - encode high/low as 3-byte utf-8 strings
+ * the length of the result could be len/4*6 bytes long, so
+ * to avoid frequent reallocation/string appending, a temporary buffer is used
+ * for long strings (>512 characters, which does not apply to IRC lines) and assembled to a Tcl_DString
+ * for short strings the 512 character buffer is enough
+ */
+Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
+{
+  int stridx = 0, bufidx = 0;
+  char buf[512];
+  Tcl_DString ds;
+  Tcl_Obj *result;
+
+  /* chunked */
+  if (len > sizeof buf) {
+    Tcl_DStringInit(&ds);
+  }
+
+  while (stridx < len) {
+    int charlen = utf8lengths[((unsigned char)oldstr[stridx]) >> 3] + !utf8lengths[((unsigned char)oldstr[stridx])>> 3];
+
+    if (charlen == 4 && stridx + 4 <= len) {
+      uint32_t c;
+      uint16_t high, low;
+
+      /* decode 4-byte utf-8 into unicode codepoint */
+      c  = (uint32_t)(oldstr[stridx++] & 0x07) << 18;
+      c |= (uint32_t)(oldstr[stridx++] & 0x3f) << 12;
+      c |= (uint32_t)(oldstr[stridx++] & 0x3f) <<  6;
+      c |= (uint32_t)(oldstr[stridx++] & 0x3f) <<  0;
+
+      /* calculate high and low surrogate unicode codepoints */
+      c -= 0x10000;
+      high = 0xD800 + ((c & 0xffc00) >> 10);
+      low = 0xDC00 + (c & 0x3ff);
+
+      /* encode high surrogate as utf-8 */
+      buf[bufidx++] = 0xe0 | ((high >> 12) & 0xf);
+      buf[bufidx++] = 0x80 | ((high >> 6) & 0x3f);
+      buf[bufidx++] = 0x80 | ((high >> 0) & 0x3f);
+
+      /* encode low surrogate as utf-8 */
+      buf[bufidx++] = 0xe0 | ((low >> 12) & 0xf);
+      buf[bufidx++] = 0x80 | ((low >> 6) & 0x3f);
+      buf[bufidx++] = 0x80 | ((low >> 0) & 0x3f);
+    } else {
+      /* copy everything else verbatim */
+      while (charlen-- && stridx < len) {
+        buf[bufidx++] = oldstr[stridx++];
+      }
+    }
+    if (len > sizeof buf && bufidx > sizeof buf - 6) {
+      Tcl_DStringAppend(&ds, buf, bufidx);
+      bufidx = 0;
+    }
+  }
+  if (len > sizeof buf && bufidx) {
+    Tcl_DStringAppend(&ds, buf, bufidx);
+    result = Tcl_NewStringObj(Tcl_DStringValue(&ds), Tcl_DStringLength(&ds));
+    Tcl_DStringFree(&ds);
+  } else {
+    result = Tcl_NewStringObj(buf, bufidx);
+  }
+  return result;
+}
+
+/* decode 2 utf-8 sequences that are 3 bytes long and check if they are surrogate pairs */
+int decode_surrogates(const char *str, uint32_t *high, uint32_t *low)
+{
+  *high  = (*str++ & 0xf) << 12;
+  *high |= (*str++ & 0x3f) << 6; 
+  *high |= (*str++ & 0x3f) << 0;
+  if (*high < 0xD800 || *high > 0xDBFF) {
+    return 0;
+  }
+  *low  = (*str++ & 0xf) << 12;
+  *low |= (*str++ & 0x3f) << 6; 
+  *low |= (*str++ & 0x3f) << 0;
+  if (*low < 0xDC00 || *low > 0xDFFF) {
+    return 0;
+  }
+  return 1;
+}
+
+/* returns a new Tcl_StringObj by replacing surrogate pairs back into 4-byte utf-8 sequences
+ * - for every 3-byte utf-8 sequence, check if it's a surrogate pair
+ * - decode into high/low codepoints
+ * - calculate original codepoint and write back a 4-byte utf-8 sequence instead of 3-byte surrogate pairs
+ * the length of the result is guaranteed to be equal or shorter than the original, so malloc(len) is sufficient space
+ */
+Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
+{
+  int stridx = 0, bufidx = 0;
+  char *buf = nmalloc(len);
+
+  while (stridx < len) {
+    uint32_t low, high;
+    int charlen = utf8lengths[((unsigned char)oldstr[stridx]) >> 3] + !utf8lengths[((unsigned char)oldstr[stridx]) >> 3];
+
+    if (charlen == 3 && stridx + 6 <= len && utf8lengths[((unsigned char)oldstr[stridx + 3]) >> 3] == 3 && decode_surrogates(oldstr + stridx, &high, &low)) {
+      uint32_t c = 0x10000 + (high - 0xD800) * 0x400 + (low - 0xDC00);
+
+      buf[bufidx++] = 0xF0 | ((c >> 18) & 0x07);
+      buf[bufidx++] = 0x80 | ((c >> 12) & 0x3f);
+      buf[bufidx++] = 0x80 | ((c >>  6) & 0x3f);
+      buf[bufidx++] = 0x80 | ((c >>  0) & 0x3f);
+
+      stridx += 6;
+    } else {
+      while (charlen-- && stridx < len) {
+        buf[bufidx++] = oldstr[stridx++];
+      }
+    }
+  }
+  return Tcl_NewStringObj(buf, bufidx);
+}
+
+/* C function called for ::egg_tcl_tolower/toupper/totitle
+ * context (original Tcl function and which conversion to do) is in cd
+ */
+int egg_string_unicodesup(void *cd, Tcl_Interp *interp, int objc, Tcl_Obj *const orig_objv[])
+{
+  struct tcl_unicodesup_info *info = cd;
+  Tcl_Obj **new_objv;
+  int i;
+  int ret;
+
+  /* impossible? */
+  if (objc == 0) {
+    return Tcl_EvalObjv(interp, objc, orig_objv, 0);
+  }
+  /* new arguments to original Tcl string tolower/toupper/totitle */
+  new_objv = nmalloc(objc * sizeof *new_objv);
+
+  for (i = 0; i < objc; i++) {
+    if (i == 0) {
+      /* overwrite command objv[0] with original Tcl command instead of this function */
+      new_objv[i] = info->cmd;
+    } else if (i == 1 && needs_unicodesup(Tcl_GetString(orig_objv[1]))) {
+      int len;
+      const char *oldstr = Tcl_GetStringFromObj(orig_objv[1], &len);
+
+      /* overwrite string argument by replacing 4-byet utf-8 sequences with surrogate pairs */
+      new_objv[1] = egg_string_unicodesup_surrogate(oldstr, len);
+    } else {
+      /* copy other arguments, e.g. string tolower test 1 2 */
+      new_objv[i] = orig_objv[i];
+    }
+    /* ref count of new objects must be increased before eval and decreased after, orig_objv is read-only */
+    Tcl_IncrRefCount(new_objv[i]);
+  }
+
+  /* call original Tcl function */
+  ret = Tcl_EvalObjv(interp, objc, new_objv, 0);
+
+  /* decrease ref count of new arguments */
+  for (i = 0; i < objc; i++) {
+    Tcl_DecrRefCount(new_objv[i]);
+  }
+  nfree(new_objv);
+  /* overwrite Tcl's result by replacing surrogates back to 4-byte utf-8 sequences*/
+  if (ret == TCL_OK) {
+    int len;
+    Tcl_Obj *resultobj = Tcl_GetObjResult(interp);
+    const char *str = Tcl_GetStringFromObj(resultobj, &len);
+
+    Tcl_SetObjResult(interp, egg_string_unicodesup_desurrogate(str, len));
+  }
+  return ret;
+}
+
+/* register a single workaround command, making the namespace ensemble string <subcmd> call ::egg_string_<subcmd> instead
+ * original command names are ::tcl::string::<subcmd>
+ */
+void init_unicodesup_cmd(Tcl_Obj *ensdict, const char *subcmd, int index)
+{
+  Tcl_Obj *orig_cmd;
+  static struct tcl_unicodesup_info info[3];
+  char buf[64];
+
+  if (Tcl_DictObjGet(interp, ensdict, Tcl_NewStringObj(subcmd, -1), &orig_cmd) != TCL_OK || !orig_cmd) {
+    putlog(LOG_MISC, "*", "ERROR: Tcl non-BMP unicodesup could not find string %s subcommand", subcmd);
+    return;
+  }
+
+  info[index].subcmd = subcmd;
+  info[index].cmd = orig_cmd;
+  Tcl_IncrRefCount(orig_cmd);
+
+  snprintf(buf, sizeof buf, "::egg_string_%s", subcmd);
+  Tcl_CreateObjCommand(interp, buf, egg_string_unicodesup, &info[index], NULL);
+
+  if (Tcl_DictObjPut(interp, ensdict, Tcl_NewStringObj(subcmd, -1), Tcl_NewStringObj(buf, -1)) != TCL_OK) {
+    putlog(LOG_MISC, "*", "ERROR: Tcl non-BMP unicodesup could not set dictionary redirect");
+    return;
+  }
+}
+
+/* register all workaround functions */
+void init_unicodesup(void)
+{
+  Tcl_Obj *ensdict;
+  Tcl_Command enscmd = Tcl_FindEnsemble(interp, Tcl_NewStringObj("string", -1), 0);
+
+  if (!enscmd) {
+    putlog(LOG_MISC, "*", "ERROR: Tcl non-BMP unicodesup could not find string command");
+    return;
+  }
+  if (!Tcl_IsEnsemble(enscmd)) {
+    putlog(LOG_MISC, "*", "ERROR: Tcl non-BMP unicodesup is not a namespace ensemble");
+    return;
+  }
+  if (Tcl_GetEnsembleMappingDict(interp, enscmd, &ensdict) != TCL_OK || !ensdict) {
+    putlog(LOG_MISC, "*", "ERROR: Tcl non-BMP unicodesup could not get namespace ensemble dictionary");
+    return;
+  }
+
+  init_unicodesup_cmd(ensdict, "tolower", 0);
+  init_unicodesup_cmd(ensdict, "toupper", 1);
+  init_unicodesup_cmd(ensdict, "totitle", 2);
+
+  if (Tcl_SetEnsembleMappingDict(interp, enscmd, ensdict) != TCL_OK) {
+    putlog(LOG_MISC, "*", "ERROR: Tcl non-BMP unicodesup could not set namespace ensemble dictionary");
+    return;
+  }
+}
+#endif /* TCL_WORKAROUND_UNICODESUP */
 
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
  */
 void init_tcl(int argc, char **argv)
 {
-#ifdef REPLACE_NOTIFIER
   Tcl_NotifierProcs notifierprocs;
-#endif /* REPLACE_NOTIFIER */
 
   const char *encoding;
   int i, j;
   char *langEnv, pver[1024] = "";
 
-#ifdef REPLACE_NOTIFIER
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -661,9 +924,9 @@ void init_tcl(int argc, char **argv)
   notifierprocs.waitForEventProc = tickle_WaitForEvent;
   notifierprocs.finalizeNotifierProc = tickle_FinalizeNotifier;
   notifierprocs.alertNotifierProc = tickle_AlertNotifier;
+  notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-#endif /* REPLACE_NOTIFIER */
 
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
@@ -769,6 +1032,9 @@ resetPath:
   }
   Tcl_PkgProvide(interp, "eggdrop", pver);
 
+#ifdef TCL_WORKAROUND_UNICODESUP
+  init_unicodesup();
+#endif
   /* Initialize binds and traces */
   init_bind();
   init_traces();
@@ -777,7 +1043,6 @@ resetPath:
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
-  add_tcl_objcommands(tclmisc_objcmds);
   add_tcl_commands(tcldns_cmds);
 #ifdef TLS
   add_tcl_commands(tcltls_cmds);
@@ -973,11 +1238,7 @@ int tcl_threaded()
 */
 int fork_before_tcl()
 {
-#ifndef REPLACE_NOTIFIER
-  return tcl_threaded();
-#else
   return 0;
-#endif
 }
 
 time_t get_expire_time(Tcl_Interp * irp, const char *s) {

@@ -2,7 +2,7 @@
  * explicit_bzero.c -- provides explicit_bzero() if necessary
  */
 /*
- * Copyright (C) 2010 - 2022 Eggheads Development Team
+ * Copyright (C) 2010 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,12 +22,12 @@
 #include <config.h>
 
 #ifndef HAVE_EXPLICIT_BZERO
-/* https://raw.githubusercontent.com/jedisct1/libsodium/d47ded1867af69965b2374b8fb90aee01e6ff291/src/libsodium/sodium/utils.c */
+/* https://raw.githubusercontent.com/jedisct1/libsodium/6e8468d8750aecf91593f28a9d373bb9a5fe326e/src/libsodium/sodium/utils.c */
 
 /*
  * ISC License
  *
- * Copyright (c) 2013-2019
+ * Copyright (c) 2013-2023
  * Frank Denis <j at pureftpd dot org>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -68,12 +68,14 @@ _sodium_dummy_symbol_to_prevent_memzero_lto(void *const  pnt,
 void
 explicit_bzero(void *const pnt, const size_t len)
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CRT_INLINE)
     SecureZeroMemory(pnt, len);
 #elif defined(HAVE_MEMSET_S)
     if (len > 0U && memset_s(pnt, (rsize_t) len, 0, (rsize_t) len) != 0) {
         fatal("explicit_bzero misuse", 0); /* LCOV_EXCL_LINE */
     }
+#elif defined(HAVE_MEMSET_EXPLICIT)
+    memset_explicit(pnt, 0, len);
 #elif defined(HAVE_EXPLICIT_MEMSET)
     explicit_memset(pnt, 0, len);
 #elif HAVE_WEAK_SYMBOLS

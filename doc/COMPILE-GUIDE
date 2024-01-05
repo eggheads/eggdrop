@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: June 9, 2020
+Last revised: November 17, 2022
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -20,7 +20,7 @@ Last revised: June 9, 2020
       A. Standard compile process (Linux, FreeBSD, NetBSD, OpenBSD, etc)
       B. HP-UX B.11.*
       C. Ultrix
-      D. Mac OS X
+      D. macOS (previously OS X and originally Mac OS X)
       E. AIX
       F. IRIX
       G. Solaris / SunOS
@@ -187,7 +187,7 @@ Last revised: June 9, 2020
                gmake install DEST=/home/user/otherdir
 
 
-    D. Mac OS X
+    D. macOS
       Follow the standard compile process in Section A. To compile dynamically
       (with module support), use 'make eggdrop' instead of 'make'.
 
@@ -210,7 +210,7 @@ Last revised: June 9, 2020
       If you notice a module that requires these changes, it would probably be
       a good idea to let the module's developer know, so it can be fixed.
 
-      Note that on Mac OS X, the DYLD_LIBRARY_PATH environment variable should
+      Note that on macOS, the DYLD_LIBRARY_PATH environment variable should
       be used instead of LD_LIBRARY_PATH.
 
       Install OpenSSL using homebrew:
@@ -221,7 +221,7 @@ Last revised: June 9, 2020
 
       Tell configure where to find tcl and openssl:
 
-        ./configure --with-tcl=/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh --with-sslinc=/usr/local/opt/openssl/include --with-ssllib=/usr/local/opt/openssl/lib
+        ./configure --with-tcl=/System/Volumes/Data/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh -with-sslinc=/usr/local/Cellar/openssl@3/3.0.7/include --with-ssllib=/usr/local/Cellar/openssl@3/3.0.7/lib
 
     E. AIX
       Follow the standard compile process in Section A. To compile dynamically
@@ -581,4 +581,4 @@ Last revised: June 9, 2020
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
-   Copyright (C) 1999 - 2021 Eggheads Development Team
+   Copyright (C) 1999 - 2023 Eggheads Development Team

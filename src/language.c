@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -103,7 +103,7 @@ char language[64];
 /* Add a new preferred language to the list of languages. Newly added
  * languages get the highest priority.
  */
-void add_lang(char *lang)
+static void add_lang(char *lang)
 {
   lang_pri *lp = langpriority, *lpo = NULL;
 

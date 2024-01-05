@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2282,7 +2282,7 @@ static int tcl_deludef STDVAR
 static int tcl_getudefs STDVAR
 {
   struct udef_struct *ul;
-  int type = 0, count = 0;
+  int type = 0;
 
   BADARGS(1, 2, " ?type?");
 
@@ -2302,7 +2302,6 @@ static int tcl_getudefs STDVAR
   for (ul = udef; ul; ul = ul->next)
     if (!type || (ul->type == type)) {
       Tcl_AppendElement(irp, ul->name);
-      count++;
     }
 
   return TCL_OK;

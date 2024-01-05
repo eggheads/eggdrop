@@ -4,7 +4,7 @@
  *
  * Written by thommey and Michael Ortmann
  *
- * Copyright (C) 2017 - 2022 Eggheads Development Team
+ * Copyright (C) 2017 - 2023 Eggheads Development Team
  */
 
 #include "src/mod/module.h"
@@ -319,7 +319,7 @@ char *pbkdf2_start(Function *global_funcs)
   #ifdef TLS
     return "Initialization failure: compiled with openssl version < 1.0.0";
   #else
-    return "Initialization failure: configured with --disable-TLS or openssl not found";
+    return "Initialization failure: configured with --disable-tls or openssl not found";
   #endif
 #endif
 }

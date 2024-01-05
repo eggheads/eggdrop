@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2023 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,6 +97,7 @@ void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);
 void check_tcl_chatactbcst(const char *, int, const char *, tcl_bind_list_t *);
 void check_tcl_event(const char *);
+void check_tcl_event_arg(const char *, const char *);
 int check_tcl_signal(const char *);
 void check_tcl_die(char *);
 void check_tcl_log(int, char *, char *);
