@@ -24,6 +24,7 @@
 #define MODULE_NAME "share"
 #define MAKING_SHARE
 
+#include <errno.h>
 #include "src/mod/module.h"
 
 #include <netinet/in.h>
@@ -1242,8 +1243,9 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (!(f = fopen(s, "wb"))) {
-    putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
+  } else if (!(f = tmpfile())) {
+    debug1("share: share_ufsend(): tmpfile(): error: %s", strerror(errno));
+    putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
     /* Ignore longip and use botaddr, arg kept for backward compat for pre 1.8.3 */

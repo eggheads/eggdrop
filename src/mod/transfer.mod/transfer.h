@@ -28,7 +28,8 @@ enum dccsend_types {
   DCCSEND_FULL,                 /* DCC table is full                    */
   DCCSEND_NOSOCK,               /* Can not open a listening socket      */
   DCCSEND_BADFN,                /* No such file                         */
-  DCCSEND_FEMPTY                /* File is empty                        */
+  DCCSEND_FEMPTY,               /* File is empty                        */
+  DCCSEND_FCOPY                 /* File failed to copy to tmpfile       */
 };
 
 /* File matching */
@@ -64,7 +65,7 @@ enum dccsend_types {
 #define TRANSFER_NOTICE_FNTOOLONG   get_language(0xf17)
 #define TRANSFER_TOO_BAD            get_language(0xf18)
 #define TRANSFER_NOTICE_TOOBAD      get_language(0xf19)
-/* #define TRANSFER_FAILED_MOVE        get_language(0xf1a) */
+#define TRANSFER_FAILED_MOVE        get_language(0xf1a)
 #define TRANSFER_THANKS             get_language(0xf1b)
 #define TRANSFER_NOTICE_THANKS      get_language(0xf1c)
 #define TRANSFER_USERFILE_LOST      get_language(0xf1d)

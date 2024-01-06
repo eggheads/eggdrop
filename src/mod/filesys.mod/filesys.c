@@ -392,6 +392,13 @@ static int _dcc_send(int idx, char *filename, char *nick, int resend)
            dcc[idx].nick);
     return 0;
   }
+  if (x == DCCSEND_FCOPY) {
+    dprintf(idx, "Can't make temporary copy of file!\n");
+    putlog(LOG_FILES | LOG_MISC, "*",
+           "Refused dcc %sget %s: copy to temporary location FAILED!",
+           resend ? "re" : "", filename);
+    return 0;
+  }
   nfn = strrchr(filename, '/');
   if (nfn == NULL)
     nfn = filename;
@@ -784,6 +791,7 @@ static void filesys_dcc_send_hostresolved(int i)
     /* Put uploads in a temp file first */
     dcc[i].u.xfer->f = tmpfile();
     if (dcc[i].u.xfer->f == NULL) {
+      debug1("filesys: filesys_dcc_send_hostresolved(): tmpfile(): error: %s", strerror(errno));
       dprintf(DP_HELP,
               "NOTICE %s :Can't create file `%s' (temp dir error)\n",
               dcc[i].nick, dcc[i].u.xfer->origname);

@@ -311,10 +311,24 @@ void dcc_chatter(int idx)
 /* Closes an open FD for transfer sockets. */
 void killtransfer(int n)
 {
+  int i, ok = 1;
+
   if (dcc[n].type->flags & DCT_FILETRAN) {
     if (dcc[n].u.xfer->f) {
       fclose(dcc[n].u.xfer->f);
       dcc[n].u.xfer->f = NULL;
+    }
+    if (dcc[n].u.xfer->filename) {
+      for (i = 0; i < dcc_total; i++) {
+        if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) &&
+            (dcc[i].u.xfer->filename) &&
+            (!strcmp(dcc[i].u.xfer->filename, dcc[n].u.xfer->filename))) {
+          ok = 0;
+          break;
+        }
+      }
+      if (ok)
+        unlink(dcc[n].u.xfer->filename);
     }
   }
 }

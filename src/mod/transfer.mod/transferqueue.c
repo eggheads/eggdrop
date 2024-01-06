@@ -140,6 +140,11 @@ static void send_next_file(char *to)
     dprintf(DP_HELP, TRANSFER_NOTICE_SOCKERR, this->to);
     strcpy(s, this->to);
     flush_fileq(s);
+  } else if (x == DCCSEND_FCOPY) {
+    putlog(LOG_FILES | LOG_MISC, "*", TRANSFER_COPY_FAILED, this->file);
+    dprintf(DP_HELP, TRANSFER_FILESYS_BROKEN, this->to);
+    strcpy(s, this->to);
+    flush_fileq(s);
   } else {
     if (x == DCCSEND_FEMPTY) {
       putlog(LOG_FILES, "*", TRANSFER_LOG_FILEEMPTY, this->file);
