@@ -35,6 +35,7 @@
 #include "modules.h"
 #include "tandem.h"
 
+#include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
@@ -698,9 +699,10 @@ int readuserfile(char *file, struct userrec **ret)
     global_invites = NULL;
   }
   lasthand[0] = 0;
-  f = fopen(file, "r");
-  if (f == NULL)
+  if (!(f = fopen(file, "r"))) {
+    debug2("users: fopen(%s): %s", file, strerror(errno));
     return 0;
+  }
   noshare = noxtra = 1;
   /* read opening comment */
   s = buf;
