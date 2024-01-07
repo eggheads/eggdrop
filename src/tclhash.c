@@ -738,7 +738,7 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
 
   if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
 #ifdef DEBUG_CONTEXT
-    snprintf(last_bind_called, sizeof last_bind_called, proc);
+    strlcpy(last_bind_called, proc, sizeof last_bind_called);
 #endif
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
