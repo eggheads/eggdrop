@@ -275,7 +275,7 @@ static void write_debug()
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
       if (*last_bind_called)
-        dprintf(-x, "Last bind called: %s\n", last_bind_called);
+        dprintf(-x, "Last bind (may not be related): %s\n", last_bind_called);
       killsock(x);
       close(x);
     }
@@ -287,7 +287,7 @@ static void write_debug()
   putlog(LOG_MISC, "*", "* Please report problem to https://github.com/eggheads/eggdrop/issues");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
   if (*last_bind_called)
-    putlog(LOG_MISC, "*", "* Last bind called: %s", last_bind_called);
+    putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
@@ -343,7 +343,7 @@ static void write_debug()
 #ifdef STRIPFLAGS
     dprintf(-x, "Strip flags: %s\n", STRIPFLAGS);
 #endif
-    dprintf(-x, "Last bind called: %s\n", last_bind_called);
+    dprintf(-x, "Last bind (may not be related): %s\n", last_bind_called);
     tell_dcc(-x);
     dprintf(-x, "\n");
     debug_mem_to_dcc(-x);
@@ -430,7 +430,7 @@ static void got_ill(int z)
 #ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  putlog(LOG_MISC, "*", "* Last bind called: %s", last_bind_called);
+  putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
 #endif
 }
 
