@@ -240,14 +240,6 @@
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x)      n_free((x),__FILE__,__LINE__)
 
-#ifdef DEBUG_CONTEXT
-#  define Context           eggContext(__FILE__, __LINE__, NULL)
-#  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#else
-#  define Context           do {} while (0)
-#  define ContextNote(note) do {} while (0)
-#endif
-
 #ifdef DEBUG_ASSERT
 #  define Assert(expr) do {                                             \
           if (!(expr))                                                  \

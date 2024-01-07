@@ -186,11 +186,7 @@ Function global_table[] = {
   /* 0 - 3 */
   (Function) mod_malloc,
   (Function) mod_free,
-#ifdef DEBUG_CONTEXT
-  (Function) eggContext,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,                   /* was eggContext()                    */
   (Function) module_rename,
   /* 4 - 7 */
   (Function) module_register,
@@ -495,11 +491,7 @@ Function global_table[] = {
   (Function) mod_realloc,
   (Function) xtra_set,
   /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-  (Function) eggContextNote,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,                   /* was eggContextNote()                */
 #ifdef DEBUG_ASSERT
   (Function) eggAssert,
 #else

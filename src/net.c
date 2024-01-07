@@ -1097,7 +1097,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
  * dcc functions. Simply ignore it.
  * Returns -5 if tcl sockets are busy but not eggdrop sockets.
  */
-
 int sockgets(char *s, int *len)
 {
   char xx[READMAX + 2], *p, *px, *p2;
@@ -1283,8 +1282,6 @@ int sockgets(char *s, int *len)
 }
 
 /* Dump something to a socket
- *
- * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
 void tputs(int z, char *s, unsigned int len)
 {
