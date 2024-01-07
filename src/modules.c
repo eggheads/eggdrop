@@ -82,8 +82,10 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
            require_p, share_greet, use_invites, use_exempts, password_timeout,
            force_expire, protect_readonly, reserved_port_min, reserved_port_max,
-           copy_to_tmp, quiet_reject;
+           quiet_reject;
 extern volatile sig_atomic_t do_restart;
+
+int copy_to_tmp = 1; /* TODO: remove from module API for eggdrop 2.0 */
 
 #ifdef IPV6
 extern int pref_af;

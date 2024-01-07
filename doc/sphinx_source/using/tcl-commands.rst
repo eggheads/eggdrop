@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: January 24, 2021
+Last revised: January 6, 2024
 
 ====================
 Eggdrop Tcl Commands
@@ -2011,8 +2011,7 @@ dccsend <filename> <ircnick>
   | 4     | the file was queued for later transfer, which means that person has |
   |       | too many file transfers going right now                             |
   +-------+---------------------------------------------------------------------+
-  | 5     | copy-to-tmp is enabled and the file already exists in the temp      |
-  |       | directory                                                           |
+  | 5     | the file could not be opened or temporary file could not be created |
   +-------+---------------------------------------------------------------------+
 
   Module: transfer

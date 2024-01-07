@@ -33,7 +33,7 @@
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total, dcc_flood_thr, backgrd, copy_to_tmp, max_socks;
+extern int dcc_total, dcc_flood_thr, backgrd, max_socks;
 extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
@@ -318,7 +318,7 @@ void killtransfer(int n)
       fclose(dcc[n].u.xfer->f);
       dcc[n].u.xfer->f = NULL;
     }
-    if (dcc[n].u.xfer->filename && copy_to_tmp) {
+    if (dcc[n].u.xfer->filename) {
       for (i = 0; i < dcc_total; i++) {
         if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) &&
             (dcc[i].u.xfer->filename) &&

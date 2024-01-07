@@ -86,7 +86,6 @@ int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
 int quiet_reject = 1;
-int copy_to_tmp = 1;
 int max_socks = 100;
 int quick_logs = 0;
 int par_telnet_flood = 1;
@@ -498,7 +497,6 @@ static tcl_ints def_tcl_ints[] = {
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
   {"userfile-perm",         &userfile_perm,        0},
-  {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
   {"remove-pass",           &remove_pass,          0},
