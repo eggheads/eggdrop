@@ -58,6 +58,10 @@ static int builtin_chat STDVAR;
 static int builtin_dcc STDVAR;
 static int builtin_log STDVAR;
 
+#ifdef DEBUG_CONTEXT
+char last_bind_called[512] = "";
+#endif
+
 /* Allocate and initialise a chunk of memory.
  */
 static void *n_malloc_null(int size, const char *file, int line)
@@ -215,7 +219,6 @@ static cd_tcl_cmd cd_cmd_table[] = {
 void init_bind(void)
 {
   bind_table_list = NULL;
-  Context;
   add_cd_tcl_cmds(cd_cmd_table);
   H_unld = add_bind_table("unld", HT_STACKABLE, builtin_char);
   H_time = add_bind_table("time", HT_STACKABLE, builtin_5int);
@@ -243,7 +246,6 @@ void init_bind(void)
   H_tls = add_bind_table("tls", HT_STACKABLE, builtin_idx);
 #endif
   add_builtins(H_dcc, C_dcc);
-  Context;
 }
 
 void kill_bind(void)
@@ -726,35 +728,22 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
   int x;
   struct rusage ru1, ru2;
   int r = 0;
-#ifdef DEBUG_CONTEXT
-  #define FORMAT "Tcl proc: %s, param: %s"
-  char *buf;
 
-  /* We now try to debug the Tcl_VarEval() call below by remembering both
-   * the called proc name and it's parameters. This should render us a bit
-   * less helpless when we see context dumps.
-   */
-  Context;
-  /* reuse x */
-  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
-  buf = nmalloc(x + 1);
-  sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
-  ContextNote(buf);
-  nfree(buf);
-#endif /* DEBUG_CONTEXT */
 
   /* Set the lastbind variable before evaluating the proc so that the name
    * of the command that triggered the bind will be available to the proc.
    * This feature is used by scripts such as userinfo.tcl
    */
-  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "lastbind", mask, TCL_GLOBAL_ONLY);
 
   if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
+#ifdef DEBUG_CONTEXT
+    snprintf(last_bind_called, sizeof last_bind_called, proc);
+#endif
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
-  Context;
   if (proc && proc[0] != '*' && !r) {
     if (!getrusage(RUSAGE_SELF, &ru2)) {
       debug3("triggered bind %s, user %.3fms sys %.3fms", proc,

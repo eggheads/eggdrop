@@ -188,8 +188,6 @@ int exist_lang_section(char *);
 /* main.c */
 void fatal(const char *, int);
 int expected_memory(void);
-void eggContext(const char *, int, const char *);
-void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
 int expmem_modules(int);

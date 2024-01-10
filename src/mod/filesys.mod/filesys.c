@@ -791,6 +791,7 @@ static void filesys_dcc_send_hostresolved(int i)
     /* Put uploads in a temp file first */
     dcc[i].u.xfer->f = tmpfile();
     if (dcc[i].u.xfer->f == NULL) {
+      debug1("filesys: filesys_dcc_send_hostresolved(): tmpfile(): error: %s", strerror(errno));
       dprintf(DP_HELP,
               "NOTICE %s :Can't create file `%s' (temp dir error)\n",
               dcc[i].nick, dcc[i].u.xfer->origname);
