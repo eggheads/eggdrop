@@ -521,7 +521,7 @@ Function global_table[] = {
   (Function) egg_inet_aton,
   /* 252 - 255 */
   (Function) egg_snprintf,
-  (Function) egg_vsnprintf,
+  (Function) 0,                   /* was egg_vsnprintf -- use vsnprintf instead */
   (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
   (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */

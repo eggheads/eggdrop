@@ -541,7 +541,7 @@ void putlog (int type, char *chname, const char *format, ...)
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
-  egg_vsnprintf(out, LOGLINEMAX - tsl, format, va);
+  vsnprintf(out, LOGLINEMAX - tsl, format, va);
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
