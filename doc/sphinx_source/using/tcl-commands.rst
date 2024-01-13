@@ -3585,6 +3585,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: triggered when a server sends an IRCv3 spec CHGHOST message to change a user's hostmask. The new host is matched against mask in the form of "#channel nick!user\@host" and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
+(57) CHANSET
+
+  bind chanset <flags> <mask> <proc>
+
+  procname <chan> <setting> <value>
+
+  Description: triggered when a channel setting is set via the partyline. flags is ignored, mask is the name of channel setting (not including any +/- prefix) and can contain wildcards. The proc will be called with the channel that the setting was set on, the text name of the setting that was changed, and the value it was set to (a +/-, string, or X:Y formatted value).
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
