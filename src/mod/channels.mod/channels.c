@@ -32,6 +32,8 @@ static Function *global = NULL;
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
 
+static p_tcl_bind_list H_chanset;
+
 static struct udef_struct *udef;
 
 static int use_info, chan_hack, quiet_save, global_revenge_mode,
@@ -239,6 +241,32 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
     strcat(s, " ");
     strcat(s, s1);
   }
+}
+
+static int builtin_chanset STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(4, 4, " chan, setting, type, value");
+
+  CHECKVALIDITY(builtin_chanset);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+int check_tcl_chanset(const char *chan, const char *setting, const char *type, const char *value)
+{
+  int x;
+
+  Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
+  Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
+  Tcl_SetVar(interp, "_chanset3", (char *) type, 0);
+  Tcl_SetVar(interp, "_chanset4", (char *) value, 0);
+
+  x = check_tcl_bind(H_chanset, chan, 0, " $_chanset1 $_chanset2 $_chanset3 $_chanset4",
+                     BIND_STACKABLE | BIND_WANTRET);
+
+  return 0;
 }
 
 /* Returns true if this is one of the channel masks

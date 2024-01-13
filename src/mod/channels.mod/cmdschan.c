@@ -1472,7 +1472,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
-  char *chname = NULL, answers[512], *parcpy;
+  char *chname = NULL, answers[1024], *parcpy;
   char *list[2], *bak, *buf;
   struct chanset_t *chan = NULL;
   int all = 0;
@@ -1555,6 +1555,14 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
             return;
           }
           list[1] = par;
+          /* Don't send any follow-on arguments if this is an integer value */
+          list[1] = newsplit(&par);
+/*
+          ptr = strchr(list[1], ' ');
+          if (ptr != NULL) {
+            *ptr = '\0';
+          }
+*/
           /* Par gets modified in tcl_channel_modify under some
            * circumstances, so save it now.
            */
@@ -1563,18 +1571,19 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           irp = Tcl_CreateInterp();
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             int len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
+            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s } ", list[0], list[1]); /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, %s\n",
                     list[0], all ? "all channels" : chname, Tcl_GetStringResult(irp));
           Tcl_ResetResult(irp);
           Tcl_DeleteInterp(irp);
           nfree(parcpy);
+          list[0] = newsplit(&par);
+          list[1] = '\0';
         }
-        break;
       }
       if (!all && answers[0]) {
-        dprintf(idx, "Successfully set modes { %s } on %s.\n", answers,
+        dprintf(idx, "Successfully set modes { %s} on %s.\n", answers,
                 chname);
         putlog(LOG_CMDS, "*", "#%s# chanset %s %s", dcc[idx].nick, chname,
                answers);
@@ -1585,7 +1594,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
         chan = chan->next;
     }
     if (all && answers[0]) {
-      dprintf(idx, "Successfully set modes { %s } on all channels.\n",
+      dprintf(idx, "Successfully set modes { %s} on all channels.\n",
               answers);
       putlog(LOG_CMDS, "*", "#%s# chanset * %s", dcc[idx].nick, answers);
     }
