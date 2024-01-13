@@ -1472,8 +1472,8 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
-  char *chname = NULL, answers[1024], *parcpy;
-  char *list[2], *bak, *buf;
+  char *chname = NULL, answers[1024], *parcpy, *ptr = NULL;
+  char *list[2], value[2], *bak, *buf;
   struct chanset_t *chan = NULL;
   int all = 0;
 
@@ -1534,6 +1534,9 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
               return;
             }
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
+            ptr = list[0]+1;
+            strlcpy(value, list[0], 2);
+            check_tcl_chanset(chname, ptr, value);
             strcat(answers, list[0]);
             strcat(answers, " ");
           } else if (!all || !chan->next)
@@ -1542,9 +1545,8 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           list[0] = newsplit(&par);
           continue;
         }
-        /* The rest have an unknown amount of args, so assume the rest of the
-         * line is args. Woops nearly made a nasty little hole here :) we'll
-         * just ignore any non global +n's trying to set the need-commands.
+        /* Prior to 1.10 we assumed anything here meant the end of the command.
+         * Now we process it and continue on until no more args are left
          */
         if (strncmp(list[0], "need-", 5) || (u->flags & USER_OWNER)) {
           Tcl_Interp *irp = NULL;
@@ -1554,15 +1556,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
             nfree(buf);
             return;
           }
-          list[1] = par;
-          /* Don't send any follow-on arguments if this is an integer value */
           list[1] = newsplit(&par);
-/*
-          ptr = strchr(list[1], ' ');
-          if (ptr != NULL) {
-            *ptr = '\0';
-          }
-*/
           /* Par gets modified in tcl_channel_modify under some
            * circumstances, so save it now.
            */
@@ -1570,6 +1564,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
+            check_tcl_chanset(chname, list[0], list[1]);
             int len = strlen(answers);
             egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s } ", list[0], list[1]); /* Concatenation */
           } else if (!all || !chan->next)
@@ -1579,7 +1574,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           Tcl_DeleteInterp(irp);
           nfree(parcpy);
           list[0] = newsplit(&par);
-          list[1] = '\0';
+          list[1] = 0;
         }
       }
       if (!all && answers[0]) {

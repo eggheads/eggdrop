@@ -247,26 +247,25 @@ static int builtin_chanset STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(4, 4, " chan, setting, type, value");
+  BADARGS(3, 3, " chan, setting, value");
 
   CHECKVALIDITY(builtin_chanset);
-  F(argv[1], argv[2], argv[3]);
+  F(argv[1], argv[2]);
   return TCL_OK;
 }
 
-int check_tcl_chanset(const char *chan, const char *setting, const char *type, const char *value)
+int check_tcl_chanset(const char *chan, const char *setting, const char *value)
 {
   int x;
 
   Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
   Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
-  Tcl_SetVar(interp, "_chanset3", (char *) type, 0);
-  Tcl_SetVar(interp, "_chanset4", (char *) value, 0);
+  Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
 
-  x = check_tcl_bind(H_chanset, chan, 0, " $_chanset1 $_chanset2 $_chanset3 $_chanset4",
-                     BIND_STACKABLE | BIND_WANTRET);
+  x = check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
+                     MATCH_MASK | BIND_STACKABLE);
 
-  return 0;
+  return x;
 }
 
 /* Returns true if this is one of the channel masks
@@ -1035,6 +1034,7 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);
