@@ -87,20 +87,18 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
     if (pyfunc && PyCallable_Check(pyfunc)) {
       pyval = PyObject_CallFunctionObjArgs(pyfunc, ptype, pvalue, ptraceback, NULL);
       // Check if traceback is a list and handle as such
-      if (pyval) {
-        if (pyval && PyList_Check(pyval)) {
-          n = PyList_Size(pyval);
-          for (i = 0; i < n; i++) {
-            item = PyList_GetItem(pyval, i);
-            pystr = PyObject_Str(item);
-            dprintf(idx, "%s", PyUnicode_AsUTF8(pystr));
-          }
-        } else {
-          pystr = PyObject_Str(pyval);
+      if (pyval && PyList_Check(pyval)) {
+        n = PyList_Size(pyval);
+        for (i = 0; i < n; i++) {
+          item = PyList_GetItem(pyval, i);
+          pystr = PyObject_Str(item);
           dprintf(idx, "%s", PyUnicode_AsUTF8(pystr));
         }
-        Py_DECREF(pyval);
+      } else {
+        pystr = PyObject_Str(pyval);
+        dprintf(idx, "%s", PyUnicode_AsUTF8(pystr));
       }
+      Py_XDECREF(pyval);
     }
   }
   return;
