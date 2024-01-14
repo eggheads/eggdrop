@@ -1,7 +1,5 @@
 /*
- * tclpython.c -- part of python.mod
- *   contains all tcl functions
- *
+ * tclpython.c -- tcl functions for python.mod
  */
 /*
  * Copyright (C) 2000 - 2023 Eggheads Development Team
@@ -23,62 +21,63 @@
 
 static int tcl_pysource STDVAR
 {
-  BADARGS(2, 2, " script");
-
   FILE *fp;
-  PyObject *pobj, *pstr, *ptype, *pvalue, *ptraceback;
-  PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
+  PyObject *pobj, *ptype, *pvalue, *ptraceback;
+  PyObject *pystr;
   Py_ssize_t n;
   const char *res = NULL;
-  char *res2 = NULL;
   int i;
+
+  BADARGS(2, 2, " script");
 
   if (!(fp = fopen(argv[1], "r"))) {
     Tcl_AppendResult(irp, "Error: could not open file ", argv[1],": ", strerror(errno), NULL);
     return TCL_ERROR;
   }
   PyErr_Clear();
+  // Always PyNone or NULL on exception
   pobj = PyRun_FileEx(fp, argv[1], Py_file_input, pglobals, pglobals, 1);
-  if (pobj) {
-    pstr = PyObject_Str(pobj);
-    Tcl_AppendResult(irp, PyUnicode_AsUTF8(pstr), NULL);
-    Py_DECREF(pstr);
-    Py_DECREF(pobj);
-  } else if (PyErr_Occurred()) {
+  Py_XDECREF(pobj);
+
+  if (PyErr_Occurred()) {
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
     pystr = PyObject_Str(pvalue);
     Tcl_AppendResult(irp, "Error loading python: ", PyUnicode_AsUTF8(pystr), NULL);
-    module_name = PyUnicode_FromString("traceback");
-    pymodule = PyImport_Import(module_name);
-    Py_DECREF(module_name);
-    // format backtrace and print
-    pyfunc = PyObject_GetAttrString(pymodule, "format_exception");
-    if (pyfunc && PyCallable_Check(pyfunc)) {
-      pyval = PyObject_CallFunctionObjArgs(pyfunc, ptype, pvalue, ptraceback, NULL);
-      // Check if traceback is a list and handle as such
-      if (PyList_Check(pyval)) {
-        n = PyList_Size(pyval);
-        for (i = 0; i < n; i++) {
-          item = PyList_GetItem(pyval, i);
-          pystr = PyObject_Str(item);
-          //Python returns a const char but we need to remove the \n
-          res = PyUnicode_AsUTF8(pystr);
-          if (strlen(res)) {
-            res2 = (char*) nmalloc(strlen(res));
-            // Remove trailing \n
-            strlcpy(res2, res, strlen(res)-1);
+    Py_DECREF(pystr);
+    // top level syntax errors do not have a traceback
+    if (ptraceback) {
+      PyObject *module_name, *pymodule, *pyfunc, *pyval, *item;
+
+      module_name = PyUnicode_FromString("traceback");
+      pymodule = PyImport_Import(module_name);
+      Py_DECREF(module_name);
+      // format backtrace and print
+      pyfunc = PyObject_GetAttrString(pymodule, "format_exception");
+
+      if (pyfunc && PyCallable_Check(pyfunc)) {
+        pyval = PyObject_CallFunctionObjArgs(pyfunc, ptype, pvalue, ptraceback, NULL);
+
+        if (pyval && PyList_Check(pyval)) {
+          n = PyList_Size(pyval);
+          for (i = 0; i < n; i++) {
+            item = PyList_GetItem(pyval, i);
+            pystr = PyObject_Str(item);
+            res = PyUnicode_AsUTF8(pystr);
+            // strip \n
+            putlog(LOG_MISC, "*", "%.*s", (int)(strlen(res) - 1), res);
+            Py_DECREF(pystr);
           }
-          putlog(LOG_MISC, "*", "%s", res2);
-          if (res2 != NULL) {
-            nfree(res2);
-          }
+        } else {
+          putlog(LOG_MISC, "*", "Error fetching python traceback");
         }
-      } else {
-        pystr = PyObject_Str(pyval);
-        Tcl_AppendResult(irp, PyUnicode_AsUTF8(pystr), NULL);
+        Py_XDECREF(pyval);
       }
-      Py_DECREF(pyval);
+      Py_XDECREF(pyfunc);
+      Py_DECREF(pymodule);
     }
+    Py_XDECREF(ptype);
+    Py_XDECREF(pvalue);
+    Py_XDECREF(ptraceback);
     return TCL_ERROR;
   }
   return TCL_OK;

@@ -30,13 +30,16 @@ python <expression>
 
 You can run a python command from the partyline with the .python command, such as::
 
-  .python print('Hello world!')
+  .python 1 + 1
+  Python: 2
+  .python from eggdrop.tcl import putmsg; putmsg('#chan', 'Hello world!')
+  Python: None
 
 ^^^^^^^^^^^^^
 .binds python
 ^^^^^^^^^^^^^
 
-The python module extends the core ``.binds`` command by adding a ``python`` mask. This command will list all binds for python scripts.
+The python module extends the core ``.binds`` partyline command by adding a ``python`` mask. This command will list all binds for python scripts.
 
 ------------
 Tcl Commands
@@ -54,7 +57,21 @@ Eggdrop Python Commands
 
 The Python module is built to use the existing core Tcl commands integrated into Eggdrop via the ``eggdrop.tcl`` module. To call an existing Tcl command from Python, you can either load the entire catalog by running ``import eggdrop.tcl``, or be more specific by ``from eggdrop.tcl import putserv, putlog, chanlist``, etc.
 
-Additionally, a few extra python commands have been created for use:
+Arguments to the Tcl functions are automatically converted as follows:
+
+* ``None`` is converted to an empty Tcl object (the empty string, ``""``)
+* ``List`` and ``Tuple`` is converted to a ``Tcl list``
+* ``Dict`` is converted to a ``Tcl dictionary``
+* Everything else is converted to a string using the str() method
+
+Return values from Tcl functions must be manually converted:
+
+* ``""`` the empty string is automatically converted to None
+* everything else is returned as string
+* ``Tcl list`` as string can be converted to a Python ``List`` using ``parse_tcl_list``
+* ``Tcl dictionary`` as string can be converted to a Python ``Dict`` using ``parse_tcl_list``
+
+Additionally, a few extra python commands have been created for use without these conversions:
 
 ^^^^^^^^^^^^^^^^
 bind <arguments>

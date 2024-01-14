@@ -1,5 +1,5 @@
 /*
- * python.c -- part of python.mod
+ * python.c -- python interpreter handling for python.mod
  */
 
 /*
@@ -46,46 +46,40 @@ static Function *global = NULL, *irc_funcs = NULL;
 #include "src/mod/python.mod/pycmds.c"
 #include "src/mod/python.mod/tclpython.c"
 
-//extern p_tcl_bind_list H_pubm;
+EXPORT_SCOPE char *python_start(Function *global_funcs);
 
-int runPythonArgs(const char *script, const char *method, int argc, char **argv);
-int runPythonPyArgs(const char *script, const char *method, PyObject *pArgs);
-
-
-/* Calculate the memory we keep allocated.
- */
 static int python_expmem()
 {
-  int size = 0;
-
-  Context;
-  return size;
+  return 0; // TODO
 }
 
+// TODO: Do we really have to exit eggdrop on module load failure?
 static void init_python() {
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
 
   if (PY_VERSION_HEX < 0x0308) {
-    fprintf(stderr, "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
+    putlog(LOG_MISC, "*", "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
     return;
   }
-  PyConfig_InitPythonConfig(&config);
+  PyConfig_InitIsolatedConfig(&config);
+  config.install_signal_handlers = 0;
+  config.parse_argv = 0;
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    fprintf(stderr, "Python: Fatal error: Could not set program base path\n");
+    putlog(LOG_MISC, "*", "Python: Fatal error: Could not set program base path");
     Py_ExitStatusException(status);
   }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
-    fprintf(stderr, "Error: could not extend in-built modules table\n");
+    putlog(LOG_MISC, "*", "Python: Error: could not extend in-built modules table");
     exit(1);
   }
   status = Py_InitializeFromConfig(&config);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    fprintf(stderr, "Python: Fatal error: Could not initialize config\n");
+    putlog(LOG_MISC, "*", "Python: Fatal error: Could not initialize config");
     fatal(1);
   }
   PyConfig_Clear(&config);
@@ -93,13 +87,15 @@ static void init_python() {
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
     PyErr_Print();
-    fprintf(stderr, "Error: could not import module 'eggdrop'\n");
+    putlog(LOG_MISC, "*", "Error: could not import module 'eggdrop'");
+    fatal(1);
   }
 
   pirp = PyImport_AddModule("__main__");
   pglobals = PyModule_GetDict(pirp);
 
   PyRun_SimpleString("import sys");
+  // TODO: Relies on pwd() staying eggdrop main dir
   PyRun_SimpleString("sys.path.append(\".\")");
   PyRun_SimpleString("import eggdrop");
   PyRun_SimpleString("sys.displayhook = eggdrop.__displayhook__");
@@ -114,81 +110,9 @@ static void kill_python() {
   return;
 }
 
-int runPythonPyArgs(const char *script, const char *method, PyObject *pArgs)
-{
-  PyObject *pName, *pModule, *pFunc, *pValue;
-
-  pName = PyUnicode_DecodeFSDefault(script);
-  /* Error checking of pName left out */
-  pModule = PyImport_Import(pName);
-  Py_DECREF(pName);
-
-  if (pModule != NULL) {
-    pFunc = PyObject_GetAttrString(pModule, method);
-    /* pFunc is a new reference */
-    if (pFunc && PyCallable_Check(pFunc)) {
-      pValue = PyObject_CallObject(pFunc, pArgs);
-      Py_DECREF(pArgs);
-      if (pValue != NULL) {
-        printf("Result of call: %ld\n", PyLong_AsLong(pValue));
-        Py_DECREF(pValue);
-      }
-      else {
-        Py_DECREF(pFunc);
-        Py_DECREF(pModule);
-        PyErr_Print();
-        fprintf(stderr,"Call failed\n");
-        return 1;
-      }
-    }
-    else {
-      if (PyErr_Occurred())
-        PyErr_Print();
-      fprintf(stderr, "Cannot find function \"%s\"\n", method);
-    }
-    Py_XDECREF(pFunc);
-    Py_DECREF(pModule);
-  }
-  else {
-    PyErr_Print();
-    fprintf(stderr, "Failed to load \"%s\"\n", script);
-    return 1;
-  }
-  return 0;
-}
-
-int runPythonArgs(const char *script, const char *method, int argc, char **argv)
-{
-  PyObject *pArgs, *pValue;
-
-  pArgs = PyTuple_New(argc);
-  for (int i = 0; i < argc; i++) {
-    pValue = Py_BuildValue("s", argv[i]);
-    if (!pValue) {
-      Py_DECREF(pArgs);
-      fprintf(stderr, "Cannot convert argument at position %d: '%s'\n", i, argv[i]);
-      return 1;
-    }
-    /* pValue reference stolen here: */
-    PyTuple_SetItem(pArgs, i, pValue);
-  }
-  return runPythonPyArgs(script, method, pArgs);
-}
-
-/* A report on the module status.
- *
- * details is either 0 or 1:
- *    0 - `.status'
- *    1 - `.status all'  or  `.module twitch'
- */
 static void python_report(int idx, int details)
 {
-  if (details) {
-    int size = python_expmem();
-
-    dprintf(idx, "    Using %d byte%s of memory\n", size,
-            (size != 1) ? "s" : "");
-  }
+  // TODO
 }
 
 static char *python_close()
@@ -200,8 +124,6 @@ static char *python_close()
   module_undepend(MODULE_NAME);
   return NULL;
 }
-
-EXPORT_SCOPE char *python_start();
 
 static Function python_table[] = {
   (Function) python_start,
@@ -225,16 +147,12 @@ char *python_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.9.0 or later.";
   }
+  // TODO: Is this dependency necessary? It auto-loads irc.mod, that might be undesired
   if (!(irc_funcs = module_depend(MODULE_NAME, "irc", 1, 5))) {
     module_undepend(MODULE_NAME);
     return "This module requires irc module 1.5 or later.";
   }
-/*
-  if (!(server_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
-    module_undepend(MODULE_NAME);
-    return "This module requires channels module 1.1 or later.";
-  }
-*/
+  // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
 
   init_python();
 

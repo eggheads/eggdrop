@@ -117,7 +117,7 @@ distclean:
 		fi; \
 	done
 
-install: install-help install-language
+install: install-help install-language install-scripts
 
 install-help:
 	@echo "Copying module help files." && \
@@ -165,6 +165,16 @@ install-language:
 		if test ! "x`echo $(srcdir)/$$i/language/*.lang`" = "x$(srcdir)/$$i/language/*.lang"; then \
 			for h in $(srcdir)/$$i/language/*.lang; do \
 				$(INSTALL_DATA) $$h $(DEST)/language/; \
+			done; \
+		fi; \
+	done;
+
+install-scripts:
+	@for i in $(mods); do \
+		if test ! "x`echo $(srcdir)/$$i/scripts/*`" = "x$(srcdir)/$$i/scripts/*"; then \
+			echo "Installing example $$i scripts"; \
+			for s in $(srcdir)/$$i/scripts/*; do \
+				$(INSTALL_DATA) $$s $(DEST)/scripts/; \
 			done; \
 		fi; \
 	done;
