@@ -174,7 +174,9 @@ install-scripts:
 		if test ! "x`echo $(srcdir)/$$i/scripts/*`" = "x$(srcdir)/$$i/scripts/*"; then \
 			echo "Installing example $$i scripts"; \
 			for s in $(srcdir)/$$i/scripts/*; do \
-				$(INSTALL_DATA) $$s $(DEST)/scripts/; \
+				if test ! -f "$(DEST)/scripts/`basename "$$s"`"; then \
+					$(INSTALL_DATA) $$s $(DEST)/scripts/; \
+				fi; \
 			done; \
 		fi; \
 	done;
