@@ -87,7 +87,6 @@ int allow_dk_cmds = 1;
 int must_be_owner = 1;
 int quiet_reject = 1;
 int max_socks = 100;
-int quick_logs = 0;
 int par_telnet_flood = 1;
 int quiet_save = 0;
 int strtot = 0;
@@ -480,7 +479,6 @@ static tcl_ints def_tcl_ints[] = {
   {"max-socks",             &max_socks,            0},
   {"max-logs",              &max_logs,             0},
   {"max-logsize",           &max_logsize,          0},
-  {"quick-logs",            &quick_logs,           0},
   {"raw-log",               &raw_log,              1},
   {"protect-telnet",        &protect_telnet,       0},
   {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
