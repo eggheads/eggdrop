@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Botnet Sharing and Linking &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="IPv6 support" href="ipv6.html" />
     <link rel="prev" title="Bans, Invites, and Exempts" href="bans.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Botnet Sharing and Linking</a><ul>
@@ -108,19 +108,19 @@
             
   <p>Botnet Sharing and Linking</p>
 <section id="botnet-sharing-and-linking">
-<h1>Botnet Sharing and Linking<a class="headerlink" href="#botnet-sharing-and-linking" title="Permalink to this heading">¶</a></h1>
+<h1>Botnet Sharing and Linking<a class="headerlink" href="#botnet-sharing-and-linking" title="Link to this heading">¶</a></h1>
 <blockquote>
 <div><p>The purpose of this document is to show you what a botnet is and how it
 could be useful to you. It also covers botflags userfile sharing.</p>
 </div></blockquote>
 <section id="what-is-a-botnet">
-<h2>What is a botnet?<a class="headerlink" href="#what-is-a-botnet" title="Permalink to this heading">¶</a></h2>
+<h2>What is a botnet?<a class="headerlink" href="#what-is-a-botnet" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>A botnet consists of two or more bots linked together. This can allow bots to op each other securely, control floods efficiently, and share user lists, ban lists, exempt/invite lists, and ignore lists (if sharing is enabled).</p>
 </div></blockquote>
 </section>
 <section id="terms">
-<h2>Terms<a class="headerlink" href="#terms" title="Permalink to this heading">¶</a></h2>
+<h2>Terms<a class="headerlink" href="#terms" title="Link to this heading">¶</a></h2>
 <p>The following are some common terms used in this document:</p>
 <dl>
 <dt><strong>Botnet</strong></dt><dd><p>A botnet consists of two or more bots connected together.</p>
@@ -159,7 +159,7 @@ could be useful to you. It also covers botflags userfile sharing.</p>
 </dl>
 </section>
 <section id="example-bottree">
-<h2>Example bottree<a class="headerlink" href="#example-bottree" title="Permalink to this heading">¶</a></h2>
+<h2>Example bottree<a class="headerlink" href="#example-bottree" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>BotA
   |-+BotB
   `-+BotC
@@ -168,7 +168,7 @@ could be useful to you. It also covers botflags userfile sharing.</p>
 <p>BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.</p>
 </section>
 <section id="bot-flags">
-<h2>Bot Flags<a class="headerlink" href="#bot-flags" title="Permalink to this heading">¶</a></h2>
+<h2>Bot Flags<a class="headerlink" href="#bot-flags" title="Link to this heading">¶</a></h2>
 <p>Flags are attributes that determine what a bot can or is allowed to do.
 Flags can be either global (such as +s) or channel specific (such as
 |+s #lamest). See ‘.help botattr’ for help with setting these flags.</p>
@@ -236,7 +236,7 @@ with aggressive bot)</p></td>
 </table>
 </section>
 <section id="adding-and-linking-bots">
-<h2>Adding and linking bots<a class="headerlink" href="#adding-and-linking-bots" title="Permalink to this heading">¶</a></h2>
+<h2>Adding and linking bots<a class="headerlink" href="#adding-and-linking-bots" title="Link to this heading">¶</a></h2>
 <p>With the common terms out of the way, we can start with the process of linking two bots. Before you start, you need to know the address and port of each bot you wish to link.</p>
 <p>Here is an example scenario:</p>
 <blockquote>
@@ -249,12 +249,12 @@ command. On BotB, you would type ‘.+bot BotA lame.org 3333’.</p>
 </div></blockquote>
 <p>At this point, you can link the two bots by typing ‘.link BotA’ on BotB (or ‘.link BotB’ on BotA). The bots will now give themselves random passwords which are <em>not</em> stored encrypted in the userfile. Note that you can link as many bots as you wish to your botnet.</p>
 <section id="secure-tls-links">
-<h3>Secure (TLS) Links<a class="headerlink" href="#secure-tls-links" title="Permalink to this heading">¶</a></h3>
+<h3>Secure (TLS) Links<a class="headerlink" href="#secure-tls-links" title="Link to this heading">¶</a></h3>
 <p>Since Eggdrop 1.8.0, the ability to encrypt bot links using TLS is possible. On the hub bot you would prefix the port given in the <cite>listen</cite> command with a +, and when you add the hub bot to the leaf, you would prefix the port used in the <cite>.+bot</cite> command with a +. In other words, you would set <cite>listen +5555</cite> in the hub config and use <cite>.+bot hubbot 1.2.3.4 +5555</cite> on the leaf bot. These settings are explained more thoroughly in the <a class="reference external" href="https://docs.eggheads.org/using/tls.html#botnet">TLS botnet documentation.</a></p>
 </section>
 </section>
 <section id="using-botflags">
-<h2>Using botflags<a class="headerlink" href="#using-botflags" title="Permalink to this heading">¶</a></h2>
+<h2>Using botflags<a class="headerlink" href="#using-botflags" title="Link to this heading">¶</a></h2>
 <p>Botflags are needed to assign special functions and tasks to your bots.
 Bot flags are set with the ‘.botattr’ command. See ‘.help botattr’ for
 help with this command. The following is a list of botflags and their
@@ -299,7 +299,7 @@ more information on passive sharing.</p>
 </div></blockquote>
 </section>
 <section id="making-bots-share-user-records">
-<h2>Making bots share user records<a class="headerlink" href="#making-bots-share-user-records" title="Permalink to this heading">¶</a></h2>
+<h2>Making bots share user records<a class="headerlink" href="#making-bots-share-user-records" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Before you start preparing your bots for sharing, make sure that
 you’ve loaded the transfer and share modules. You also have to ensure
@@ -398,7 +398,7 @@ them, but you would not do it on the hub or beldin.</p>
 </div></blockquote>
 </section>
 <section id="using-certificates-to-authenticate-eggdrops">
-<h2>Using certificates to authenticate Eggdrops<a class="headerlink" href="#using-certificates-to-authenticate-eggdrops" title="Permalink to this heading">¶</a></h2>
+<h2>Using certificates to authenticate Eggdrops<a class="headerlink" href="#using-certificates-to-authenticate-eggdrops" title="Link to this heading">¶</a></h2>
 <p>Eggdrops can use certificates to authenticate when linking to each other instead of a password. First, you must ensure you have set the appropriate certificates in the <cite>ssl-privatekey</cite> and <cite>ssl-certificate</cite> settings in the config file, and then enable the <cite>ssl-cert-auth</cite> setting. Next, add the certificate on the partyline by using <cite>.fprint +</cite> to add the fingerprint for the certificate currently in use, or <cite>.fprint &lt;SHA1 fingerprint&gt;</cite> to manually add a fingerprint. Once the config file settings are set 0and fingerprints are added on the partyline, Eggdrops will attempt to use their certificates instead of passwords for authentication.</p>
 <p>Copyright (C) 1999 - 2023 Eggheads Development Team</p>
 </section>
@@ -430,9 +430,9 @@ them, but you would not do it on the hub or beldin.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2023, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

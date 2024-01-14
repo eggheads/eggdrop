@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Eggdrop Twitch Tcl Commands &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Patching Eggdrop" href="patch.html" />
     <link rel="prev" title="Eggdrop Tcl Commands" href="tcl-commands.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
@@ -103,7 +103,7 @@
   <p>Eggdrop Twitch Tcl Commands
 Last revised: April 25, 2020</p>
 <section id="eggdrop-twitch-tcl-commands">
-<h1>Eggdrop Twitch Tcl Commands<a class="headerlink" href="#eggdrop-twitch-tcl-commands" title="Permalink to this heading">¶</a></h1>
+<h1>Eggdrop Twitch Tcl Commands<a class="headerlink" href="#eggdrop-twitch-tcl-commands" title="Link to this heading">¶</a></h1>
 <p>This is an exhaustive list of all the Twitch-specific Tcl commands added to
 Eggdrop. These commands are held separate from the traditional tcl-commands.doc
 due to the unique nature of Twitch and the fact that these commands WILL NOT
@@ -119,9 +119,9 @@ variable that has stored all the tag messages sent by the server, it may
 appear truncated. Rest assured, the variable does contain the full set of tags,
 they just aren’t being displayed.</p>
 <section id="commands">
-<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h2>
+<h2>Commands<a class="headerlink" href="#commands" title="Link to this heading">¶</a></h2>
 <section id="twcmd-chan-cmd-arg">
-<h3>twcmd &lt;chan&gt; &lt;cmd&gt; [arg]<a class="headerlink" href="#twcmd-chan-cmd-arg" title="Permalink to this heading">¶</a></h3>
+<h3>twcmd &lt;chan&gt; &lt;cmd&gt; [arg]<a class="headerlink" href="#twcmd-chan-cmd-arg" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: sends cmd to the server, prefixed with a ‘/’. This is replicates
 the web UI functionality of sending commands such as /vip or /subscribers. Do
@@ -131,42 +131,42 @@ enclose multiple strings in quotes. Example: twcmd timeout “badguy 100”</p>
 </div></blockquote>
 </section>
 <section id="userstate-channel">
-<h3>userstate &lt;channel&gt;<a class="headerlink" href="#userstate-channel" title="Permalink to this heading">¶</a></h3>
+<h3>userstate &lt;channel&gt;<a class="headerlink" href="#userstate-channel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: provides current userstate for the Eggdrop on the given channel.</p>
 <p>Returns: a dict containing key/value pairs for userstate values.</p>
 </div></blockquote>
 </section>
 <section id="roomstate-channel">
-<h3>roomstate &lt;channel&gt;<a class="headerlink" href="#roomstate-channel" title="Permalink to this heading">¶</a></h3>
+<h3>roomstate &lt;channel&gt;<a class="headerlink" href="#roomstate-channel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: provides current roomstate of a channel Eggdrop is on.</p>
 <p>Returns: a dict containing key/value pairs for roomstate values.</p>
 </div></blockquote>
 </section>
 <section id="twitchmods-channel">
-<h3>twitchmods &lt;channel&gt;<a class="headerlink" href="#twitchmods-channel" title="Permalink to this heading">¶</a></h3>
+<h3>twitchmods &lt;channel&gt;<a class="headerlink" href="#twitchmods-channel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: maintains a list of usernames provided by Twitch as those that have moderator status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to issue a /mods Twitch command. This list is a comprehensive list, the user does not need to be present on the channel to be included on this list.</p>
 <p>Returns: A list of usernames designated as having moderator status by Twitch.</p>
 </div></blockquote>
 </section>
 <section id="twitchvips-channel">
-<h3>twitchvips &lt;channel&gt;<a class="headerlink" href="#twitchvips-channel" title="Permalink to this heading">¶</a></h3>
+<h3>twitchvips &lt;channel&gt;<a class="headerlink" href="#twitchvips-channel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: maintains a list of usernames provided by Twitch as those that have VIP status on the provided channel. This list is refreshed upon join, or can manually be refreshed by using the Tcl <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to issue a /vips Twitch command. This list is a comprehensive list, the user does not need to be present on the channel to be included on this list.</p>
 <p>Returns: A list of usernames designated as having VIP status by Twitch.</p>
 </div></blockquote>
 </section>
 <section id="ismod-nick-channel">
-<h3>ismod &lt;nick&gt; [channel]<a class="headerlink" href="#ismod-nick-channel" title="Permalink to this heading">¶</a></h3>
+<h3>ismod &lt;nick&gt; [channel]<a class="headerlink" href="#ismod-nick-channel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if a user is on the moderator list maintained by Twitch (the same list accessible by the /mods command entered via the Twith web GUI). This differs from the other “normal” is* Eggdrop Tcl cmds, as this does NOT check if the user is currently on the channel (that status is unreliable on Twitch IRC).</p>
 <p>Returns: 1 if someone by the specified nickname is on the moderator list for the channel (or any channel if no channel name is specified); 0 otherwise.</p>
 </div></blockquote>
 </section>
 <section id="isvip-nick-channel">
-<h3>isvip &lt;nick&gt; [channel]<a class="headerlink" href="#isvip-nick-channel" title="Permalink to this heading">¶</a></h3>
+<h3>isvip &lt;nick&gt; [channel]<a class="headerlink" href="#isvip-nick-channel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>Description: checks if a user is on the VIP list maintained by Twitch (the same list accessible by the /vips command entered via the Twith web GUI). This differs from the other “normal” is* Eggdrop Tcl cmds, as this does NOT check if the user is currently on the channel (that status is unreliable on Twitch IRC).</p>
 <p>Returns: 1 if someone by the specified nickname is on the VIP list for the channel (or any channel if no channel name is specified); 0 otherwise.</p>
@@ -174,7 +174,7 @@ enclose multiple strings in quotes. Example: twcmd timeout “badguy 100”</p>
 </section>
 </section>
 <section id="binds">
-<h2>Binds<a class="headerlink" href="#binds" title="Permalink to this heading">¶</a></h2>
+<h2>Binds<a class="headerlink" href="#binds" title="Link to this heading">¶</a></h2>
 <p>You can use the ‘bind’ command to attach Tcl procedures to certain events. The
 binds listed here are in addition to the binds listed in tcl-commands.doc.</p>
 <p>Because Twitch offers an IRC gateway that significantly reduces traditional IRC
@@ -184,7 +184,7 @@ is fine, they just likely won’t do anything.</p>
 <p>To remove a bind, use the ‘unbind’ command. For example, to remove the
 bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 <section id="flags">
-<h3>Flags<a class="headerlink" href="#flags" title="Permalink to this heading">¶</a></h3>
+<h3>Flags<a class="headerlink" href="#flags" title="Link to this heading">¶</a></h3>
 <p>Most of the following binds have “flags” listed as an argument for the bind. Flags represents a flagmask that the user, if found, must match in order for the bind to trigger. Example flag masks are:</p>
 <table class="docutils align-default">
 <tbody>
@@ -207,7 +207,7 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
 </table>
 </section>
 <section id="bind-types">
-<h3>Bind Types<a class="headerlink" href="#bind-types" title="Permalink to this heading">¶</a></h3>
+<h3>Bind Types<a class="headerlink" href="#bind-types" title="Link to this heading">¶</a></h3>
 <p>The following is a list of bind types and how they work. Below each bind type is the format of the bind command, the list of arguments sent to the Tcl proc, and an explanation.</p>
 <ol class="arabic simple">
 <li><p>CCHT  (CLEARCHAT)</p></li>
@@ -303,9 +303,9 @@ bind for the “stop” msg command, use ‘unbind msg - stop msg:stop’.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2023, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

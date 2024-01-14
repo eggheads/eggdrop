@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Modules included with Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Assoc Module" href="mod/assoc.html" />
     <link rel="prev" title="Eggdrop Module Information" href="index.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -84,6 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="mod/irc.html">IRC Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/notes.html">Notes Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html">Python Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/seen.html">Seen Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/server.html">Server Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/share.html">Share Module</a></li>
@@ -118,12 +119,20 @@
           <div class="body" role="main">
             
   <section id="modules-included-with-eggdrop">
-<h1>Modules included with Eggdrop<a class="headerlink" href="#modules-included-with-eggdrop" title="Permalink to this heading">¶</a></h1>
+<h1>Modules included with Eggdrop<a class="headerlink" href="#modules-included-with-eggdrop" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="mod/assoc.html">Assoc Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/blowfish.html">Blowfish Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mod/channels.html">Channels Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mod/channels.html">Channels Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mod/channels.html#channel-settings">Channel Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mod/channels.html#value-based-channel-settings">Value-based Channel Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mod/channels.html#enable-disable-channel-settings">Enable/Disable Channel Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mod/channels.html#default-channel-values">Default Channel Values</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="mod/compress.html">Compress Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/console.html">Console Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/ctcp.html">CTCP Module</a></li>
@@ -162,6 +171,32 @@
 <li class="toctree-l1"><a class="reference internal" href="mod/irc.html">IRC Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/notes.html">Notes Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mod/python.html">Python Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#loading-python">Loading Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#partyline-commands">Partyline Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#python-expression">python &lt;expression&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#binds-python">.binds python</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#tcl-commands">Tcl Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#pysource-path-to-file">pysource &lt;path/to/file&gt;</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#eggdrop-python-commands">Eggdrop Python Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#bind-arguments">bind &lt;arguments&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#parse-tcl-list-string">parse_tcl_list &lt;string&gt;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#parse-tcl-dict-string">parse_tcl_dict &lt;string&gt;</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#config-variables">Config variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#writing-an-eggdrop-python-script">Writing an Eggdrop Python script</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#header-section">Header section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mod/python.html#code-section">Code Section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#writing-a-module-for-use-with-eggdrop">Writing a module for use with Eggdrop</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="mod/seen.html">Seen Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/server.html">Server Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/share.html">Share Module</a></li>
@@ -180,11 +215,7 @@
 <dt><a class="reference internal" href="mod/assoc.html#assoc"><span class="std std-ref">Assoc Module</span></a></dt><dd><p>This module provides assoc support, i.e. naming channels on the
 botnet.</p>
 </dd>
-<dt><a class="reference internal" href="mod/blowfish.html#blowfish"><span class="std std-ref">Blowfish Module</span></a></dt><dd><p>Eggdrop can encrypt your userfile, so users can have secure
-passwords. Please note that when you change your encryption
-method later (i.e. using other modules like a md5 module),
-you can’t use your current userfile anymore. Eggdrop will not
-start without an encryption module.</p>
+<dt><a class="reference internal" href="mod/blowfish.html#blowfish"><span class="std std-ref">Blowfish Module</span></a></dt><dd><p>This module has been deprecated in favor of the pbkdf2 module for hashing purposes, such as passwords in the userfile. However, it is still required for encrypting/decrypting strings.</p>
 </dd>
 <dt><a class="reference internal" href="mod/channels.html#channels"><span class="std std-ref">Channels Module</span></a></dt><dd><p>This module provides channel related support for the bot.
 Without it, you won’t be able to make the bot join a channel
@@ -209,6 +240,8 @@ other connections.</p>
 and manage files. With this module, the bot is usable as a file
 server.</p>
 </dd>
+<dt><a class="reference internal" href="mod/ident.html#ident"><span class="std std-ref">Ident Module</span></a></dt><dd><p>This module adds Eggdrop support for the externally-provided oident service, or alternatively the ability for Eggdrop to act as its own ident daemon.</p>
+</dd>
 <dt><a class="reference internal" href="mod/irc.html#irc"><span class="std std-ref">IRC Module</span></a></dt><dd><p>This module provides basic IRC support for your bot. You have to
 load this if you want your bot to come on IRC.</p>
 </dd>
@@ -216,6 +249,10 @@ load this if you want your bot to come on IRC.</p>
 each other. Note sending between currently online users is
 supported in the core, this is only for storing the notes for
 later retrieval.</p>
+</dd>
+<dt><a class="reference internal" href="mod/pbkdf2.html#pbkdf2"><span class="std std-ref">PBKDF2 Module</span></a></dt><dd><p>This modules updates Eggdrop to use PBKDF2 for hashing purposes, such as for userfile passwords. It was specifically designed to work with the blowfish module to make the transition from blowfish to pbkdf2 password hashing as easy as possible. If you are transitioning a userfile from 1.8 or earlier, you should load this AND the blowfish module. By doing so, Eggdrop will seamlessly update the old blowfish hashes to the new PBKDF2 hashes once a user logs in for the first time, and allow you to (eventually) remove the blowfish module altogether. For new bots, you should load this module by itself and not use the blowfish module. The blowfish module is still required if you use Tcl to encrypt/decrypt strings in Tcl (ie, some scripts). Eggdrop will not start without a password-hashing module loaded.</p>
+</dd>
+<dt><a class="reference internal" href="mod/python.html#python"><span class="std std-ref">Python Module</span></a></dt><dd><p>This module adds a python interpreter to Eggdrop, enabling you to run python scripts on your Eggdrop!</p>
 </dd>
 <dt><a class="reference internal" href="mod/seen.html#seen"><span class="std std-ref">Seen Module</span></a></dt><dd><p>This module provides very basic seen commands via msg, on channel
 or via dcc. This module works only for users in the bot’s
@@ -274,9 +311,9 @@ starting point in writing modules, woobie is the right thing.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2023, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

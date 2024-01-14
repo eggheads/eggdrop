@@ -2950,6 +2950,8 @@ Some additional examples:
 
 As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
 
+.. _bind_types:
+
 ^^^^^^^^^^
 Bind Types
 ^^^^^^^^^^

@@ -110,20 +110,28 @@ place all binds towards the top of the script so that they are together
 and easy to find. Now, let's look at documentation of the bind join
 together.
 
-  -----------------------------------------------------------------------
-  bind JOIN
+  ---------------------------------------------------------------------------
+  bind JOIN         
+  ----------------- ---------------------------------------------------------
+  bind join <flags> 
+  <mask> <proc>     
 
-  -----------------------------------------------------------------------
+  procname <nick>   
+  <user@host>       
+  <handle>          
+  <channel>         
 
-+============================+=============================================================================================================================+
-| bind join <flags> <mask> <proc> |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| procname <nick> <user@host> <handle> <channel> |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Description: triggered by someone joining the channel. The mask in the
-bind is matched against "#channel nick!user@host" and can contain
-wildcards. |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------+
+  Description:      
+  triggered by      
+  someone joining   
+  the channel. The  
+  mask in the bind  
+  is matched        
+  against "#channel 
+  nick!user@host"   
+  and can contain   
+  wildcards.        
+  ---------------------------------------------------------------------------
 
 So here, we can start to match the bind listed in the code to how it is
 described in the documentation. The first term after the bind command is

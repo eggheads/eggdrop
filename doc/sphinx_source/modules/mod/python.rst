@@ -2,9 +2,9 @@ Last revised: November 03, 2023
 
 .. _python:
 
-============
+=============
 Python Module
-============
+=============
 
 This module adds a Python interpreter to Eggdrop, allowing you to run Python scripts.
 
@@ -77,7 +77,7 @@ Additionally, a few extra python commands have been created for use without thes
 bind <arguments>
 ^^^^^^^^^^^^^^^^
 
-The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, for more information on bind argument syntax please see tcl_binds_. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc. 
+The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, but here each argument is passed individually. For example, a bind that would look like ``bind pub * !foo myproc`` in Tcl is written as ``bind("pub", "*", "!foo", myproc)``. For more information on Eggsrop bind argument syntax please see :ref:`bind_types`. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc. 
 
 ^^^^^^^^^^^^^^^^^^^^^^^
 parse_tcl_list <string>
@@ -113,14 +113,19 @@ This is how to write a python script for Eggdrop.
 You can view examples of Python scripts in the exampleScripts folder included with this module.
 
 .. glossary::
+
     bestfriend.py
       This example script demonstrates how to use the parse_tcl_list() python command to convert a list returned by a Tcl command into a list that is usable by Python.
+
     greet.py
       This is a very basic script that demonstrates how a Python script with binds can be run by Eggdrop.
+
     imdb.py
       This script shows how to use an existing third-party module to extend a Python script, in this case retrieving information from imdb.com.
+
     listtls.py
       This script demonstrates how to use parse-tcl_list() and parse_tcl_dict() to convert a list of dicts provided by Tcl into something that is usuable by Python.
+
     urltitle.py
       This script shows how to use an existing third-party module to extend a Python script, in this case using an http parser to collect title information from a provided web page.
     
