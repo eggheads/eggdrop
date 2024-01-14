@@ -164,6 +164,10 @@ EGG_TLS_DETECT
 # Threaded DNS core
 EGG_TDNS_ENABLE
 
+# Check for Python
+EGG_PYTHON_ENABLE
+EGG_PYTHON_WITHCONFIG
+
 
 # Substitute Makefile variables.
 EGG_SUBST_EGGVERSION

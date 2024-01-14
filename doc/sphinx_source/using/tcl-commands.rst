@@ -2227,6 +2227,8 @@ unbind <type> <flags> <keyword/mask> <proc-name>
 binds [type/mask]
 ^^^^^^^^^^^^^^^^^
 
+  Description: By default, lists Tcl binds registered with the Eggdrop. You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and 'python' to view Python binds. Alternately, you can specify a bind type (pub, msg, etc) to view all binds that match that type of bind, or a mask that is matched against the command associated with the bind.
+
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
         {<type> <flags> <name> <hits> <proc>}
 
@@ -2897,6 +2899,7 @@ Removing a bind
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+.. _tcl_binds:
 
 ^^^^^^^^^^
 Flag Masks

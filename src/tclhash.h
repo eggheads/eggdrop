@@ -79,7 +79,10 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, IntFunc func);
 void del_bind_table(tcl_bind_list_t *tl_which);
 
 tcl_bind_list_t *find_bind_table(const char *nme);
-
+int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+                           const char *cmd, const char *proc);
+int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+                             const char *cmd, const char *proc);
 int check_tcl_bind(tcl_bind_list_t *, const char *, struct flag_record *,
                    const char *, int);
 int check_tcl_dcc(const char *, int, const char *);
