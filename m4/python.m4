@@ -1,6 +1,6 @@
 dnl python.m4 -- Autoconf macros to compile python.mod
 dnl
-dnl Copyright (c) 2022 - 2022 Eggheads Development Team
+dnl Copyright (c) 2022 - 2024 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License

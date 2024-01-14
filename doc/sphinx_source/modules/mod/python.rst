@@ -151,4 +151,4 @@ Writing a module for use with Eggdrop
 This is how you import a module for use with an egg python script.
 
 
-Copyright (C) 2000 - 2023 Eggheads Development Team
+Copyright (C) 2000 - 2024 Eggheads Development Team
