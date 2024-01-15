@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1523,21 +1523,24 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
-/* Got 900: RPL_SASLLOGGEDIN, user account name is set */
+/* Got 900: RPL_LOGGEDIN, users account name is set (whether by SASL or otherwise) */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   newsplit(&msg); /* nick!ident@host */
   newsplit(&msg); /* account */
   fixcolon(msg);
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  putlog(LOG_SERV, "*", "%s: %s", from, msg);
   return 0;
 }
 
-/* Got 901: RPL_LOGGEDOUT, user account is logged out */
+/* Got 901: RPL_LOGGEDOUT, users account name is unset (whether by SASL or otherwise) */
 static int got901(char *from, char *msg)
 {
-  putlog(LOG_SERV, "*", "SASL: Account has been logged out");
+  newsplit(&msg); /* nick */
+  newsplit(&msg); /* nick!ident@host */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "%s: %s", from, msg);
   return 0;
 }
 

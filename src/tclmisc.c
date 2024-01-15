@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,15 +27,10 @@
 #include "tandem.h"
 #include "md5/md5.h"
 
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 #include <sys/stat.h>
@@ -651,9 +646,13 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_callevent STDVAR
 {
-  BADARGS(2, 2, " event");
+  BADARGS(2, 3, " event ?arg?");
 
-  check_tcl_event(argv[1]);
+  if (argc == 2) {
+    check_tcl_event(argv[1]);
+  } else {
+    check_tcl_event_arg(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 

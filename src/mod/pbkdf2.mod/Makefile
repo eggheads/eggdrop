@@ -1,4 +1,4 @@
-# Makefile.in for src/mod/pbkdf2.mod/
+# Makefile for src/mod/pbkdf2.mod/
 
 srcdir = .
 

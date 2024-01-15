@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
  */
 
 /* We need config.h for CYGWIN_HACKS, but windows.h must be included before
- * eggdrop headers, because the malloc/free/Context macros break the inclusion.
+ * eggdrop headers, because the malloc/free macros break the inclusion.
  * The SSL undefs are a workaround for bug #2182 in openssl with msys/mingw.
  */
 #include <config.h>
@@ -53,15 +53,10 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 #ifdef STOP_UAC                         /* OSF/1 complains a lot */
@@ -88,8 +83,7 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
-           quiet_save;
+extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern struct chanset_t *chanset;
@@ -100,6 +94,7 @@ extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
 static char **argv;
+char *argv0;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -171,11 +166,7 @@ unsigned long itraffic_unknown = 0;
 unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
-/* Context storage for fatal crashes */
-char cx_file[16][32];
-char cx_note[16][256];
-int cx_line[16];
-int cx_ptr = 0;
+extern char last_bind_called[];
 #endif
 
 #ifdef TLS
@@ -187,7 +178,6 @@ void fatal(const char *s, int recoverable)
   int i;
 
   putlog(LOG_MISC, "*", "* %s", s);
-  flushlogs();
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
@@ -260,31 +250,25 @@ static void write_debug()
 {
   int x;
   char s[25];
-  int y;
 
   if (nested_debug) {
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
-     *
-     * NOTE: don't try and display context-notes in here, it's
-     *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
       strlcpy(s, ctime(&now), sizeof s);
-      dprintf(-x, "Debug (%s) written %s\n", ver, s);
-      dprintf(-x, "Please report problem to https://github.com/eggheads/eggdrop/issues\n");
+      dprintf(-x, "Debug (%s) written %s\n"
+                  "Please report problem to https://github.com/eggheads/eggdrop/issues\n"
+                  "Check doc/BUG-REPORT on how to do so.", ver, s);
 #ifdef EGG_PATCH
       dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
       dprintf(-x, "Patch level: %s\n", "stable");
 #endif
-      dprintf(-x, "Context: ");
-      cx_ptr = cx_ptr & 15;
-      for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
-        dprintf(-x, "%s/%d,\n         ", cx_file[y], cx_line[y]);
-      dprintf(-x, "%s/%d\n\n", cx_file[y], cx_line[y]);
+      if (*last_bind_called)
+        dprintf(-x, "Last bind (may not be related): %s\n", last_bind_called);
       killsock(x);
       close(x);
     }
@@ -293,10 +277,10 @@ static void write_debug()
                                  * have caused the fault last time. */
   } else
     nested_debug = 1;
-  putlog(LOG_MISC, "*", "* Last context: %s/%d [%s]", cx_file[cx_ptr],
-         cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Please report problem to https://github.com/eggheads/eggdrop/issues");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  if (*last_bind_called)
+    putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
   x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
@@ -352,14 +336,7 @@ static void write_debug()
 #ifdef STRIPFLAGS
     dprintf(-x, "Strip flags: %s\n", STRIPFLAGS);
 #endif
-
-    dprintf(-x, "Context: ");
-    cx_ptr = cx_ptr & 15;
-    for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
-      dprintf(-x, "%s/%d, [%s]\n         ", cx_file[y], cx_line[y],
-              (cx_note[y][0]) ? cx_note[y] : "");
-    dprintf(-x, "%s/%d [%s]\n\n", cx_file[cx_ptr], cx_line[cx_ptr],
-            (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
+    dprintf(-x, "Last bind (may not be related): %s\n", last_bind_called);
     tell_dcc(-x);
     dprintf(-x, "\n");
     debug_mem_to_dcc(-x);
@@ -444,39 +421,11 @@ static void got_ill(int z)
 {
   check_tcl_signal("sigill");
 #ifdef DEBUG_CONTEXT
-  putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
-         cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
 #endif
 }
-
-#ifdef DEBUG_CONTEXT
-/* Called from the Context macro.
- */
-void eggContext(const char *file, int line, const char *module)
-{
-  eggContextNote(file, line, module, NULL);
-}
-
-/* Called from the ContextNote macro.
- */
-void eggContextNote(const char *file, int line, const char *module,
-                    const char *note)
-{
-  char *p;
-
-  p = strrchr(file, '/');
-  cx_ptr = ((cx_ptr + 1) & 15);
-  if (!module)
-    strlcpy(cx_file[cx_ptr], p ? p + 1 : file, sizeof cx_file[cx_ptr]);
-  else
-    snprintf(cx_file[cx_ptr], sizeof cx_file[cx_ptr], "%s:%s", module, p ? p + 1 : file);
-  cx_line[cx_ptr] = line;
-  if (!note)
-    cx_note[cx_ptr][0] = 0;
-  else
-    strlcpy(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
-}
-#endif /* DEBUG_CONTEXT */
 
 #ifdef DEBUG_ASSERT
 /* Called from the Assert macro.
@@ -609,8 +558,6 @@ static time_t then;
 static struct tm nowtm;
 
 /* Called once a second.
- *
- * Note:  Try to not put any Context lines in here (guppy 21Mar2000).
  */
 static void core_secondly()
 {
@@ -636,11 +583,10 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  nowmins = time(NULL) / 60;
+  nowmins = now / 60;
   if (nowmins > lastmin) {
     memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
-
     /* Once a minute */
     ++lastmin;
     call_hook(HOOK_MINUTELY);
@@ -661,10 +607,7 @@ static void core_secondly()
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      if (!quick_logs) {
-        flushlogs();
-        check_logsize();
-      }
+
       if (!miltime) {           /* At midnight */
         char s[25];
         int j;
@@ -712,10 +655,7 @@ static void core_minutely()
 {
   check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
-  if (quick_logs != 0) {
-    flushlogs();
-    check_logsize();
-  }
+  check_logsize();
 }
 
 static void core_hourly()
@@ -792,7 +732,7 @@ static void mainloop(int toplevel)
 {
   static int cleanup = 5;
   int xx, i, eggbusy = 1;
-  char buf[8702];
+  char buf[READMAX + 2];
 
   /* Lets move some of this here, reducing the number of actual
    * calls to periodic_timers
@@ -952,7 +892,6 @@ static void mainloop(int toplevel)
         putlog(LOG_MISC, "*", "%s", MOD_STAGNANT);
       }
 
-      flushlogs();
       kill_tcl();
       init_tcl(argc, argv);
       init_language(0);
@@ -1006,7 +945,7 @@ static void init_random(void) {
 
 int main(int arg_c, char **arg_v)
 {
-  int i, xx;
+  int i, j, xx;
   char s[25];
   FILE *f;
   struct sigaction sv;
@@ -1031,27 +970,22 @@ int main(int arg_c, char **arg_v)
   setrlimit(RLIMIT_CORE, &cdlim);
 #endif
 
-#ifdef DEBUG_CONTEXT
-  /* Initialise context list */
-  for (i = 0; i < 16; i++)
-    Context;
-#endif
-
   argc = arg_c;
   argv = arg_v;
+  argv0 = argv[0];
 
   /* Version info! */
 #ifdef EGG_PATCH
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
                 EGG_STRINGVER);
 #endif
 
@@ -1141,8 +1075,9 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
-         botnetnick, i, count_users(userlist));
+  j = count_users(userlist);
+  putlog(LOG_MISC, "*", "=== %s: %d channel%s, %d user%s.",
+         botnetnick, i, (i == 1) ? "" : "s", j, (j == 1) ? "" : "s");
   if ((cliflags & CLI_N) && (cliflags & CLI_T)) {
     printf("\n");
     printf("NOTE: The -n flag is no longer used, it is as effective as Han\n");

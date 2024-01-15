@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +60,7 @@
 #define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
 #define DIRMAX      512           /* paranoia                            */
 #define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
+#define READMAX     16384         /* for read() and SSL_read()           */
 
 /* Invalid characters */
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
@@ -189,15 +190,10 @@
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 
@@ -243,14 +239,6 @@
 #define nmalloc(x)    n_malloc((x),__FILE__,__LINE__)
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x)      n_free((x),__FILE__,__LINE__)
-
-#ifdef DEBUG_CONTEXT
-#  define Context           eggContext(__FILE__, __LINE__, NULL)
-#  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#else
-#  define Context           do {} while (0)
-#  define ContextNote(note) do {} while (0)
-#endif
 
 #ifdef DEBUG_ASSERT
 #  define Assert(expr) do {                                             \

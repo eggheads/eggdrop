@@ -2,7 +2,7 @@
  * bg.h
  */
 /*
- * Copyright (C) 2000 - 2023 Eggheads Development Team
+ * Copyright (C) 2000 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
