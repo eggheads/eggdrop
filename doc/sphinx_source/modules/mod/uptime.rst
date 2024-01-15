@@ -25,4 +25,4 @@ module::
 
   loadmodule uptime
 
-Copyright (C) 2001 - 2023 Eggheads Development Team
+Copyright (C) 2001 - 2024 Eggheads Development Team

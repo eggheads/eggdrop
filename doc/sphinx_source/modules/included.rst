@@ -15,6 +15,7 @@ Modules included with Eggdrop
     mod/irc
     mod/notes
     mod/pbkdf2
+    mod/python
     mod/seen
     mod/server
     mod/share
@@ -74,6 +75,9 @@ Modules included with Eggdrop
 
 :ref:`pbkdf2`
     This modules updates Eggdrop to use PBKDF2 for hashing purposes, such as for userfile passwords. It was specifically designed to work with the blowfish module to make the transition from blowfish to pbkdf2 password hashing as easy as possible. If you are transitioning a userfile from 1.8 or earlier, you should load this AND the blowfish module. By doing so, Eggdrop will seamlessly update the old blowfish hashes to the new PBKDF2 hashes once a user logs in for the first time, and allow you to (eventually) remove the blowfish module altogether. For new bots, you should load this module by itself and not use the blowfish module. The blowfish module is still required if you use Tcl to encrypt/decrypt strings in Tcl (ie, some scripts). Eggdrop will not start without a password-hashing module loaded.
+
+:ref:`python`
+    This module adds a python interpreter to Eggdrop, enabling you to run python scripts on your Eggdrop!
 
 :ref:`seen`
     This module provides very basic seen commands via msg, on channel

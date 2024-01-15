@@ -1,4 +1,4 @@
-Last revised: January 1, 2002
+Last revised: November 29, 2023
 
 .. _transfer:
 
@@ -27,13 +27,6 @@ There are also some variables you can set in your config file:
     but admits that may be too small. 1024 is standard these days.
     Set this to 0 to use turbo-dcc (recommended).
 
-  set copy-to-tmp 1
-    Enable this setting if you want to copy files to a temporary location
-    before sending or receiving them. This might be useful for file
-    stability, but if your directories are NFS mounted, it's a pain.
-    Setting this to 1 is not advised for big files or if you're low on
-    disk space.
-
   set xfer-timeout 30
     Set here the time (in seconds) to wait before an inactive transfer
     times out.
@@ -44,4 +37,4 @@ There are also some variables you can set in your config file:
     linked if the userfile transfer fails and retry every minute (both bots must
     be v1.9.0 or higher).
 
-Copyright (C) 2000 - 2023 Eggheads Development Team
+Copyright (C) 2000 - 2024 Eggheads Development Team

@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2023 Eggheads Development Team
+dnl Copyright (C) 1999 - 2024 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -19,6 +19,9 @@ dnl
 
 dnl Load tcl macros
 builtin(include,m4/tcl.m4)
+
+dnl Load python macros
+builtin(include,m4/python.m4)
 
 dnl Load gnu autoconf archive macros
 builtin(include,m4/ax_create_stdint_h.m4)

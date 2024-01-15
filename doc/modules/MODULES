@@ -1,8 +1,9 @@
 Modules included with Eggdrop
 
 mod/assoc mod/blowfish mod/channels mod/compress mod/console mod/ctcp
-mod/dns mod/filesys mod/ident mod/irc mod/notes mod/pbkdf2 mod/seen
-mod/server mod/share mod/transfer mod/twitch mod/woobie mod/uptime
+mod/dns mod/filesys mod/ident mod/irc mod/notes mod/pbkdf2 mod/python
+mod/seen mod/server mod/share mod/transfer mod/twitch mod/woobie
+mod/uptime
 
 assoc
 
@@ -11,11 +12,9 @@ assoc
 
 blowfish
 
-    Eggdrop can encrypt your userfile, so users can have secure
-    passwords. Please note that when you change your encryption method
-    later (i.e. using other modules like a md5 module), you can't use
-    your current userfile anymore. Eggdrop will not start without an
-    encryption module.
+    This module has been deprecated in favor of the pbkdf2 module for
+    hashing purposes, such as passwords in the userfile. However, it is
+    still required for encrypting/decrypting strings.
 
 channels
 
@@ -51,6 +50,12 @@ filesys
     and manage files. With this module, the bot is usable as a file
     server.
 
+ident
+
+    This module adds Eggdrop support for the externally-provided oident
+    service, or alternatively the ability for Eggdrop to act as its own
+    ident daemon.
+
 irc
 
     This module provides basic IRC support for your bot. You have to
@@ -61,6 +66,27 @@ notes
     This module provides support for storing of notes for users from
     each other. Note sending between currently online users is supported
     in the core, this is only for storing the notes for later retrieval.
+
+pbkdf2
+
+    This modules updates Eggdrop to use PBKDF2 for hashing purposes,
+    such as for userfile passwords. It was specifically designed to work
+    with the blowfish module to make the transition from blowfish to
+    pbkdf2 password hashing as easy as possible. If you are
+    transitioning a userfile from 1.8 or earlier, you should load this
+    AND the blowfish module. By doing so, Eggdrop will seamlessly update
+    the old blowfish hashes to the new PBKDF2 hashes once a user logs in
+    for the first time, and allow you to (eventually) remove the
+    blowfish module altogether. For new bots, you should load this
+    module by itself and not use the blowfish module. The blowfish
+    module is still required if you use Tcl to encrypt/decrypt strings
+    in Tcl (ie, some scripts). Eggdrop will not start without a
+    password-hashing module loaded.
+
+python
+
+    This module adds a python interpreter to Eggdrop, enabling you to
+    run python scripts on your Eggdrop!
 
 seen
 

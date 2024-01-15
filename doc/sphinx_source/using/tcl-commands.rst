@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: January 24, 2021
+Last revised: January 6, 2024
 
 ====================
 Eggdrop Tcl Commands
@@ -2011,8 +2011,7 @@ dccsend <filename> <ircnick>
   | 4     | the file was queued for later transfer, which means that person has |
   |       | too many file transfers going right now                             |
   +-------+---------------------------------------------------------------------+
-  | 5     | copy-to-tmp is enabled and the file already exists in the temp      |
-  |       | directory                                                           |
+  | 5     | the file could not be opened or temporary file could not be created |
   +-------+---------------------------------------------------------------------+
 
   Module: transfer
@@ -2227,6 +2226,8 @@ unbind <type> <flags> <keyword/mask> <proc-name>
 ^^^^^^^^^^^^^^^^^
 binds [type/mask]
 ^^^^^^^^^^^^^^^^^
+
+  Description: By default, lists Tcl binds registered with the Eggdrop. You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and 'python' to view Python binds. Alternately, you can specify a bind type (pub, msg, etc) to view all binds that match that type of bind, or a mask that is matched against the command associated with the bind.
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
         {<type> <flags> <name> <hits> <proc>}
@@ -2898,6 +2899,7 @@ Removing a bind
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+.. _tcl_binds:
 
 ^^^^^^^^^^
 Flag Masks
@@ -2947,6 +2949,8 @@ Some additional examples:
 +------------+-----------------------------------------------------------------+
 
 As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
+
+.. _bind_types:
 
 ^^^^^^^^^^
 Bind Types
@@ -3757,4 +3761,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2023 Eggheads Development Team
+  Copyright (C) 1999 - 2024 Eggheads Development Team

@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1097,7 +1097,6 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
  * dcc functions. Simply ignore it.
  * Returns -5 if tcl sockets are busy but not eggdrop sockets.
  */
-
 int sockgets(char *s, int *len)
 {
   char xx[READMAX + 2], *p, *px, *p2;
@@ -1283,8 +1282,6 @@ int sockgets(char *s, int *len)
 }
 
 /* Dump something to a socket
- *
- * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
 void tputs(int z, char *s, unsigned int len)
 {
