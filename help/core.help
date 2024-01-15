@@ -183,7 +183,6 @@ default-flags
 log-time
 timestamp-format
 max-logsize
-quick-logs
 logfile-suffix
 quiet-save
 remote-boots

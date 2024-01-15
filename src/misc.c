@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,8 +43,7 @@ extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
             motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
-extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-            quick_logs;
+extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
 extern Tcl_Interp *interp;
@@ -579,9 +578,10 @@ void putlog (int type, char *chname, const char *format, ...)
           /* Open this logfile */
           if (keep_all_logs) {
             snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(path, "a");
-          } else
-            logs[i].f = fopen(logs[i].filename, "a");
+            if ((logs[i].f = fopen(path, "a")))
+              setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
+          } else if ((logs[i].f = fopen(logs[i].filename, "a")))
+            setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
@@ -653,7 +653,6 @@ void logsuffix_change(char *s)
   }
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f) {
-      fflush(logs[i].f);
       fclose(logs[i].f);
       logs[i].f = NULL;
     }
@@ -678,7 +677,6 @@ void check_logsize()
           if (logs[i].f) {
             /* write to the log before closing it huh.. */
             putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
-            fflush(logs[i].f);
             fclose(logs[i].f);
             logs[i].f = NULL;
           }
@@ -692,39 +690,6 @@ void check_logsize()
     }
   }
 }
-
-/* Flush the logfiles to disk
- */
-void flushlogs()
-{
-  int i;
-
-  /* Logs may not be initialised yet. */
-  if (!logs)
-    return;
-
-  /* Now also checks to see if there's a repeat message and
-   * displays the 'last message repeated...' stuff too <cybah>
-   */
-  for (i = 0; i < max_logs; i++) {
-    if (logs[i].f != NULL) {
-      if ((logs[i].repeats > 0) && quick_logs) {
-        /* Repeat.. if quicklogs used then display 'last message
-         * repeated x times' and reset repeats.
-         */
-        char stamp[33];
-
-        strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
-        fprintf(logs[i].f, "%s ", stamp);
-        fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-        /* Reset repeats */
-        logs[i].repeats = 0;
-      }
-      fflush(logs[i].f);
-    }
-  }
-}
-
 
 /*
  *     String substitution functions

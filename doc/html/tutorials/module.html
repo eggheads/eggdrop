@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Writing a Basic Eggdrop Module &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Module Information" href="../modules/index.html" />
     <link rel="prev" title="Writing an Eggdrop Script" href="firstscript.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -105,11 +105,11 @@
           <div class="body" role="main">
             
   <section id="writing-a-basic-eggdrop-module">
-<h1>Writing a Basic Eggdrop Module<a class="headerlink" href="#writing-a-basic-eggdrop-module" title="Permalink to this heading">¶</a></h1>
+<h1>Writing a Basic Eggdrop Module<a class="headerlink" href="#writing-a-basic-eggdrop-module" title="Link to this heading">¶</a></h1>
 <p>An Eggdrop module is a piece of C code that can be loaded (or unloaded) onto the core Eggdrop code. A module differs from a Tcl script in that modules must be compiled and then loaded, whereas scripts can be edited and loaded directly. Importantly, a module can be written to create new Eggdrop-specific Tcl commands and binds that a user can then use in a Tcl script. For example, the server module loaded by Eggdrop is what creates the “jump” Tcl command, which causes tells the Eggdrop to jump to the next server in its server list.</p>
 <p>There are a few required functions a module must perform in order to properly work with Eggdrop</p>
 <section id="module-header">
-<h2>Module Header<a class="headerlink" href="#module-header" title="Permalink to this heading">¶</a></h2>
+<h2>Module Header<a class="headerlink" href="#module-header" title="Link to this heading">¶</a></h2>
 <p>A module should include license information. This tells other open source users how they are allowed to use the code. Eggdrop uses GPL 2.0 licensing, and our license information looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span>
 <span class="o">*</span> <span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="p">;</span> <span class="n">you</span> <span class="n">can</span> <span class="n">redistribute</span> <span class="n">it</span> <span class="ow">and</span><span class="o">/</span><span class="ow">or</span>
@@ -130,7 +130,7 @@
 </div>
 </section>
 <section id="required-code">
-<h2>Required Code<a class="headerlink" href="#required-code" title="Permalink to this heading">¶</a></h2>
+<h2>Required Code<a class="headerlink" href="#required-code" title="Link to this heading">¶</a></h2>
 <p>For this section, you don’t necessarily need to understand what it is doing, but this code is required for a module to function. If you want to learn more about this, check out <a class="reference internal" href="../modules/writing.html#writing-module"><span class="std std-ref">How to Write an Eggdrop Module</span></a></p>
 <p>You’ll next want to name your module:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define MODULE_NAME &quot;woobie&quot;</span>
@@ -200,7 +200,7 @@ static void woobie_report(int idx, int details)
 <p>At this point, you should have a module that compiles and can be loaded by Eggdrop- but doesn’t really do anything yet. We’ll change that in the next section!</p>
 </section>
 <section id="adding-a-partyline-command">
-<h2>Adding a Partyline Command<a class="headerlink" href="#adding-a-partyline-command" title="Permalink to this heading">¶</a></h2>
+<h2>Adding a Partyline Command<a class="headerlink" href="#adding-a-partyline-command" title="Link to this heading">¶</a></h2>
 <p>A partyline command function accepts three arguments- a pointer to the user record of the user that called the command; the idx the user was on when calling the command; and a pointer to the arguments appended to the command. A command should immediately log that it was called to the LOG_CMDS log level, and then run its desired code. This simple example prints “WOOBIE” to the partyline idx of the user that called it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">cmd_woobie</span><span class="p">(</span><span class="n">struct</span> <span class="n">userrec</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="nb">int</span> <span class="n">idx</span><span class="p">,</span> <span class="n">char</span> <span class="o">*</span><span class="n">par</span><span class="p">)</span>
 <span class="p">{</span>
@@ -221,7 +221,7 @@ static void woobie_report(int idx, int details)
 <p>The tcl-name field can be a name for a Tcl command that will also call the partyline command, or it can be left as NULL.</p>
 </section>
 <section id="adding-a-tcl-command">
-<h2>Adding a Tcl Command<a class="headerlink" href="#adding-a-tcl-command" title="Permalink to this heading">¶</a></h2>
+<h2>Adding a Tcl Command<a class="headerlink" href="#adding-a-tcl-command" title="Link to this heading">¶</a></h2>
 <p>Eggdrop uses the Tcl C API library to interact with the Tcl interpreter. Learning this API is outside the scope of this tutorial, but this example Tcl command will echo the provided argument:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">tcl_echome</span> <span class="n">STDVAR</span> <span class="p">{</span>
   <span class="n">BADARGS</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot; arg&quot;</span><span class="p">);</span>
@@ -248,7 +248,7 @@ static void woobie_report(int idx, int details)
 <p>And now the newly-created Tcl command ‘echome’ is available for use in a script!</p>
 </section>
 <section id="adding-a-tcl-bind">
-<h2>Adding a Tcl Bind<a class="headerlink" href="#adding-a-tcl-bind" title="Permalink to this heading">¶</a></h2>
+<h2>Adding a Tcl Bind<a class="headerlink" href="#adding-a-tcl-bind" title="Link to this heading">¶</a></h2>
 <p>A Tcl bind is a command that is activated when a certain condition is met. With Eggdrop, these are usually linked to receiving messages or other IRC events. To create a bind, you must first register the bind type with Eggdrop when the module is loaded (you added the woobie_start() and woobie_close functions earlier, you still need all that earlier code in here as well):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">p_tcl_bind_list</span> <span class="n">H_woob</span><span class="p">;</span>
 
@@ -271,7 +271,7 @@ static void woobie_report(int idx, int details)
 </div>
 <p>Here, “woobie” is the name of the bind (similar to the PUB, MSG, JOIN types of binds you already see in tcl-commands.doc). HT_STACKABLE means you can have multiple binds of this type. “woobie_2char” defines how many arguments the bind will take, and we’ll talk about that next.</p>
 <section id="defining-bind-arguments">
-<h3>Defining bind arguments<a class="headerlink" href="#defining-bind-arguments" title="Permalink to this heading">¶</a></h3>
+<h3>Defining bind arguments<a class="headerlink" href="#defining-bind-arguments" title="Link to this heading">¶</a></h3>
 <p>The following code example defines a bind that will take two arguments:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">woobie_2char</span> <span class="n">STDVAR</span>
 <span class="p">{</span>
@@ -301,7 +301,7 @@ static void woobie_report(int idx, int details)
 <p>Like before, BADARGS still checks that the number of arguments passed is correct, and outputs help text if it is not. The rest is boilerplate code to pass the arguments when the bind is called.</p>
 </section>
 <section id="calling-the-bind">
-<h3>Calling the Bind<a class="headerlink" href="#calling-the-bind" title="Permalink to this heading">¶</a></h3>
+<h3>Calling the Bind<a class="headerlink" href="#calling-the-bind" title="Link to this heading">¶</a></h3>
 <p>To call the bind, Eggdrop coding style it to name that function “check_tcl_bindname”. So here, whenever we reach a point in code that should trigger the bind, we’ll call check_tcl_woobie() and pass the arguments we defined- in this case, two arguments that woobie_2char was created to handle. Here is some sample code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>check_tcl_woobie(chan, nick);
 
@@ -325,7 +325,7 @@ static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
 </section>
 </section>
 <section id="exporting-the-bind">
-<h2>Exporting the Bind<a class="headerlink" href="#exporting-the-bind" title="Permalink to this heading">¶</a></h2>
+<h2>Exporting the Bind<a class="headerlink" href="#exporting-the-bind" title="Link to this heading">¶</a></h2>
 <p>Do we need to do this?</p>
 </section>
 </section>
@@ -356,9 +356,9 @@ static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

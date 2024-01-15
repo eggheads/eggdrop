@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: January 24, 2021
+Last revised: January 6, 2024
 
 ====================
 Eggdrop Tcl Commands
@@ -1105,7 +1105,7 @@ monitor <add/delete/list/online/offline/status/clear> [nickname]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid sub-commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
 
-  Returns: The 'add' sub-command returns a '1' if the nick was succssfully added, a '0' if the nick is already in the monitor list, and a '2' if the nick could not be added. The 'delete' sub-command returns a '1' if the nick is removed, or an error if the nick is not found. The 'status' sub-command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Returns: The 'add' sub-command returns a '1' if the nick was successfully added, a '0' if the nick is already in the monitor list, and a '2' if the nick could not be added. The 'delete' sub-command returns a '1' if the nick is removed, or an error if the nick is not found. The 'status' sub-command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
 
   Module: irc
 
@@ -1113,7 +1113,7 @@ monitor <add/delete/list/online/offline/status/clear> [nickname]
 accounttracking
 ^^^^^^^^^^^^^^^
 
-  Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when seleceting an "Other" server).
+  Description: checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when selecting an "Other" server).
 
   Returns: a '1' if all three functionalities are present, a '0' if one or more are missing.
 
@@ -1338,7 +1338,7 @@ onchansplit <nick> [channel]
 chanlist <channel> [flags][<&|>chanflags]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See `Flag Masks`_ for additional information).
+  Description: lists all users on a channel Eggdrop has joined. flags are any global flags; the '&' or '\|' denotes to look for channel specific flags, where '&' will return users having ALL chanflags and '|' returns users having ANY of the chanflags (See `Flag Masks`_ for additional information).
 
   Returns: Searching for flags optionally preceded with a '+' will return a list of nicknames that have all the flags listed. Searching for flags preceded with a '-' will return a list of nicknames that do not have have any of the flags (differently said, '-' will hide users that have all flags listed). If no flags are given, all of the nicknames on the channel are returned.
 
@@ -2011,8 +2011,7 @@ dccsend <filename> <ircnick>
   | 4     | the file was queued for later transfer, which means that person has |
   |       | too many file transfers going right now                             |
   +-------+---------------------------------------------------------------------+
-  | 5     | copy-to-tmp is enabled and the file already exists in the temp      |
-  |       | directory                                                           |
+  | 5     | the file could not be opened or temporary file could not be created |
   +-------+---------------------------------------------------------------------+
 
   Module: transfer
@@ -2227,6 +2226,8 @@ unbind <type> <flags> <keyword/mask> <proc-name>
 ^^^^^^^^^^^^^^^^^
 binds [type/mask]
 ^^^^^^^^^^^^^^^^^
+
+  Description: By default, lists Tcl binds registered with the Eggdrop. You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and 'python' to view Python binds. Alternately, you can specify a bind type (pub, msg, etc) to view all binds that match that type of bind, or a mask that is matched against the command associated with the bind.
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
         {<type> <flags> <name> <hits> <proc>}
@@ -2898,6 +2899,7 @@ Removing a bind
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+.. _tcl_binds:
 
 ^^^^^^^^^^
 Flag Masks
@@ -2947,6 +2949,8 @@ Some additional examples:
 +------------+-----------------------------------------------------------------+
 
 As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
+
+.. _bind_types:
 
 ^^^^^^^^^^
 Bind Types
@@ -3757,4 +3761,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2023 Eggheads Development Team
+  Copyright (C) 1999 - 2024 Eggheads Development Team

@@ -49,17 +49,26 @@ There are also some variables you can set in your config file:
       preconfigured with the specified settings. A full list of settings
       is defined in Channel Settings.
 
-  channel set <chan> +/-<setting>
+CHANNEL SETTINGS
+
+There are two types of channel settings: value-based settings (where you
+configure a setting with a number or string), and enable/disable-based
+settings (where you turn a setting on or off). These settings can be
+configured via Tcl using the 'channel set' command:
+
+  channel set <chan> <setting>
 
       This command modifies a specific channel setting for a channel.
       There are many different options for channels which you can
-      define. A full list of settings is defined in Channel Settings.
-      Some settings are enabled or disabled by a plus or minus in front
-      of them, and others directly take text or integer values.
-
-CHANNEL SETTINGS
+      define. Some settings are enabled or disabled by a plus or minus
+      in front of them, and others directly take text or integer values.
 
 Value-based Channel Settings
+
+  chanmode +/-<modes>
+
+      This setting makes the bot enforce channel modes. It will always
+      enforce the +<modes> and remove the -<modes> modes.
 
   idle-kick 0
 
@@ -71,39 +80,25 @@ Value-based Channel Settings
       This setting will make the bot de-op anyone who enters the channel
       with serverops. There are seven different modes for this settings:
 
-        +---+--------------------------------------------------------+
-        | 0 | turn off                                               |
-        +---+--------------------------------------------------------+
-        | 1 | isoptest (allow serverop if registered op)             |
-        +---+--------------------------------------------------------+
-        | 2 | wasoptest (allow serverop if user had op before split) |
-        +---+--------------------------------------------------------+
-        | 3 | allow serverop if isop or wasop                        |
-        +---+--------------------------------------------------------+
-        | 4 | allow serverop if isop and wasop.                      |
-        +---+--------------------------------------------------------+
-        | 5 |   If the channel is -bitch, see stopnethack-mode 3     |
-        |   |                                                        |
-        |   | ---                                                    |
-        |   | -----------------------------------------------------+ |
-        |   |                                                        |
-        |   |     If the channel is +bitch, see stopnethack-mode 1   |
-        | - |                                                        |
-        |   |                                                        |
-        |   |                                                        |
-        |   |                                                        |
-        +---+--------------------------------------------------------+
-        | 6 |   If the channel is -bitch, see stopnethack-mode 2     |
-        |   |                                                        |
-        |   | ---                                                    |
-        |   | -----------------------------------------------------+ |
-        |   |                                                        |
-        |   |     If the channel is +bitch, see stopnethack-mode 4   |
-        | - |                                                        |
-        |   |                                                        |
-        |   |                                                        |
-        |   |                                                        |
-        +---+--------------------------------------------------------+
+          --- --------------------------------------------------------
+          0   turn off
+
+          1   isoptest (allow serverop if registered op)
+
+          2   wasoptest (allow serverop if user had op before split)
+
+          3   allow serverop if isop or wasop
+
+          4   allow serverop if isop and wasop.
+
+          5   If the channel is -bitch, see stopnethack-mode 3
+
+              If the channel is +bitch, see stopnethack-mode 1
+
+          6   If the channel is -bitch, see stopnethack-mode 2
+
+              If the channel is +bitch, see stopnethack-mode 4
+          --- --------------------------------------------------------
 
   revenge-mode 0
 
@@ -125,27 +120,27 @@ Value-based Channel Settings
   ban-type 3 This setting defines what type of bans should eggdrop place
   for +k users or when revenge-mode is 3. Available types are:
 
-      --- ------------------------
-      0   *!user@host
+      ------------------- ------------------------
+      0 *!user@host       
 
-      1   *!*user@host
+      1 *!*user@host      
 
-      2   *!*@host
+      2 *!*@host          
 
-      3   *!*user@*.host
+      3 *!*user@*.host    
 
-      4   !*@.host
+      4 *!*@*.host        
 
-      5 n ick!user@host
+      5 nick!user@host    
 
-      6 n ick!*user@host
+      6 nick!*user@host   
 
-      7 n ick!*@host
+      7 nick!*@host       
 
-      8 n ick!*user@*.host
+      8 nick!*user@*.host 
 
-      9 n ick!*@*.host
-      --- ------------------------
+      9 nick!*@*.host     
+      ------------------- ------------------------
 
   You can also specify types from 10 to 19 which correspond to types 0
   to 9, but instead of using a * wildcard to replace portions of the
@@ -273,21 +268,13 @@ Value-based Channel Settings
 
 Enable/Disable Channel Settings
 
-  chanmode +/-<modes>
-
-      This setting makes the bot enforce channel modes. It will always
-      enforce the +<modes> and remove the -<modes> modes.
-
-  channel set <chan> +/-<setting>
-
-      There are many different options for channels which you can
-      define. They can be enabled or disabled by a plus or minus in
-      front of them.
+These settings should be preceded by a + or - to enable or disable the
+setting, respctively.
 
   enforcebans
 
       When a ban is set, kick people who are on the channel and match
-      the ban?
+      the ban
 
   dynamicbans
 
@@ -331,8 +318,8 @@ Enable/Disable Channel Settings
 
   autoop
 
-      Op users with the +o flag as soon as they join the channel? This
-      is insecure and not recommended.
+      Op users with the +o flag as soon as they join the channel This is
+      insecure and not recommended.
 
   autohalfop
 
@@ -341,11 +328,11 @@ Enable/Disable Channel Settings
 
   bitch
 
-      Only let users with the +o flag have op on the channel?
+      Only let users with the +o flag have op on the channel
 
   greet
 
-      Say a user's info line when they join the channel?
+      Say a user's info line when they join the channel
 
   protectops
 
@@ -353,11 +340,11 @@ Enable/Disable Channel Settings
 
   protecthalfops
 
-      Re-halfop a user with the +l flag if they get dehalfopped?
+      Re-halfop a user with the +l flag if they get dehalfopped
 
   protectfriends
 
-      Re-op a user with the +f flag if they get deopped?
+      Re-op a user with the +f flag if they get deopped
 
   statuslog
 
@@ -420,7 +407,7 @@ Enable/Disable Channel Settings
 
   static
 
-      Allow only permanent owners to remove the channel?
+      Allow only permanent owners to remove the channel
 
 DEFAULT CHANNEL VALUES
 
@@ -490,4 +477,4 @@ DEFAULT CHANNEL VALUES
 
     }
 
-  Copyright (C) 2000 - 2023 Eggheads Development Team
+  Copyright (C) 2000 - 2024 Eggheads Development Team

@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2023 Eggheads Development Team
+ * Copyright (C) 2010 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -765,7 +765,8 @@ static void ssl_info(const SSL *ssl, int where, int ret)
   const
 #endif
   SSL_CIPHER *cipher;
-  int secret, processed;
+  int secret, processed, i;
+  EVP_PKEY *key;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
     return;
@@ -796,15 +797,23 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     /* Display cipher information */
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
-    putlog(LOG_DEBUG, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
-           SSL_CIPHER_get_name(cipher), SSL_get_version(ssl),
-           processed, secret);
+    putlog(LOG_DEBUG, "*", "TLS: cipher used: %s, %d of %d secret bits used for cipher, %s",
+           SSL_CIPHER_get_name(cipher), processed, secret, SSL_get_version(ssl));
     /* secret are the actually secret bits. If processed and secret differ,
        the rest of the bits are fixed, i.e. for limited export ciphers */
 
     /* More verbose information, for debugging only */
     SSL_CIPHER_description(cipher, buf, sizeof buf);
+    i = strlen(buf);
+    if ((i > 0) && (buf[i - 1]) == '\n')
+      buf[i - 1] = 0;
     debug1("TLS: cipher details: %s", buf);
+
+    if (SSL_get_server_tmp_key((SSL *) ssl, &key)) {
+      putlog(LOG_DEBUG, "*", "TLS: diffie–hellman ephemeral key used: %s, bits %d",
+             OBJ_nid2sn(EVP_PKEY_id(key)), EVP_PKEY_bits(key));
+      EVP_PKEY_free(key);
+    }
   } else if (where & SSL_CB_ALERT) {
     if (strcmp(SSL_alert_type_string(ret), "W") ||
         strcmp(SSL_alert_desc_string(ret), "CN")) {
