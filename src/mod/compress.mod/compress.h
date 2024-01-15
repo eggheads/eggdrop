@@ -39,12 +39,13 @@ typedef enum {
 
 #ifndef MAKING_COMPRESS
 /* 4 - 7 */
-# define compress_to_file   ((int (*)(char *, char *, int))(compress_funcs[4]))
-# define compress_file      ((int (*)(char *, int))(compress_funcs[5]))
-# define uncompress_to_file ((int (*)(char *, char *))(uncompress_funcs[6]))
-# define uncompress_file    ((int (*)(char *))(uncompress_funcs[7]))
+# define compress_to_file     ((int (*)(char *, char *, int))(compress_funcs[4]))
+# define compress_file        ((int (*)(char *, int))(compress_funcs[5]))
+# define uncompress_to_file   ((int (*)(char *, char *))(uncompress_funcs[6]))
+# define uncompress_file      ((int (*)(char *))(uncompress_funcs[7]))
 /* 8 - 11 */
-# define is_compressedfile  ((int (*)(char *))(uncompress_funcs[8]))
+# define is_compressedfile    ((int (*)(char *))(uncompress_funcs[8]))
+# define compress_start_share ((void (*)(void))(compress_funcs[9]))
 #endif /* !MAKING_COMPRESS */
 
 #endif /* !_EGG_MOD_COMPRESS_COMPRESS_H */
