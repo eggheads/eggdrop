@@ -202,7 +202,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define open_telnet ((int (*) (int, char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void (*) (const char *))global[88])
-/* was my_memcpy -- use memcpy() instead */
+/* was my_memcpy() -- use memcpy() instead */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -426,10 +426,10 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-/* was egg_memset -- use memset() instead */
-/* was egg_strcasecmp -- use strcasecmp instead */
+/* was egg_memset() -- use memset() instead */
+/* was egg_strcasecmp() -- use strcasecmp() instead */
 /* 256 - 259 */
-/* was egg_strncasecmp -- use strncasecmp instead */
+/* was egg_strncasecmp() -- use strncasecmp() instead */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))
@@ -497,7 +497,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 # define strlcpy ((size_t (*) (char *, const char *, size_t))global[303])
 #endif
 /* 304 - 307 */
-#define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
+#define strncpyz strlcpy /* strncpyz() is deprecated, use strlcpy() instead */
 #ifndef HAVE_BASE64
 # define b64_ntop ((int (*) (uint8_t const *, size_t, char *, size_t))global[305])
 # define b64_pton ((int (*) (const char *, uint8_t *, size_t))global[306])
