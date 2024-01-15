@@ -63,7 +63,7 @@ static void init_python() {
     putlog(LOG_MISC, "*", "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
     return;
   }
-  PyConfig_InitIsolatedConfig(&config);
+  PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
