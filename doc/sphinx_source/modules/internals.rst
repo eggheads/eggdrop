@@ -160,11 +160,11 @@ The last argument to :code:`check_tcl_bind` in `check_tcl_dcc` sets additional c
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | MATCH_CASE        | Check the triggering value exactly against the bind mask value (case sensitive)                                               |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_MASK        | Check if the bind mask is contained within the triggering value, as a wildcarded value                                        |
+| MATCH_MASK        | Check if the bind mask is matched against the triggering value as a wildcarded value                                          |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_MODE        | Check if the triggering value is contained within the bind mask, as a wildcarded value                                        |
+| MATCH_MODE        | Check if the triggering value matches the bind mask as a wildcarded value                                                     |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_CRON        | Check the triggering value against a bind mask formatted as a cron entry, ie "30 7 6 7 * " triggers a mask for "30 7 * * * "  |
+| MATCH_CRON        | Check the triggering value against a bind mask formatted as a cron entry, ie "30 7 6 7 5 " triggers a mask for "30 7 * * * "  |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | BIND_USE_ATTR     | Check the flags of the user match the flags required to trigger the bind                                                      |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
@@ -173,8 +173,6 @@ The last argument to :code:`check_tcl_bind` in `check_tcl_dcc` sets additional c
 | BIND_WANTRET      | With stacked binds, if the called Tcl proc called returns a '1', halt processing any further binds triggered by the action    |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | BIND_STACKRET     | Used with BIND_WANTRET; allow stacked binds to continue despite receiving a '1'                                               |
-+-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_ALTER_ARGS   | Replaces arguments (which ones?) with the result returned from the called Tcl proc                                            |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 
 Bind Return Values
