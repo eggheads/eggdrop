@@ -39,3 +39,4 @@ config.cache
 eggdrop
 EGGMOD.stamp
 mod.xlibs
+__pycache__

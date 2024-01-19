@@ -43,4 +43,4 @@ The following capabilities are supported by Eggdrop:
  * setname
  * +typing
 
-Copyright (C) 2010 - 2023 Eggheads Development Team
+Copyright (C) 2010 - 2024 Eggheads Development Team
