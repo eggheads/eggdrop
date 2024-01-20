@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,9 +86,7 @@ int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
 int quiet_reject = 1;
-int copy_to_tmp = 1;
 int max_socks = 100;
-int quick_logs = 0;
 int par_telnet_flood = 1;
 int quiet_save = 0;
 int strtot = 0;
@@ -481,7 +479,6 @@ static tcl_ints def_tcl_ints[] = {
   {"max-socks",             &max_socks,            0},
   {"max-logs",              &max_logs,             0},
   {"max-logsize",           &max_logsize,          0},
-  {"quick-logs",            &quick_logs,           0},
   {"raw-log",               &raw_log,              1},
   {"protect-telnet",        &protect_telnet,       0},
   {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
@@ -498,7 +495,6 @@ static tcl_ints def_tcl_ints[] = {
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
   {"userfile-perm",         &userfile_perm,        0},
-  {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
   {"remove-pass",           &remove_pass,          0},
@@ -1043,7 +1039,6 @@ resetPath:
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
-  add_tcl_objcommands(tclmisc_objcmds);
   add_tcl_commands(tcldns_cmds);
 #ifdef TLS
   add_tcl_commands(tcltls_cmds);

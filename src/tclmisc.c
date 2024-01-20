@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,15 +27,10 @@
 #include "tandem.h"
 #include "md5/md5.h"
 
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 #include <sys/stat.h>
@@ -651,9 +646,13 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_callevent STDVAR
 {
-  BADARGS(2, 2, " event");
+  BADARGS(2, 3, " event ?arg?");
 
-  check_tcl_event(argv[1]);
+  if (argc == 2) {
+    check_tcl_event(argv[1]);
+  } else {
+    check_tcl_event_arg(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 
@@ -705,26 +704,29 @@ static int tcl_stripcodes STDVAR
   return TCL_OK;
 }
 
-static int tcl_md5(cd, irp, objc, objv)
-ClientData cd;
-Tcl_Interp *irp;
-int objc;
-Tcl_Obj *CONST objv[];
+static int tcl_md5 STDVAR
 {
-  MD5_CTX md5context;
-  char digest_string[33], *string;
+  char digest_string[33];
   unsigned char digest[16];
-  int i, len;
+  int i;
 
-  if (objc != 2) {
-    Tcl_WrongNumArgs(irp, 1, objv, "string");
-    return TCL_ERROR;
-  }
-  string = Tcl_GetStringFromObj(objv[1], &len);
+  BADARGS(2, 2, " string");
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
+  EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+  const EVP_MD *md = EVP_md5();
+  unsigned int md_len;
+  EVP_DigestInit_ex(mdctx, md, NULL);
+  EVP_DigestUpdate(mdctx, argv[1], strlen(argv[1]));
+  EVP_DigestFinal_ex(mdctx, digest, &md_len);
+  EVP_MD_CTX_free(mdctx);
+#else
+  MD5_CTX md5context;
   MD5_Init(&md5context);
-  MD5_Update(&md5context, (unsigned char *) string, len);
+  MD5_Update(&md5context, (unsigned char *) argv[1], strlen(argv[1]));
   MD5_Final(digest, &md5context);
+#endif
+
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   Tcl_AppendResult(irp, digest_string, NULL);
@@ -763,11 +765,6 @@ static int tcl_matchstr STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
-
-tcl_cmds tclmisc_objcmds[] = {
-  {"md5", tcl_md5},
-  {NULL,     NULL}
-};
 
 static int tcl_status STDVAR
 {
@@ -860,5 +857,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchstr",         tcl_matchstr},
   {"status",             tcl_status},
   {"rfcequal",         tcl_rfcequal},
+  {"md5",                   tcl_md5},
   {NULL,                       NULL}
 };

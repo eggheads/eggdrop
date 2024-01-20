@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Eggdrop, an open source IRC bot &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/eggdrop.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/eggdrop.css?v=ab48a1b6" />
+    <script src="_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="README" href="install/readme.html" /> 
   </head><body>
@@ -42,6 +41,7 @@
 <li class="toctree-l1"><a class="reference internal" href="using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -94,10 +94,10 @@
           <div class="body" role="main">
             
   <section id="eggdrop-an-open-source-irc-bot">
-<h1>Eggdrop, an open source IRC bot<a class="headerlink" href="#eggdrop-an-open-source-irc-bot" title="Permalink to this heading">¶</a></h1>
+<h1>Eggdrop, an open source IRC bot<a class="headerlink" href="#eggdrop-an-open-source-irc-bot" title="Link to this heading">¶</a></h1>
 <p>Eggdrop is a free, open source software program built to assist in managing an IRC channel. It is the world’s oldest actively-maintained IRC bot and was designed to be easily used and expanded on via it’s ability to run Tcl scripts. Eggdrop can join IRC channels and perorm automated tasks such as protecting the channel from abuse, assisting users obtain their op/voice status, provide information and greetings, host games, etc.</p>
 <section id="some-things-you-can-do-with-eggdrop">
-<h2>Some things you can do with Eggdrop<a class="headerlink" href="#some-things-you-can-do-with-eggdrop" title="Permalink to this heading">¶</a></h2>
+<h2>Some things you can do with Eggdrop<a class="headerlink" href="#some-things-you-can-do-with-eggdrop" title="Link to this heading">¶</a></h2>
 <p>Eggdrop has a large number of features, such as:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="using/users.html">Channel Management</a></p></li>
@@ -111,22 +111,22 @@
 </ul>
 </section>
 <section id="how-to-get-eggdrop">
-<h2>How to get Eggdrop<a class="headerlink" href="#how-to-get-eggdrop" title="Permalink to this heading">¶</a></h2>
-<p>The Eggdrop project source code is hosted at <a class="reference external" href="https://github.com/eggheads/egggdrop">https://github.com/eggheads/egggdrop</a>. You can clone it via git, or alternatively a copy of the current stable snapshot is located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. Additional information can be found on the official Eggdrop webpage at <a class="reference external" href="https://www.eggheads.org">https://www.eggheads.org</a>. For more information, see <a class="reference external" href="install/install.html">Installing Eggdrop</a></p>
+<h2>How to get Eggdrop<a class="headerlink" href="#how-to-get-eggdrop" title="Link to this heading">¶</a></h2>
+<p>The Eggdrop project source code is hosted at <a class="reference external" href="https://github.com/eggheads/eggdrop">https://github.com/eggheads/eggdrop</a>. You can clone it via git, or alternatively a copy of the current stable snapshot is located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. Additional information can be found on the official Eggdrop webpage at <a class="reference external" href="https://www.eggheads.org">https://www.eggheads.org</a>. For more information, see <a class="reference external" href="install/install.html">Installing Eggdrop</a></p>
 </section>
 <section id="how-to-install-eggdrop">
-<h2>How to install Eggdrop<a class="headerlink" href="#how-to-install-eggdrop" title="Permalink to this heading">¶</a></h2>
+<h2>How to install Eggdrop<a class="headerlink" href="#how-to-install-eggdrop" title="Link to this heading">¶</a></h2>
 <section id="installation-pre-requisites">
-<h3>Installation Pre-requisites<a class="headerlink" href="#installation-pre-requisites" title="Permalink to this heading">¶</a></h3>
+<h3>Installation Pre-requisites<a class="headerlink" href="#installation-pre-requisites" title="Link to this heading">¶</a></h3>
 <p>Eggdrop requires Tcl (and its development header files) to be present on the system it is compiled on. It is also strongly encouraged to install openssl (and its development header files) to enable TLS-protected network communication.</p>
 </section>
 <section id="installation">
-<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h3>
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h3>
 <p>A guide to quickly installing Eggdrop can be found here.</p>
 </section>
 </section>
 <section id="where-to-find-more-help">
-<h2>Where to find more help<a class="headerlink" href="#where-to-find-more-help" title="Permalink to this heading">¶</a></h2>
+<h2>Where to find more help<a class="headerlink" href="#where-to-find-more-help" title="Link to this heading">¶</a></h2>
 <p>The Eggheads development team can be found lurking on #eggdrop on the Libera network (irc.libera.chat).</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
@@ -175,6 +175,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using/autoscripts.html">Eggdrop Autoscripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="using/autoscripts.html#autoscripts-usage">Autoscripts usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/autoscripts.html#autoscripts-file-structure">Autoscripts File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/autoscripts.html#development-hints">Development hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/autoscripts.html#tcl-commands">Tcl Commands</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/botnet.html">Botnet Sharing and Linking</a><ul>
@@ -332,6 +339,7 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/mod/irc.html">IRC Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/mod/notes.html">Notes Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/mod/pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/mod/python.html">Python Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/mod/seen.html">Seen Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/mod/server.html">Server Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/mod/share.html">Share Module</a></li>
@@ -393,9 +401,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

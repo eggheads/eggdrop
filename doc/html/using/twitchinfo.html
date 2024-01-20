@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Twitch &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Advanced Tips" href="tricks.html" />
     <link rel="prev" title="Encryption/Hashing" href="pbkdf2info.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
@@ -104,7 +104,7 @@
           <div class="body" role="main">
             
   <section id="twitch">
-<h1>Twitch<a class="headerlink" href="#twitch" title="Permalink to this heading">¶</a></h1>
+<h1>Twitch<a class="headerlink" href="#twitch" title="Link to this heading">¶</a></h1>
 <p>This module <em>attempts</em> to provide connectivity with the Twitch gaming platform. While Twitch provides an IRC gateway to connect with it’s streaming service, it does not claim to (and certainly does not) follow the IRC RFC in any meaningful way. The intent of this module is not to provide the full spectrum of management functions typically associated with Eggdrop; instead it focuses around the following key functions:</p>
 <ul class="simple">
 <li><p>Logging of general and Twitch-specific events (raids, blocks, bit donations)</p></li>
@@ -112,18 +112,18 @@
 <li><p>Adding Tcl event binds for a number of Twitch events</p></li>
 </ul>
 <section id="disclaimer">
-<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this heading">¶</a></h2>
+<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Link to this heading">¶</a></h2>
 <p>We should also make clear that Eggdrop is in no way affiliated with Twitch in any way, and Twitch fully controls their own platform, to include the IRC gateway. This was just a fun project implemented at the request of some users to interact with the Twitch IRC development gateway as it existed at the time of development. At any time, Twitch could choose to alter or discontinue their IRC connectivity, thereby rendering this Eggdrop module useless. Eggdrop developers are also unable to offer technical support for Twitch-specific issues encountered while using this module.</p>
 </section>
 <section id="registering-with-twitch">
-<h2>Registering with Twitch<a class="headerlink" href="#registering-with-twitch" title="Permalink to this heading">¶</a></h2>
+<h2>Registering with Twitch<a class="headerlink" href="#registering-with-twitch" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p>Register an account with Twitch. At the time of writing, this is done by visiting <a class="reference external" href="http://twitch.tv/">Twitch</a> and clicking on the Sign Up button.</p></li>
 <li><p>Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the <a class="reference external" href="https://twitchapps.com/tmi/">Twitch OAuth generator</a> while logged in to the account you just created. The token will be an alphanumeric string and should be treated like a password (…because it is). Make note of it, and keep it safe!</p></li>
 </ol>
 </section>
 <section id="editing-the-config-file">
-<h2>Editing the config file<a class="headerlink" href="#editing-the-config-file" title="Permalink to this heading">¶</a></h2>
+<h2>Editing the config file<a class="headerlink" href="#editing-the-config-file" title="Link to this heading">¶</a></h2>
 <ol class="arabic">
 <li><p>Find the options to add a server in the server section of the config file. Remove the sample servers listed and add the following line in their place, replacing the alphanumeric string after ‘oauth:’ with the token you created when registering with Twitch in the previous section. Pretending your Twitch token from the previous step is ‘j9irk4vs28b0obz9easys4w2ystji3u’, it should look like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="n">add</span> <span class="n">irc</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">twitch</span><span class="o">.</span><span class="n">tv</span> <span class="mi">6667</span> <span class="n">oauth</span><span class="p">:</span><span class="n">j9irk4vs28b0obz9easys4w2ystji3u</span>
@@ -143,11 +143,11 @@
 </ol>
 </section>
 <section id="twitch-web-ui-functions">
-<h2>Twitch web UI functions<a class="headerlink" href="#twitch-web-ui-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Twitch web UI functions<a class="headerlink" href="#twitch-web-ui-functions" title="Link to this heading">¶</a></h2>
 <p>Twitch is normally accessed via a web UI, and uses commands prefixed with a . or a / to interact with the channel. The Twitch module adds the partyline command <code class="docutils literal notranslate"><span class="pre">twcmd</span></code> to replicate those Twitch-specific commands. For example, to grant VIP status to a user via Tcl, you would use the command <code class="docutils literal notranslate"><span class="pre">.twcmd</span> <span class="pre">vip</span> <span class="pre">username</span></code>. or to restrict chat to subscribers, you would use <code class="docutils literal notranslate"><span class="pre">.twcmd</span> <span class="pre">subscribers</span></code> (Note: no . or / is needed as a prefix to the Twitch command). In other words, <code class="docutils literal notranslate"><span class="pre">.twcmd</span></code> in Tcl is the interface to the standard Twitch set of commands available through the web UI (Also available as a Tcl command).</p>
 </section>
 <section id="twitch-irc-limitations">
-<h2>Twitch IRC limitations<a class="headerlink" href="#twitch-irc-limitations" title="Permalink to this heading">¶</a></h2>
+<h2>Twitch IRC limitations<a class="headerlink" href="#twitch-irc-limitations" title="Link to this heading">¶</a></h2>
 <p>There are a few things you should know about how Twitch provides service through the IRC gateway that affects how well Eggdrop can function:</p>
 <ul class="simple">
 <li><p>Twitch does not broadcast JOINs or PARTs for channels over 1,000 users. This renders tracking users on a channel unreliable.</p></li>
@@ -185,9 +185,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

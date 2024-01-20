@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -126,6 +126,7 @@ int check_int_range(char *value, int min, int max);
 int stripmodes(char *);
 char *stripmasktype(int);
 char *check_validpass(struct userrec *, char *);
+void cmd_die(struct userrec *, int, char *);
 
 /* dcc.c */
 void failed_link(int);
@@ -187,10 +188,9 @@ int exist_lang_section(char *);
 /* main.c */
 void fatal(const char *, int);
 int expected_memory(void);
-void eggContext(const char *, int, const char *);
-void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
+int expmem_modules(int);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
@@ -228,7 +228,6 @@ void debug_mem_to_dcc(int);
 int egg_strcatn(char *, const char *, size_t);
 int my_strcpy(char *, char *);
 void putlog(int type, char *chname, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
-void flushlogs(void);
 void check_logsize(void);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);

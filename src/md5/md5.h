@@ -28,7 +28,7 @@
 
 #include "src/main.h"
 
-#ifdef HAVE_OPENSSL_MD5
+#if (OPENSSL_VERSION_NUMBER < 0x30000000L) && defined(HAVE_OPENSSL_MD5)
 #  include <openssl/md5.h>
 #else
 
