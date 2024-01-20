@@ -2242,11 +2242,13 @@ static Function server_table[] = {
   (Function) & account_notify,  /* int                                  */
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
   (Function) & isupport_get,    /*                                      */
-  /* 48 - 52 */
+  /* 48 - 51 */
   (Function) & isupport_parseint,/*                                     */
   (Function) NULL,               /* was check_tcl_account, now irc.mod  */
   (Function) & find_capability,
-  (Function) encode_msgtags
+  (Function) encode_msgtags,
+  /* 52 - 55 */
+  (Function) isupport_get_prefixchars
 };
 
 char *server_start(Function *global_funcs)

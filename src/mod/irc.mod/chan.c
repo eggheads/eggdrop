@@ -1336,7 +1336,7 @@ static int got354(char *from, char *msg)
 }
 
 /* got 353: NAMES
- * <server> 353 <chan> :[+/@]nick [+/@]nick ....
+ * <server> 353 <client> <symbol> <chan> :[+/@]nick [+/@]nick ....
  *
  * if userhost-in-names is enabled, nick is nick@userhost.com
  * this function is added solely to handle userhost-in-names stuff, and will
@@ -1344,15 +1344,18 @@ static int got354(char *from, char *msg)
  */
 static int got353(char *from, char *msg)
 {
+  char prefixchars[64];
   char *nameptr, *chname, *uhost, *nick, *p, *host;
   struct chanset_t *chan;
   int i;
 
   if (find_capability("userhost-in-names")) {
+    strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
     newsplit(&msg);
-    newsplit(&msg); /* Get rid of =/@ prefix */
+    newsplit(&msg); /* Get rid of =, @, or * symbol */
     chname = newsplit(&msg);
     nameptr = newsplit(&msg);
+    fixcolon(nameptr);
     while ((uhost = newsplit(&nameptr))) {
       if (!strcmp(uhost, "")) {
         break;
@@ -1360,8 +1363,8 @@ static int got353(char *from, char *msg)
       fixcolon(uhost);
       nick = splitnick(&uhost);
       /* Strip @, +, etc chars prefixed to nicks in NAMES */
-      for (i = 0; opchars[i]; i++) {
-        if(nick[0] == opchars[i]) {
+      for (i = 0; prefixchars[i]; i++) {
+        if(nick[0] == prefixchars[i]) {
           nick=nick+1;
         }
       }
@@ -1375,6 +1378,7 @@ static int got353(char *from, char *msg)
       }
       chan = findchan(chname);      /* See if I'm on channel */
       if (chan && uhost && host) {
+        /* Pretend we got a WHO and pass the info we got from NAMES */
         got352or4(chan, uhost, host, nick, "", NULL);
       }
     }

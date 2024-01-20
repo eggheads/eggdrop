@@ -509,3 +509,15 @@ void isupport_report(int idx, const char *prefix, int details)
   }
 }
 
+static const char *isupport_get_prefixchars(void)
+{
+  const char *str = isupport_get("PREFIX", strlen("PREFIX"));
+
+  if (str) {
+    str = strchr(str, ')');
+    if (str && str[1]) {
+      return str + 1;
+    }
+  }
+  return "+%@&~";
+}
