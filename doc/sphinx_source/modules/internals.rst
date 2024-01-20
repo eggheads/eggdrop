@@ -9,10 +9,19 @@ It already exists and is suitable to illustrate the details of bind handling in 
 
 Note: All code snippets are altered for brevity and simplicity, see original source code for the full and current versions.
 
-Bind Table Creation
--------------------
+General Workflow To Create a New Bind
+-------------------------------------
 
-The bind table is added by calling, either at module initialization or startup::
+To create a new type of bind, there are generally three steps. First, you must add the new bind type to the `Bind Table`_. Once you have registered the bind type with the bind table, you must create a `C Function`_ that will be called to perform the functionality you wish to occur when the bind is triggered. Finally, once the C code supporting the new bind has been finished, the new `Tcl Binding`_ is ready to be used in a Tcl script.
+
+.. _Bind Table:
+
+Adding a New Bind Type to the Bind Table
+----------------------------------------
+
+The bind is added to the bind table is by calling, either at module initialization or startup
+
+.. code-block:: C
 
   /* Global symbol, available to other C files with
    * extern p_tcl_bind_list H_dcc;
@@ -31,40 +40,28 @@ What the :code:`C handler` does is explained later, because a lot happens before
 
 :code:`H_dcc` can be exported from core and imported into modules as any other variable or function. That should be explained in a separate document.
 
-Stackable Binds: HT_STACKABLE
------------------------------
+.. _HT_STACKABLE:
 
-:code:`HT_STACKABLE` means that multiple binds can exist for the same mask.
-::
+Stackable Binds: HT_STACKABLE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:code:`HT_STACKABLE` means that multiple binds can exist for the same mask. An example of what happens when NOT using this flag shown in the code block below.
+
+.. code-block:: Tcl
 
   bind dcc - test proc1; # not stackable
   bind dcc - test proc2; # overwrites the first one, only proc2 will be called
 
-It does not automatically call multiple binds that match, see later in the `Triggering any Bind`_ section for details.
+To enable this feature, you must set the second argument to ``add_bind_table()`` with ``HT_STACKABLE``. Using ``HT_STACKABLE`` does not automatically call all the binds that match, see the bind flags listed in `Triggering any Bind`_ section for details on the partner flags ``BIND_STACKABLE`` and ``BIND_WANTRET`` used in ``check_tcl_bind()``.
 
-Tcl Binding
------------
+.. _C Function:
 
-After the bind table is created with :code:`add_bind_table`, Tcl procs can already be registered to this bind by calling::
+Adding Bind Functionality
+-------------------------
 
-  bind dcc -|- test myproc
-  proc myproc {args} {
-    putlog "myproc was called, argument list: '[join $args ',']'"
-    return 0
-  }
+A C function must created that will be called when the bind is triggered. Importantly, the function is designed to accept specific arguments passed by Tcl.
 
-Of course it is not clear so far:
-
-* If flags :code:`-|-` matter for this bind at all and what they are checked against
-* If channel flags have a meaning or global/bot only
-* What :code:`test` is matched against to see if the bind should trigger
-* Which arguments :code:`myproc` receives, the example just accepts all arguments
-
-Triggering the Bind
--------------------
-
-To trigger the bind and call it with the desired arguments, a function is created.
-::
+.. code-block:: C
 
   int check_tcl_dcc(const char *cmd, int idx, const char *args) {
     struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -92,10 +89,34 @@ This shows which arguments the callbacks in Tcl get:
 
 The call to :code:`check_tcl_dcc` can be found in the DCC parsing in `src/dcc.c`.
 
+Using the Bind in Tcl
+---------------------
+
+After the bind table is created with :code:`add_bind_table`, Tcl procs can already be registered to this bind by calling
+
+.. code-block:: Tcl
+
+  bind dcc -|- test myproc
+  proc myproc {args} {
+    putlog "myproc was called, argument list: '[join $args ',']'"
+    return 0
+  }
+
+Of course it is not clear so far:
+
+* If flags :code:`-|-` matter for this bind at all and what they are checked against
+* If channel flags have a meaning or global/bot only
+* What :code:`test` is matched against to see if the bind should trigger
+* Which arguments :code:`myproc` receives, the example just accepts all arguments
+
+.. _triggering_any_bind:
+
 Triggering any Bind
 -------------------
 
-`check_tcl_bind` is used by all binds and does the following::
+`check_tcl_bind` is used by all binds and does the following
+
+.. code-block:: C
 
   /* Generic function to call one/all matching binds
    * @param[in] tcl_bind_list_t *tl      Bind table (e.g. H_dcc)
@@ -125,15 +146,54 @@ Triggering any Bind
     return x;
   }
 
-The supplied flags to :code:`check_tcl_bind` in `check_tcl_dcc` are what defines how matching is performed.
+Bind Flags
+^^^^^^^^^^
 
-In the case of a DCC bind we had:
+The last argument to :code:`check_tcl_bind` in `check_tcl_dcc` sets additional configurations for the bind. These are the allowed defined values:
 
-* Matchtype :code:`MATCH_PARTIAL`: Prefix-Matching if the command can be uniquely identified (e.g. dcc .help calls .help)
-* Additional flag :code:`BIND_USE_ATTR`: Flags are checked
-* Additional flag :code:`BIND_HAS_BUILTINS`: Something with flag matching, unsure
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| **Value**         | **Description**                                                                                                               |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| MATCH_PARTIAL     | Check the triggering value against the beginning of the bind mask, ie DIR triggers a mask for DIRECTORY (case insensitive)    |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| MATCH_EXACT       | Check the triggering value exactly against the bind mask value (case insensitive)                                             |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| MATCH_CASE        | Check the triggering value exactly against the bind mask value (case sensitive)                                               |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| MATCH_MASK        | Check if the bind mask is matched against the triggering value as a wildcarded value                                          |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| MATCH_MODE        | Check if the triggering value matches the bind mask as a wildcarded value                                                     |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| MATCH_CRON        | Check the triggering value against a bind mask formatted as a cron entry, ie "30 7 6 7 5 " triggers a mask for "30 7 * * * "  |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| BIND_USE_ATTR     | Check the flags of the user match the flags required to trigger the bind                                                      |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| BIND_STACKABLE    | Allow one mask to be re-used to call multiple Tcl proc. Must be used with HT_STACKABLE_                                       |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| BIND_WANTRET      | With stacked binds, if the called Tcl proc called returns a '1', halt processing any further binds triggered by the action    |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
+| BIND_STACKRET     | Used with BIND_WANTRET; allow stacked binds to continue despite receiving a '1'                                               |
++-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 
-For details on the available match types (wildcard matching, exact matching, etc.) see :code:`src/tclegg.h`. Additional flags are also described there as well as the return codes of :code:`check_tcl_bind` (e.g. :code:`BIND_NOMATCH`).
+Bind Return Values
+^^^^^^^^^^^^^^^^^^
+The value returned by the bind is often matched against a desired value to return a '1' (often used with BIND_WANTRET and BIND_STACKRET) to the calling function.
+
++----------------+--------------------------------------------------------------------------------------------------------------+
+| **Value**      | **Description**                                                                                              |
++----------------+--------------------------------------------------------------------------------------------------------------+
+| BIND_NOMATCH   | The bind was not triggered due to not meeting the criteria set for the bind                                  |
++----------------+--------------------------------------------------------------------------------------------------------------+
+| BIND_AMBIGUOUS | The triggering action matched multiple non-stackable binds                                                   |
++----------------+--------------------------------------------------------------------------------------------------------------+
+| BIND_MATCHED   | The bind criteria was met, but the Tcl proc it tried to call could not be found                              |
++----------------+--------------------------------------------------------------------------------------------------------------+
+| BIND_EXECUTED  | The bind criteria was met and the Tcl proc was called                                                        |
++----------------+--------------------------------------------------------------------------------------------------------------+
+| BIND_EXEC_LOG  | The bind criteria was met, the Tcl proc was called, and Eggdrop logged the bind being called                 |
++----------------+--------------------------------------------------------------------------------------------------------------+
+| BIND_QUIT      | The bind was triggered in conjunction with the target leaving the partyline or filesys area (?)              |
++----------------+--------------------------------------------------------------------------------------------------------------+
 
 Note: For a bind type to be stackable it needs to be registered with :code:`HT_STACKABLE` AND :code:`check_tcl_bind` must be called with :code:`BIND_STACKABLE`.
 
@@ -141,7 +201,8 @@ C Binding
 ---------
 
 To create a C function that is called by the bind, Eggdrop provides the :code:`add_builtins` function.
-::
+
+.. code-block:: C
 
   /* Add a list of C function callbacks to a bind
    * @param[in] tcl_bind_list_t *  the bind type (e.g. H_dcc)
@@ -178,7 +239,9 @@ Now we can actually look at the C function handler for dcc as an example and wha
 C Handler
 ---------
 
-The example handler for DCC looks as follows::
+The example handler for DCC looks as follows
+
+.. code-block:: C
 
   /* Typical Tcl_Command arguments, just like e.g. tcl_putdcc is a Tcl/C command for [putdcc] */
   static int builtin_dcc (ClientData cd, Tcl_Interp *irp, int argc, char *argv[]) {
@@ -209,13 +272,15 @@ The example handler for DCC looks as follows::
 
 This is finally the part where we see the arguments a C function gets for a DCC bind as opposed to a Tcl proc.
 
-code:`F(dcc[idx].user, idx, argv[3])`:
+:code:`F(dcc[idx].user, idx, argv[3])`:
 
 * User information as struct userrec *
 * IDX as int
 * The 3rd string argument from the Tcl call to \*dcc:cmd_boot, which was :code:`$_dcc3` which was :code:`args` to :code:`check_tcl_dcc` which was everything after the dcc command
 
-So this is how we register C callbacks for binds with the correct arguments::
+So this is how we register C callbacks for binds with the correct arguments
+
+.. code-block:: C
 
   /* We know the return value is ignored because the return value of F
    * in builtin_dcc is ignored, so it can be void, but for other binds
