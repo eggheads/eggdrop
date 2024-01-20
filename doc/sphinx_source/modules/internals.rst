@@ -162,7 +162,8 @@ The last argument to :code:`check_tcl_bind` in `check_tcl_dcc` sets additional c
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | MATCH_MASK        | Check if the bind mask is matched against the triggering value as a wildcarded value                                          |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| MATCH_MODE        | Check if the triggering value matches the bind mask as a wildcarded value                                                     |
+| MATCH_MODE        | Special mode for `bind mode` similar to `MATCH_MASK`. This uses case-insensitive matching before the first space in the mask, |
+|                   | (the channel), and then case sensitive after the first space (the modes)                                                      |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | MATCH_CRON        | Check the triggering value against a bind mask formatted as a cron entry, ie "30 7 6 7 5 " triggers a mask for "30 7 * * * "  |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
@@ -192,7 +193,8 @@ The value returned by the bind is often matched against a desired value to retur
 +----------------+--------------------------------------------------------------------------------------------------------------+
 | BIND_EXEC_LOG  | The bind criteria was met, the Tcl proc was called, and Eggdrop logged the bind being called                 |
 +----------------+--------------------------------------------------------------------------------------------------------------+
-| BIND_QUIT      | The bind was triggered in conjunction with the target leaving the partyline or filesys area (?)              |
+| BIND_QUIT      | Sentinel value to signal that quit was triggered by the target leaving the partyline or filesys area.        |
+|                | (Virtual bind to CMD_LEAVE)                                                                                  |
 +----------------+--------------------------------------------------------------------------------------------------------------+
 
 Note: For a bind type to be stackable it needs to be registered with :code:`HT_STACKABLE` AND :code:`check_tcl_bind` must be called with :code:`BIND_STACKABLE`.
