@@ -1293,7 +1293,7 @@ static int got353(char *from, char *msg)
         host = p+1;
       }
       chan = findchan(chname);      /* See if I'm on channel */
-      if (chan && uhost && host) {
+      if (chan && host) {
         /* Pretend we got a WHO and pass the info we got from NAMES */
         got352or4(chan, uhost, host, nick, "", NULL);
       }
