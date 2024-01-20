@@ -99,7 +99,8 @@
 #define find_capability ((struct capability *(*)(char *))(server_funcs[50]))
 #define encode_msgtags ((char *(*)(Tcl_Obj *))(server_funcs[51]))
 /* 52 - 55 */
-#define isupport_get_prefixchars ((const char *(*)(void))server_funcs[52])
+#define H_monitor (*(p_tcl_bind_list *)(server_funcs[52]))
+#define isupport_get_prefixchars ((const char *(*)(void))server_funcs[53])
 
 
 #endif /* MAKING_SERVER */
