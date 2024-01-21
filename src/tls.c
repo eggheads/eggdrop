@@ -740,7 +740,6 @@ static void ssl_info(const SSL *ssl, int where, int ret)
 #endif
   SSL_CIPHER *cipher;
   int secret, processed, i;
-  EVP_PKEY *key;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
     return;
@@ -783,11 +782,14 @@ static void ssl_info(const SSL *ssl, int where, int ret)
       buf[i - 1] = 0;
     debug1("TLS: cipher details: %s", buf);
 
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+    EVP_PKEY *key;
     if (SSL_get_server_tmp_key((SSL *) ssl, &key)) {
       putlog(LOG_DEBUG, "*", "TLS: diffie–hellman ephemeral key used: %s, bits %d",
              OBJ_nid2sn(EVP_PKEY_id(key)), EVP_PKEY_bits(key));
       EVP_PKEY_free(key);
     }
+#endif
   } else if (where & SSL_CB_ALERT) {
     if (strcmp(SSL_alert_type_string(ret), "W") ||
         strcmp(SSL_alert_desc_string(ret), "CN")) {
