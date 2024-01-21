@@ -80,15 +80,18 @@ which will enforce the s, n, and t flags on a channel.
 Automatically restarting an Eggdrop
 -----------------------------------
 
-A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? To do that, we use the system's crontab daemon to run a script (called botchk) every ten minutes that checks if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. To make this process as simple as possible, we have included a script that can automatically configure your crontab and botchk scripts for you. To set up your crontab/botchk combo:
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it. 
+
+Crontab Method (Old)
+^^^^^^^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
-2. Just humor us- run ``./scripts/autobotchk`` without any arguments and read the options available to you. They're listed there for a reason!
+2. Just humor us- run ``./scripts/autobotchk`` without any arguments and read the options available to you. They're listed there for a reason! 
 
-3. If you don't want to customize anything via the options listed in #2, you can start the script simply by running::
+3. If you don't want to customize anything via the options listed in #2, you can install a crontab job to start Eggdrop simply by running::
 
-    ./scripts/autobotchk yourEggdropConfigNameHere.conf
+    ./scripts/autobotchk yourEggdropConfigNameHere.conf 
 
 4. Review the output of the script, and verify your new crontab entry by typing::
 
@@ -99,6 +102,37 @@ By default, it should create an entry that looks similar to::
     0,10,20,30,40,50 * * * * /home/user/bot/scripts/YourEggdrop.botchk 2>&1
 
 This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
+
+Systemd Method (Newer Systems)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
+
+2. Install the systemd job for Eggdrop simply by running::
+
+    ./scripts/autobotchk yourEggdropConfigNameHere.conf -systemd
+
+3. Note the output at the end of the script informing you of the command you can use to start/stop the Eggdrop in thee future. For example, to manually start the Eggdrop, use::
+
+    systemctl --user start <botname>.service
+
+To stop Eggdrop, use::
+
+    systemctl --user stop <botname>.service
+
+To rehash (not reload) Eggdrop, use::
+
+    systemctl --user reload <botname>.service
+
+(Yes, we acknowledge the confusion that the systemd reload command will execute the Eggdrop '.rehash' command, not the '.reload' command. Unfortunately, systemd did not consult us when choosing its commands!)
+
+To prevent Eggdrop from automatically running after a system start, use::
+
+    systemctl --user disable <botname>.service 
+
+To re-enable Eggdrop automatically starting after a system start, use::
+
+    systemctl --user enable <botname>.service
 
 Authenticating with NickServ
 ----------------------------

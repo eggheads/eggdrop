@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -591,7 +591,7 @@ void write_userfile(int idx)
   strlcpy(s1, ctime(&tt), sizeof s1);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
-  /* Add all users except the -tn user */
+  /* Add all users except the -t user */
   for (u = userlist; u && ok; u = u->next)
     if (strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
       ok = 0;
@@ -622,7 +622,7 @@ int change_handle(struct userrec *u, char *newh)
 
   if (!u)
     return 0;
-  /* Don't allow the -tn handle to be changed */
+  /* Don't allow the -t handle to be changed */
   if (!strcasecmp(u->handle, EGG_BG_HANDLE))
     return 0;
   /* Nothing that will confuse the userfile */
@@ -656,7 +656,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   struct userrec *u, *x;
   struct xtra_key *xk;
   int oldshare = noshare;
-  long tv;
+  time_t tv;
 
   noshare = 1;
   u = nmalloc(sizeof *u);
@@ -680,9 +680,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
     tv = now;
-    l = snprintf(NULL, 0, "%li", tv);
+    l = snprintf(NULL, 0, "%" PRId64, (int64_t) tv);
     xk->data = nmalloc(l + 1);
-    sprintf(xk->data, "%li", tv);
+    sprintf(xk->data, "%" PRId64, (int64_t) tv);
     set_user(&USERENTRY_XTRA, u, xk);
   }
   /* Strip out commas -- they're illegal */
@@ -794,7 +794,7 @@ int deluser(char *handle)
   return 1;
 }
 
-int del_host_or_account(char *handle, char *host, int type)
+static int del_host_or_account(char *handle, char *host, int type)
 {
   struct userrec *u;
   struct list_type *q, *qnext, *qprev;
@@ -866,7 +866,7 @@ int delaccount_by_handle(char *handle, char *acct)
 }
 
 
-void add_host_or_account(char *handle, char *arg, int type)
+static void add_host_or_account(char *handle, char *arg, int type)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
 

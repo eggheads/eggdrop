@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,8 +43,7 @@ extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
             motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
-extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-            quick_logs;
+extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
 extern Tcl_Interp *interp;
@@ -232,11 +231,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   if (first != NULL)
     strlcpy(first, rest, max);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 char *splitnick(char **blah)
@@ -518,7 +513,7 @@ void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
   int i, tsl = 0;
-  char s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -582,10 +577,11 @@ void putlog (int type, char *chname, const char *format, ...)
         if (logs[i].f == NULL) {
           /* Open this logfile */
           if (keep_all_logs) {
-            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a");
-          } else
-            logs[i].f = fopen(logs[i].filename, "a");
+            snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
+            if ((logs[i].f = fopen(path, "a")))
+              setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
+          } else if ((logs[i].f = fopen(logs[i].filename, "a")))
+            setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
@@ -618,7 +614,8 @@ void putlog (int type, char *chname, const char *format, ...)
     }
   }
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
+    if (((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) ||
+        ((dcc[i].type == &DCC_PRE_RELAY) && (dcc[i].u.relay->chat->con_flags & type))) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
           !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
         dprintf(i, "%s", out);
@@ -656,7 +653,6 @@ void logsuffix_change(char *s)
   }
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f) {
-      fflush(logs[i].f);
       fclose(logs[i].f);
       logs[i].f = NULL;
     }
@@ -681,7 +677,6 @@ void check_logsize()
           if (logs[i].f) {
             /* write to the log before closing it huh.. */
             putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
-            fflush(logs[i].f);
             fclose(logs[i].f);
             logs[i].f = NULL;
           }
@@ -695,39 +690,6 @@ void check_logsize()
     }
   }
 }
-
-/* Flush the logfiles to disk
- */
-void flushlogs()
-{
-  int i;
-
-  /* Logs may not be initialised yet. */
-  if (!logs)
-    return;
-
-  /* Now also checks to see if there's a repeat message and
-   * displays the 'last message repeated...' stuff too <cybah>
-   */
-  for (i = 0; i < max_logs; i++) {
-    if (logs[i].f != NULL) {
-      if ((logs[i].repeats > 0) && quick_logs) {
-        /* Repeat.. if quicklogs used then display 'last message
-         * repeated x times' and reset repeats.
-         */
-        char stamp[33];
-
-        strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
-        fprintf(logs[i].f, "%s ", stamp);
-        fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-        /* Reset repeats */
-        logs[i].repeats = 0;
-      }
-      fflush(logs[i].f);
-    }
-  }
-}
-
 
 /*
  *     String substitution functions

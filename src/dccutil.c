@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total, dcc_flood_thr, backgrd, copy_to_tmp, max_socks;
+extern int dcc_total, dcc_flood_thr, backgrd, max_socks;
 extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
@@ -318,7 +318,7 @@ void killtransfer(int n)
       fclose(dcc[n].u.xfer->f);
       dcc[n].u.xfer->f = NULL;
     }
-    if (dcc[n].u.xfer->filename && copy_to_tmp) {
+    if (dcc[n].u.xfer->filename) {
       for (i = 0; i < dcc_total; i++) {
         if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) &&
             (dcc[i].u.xfer->filename) &&

@@ -1,4 +1,4 @@
-Last revised: October 25, 2010
+Last revised: August 29, 2023
 
 =====================
 Eggdrop Core Settings
@@ -107,13 +107,6 @@ the logfile of the next day.
     reaches the size of 550 kilobytes. Note that this only works if you
     have keep-all-logs set to 0 (OFF).
 
-  set quick-logs 0
-    This could be good if you have had a problem with logfiles filling
-    your quota/hard disk or if you log +p and publish it to the web, and
-    you need more up-to-date info. Note that this setting might increase
-    the CPU usage of your bot (on the other hand it will decrease your RAM
-    usage).
-
   set raw-log 0
     This setting allows you the logging of raw incoming server traffic via
     console/log flag 'r', raw outgoing server traffic via console/log mode
@@ -193,7 +186,7 @@ logfile <logflags> <channel> "logs/logfile"
   set timestamp-format "[%H:%M:%S]"
     Set the following to the timestamp for the logfile entries. Popular times
     might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec).
-    Read 'man strftime' for more formatting options.  Keep it below 32 chars.
+    Read 'man strftime' for more formatting options. Keep it below 32 chars.
 
   set keep-all-logs 0
     If you want to keep your logfiles forever, turn this setting on. All
@@ -218,8 +211,7 @@ logfile <logflags> <channel> "logs/logfile"
     If keep-all-logs is 1, this setting will define the suffix of the
     logfiles. The default will result in a suffix like "04May2000". "%Y%m%d"
     will produce the often used yyyymmdd format. Read the strftime manpages
-    for more options. NOTE: On systems which don't support strftime, the
-    default format will always be used.
+    for more options.
 
 Console Settings
 ----------------
@@ -618,7 +610,7 @@ Four examples:
   Limbo Bot:
     A limbo bot (serves as a botnet hub outside IRC) just needs the
     channels, console, dns, and maybe notes or share modules loaded. Of
-    course, blowfish needs to be loaded here, too.
+    course, an encryption module needs to be loaded here, too.
 
 Scripts
 -------
@@ -639,4 +631,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2024 Eggheads Development Team

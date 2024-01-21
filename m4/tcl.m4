@@ -5,7 +5,7 @@
 #
 # Copyright (c) 1999-2000 Ajuba Solutions.
 # Copyright (c) 2002-2005 ActiveState Corporation.
-# Copyright (c) 2017 - 2022 Eggheads Development Team
+# Copyright (c) 2017 - 2024 Eggheads Development Team
 #
 # Original Tcl/TEA license.terms information for this file:
 # This software is copyrighted by the Regents of the University of
@@ -49,7 +49,7 @@
 # permission to use and distribute the software in accordance with the
 # terms specified in this license.
 
-AC_PREREQ(2.57)
+AC_PREREQ([2.71])
 
 dnl TEA extensions pass us the version of TEA they think they
 dnl are compatible with (must be set in TEA_INIT below)
@@ -98,8 +98,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	# we reset no_tcl in case something fails here
 	no_tcl=true
 	AC_ARG_WITH(tcl,
-	    AC_HELP_STRING([--with-tcl],
-		[directory containing tcl configuration (tclConfig.sh)]),
+	    AS_HELP_STRING([--with-tcl],[directory containing tcl configuration (tclConfig.sh)]),
 	    with_tclconfig="${withval}")
 	AC_MSG_CHECKING([for Tcl configuration])
 	AC_CACHE_VAL(ac_cv_c_tclconfig,[
@@ -279,7 +278,7 @@ TEA version not specified.])
     fi
 
     # If the user did not set CFLAGS, set it now to keep macros
-    # like AC_PROG_CC and AC_TRY_COMPILE from adding "-g -O2".
+    # like AC_PROG_CC and AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) from adding "-g -O2".
     if test "${CFLAGS+set}" != "set" ; then
 	CFLAGS=""
     fi
@@ -429,17 +428,17 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 
     AC_MSG_CHECKING([platform])
     hold_cc=$CC; CC="$TCL_CC"
-    AC_TRY_COMPILE(,[
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 	    #ifdef _WIN32
 		#error win32
 	    #endif
-	], [
+	]])],[
 	    TEA_PLATFORM="unix"
 	    CYGPATH=echo
-	], [
+	],[
 	    TEA_PLATFORM="windows"
-	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)	]
-    )
+	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)	
+    ])
     CC=$hold_cc
     AC_MSG_RESULT($TEA_PLATFORM)
 

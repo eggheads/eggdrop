@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,12 +30,8 @@
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
-static int monitor005 = 0;
-static int max_monitor = 0;
-static int monitor732 = 0;
 static time_t last_invtime = (time_t) 0L;
 static char last_invchan[CHANNELLEN + 1] = "";
-static struct monitor_list *monitor = NULL;
 static char botflag005;
 
 static int got315(char *from, char *msg);
@@ -81,122 +77,6 @@ static void sync_members(struct chanset_t *chan)
   }
 }
 
-/* Add nickname to monitor list *
- * Returns 0 on success
- * Returns 1 if duplicate nick found
- * Returns 2 if maximum number of nicks to be monitored reached
- */
-static int monitor_add(char * nick, int send) {
-  struct monitor_list *entry = nmalloc(sizeof(struct monitor_list));
-  struct monitor_list *current = monitor;
-  int count = 0;
-
-  memset(entry, 0, sizeof *entry);
-
-  /* Check for duplicates before adding */
-  while (current != NULL) {
-    count++;
-    if (!rfc_casecmp(current->nick, nick)) {
-      return 1;
-    }
-    current=current->next;
-  }
-  if (count >= max_monitor) {
-    return 2;
-  }
-  strlcpy(entry->nick, nick, NICKLEN);
-  entry->next = monitor;
-  monitor = entry;
-  if (send) {
-    dprintf(DP_SERVER, "MONITOR + %s\n", nick);
-  }
-
-  return 0;
-}
-
-/* Remove nickname from monitor list */
-static int monitor_del (char *nick) {
-  struct monitor_list *current = monitor;
-  struct monitor_list *previous = NULL;
-
-  if (monitor == NULL) {
-    return 1;
-  }
-  while (rfc_casecmp(current->nick, nick)) {
-    if (current->next == NULL) {
-      return 1;
-    } else {
-      previous = current;
-      current = current->next;
-    }
-  }
-  if (current == monitor) {
-    monitor = monitor->next;
-  } else {
-    previous->next = current->next;
-  }
-  dprintf(DP_SERVER, "MONITOR - %s\n", nick);
-  return 0;
-}
-
-/* Show nicknames being monitored with MONITOR.
- * Mode can be 0 (all nicks), 1 (online nicks), 2 (offline nicks)
- * 3 (check status of nick)
- */
-static int monitor_show(Tcl_Obj *mlist, int mode, char *nick) {
-  struct monitor_list *current = monitor;
-  int found = 0;
-
-  if (current == NULL) {
-    return 0;
-  }
-
-  while (current != NULL) {
-    if (!mode) {
-      Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
-    } else if (mode == 1) {
-      if (current->online) {
-        Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
-      }
-    } else if (mode == 2) {
-      if (!current->online) {
-        Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj(current->nick, -1));
-      }
-    } else if (mode == 3) {
-      if(!rfc_casecmp(current->nick, nick)) {
-        found = 1;
-        if (current->online) {
-          Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("1", 1));
-        } else {
-          Tcl_ListObjAppendElement(interp, mlist, Tcl_NewStringObj("0", 1));
-        }
-      }
-    }
-    current = current->next;
-  }
-  if ((!found) && (mode == 3)) {
-    return 1;
-  }
-  return 0;
-}
-
-static void monitor_clear()
-{
-  struct monitor_list *current = monitor;
-  struct monitor_list *next = NULL;
-
-  monitor = NULL;
-  dprintf(DP_SERVER, "MONITOR C");
-  /* Clear local linked list */
-  while (current != NULL) {
-    next = current->next;
-    nfree(current);
-    current = next;
-  }
-
-  return;
-}
-
 /* Always pass the channel dname (display name) to this function <cybah>
  */
 static void update_idle(char *chname, char *nick)
@@ -209,6 +89,32 @@ static void update_idle(char *chname, char *nick)
     m = ismember(chan, nick);
     if (m)
       m->last = now;
+  }
+}
+
+/* set user account on all members on all channels,
+ * trigger account bind if account state was not "unknown" (empty string)
+ */
+static void setaccount(char *nick, char *account)
+{
+  memberlist *m;
+  struct chanset_t *chan;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    if ((m = ismember(chan, nick))) {
+      if (rfc_casecmp(m->account, account)) {
+        /* account was known */
+        if (m->account[0]) {
+          if (!strcmp(account, "*")) {
+            putlog(LOG_MODES, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
+          } else {
+            putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
+          }
+          check_tcl_account(m->nick, m->userhost, m->user, chan->dname, account);
+        }
+        strlcpy(m->account, account, sizeof m->account);
+      }
+    }
   }
 }
 
@@ -1163,10 +1069,8 @@ static int got324(char *from, char *msg)
 static int got352or4(struct chanset_t *chan, char *user, char *host,
                      char *nick, char *flags, char *account)
 {
-  char userhost[UHOSTLEN], mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
-  struct chanset_t *acctchan;
+  char userhost[UHOSTLEN];
   memberlist *m;
-  int empty_accounts;
 
   m = ismember(chan, nick);     /* In my channel list copy? */
   if (!m) {                     /* Nope, so update */
@@ -1216,25 +1120,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
   if (account) {
-    empty_accounts = (!strcmp(account, "0") && (!strcmp(m->account, "")));
-    /* If the account has changed... */
-    if (strcmp(account, m->account) && !empty_accounts) {
-      for (acctchan = chanset; acctchan; acctchan = acctchan->next) {
-        if ((m = ismember(chan, nick))) {
-          if (strcmp(account, "0")) {
-            strlcpy(m->account, account, sizeof(m->account));
-            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-            if (strcasecmp(chan->dname, acctchan->dname)) {
-            }
-          } else {      /* Explicitly clear, in case someone deauthenticated? */
-            m->account[0] = 0;
-            snprintf(mask, sizeof mask, "%s %s", acctchan->dname, userhost);
-            if (strcasecmp(chan->dname, acctchan->dname)) {
-            }
-          }
-        }
-      }
+    if (!strcmp(account, "0")) {
+      /* normalize "logged out" to "*" */
+      account = "*";
     }
+    setaccount(nick, account);
   }
   return 0;
 }
@@ -1301,9 +1191,10 @@ static int got354(char *from, char *msg)
 
   if (use_354) {
     newsplit(&msg);             /* Skip my nick - efficiently */
-    if (!strncmp(msg, "222", strlen("222"))) {
-      newsplit(&msg);           /* Skip our query-type magic number" */
+    if (strncmp(msg, "222", strlen("222"))) {
+      return 0;                 /* ignore request without our query type, could be different arguments */
     }
+    newsplit(&msg);           /* Skip our query-type magic number" */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);  /* Grab the channel */
       chan = findchan(chname);  /* See if I'm on channel */
@@ -1323,7 +1214,122 @@ static int got354(char *from, char *msg)
   }
   return 0;
 }
+  
+/* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
+ * ident of the user. Format:
+ * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
+ * changes user hostmask to tehgeo@foo.io
+ */
+static int gotchghost(char *from, char *msg){
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct userrec *u;
+  struct chanset_t *chan;
+  memberlist *m;
+  char mask[1024], *nick, *ident, buf[MSGMAX], *s1=buf, *chname;
 
+  strlcpy(s1, from, sizeof buf);
+  nick = splitnick(&s1);
+  ident = newsplit(&msg);  /* Get the ident */
+  /* Update my own internal hostmask */
+  if (match_my_nick(nick)) {
+    snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, msg);
+  }
+  u = get_user_by_host(from);
+  /* Run the bind for each channel the user is on */
+  for (chan = chanset; chan; chan = chan->next) {
+    chname = chan->dname;
+    m = ismember(chan, nick);
+    if (m) {
+      snprintf(m->userhost, sizeof m->userhost, "%s@%s", ident, msg);
+      snprintf(mask, sizeof mask, "%s %s!%s@%s", chname, nick, ident, msg);
+      check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
+      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
+                       chan->dname);
+      check_this_member(chan, m->nick, &fr);
+    }
+  }
+  return 0;
+}
+
+/* got 353: NAMES
+ * <server> 353 <client> <symbol> <chan> :[+/@]nick [+/@]nick ....
+ *
+ * if userhost-in-names is enabled, nick is nick@userhost.com
+ * this function is added solely to handle userhost-in-names stuff, and will
+ * update hostnames for nicks received
+ */
+static int got353(char *from, char *msg)
+{
+  char prefixchars[64];
+  char *nameptr, *chname, *uhost, *nick, *p, *host;
+  struct chanset_t *chan;
+  int i;
+
+  if (find_capability("userhost-in-names")) {
+    strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
+    newsplit(&msg);
+    newsplit(&msg); /* Get rid of =, @, or * symbol */
+    chname = newsplit(&msg);
+    nameptr = newsplit(&msg);
+    fixcolon(nameptr);
+    while ((uhost = newsplit(&nameptr))) {
+      if (!strcmp(uhost, "")) {
+        break;
+      }
+      fixcolon(uhost);
+      nick = splitnick(&uhost);
+      /* Strip @, +, etc chars prefixed to nicks in NAMES */
+      for (i = 0; prefixchars[i]; i++) {
+        if(nick[0] == prefixchars[i]) {
+          nick=nick+1;
+        }
+      }
+      if ((nick[0] == '+') || (nick[0] == '%')) {
+        nick=nick+1;
+      }
+      p = strchr(uhost, '@');
+      if (p) {
+        *p = 0;
+        host = p+1;
+      }
+      chan = findchan(chname);      /* See if I'm on channel */
+      if (chan && host) {
+        /* Pretend we got a WHO and pass the info we got from NAMES */
+        got352or4(chan, uhost, host, nick, "", NULL);
+      }
+    }
+    /* The assumption here is the user enabled userhost-in-names because WHO
+     * is disabled. We remove the pending flag here because we'll never get a
+     * a WHO to do it
+     */
+    if (chan) {
+      chan->status |= CHAN_ACTIVE;
+      chan->status &= ~CHAN_PEND;
+    }
+  }
+  return 0;
+}
+      
+/* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
+ * successfully set. Format:
+ * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
+ */
+static int got396(char *from, char *msg)
+{
+  char *nick, *ident, *uhost, userbuf[UHOSTLEN];
+
+  nick = newsplit(&msg);
+  if (match_my_nick(nick)) {  /* Double check this really is for me */
+    strlcpy(userbuf, botuserhost, sizeof userbuf);
+    ident = strtok(userbuf, "@");
+    uhost = newsplit(&msg);
+    if (ident) {
+      snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, uhost);
+      check_tcl_event("hidden-host");
+    }
+  }
+  return 0;
+}
 
 /* got 315: end of who
  * <server> 315 <to> <chan> :End of /who
@@ -1342,6 +1348,7 @@ static int got315(char *from, char *msg)
   sync_members(chan);
   chan->status |= CHAN_ACTIVE;
   chan->status &= ~CHAN_PEND;
+  check_tcl_event_arg("got-chanlist", chname);
   if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
     putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
            chan->dname);
@@ -1404,124 +1411,13 @@ static int gotaway(char *from, char *msg)
       if (strlen(msg)) {
         m->flags |= IRCAWAY;
         fixcolon(msg);
-        putlog(LOG_JOIN, chan->dname, "%s is now away: %s", from, msg);
+        putlog(LOG_MODES, chan->dname, "%s is now away: %s", from, msg);
       } else {
         m->flags &= ~IRCAWAY;
-        putlog(LOG_JOIN, chan->dname, "%s has returned from away status", from);
+        putlog(LOG_MODES, chan->dname, "%s has returned from away status", from);
       }
     }
   }
-  return 0;
-}
-
-/* Got 730/RPL_MONONLINE
- * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
- */
-static int got730or1(char *from, char *msg, int code)
-{
-  char *nick, *tok;
-  struct monitor_list *current = monitor;
-
-  newsplit(&msg);               /* Get rid of nick */
-  fixcolon(msg);                /* Get rid of :    */
-
-  for (tok = strtok(msg, ","); tok; tok = strtok(NULL, " ")) {
-    if (strchr(tok, '!')) {
-      nick = splitnick(&tok);
-    } else {
-      nick = tok;
-    }
-    while (current != NULL) {
-      if (!rfc_casecmp(current->nick, nick)) {
-        if (code == 1) {
-          current->online = 1;
-          check_tcl_monitor(nick, 1);
-          putlog(LOG_SERV, "*", "%s is now online", nick);
-        } else if (code == 0) {
-          current->online = 0;
-          check_tcl_monitor(nick, 0);
-          putlog(LOG_SERV, "*", "%s is now offline", nick);
-        }
-      }
-      current = current->next;
-    }
-  }
-  return 0;
-}
-
-/* Got 730/RPL_MONONLINE
- * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
- */
-static int got730(char *from, char *msg)
-{
-  got730or1(from, msg, 1);
-  return 0;
-}
-
-/* Got 731/RPL_MONOFFLINE
- * :<server> 731 <nick> :target[,target2]*
- */
-static int got731(char *from, char *msg)
-{
-  got730or1(from, msg, 0);
-  return 0;
-}
-
-/* Got 732/RPL_MONLIST
- * :<server> 732 <nick> :target[,target2]*
- *
- * Clear the existing list, replace it with what the server sends us, as
- * that is what is 100% accurate
- */
-static int got732(char *from, char *msg)
-{
-  char *tok, *nick;
-  struct monitor_list *current = monitor;
-  struct monitor_list *next = NULL;
-
-/* Did we already get a 732? If no, clear the existing list, otherwise leave
- * it for appending
- */
-  if (!monitor732) {
-    while (current != NULL) {
-      next = current->next;
-      nfree(current);
-      current = next;
-    }
-    monitor = NULL;
-  }
-
-  newsplit(&msg);               /* Get rid of nick */
-  fixcolon(msg);                /* Get rid of :    */
-
-  for (tok = strtok(msg, ","); tok && *tok; tok = strtok(NULL, ",")) {
-    /* returned target could be in nick!u@host format */
-    if (strchr(tok, '!')) {
-      nick = splitnick(&tok);
-    } else {
-      nick = tok;
-    }
-    monitor_add(nick, 0);
-  }
-  monitor732 = 1;
-  return 0;
-}
-
-/* Got 733/RPL_ENDOFMONLISt
- * :<server> 733 <nick> :End of MONITOR list
- */
-static int got733(char *from, char *msg)
-{
-  monitor732 = 0;
-  return 0;
-}
-
-/* Got 734/RPL_MONLISTFULL
- * :<server> 734 <nick> <limit> <targets> :Monitor list is full.
- */
-static int got734(char *from, char *msg)
-{
-  putlog(LOG_SERV, "*", "Server monitor list is full, nickname not added");
   return 0;
 }
 
@@ -1881,7 +1777,7 @@ static int gotinvite(char *from, char *msg)
   check_tcl_invite(nick, from, msg, invitee);
 /* Because who needs RFCs? Freakin IRCv3... */
   if (!match_my_nick(invitee)) {
-    putlog(LOG_DEBUG, "*", "Received invite notifiation for %s to %s by %s.",
+    putlog(LOG_DEBUG, "*", "Received invite notification for %s to %s by %s.",
             invitee, msg, nick);
     return 1;
   }
@@ -2046,12 +1942,11 @@ static void set_delay(struct chanset_t *chan, char *nick)
  */
 static int gotjoin(char *from, char *channame)
 {
-  char *nick, *p, buf[UHOSTLEN], account[NICKMAX], *uhost = buf, *chname;
-  char *ch_dname = NULL, mask[CHANNELLEN+UHOSTLEN+NICKMAX+2];
+  char *nick, *p, buf[UHOSTLEN], *uhost = buf, *chname;
+  char *ch_dname = NULL;
   int extjoin = 0;
   struct chanset_t *chan;
-  struct chanset_t *extchan;
-  memberlist *m, *n;
+  memberlist *m;
   masklist *b;
   struct capability *current;
   struct userrec *u;
@@ -2183,42 +2078,23 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->user = u;
         m->flags |= STOPWHO;
+
         if (extjoin) {
-          /* Update account for all channels the nick is on, not just this one */
-          strlcpy(account, newsplit(&channame), sizeof account);
-          for (extchan = chanset; extchan; extchan = extchan->next) {
-            if ((n = ismember(extchan, nick))) {
-              if (strcmp(account, "*")) {
-                strlcpy (n->account, account, sizeof n->account);
-              } else {
-                n->account[0] = 0;
-              }
-              /* Don't trigger for the channel the user joined, but do trigger
-               * for other channels the user is already in
-               */
-              if (strcasecmp(chname, extchan->dname)) {
-                snprintf(mask, sizeof mask, "%s %s", chname, from);
-                //check_tcl_account(nick, from, mask, u, extchan->dname, account);
-              }
-            }
+          /* calls check_tcl_account which can delete the channel */
+          setaccount(nick, newsplit(&channame));
+          
+          if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
+            /* The channel doesn't exist anymore, so get out of here. */
+            goto exit;
           }
         }
+
         check_tcl_join(nick, uhost, u, chan->dname);
 
-        /* The tcl binding might have deleted the current user and the
-         * current channel, so we'll now have to re-check whether they
-         * both still exist.
-         */
-        chan = findchan(chname);
-        if (!chan) {
-          if (ch_dname)
-            chan = findchan_by_dname(ch_dname);
-          else
-            chan = findchan_by_dname(chname);
-        }
-        if (!chan)
+        if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
           /* The channel doesn't exist anymore, so get out of here. */
           goto exit;
+        }
 
         /* The record saved in the channel record always gets updated,
          * so we can use that. */
@@ -2891,6 +2767,15 @@ static int gotnotice(char *from, char *msg)
   return 0;
 }
 
+/* Got ACCOUNT message; only valid for account-notify capability */
+static int gotaccount(char *from, char *msg) {
+  char *nick = splitnick(&from);
+  fixcolon(msg);
+  /* nick!ident@host ACCOUNT xxx */
+  setaccount(nick, msg);
+  return 0;
+}
+
 static int parse_maxlist(const char *value)
 {
   int tmpsum = 0, addtosum;
@@ -2973,11 +2858,20 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     if (max_bans > max_modes) {
       max_modes = max_bans;
     }
-  } else if (!strcmp(key, "MONITOR")) {
-    monitor005 = isset;
-    isupport_parseint(key, isset ? value : NULL, 1, 500, 1, 0, &max_monitor);
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
+  }
+  return 0;
+}
+
+static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
+  Tcl_Obj *valueobj;
+  if (TCL_OK != Tcl_DictObjGet(interp, tags, Tcl_NewStringObj("account", -1), &valueobj)) {
+    putlog(LOG_MISC, "*", "ERROR: irc:rawt called with invalid dictionary");
+    return 0;
+  }
+  if (valueobj) {
+    setaccount(splitnick(&from), Tcl_GetString(valueobj));
   }
   return 0;
 }
@@ -2985,6 +2879,7 @@ static int irc_isupport(char *key, char *isset_str, char *value)
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
+  {"353",     "",   (IntFunc) got353,          "irc:353"},
   {"354",     "",   (IntFunc) got354,          "irc:354"},
   {"315",     "",   (IntFunc) got315,          "irc:315"},
   {"366",     "",   (IntFunc) gottwitch366,   "irc:t366"},
@@ -2996,11 +2891,6 @@ static cmd_t irc_raw[] = {
   {"473",     "",   (IntFunc) got473,          "irc:473"},
   {"474",     "",   (IntFunc) got474,          "irc:474"},
   {"475",     "",   (IntFunc) got475,          "irc:475"},
-  {"730",     "",   (IntFunc) got730,          "irc:730"},
-  {"731",     "",   (IntFunc) got731,          "irc:731"},
-  {"732",     "",   (IntFunc) got732,          "irc:732"},
-  {"733",     "",   (IntFunc) got733,          "irc:733"},
-  {"734",     "",   (IntFunc) got734,          "irc:734"},
   {"INVITE",  "",   (IntFunc) gotinvite,    "irc:invite"},
   {"TOPIC",   "",   (IntFunc) gottopic,      "irc:topic"},
   {"331",     "",   (IntFunc) got331,          "irc:331"},
@@ -3019,7 +2909,15 @@ static cmd_t irc_raw[] = {
   {"347",     "",   (IntFunc) got347,          "irc:347"},
   {"348",     "",   (IntFunc) got348,          "irc:348"},
   {"349",     "",   (IntFunc) got349,          "irc:349"},
-  {NULL,      NULL, NULL,                           NULL}
+  {"396",     "",   (IntFunc) got396,          "irc:396"},
+  {"ACCOUNT", "",   (IntFunc) gotaccount,  "irc:account"},
+  {"CHGHOST", "",   (IntFunc) gotchghost,  "irc:chghost"},
+  {NULL,     NULL,  NULL,                           NULL}
+};
+
+static cmd_t irc_rawt[] = {
+  {"*",       "",   (IntFunc) gotrawt,        "irc:rawt"},
+  {NULL,    NULL,   NULL,                           NULL}
 };
 
 static cmd_t irc_isupport_binds[] = {

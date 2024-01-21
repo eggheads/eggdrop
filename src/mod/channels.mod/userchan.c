@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -394,7 +394,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 }
 
 /* Add a !* and/or @* if lacking in a usermask, copying to newmask */
-void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
+static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 {
   char *strat, *strbang;
 
@@ -752,7 +752,7 @@ static void display_invite(int idx, int number, maskrec *invite,
 static void tell_bans(int idx, int show_inact, char *match)
 {
   int k = 1;
-  char *chname;
+  char *chname = NULL;
   struct chanset_t *chan = NULL;
   maskrec *u;
 
@@ -788,7 +788,16 @@ static void tell_bans(int idx, int show_inact, char *match)
     } else
       display_ban(idx, k++, u, chan, show_inact);
   }
-  if (chan) {
+  for (chan = chanset; chan; chan = chan->next) {
+    /* Show a channel's bans if:
+     * - the console is set to *
+     * - the console is set to this channel
+     * - we're matching a mask
+     * - this channel was specifically requested in .bans
+     */
+    if ( (!strcmp(dcc[idx].u.chat->con_chan, "*")) ||
+         (!strcmp(dcc[idx].u.chat->con_chan, chan->dname) && (!chname || match[0])) ||
+         (chname && !strcasecmp(chname, chan->dname)) ) {
     if (show_inact)
       dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
               BANS_BYCHANNEL, chan->dname, MODES_NOTACTIVE2, MODES_NOTBYBOT);
@@ -800,6 +809,9 @@ static void tell_bans(int idx, int show_inact, char *match)
         if ((match_addr(match, u->mask)) ||
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_ban(idx, k, u, chan, 1);
+        k++;
+      } else if (chname && !strcasecmp(chname, chan->dname)) {
+        display_ban(idx, k, u, chan, 0);
         k++;
       } else
         display_ban(idx, k++, u, chan, show_inact);
@@ -830,6 +842,7 @@ static void tell_bans(int idx, int show_inact, char *match)
           k++;
         }
       }
+    }
     }
   }
   if (k == 1)

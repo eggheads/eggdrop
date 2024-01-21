@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,11 +90,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 0 - 3 */
 #define nmalloc(x) (((void *(*)())global[0])((x),MODULE_NAME,__FILE__,__LINE__))
 #define nfree(x) (global[1]((x),MODULE_NAME,__FILE__,__LINE__))
-#ifdef DEBUG_CONTEXT
-#  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
-#else
-#  define Context do {} while (0)
-#endif
+#define Context do {} while (0) /* For backward compatibility only */
 #define module_rename ((int (*)(char *, char *))global[3])
 /* 4 - 7 */
 #define module_register ((int (*)(char *, Function *, int, int))global[4])
@@ -396,11 +392,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define nrealloc(x,y) (((void *(*)())global[230])((x),(y),MODULE_NAME,__FILE__,__LINE__))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-#  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
-#else
-#  define ContextNote(note) do {} while (0)
-#endif
+#define ContextNote(note) do {} while (0) /* For backward compatibility only */
 #ifdef DEBUG_ASSERT
 #  define Assert(expr) do {                                             \
           if (!(expr))                                                  \
@@ -527,6 +519,11 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
 #define get_user_by_account ((struct userrec * (*)(char *))global[317])
 #define delaccount_by_handle ((int(*)(char *,char *))global[318])
+#define check_tcl_event_arg ((void (*) (const char *,const char *))global[319])
+/* 320 - 323 */
+#define bind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[320])
+#define unbind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[321])
+#define argv0 ((char *)global[322])
 
 
 

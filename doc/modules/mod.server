@@ -254,8 +254,8 @@ There are additional settings for 'net-type' Efnet.
         This settings defines how umode +r is understood by Eggdrop.
         Some networks use +r to indicate a restricted connection. If
         this is your case, and you want your bot to leave restricted
-        servers and jump to the next server on its list, then set it to
-        1. Please note, this setting is automatically set to 0 for
+        servers and jump to the next server on its list, then set it
+        to 1. Please note, this setting is automatically set to 0 for
         net-type of Efnet, Undernet, and DALnet, and set to 1 for
         net-type IRCNet.
 
@@ -265,4 +265,4 @@ There are additional settings for 'net-type' Efnet.
         supported by your network. The default setting is 9. The maximum
         supported length by Eggdrop is 32.
 
-  Copyright (C) 2000 - 2022 Eggheads Development Team
+  Copyright (C) 2000 - 2024 Eggheads Development Team

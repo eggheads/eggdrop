@@ -11,7 +11,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2022 Eggheads Development Team
+ * Copyright (C) 2001 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -110,7 +110,7 @@ static void uptime_report(int idx, int details)
   }
 }
 
-unsigned long get_ip()
+static unsigned long get_ip()
 {
   struct hostent *hp;
   IP ip;
@@ -130,7 +130,7 @@ unsigned long get_ip()
   return ip;
 }
 
-int init_uptime(void)
+static int init_uptime(void)
 {
   struct sockaddr_in sai;
   char x[64], *z = x;
@@ -169,7 +169,7 @@ int init_uptime(void)
 }
 
 
-int send_uptime(void)
+static int send_uptime(void)
 {
   struct sockaddr_in sai;
   struct stat st;
