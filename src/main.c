@@ -577,7 +577,7 @@ static void core_secondly()
         printf("NOTE: You don't need to use the -n flag with the\n");
         printf("       -t or -c flag anymore.\n");
       }
-      tell_status(DP_STDOUT, 1);
+      tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
       tell_mem_status_dcc(DP_STDOUT);

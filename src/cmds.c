@@ -26,6 +26,7 @@
 #include "tandem.h"
 #include "modules.h"
 #include <signal.h>
+#include <sys/resource.h>
 
 extern struct chanset_t *chanset;
 extern struct dcc_t *dcc;
@@ -582,22 +583,26 @@ static void cmd_uptime(struct userrec *u, int idx, char *par)
 
 static void cmd_status(struct userrec *u, int idx, char *par)
 {
-  int atr = u ? u->flags : 0;
+  struct rlimit rlp;
 
+  int atr = u ? u->flags : 0;
   if (!strcasecmp(par, "all")) {
     if (!(atr & USER_MASTER)) {
       dprintf(idx, "You do not have Bot Master privileges.\n");
       return;
     }
     putlog(LOG_CMDS, "*", "#%s# status all", dcc[idx].nick);
-    tell_status(idx, 1);
+    tell_verbose_status(idx);
+    if (!getrlimit(RLIMIT_NOFILE, &rlp))
+      dprintf(idx, "Maximum number of open files (sockets): soft limit %ju hard limit %ju\n",
+              (uintmax_t) rlp.rlim_cur, (uintmax_t) rlp.rlim_max);
     tell_mem_status_dcc(idx);
     dprintf(idx, "\n");
     tell_settings(idx);
     do_module_report(idx, 1, NULL);
   } else {
     putlog(LOG_CMDS, "*", "#%s# status", dcc[idx].nick);
-    tell_status(idx, 0);
+    tell_verbose_status(idx);
     tell_mem_status_dcc(idx);
     do_module_report(idx, 0, NULL);
   }

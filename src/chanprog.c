@@ -269,13 +269,12 @@ void tell_verbose_uptime(int idx)
 
 /* Dump status info out to dcc
  */
-void tell_status(int idx, int details)
+void tell_verbose_status(int idx)
 {
   char s[256], s1[121], s2[81], *sysrel;
   int i;
   time_t now2 = now - online_since, hr, min;
   double cputime, cache_total;
-  struct rlimit rlp;
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
@@ -367,10 +366,6 @@ void tell_status(int idx, int details)
                "Threaded DNS core is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
-
-  if (details && !getrlimit(RLIMIT_NOFILE, &rlp))
-    dprintf(idx, "Maximum number of open files (sockets): soft limit %ju hard limit %ju\n",
-            (uintmax_t) rlp.rlim_cur, (uintmax_t) rlp.rlim_max);
 }
 
 /* Show all internal state variables
