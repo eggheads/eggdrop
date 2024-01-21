@@ -1214,7 +1214,7 @@ static int got354(char *from, char *msg)
   }
   return 0;
 }
-
+  
 /* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
  * ident of the user. Format:
  * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
@@ -1251,6 +1251,65 @@ static int gotchghost(char *from, char *msg){
   return 0;
 }
 
+/* got 353: NAMES
+ * <server> 353 <client> <symbol> <chan> :[+/@]nick [+/@]nick ....
+ *
+ * if userhost-in-names is enabled, nick is nick@userhost.com
+ * this function is added solely to handle userhost-in-names stuff, and will
+ * update hostnames for nicks received
+ */
+static int got353(char *from, char *msg)
+{
+  char prefixchars[64];
+  char *nameptr, *chname, *uhost, *nick, *p, *host;
+  struct chanset_t *chan;
+  int i;
+
+  if (find_capability("userhost-in-names")) {
+    strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
+    newsplit(&msg);
+    newsplit(&msg); /* Get rid of =, @, or * symbol */
+    chname = newsplit(&msg);
+    nameptr = newsplit(&msg);
+    fixcolon(nameptr);
+    while ((uhost = newsplit(&nameptr))) {
+      if (!strcmp(uhost, "")) {
+        break;
+      }
+      fixcolon(uhost);
+      nick = splitnick(&uhost);
+      /* Strip @, +, etc chars prefixed to nicks in NAMES */
+      for (i = 0; prefixchars[i]; i++) {
+        if(nick[0] == prefixchars[i]) {
+          nick=nick+1;
+        }
+      }
+      if ((nick[0] == '+') || (nick[0] == '%')) {
+        nick=nick+1;
+      }
+      p = strchr(uhost, '@');
+      if (p) {
+        *p = 0;
+        host = p+1;
+      }
+      chan = findchan(chname);      /* See if I'm on channel */
+      if (chan && host) {
+        /* Pretend we got a WHO and pass the info we got from NAMES */
+        got352or4(chan, uhost, host, nick, "", NULL);
+      }
+    }
+    /* The assumption here is the user enabled userhost-in-names because WHO
+     * is disabled. We remove the pending flag here because we'll never get a
+     * a WHO to do it
+     */
+    if (chan) {
+      chan->status |= CHAN_ACTIVE;
+      chan->status &= ~CHAN_PEND;
+    }
+  }
+  return 0;
+}
+      
 /* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
  * successfully set. Format:
  * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
@@ -2820,6 +2879,7 @@ static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
+  {"353",     "",   (IntFunc) got353,          "irc:353"},
   {"354",     "",   (IntFunc) got354,          "irc:354"},
   {"315",     "",   (IntFunc) got315,          "irc:315"},
   {"366",     "",   (IntFunc) gottwitch366,   "irc:t366"},
