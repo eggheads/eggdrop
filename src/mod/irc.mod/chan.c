@@ -1261,8 +1261,8 @@ static int gotchghost(char *from, char *msg){
 static int got353(char *from, char *msg)
 {
   char prefixchars[64];
-  char *nameptr, *chname, *uhost, *nick, *p, *host;
-  struct chanset_t *chan;
+  char *nameptr, *chname, *uhost, *nick, *p, *host = NULL;
+  struct chanset_t *chan = NULL;
   int i;
 
   if (find_capability("userhost-in-names")) {
