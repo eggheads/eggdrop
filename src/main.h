@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,16 +45,8 @@
 #  define TCL_PATCH_LEVEL "*unknown*"
 #endif
 
-#if defined(HAVE_TCL_NOTIFIER_INIT)
-#  define REPLACE_NOTIFIER
-#endif
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-#  ifdef CONST
-#    define EGG_CONST CONST
-#  else
-#    define EGG_CONST
-#  endif
+#ifdef CONST
+#  define EGG_CONST CONST
 #else
 #  define EGG_CONST
 #endif
@@ -130,16 +122,12 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGCUBES */
 
-/* Handle for the user that's used when starting eggdrop with -tn */
+/* Handle for the user that's used when starting eggdrop with -t */
 #define EGG_BG_HANDLE "-HQ"
 /* Default recommended flags for this user, use | as splitter */
 #define EGG_BG_CONMASK LOG_MISC /* "o" */
 
-/* Stringify macros */
-#define EGG_MACRO_STR(x) EGG_STR(x)
-#define EGG_STR(x) #x
-
-#define EGG_AC_ARGS EGG_MACRO_STR(EGG_AC_ARGS_RAW)
+#define EGG_AC_ARGS STRINGIFY(EGG_AC_ARGS_RAW)
 
 #define ARRAY_SIZE(x) (sizeof (x) / sizeof *(x))
 

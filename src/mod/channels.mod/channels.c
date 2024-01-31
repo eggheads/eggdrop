@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -620,61 +620,34 @@ static void channels_report(int idx, int details)
     dprintf(idx, "%s\n", s);
 
     if (details) {
-      s[0] = 0;
-      i = 0;
-
-      if (channel_enforcebans(chan))
-        i += my_strcpy(s + i, "enforcebans ");
-      if (channel_dynamicbans(chan))
-        i += my_strcpy(s + i, "dynamicbans ");
-      if (!channel_nouserbans(chan))
-        i += my_strcpy(s + i, "userbans ");
-      if (channel_autoop(chan))
-        i += my_strcpy(s + i, "autoop ");
-      if (channel_bitch(chan))
-        i += my_strcpy(s + i, "bitch ");
-      if (channel_greet(chan))
-        i += my_strcpy(s + i, "greet ");
-      if (channel_protectops(chan))
-        i += my_strcpy(s + i, "protectops ");
-      if (channel_protecthalfops(chan))
-        i += my_strcpy(s + i, "protecthalfops ");
-      if (channel_protectfriends(chan))
-        i += my_strcpy(s + i, "protectfriends ");
-      if (channel_dontkickops(chan))
-        i += my_strcpy(s + i, "dontkickops ");
-      if (channel_logstatus(chan))
-        i += my_strcpy(s + i, "statuslog ");
-      if (channel_revenge(chan))
-        i += my_strcpy(s + i, "revenge ");
-      if (channel_revenge(chan))
-        i += my_strcpy(s + i, "revengebot ");
-      if (channel_secret(chan))
-        i += my_strcpy(s + i, "secret ");
-      if (channel_shared(chan))
-        i += my_strcpy(s + i, "shared ");
-      if (!channel_static(chan))
-        i += my_strcpy(s + i, "dynamic ");
-      if (channel_autovoice(chan))
-        i += my_strcpy(s + i, "autovoice ");
-      if (channel_autohalfop(chan))
-        i += my_strcpy(s + i, "autohalfop ");
-      if (channel_cycle(chan))
-        i += my_strcpy(s + i, "cycle ");
-      if (channel_seen(chan))
-        i += my_strcpy(s + i, "seen ");
-      if (channel_dynamicexempts(chan))
-        i += my_strcpy(s + i, "dynamicexempts ");
-      if (!channel_nouserexempts(chan))
-        i += my_strcpy(s + i, "userexempts ");
-      if (channel_dynamicinvites(chan))
-        i += my_strcpy(s + i, "dynamicinvites ");
-      if (!channel_nouserinvites(chan))
-        i += my_strcpy(s + i, "userinvites ");
-      if (channel_inactive(chan))
-        i += my_strcpy(s + i, "inactive ");
-      if (channel_nodesynch(chan))
-        my_strcpy(s + i, "nodesynch ");
+      if ((i = snprintf(s, sizeof s, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+                        channel_enforcebans(chan) ? "enforcebans " : "",
+                        channel_dynamicbans(chan) ? "dynamicbans " : "",
+                        !channel_nouserbans(chan) ? "userbans " : "",
+                        channel_autoop(chan) ? "autoop " : "",
+                        channel_bitch(chan) ? "bitch " : "",
+                        channel_greet(chan) ? "greet " : "",
+                        channel_protectops(chan) ? "protectops " : "",
+                        channel_protecthalfops(chan) ? "protecthalfops " : "",
+                        channel_protectfriends(chan) ? "protectfriends " : "",
+                        channel_dontkickops(chan) ? "dontkickops " : "",
+                        channel_logstatus(chan) ? "statuslog " : "",
+                        channel_revenge(chan) ? "revenge " : "",
+                        channel_revengebot(chan) ? "revengebot " : "",
+                        channel_secret(chan) ? "secret " : "",
+                        channel_shared(chan) ? "shared " : "",
+                        !channel_static(chan) ? "dynamic " : "",
+                        channel_autovoice(chan) ? "autovoice " : "",
+                        channel_autohalfop(chan) ? "autohalfop " : "",
+                        channel_cycle(chan) ? "cycle " : "",
+                        channel_seen(chan) ? "seen " : "",
+                        channel_dynamicexempts(chan) ? "dynamicexempts " : "",
+                        !channel_nouserexempts(chan) ? "userexempts " : "",
+                        channel_dynamicinvites(chan) ? "dynamicinvites " : "",
+                        !channel_nouserinvites(chan) ? "userinvites " : "",
+                        channel_inactive(chan) ? "inactive " : "",
+                        channel_nodesynch(chan) ? "nodesynch " : "")))
+        s[i - 2] = 0;
 
       dprintf(idx, "      Options: %s\n", s);
 

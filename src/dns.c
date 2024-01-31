@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +86,7 @@ static void eof_dcc_dnswait(int idx)
 
 static void display_dcc_dnswait(int idx, char *buf)
 {
-  sprintf(buf, "dns   waited %lis", (long) (now - dcc[idx].timeval));
+  sprintf(buf, "dns   waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_dnswait(void *x)

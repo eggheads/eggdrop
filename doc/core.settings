@@ -1,4 +1,4 @@
-Last revised: October 25, 2010
+Last revised: August 29, 2023
 
 Eggdrop Core Settings
 
@@ -231,9 +231,7 @@ logfile <logflags> <channel> "logs/logfile"
     set logfile-suffix ".%d%b%Y" If keep-all-logs is 1, this setting
     will define the suffix of the logfiles. The default will result in a
     suffix like "04May2000". "%Y%m%d" will produce the often used
-    yyyymmdd format. Read the strftime manpages for more options. NOTE:
-    On systems which don't support strftime, the default format will
-    always be used.
+    yyyymmdd format. Read the strftime manpages for more options.
 
 CONSOLE SETTINGS
 
@@ -341,8 +339,8 @@ efficiency). You should read doc/BOTNET before modifying these settings.
           listen +5555 all
 
       You need to un-comment this line and change the port number in
-      order to open the listen port. You should not keep this set
-      to 3333.
+      order to open the listen port. You should not keep this set to
+      3333.
 
   set remote-boots 2
 
@@ -690,7 +688,7 @@ needed. Four examples:
 
       A limbo bot (serves as a botnet hub outside IRC) just needs the
       channels, console, dns, and maybe notes or share modules loaded.
-      Of course, blowfish needs to be loaded here, too.
+      Of course, an encryption module needs to be loaded here, too.
 
 SCRIPTS
 
@@ -712,4 +710,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2022 Eggheads Development Team
+Copyright (C) 2000 - 2024 Eggheads Development Team

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define MODULE_NAME "share"
 #define MAKING_SHARE
 
+#include <errno.h>
 #include "src/mod/module.h"
 
 #include <netinet/in.h>
@@ -1232,7 +1233,8 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%" PRId64 ".users", botnetnick,
+           (int64_t) now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -1241,11 +1243,9 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (copy_to_tmp && !(f = tmpfile())) {
+  } else if (!(f = tmpfile())) {
+    debug1("share: share_ufsend(): tmpfile(): error: %s", strerror(errno));
     putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
-    zapfbot(idx);
-  } else if (!copy_to_tmp && !(f = fopen(s, "wb"))) {
-    putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
     /* Ignore longip and use botaddr, arg kept for backward compat for pre 1.8.3 */
@@ -2038,8 +2038,8 @@ static void start_sending_users(int idx)
   struct chanset_t *cst;
   char s[EGG_INET_ADDRSTRLEN];
 
-  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
-               now);
+  snprintf(share_file, sizeof share_file, ".share.%s.%" PRId64, dcc[idx].nick,
+           (int64_t) now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
            dcc[idx].nick);
@@ -2352,7 +2352,7 @@ char *share_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, share_table, 2, 4);
+  module_register(MODULE_NAME, share_table, 2, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

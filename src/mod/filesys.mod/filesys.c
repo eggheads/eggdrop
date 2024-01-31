@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,15 +48,10 @@
 #  endif
 #endif
 
-#ifdef TIME_WITH_SYS_TIME
+#ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#  include <time.h>
 #else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#  include <time.h>
 #endif
 
 #include "filedb3.h"
@@ -796,6 +791,7 @@ static void filesys_dcc_send_hostresolved(int i)
     /* Put uploads in a temp file first */
     dcc[i].u.xfer->f = tmpfile();
     if (dcc[i].u.xfer->f == NULL) {
+      debug1("filesys: filesys_dcc_send_hostresolved(): tmpfile(): error: %s", strerror(errno));
       dprintf(DP_HELP,
               "NOTICE %s :Can't create file `%s' (temp dir error)\n",
               dcc[i].nick, dcc[i].u.xfer->origname);

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2022 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -203,63 +203,36 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[275]; /* Change this if you change the levels */
-  int i = 0;          /* 6+8+7+13+6+6+6+17+5+7+8+7+9+15+17+17+24+24+(8*9)+1 */
+  static char s[512];
+  int i;
 
-  s[0] = 0;
-  if (x & LOG_MSGS)
-    i += my_strcpy(s, "msgs, "); /* 6 */
-  if (x & LOG_PUBLIC)
-    i += my_strcpy(s + i, "public, "); /* 8 */
-  if (x & LOG_JOIN)
-    i += my_strcpy(s + i, "joins, "); /* 7 */
-  if (x & LOG_MODES)
-    i += my_strcpy(s + i, "kicks/modes, "); /* 13 */
-  if (x & LOG_CMDS)
-    i += my_strcpy(s + i, "cmds, "); /* 6 */
-  if (x & LOG_MISC)
-    i += my_strcpy(s + i, "misc, "); /* 6 */
-  if (x & LOG_BOTS)
-    i += my_strcpy(s + i, "bots, "); /* 6 */
-  if (x & LOG_BOTMSG)
-    i += my_strcpy(s + i, "linked bot msgs, "); /* 17 */
-  if ((x & LOG_RAW) && raw_log)
-    i += my_strcpy(s + i, "raw, "); /* 5 */
-  if (x & LOG_FILES)
-    i += my_strcpy(s + i, "files, "); /* 7 */
-  if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server input, "); /* 8 */
-  if (x & LOG_DEBUG)
-    i += my_strcpy(s + i, "debug, "); /* 7 */
-  if (x & LOG_WALL)
-    i += my_strcpy(s + i, "wallops, "); /* 9 */
-  if ((x & LOG_SRVOUT) && raw_log)
-    i += my_strcpy(s + i, "server output, "); /* 15 */
-  if ((x & LOG_BOTNETIN) && raw_log)
-    i += my_strcpy(s + i, "botnet incoming, "); /* 17 */
-  if ((x & LOG_BOTNETOUT) && raw_log)
-    i += my_strcpy(s + i, "botnet outgoing, "); /* 17 */
-  if ((x & LOG_BOTSHRIN) && raw_log)
-    i += my_strcpy(s + i, "incoming share traffic, "); /* 24 */
-  if ((x & LOG_BOTSHROUT) && raw_log)
-    i += my_strcpy(s + i, "outgoing share traffic, "); /* 24 */
-  if (x & LOG_LEV1)
-    i += my_strcpy(s + i, "level 1, "); /* 9 */
-  if (x & LOG_LEV2)
-    i += my_strcpy(s + i, "level 2, "); /* 9 */
-  if (x & LOG_LEV3)
-    i += my_strcpy(s + i, "level 3, "); /* 9 */
-  if (x & LOG_LEV4)
-    i += my_strcpy(s + i, "level 4, "); /* 9 */
-  if (x & LOG_LEV5)
-    i += my_strcpy(s + i, "level 5, "); /* 9 */
-  if (x & LOG_LEV6)
-    i += my_strcpy(s + i, "level 6, "); /* 9 */
-  if (x & LOG_LEV7)
-    i += my_strcpy(s + i, "level 7, "); /* 9 */
-  if (x & LOG_LEV8)
-    i += my_strcpy(s + i, "level 8, "); /* 9 */
-  if (i)
+  if ((i = snprintf(s, sizeof s, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+                    (x & LOG_MSGS)   ? "msgs, " : "",
+                    (x & LOG_PUBLIC) ? "public, " : "",
+                    (x & LOG_JOIN) ? "joins, " : "",
+                    (x & LOG_MODES) ? "kicks/modes, " : "",
+                    (x & LOG_CMDS) ? "cmds, " : "",
+                    (x & LOG_MISC) ? "misc, " : "",
+                    (x & LOG_BOTS) ? "bots, " : "",
+                    (x & LOG_BOTMSG) ? "linked bot msgs, " : "",
+                    ((x & LOG_RAW) && raw_log) ? "raw, " : "",
+                    (x & LOG_FILES) ? "files, " : "",
+                    (x & LOG_SERV) ? "server input, " : "",
+                    (x & LOG_DEBUG) ? "debug, " : "",
+                    (x & LOG_WALL) ? "wallops, " : "",
+                    ((x & LOG_SRVOUT) && raw_log) ? "server output, " : "",
+                    ((x & LOG_BOTNETIN) && raw_log) ? "botnet incoming, " : "",
+                    ((x & LOG_BOTNETOUT) && raw_log) ? "botnet outgoing, " : "",
+                    ((x & LOG_BOTSHRIN) && raw_log) ? "incoming share traffic, " : "",
+                    ((x & LOG_BOTSHROUT) && raw_log) ? "outgoing share traffic, " : "",
+                    (x & LOG_LEV1) ? "level 1, " : "",
+                    (x & LOG_LEV2) ? "level 2, " : "",
+                    (x & LOG_LEV3) ? "level 3, " : "",
+                    (x & LOG_LEV4) ? "level 4, " : "",
+                    (x & LOG_LEV5) ? "level 5, " : "",
+                    (x & LOG_LEV6) ? "level 6, " : "",
+                    (x & LOG_LEV7) ? "level 7, " : "",
+                    (x & LOG_LEV8) ? "level 8, " : "")))
     s[i - 2] = 0;
   else
     strcpy(s, "none");
