@@ -24,6 +24,7 @@
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
 # CrazyCat  18Oct2022: added achannels
+# CrazyCat  31Jan2024: added lintersect and ldiff
 #
 ########################################
 #
@@ -127,6 +128,11 @@
 #   if the given number is between 1 and 15, return its text representation
 #   else return the number given
 #
+# lintersect <list1> <list2>
+#   returns a list of all elements in list1 that are present in list2
+#
+# ldiff <list1> <list2>
+#   returns a list of all elements in list1 which are not in list2
 #
 ##
 ## (other commands):
@@ -382,6 +388,16 @@ proc number_to_number {number} {
       return $number
     }
   }
+}
+
+proc lintersect {list1 list2 {option -exact}} {
+   if {$option ne "-nocase"} { set option -exact }
+   return [lmap x $list1 {expr {[lsearch $option $list2 $x] >= 0 ? $x : [continue]}}]
+}
+ 
+proc ldiff {list1 list2 {option -exact}} {
+   if {$option ne "-nocase"} { set option -exact }
+   return [lmap x $list1 {expr {[lsearch $option $list2 $x] < 0 ? $x : [continue]}}]
 }
 
 #
