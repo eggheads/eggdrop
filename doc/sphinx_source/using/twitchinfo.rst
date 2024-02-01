@@ -16,7 +16,7 @@ We should also make clear that Eggdrop is in no way affiliated with Twitch in an
 ***********************
 Registering with Twitch
 ***********************
-#. Register an account with Twitch. At the time of writing, this is done by visiting `Twitch <http://twitch.tv/>`_ and clicking on the Sign Up button.
+#. Register an account with Twitch. At the time of writing, this is done by visiting `Twitch <https://www.twitch.tv/>`_ and clicking on the Sign Up button.
 #. Generate a token to authenticate your bot with Twitch. At the time of writing, this is done by visiting the `Twitch OAuth generator <https://twitchapps.com/tmi/>`_ while logged in to the account you just created. The token will be an alphanumeric string and should be treated like a password (...because it is). Make note of it, and keep it safe!
 
 ***********************

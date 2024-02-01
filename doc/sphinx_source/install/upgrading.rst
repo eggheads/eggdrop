@@ -44,7 +44,7 @@ To migrate from a 1.8 to a 1.9 Eggdrop, some changes are suggested to be made in
 Modules
 ^^^^^^^
 
-While most 3rd party modules that worked on Eggdrop v1.6/v1.8 should still work with Eggdrop v1.9, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<ftp://eggheads.org/pub/eggdrop/modules/1.9/>`_
+While most 3rd party modules that worked on Eggdrop v1.6/v1.8 should still work with Eggdrop v1.9, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<ftp.eggheads.org/pub/eggdrop/modules/1.9/>`_
 
 Scripts
 ^^^^^^^
