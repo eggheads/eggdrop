@@ -11,6 +11,7 @@ doofus:
 	cd ../../../ && $(MAKE)
 
 static: ../python.o
+	@echo "$(PYTHON_LDFLAGS)" >> ../mod.xlibs
 
 modules: ../../../python.$(MOD_EXT)
 
