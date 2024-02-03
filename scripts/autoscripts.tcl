@@ -1,8 +1,12 @@
-package require json
-package require json::write
-package require http
-package require tls
-
+set pkgs {"json" "json::write" "http" "tls"}
+foreach pkg $pkgs {
+  if {[catch {package require $pkg}]} {
+    putlog "$pkg is not installed. Autoscripts cannot load"
+    putlog "$pkg can be installed via your host's command line package manager"
+    return 1
+  }
+}
+       
 set asidx 0
 set eggdir "autoscripts"
 set cmdtxt "\nEnter your command (done to exit):"
