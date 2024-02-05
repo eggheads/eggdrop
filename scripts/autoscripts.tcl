@@ -9,7 +9,7 @@ foreach pkg $pkgs {
        
 set asidx 0
 set eggdir "autoscripts"
-set cmdtxt "\nEnter your command (done to exit):"
+set cmdtxt "\nEnter your command ('done' to return to partyline):"
 set jsondict [dict create]
 set asmajor 1
 set asminor 0
@@ -128,7 +128,7 @@ proc parse_egg {idx text} {
 
     # Check if this is the user who triggered the console
     if {$idx != $asidx} {
-      return
+      return $text
     }
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
@@ -173,6 +173,9 @@ proc egg_list {idx} {
   readjsonfile
   putdcc $idx "\nThe following scripts are available for configuration:"
   putdcc $idx "-------------------------------------------------------"
+  if {[dict size $jsondict] == 0} {
+    putdcc $idx "* No scripts have been downloaded"
+  }
   foreach script $jsondict {
     set loaded [expr {[dict get $script config loaded] == 1 ? "\[X\]" : "\[ \]"}]
     putdcc $idx "* $loaded [dict get $script name] (v[dict get $script version_major].[dict get $script version_minor]) - [dict get $script description]"
