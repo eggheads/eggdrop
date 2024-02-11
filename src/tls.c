@@ -109,6 +109,17 @@ static int ssl_seed(void)
   return 0;
 }
 
+void verify_cert_expiry(int idx) {
+  X509 *x509;
+  if ((x509 = SSL_CTX_get0_certificate(ssl_ctx)) &&
+      (ASN1_TIME_cmp_time_t(X509_get0_notAfter(x509), time(NULL)) < 0)) {
+    if (idx)
+        dprintf(idx, "WARNING: certificate expired: %s\n", tls_certfile);
+    else
+      putlog(LOG_MISC, "*", "WARNING: certificate expired: %s", tls_certfile);
+  }
+}
+
 /* Prepares and initializes SSL stuff
  *
  * Creates a context object, supporting SSLv2/v3 & TLSv1 protocols;
@@ -157,6 +168,7 @@ int ssl_init()
           tls_certfile, ERR_error_string(ERR_get_error(), NULL));
       fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
+    verify_cert_expiry(0);
     if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
           tls_keyfile, ERR_error_string(ERR_get_error(), NULL));

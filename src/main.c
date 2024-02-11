@@ -647,6 +647,7 @@ static void core_secondly()
             movefile(logs[i].filename, s);
           }
       }
+      verify_cert_expiry(0);
     }
   }
 }
