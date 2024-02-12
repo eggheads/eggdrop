@@ -13,7 +13,7 @@ static: ../zig.o
 modules: ../../../zig.$(MOD_EXT)
 
 ../zig.o:
-	zig build-lib -fPIC zig.zig
+	zig build-lib -fPIC -lc -isystem ../../.. zig.zig
 	mv libzig.a.o ../zig.o
 
 ../../../zig.$(MOD_EXT): ../zig.o
