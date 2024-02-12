@@ -19,11 +19,11 @@ const global_funcs = extern struct {
     egg_context: *const fn () c_int,
     module_rename: *const fn () c_int,
     // 4 - 7
-    module_register: *const fn ([]const u8, c_int, c_int, c_int) c_int,
+    module_register: *const fn ([*]const u8, c_int, c_int, c_int) c_int,
 };
 
 export fn zig_start(global: *global_funcs) ?[*]const u8 {
-    _ = global.module_register(MODULE_NAME, 5, 7, 11);
+    _ = global.module_register(MODULE_NAME.ptr, 0, 0, 1);
 
     std.io.getStdOut().writer().print("hello from zig.mod zig_start()\n", .{}) catch return null;
     // return "WIP".ptr;
