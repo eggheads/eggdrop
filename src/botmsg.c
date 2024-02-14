@@ -49,7 +49,7 @@ void tandout_but(int x, const char *format, ...)
 
   va_start(va, format);
 
-  len = egg_vsnprintf(s, sizeof s, format, va);
+  len = vsnprintf(s, sizeof s, format, va);
   va_end(va);
   if (len >= sizeof s) {
     len = sizeof s - 1;
@@ -298,7 +298,7 @@ void botnet_send_priv (int idx, char *from, char *to, char *tobot, const char *f
   va_list va;
 
   va_start(va, format);
-  egg_vsnprintf(tbuf, 450, format, va);
+  vsnprintf(tbuf, 450, format, va);
   va_end(va);
   tbuf[sizeof(tbuf) - 1] = 0;
 
