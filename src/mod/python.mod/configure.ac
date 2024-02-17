@@ -6,7 +6,7 @@ sinclude(../eggmod.m4)
 builtin(include,../../../m4/python.m4)
 builtin(include,../../../m4/ax_compare_version.m4)
 
-AC_INIT([Eggdrop Python Module],[1.9.3],[bugs@eggheads.org])
+AC_INIT([Eggdrop Python Module],[1.10.0],[bugs@eggheads.org])
 
 AC_CONFIG_SRCDIR(python.c)
 AC_CONFIG_AUX_DIR(../../../misc)
