@@ -80,14 +80,14 @@ fi
 # Check for python version
   python_ver=`$PYTHON -c "import sys; \
   print(sys.version.split ()[[0]])"`
-  AX_COMPARE_VERSION([$python_ver],[ge],[3.8.0], [ac_check_ver="yes"], [ax_check_ver="no"])
+  AX_COMPARE_VERSION([$python_ver],[ge],[3.8.0], [ax_check_ver="yes"], [ax_check_ver="no"])
   AC_MSG_CHECKING([$PYTHON version is >= 3.8.0])
   if test "x$ax_check_ver" = x"no"; then
     python_avail="false"
     AC_MSG_RESULT([no ($python_ver)])
     AC_MSG_WARN([Eggdrop requires python version 3.8.0 or higher])
   else
-    AC_MSG_RESULT(yes ($python_ver))
+    AC_MSG_RESULT([yes ($python_ver)])
   fi
 
 # Disable the module
