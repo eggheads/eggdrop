@@ -15,7 +15,6 @@ AC_COPYRIGHT([Copyright (C) 1999 - 2024 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 AC_PROG_FGREP
-EGG_PYTHON_ENABLE
 EGG_PYTHON_WITHCONFIG
 
 python_avail="false"
