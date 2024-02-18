@@ -1472,7 +1472,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
-  char *chname = NULL, answers[1024], *parcpy, *ptr = NULL;
+  char *chname = NULL, answers[1024], *parcpy;
   char *list[2], value[2], *bak, *buf;
   struct chanset_t *chan = NULL;
   int all = 0;
@@ -1533,10 +1533,11 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
               nfree(buf);
               return;
             }
+          if (check_tcl_chanset(chname, list[0]+1, value)) {
+            return;
+          }
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
-            ptr = list[0]+1;
             strlcpy(value, list[0], 2);
-            check_tcl_chanset(chname, ptr, value);
             strcat(answers, list[0]);
             strcat(answers, " ");
           } else if (!all || !chan->next)
@@ -1563,6 +1564,9 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           parcpy = nmalloc(strlen(par) + 1);
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
+          if (check_tcl_chanset(chname, list[0], list[1])) {
+            return;
+          }
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             check_tcl_chanset(chname, list[0], list[1]);
             int len = strlen(answers);

@@ -262,8 +262,8 @@ int check_tcl_chanset(const char *chan, const char *setting, const char *value)
   Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
   Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
 
-  x = check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
-                     MATCH_MASK | BIND_STACKABLE);
+  return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
 
   return x;
 }
