@@ -316,7 +316,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+  AC_RUN_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <resolv.h>
@@ -328,7 +328,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
     AC_MSG_CHECKING(for b64_ntop with -lresolv)
     OLD_LIBS="$LIBS"
     LIBS="$LIBS -lresolv"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
@@ -341,7 +341,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
       AC_MSG_CHECKING(for b64_ntop with -lnetwork)
       OLD_LIBS="$LIBS"
       LIBS="-lnetwork"
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+      AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
