@@ -247,7 +247,7 @@ static int builtin_chanset STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(3, 3, " chan, setting, value");
+  BADARGS(3, 3, " chan setting value");
 
   CHECKVALIDITY(builtin_chanset);
   F(argv[1], argv[2]);
@@ -256,16 +256,12 @@ static int builtin_chanset STDVAR
 
 int check_tcl_chanset(const char *chan, const char *setting, const char *value)
 {
-  int x;
-
   Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
   Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
   Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
 
   return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
                      MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
-
-  return x;
 }
 
 /* Returns true if this is one of the channel masks
