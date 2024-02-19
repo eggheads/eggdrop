@@ -986,7 +986,8 @@ static int tcl_account2nicks STDVAR
   struct chanset_t *chan, *thechan = NULL;
   Tcl_Obj *nicks;
   Tcl_Obj **nicksv = NULL;
-  int nicksc = 0, i, found;
+  Tcl_Size nicksc = 0, i;
+  int found;
 
   BADARGS(2, 3, " account ?channel?");
 
@@ -1032,7 +1033,8 @@ static int tcl_hand2nicks STDVAR
   struct chanset_t *chan, *thechan = NULL;
   Tcl_Obj *nicks;
   Tcl_Obj **nicksv = NULL;
-  int nicksc = 0, i, found;
+  Tcl_Size nicksc = 0, i;
+  int found;
 
   BADARGS(2, 3, " handle ?channel?");
 

@@ -1013,7 +1013,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
 {
   char s[121], *str;
   EGG_CONST char **argv = NULL;
-  int argc = 0;
+  Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   /* String values first */
@@ -1133,7 +1133,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
 {
   char s[121], *str = NULL;
   EGG_CONST char **argv = NULL;
-  int argc = 0;
+  Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   if (!strcmp(setting, "chanmode"))
@@ -2089,7 +2089,7 @@ static void clear_channel(struct chanset_t *chan, int reset)
  */
 static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 {
-  int items;
+  Tcl_Size items;
   int ret = TCL_OK;
   int join = 0;
   char buf[2048], buf2[256];

@@ -1413,7 +1413,6 @@ static int server_raw STDVAR
 
 static int server_rawt STDVAR
 {
-  int unused;
   Tcl_Obj *tagdict;
   Function F = (Function) cd;
 
@@ -1421,7 +1420,7 @@ static int server_rawt STDVAR
 
   CHECKVALIDITY(server_rawt);
   tagdict = Tcl_NewStringObj(argv[4], -1);
-  if (Tcl_DictObjSize(irp, tagdict, &unused) != TCL_OK) {
+  if (Tcl_DictObjSize(irp, tagdict, (Tcl_Size *)NULL) != TCL_OK) {
     /* check early, Tcl sets error string first */
     Tcl_AppendResult(irp, " in call to ", argv[0], NULL);
     return TCL_ERROR;
@@ -1809,7 +1808,8 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
                            EGG_CONST char *name1,
                            EGG_CONST char *name2, int flags)
 {
-  int lc, code, i;
+  Tcl_Size lc, i;
+  int code;
   char x[1024];
   EGG_CONST char **list, *slist;
   struct server_list *q;
