@@ -1546,8 +1546,9 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           list[0] = newsplit(&par);
           continue;
         }
-        /* Prior to 1.10 we assumed anything here meant the end of the command.
-         * Now we process it and continue on until no more args are left
+        /* The rest have an unknown amount of args, so assume the rest of the
+         * line is args. Woops nearly made a nasty little hole here :) we'll
+         * just ignore any non global +n's trying to set the need-commands.
          */
         if (strncmp(list[0], "need-", 5) || (u->flags & USER_OWNER)) {
           Tcl_Interp *irp = NULL;
@@ -1557,7 +1558,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
             nfree(buf);
             return;
           }
-          list[1] = newsplit(&par);
+          list[1] = par;
           /* Par gets modified in tcl_channel_modify under some
            * circumstances, so save it now.
            */
@@ -1568,21 +1569,19 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
             return;
           }
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
-            check_tcl_chanset(chname, list[0], list[1]);
             int len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s } ", list[0], list[1]); /* Concatenation */
+            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, %s\n",
                     list[0], all ? "all channels" : chname, Tcl_GetStringResult(irp));
           Tcl_ResetResult(irp);
           Tcl_DeleteInterp(irp);
           nfree(parcpy);
-          list[0] = newsplit(&par);
-          list[1] = 0;
         }
+        break;
       }
       if (!all && answers[0]) {
-        dprintf(idx, "Successfully set modes { %s} on %s.\n", answers,
+        dprintf(idx, "Successfully set modes { %s } on %s.\n", answers,
                 chname);
         putlog(LOG_CMDS, "*", "#%s# chanset %s %s", dcc[idx].nick, chname,
                answers);
@@ -1593,7 +1592,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
         chan = chan->next;
     }
     if (all && answers[0]) {
-      dprintf(idx, "Successfully set modes { %s} on all channels.\n",
+      dprintf(idx, "Successfully set modes { %s } on all channels.\n",
               answers);
       putlog(LOG_CMDS, "*", "#%s# chanset * %s", dcc[idx].nick, answers);
     }
