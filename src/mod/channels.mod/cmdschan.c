@@ -1567,7 +1567,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
           if (check_tcl_chanset(chname, list[0], list[1])) {
-            continue;
+            break;
           }
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             int len = strlen(answers);
