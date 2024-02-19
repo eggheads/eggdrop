@@ -1475,7 +1475,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
   char *chname = NULL, answers[1024], *parcpy;
   char *list[2], value[2], *bak, *buf;
   struct chanset_t *chan = NULL;
-  int all = 0;
+  int len, all = 0;
 
   if (!par[0])
     dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
@@ -1539,8 +1539,9 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           }
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
-            strcat(answers, list[0]);
-            strcat(answers, " ");
+            len = strlen(answers);
+            egg_snprintf(answers + len, (sizeof answers) - len, 
+                (len == 0) ? "%s" : " %s", list[0]);        /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid mode.\n",
                     list[0], all ? "all channels" : chname);
@@ -1570,7 +1571,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
             break;
           }
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
-            int len = strlen(answers);
+            len = strlen(answers);
             egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, %s\n",
