@@ -1534,7 +1534,8 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
               return;
             }
           if (check_tcl_chanset(chname, list[0]+1, value)) {
-            return;
+            list[0] = newsplit(&par);
+            continue;
           }
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
@@ -1566,7 +1567,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
           if (check_tcl_chanset(chname, list[0], list[1])) {
-            return;
+            continue;
           }
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             int len = strlen(answers);
