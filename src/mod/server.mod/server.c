@@ -1413,6 +1413,7 @@ static int server_raw STDVAR
 
 static int server_rawt STDVAR
 {
+  Tcl_Size unused;
   Tcl_Obj *tagdict;
   Function F = (Function) cd;
 
@@ -1420,7 +1421,7 @@ static int server_rawt STDVAR
 
   CHECKVALIDITY(server_rawt);
   tagdict = Tcl_NewStringObj(argv[4], -1);
-  if (Tcl_DictObjSize(irp, tagdict, (Tcl_Size *)NULL) != TCL_OK) {
+  if (Tcl_DictObjSize(irp, tagdict, &unused) != TCL_OK) {
     /* check early, Tcl sets error string first */
     Tcl_AppendResult(irp, " in call to ", argv[0], NULL);
     return TCL_ERROR;
