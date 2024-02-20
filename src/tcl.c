@@ -925,7 +925,9 @@ void init_tcl0(int argc, char **argv)
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
+#if TCL_MAJOR_VERSION >= 9
   Tcl_InitSubsystems();
+#endif
 }
 
 /* Not going through Tcl's crazy main() system (what on earth was he
