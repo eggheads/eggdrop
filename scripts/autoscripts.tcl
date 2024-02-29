@@ -173,7 +173,7 @@ proc egg_list {idx} {
   readjsonfile
   putdcc $idx "\nThe following scripts are available for configuration:"
   putdcc $idx "-------------------------------------------------------"
-  if {[dict size $jsondict] == 0} {
+  if {[llength $jsondict] == 0} {
     putdcc $idx "* No scripts have been downloaded"
   }
   foreach script $jsondict {
@@ -182,7 +182,7 @@ proc egg_list {idx} {
     if {[dict exists $script config requires] && [string length [dict get $script config requires]]} {
       foreach pkg [dict get $script config requires] {
         if {![string equal $pkg "null"]} {
-          if {![lsearch -exact [package names] $pkg]} {
+          if {[lsearch -exact [package names] $pkg] == -1} {
             putdcc $idx "      ( ^ Must install Tcl $pkg package on host before loading)"
           }
         }
@@ -352,7 +352,9 @@ proc egg_remote {idx} {
   putdcc $idx "-------------------------------"
   foreach scriptentry $datadict {
 #    regsub -all {<[^>]+>} [dict get $scriptentry caption rendered] "" scriptcap
-    putdcc $idx "* [format "%-16s %s" [dict get $scriptentry name] [dict get $scriptentry description]]"
+    if {![string equal -nocase [dict get $scriptentry name] "autoscripts"]} {
+      putdcc $idx "* [format "%-16s %s" [dict get $scriptentry name] [dict get $scriptentry description]]"
+    }
   }
   putdcc $idx "\n"
   putdcc $idx "* Type 'fetch <scriptname>' to download a script"
