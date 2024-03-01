@@ -14,9 +14,9 @@ set jsondict [dict create]
 set asmajor 1
 set asminor 0
 
-bind DCC n autoscript console
+bind DCC n autoscript asconsole
 
-proc console {hand idx arg} {
+proc asconsole {hand idx arg} {
   global echostatus
   global oldchan
   global asidx
