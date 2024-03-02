@@ -95,6 +95,7 @@ if test "x$python_avail" = "xfalse"; then
     cat >&2 <<EOF
 
   There was an issue with your python installation.
+  Please read python.mod/config.log for more details.
   The python module will be disabled.
 
 EOF
