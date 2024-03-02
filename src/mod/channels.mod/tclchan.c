@@ -1264,7 +1264,14 @@ static int tcl_channel STDVAR
       Tcl_AppendResult(irp, "no such channel record", NULL);
       return TCL_ERROR;
     }
-    return tcl_channel_modify(irp, chan, argc - 3, &argv[3]);
+    for (int i = 3; i < argc; i++) {
+      argv[i] = strdup(argv[i]);
+    }
+    int ret = tcl_channel_modify(irp, chan, argc - 3, &argv[3]);
+    for (int i = 3; i < argc; i++) {
+      nfree(argv[i]);
+    }
+    return ret;
   }
   if (!strcmp(argv[1], "get")) {
     BADARGS(3, 4, " get channel-name ?setting-name?");
@@ -1318,6 +1325,19 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
   module_entry *me;
 
   for (i = 0; i < items; i++) {
+    if (item[i][0] == '+' || item[i][0] == '-') {
+      if (check_tcl_chanset(chan->dname, item[i]+1, item[i][0] == '+' ? "1" : "0")) {
+        if (irp)
+          Tcl_AppendResult(irp, "Channel setting ", item[i], " rejected by Tcl script", NULL);
+        return TCL_ERROR;
+      }
+    } else {
+      if (check_tcl_chanset(chan->dname, item[i], item[i][0] == '+' ? "1" : "0")) {
+        if (irp)
+          Tcl_AppendResult(irp, "Channel setting ", item[i], " rejected by Tcl script", NULL);
+        return TCL_ERROR;
+      }
+    }
     if (!strcmp(item[i], "need-op")) {
       i++;
       if (i >= items) {
