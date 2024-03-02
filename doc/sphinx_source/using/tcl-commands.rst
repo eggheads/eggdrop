@@ -3647,6 +3647,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 
 (19) RAWT  Return 1 to ask the bot not to process the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
 
+(20) CHANSET Return 1 to prevent the channel setting from being changed.
+
 Control Procedures
 ------------------
 
