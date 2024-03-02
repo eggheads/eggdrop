@@ -250,7 +250,7 @@ static int builtin_chanset STDVAR
   BADARGS(3, 3, " chan setting value");
 
   CHECKVALIDITY(builtin_chanset);
-  F(argv[1], argv[2]);
+  F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 

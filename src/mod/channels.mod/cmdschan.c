@@ -1533,7 +1533,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
               nfree(buf);
               return;
             }
-          if (check_tcl_chanset(chname, list[0]+1, value)) {
+          if (check_tcl_chanset(chname, list[0] + 1, list[0] == '+' ? "1" : "0")) {
             list[0] = newsplit(&par);
             continue;
           }

@@ -3591,7 +3591,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <chan> <setting> <value>
 
-  Description: triggered when a channel setting is set via the partyline. flags is ignored, mask is the name of channel setting (not including any +/- prefix) and can contain wildcards. The proc will be called with the channel that the setting was set on, the text name of the setting that was changed, and the value it was set to (a +/-, string, or X:Y formatted value).
+  Description: triggered when a channel setting is set via the partyline. flags is ignored, mask is the name of channel setting (not including any +/- prefix) and can contain wildcards. The proc will be called with the channel that the setting was set on, the text name of the setting that was changed, and the value it was set to (0/1 for -/+, string, or X:Y formatted value).
 
 ^^^^^^^^^^^^^
 Return Values
