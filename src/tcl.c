@@ -319,6 +319,11 @@ static void tcl_cleanup_stringinfo(ClientData cd)
 }
 
 /* Compatibility wrapper that calls Tcl functions with String API */
+/*
+ * can call itself recursively, so argv is dynamically allocated
+ * incrrefcount is needed to preserve the strings we get from Tcl_GetString from being cleaned up
+ * if Tcl is invoked from this
+ */
 static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
   const char **argv;
