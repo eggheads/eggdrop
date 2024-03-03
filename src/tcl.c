@@ -336,6 +336,7 @@ static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, T
   for (i = 0; i < objc; i++) {
     Tcl_DecrRefCount(objv[i]);
   }
+  nfree(argv);
   return ret;
 }
 
