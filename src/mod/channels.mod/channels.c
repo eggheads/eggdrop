@@ -256,13 +256,9 @@ static int builtin_chanset STDVAR
 
 int check_tcl_chanset(const char *chan, const char *setting, const char *value)
 {
-  setting = strdup(setting);
-  value = strdup(value);
   Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
   Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
   Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
-  nfree(setting);
-  nfree(value);
 
   return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
                      MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
