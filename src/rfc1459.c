@@ -27,23 +27,19 @@
 
 int _rfc_casecmp(const char *s1, const char *s2)
 {
-  unsigned char *str1 = (unsigned char *) s1;
-  unsigned char *str2 = (unsigned char *) s2;
   int res;
 
-  while (!(res = rfc_toupper(*str1) - rfc_toupper(*str2))) {
-    if (*str1 == '\0')
+  while (!(res = rfc_toupper(*s1) - rfc_toupper(*s2))) {
+    if (*s1 == '\0')
       return 0;
-    str1++;
-    str2++;
+    s1++;
+    s2++;
   }
   return res;
 }
 
-int _rfc_ncasecmp(const char *str1, const char *str2, int n)
+int _rfc_ncasecmp(const char *s1, const char *s2, int n)
 {
-  unsigned char *s1 = (unsigned char *) str1;
-  unsigned char *s2 = (unsigned char *) str2;
   int res;
 
   while (!(res = rfc_toupper(*s1) - rfc_toupper(*s2))) {
