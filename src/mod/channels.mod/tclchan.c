@@ -1319,7 +1319,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 
   for (i = 0; i < items; i++) {
     if (item[i][0] == '+' || item[i][0] == '-') {
-      if (check_tcl_chanset(chan->dname, item[i]+1, item[i][0] == '+' ? "1" : "0")) {
+      if (check_tcl_chanset(chan->dname, item[i] + 1, item[i][0] == '+' ? "1" : "0")) {
         if (irp) {
           Tcl_ResetResult(irp);
           Tcl_AppendResult(irp, "Channel setting ", item[i], " rejected by Tcl script", NULL);
@@ -1327,12 +1327,37 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
     } else {
-      if (i < items - 1 && check_tcl_chanset(chan->dname, item[i], item[i + 1])) {
-        if (irp) {
-          Tcl_ResetResult(irp);
-          Tcl_AppendResult(irp, "Channel setting ", item[i], " rejected by Tcl script", NULL);
+      // otherwise invalid later, missing value
+      if (i < items - 1) {
+        int free_value = 0;
+        char *value;
+
+        if (!strncmp("need-", item[i], 5)) {
+          value = item[i + 1];
+        } else {
+          char *sep = strchr(item[i + 1], ' ');
+
+          if (sep) {
+            value = nmalloc(sep - item[i + 1] + 1);
+            strlcpy(value, item[i + 1], sep - item[i + 1] + 1);
+            free_value = 1;
+          } else {
+            value = item[i + 1];
+          }
         }
-        return TCL_ERROR;
+        if (check_tcl_chanset(chan->dname, item[i], value)) {
+          if (free_value) {
+            nfree(value);
+          }
+          if (irp) {
+            Tcl_ResetResult(irp);
+            Tcl_AppendResult(irp, "Channel setting ", item[i], " to ", value, " rejected by Tcl script", NULL);
+          }
+          return TCL_ERROR;
+        }
+        if (free_value) {
+          nfree(value);
+        }
       }
     }
     if (!strcmp(item[i], "need-op")) {

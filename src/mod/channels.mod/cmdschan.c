@@ -1563,9 +1563,6 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           parcpy = nmalloc(strlen(par) + 1);
           strcpy(parcpy, par);
           irp = Tcl_CreateInterp();
-          if (check_tcl_chanset(chname, list[0], list[1])) {
-            break;
-          }
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             len = strlen(answers);
             egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
