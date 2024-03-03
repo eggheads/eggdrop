@@ -1327,7 +1327,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
     } else {
-      if (check_tcl_chanset(chan->dname, item[i], item[i][0] == '+' ? "1" : "0")) {
+      if (i < items - 1 && check_tcl_chanset(chan->dname, item[i], item[i + 1])) {
         if (irp) {
           Tcl_ResetResult(irp);
           Tcl_AppendResult(irp, "Channel setting ", item[i], " rejected by Tcl script", NULL);
