@@ -249,7 +249,7 @@ static int nested_debug = 0;
 static void write_debug()
 {
   int x;
-  char s[25];
+  char s[26];
 
   if (nested_debug) {
     /* Yoicks, if we have this there's serious trouble!
@@ -258,7 +258,7 @@ static void write_debug()
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
-      strlcpy(s, ctime(&now), sizeof s);
+      ctime_r(&now, s);
       dprintf(-x, "Debug (%s) written %s\n"
                   "Please report problem to https://github.com/eggheads/eggdrop/issues\n"
                   "Check doc/BUG-REPORT on how to do so.", ver, s);
@@ -286,8 +286,8 @@ static void write_debug()
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
-    strlcpy(s, ctime(&now), sizeof s);
-    dprintf(-x, "Debug (%s) written %s\n", ver, s);
+    ctime_r(&now, s);
+    dprintf(-x, "Debug (%s) written %s", ver, s);
 #ifdef EGG_PATCH
     dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
@@ -585,7 +585,7 @@ static void core_secondly()
   }
   nowmins = now / 60;
   if (nowmins > lastmin) {
-    memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    localtime_r(&now, &nowtm);
     i = 0;
     /* Once a minute */
     ++lastmin;
@@ -609,10 +609,11 @@ static void core_secondly()
       check_botnet_pings();
 
       if (!miltime) {           /* At midnight */
-        char s[25];
+        char s[26];
         int j;
 
-        strlcpy(s, ctime(&now), sizeof s);
+        ctime_r(&now, s);
+        s[24] = 0;
         if (quiet_save < 3)
           putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
@@ -946,7 +947,7 @@ static void init_random(void) {
 int main(int arg_c, char **arg_v)
 {
   int i, j, xx;
-  char s[25];
+  char s[26];
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -1063,8 +1064,8 @@ int main(int arg_c, char **arg_v)
   dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
   dns_thread_head->next = NULL;
 #endif
-  strlcpy(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
+  ctime_r(&now, s);
+  s[24] = 0;
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass2 && !encrypt_pass) {
