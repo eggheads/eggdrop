@@ -737,7 +737,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
                                 EGG_CONST char *name1,
                                 EGG_CONST char *name2, int flags)
 {
-  int i, items;
+  Tcl_Size i, items;
   char *t, *s;
   EGG_CONST char **item, *s2;
 

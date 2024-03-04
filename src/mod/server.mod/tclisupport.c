@@ -67,7 +67,7 @@ int tcl_isupport STDOBJVAR
 
 static int tcl_isupport_get STDOBJVAR
 {
-  int keylen;
+  Tcl_Size keylen;
   const char *key, *value;
   Tcl_Obj *tclres;
 
@@ -95,7 +95,7 @@ static int tcl_isupport_get STDOBJVAR
 
 static int tcl_isupport_isset STDOBJVAR
 {
-  int keylen;
+  Tcl_Size keylen;
   const char *key, *value;
 
   BADOBJARGS(3, 3, 2, "setting");
@@ -109,7 +109,7 @@ static int tcl_isupport_isset STDOBJVAR
 /* not exposed for now */
 static int tcl_isupport_set STDOBJVAR
 {
-  int keylen, valuelen;
+  Tcl_Size keylen, valuelen;
   const char *key, *value;
 
   /* First one to check for type validity only */
@@ -126,7 +126,7 @@ static int tcl_isupport_set STDOBJVAR
 static int tcl_isupport_unset STDOBJVAR
 {
   struct isupport *data;
-  int keylen;
+  Tcl_Size keylen;
   const char *key;
 
   BADOBJARGS(3, 3, 2, "setting");
@@ -170,7 +170,7 @@ char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
     }
     /* remove trailing space */
     if (Tcl_DStringLength(&ds))
-      Tcl_DStringTrunc(&ds, Tcl_DStringLength(&ds) - 1);
+      Tcl_DStringSetLength(&ds, Tcl_DStringLength(&ds) - 1);
     Tcl_SetVar2(interp, name1, name2, Tcl_DStringValue(&ds), TCL_GLOBAL_ONLY);
     Tcl_DStringFree(&ds);
 

@@ -1708,7 +1708,7 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
 {
   const char *value;
 
-  if (flags & TCL_INTERP_DESTROYED)
+  if (Tcl_InterpDeleted(irp))
     return NULL;
   /* Recover trace in case of unset. */
   if (flags & TCL_TRACE_DESTROYED) {

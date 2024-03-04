@@ -1036,7 +1036,8 @@ static int xtra_pack(struct userrec *u, struct user_entry *e)
 
 static void xtra_display(int idx, struct user_entry *e)
 {
-  int code, lc, j;
+  int code;
+  Tcl_Size lc, j;
   EGG_CONST char **list;
   struct xtra_key *xk;
 
