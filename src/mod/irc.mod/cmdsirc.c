@@ -389,7 +389,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
       return;
@@ -455,7 +455,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
       return;
@@ -536,7 +536,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
       dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
       return;
@@ -589,7 +589,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
       dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
       return;
