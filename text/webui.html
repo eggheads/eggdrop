@@ -1,0 +1,51 @@
+<!--
+SPDX-License-Identifier: GPL-2.0-only
+
+webui.html
+
+Written by Michael Ortmann
+
+Copyright (C) 2023 Eggheads Development Team
+-->
+<!DOCTYPE html>
+<html style="height:100%;">
+  <head>
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+    <title>Eggdrop</title>
+  </head>
+  <body bgcolor="#282828" text="#ebdbb2">
+    <pre id="out" style="overflow-wrap:break-word;white-space:pre-wrap;"></pre>
+    <input id="d" type="text" class="b" onkeydown="b(this)" autofocus style="width:100%;"/>
+    <script>
+      WS_ECHO_ON  = '\x01'
+      WS_ECHO_OFF = '\x02'
+      ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws:") + location.host + "/w");
+      out = document.getElementById("out");
+      echo = 1
+      ws.addEventListener("message", (event) => {
+        out.innerHTML = out.innerHTML + event.data.replace(/[\x01-\x02]/g, "");
+        out.scrollTop = out.scrollHeight;
+        d.scrollIntoView();
+        if (event.data.indexOf(WS_ECHO_ON) > -1) {
+          d.type = "text";
+          echo = 1;
+          console.log("echo on");
+        }
+        else if (event.data.indexOf(WS_ECHO_OFF) > -1) {
+          d.type = "password"
+          echo = 0;
+          console.log("echo off");
+        }
+      });
+      function b(c) {
+        if(event.key === "Enter") {
+          ws.send(c.value);
+          if (echo)
+            out.innerHTML = out.innerHTML + c.value + '\n';
+            out.scrollTop = out.scrollHeight;
+          c.value = "";
+        }
+      }
+    </script>
+  </body>
+</html>
