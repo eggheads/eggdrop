@@ -22,9 +22,6 @@
  */
 
 #include "main.h"
-#include "users.h"
-#include "chan.h"
-#include "tandem.h"
 #include "modules.h"
 #include "string.h"
 
