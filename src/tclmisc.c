@@ -24,7 +24,6 @@
 #include <errno.h>
 #include "main.h"
 #include "modules.h"
-#include "tandem.h"
 #include "md5/md5.h"
 
 #ifdef HAVE_SYS_TIME_H

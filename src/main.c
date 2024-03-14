@@ -67,7 +67,6 @@
 #include "version.h"
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "bg.h"
 
 #ifdef DEBUG                            /* For debug compile */

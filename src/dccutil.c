@@ -27,9 +27,6 @@
 
 #include <sys/stat.h>
 #include "main.h"
-#include <errno.h>
-#include "chan.h"
-#include "modules.h"
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
