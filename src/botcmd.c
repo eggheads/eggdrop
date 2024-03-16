@@ -67,6 +67,10 @@ int base64_to_int(char *buf)
   int i = 0;
 
   while (*buf) {
+    if (i > (INT_MAX >> 6)) {
+      debug0("botcmd: base64_to_int(): Bogus input");
+      return INT_MAX; /* FIXME: return -1 and check for this return value */
+    }
     i = i << 6;
     i += base64to[(int) *buf];
     buf++;
@@ -1397,27 +1401,32 @@ static void bot_away(int idx, char *par)
   etc = newsplit(&par);
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    sock = atoi(etc);
+    sock = atoi(etc); /* FIXME: etc is user input, so we need to check it and/or use strtol() / strtoul() */ 
   else
 #endif
     sock = base64_to_int(etc);
   if (sock == 0)
     sock = partysock(bot, etc);
+  if (sock > 0xffff) {
+    putlog(LOG_BOTS, "*", "botcmd: bot_away() Bogus sock from %s", dcc[idx].nick);
+    return;
+  }
   check_tcl_away(bot, sock, par);
   if (par[0]) {
     partystat(bot, sock, PLSTAT_AWAY, 0);
     partyaway(bot, sock, par);
   } else
     partystat(bot, sock, 0, PLSTAT_AWAY);
-  partyidx = getparty(bot, sock);
-  if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
-    if (par[0])
-      chanout_but(-1, party[partyidx].chan,
-                  "*** (%s) %s %s: %s.\n", bot,
-                  party[partyidx].nick, NET_AWAY, par);
-    else
-      chanout_but(-1, party[partyidx].chan,
-                  "*** (%s) %s %s.\n", bot, party[partyidx].nick, NET_UNAWAY);
+  if ((partyidx = getparty(bot, sock)) > -1) {
+    if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
+      if (par[0])
+        chanout_but(-1, party[partyidx].chan,
+                    "*** (%s) %s %s: %s.\n", bot,
+                    party[partyidx].nick, NET_AWAY, par);
+      else
+        chanout_but(-1, party[partyidx].chan,
+                    "*** (%s) %s %s.\n", bot, party[partyidx].nick, NET_UNAWAY);
+    }
   }
   botnet_send_away(idx, bot, sock, par, linking);
 }
