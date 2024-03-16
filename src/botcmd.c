@@ -67,7 +67,11 @@ int base64_to_int(char *buf)
   int i = 0;
 
   while (*buf) {
-    i = i << 6; /* FIXME: buf is user input, so this could overflow */
+    if (i > (INT_MAX >> 6)) {
+      debug0("botcmd: base64_to_int(): Bogus input");
+      return INT_MAX; /* FIXME: return -1 and check for this return value */
+    }
+    i = i << 6;
     i += base64to[(int) *buf];
     buf++;
   }
@@ -1403,6 +1407,10 @@ static void bot_away(int idx, char *par)
     sock = base64_to_int(etc);
   if (sock == 0)
     sock = partysock(bot, etc);
+  if (sock > 0xffff) {
+    putlog(LOG_BOTS, "*", "botcmd: bot_away() Bogus sock from %s", dcc[idx].nick);
+    return;
+  }
   check_tcl_away(bot, sock, par);
   if (par[0]) {
     partystat(bot, sock, PLSTAT_AWAY, 0);
