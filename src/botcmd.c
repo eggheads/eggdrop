@@ -67,7 +67,7 @@ int base64_to_int(char *buf)
   int i = 0;
 
   while (*buf) {
-    i = i << 6;
+    i = i << 6; /* FIXME: buf is user input, so this could overflow */
     i += base64to[(int) *buf];
     buf++;
   }
@@ -1397,7 +1397,7 @@ static void bot_away(int idx, char *par)
   etc = newsplit(&par);
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    sock = atoi(etc);
+    sock = atoi(etc); /* FIXME: etc is user input, so we need to check it and/or use strtol() / strtoul() */ 
   else
 #endif
     sock = base64_to_int(etc);
@@ -1409,15 +1409,16 @@ static void bot_away(int idx, char *par)
     partyaway(bot, sock, par);
   } else
     partystat(bot, sock, 0, PLSTAT_AWAY);
-  partyidx = getparty(bot, sock);
-  if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
-    if (par[0])
-      chanout_but(-1, party[partyidx].chan,
-                  "*** (%s) %s %s: %s.\n", bot,
-                  party[partyidx].nick, NET_AWAY, par);
-    else
-      chanout_but(-1, party[partyidx].chan,
-                  "*** (%s) %s %s.\n", bot, party[partyidx].nick, NET_UNAWAY);
+  if ((partyidx = getparty(bot, sock)) > -1) {
+    if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
+      if (par[0])
+        chanout_but(-1, party[partyidx].chan,
+                    "*** (%s) %s %s: %s.\n", bot,
+                    party[partyidx].nick, NET_AWAY, par);
+      else
+        chanout_but(-1, party[partyidx].chan,
+                    "*** (%s) %s %s.\n", bot, party[partyidx].nick, NET_UNAWAY);
+    }
   }
   botnet_send_away(idx, bot, sock, par, linking);
 }
