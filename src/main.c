@@ -565,6 +565,7 @@ static void core_secondly()
   int miltime;
   time_t nowmins;
   int i;
+  uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -595,14 +596,14 @@ static void core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug1("timer: drift (%" PRId64 " seconds)", (int64_t) (nowmins - lastmin));
+      drift_mins = nowmins - lastmin;
+      debug2("timer: drift (%" PRId64 " minute%s)", drift_mins, drift_mins == 1 ? "" : "s");
       i++;
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
     if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %" PRId64 " minutes",
-             ((int64_t) (nowmins - lastmin)) / 60);
+      putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
