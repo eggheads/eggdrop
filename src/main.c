@@ -602,7 +602,7 @@ static void core_secondly()
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
-    if (i > 1)
+    if (i)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
