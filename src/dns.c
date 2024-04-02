@@ -543,16 +543,19 @@ void *thread_dns_ipbyhost(void *arg)
       }
     }
 #else
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): hostname %s: no ipv4", dtn->host);
+    error = 1;
     for (res = res0; res; res = res->ai_next) {
       if (res->ai_family == AF_INET) {
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
+	error = 0;
         *dtn->strerror = 0;
         break;
       }
     }
+    if (error)
+      snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): hostname %s: no ipv4", dtn->host);
 #endif
     if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
                * 2553 and 3493. Avoid to be compatible with all OSes. */
