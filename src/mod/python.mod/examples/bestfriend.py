@@ -1,11 +1,7 @@
 # GOAL: Demonstrate how to convert a list provided by a Tcl command into a Python list
 
-# Load bind from eggdrop, not eggdrop.tcl. Loading it from eggdrop.tcl would cause
-# the bind to call a Tcl proc, not the python method.
-from eggdrop import bind, parse_tcl_list
-
-# Load any Tcl commands you want to use from the eggdrop.tcl module.
-from eggdrop.tcl import putmsg, putlog, chanlist
+# Load all from eggdrop. Tcl commands must be prefixed with tcl.
+from eggdrop import *
 
 # And now, a totally normal python module
 import random
@@ -15,14 +11,14 @@ import random
 #
 # This function is trivial and silly, but shows how Python can properly accept and type a Tcl list
 def pickAFriend(nick, user, hand, chan, text, **kwargs):
-  users = chanlist(chan)
+  users = tcl.chanlist(chan)
   # Here we use a new python function called 'parse_tcl_list' to convert the Tcl list provided by chanlist
   # into a python list. Without this, you just have a long space-separated string
   userlist = parse_tcl_list(users)
-  putlog(f"This is a python list of the users: {userlist}")
+  tcl.putlog(f"This is a python list of the users: {userlist}")
   bestFriend = random.choice(userlist)
-  putmsg(chan, f"The first user I found was {userlist[0]}")
-  putmsg(chan, f"But {bestFriend} is my new best friend!")
+  tcl.putmsg(chan, f"The first user I found was {userlist[0]}")
+  tcl.putmsg(chan, f"But {bestFriend} is my new best friend!")
 
 # Call binds at the end of the script, not the top- the methods must be defined!
 bind("pub", "*", "!friend", pickAFriend)
