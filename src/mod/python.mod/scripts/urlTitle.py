@@ -24,4 +24,4 @@ def pubGetTitle(nick, host, handle, channel, text, **kwargs):
 # Call binds at the end of the script, not the top- the functions must be defined!
 bind("pub", "*", "!title", pubGetTitle)
 
-print('Loaded example.py')
+print('Loaded urlTitle.py')
