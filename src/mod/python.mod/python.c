@@ -112,7 +112,8 @@ static void kill_python() {
 
 static void python_report(int idx, int details)
 {
-  // TODO
+  if (details)
+    dprintf(idx, "    python version: %s (header version %s)\n", Py_GetVersion(), PY_VERSION);
 }
 
 static char *python_close()

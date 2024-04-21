@@ -396,7 +396,7 @@ static int compress_report(int idx, int details)
   if (details) {
     int size = compress_expmem();
 
-    dprintf(idx, "    zlib version %s\n", ZLIB_VERSION);
+    dprintf(idx, "    zlib version: %s (header version %s)\n", zlibVersion(), ZLIB_VERSION);
     dprintf(idx, "    %u file%s compressed\n", compressed_files,
             (compressed_files != 1) ? "s" : "");
     dprintf(idx, "    %u file%s uncompressed\n", uncompressed_files,
