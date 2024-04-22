@@ -23,29 +23,29 @@ const global_funcs = extern struct {
     module_register: *const fn ([*]const u8, *const modcall, c_int, c_int) callconv(.C) c_int,
 };
 
-const modcall = extern struct {
-    start: ?*const fn (*global_funcs) callconv(.C) ?[*]const u8, // MODCALL_START
-    close: ?*const fn () callconv(.C) void, // MODCALL_CLOSE
-    expmem: ?*const fn () callconv(.C) void, // MODCALL_EXPMEM
-    report: ?*const fn () callconv(.C) void, // MODCALL_REPORT
-};
-
 export fn zig_report(idx: c_int, details: c_int) void {
     _ = idx;
-    _ = details;
+    if (details > 0)
+        std.io.getStdOut().writer().print("    zig version: {s}\n", .{builtin.zig_version_string}) catch return;
 }
+
+const modcall = extern struct {
+    start: *const fn (*global_funcs) callconv(.C) ?[*]const u8, // MODCALL_START, TODO: will become Optional Pointer via #1564
+    close: ?*const fn () callconv(.C) void, // MODCALL_CLOSE
+    expmem: ?*const fn () callconv(.C) void, // MODCALL_EXPMEM
+    report: ?*const fn (c_int, c_int) callconv(.C) void, // MODCALL_REPORT
+};
 
 export fn zig_start(global: *global_funcs) ?[*]const u8 {
     const zig_table = modcall{
-        .start = null, //zig_start,
+        .start = zig_start,
         .close = null,
         .expmem = null,
-        .report = null,
+        .report = zig_report,
     };
     _ = global.module_register(MODULE_NAME.ptr, &zig_table, 0, 1);
-
     std.io.getStdOut().writer().print("hello from zig.mod zig_start()\n", .{}) catch return null;
-    std.io.getStdOut().writer().print("zig version: {s}\n", .{builtin.zig_version_string}) catch return null;
+
     // return "WIP".ptr;
     return null;
 }
