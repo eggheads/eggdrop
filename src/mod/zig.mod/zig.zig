@@ -439,12 +439,6 @@ export fn zig_close() ?[*]const u8 {
 
 export fn zig_report(idx: c_int, details: c_int) void {
     if (details > 0) {
-        // TODO: idx != file handle, we need to call dprintf() from eggdrop module API
-        // so, we need to translate the rest of global_table of src/modules.c to global_func
-        // lets write a small python script for that
-        // later we can automatically deduce types from src/mod/module.handle
-        // for now we can make those funcs dummy parameters and only fully specify what we need
-        // like dprintf()
         const allocator = std.heap.page_allocator;
         const s = std.fmt.allocPrint(allocator, "    zig version: {s}\n", .{builtin.zig_version_string}) catch return;
         global.dprintf(idx, s.ptr);
@@ -467,8 +461,8 @@ export fn zig_start(global_funcs: *global_table) ?[*]const u8 {
         .report = zig_report,
     };
     _ = global.module_register(MODULE_NAME.ptr, &zig_table, 0, 1); // TODO: crashes on restart, if zig_close() (mod unload) isnt there
-    std.io.getStdOut().writer().print("hello from zig.mod zig_start()\n", .{}) catch return null;
 
-    // return "WIP".ptr;
+    // TODO: module_depend and return "error".ptr
+
     return null;
 }
