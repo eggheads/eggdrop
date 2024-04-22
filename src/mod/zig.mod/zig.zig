@@ -23,6 +23,10 @@ const global_funcs = extern struct {
     module_register: *const fn ([*]const u8, *const modcall, c_int, c_int) callconv(.C) c_int,
 };
 
+export fn zig_close() ?[*]const u8 {
+    return null;
+}
+
 export fn zig_report(idx: c_int, details: c_int) void {
     _ = idx;
     if (details > 0)
@@ -31,7 +35,7 @@ export fn zig_report(idx: c_int, details: c_int) void {
 
 const modcall = extern struct {
     start: *const fn (*global_funcs) callconv(.C) ?[*]const u8, // MODCALL_START, TODO: will become Optional Pointer via #1564
-    close: ?*const fn () callconv(.C) void, // MODCALL_CLOSE
+    close: ?*const fn () callconv(.C) ?[*]const u8, // MODCALL_CLOSE
     expmem: ?*const fn () callconv(.C) void, // MODCALL_EXPMEM
     report: ?*const fn (c_int, c_int) callconv(.C) void, // MODCALL_REPORT
 };
@@ -39,7 +43,7 @@ const modcall = extern struct {
 export fn zig_start(global: *global_funcs) ?[*]const u8 {
     const zig_table = modcall{
         .start = zig_start,
-        .close = null,
+        .close = zig_close,
         .expmem = null,
         .report = zig_report,
     };
