@@ -407,7 +407,7 @@ void tell_settings(int idx)
 
 void reaffirm_owners()
 {
-  char *p, *q, s[121];
+  char *p, *q, s[sizeof owner];
   struct userrec *u;
 
   /* Please stop breaking this function. */
