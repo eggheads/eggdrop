@@ -22,8 +22,8 @@ const global_table = extern struct {
     // 4 - 7
     module_register: *const fn ([*]const u8, *const modcall, c_int, c_int) callconv(.C) c_int,
     module_find: *const fn () callconv(.C) void,
-    module_depend: *const fn () callconv(.C) void,
-    module_undepend: *const fn () callconv(.C) void,
+    module_depend: *const fn ([*]const u8, [*]const u8, c_int, c_int) callconv(.C) ?[*]void, // TODO: return value
+    module_undepend: *const fn ([*]const u8) callconv(.C) c_int,
     // 8 - 11
     add_bind_table: *const fn () callconv(.C) void,
     del_bind_table: *const fn () callconv(.C) void,
@@ -460,9 +460,12 @@ export fn zig_start(global_funcs: *global_table) ?[*]const u8 {
         .expmem = null,
         .report = zig_report,
     };
-    _ = global.module_register(MODULE_NAME.ptr, &zig_table, 0, 1); // TODO: crashes on restart, if zig_close() (mod unload) isnt there
+    _ = global.module_register(MODULE_NAME.ptr, &zig_table, 0, 1);
 
-    // TODO: module_depend and return "error".ptr
+    if (global.module_depend(MODULE_NAME, "eggdrop", 109, 5) == null) {
+        _ = global.module_undepend(MODULE_NAME);
+        return "This module requires Eggdrop 1.9.5 or later.";
+    }
 
     return null;
 }
