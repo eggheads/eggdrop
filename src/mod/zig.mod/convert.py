@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# SPDX-License-Identifier: MIT */
+# SPDX-License-Identifier: MIT
 #
 # convert.py -- part of zig.mod
 #
@@ -29,6 +29,5 @@ for line in open("src/modules.c").readlines():
                 func_name = "foo%i" % foo_i
                 foo_i += 1
             print("    %s: *const fn () callconv(.C) void," % func_name)
-
         elif line == "};\n":
             break
