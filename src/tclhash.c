@@ -32,7 +32,7 @@
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
-extern int dcc_total;
+extern int dcc_total, log_bind_time;
 extern time_t now;
 
 p_tcl_bind_list bind_table_list;
@@ -745,7 +745,7 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
   if (proc && proc[0] != '*' && !r) {
-    if (!getrusage(RUSAGE_SELF, &ru2)) {
+    if (log_bind_time && !getrusage(RUSAGE_SELF, &ru2)) {
       debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
              (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
              (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
