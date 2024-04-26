@@ -741,7 +741,8 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
     strlcpy(last_bind_called, proc, sizeof last_bind_called);
 #endif
     debug1("triggering bind %s", proc);
-    r = getrusage(RUSAGE_SELF, &ru1);
+    if (log_bind_time)
+      r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
   if (proc && proc[0] != '*' && !r) {

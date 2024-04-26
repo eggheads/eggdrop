@@ -2846,7 +2846,8 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
     return;
   }
   debug1("tcl: evaluating .tcl %s", msg);
-  r = getrusage(RUSAGE_SELF, &ru1);
+  if (log_tcl_time)
+    r = getrusage(RUSAGE_SELF, &ru1);
   code = Tcl_GlobalEval(interp, msg);
   if (log_tcl_time && !r && !getrusage(RUSAGE_SELF, &ru2)) {
     debug3("tcl: evaluated .tcl %s, user %.3fms sys %.3fms", msg,
