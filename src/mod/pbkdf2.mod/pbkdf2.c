@@ -226,15 +226,40 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
 static int tcl_encpass2 STDVAR
 {
   BADARGS(2, 2, " string");
-  if (strlen(argv[1]) > 0)
-    Tcl_AppendResult(irp, pbkdf2_encrypt(argv[1]), NULL);
-  else
-    Tcl_AppendResult(irp, "", NULL);
+  Tcl_AppendResult(irp, pbkdf2_encrypt(argv[1]), NULL);
+  return TCL_OK;
+}
+
+static int tcl_pbkdf2 STDVAR
+{
+  unsigned int rounds;
+  const EVP_MD *digest;
+  int digestlen;
+  unsigned char buf[256];
+
+  BADARGS(5, 5, " pass salt rounds digest");
+  rounds = atoi(argv[3]);
+  digest = EVP_get_digestbyname(argv[4]);
+  if (!digest) {
+    Tcl_AppendResult(irp, "PBKDF2 error: Unknown message digest '", argv[4], "'.", NULL);
+    return TCL_ERROR;
+  }
+  digestlen = EVP_MD_size(digest);
+  if (!PKCS5_PBKDF2_HMAC(argv[1], strlen(argv[1]), (const unsigned char *) argv[2], strlen(argv[2]), rounds, digest, digestlen, buf)) {
+    Tcl_AppendResult(irp, "PBKDF2 error: PKCS5_PBKDF2_HMAC(): ", ERR_error_string(ERR_get_error(), NULL), ".", NULL);
+    return TCL_ERROR;
+  }
+  else {
+    buf[digestlen] = 0;
+    Tcl_Obj *result = Tcl_NewByteArrayObj(buf, digestlen);
+    Tcl_SetObjResult(irp, result);
+  }
   return TCL_OK;
 }
 
 static tcl_cmds my_tcl_cmds[] = {
   {"encpass2", tcl_encpass2},
+  {"pbkdf2",   tcl_pbkdf2},
   {NULL,       NULL}
 };
 
