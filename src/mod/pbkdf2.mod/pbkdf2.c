@@ -249,11 +249,10 @@ static int tcl_pbkdf2 STDVAR
     Tcl_AppendResult(irp, "PBKDF2 error: PKCS5_PBKDF2_HMAC(): ", ERR_error_string(ERR_get_error(), NULL), ".", NULL);
     return TCL_ERROR;
   }
-  else {
-    buf[digestlen] = 0;
-    Tcl_Obj *result = Tcl_NewByteArrayObj(buf, digestlen);
-    Tcl_SetObjResult(irp, result);
-  }
+  buf[digestlen] = 0;
+  Tcl_Obj *result = Tcl_NewByteArrayObj(buf, digestlen);
+  explicit_bzero(buf, digestlen);
+  Tcl_SetObjResult(irp, result);
   return TCL_OK;
 }
 
