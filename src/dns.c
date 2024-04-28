@@ -563,6 +563,8 @@ void *thread_dns_ipbyhost(void *arg)
   }
   else if (error == EAI_NONAME)
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s: not known", dtn->host);
+  else if (error == EAI_SYSTEM)
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s: %s: %s", dtn->host, gai_strerror(error), strerror(errno));
   else
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s: %s", dtn->host, gai_strerror(error));
   pthread_mutex_lock(&dtn->mutex);
