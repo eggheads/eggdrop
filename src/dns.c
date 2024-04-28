@@ -507,7 +507,7 @@ void *thread_dns_hostbyip(void *arg)
   if (!i)
     *dtn->strerror = 0;
   else {
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_hostbyip(): getnameinfo(): hostname %s: %s", dtn->host, gai_strerror(i));
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_hostbyip(): getnameinfo(): %s", gai_strerror(i));
 #ifdef IPV6
     if (addr->family == AF_INET6)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
@@ -555,18 +555,18 @@ void *thread_dns_ipbyhost(void *arg)
       }
     }
     if (error)
-      snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): hostname %s: no ipv4", dtn->host);
+      snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): no ipv4");
 #endif
     if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
                * 2553 and 3493. Avoid to be compatible with all OSes. */
       freeaddrinfo(res0);
   }
   else if (error == EAI_NONAME)
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s: not known", dtn->host);
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
   else if (error == EAI_SYSTEM)
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s: %s: %s", dtn->host, gai_strerror(error), strerror(errno));
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: %s", gai_strerror(error), strerror(errno));
   else
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s: %s", dtn->host, gai_strerror(error));
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s", gai_strerror(error));
   pthread_mutex_lock(&dtn->mutex);
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);

@@ -757,7 +757,7 @@ struct dns_thread_node {
   int type;
   sockname_t addr;
   char host[256];
-  char strerror[256 + 128]; /* hostname + gai_strerror() + msg */
+  char strerror[256]; /* msg + gai_strerror() + strerror() */
   struct dns_thread_node *next;
 };
 
