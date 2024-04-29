@@ -25,7 +25,6 @@
 #define MAKING_CONSOLE
 
 #include "src/mod/module.h"
-#include <stdlib.h>
 #include "console.h"
 
 static Function *global = NULL;
