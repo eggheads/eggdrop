@@ -630,18 +630,12 @@ static void ssl_showcert(X509 *cert, const int loglev)
   } else
     putlog(loglev, "*", "TLS: cannot get issuer name from certificate!");
 
-  /* Fingerprints */
-  if (X509_digest(cert, EVP_sha1(), md, &len)) {
-    buf = OPENSSL_buf2hexstr(md, len);
-    putlog(loglev, "*", "TLS: certificate SHA1 Fingerprint: %s", buf);
-    OPENSSL_free(buf);
-  }
+  /* Fingerprint */
   if (X509_digest(cert, EVP_sha256(), md, &len)) {
     buf = OPENSSL_buf2hexstr(md, len);
-    putlog(loglev, "*", "TLS: certificate SHA-256 Fingerprint: %s", buf);
+    putlog(loglev, "*", "TLS: certificate SHA256 Fingerprint: %s", buf);
     OPENSSL_free(buf);
   }
-
 
   /* Validity time */
   from = ssl_printtime(X509_get_notBefore(cert));
