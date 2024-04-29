@@ -134,13 +134,12 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int console_tcl_format(char *work, struct console_info *i)
+static void console_tcl_format(char *work, struct console_info *i)
 {
   simple_sprintf(work, "%s %s %s %d %d %d",
                  i->channel, masktype(i->conflags),
                  stripmasktype(i->stripflags), i->echoflags,
                  i->page, i->conchan);
-  return 0;
 }
 
 static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
