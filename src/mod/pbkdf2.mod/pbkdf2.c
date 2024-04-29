@@ -226,7 +226,7 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
 static int tcl_encpass2 STDVAR
 {
   BADARGS(2, 2, " string");
-  Tcl_AppendResult(irp, pbkdf2_encrypt(argv[1]), NULL);
+  Tcl_SetResult(irp, pbkdf2_encrypt(argv[1]), TCL_STATIC);
   return TCL_OK;
 }
 
