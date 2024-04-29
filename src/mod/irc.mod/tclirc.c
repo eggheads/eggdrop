@@ -511,7 +511,7 @@ static int tcl_accounttracking STDVAR
   if (current->enabled) {
     acctnotify = 1;
   }
-  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", TCL_STATIC);
   return TCL_OK;
 }
 
