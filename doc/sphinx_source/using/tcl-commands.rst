@@ -2200,6 +2200,28 @@ setflags <dir> [<flags> [channel]]
 
   Module: filesys
 
+PBKDF2 Module
+-------------
+
+^^^^^^^^^^^^^^^
+encpass2 <pass>
+^^^^^^^^^^^^^^^
+
+
+  Returns: hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" (PHC string format)
+        salt and hash = base64
+        NULL = error
+
+  Module: pbkdf2
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pbkdf2 <pass> <salt> <rounds> <digest>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: derived key from a password using a salt and iteration count as specified in RFC 2898.
+
+  Module: pbkdf2
+
 Miscellaneous Commands
 ----------------------
 
