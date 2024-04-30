@@ -108,7 +108,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
                          digestlen, buf)) {
     explicit_bzero(buf, digestlen);
     explicit_bzero(out, outlen);
-    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.",
+    putlog(LOG_MISC, "*", "PBKDF2 key derivation error: %s.",
            ERR_error_string(ERR_get_error(), NULL));
     nfree(buf);
     return NULL;
@@ -246,7 +246,7 @@ static int tcl_pbkdf2 STDVAR
   }
   digestlen = EVP_MD_size(digest);
   if (!PKCS5_PBKDF2_HMAC(argv[1], strlen(argv[1]), (const unsigned char *) argv[2], strlen(argv[2]), rounds, digest, digestlen, buf)) {
-    Tcl_AppendResult(irp, "PBKDF2 error: PKCS5_PBKDF2_HMAC(): ", ERR_error_string(ERR_get_error(), NULL), ".", NULL);
+    Tcl_AppendResult(irp, "PBKDF2 key derivation error: ", ERR_error_string(ERR_get_error(), NULL), ".", NULL);
     return TCL_ERROR;
   }
   buf[digestlen] = 0;
