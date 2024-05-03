@@ -357,7 +357,7 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
 
 static char *get_bot_pass(struct userrec *u) {
     char *pass2 = get_user(&USERENTRY_PASS2, u);
-    char * pass = get_user(&USERENTRY_PASS, u);
+    char *pass = get_user(&USERENTRY_PASS, u);
     if (pass2) {
       if (!pass) {
         pass = pass2;
