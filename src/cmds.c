@@ -2845,11 +2845,11 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
-  debug1("tcl: evaluating .tcl %s", msg);
+  debug1("evaluating .tcl %s", msg);
   r = getrusage(RUSAGE_SELF, &ru1);
   code = Tcl_GlobalEval(interp, msg);
   if (!r && !getrusage(RUSAGE_SELF, &ru2))
-    debug3("tcl: evaluated .tcl %s, user %.3fms sys %.3fms", msg,
+    debug3("evaluated .tcl %s, user %.3fms sys %.3fms", msg,
            (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
