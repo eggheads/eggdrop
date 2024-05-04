@@ -49,8 +49,8 @@ update_copyright() {
 		mv ${i}_ $i
 	fi
 	# Cats and Dogs
-	sed -i '/Eggdrop v%s (C) 1997 Robey Pointer/c\               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-'$YEAR' Eggheads",' src/main.c
-    sed -i '/Eggdrop v%s+%s (C) 1997 Robey Pointer/c\               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-'$YEAR' Eggheads",' src/main.c
+	sed -i '/Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-/c\          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-'$YEAR' Eggheads Development Team",' src/main.c
+    sed -i '/Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-/c\          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-'$YEAR' Eggheads Development Team",' src/main.c
 
 }
 
