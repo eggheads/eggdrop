@@ -2214,11 +2214,12 @@ encpass2 <pass>
 
   Module: pbkdf2
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pbkdf2 <pass> <salt> <rounds> <digest>
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: derived key from a password using a salt and iteration count as specified in RFC 2898.
+  Returns: derived key from a password using a salt and iteration count as specified in RFC 2898 as a hexadecimal string. You may request the result as binary data by giving -bin.
+
 
   Module: pbkdf2
 
