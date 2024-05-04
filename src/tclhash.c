@@ -32,7 +32,7 @@
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
-extern int dcc_total, log_bind_time;
+extern int dcc_total;
 extern time_t now;
 
 p_tcl_bind_list bind_table_list;
@@ -741,19 +741,15 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
     strlcpy(last_bind_called, proc, sizeof last_bind_called);
 #endif
     debug1("triggering bind %s", proc);
-    if (log_bind_time)
-      r = getrusage(RUSAGE_SELF, &ru1);
+    r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
-  if (proc && proc[0] != '*' && !r) {
-    if (log_bind_time && !getrusage(RUSAGE_SELF, &ru2)) {
-      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
-             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-    }
-  }
+  if (proc && proc[0] != '*' && !r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */

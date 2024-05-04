@@ -89,8 +89,6 @@ int quiet_reject = 1;
 int max_socks = 100;
 int par_telnet_flood = 1;
 int quiet_save = 0;
-int log_bind_time = 1;
-int log_tcl_time = 1;
 int strtot = 0;
 int handlen = HANDLEN;
 
@@ -494,8 +492,6 @@ static tcl_ints def_tcl_ints[] = {
   {"use-exempts",           &use_exempts,          0},
   {"use-invites",           &use_invites,          0},
   {"quiet-save",            &quiet_save,           0},
-  {"log-bind-time",         &log_bind_time,        0},
-  {"log-tcl-time",          &log_tcl_time,         0},
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
   {"userfile-perm",         &userfile_perm,        0},
