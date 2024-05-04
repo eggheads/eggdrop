@@ -50,7 +50,6 @@ static int tcl_pbkdf2 STDVAR
     Tcl_AppendResult(irp, "PBKDF2 key derivation error: ", ERR_error_string(ERR_get_error(), NULL), ".", NULL);
     return TCL_ERROR;
   }
-  buf[digestlen] = 0;
   if (hex) {
     for (i = 0; i < digestlen; i++)
       sprintf(buf_hex + (i * 2), "%.2X", buf[i]);
