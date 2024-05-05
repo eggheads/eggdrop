@@ -1053,16 +1053,18 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    if (*dtn->strerror)
+      debug2("%s: hostname %s", dtn->strerror, dtn->host);
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
       if (dtn->type == DTN_TYPE_HOSTBYIP) {
         pthread_mutex_lock(&dtn->mutex);
-        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+        call_hostbyip(&dtn->addr, dtn->host, !*dtn->strerror);
         pthread_mutex_unlock(&dtn->mutex);
       }
       else {
         pthread_mutex_lock(&dtn->mutex);
-        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+        call_ipbyhost(dtn->host, &dtn->addr, !*dtn->strerror);
         pthread_mutex_unlock(&dtn->mutex);
       }
       close(dtn->fildes[0]);

@@ -492,6 +492,8 @@ void call_ipbyhost(char *hostn, sockname_t *ip, int ok)
  * is closed and the thread is ended by return. The other end will make
  * eggdrops mainloop select() return, read the result from the dns_thread_node
  * and call call_hostbyip() or call_ipbyhost(). No signal or tcl thread problem.
+ *
+ * defer debug() / putlog() from dns threads to main thread via dtn.strerror
  */
 
 void *thread_dns_hostbyip(void *arg)
@@ -502,8 +504,10 @@ void *thread_dns_hostbyip(void *arg)
 
   i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
                   dtn->host, sizeof dtn->host, NULL, 0, 0);
-  if (i) {
-    debug1("dns: thread_dns_hostbyip(): getnameinfo(): error = %s", gai_strerror(i));
+  if (!i)
+    *dtn->strerror = 0;
+  else {
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_hostbyip(): getnameinfo(): %s", gai_strerror(i));
 #ifdef IPV6
     if (addr->family == AF_INET6)
       inet_ntop(AF_INET6, &addr->addr.s6.sin6_addr, dtn->host, sizeof dtn->host);
@@ -512,7 +516,6 @@ void *thread_dns_hostbyip(void *arg)
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
   }
   pthread_mutex_lock(&dtn->mutex);
-  dtn->ok = !i;
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
@@ -528,6 +531,7 @@ void *thread_dns_ipbyhost(void *arg)
   error = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
   if (!error) {
+    *dtn->strerror = 0;
 #ifdef IPV6
     for (res = res0; res; res = res->ai_next) {
       if (res == res0 || res->ai_family == (pref_af ? AF_INET6 : AF_INET)) {
@@ -545,21 +549,25 @@ void *thread_dns_ipbyhost(void *arg)
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-        error = 0;
+	error = 0;
+        *dtn->strerror = 0;
         break;
       }
     }
+    if (error)
+      snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): no ipv4");
 #endif
     if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
                * 2553 and 3493. Avoid to be compatible with all OSes. */
       freeaddrinfo(res0);
   }
   else if (error == EAI_NONAME)
-    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): hostname %s not known", dtn->host);
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
+  else if (error == EAI_SYSTEM)
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: %s", gai_strerror(error), strerror(errno));
   else
-    debug1("dns: thread_dns_ipbyhost(): getaddrinfo(): error = %s", gai_strerror(error));
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s", gai_strerror(error));
   pthread_mutex_lock(&dtn->mutex);
-  dtn->ok = !error;
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
