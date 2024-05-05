@@ -147,7 +147,7 @@ static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
   char work[1024];
 
   console_tcl_format(work, e->u.extra);
-  Tcl_AppendResult(irp, work, NULL);
+  Tcl_SetResult(irp, work, TCL_STATIC);
   return TCL_OK;
 }
 

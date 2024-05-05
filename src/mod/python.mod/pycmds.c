@@ -149,7 +149,7 @@ static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *co
   }
   if (!PyObject_Call(bindinfo->callback, args, NULL)) {
     PyErr_Print();
-    Tcl_SetResult(irp, "Error calling python code", NULL);
+    Tcl_SetResult(irp, "Error calling python code", TCL_STATIC);
     return TCL_ERROR;
   }
   return TCL_OK;
