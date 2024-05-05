@@ -185,7 +185,6 @@ struct userrec *get_user_by_host(char *);
 struct userrec *get_user_by_account(char *);
 struct userrec *get_user_by_nick(char *);
 struct userrec *check_chanlist(const char *);
-struct userrec *check_chanlist_hand(const char *);
 
 /* All the default userentry stuff, for code re-use
  */
