@@ -1520,7 +1520,7 @@ AC_DEFUN([EGG_TLS_ENABLE],
   AC_MSG_CHECKING([whether to enable TLS support])
   AC_ARG_ENABLE(tls,
     [  --disable-tls           disable TLS support ], [tls_enabled="$enableval"],
-    [tls_enabled="$enableval"])
+    [tls_enabled="yes"])
 
   AC_MSG_RESULT([$tls_enabled])
 ])
