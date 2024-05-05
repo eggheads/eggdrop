@@ -25,8 +25,6 @@
 
 #include <sys/stat.h>
 #include "main.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 #include "tandem.h"
 

@@ -25,7 +25,6 @@
 
 #include "main.h"
 #include <errno.h>
-#include "modules.h"
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
