@@ -2001,6 +2001,53 @@ static int got730or1(char *from, char *msg, int code)
   return 0;
 }
 
+/* Got IRCv3 standard-reply
+ * <FAIL/NOTE/WARN> <command> <code> [<context>...] <description>
+ *
+ * stdtype is 0 for FAIL, 1 for NOTE, 2 for WARN
+ */
+static int gotstdreply(char *from, char * msgtype, char *msg)
+{
+  char *cmd, *code, *text;
+  char context[MSGMAX] = "";
+  int len;
+
+  cmd = newsplit(&msg);
+  code = newsplit(&msg);
+  text = strchr(msg, ':');
+  if (text != msg) {
+    len = text - msg;
+    strncpy(context, msg, len);
+  }
+  fixcolon(text);
+  putlog(LOG_SERV, "*", "%s%s%s: Received a %s message from %s: %s", cmd, cmd ? ": " : "", code, msgtype, from, text);
+  return 0;
+}
+
+/* Got IRCv3 FAIL standard-reply */
+static int gotstdfail(char *from, char *msg)
+{
+  char msgtype[] = "FAIL";
+  gotstdreply(from, msgtype, msg);
+  return 0;
+}
+
+/* Got IRCv3 NOTE standard-reply */
+static int gotstdnote(char *from, char *msg)
+{
+  char msgtype[] = "NOTE";
+  gotstdreply(from, msgtype, msg);
+  return 0;
+}
+
+/* Got IRCv3 WARN standard-reply */
+static int gotstdwarn(char *from, char *msg)
+{
+  char msgtype[] = "WARN";
+  gotstdreply(from, msgtype, msg);
+  return 0;
+}
+
 /* Got 730/RPL_MONONLINE
  * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
  */
@@ -2097,6 +2144,9 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"FAIL",         "",   (IntFunc) gotstdfail,      NULL},
+  {"NOTE",         "",   (IntFunc) gotstdnote,      NULL},
+  {"WARN",         "",   (IntFunc) gotstdwarn,      NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"005",          "",   (IntFunc) got005,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
