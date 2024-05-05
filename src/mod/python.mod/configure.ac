@@ -21,7 +21,7 @@ python_avail="false"
 
 if test "x$egg_enable_python" != "xno"; then
   if test "x$egg_with_python_config" = "x"; then
-    AC_PATH_PROGS([python_config_bin], [python3-config python-config])
+    AC_PATH_PROGS([python_config_bin], [python3-config python-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config])
   else
     if test -d "$egg_with_python_config"; then
       AC_MSG_NOTICE([Checking for python-config binaries in $egg_with_python_config])
