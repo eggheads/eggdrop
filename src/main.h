@@ -57,12 +57,7 @@
 #  define TCL_CONST86
 #endif
 
-#ifdef HAVE_STDARG_H
-#  include <stdarg.h>
-#else
-#  error "Must have stdarg.h"
-#endif
-
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
