@@ -901,7 +901,10 @@ static void mainloop(int toplevel)
       for (p = module_list; p; p = p->next) {
         if (p->funcs) {
           startfunc = p->funcs[MODCALL_START];
-          startfunc(NULL);
+          if (startfunc)
+            startfunc(NULL);
+          else
+            debug2("module: %s: %s", p->name, MOD_NOSTARTDEF);
         }
       }
 
