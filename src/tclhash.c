@@ -744,15 +744,12 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
     r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
-  if (proc && proc[0] != '*' && !r) {
-    if (!getrusage(RUSAGE_SELF, &ru2)) {
-      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
-             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-    }
-  }
+  if (proc && proc[0] != '*' && !r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
