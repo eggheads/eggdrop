@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2020 Eggheads Development Team
+ * Copyright (C) 2010 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,10 +120,13 @@ static int ssl_seed(void)
  */
 int ssl_init()
 {
-  /* Load SSL and crypto error strings; register SSL algorithms */
-  SSL_load_error_strings();
+  /* OpenSSL library initialization
+   * If you are using 1.1.0 or above then you don't need to take any further steps. */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   SSL_library_init();
-
+  SSL_load_error_strings();
+  OpenSSL_add_all_algorithms();
+#endif
   if (ssl_seed()) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
     ERR_free_strings();
@@ -132,7 +135,7 @@ int ssl_init()
   /* A TLS/SSL connection established with this method will understand all
      supported protocols (SSLv2, SSLv3, and TLSv1) */
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
-    putlog(LOG_MISC, "*", ERR_error_string(ERR_get_error(), NULL));
+    putlog(LOG_MISC, "*", "%s", ERR_error_string(ERR_get_error(), NULL));
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
     ERR_free_strings();
     return -1;
@@ -225,27 +228,49 @@ int ssl_init()
 #endif
   /* Let advanced users specify dhparam */
   if (tls_dhparam[0]) {
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+    BIO *pbio = BIO_new_file(tls_dhparam, "r");
+    if (pbio) {
+      EVP_PKEY *param = PEM_read_bio_Parameters(pbio, NULL);
+      BIO_free(pbio);
+      if (param) {
+        if (SSL_CTX_set0_tmp_dh_pkey(ssl_ctx, param) == 1)
+          debug1("TLS: setting ssl dhparam %s successful", tls_dhparam);
+        else {
+          EVP_PKEY_free(param);
+          putlog(LOG_MISC, "*", "ERROR: TLS: SSL_CTX_set0_tmp_dh_pkey(%s): %s",
+                 tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+        }
+      }
+      else
+        putlog(LOG_MISC, "*", "ERROR: TLS: PEM_read_bio_Parameters(%s): %s",
+               tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
+    }
+    else
+      putlog(LOG_MISC, "*", "ERROR: TLS: BIO_new_file(%s): %s", tls_dhparam,
+            ERR_error_string(ERR_get_error(), NULL));
+#else
     DH *dh;
     FILE *paramfile = fopen(tls_dhparam, "r");
     if (paramfile) {
       dh = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
       fclose(paramfile);
       if (dh) {
-        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) != 1) {
-          putlog(LOG_MISC, "*", "ERROR: TLS: unable to set tmp dh %s: %s",
+        if (SSL_CTX_set_tmp_dh(ssl_ctx, dh) == 1)
+          debug1("TLS: setting ssl dhparam %s successful", tls_dhparam);
+        else
+          putlog(LOG_MISC, "*", "ERROR: TLS: SSL_CTX_set_tmp_dh(%s): %s",
                  tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
-        }
         DH_free(dh);
       }
-      else {
-        putlog(LOG_MISC, "*", "ERROR: TLS: unable to read DHparams %s: %s",
+      else
+        putlog(LOG_MISC, "*", "ERROR: TLS: PEM_read_DHparams(%s): %s",
                tls_dhparam, ERR_error_string(ERR_get_error(), NULL));
-      }
     }
-    else {
+    else
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to open %s: %s",
              tls_dhparam, strerror(errno));
-    }
+#endif
   }
   /* Let advanced users specify the list of allowed ssl ciphers */
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
@@ -275,21 +300,21 @@ char *ssl_fpconv(char *in, char *out)
 {
   long len;
   char *fp;
-  unsigned char *md5;
+  unsigned char *sha1;
 
   if (!in)
     return NULL;
 
-  if ((md5 = OPENSSL_hexstr2buf(in, &len))) {
-    fp = OPENSSL_buf2hexstr(md5, len);
+  if ((sha1 = OPENSSL_hexstr2buf(in, &len))) {
+    fp = OPENSSL_buf2hexstr(sha1, len);
     if (fp) {
       out = user_realloc(out, strlen(fp) + 1);
       strcpy(out, fp);
-      OPENSSL_free(md5);
+      OPENSSL_free(sha1);
       OPENSSL_free(fp);
       return out;
     }
-    OPENSSL_free(md5);
+    OPENSSL_free(sha1);
   }
   return NULL;
 }
@@ -327,12 +352,17 @@ char *ssl_getfp(int sock)
 
   if (!(cert = ssl_getcert(sock)))
     return NULL;
-  if (!X509_digest(cert, EVP_sha1(), md, &i))
+  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+    X509_free(cert);
     return NULL;
-  if (!(p = OPENSSL_buf2hexstr(md, i)))
+  }
+  if (!(p = OPENSSL_buf2hexstr(md, i))) {
+    X509_free(cert);
     return NULL;
+  }
   strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
+  X509_free(cert);
   return fp;
 }
 
@@ -709,7 +739,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
   const
 #endif
   SSL_CIPHER *cipher;
-  int secret, processed;
+  int secret, processed, i;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
     return;
@@ -731,7 +761,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
            "established.");
 
     if ((cert = SSL_get_peer_certificate(ssl))) {
-      ssl_showcert(cert, data->loglevel);
+      ssl_showcert(cert, LOG_DEBUG);
       X509_free(cert);
     }
     else
@@ -740,15 +770,26 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     /* Display cipher information */
     cipher = SSL_get_current_cipher(ssl);
     processed = SSL_CIPHER_get_bits(cipher, &secret);
-    putlog(data->loglevel, "*", "TLS: cipher used: %s %s; %d bits (%d secret)",
-           SSL_CIPHER_get_name(cipher), SSL_get_version(ssl),
-           processed, secret);
+    putlog(LOG_DEBUG, "*", "TLS: cipher used: %s, %d of %d secret bits used for cipher, %s",
+           SSL_CIPHER_get_name(cipher), processed, secret, SSL_get_version(ssl));
     /* secret are the actually secret bits. If processed and secret differ,
        the rest of the bits are fixed, i.e. for limited export ciphers */
 
     /* More verbose information, for debugging only */
     SSL_CIPHER_description(cipher, buf, sizeof buf);
+    i = strlen(buf);
+    if ((i > 0) && (buf[i - 1]) == '\n')
+      buf[i - 1] = 0;
     debug1("TLS: cipher details: %s", buf);
+
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+    EVP_PKEY *key;
+    if (SSL_get_server_tmp_key((SSL *) ssl, &key)) {
+      putlog(LOG_DEBUG, "*", "TLS: diffie–hellman ephemeral key used: %s, bits %d",
+             OBJ_nid2sn(EVP_PKEY_id(key)), EVP_PKEY_bits(key));
+      EVP_PKEY_free(key);
+    }
+#endif
   } else if (where & SSL_CB_ALERT) {
     if (strcmp(SSL_alert_type_string(ret), "W") ||
         strcmp(SSL_alert_desc_string(ret), "CN")) {
@@ -866,13 +907,16 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
     nanosleep(&req, NULL);
 #ifdef SSL_set_tlsext_host_name
-    if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
-       debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+    if (*data->host)
+      if (!SSL_set_tlsext_host_name(td->socklist[i].ssl, data->host))
+        debug1("TLS: setting the server name indication (SNI) to %s failed", data->host);
+      else
+        debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
     else
-       debug1("TLS: setting the server name indication (SNI) to %s successful", data->host);
+      debug0("TLS: not setting the server name indication (SNI) because host is an empty string");
 #else
-    debug1("TLS: setting the server name indication (SNI) not supported by ssl "
-           "lib, probably < openssl 0.9.8f", data->host);
+    debug0("TLS: setting the server name indication (SNI) not supported by ssl "
+           "lib, probably < openssl 0.9.8f");
 #endif
     ret = SSL_connect(td->socklist[i].ssl);
     if (!ret)
@@ -1019,6 +1063,7 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "serial");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+    X509_free(cert);
   }
   /* We should always have a cipher, but who knows? */
   cipher = SSL_get_current_cipher(td->socklist[j].ssl);

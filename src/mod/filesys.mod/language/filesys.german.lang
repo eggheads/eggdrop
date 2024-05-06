@@ -1,7 +1,7 @@
 # filesys.german.lang
 #   language messages for filesys module
 #
-# german translation by rtc
+# Written by rtc
 
 0x300,Konvertiere Dateisystem-Abbild in %s ...
 0x301,filedb-update: kann Verzeichnis nicht oeffnen!

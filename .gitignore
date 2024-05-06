@@ -32,10 +32,11 @@ Makefile
 .known_modules
 /config.h
 /eggint.h
-lush.h
+/lush.h
 config.log
 config.status
 config.cache
 eggdrop
 EGGMOD.stamp
 mod.xlibs
+__pycache__

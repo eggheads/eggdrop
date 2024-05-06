@@ -1,0 +1,6 @@
+DESC:The pbkdf2 module provides second generation encryption support
+DESC:for eggdrop. You always need to load an encryption module
+DESC:to run eggdrop. This will replace the old blowfish encryption
+DESC:module in a future version of eggdrop.
+DESC:
+DESC:ENABLE this module.

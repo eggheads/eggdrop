@@ -486,9 +486,11 @@ install-filesys: install-start
 
 install-doc: install-start
 	+@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
+	$(INSTALL_DATA) $(srcdir)/FEATURES $(DEST) && \
 	cd doc/ && $(MAKE_INSTALL) install
 
 install-scripts: install-start
-	+@cd scripts/ && $(MAKE_INSTALL) install
+	+@cd scripts/ && $(MAKE_INSTALL) install; \
+	cd ../src/mod && $(MAKE_INSTALL) install-scripts
 
 #safety hash

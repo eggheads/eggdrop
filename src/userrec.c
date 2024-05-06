@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,14 +25,13 @@
 
 #include <sys/stat.h>
 #include "main.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
-extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
+extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet,
+           remove_pass;
 extern char ver[], botnetnick[];
 extern time_t now;
 
@@ -53,7 +52,7 @@ void *_user_malloc(int size, const char *file, int line)
   const char *p;
 
   p = strrchr(file, '/');
-  simple_sprintf(x, "userrec.c:%s", p ? p + 1 : file);
+  snprintf(x, sizeof x, "userrec.c:%s", p ? p + 1 : file);
   return n_malloc(size, x, line);
 #else
   return nmalloc(size);
@@ -67,7 +66,7 @@ void *_user_realloc(void *ptr, int size, const char *file, int line)
   const char *p;
 
   p = strrchr(file, '/');
-  simple_sprintf(x, "userrec.c:%s", p ? p + 1 : file);
+  snprintf(x, sizeof x, "userrec.c:%s", p ? p + 1 : file);
   return n_realloc(ptr, size, x, line);
 #else
   return nrealloc(ptr, size);
@@ -160,13 +159,50 @@ int count_users(struct userrec *bu)
   return tot;
 }
 
-struct userrec *check_dcclist_hand(char *handle)
+/* Shortcut for get_user_by_handle -- might have user record in dccs
+ */
+static struct userrec *check_dcclist_hand(char *handle)
 {
   int i;
 
   for (i = 0; i < dcc_total; i++)
     if (!strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
+  return NULL;
+}
+
+/* Shortcut for get_user_by_handle -- might have user record in channels
+ */
+static struct userrec *check_chanlist_hand(const char *hand)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      if (m->user && !strcasecmp(m->user->handle, hand))
+        return m->user;
+  return NULL;
+}
+
+/* Search userlist for a provided account name
+ * Returns: userrecord for user containing the account
+ */
+struct userrec *get_user_by_account(char *acct)
+{
+  struct userrec *u;
+  struct list_type *q;
+
+  if (acct == NULL)
+    return NULL;
+  for (u = userlist; u; u = u->next) {
+    q = get_user(&USERENTRY_ACCOUNT, u);
+    for (; q; q = q->next) {
+      if(q && !strcasecmp(q->extra, acct)) {
+        return u;
+      }
+    }
+  }
   return NULL;
 }
 
@@ -318,35 +354,71 @@ struct userrec *get_user_by_host(char *host)
 /* Description: checks the password given against the user's password.
  * Check against the password "-" to find out if a user has no password set.
  *
+ * If encryption2 module is loaded and PASS2 is set PASS2 is compared; else
+ * PASS.
+ *
  * Returns: 1 if the password matches for that user; 0 otherwise. Or if we are
  * checking against the password "-": 1 if the user has no password set; 0
  * otherwise.
  */
 int u_pass_match(struct userrec *u, char *pass)
 {
-  char *cmp, new[32];
+  char *cmp = 0, *new, new2[32];
+  int pass2 = 1;
+  struct user_entry *e;
 
   if (!u || !pass)
     return 0;
-  cmp = get_user(&USERENTRY_PASS, u);
+  if (encrypt_pass2)
+    cmp = get_user(&USERENTRY_PASS2, u);
+  if (!cmp) { /* implicit && encrypt_pass, due to eggdrop has at least one
+                 encryption module loaded */
+    cmp = get_user(&USERENTRY_PASS, u);
+    pass2 = 0;
+  }
   if (pass[0] == '-') {
     if (!cmp)
       return 1;
-    else
-      return 0;
+    return 0;
   }
   /* If password is not set in userrecord, or password is not sent */
   if (!cmp || !pass[0])
     return 0;
   if (u->flags & USER_BOT) {
-    if (!strcmp(cmp, pass))
+    if (!crypto_verify(cmp, pass)) /* verify successful */
       return 1;
-  } else {
-    if (strlen(pass) > 30)
-      pass[30] = 0;
-    encrypt_pass(pass, new);
-    if (!strcmp(cmp, new))
+    return 0;
+  }
+  if (strlen(pass) > PASSWORDMAX)
+    pass[PASSWORDMAX] = 0;
+  if (pass2) {
+    new = verify_pass2(pass, cmp);
+    if (new) { /* verify successful */
+      if (new != cmp) /* reenrypted with new parameters,
+                         no need to strcmp() */
+        set_user(&USERENTRY_PASS2, u, new);
       return 1;
+    }
+  }
+  else if (encrypt_pass) {
+    encrypt_pass(pass, new2);
+    if (!crypto_verify(cmp, new2)) { /* verify successful */
+      if (encrypt_pass2) {
+        new = encrypt_pass2(pass);
+        if (new) {
+          set_user(&USERENTRY_PASS2, u, new);
+          if (remove_pass) { /* implicit e->u.extra != NULL */
+            e = find_user_entry(&USERENTRY_PASS, u);
+            explicit_bzero(e->u.extra, strlen(e->u.extra));
+            nfree(e->u.extra);
+            e->u.extra = NULL;
+            egg_list_delete((struct list_type **) &(u->entries), (struct list_type *) e);
+            nfree(e);
+          }
+        }
+      }
+      return 1;
+    }
   }
   return 0;
 }
@@ -373,8 +445,8 @@ int write_user(struct userrec *u, FILE *f, int idx)
         fr.match = (FR_CHAN | FR_BOT);
         get_user_flagrec(dcc[idx].user, &fr, ch->channel);
       } else
-        fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+        fr.chan = BOT_AGGRESSIVE;
+      if ((fr.chan & BOT_AGGRESSIVE) || (fr.bot & BOT_GLOBAL)) {
         fr.match = FR_CHAN;
         fr.chan = ch->flags;
         fr.udef_chan = ch->flags_udef;
@@ -426,7 +498,7 @@ int write_ignores(FILE *f, int idx)
   return 1;
 }
 
-int sort_compare(struct userrec *a, struct userrec *b)
+static int sort_compare(struct userrec *a, struct userrec *b)
 {
   /* Order by flags, then alphabetically
    * first bots: +h / +a / +l / other bots
@@ -471,7 +543,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
   return (strcasecmp(a->handle, b->handle) > 0);
 }
 
-void sort_userlist()
+static void sort_userlist()
 {
   int again;
   struct userrec *last, *p, *c, *n;
@@ -521,18 +593,18 @@ void write_userfile(int idx)
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE);
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", USERF_WRITING);
+    putlog(LOG_MISC, "*", "%s", USERF_WRITING);
 
   sort_userlist();
   tt = now;
   strlcpy(s1, ctime(&tt), sizeof s1);
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
-  /* Add all users except the -tn user */
+  /* Add all users except the -t user */
   for (u = userlist; u && ok; u = u->next)
     if (strcasecmp(u->handle, EGG_BG_HANDLE) && !write_user(u, f, idx))
       ok = 0;
@@ -551,7 +623,7 @@ void backup_userfile(void)
   char s[(sizeof userfile) + 4]; /* 4 = strlen("~bak") */
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
+    putlog(LOG_MISC, "*", "%s", USERF_BACKUP);
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
@@ -563,7 +635,7 @@ int change_handle(struct userrec *u, char *newh)
 
   if (!u)
     return 0;
-  /* Don't allow the -tn handle to be changed */
+  /* Don't allow the -t handle to be changed */
   if (!strcasecmp(u->handle, EGG_BG_HANDLE))
     return 0;
   /* Nothing that will confuse the userfile */
@@ -597,7 +669,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   struct userrec *u, *x;
   struct xtra_key *xk;
   int oldshare = noshare;
-  long tv;
+  time_t tv;
 
   noshare = 1;
   u = nmalloc(sizeof *u);
@@ -621,9 +693,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
     tv = now;
-    l = snprintf(NULL, 0, "%li", tv);
+    l = snprintf(NULL, 0, "%" PRId64, (int64_t) tv);
     xk->data = nmalloc(l + 1);
-    sprintf(xk->data, "%li", tv);
+    sprintf(xk->data, "%" PRId64, (int64_t) tv);
     set_user(&USERENTRY_XTRA, u, xk);
   }
   /* Strip out commas -- they're illegal */
@@ -735,7 +807,7 @@ int deluser(char *handle)
   return 1;
 }
 
-int delhost_by_handle(char *handle, char *host)
+static int del_host_or_account(char *handle, char *host, int type)
 {
   struct userrec *u;
   struct list_type *q, *qnext, *qprev;
@@ -745,11 +817,19 @@ int delhost_by_handle(char *handle, char *host)
   u = get_user_by_handle(userlist, handle);
   if (!u)
     return 0;
-  q = get_user(&USERENTRY_HOSTS, u);
+  if (type) {
+    q = get_user(&USERENTRY_ACCOUNT, u);
+  } else {
+    q = get_user(&USERENTRY_HOSTS, u);
+  }
   qprev = q;
   if (q) {
     if (!rfc_casecmp(q->extra, host)) {
-      e = find_user_entry(&USERENTRY_HOSTS, u);
+      if (type) {
+        e = find_user_entry(&USERENTRY_ACCOUNT, u);
+      } else {
+        e = find_user_entry(&USERENTRY_HOSTS, u);
+      }
       e->u.extra = q->next;
       nfree(q->extra);
       nfree(q);
@@ -775,27 +855,57 @@ int delhost_by_handle(char *handle, char *host)
       q = qnext;
     }
   }
-  if (!qprev)
-    set_user(&USERENTRY_HOSTS, u, "none");
+  if (!qprev) {
+    if (type) {
+      set_user(&USERENTRY_ACCOUNT, u, "none");
+    } else {
+      set_user(&USERENTRY_HOSTS, u, "none");
+    }
+  }
   if (!noshare && i && !(u->flags & USER_UNSHARED))
-    shareout(NULL, "-h %s %s\n", handle, host);
+    shareout(NULL, "-%s %s %s\n", type ? "a" : "h", handle, host);
   clear_chanlist();
   return i;
 }
 
-void addhost_by_handle(char *handle, char *host)
+int delhost_by_handle(char *handle, char *host)
+{
+  return del_host_or_account(handle, host, 0);
+}
+
+int delaccount_by_handle(char *handle, char *acct)
+{
+  return del_host_or_account(handle, acct, 1);
+}
+
+
+static void add_host_or_account(char *handle, char *arg, int type)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
 
-  set_user(&USERENTRY_HOSTS, u, host);
-  /* u will be cached, so really no overhead, even tho this looks dumb: */
+  if (type) {
+    set_user(&USERENTRY_ACCOUNT, u, arg);
+  } else {
+    set_user(&USERENTRY_HOSTS, u, arg);
+  }
   if ((!noshare) && !(u->flags & USER_UNSHARED)) {
-    if (u->flags & USER_BOT)
-      shareout(NULL, "+bh %s %s\n", handle, host);
-    else
-      shareout(NULL, "+h %s %s\n", handle, host);
+    if (u->flags & USER_BOT) {
+      shareout(NULL, "+b%s %s %s\n", type ? "a" : "h", handle, arg);
+    } else {
+      shareout(NULL, "+%s %s %s\n", type ? "a" : "h", handle, arg);
+    }
   }
   clear_chanlist();
+}
+
+void addhost_by_handle(char *handle, char *host)
+{
+  add_host_or_account(handle, host, 0);
+}
+
+void addaccount_by_handle(char *handle, char *acct)
+{
+  add_host_or_account(handle, acct, 1);
 }
 
 void touch_laston(struct userrec *u, char *where, time_t timeval)

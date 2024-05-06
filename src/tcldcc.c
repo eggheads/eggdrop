@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
  */
 
 #include "main.h"
+#include <netdb.h>
 #include "tandem.h"
 #include "modules.h"
 #include <errno.h>
@@ -30,9 +31,12 @@
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
-extern char botnetnick[];
+extern char botnetnick[], listen_ip[];
 extern int dcc_total, backgrd, parties, make_userfile, remote_boots, max_dcc,
            conmask;
+#ifdef IPV6
+extern int pref_af;
+#endif
 extern volatile sig_atomic_t do_restart;
 #ifdef TLS
 extern int tls_vfydcc;
@@ -169,7 +173,7 @@ static int tcl_hand2idx STDVAR
   int i;
   char s[11];
 
-  BADARGS(2, 2, " nickname");
+  BADARGS(2, 2, " handle");
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
@@ -501,7 +505,7 @@ static int tcl_control STDVAR
   /* Do not buffer data anymore. All received and stored data is passed
    * over to the dcc functions from now on.  */
   sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-  strlcpy(dcc[idx].u.script->command, argv[2], 120);
+  strlcpy(dcc[idx].u.script->command, argv[2], sizeof dcc[idx].u.script->command);
   return TCL_OK;
 }
 
@@ -645,22 +649,76 @@ static int tcl_botlist STDVAR
   return TCL_OK;
 }
 
-static int tcl_dcclist STDVAR
-{
-  int i;
-  char *p, idxstr[10], timestamp[11], other[160];
-  char portstring[7]; /* ssl + portmax + NULL */
-  long tv;
+static void build_dcc_list(Tcl_Interp *irp, char *idxstr, char *nick, char *host,
+            char *portstring, char *type, char *other, char *timestamp) {
+  char *p;
   EGG_CONST char *list[7];
 
-  BADARGS(1, 2, " ?type?");
+  list[0] = idxstr;
+  list[1] = nick;
+  list[2] = host;
+  list[3] = portstring;
+  list[4] = type;
+  list[5] = other;
+  list[6] = timestamp;
+  p = Tcl_Merge(7, list);
+  Tcl_AppendElement(irp, p);
+  Tcl_Free((char *) p);
+}
 
+/* Build and return a list of lists of all sockets, in dict-readable format */
+static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
+            char *nick, char *host, char *ip, int port, int secure,
+            char *type, char *other, char *timestamp) {
+  EGG_CONST char *val[] = {"idx", "handle", "host", "ip", "port", "secure",
+                           "type", "info", "time"};
+  Tcl_Obj *thelist;
+  char securestr[2], portstr[6];
+
+  egg_snprintf(securestr, sizeof securestr, "%d", secure);
+  egg_snprintf(portstr, sizeof portstr, "%d", port);
+  thelist = Tcl_NewListObj(0, NULL);
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[0], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(idxstr, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[1], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(nick, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[2], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(host, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[3], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(ip, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[4], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(portstr, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[5], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(securestr, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[6], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(type, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[7], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(other, -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[8], -1));
+  Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(timestamp, -1));
+  Tcl_ListObjAppendElement(irp, masterlist, thelist);
+  Tcl_SetObjResult(irp, masterlist);
+}
+
+/* Gather information for dcclist or socklist */
+static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
+  int i;
+  char idxstr[10], timestamp[21], other[160];
+  char portstring[7]; /* ssl + portmax + NULL */
+  char s[EGG_INET_ADDRSTRLEN];
+  socklen_t namelen;
+  struct sockaddr_storage ss;
+  Tcl_Obj *masterlist = NULL; /* initialize to NULL to make old gcc versions
+                               * happy */
+ 
+  if (src) {
+    masterlist = Tcl_NewListObj(0, NULL);
+  }
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
-        !strcasecmp(dcc[i].type->name, argv[1])))) {
+        !strcasecmp(dcc[i].type->name, type)))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
-      tv = dcc[i].timeval;
-      egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
+      snprintf(timestamp, sizeof timestamp, "%" PRId64, (int64_t) dcc[i].timeval);
       if (dcc[i].type && dcc[i].type->display)
         dcc[i].type->display(i, other);
       else {
@@ -668,32 +726,65 @@ static int tcl_dcclist STDVAR
                      (long) dcc[i].type);
         break;
       }
-      list[0] = idxstr;
-      list[1] = dcc[i].nick;
-      list[2] = (dcc[i].host[0] == '\0') ?
-                iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host;
 #ifdef TLS
       egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
 #else
       egg_snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
 #endif
-      list[3] = portstring;
-      list[4] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
-      list[5] = other;
-      list[6] = timestamp;
-      p = Tcl_Merge(7, list);
-      Tcl_AppendElement(irp, p);
-      Tcl_Free((char *) p);
+      /* If this came from dcclist... */
+      if (!src) {
+        build_dcc_list(irp, idxstr, dcc[i].nick,
+            (dcc[i].host[0] == '\0') ? iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host,
+            portstring, dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
+            timestamp);
+      /* If this came from socklist... */
+      } else {
+        /* Update dcc table socket information, needed for getting local IP */
+        namelen = sizeof ss;
+        getsockname(dcc[i].sock, (struct sockaddr *) &ss, &namelen);
+        if (ss.ss_family == AF_INET) {
+          struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
+          inet_ntop(AF_INET, &(saddr->sin_addr), s, sizeof s);
+#ifdef IPV6
+        } else if (ss.ss_family == AF_INET6) {
+          struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
+            inet_ntop(AF_INET6, &(saddr->sin6_addr), s, sizeof s);
+#endif
+        }
+        build_sock_list(irp, masterlist, idxstr, dcc[i].nick,
+            (dcc[i].host[0] == '\0') ? iptostr(&dcc[i].sockname.addr.sa) : dcc[i].host,
+            s, dcc[i].port,
+#ifdef TLS
+            dcc[i].ssl,
+#else
+            0,
+#endif
+            dcc[i].type ? dcc[i].type->name : "*UNKNOWN*", other,
+            timestamp);
+      }
     }
   }
+}
+
+static int tcl_socklist STDVAR
+{
+
+  BADARGS(1, 2, " ?type?");
+  dccsocklist(irp, argc, (argc == 2) ? argv[1] : NULL, 1);
+  return TCL_OK;
+}
+
+static int tcl_dcclist STDVAR
+{
+  BADARGS(1, 2, " ?type?");
+  dccsocklist(irp, argc, (argc == 2) ? argv[1] : NULL, 0);
   return TCL_OK;
 }
 
 static int tcl_whom STDVAR
 {
   int chan, i;
-  char c[2], idle[32], work[20], *p;
-  long tv = 0;
+  char c[2], idle[21], work[20], *p;
   EGG_CONST char *list[7];
 
   BADARGS(2, 2, " chan");
@@ -722,8 +813,7 @@ static int tcl_whom STDVAR
       if (dcc[i].u.chat->channel == chan || chan == -1) {
         c[0] = geticon(i);
         c[1] = 0;
-        tv = (now - dcc[i].timeval) / 60;
-        egg_snprintf(idle, sizeof idle, "%li", tv);
+        snprintf(idle, sizeof idle, "%" PRId64, (int64_t) ((now - dcc[i].timeval) / 60));
         list[0] = dcc[i].nick;
         list[1] = botnetnick;
         list[2] = dcc[i].host;
@@ -745,10 +835,8 @@ static int tcl_whom STDVAR
       c[1] = 0;
       if (party[i].timer == 0L)
         strcpy(idle, "0");
-      else {
-        tv = (now - party[i].timer) / 60;
-        egg_snprintf(idle, sizeof idle, "%li", tv);
-      }
+      else
+        snprintf(idle, sizeof idle, "%" PRId64, (int64_t) ((now - party[i].timer) / 60));
       list[0] = party[i].nick;
       list[1] = party[i].bot;
       list[2] = party[i].from ? party[i].from : "";
@@ -934,30 +1022,126 @@ static int tcl_connect STDVAR
   return TCL_OK;
 }
 
-/* Create a new listening port (or destroy one)
- *
- * listen <port> bots/all/users [mask]
- * listen <port> script <proc> [flag]
- * listen <port> off
- */
-static int tcl_listen STDVAR
-{
-  int i, j, idx = -1, port, realport;
-  char s[11], msg[256];
+static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
+  int i, idx = -1, port, realport, found=0, ipv4=1, error;
+  char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
+  sockname_t name;
+  struct in_addr ipaddr4;
+  struct addrinfo hint, *ipaddr = NULL;
+#ifdef IPV6
+  struct in6_addr ipaddr6;
+#endif
 
-  BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
-
-  port = realport = atoi(argv[1]);
-  for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
+  memset(&hint, '\0', sizeof hint);
+  hint.ai_family = PF_UNSPEC;
+  hint.ai_flags = AI_NUMERICHOST;
+  if (!ip[0]) {
+#ifdef IPV6
+    if (pref_af) {
+      strlcpy(newip, "::", sizeof newip);
+    } else {
+#endif
+      strlcpy(newip, "0.0.0.0", sizeof newip);
+#ifdef IPV6
+    }
+#endif
+  } else {
+    strlcpy(newip, ip, sizeof newip);
+  }
+  /* Return addrinfo struct ipaddr containing family... */
+  error = getaddrinfo(newip, NULL, &hint, &ipaddr);
+  if (!error) {
+  /* Load network address to in(6)_addr struct for later byte comparisons */
+    if (ipaddr->ai_family == AF_INET) {
+      inet_pton(AF_INET, newip, &ipaddr4);
+    }
+#ifdef IPV6
+    else if (ipaddr->ai_family == AF_INET6) {
+      inet_pton(AF_INET6, newip, &ipaddr6);
+      ipv4 = 0;
+    }
+#endif
+    if (ipaddr) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+                 * 2553 and 3493. Avoid to be compatible with all OSes. */
+      freeaddrinfo(ipaddr);
+  }
+  else if (error == EAI_NONAME)
+    /* currently setlisten() handles only ip not hostname */
+    putlog(LOG_MISC, "*",
+           "tcldcc: setlisten(): getaddrinfo(): ip %s not known", newip);
+  else
+    putlog(LOG_MISC, "*", "tcldcc: setlisten(): getaddrinfo(): error = %s",
+           gai_strerror(error));
+  port = realport = atoi(portp);
+  for (pmap = root; pmap; pold = pmap, pmap = pmap->next) {
     if (pmap->realport == port) {
       port = pmap->mappedto;
       break;
+    }
   }
-  for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
+  for (i = 0; i < dcc_total; i++) {
+    if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port)) {
       idx = i;
-  if (!strcasecmp(argv[2], "off")) {
+      found = 1;
+
+      /* Check if this is an exact match and skip these checks (ie, rehash) */
+      if (ipv4) {
+        if (ipaddr4.s_addr == dcc[idx].sockname.addr.s4.sin_addr.s_addr) {
+          break;
+        }
+      }
+#ifdef IPV6
+      else if (ipaddr6.s6_addr == dcc[idx].sockname.addr.s6.sin6_addr.s6_addr) {
+        break;
+      }
+
+      /* Check if the bound IP is IPvX, and the new IP is IPvY */
+      if (((ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET)) ||
+         ((!ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET6))) {
+        found = 0;
+        break;
+      }
+#endif
+
+      /* Check if IP is specific, but the already-bound IP is all-interfaces */
+      if (ipv4) {
+        if ((ipaddr4.s_addr != 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr == 0)) {
+          Tcl_AppendResult(irp, "this port is already bound to 0.0.0.0 on this "
+                "machine, remove it before trying to bind to this IP", NULL);
+          return TCL_ERROR;
+        }
+      }
+#ifdef IPV6
+      else if ((!IN6_IS_ADDR_UNSPECIFIED(&ipaddr6)) &&
+                (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
+          Tcl_AppendResult(irp, "this port is already bound to :: on this "
+                "machine, remove it before trying to bind to this IP", NULL);
+          return TCL_ERROR;
+      }
+#endif
+
+      /* Check if IP is all-interfaces, but the already-bound IP is specific */
+      if (ipv4) {
+        if ((ipaddr4.s_addr == 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr != 0)) {
+          Tcl_AppendResult(irp, "this port is already bound to a specific IP "
+                "on this machine, remove it before trying to bind to all "
+                "interfaces", NULL);
+          return TCL_ERROR;
+        }
+      }
+#ifdef IPV6
+      else if (IN6_IS_ADDR_UNSPECIFIED(&ipaddr6) &&
+                (!IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
+          Tcl_AppendResult(irp, "this port is already bound to a specific IP "
+                "on this machine, remove it before trying to bind to this all "
+                "interfaces", NULL);
+          return TCL_ERROR;
+      }
+#endif
+    }
+  }
+  if (!strcasecmp(type, "off")) {
     if (pmap) {
       if (pold)
         pold->next = pmap->next;
@@ -974,32 +1158,31 @@ static int tcl_listen STDVAR
     lostdcc(idx);
     return TCL_OK;
   }
-  if (idx < 0) {
+  /* If there isn't already something listening on that port, or there is but
+   * it is something that may allow us to try a different IP for that port
+   */
+  if ((idx < 0) || (!found)) {
     /* Make new one */
     if (dcc_total >= max_dcc && increase_socks_max()) {
       Tcl_AppendResult(irp, "No more DCC slots available.", NULL);
       return TCL_ERROR;
     }
-    /* Try to grab port */
-    j = port + 20;
-    i = -2;
-    while (port < j && i < 0) {
+    /* We used to try up to 20 ports here, but have scientifically concluded
+     * that is just silly.
+     */
+    /* If we didn't find a listening ip/port, or we did but it isn't all
+     * interfaces
+     */
+    if (strlen(newip)) {
+      setsockname(&name, newip, port, 1);
+      i = open_address_listen(&name);
+    } else {
       i = open_listen(&port);
-      if (i == -1)
-        break;
-      else if (i == -2)
-        port++;
     }
-
-    if (i == -1) {
+    if (i < 0) {
       egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
-                   "address: %s", realport, strerror(errno));
-      Tcl_AppendResult(irp, msg, NULL);
-      return TCL_ERROR;
-    } else if (i == -2) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
-                   "address. Please make sure 'listen-addr' is set properly"
-                   " or try choosing a different port.", realport);
+                 "address: %s. Please check that the port is not already in use",
+                  realport, strerror(errno));
       Tcl_AppendResult(irp, msg, NULL);
       return TCL_ERROR;
     }
@@ -1012,51 +1195,31 @@ static int tcl_listen STDVAR
     dcc[idx].timeval = now;
   }
 #ifdef TLS
-  if (*argv[1] == '+')
+  if (portp[0] == '+')
     dcc[idx].ssl = 1;
   else
     dcc[idx].ssl = 0;
 #endif
   /* script? */
-  if (!strcmp(argv[2], "script")) {
+  if (!strcmp(type, "script")) {
     strcpy(dcc[idx].nick, "(script)");
-    if (argc < 4) {
-      Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
-      return TCL_ERROR;
-    }
-    if (argc == 5) {
-      if (strcmp(argv[4], "pub")) {
-        Tcl_AppendResult(irp, "unknown flag: ", argv[4], ". allowed flags: pub",
-                         NULL);
-        killsock(dcc[idx].sock);
-        lostdcc(idx);
-        return TCL_ERROR;
-      }
+    if (flag) {
       dcc[idx].status = LSTN_PUBLIC;
     }
-    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
+    strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
     egg_snprintf(s, sizeof s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   }
   /* bots/users/all */
-  if (!strcmp(argv[2], "bots"))
+  if (!strcmp(type, "bots"))
     strcpy(dcc[idx].nick, "(bots)");
-  else if (!strcmp(argv[2], "users"))
+  else if (!strcmp(type, "users"))
     strcpy(dcc[idx].nick, "(users)");
-  else if (!strcmp(argv[2], "all"))
+  else if (!strcmp(type, "all"))
     strcpy(dcc[idx].nick, "(telnet)");
-  if (!dcc[idx].nick[0]) {
-    Tcl_AppendResult(irp, "invalid listen type: must be one of ",
-                     "bots, users, all, off, script", NULL);
-    killsock(dcc[idx].sock);
-    dcc_total--;
-    return TCL_ERROR;
-  }
-  if (argc == 4)
-    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
+  if (maskproc[0])
+    strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
     strcpy(dcc[idx].host, "*");
   egg_snprintf(s, sizeof s, "%d", port);
@@ -1069,9 +1232,106 @@ static int tcl_listen STDVAR
   pmap->realport = realport;
   pmap->mappedto = port;
 
-  putlog(LOG_MISC, "*", "Listening for telnet connections on %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
+#ifdef TLS
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s port %s%d (%s).",
+        iptostr(&dcc[idx].sockname.addr.sa), dcc[idx].ssl ? "+" : "", port, type);
+#else
+  putlog(LOG_MISC, "*", "Listening for telnet connections on %s port %d (%s).",
+        iptostr(&dcc[idx].sockname.addr.sa), port, type);
+#endif
 
   return TCL_OK;
+}
+
+/* Create a new listening port (or destroy one)
+ *
+ * listen [ip] <port> bots/all/users [mask]
+ * listen [ip] <port> script <proc> <flag>
+ * listen [ip] <port> off
+ */
+static int tcl_listen STDVAR
+{
+  char ip[121], maskproc[UHOSTMAX] = "";
+  char port[7], type[7], flag[4], *endptr;
+  unsigned char buf[sizeof(struct in6_addr)];
+  int i = 1;
+
+/* People like to add comments to this command for some reason, and it can cause
+ * errors that are difficult to figure out. Let's instead throw a more helpful
+ * error for this case to get around BADARGS, and handle other cases further
+ * down in the code
+ *
+ * Check if extra args are config comments 
+ */
+  if (argc > 6) {
+    if (argv[6][0] == '#') {
+      fatal(DCC_BADLISTEN, 0);
+    }
+  }
+
+  BADARGS(3, 6, " ?ip? port type ?mask?/?proc flag?");
+
+/* default listen-addr if not specified */
+  strlcpy(ip, listen_ip, sizeof(ip));
+
+/* Check if IP exists, set to NULL if not */
+  strtol(argv[1], &endptr, 10);
+  if (*endptr != '\0') {
+    if (inet_pton(AF_INET, argv[1], buf)
+#ifdef IPV6
+        || inet_pton(AF_INET6, argv[1], buf)
+#endif
+      ) {
+      strlcpy(ip, argv[1], sizeof(ip));
+      i++;
+    } else {
+      Tcl_AppendResult(irp, "invalid IP address argument", NULL);
+      return TCL_ERROR;
+    }
+  }
+/* Check for port */
+  if ((atoi(argv[i]) > 65535) || (atoi(argv[i]) < 1)) {
+    Tcl_AppendResult(irp, "invalid listen port", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(port, argv[i], sizeof(port));
+  i++;
+/* Check for listen type */
+  if (!argv[i]) {
+    Tcl_AppendResult(irp, "missing listen type", NULL);
+    return TCL_ERROR;
+  }
+  if ((strcmp(argv[i], "bots")) && (strcmp(argv[i], "users"))
+        && (strcmp(argv[i], "all")) && (strcmp(argv[i], "off"))
+        && (strcmp(argv[i], "script"))) {
+    Tcl_AppendResult(irp, "invalid listen type: must be one of ",
+          "bots, users, all, off, script", NULL);
+    return TCL_ERROR;
+  }
+  strlcpy(type, argv[i], sizeof(type));
+/* Check if mask or proc exists */
+  if ((((argc>3) && !ip[0]) || ((argc >4) && ip[0])) &&
+        (argv[i+1][0] != '#')) { /* Ignore config comments! */
+    i++;
+    strlcpy(maskproc, argv[i], sizeof(maskproc));
+  }
+/* If script, check for proc and flag */
+  if (!strcmp(type, "script")) {
+    if (!maskproc[0]) {
+      Tcl_AppendResult(irp, "a proc name must be specified for a script listen", NULL);
+      return TCL_ERROR;
+    }
+    if ((!ip[0] && (argc==5)) || (argc == 6)) {
+      i++;
+      if (strcmp(argv[i], "pub")) {
+        Tcl_AppendResult(irp, "unknown flag: ", argv[i], ". allowed flags: pub",
+              NULL);
+        return TCL_ERROR;
+      }
+      strlcpy(flag, argv[i], sizeof flag);
+    }
+  }
+  return setlisten(irp, ip, port, type, maskproc, flag);
 }
 
 static int tcl_boot STDVAR
@@ -1095,14 +1355,14 @@ static int tcl_boot STDVAR
       if (i < 0)
         return TCL_OK;
       botnet_send_reject(i, botnetnick, NULL, whonick, who,
-                         argv[2] ? argv[2] : "");
+                         argc >= 3 && argv[2] ? argv[2] : "");
     } else
       return TCL_OK;
   }
   for (i = 0; i < dcc_total; i++)
     if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
         !strcasecmp(dcc[i].nick, who)) {
-      do_boot(i, botnetnick, argv[2] ? argv[2] : "");
+      do_boot(i, botnetnick, argc >= 3 && argv[2] ? argv[2] : "");
       ok = 1;
     }
   return TCL_OK;
@@ -1113,12 +1373,12 @@ static int tcl_rehash STDVAR
   BADARGS(1, 1, "");
 
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", "%s", USERF_NONEEDNEW);
     make_userfile = 0;
   }
   write_userfile(-1);
 
-  putlog(LOG_MISC, "*", USERF_REHASHING);
+  putlog(LOG_MISC, "*", "%s", USERF_REHASHING);
   do_restart = -2;
   return TCL_OK;
 }
@@ -1132,11 +1392,11 @@ static int tcl_restart STDVAR
     return TCL_ERROR;
   }
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", "%s", USERF_NONEEDNEW);
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", MISC_RESTARTING);
+  putlog(LOG_MISC, "*", "%s", MISC_RESTARTING);
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = -1;
@@ -1220,6 +1480,7 @@ tcl_cmds tcldcc_cmds[] = {
   {"bots",                 tcl_bots},
   {"botlist",           tcl_botlist},
   {"dcclist",           tcl_dcclist},
+  {"socklist",         tcl_socklist},
   {"whom",                 tcl_whom},
   {"dccused",           tcl_dccused},
   {"getdccidle",     tcl_getdccidle},

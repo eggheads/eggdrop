@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -143,7 +143,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
   int chatv = AF_UNSPEC;
-  char s[INET6_ADDRSTRLEN];
+  char s[EGG_INET_ADDRSTRLEN];
 #ifdef TLS
   int ssl = 0;
 #endif
@@ -185,7 +185,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 #endif
           (!strcmp(dcc[i].nick, "(telnet)") ||
            !strcmp(dcc[i].nick, "(users)")) &&
-          getdccfamilyaddr(&dcc[i].sockname, s, sizeof s, chatv)) {
+          getdccfamilyaddr(NULL, s, sizeof s, chatv)) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
@@ -241,8 +241,8 @@ static tcl_strings mystrings[] = {
 };
 
 static tcl_ints myints[] = {
-  {"ctcp-mode", &ctcp_mode},
-  {NULL,              NULL}
+  {"ctcp-mode", &ctcp_mode, 0},
+  {NULL,              NULL, 0}
 };
 
 static char *ctcp_close()

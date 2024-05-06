@@ -2,7 +2,7 @@
  * base64.c -- provides b64_ntop() and b64_pton() if necessary
  */
 /*
- * Copyright (C) 2010 - 2020 Eggheads Development Team
+ * Copyright (C) 2010 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -150,10 +150,10 @@ static const char Pad64 = '=';
    */
 
 int
-b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize) {
+b64_ntop(uint8_t const *src, size_t srclength, char *target, size_t targsize) {
 	size_t datalength = 0;
-	u_char input[3];
-	u_char output[4];
+	uint8_t input[3];
+	uint8_t output[4];
 	size_t i;
 
 	while (2 < srclength) {
@@ -216,10 +216,10 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize) {
  */
 
 int
-b64_pton(const char *src, u_char *target, size_t targsize)
+b64_pton(const char *src, uint8_t *target, size_t targsize)
 {
 	int tarindex, state, ch;
-	u_char nextbyte;
+	uint8_t nextbyte;
 	char *pos;
 
 	state = 0;

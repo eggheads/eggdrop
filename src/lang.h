@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -122,7 +122,7 @@
 #define MISC_JUPED              get_language(0x542)
 #define MISC_NOFREESOCK         get_language(0x543)
 #define MISC_TCLVERSION         get_language(0x544)
-#define MISC_TCLHVERSION        get_language(0x545)
+#define MISC_HEADERVERSION      get_language(0x545)
 
 /* IRC */
 #define IRC_BANNED              get_language(0x600)
@@ -489,5 +489,8 @@
 #define DCC_MYBOTNETNICK        get_language(0xe32)
 #define DCC_LOSTDUP             get_language(0xe33)
 #define DCC_TIMEOUTIDENT        get_language(0xe34)
+#define DCC_BADLISTEN           get_language(0xe35)
+#define DCC_NONBOT2             get_language(0xe36)
+#define DCC_NONUSER2            get_language(0xe37)
 
 #endif /* _EGG_LANG_H */

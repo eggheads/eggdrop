@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,6 +51,8 @@
 #define HOOK_DNS_IPBYHOST       113
 #define HOOK_ENCRYPT_STRING     114
 #define HOOK_DECRYPT_STRING     115
+#define HOOK_ENCRYPT_PASS2      116
+#define HOOK_VERIFY_PASS2       117
 
 /* These are FIXED once they are in a release they STAY */
 #define MODCALL_START             0
@@ -70,7 +72,7 @@
 /* Server */
 #define SERVER_BOTNAME            4
 #define SERVER_BOTUSERHOST        5
-#define SERVER_NICKLEN           38
+#define SERVER_NICKLEN           37
 /* IRC */
 #define IRC_RECHECK_CHANNEL       15
 #define IRC_RECHECK_CHANNEL_MODES 17
@@ -116,7 +118,7 @@ typedef struct _module_entry {
 #endif /* STATIC */
   Function *funcs;
 #ifdef DEBUG_MEM
-  int mem_work;
+  unsigned long mem_work;
 #endif /* DEBUG_MEM */
 } module_entry;
 

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -389,7 +389,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
       return;
@@ -455,7 +455,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
       return;
@@ -536,7 +536,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
       dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
       return;
@@ -589,7 +589,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
-    if (!u2 || strcmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
+    if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
       dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
       return;
@@ -659,7 +659,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && chan_hasop(m)) {
-    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n",
+    dprintf(idx, "I can't help you now because halfops cannot kick ops (on %s).\n",
             chan->dname);
     return;
   }
@@ -726,7 +726,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   struct chanset_t *chan;
   memberlist *m;
   int maxnicklen, maxhandlen;
-  char format[81];
 
   chan = get_channel(idx, par);
   if (!chan || !has_oporhalfop(idx, chan))
@@ -758,9 +757,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxhandlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s %%s\n",
-                 maxnicklen, maxhandlen);
-    dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
+    dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s        %s\n", maxnicklen, "NICKNAME",
+              maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", "JOIN", "IDLE",
+              "USER@HOST");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
         if ((now - (m->joined)) > 86400)
@@ -854,31 +853,31 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        egg_snprintf(format, sizeof format,
-                     "%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n",
-                     maxnicklen, maxhandlen);
-        dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
-                now - (m->split));
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %" PRId64 "s\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
+                m->account, s, atrflag, (int64_t) (now - m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        egg_snprintf(format, sizeof format,
-                     "%%c%%-%us %%-%us %%s %%c     <- it's me!\n",
-                     maxnicklen, maxhandlen);
-        dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
+                m->account, s, atrflag);
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
-          egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
+          snprintf(s1, sizeof s1, "%2" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
         else if (now - (m->last) > 3600)
-          egg_snprintf(s1, sizeof s1, "%2luh", ((now - (m->last)) / 3600));
+          snprintf(s1, sizeof s1, "%2" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
         else if (now - (m->last) > 180)
-          egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
+          snprintf(s1, sizeof s1, "%2" PRId64 "m", ((int64_t) (now - m->last)) / 60);
         else
           strlcpy(s1, "   ", sizeof s1);
-        egg_snprintf(format, sizeof format,
-                     "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
-                     maxhandlen);
-        dprintf(idx, format, chanflag, m->nick, handle, s, atrflag, s1,
-                m->userhost);
+        if (chan_ircaway(m)) {
+          strlcpy(s1+strlen(s1), " (away)", ((sizeof s1)-strlen(s1)));
+        } else {
+          strlcpy(s1+strlen(s1), "       ", ((sizeof s1)-strlen(s1)));
+        }
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
+              m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
+              s1, m->userhost);
       }
       if (chan_fakeop(m))
         dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);
@@ -1136,7 +1135,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
       else {
         putlog(LOG_CMDS, "*", "#%s# reset %s", dcc[idx].nick, par);
         dprintf(idx, "Resetting channel info for %s...\n", chan->dname);
-        reset_chan_info(chan, CHAN_RESETALL);
+        reset_chan_info(chan, CHAN_RESETALL, 1);
       }
     }
   } else if (!(u->flags & USER_MASTER))
@@ -1146,7 +1145,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
     dprintf(idx, "Resetting channel info for all channels...\n");
     for (chan = chanset; chan; chan = chan->next) {
       if (channel_active(chan))
-        reset_chan_info(chan, CHAN_RESETALL);
+        reset_chan_info(chan, CHAN_RESETALL, 1);
     }
   }
 }
