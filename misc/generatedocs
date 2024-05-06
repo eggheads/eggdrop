@@ -120,6 +120,7 @@ mv tmpdocs/ident.txt $BASEDIR/../doc/modules/mod.ident
 mv tmpdocs/irc.txt $BASEDIR/../doc/modules/mod.irc
 mv tmpdocs/notes.txt $BASEDIR/../doc/modules/mod.notes
 mv tmpdocs/pbkdf2.txt $BASEDIR/../doc/modules/mod.pbkdf2
+mv tmpdocs/python.txt $BASEDIR/../doc/modules/mod.python
 mv tmpdocs/seen.txt $BASEDIR/../doc/modules/mod.seen
 mv tmpdocs/server.txt $BASEDIR/../doc/modules/mod.server
 mv tmpdocs/share.txt $BASEDIR/../doc/modules/mod.share

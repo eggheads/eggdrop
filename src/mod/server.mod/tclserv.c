@@ -210,7 +210,7 @@ static int tcl_isidentified STDVAR {
   }
   while (chan && (thechan == NULL || thechan == chan)) {
     if ((m = ismember(chan, argv[1]))) {
-      if (strcmp(m->account, "")) {
+      if (strcmp(m->account, "*") && strcmp(m->account, "")) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }

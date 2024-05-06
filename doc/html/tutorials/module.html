@@ -234,10 +234,9 @@ static void woobie_report(int idx, int details)
     <span class="k">return</span> <span class="n">TCL_ERROR</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">}</span>
-
-<span class="n">A</span> <span class="n">few</span> <span class="n">notes</span> <span class="n">on</span> <span class="n">this</span> <span class="n">example</span><span class="o">.</span> <span class="n">BADARGS</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">macro</span> <span class="n">that</span> <span class="n">checks</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">provided</span> <span class="n">to</span> <span class="n">the</span> <span class="n">Tcl</span> <span class="n">command</span><span class="o">.</span> <span class="n">The</span> <span class="n">first</span> <span class="n">argument</span> <span class="n">BADARGS</span> <span class="n">accepts</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">parameters</span> <span class="n">the</span> <span class="n">Tcl</span> <span class="n">command</span> <span class="n">must</span> <span class="n">accept</span> <span class="p">(</span><span class="n">including</span> <span class="n">the</span> <span class="n">command</span> <span class="n">itself</span><span class="p">)</span><span class="o">.</span> <span class="n">The</span> <span class="n">second</span> <span class="n">argument</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">maximum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">parameters</span> <span class="n">that</span> <span class="n">BADARGS</span> <span class="n">will</span> <span class="n">accept</span><span class="o">.</span> <span class="n">The</span> <span class="n">third</span> <span class="n">argument</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">help</span> <span class="n">text</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">displayed</span> <span class="k">if</span> <span class="n">these</span> <span class="n">boundaries</span> <span class="n">are</span> <span class="n">exceeded</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">BADARGS</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; name ?date? ?place?&quot;</span><span class="p">)</span> <span class="n">requires</span> <span class="n">at</span> <span class="n">least</span> <span class="n">one</span> <span class="n">argument</span> <span class="n">to</span> <span class="n">be</span> <span class="n">passed</span><span class="p">,</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">maximum</span> <span class="n">of</span> <span class="n">three</span> <span class="n">arguments</span><span class="o">.</span> <span class="n">Eggdrop</span> <span class="n">code</span> <span class="n">style</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">enclose</span> <span class="n">optional</span> <span class="n">arguments</span> <span class="n">between</span> <span class="n">qusetion</span> <span class="n">marks</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">help</span> <span class="n">text</span><span class="o">.</span>
 </pre></div>
 </div>
+<p>A few notes on this example. BADARGS is a macro that checks the input provided to the Tcl command. The first argument BADARGS accepts is the minimum number of parameters the Tcl command must accept (including the command itself). The second argument is the maximum number of parameters that BADARGS will accept. The third argument is the help text that will be displayed if these boundaries are exceeded. For example, BADARGS(2, 4, “ name ?date? ?place?”) requires at least one argument to be passed, and a maximum of three arguments. Eggdrop code style is to enclose optional arguments between qusetion marks in the help text.</p>
 <p>Similar to adding a partyline command, you also have to create a function table for a new Tcl command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">tcl_cmds</span> <span class="n">mytcl</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
   <span class="p">{</span><span class="s2">&quot;echome&quot;</span><span class="p">,</span>           <span class="n">tcl_echome</span><span class="p">},</span>
@@ -302,7 +301,7 @@ static void woobie_report(int idx, int details)
 </section>
 <section id="calling-the-bind">
 <h3>Calling the Bind<a class="headerlink" href="#calling-the-bind" title="Link to this heading">¶</a></h3>
-<p>To call the bind, Eggdrop coding style it to name that function “check_tcl_bindname”. So here, whenever we reach a point in code that should trigger the bind, we’ll call check_tcl_woobie() and pass the arguments we defined- in this case, two arguments that woobie_2char was created to handle. Here is some sample code:</p>
+<p>To call the bind, Eggdrop coding style is to name that function “check_tcl_bindname”. So here, whenever we reach a point in code that should trigger the bind, we’ll call check_tcl_woobie() and pass the arguments we defined- in this case, two arguments that woobie_2char was created to handle. Here is some sample code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>check_tcl_woobie(chan, nick);
 
 
@@ -321,7 +320,80 @@ static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
 }
 </pre></div>
 </div>
-<p>Now that we have encountered a condition that triggers the bind, we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with check_tcl_bind(), called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options.</p>
+<p>Now that we have encountered a condition that triggers the bind type (in code by calling check_tcl_woobie() ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with check_tcl_bind(), called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from check_tcl_bind() to take additional action by Eggdrop.</p>
+<section id="bind-configuration-settings">
+<h4>Bind Configuration Settings<a class="headerlink" href="#bind-configuration-settings" title="Link to this heading">¶</a></h4>
+<p>The last argument to check_tcl_bind sets additional configurations for the bind, these are the defined values:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>MATCH_PARTIAL</p></td>
+<td><p>Check the triggering value against the beginning of the bind mask, ie DIR triggers a mask for DIRECTORY (case insensitive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>MATCH_EXACT</p></td>
+<td><p>Check the triggering value exactly against the bind mask value (case insensitive)</p></td>
+</tr>
+<tr class="row-even"><td><p>MATCH_CASE</p></td>
+<td><p>Check the triggering value exactly against the bind mask value (case sensitive)</p></td>
+</tr>
+<tr class="row-odd"><td><p>MATCH_MASK</p></td>
+<td><p>Check if the bind mask is contained within the triggering value, as a wildcarded value</p></td>
+</tr>
+<tr class="row-even"><td><p>MATCH_MODE</p></td>
+<td><p>Check if the triggering value is contained within the bind mask, as a wildcarded value</p></td>
+</tr>
+<tr class="row-odd"><td><p>MATCH_CRON</p></td>
+<td><p>Check the triggering value against a bind mask formatted as a cron entry, ie “30 7 6 7 * “ triggers a mask for “30 7 * * * “</p></td>
+</tr>
+<tr class="row-even"><td><p>BIND_USE_ATTR</p></td>
+<td><p>Check the flags of the user match the flags required to trigger the bind</p></td>
+</tr>
+<tr class="row-odd"><td><p>BIND_STACKABLE</p></td>
+<td><p>Allow multiple binds to call the same Tcl proc</p></td>
+</tr>
+<tr class="row-even"><td><p>BIND_WANTRET</p></td>
+<td><p>With stacked binds, if the called Tcl proc called returns a ‘1’, halt processing any further binds triggered by the action</p></td>
+</tr>
+<tr class="row-odd"><td><p>BIND_STACKRET</p></td>
+<td><p>Used with BIND_WANTRET; allow stacked binds to continue despite receiving a ‘1’</p></td>
+</tr>
+<tr class="row-even"><td><p>BIND_ALTER_ARGS</p></td>
+<td><p>Replaces arguments (which ones?) with the result returned from the called Tcl proc</p></td>
+</tr>
+</tbody>
+</table>
+<p>The value returned by the bind is often matched against a desired value to return a ‘1’ (often used with BIND_WANTRET and BIND_STACKRET) to the calling function.</p>
+</section>
+<section id="bind-return-values">
+<h4>Bind Return Values<a class="headerlink" href="#bind-return-values" title="Link to this heading">¶</a></h4>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>Value</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>BIND_NOMATCH</p></td>
+<td><p>The bind was not triggered due to not meeting the criteria set for the bind</p></td>
+</tr>
+<tr class="row-odd"><td><p>BIND_AMBIGUOUS</p></td>
+<td><p>The bind was ambiguous, similar to this explanation</p></td>
+</tr>
+<tr class="row-even"><td><p>BIND_MATCHED</p></td>
+<td><p>The bind criteria was met, but the Tcl proc it tried to call could not be found</p></td>
+</tr>
+<tr class="row-odd"><td><p>BIND_EXECUTED</p></td>
+<td><p>The bind criteria was met and the Tcl proc was called</p></td>
+</tr>
+<tr class="row-even"><td><p>BIND_EXEC_LOG</p></td>
+<td><p>The bind criteria was met, the Tcl proc was called, and Eggdrop logged the bind being called</p></td>
+</tr>
+<tr class="row-odd"><td><p>BIND_QUIT</p></td>
+<td><p>The bind was triggered in conjunction with the target leaving the partyline or filesys area (?)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 </section>
 <section id="exporting-the-bind">

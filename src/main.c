@@ -67,7 +67,6 @@
 #include "version.h"
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "bg.h"
 
 #ifdef DEBUG                            /* For debug compile */
@@ -303,10 +302,10 @@ static void write_debug()
             tcl_resultstring() : "*unknown*");
 
     /* info tclversion/patchlevel */
-    dprintf(-x, "Tcl version: %s (header version %s)\n",
+    dprintf(-x, "Tcl version: %s (header version " TCL_PATCH_LEVEL ")\n",
             ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
             tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL);
+            tcl_resultstring() : "*unknown*");
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
@@ -565,6 +564,7 @@ static void core_secondly()
   int miltime;
   time_t nowmins;
   int i;
+  uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -595,14 +595,14 @@ static void core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug1("timer: drift (%" PRId64 " seconds)", (int64_t) (nowmins - lastmin));
+      drift_mins = nowmins - lastmin;
+      debug2("timer: drift (%" PRId64 " minute%s)", drift_mins, drift_mins == 1 ? "" : "s");
       i++;
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
-    if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %" PRId64 " minutes",
-             ((int64_t) (nowmins - lastmin)) / 60);
+    if (i)
+      putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
@@ -900,7 +900,10 @@ static void mainloop(int toplevel)
       for (p = module_list; p; p = p->next) {
         if (p->funcs) {
           startfunc = p->funcs[MODCALL_START];
-          startfunc(NULL);
+          if (startfunc)
+            startfunc(NULL);
+          else
+            debug2("module: %s: %s", p->name, MOD_NOSTARTDEF);
         }
       }
 

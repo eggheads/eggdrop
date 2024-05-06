@@ -183,9 +183,10 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
                         EGG_CONST char *name1,
                         EGG_CONST char *name2, int flags)
 {
-  char *s, s1[40];
+  char *s, s1[40], *endptr;
   long l;
   intinfo *ii = (intinfo *) cdata;
+  int p;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Special cases */
@@ -223,10 +224,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
 
         default_uflags = fr.udef_global;
       } else if ((int *) ii->var == &userfile_perm) {
-        int p = oatoi(s);
-
-        if (p <= 0)
-          return "Invalid userfile permissions";
+	p = strtol(s, &endptr, 8);
+        if ((p < 01) || (p > 0777) || (*endptr))
+          return "Invalid userfile permissions, must be octal between 01 and 0777";
         userfile_perm = p;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
         return "Read-only variable";
@@ -1242,17 +1242,17 @@ time_t get_expire_time(Tcl_Interp * irp, const char *s) {
   long expire_foo = strtol(s, &endptr, 10);
 
   if (*endptr) {
-    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    Tcl_SetResult(irp, "bogus expire time", TCL_STATIC);
     return -1;
   }
   if (expire_foo < 0) {
-    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    Tcl_SetResult(irp, "expire time must be 0 (perm) or greater than 0 days", TCL_STATIC);
     return -1;
   }
   if (expire_foo == 0)
     return 0;
   if (expire_foo > (60 * 24 * 2000)) {
-    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    Tcl_SetResult(irp, "expire time must be equal to or less than 2000 days", TCL_STATIC);
     return -1;
   }
   return now + 60 * expire_foo;

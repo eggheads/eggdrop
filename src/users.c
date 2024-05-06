@@ -30,8 +30,6 @@
  */
 
 #include "main.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 #include "tandem.h"
 
@@ -1033,7 +1031,7 @@ void autolink_cycle(char *start)
   }                             /* new run through the user list */
   while (u && !autc) {
     while (u && !autc) {
-      if (u->flags & USER_BOT && strcmp(u->handle, botnetnick)) {              /* ignore our own user record */
+      if (u->flags & USER_BOT && strcasecmp(u->handle, botnetnick)) {              /* ignore our own user record */
         bfl = bot_flags(u);
         if (bfl & (BOT_HUB | BOT_ALT)) {
           linked = 0;

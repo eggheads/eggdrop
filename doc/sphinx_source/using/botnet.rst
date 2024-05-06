@@ -69,17 +69,22 @@ The following are some common terms used in this document:
 **Port**
   The telnet port is used by the bot to communicate with other bots and/or users. Note that you can define separate ports for user and bot connections.
 
-Example bottree
----------------
+Example bottrees
+----------------
 
 ::
 
   BotA
     |-+BotB
-    `-+BotC
+    |==BotC
+    |=+BotD
+    `--BotC
 
-BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.
-
+Legend:
+* -- means the bots are linked, but not sharing userfiles
+* -+ means the bots are sharing userfiles
+* == means the bots have an encrypted link between them, and are not sharing userfiles
+* =+ means the bots have an encrypted link between them, and are sharing userfiles
 
 Bot Flags
 ---------

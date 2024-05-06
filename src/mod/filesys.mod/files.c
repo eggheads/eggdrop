@@ -425,6 +425,12 @@ static void cmd_reget_get(int idx, char *par, int resend)
   long where = 0;
   int nicklen = NICKLEN;
 
+  if (!par[0]) {
+    dprintf(idx, "%s: %sget <file(s)> [nickname]\n", MISC_USAGE,
+            resend ? "re" : "");
+    return;
+  }
+  what = newsplit(&par);
   /* Get the nick length if necessary. */
   if (NICKLEN > 9) {
     module_entry *me = module_find("server", 1, 1);
@@ -432,12 +438,6 @@ static void cmd_reget_get(int idx, char *par, int resend)
     if (me && me->funcs)
       nicklen = (*(int *)me->funcs[SERVER_NICKLEN]);
   }
-  if (!par[0]) {
-    dprintf(idx, "%s: %sget <file(s)> [nickname]\n", MISC_USAGE,
-            resend ? "re" : "");
-    return;
-  }
-  what = newsplit(&par);
   if (strlen(par) > nicklen) {
     dprintf(idx, "%s", FILES_BADNICK);
     return;
