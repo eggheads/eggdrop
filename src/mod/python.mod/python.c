@@ -118,7 +118,6 @@ static void python_report(int idx, int details)
 
 static char *python_close()
 {
-  Context;
   kill_python();
   rem_builtins(H_dcc, mydcc);
   rem_tcl_commands(my_tcl_cmds);
@@ -140,7 +139,6 @@ char *python_start(Function *global_funcs)
    */
   global = global_funcs;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, python_table, 0, 1);
 
