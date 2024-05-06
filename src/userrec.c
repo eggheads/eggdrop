@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,6 @@
 
 #include <sys/stat.h>
 #include "main.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 #include "tandem.h"
 
@@ -161,13 +159,29 @@ int count_users(struct userrec *bu)
   return tot;
 }
 
-struct userrec *check_dcclist_hand(char *handle)
+/* Shortcut for get_user_by_handle -- might have user record in dccs
+ */
+static struct userrec *check_dcclist_hand(char *handle)
 {
   int i;
 
   for (i = 0; i < dcc_total; i++)
     if (!strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
+  return NULL;
+}
+
+/* Shortcut for get_user_by_handle -- might have user record in channels
+ */
+static struct userrec *check_chanlist_hand(const char *hand)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      if (m->user && !strcasecmp(m->user->handle, hand))
+        return m->user;
   return NULL;
 }
 
@@ -191,7 +205,6 @@ struct userrec *get_user_by_account(char *acct)
   }
   return NULL;
 }
-
 
 struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 {

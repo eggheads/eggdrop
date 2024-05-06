@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -136,20 +136,6 @@ struct userrec *check_chanlist(const char *host)
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-        return m->user;
-  return NULL;
-}
-
-/* Shortcut for get_user_by_handle -- might have user record in channels
- */
-struct userrec *check_chanlist_hand(const char *hand)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !strcasecmp(m->user->handle, hand))
         return m->user;
   return NULL;
 }
@@ -407,7 +393,7 @@ void tell_settings(int idx)
 
 void reaffirm_owners()
 {
-  char *p, *q, s[121];
+  char *p, *q, s[sizeof owner];
   struct userrec *u;
 
   /* Please stop breaking this function. */

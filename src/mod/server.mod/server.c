@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2385,7 +2385,8 @@ static Function server_table[] = {
   (Function) & find_capability,
   (Function) encode_msgtags,
   /* 52 - 55 */
-  (Function) & H_monitor
+  (Function) & H_monitor,
+  (Function) isupport_get_prefixchars
 };
 
 char *server_start(Function *global_funcs)

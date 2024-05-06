@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/resource.h>
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
@@ -2834,6 +2835,8 @@ static void cmd_page(struct userrec *u, int idx, char *par)
  */
 static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
+  struct rusage ru1, ru2;
+  int r = 0;
   int code;
   char *result;
   Tcl_DString dstr;
@@ -2842,8 +2845,15 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
-  debug1("tcl: evaluate (.tcl): %s", msg);
+  debug1("tcl: evaluating .tcl %s", msg);
+  r = getrusage(RUSAGE_SELF, &ru1);
   code = Tcl_GlobalEval(interp, msg);
+  if (!r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("tcl: evaluated .tcl %s, user %.3fms sys %.3fms", msg,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);
@@ -3317,7 +3327,7 @@ cmd_t C_dcc[] = {
   {"+host",     "t|m",  (IntFunc) cmd_pls_host,   NULL},
   {"+ignore",   "m",    (IntFunc) cmd_pls_ignore, NULL},
   {"+user",     "m",    (IntFunc) cmd_pls_user,   NULL},
-  {"-account",  "t|m",  (IntFunc) cmd_mns_account,NULL},
+  {"-account",  "",     (IntFunc) cmd_mns_account,NULL},
   {"-bot",      "t",    (IntFunc) cmd_mns_user,   NULL},
   {"-host",     "",     (IntFunc) cmd_mns_host,   NULL},
   {"-ignore",   "m",    (IntFunc) cmd_mns_ignore, NULL},

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -517,8 +517,10 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define get_user_by_account ((struct userrec * (*)(char *))global[317])
 #define delaccount_by_handle ((int(*)(char *,char *))global[318])
 #define check_tcl_event_arg ((void (*) (const char *,const char *))global[319])
-/*320 - 323 */
-
+/* 320 - 323 */
+#define bind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[320])
+#define unbind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[321])
+#define argv0 ((char *)global[322])
 
 
 

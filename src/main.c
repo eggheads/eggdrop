@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,6 @@
 #include "version.h"
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "bg.h"
 
 #ifdef DEBUG                            /* For debug compile */
@@ -83,8 +82,7 @@
 #endif
 
 extern char origbotname[], botnetnick[]; 
-extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs,
-           quiet_save;
+extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern struct chanset_t *chanset;
@@ -95,6 +93,7 @@ extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
 static char **argv;
+char *argv0;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -178,7 +177,6 @@ void fatal(const char *s, int recoverable)
   int i;
 
   putlog(LOG_MISC, "*", "* %s", s);
-  flushlogs();
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
@@ -304,10 +302,10 @@ static void write_debug()
             tcl_resultstring() : "*unknown*");
 
     /* info tclversion/patchlevel */
-    dprintf(-x, "Tcl version: %s (header version %s)\n",
+    dprintf(-x, "Tcl version: %s (header version " TCL_PATCH_LEVEL ")\n",
             ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
             tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL);
+            tcl_resultstring() : "*unknown*");
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
@@ -566,6 +564,7 @@ static void core_secondly()
   int miltime;
   time_t nowmins;
   int i;
+  uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -588,7 +587,6 @@ static void core_secondly()
   if (nowmins > lastmin) {
     memcpy(&nowtm, localtime(&now), sizeof(struct tm));
     i = 0;
-
     /* Once a minute */
     ++lastmin;
     call_hook(HOOK_MINUTELY);
@@ -597,22 +595,19 @@ static void core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug1("timer: drift (%" PRId64 " seconds)", (int64_t) (nowmins - lastmin));
+      drift_mins = nowmins - lastmin;
+      debug2("timer: drift (%" PRId64 " minute%s)", drift_mins, drift_mins == 1 ? "" : "s");
       i++;
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
-    if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %" PRId64 " minutes",
-             ((int64_t) (nowmins - lastmin)) / 60);
+    if (i)
+      putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      if (!quick_logs) {
-        flushlogs();
-        check_logsize();
-      }
+
       if (!miltime) {           /* At midnight */
         char s[25];
         int j;
@@ -660,10 +655,7 @@ static void core_minutely()
 {
   check_tcl_time_and_cron(&nowtm);
   do_check_timers(&timer);
-  if (quick_logs != 0) {
-    flushlogs();
-    check_logsize();
-  }
+  check_logsize();
 }
 
 static void core_hourly()
@@ -900,7 +892,6 @@ static void mainloop(int toplevel)
         putlog(LOG_MISC, "*", "%s", MOD_STAGNANT);
       }
 
-      flushlogs();
       kill_tcl();
       init_tcl(argc, argv);
       init_language(0);
@@ -909,7 +900,10 @@ static void mainloop(int toplevel)
       for (p = module_list; p; p = p->next) {
         if (p->funcs) {
           startfunc = p->funcs[MODCALL_START];
-          startfunc(NULL);
+          if (startfunc)
+            startfunc(NULL);
+          else
+            debug2("module: %s: %s", p->name, MOD_NOSTARTDEF);
         }
       }
 
@@ -981,19 +975,20 @@ int main(int arg_c, char **arg_v)
 
   argc = arg_c;
   argv = arg_v;
+  argv0 = argv[0];
 
   /* Version info! */
 #ifdef EGG_PATCH
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
+               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
                 EGG_STRINGVER, EGG_PATCH);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 1999-2023 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
                 EGG_STRINGVER);
 #endif
 
