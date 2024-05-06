@@ -140,20 +140,6 @@ struct userrec *check_chanlist(const char *host)
   return NULL;
 }
 
-/* Shortcut for get_user_by_handle -- might have user record in channels
- */
-struct userrec *check_chanlist_hand(const char *hand)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !strcasecmp(m->user->handle, hand))
-        return m->user;
-  return NULL;
-}
-
 /* Clear the user pointers in the chanlists.
  *
  * Necessary when a hostmask is added/removed, a user is added or a new
@@ -407,7 +393,7 @@ void tell_settings(int idx)
 
 void reaffirm_owners()
 {
-  char *p, *q, s[121];
+  char *p, *q, s[sizeof owner];
   struct userrec *u;
 
   /* Please stop breaking this function. */

@@ -49,7 +49,7 @@ Tcl Commands
 pysource <path/to/file>
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``pysource`` command is analgous to the Tcl ``source`` command, except that it loads a Python script into Eggdrop instead of a Tcl script.
+The ``pysource`` command is analogous to the Tcl ``source`` command, except that it loads a Python script into Eggdrop instead of a Tcl script.
 
 -----------------------
 Eggdrop Python Commands
@@ -124,7 +124,7 @@ You can view examples of Python scripts in the exampleScripts folder included wi
       This script shows how to use an existing third-party module to extend a Python script, in this case retrieving information from imdb.com.
 
     listtls.py
-      This script demonstrates how to use parse-tcl_list() and parse_tcl_dict() to convert a list of dicts provided by Tcl into something that is usuable by Python.
+      This script demonstrates how to use parse-tcl_list() and parse_tcl_dict() to convert a list of dicts provided by Tcl into something that is usable by Python.
 
     urltitle.py
       This script shows how to use an existing third-party module to extend a Python script, in this case using an http parser to collect title information from a provided web page.

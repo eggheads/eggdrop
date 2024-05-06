@@ -89,13 +89,6 @@
 #define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
 #define PASSWORDLEN PASSWORDMAX + 1
 
-
-/* We have to generate compiler errors in a weird way since not all compilers
- * support the #error preprocessor directive. */
-#ifndef STDC_HEADERS
-#  include "Error: Your system must have standard ANSI C headers."
-#endif
-
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
@@ -753,12 +746,13 @@ enum {
 
 /* linked list instead of array because of multi threading */
 struct dns_thread_node {
+  pthread_t thread_id;
   pthread_mutex_t mutex;
   int fildes[2];
   int type;
   sockname_t addr;
   char host[256];
-  int ok;
+  char strerror[3 * 64]; /* msg + gai_strerror() + strerror() */
   struct dns_thread_node *next;
 };
 

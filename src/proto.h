@@ -343,7 +343,6 @@ void correct_handle(char *);
 int write_user(struct userrec *, FILE *, int);
 int write_ignores(FILE *f, int);
 void write_userfile(int);
-struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
 void user_del_chan(char *);
 int check_conflags(struct flag_record *fr, int md);

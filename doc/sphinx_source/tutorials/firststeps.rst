@@ -150,7 +150,7 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
 * **PLAIN**: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
 
-* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-method to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
+* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-mechanism to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
 
     openssl ecparam -genkey -name prime256v1 -out eggdrop-ecdsa.pem
 
@@ -162,7 +162,7 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
 
-* **EXTERNAL**: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
+* **EXTERNAL**: To use this method, set sasl-mechanism to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
 

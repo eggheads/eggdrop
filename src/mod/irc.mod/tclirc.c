@@ -369,7 +369,7 @@ static int tcl_handonchan STDVAR
         egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
         m->user = get_user_by_host(nuh);
       }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      if (m->user && !strcasecmp(m->user->handle, argv[1])) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -511,7 +511,7 @@ static int tcl_accounttracking STDVAR
   if (current->enabled) {
     acctnotify = 1;
   }
-  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", TCL_STATIC);
   return TCL_OK;
 }
 
@@ -1056,7 +1056,7 @@ static int tcl_hand2nicks STDVAR
         m->tried_getuser = 1;
         m->user = get_user_by_host(nuh);
       }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      if (m->user && !strcasecmp(m->user->handle, argv[1])) {
         /* Is the nick of the user already in the list? */
         Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
         for (i = 0; i < nicksc; i++) {
@@ -1101,7 +1101,7 @@ static int tcl_hand2nick STDVAR
         m->tried_getuser = 1;
         m->user = get_user_by_host(nuh);
       }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      if (m->user && !strcasecmp(m->user->handle, argv[1])) {
         Tcl_AppendResult(irp, m->nick, NULL);
         return TCL_OK;
       }

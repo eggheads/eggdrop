@@ -24,8 +24,6 @@
 
 #include "main.h"
 #include "tandem.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 
 extern char botnetnick[], ver[], admin[], network[], motdfile[];

@@ -899,6 +899,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   int fd;
   struct dns_thread_node *dtn, *dtn_prev;
+  void *res;
 #endif
 
   maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
@@ -1056,19 +1057,23 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    if (*dtn->strerror)
+      debug2("%s: hostname %s", dtn->strerror, dtn->host);
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
       if (dtn->type == DTN_TYPE_HOSTBYIP) {
         pthread_mutex_lock(&dtn->mutex);
-        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
+        call_hostbyip(&dtn->addr, dtn->host, !*dtn->strerror);
         pthread_mutex_unlock(&dtn->mutex);
       }
       else {
         pthread_mutex_lock(&dtn->mutex);
-        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
+        call_ipbyhost(dtn->host, &dtn->addr, !*dtn->strerror);
         pthread_mutex_unlock(&dtn->mutex);
       }
       close(dtn->fildes[0]);
+      if (pthread_join(dtn->thread_id, &res))
+        putlog(LOG_MISC, "*", "sockread(): pthread_join(): error = %s", strerror(errno));
       dtn_prev->next = dtn->next;
       nfree(dtn);
       dtn = dtn_prev;
@@ -1713,8 +1718,9 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
 {
   const char *value;
 
-  if (flags & TCL_INTERP_DESTROYED)
+  if (Tcl_InterpDeleted(irp))
     return NULL;
+
   /* Recover trace in case of unset. */
   if (flags & TCL_TRACE_DESTROYED) {
     Tcl_TraceVar2(irp, name1, name2, TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, cd);
