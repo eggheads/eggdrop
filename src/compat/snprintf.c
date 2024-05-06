@@ -105,7 +105,7 @@ va_dcl
   VA_SHIFT(count, size_t);
   VA_SHIFT(fmt, char *);
 
-  (void) egg_vsnprintf(str, count, fmt, ap);
+  (void) vsnprintf(str, count, fmt, ap);
   VA_END;
   return (strlen(str));
 }

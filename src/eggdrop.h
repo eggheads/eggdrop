@@ -274,7 +274,6 @@ typedef uint32_t IP;
 #define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
 #define egg_strncasecmp strncasecmp
-#define egg_vsnprintf vsnprintf
 #define my_memcpy memcpy
 
 /***********************************************************************/
