@@ -965,12 +965,20 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     return 0;
   }
   if ((err = ERR_peek_error())) {
-    putlog(data->loglevel, "*",
-           "TLS: handshake failed due to the following error: %s",
-           ERR_reason_error_string(err));
-    debug0("TLS: handshake failed due to the following errors: ");
-    while ((err = ERR_get_error()))
-      debug1("TLS: %s", ERR_error_string(err, NULL));
+    if (ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
+        ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST)
+      /* TODO: check if this is really a webui port, report source host (info in dcc[i]?) and give hint to use https:// */
+      putlog(LOG_MISC, "*", "TLS: error: plain HTTP request received on an SSL port, sock %i", sock);
+    else {
+      putlog(data->loglevel, "*",
+             "TLS: handshake failed due to the following error: %s",
+             ERR_reason_error_string(err));
+      debug0("TLS: handshake failed due to the following errors: ");
+      while ((err = ERR_get_error())) {
+	printf("err = %ul\n", err);
+        debug1("TLS: %s", ERR_error_string(err, NULL));
+      }
+    }
   }
 
   /* Attempt failed, cleanup and abort */
