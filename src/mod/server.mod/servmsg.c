@@ -2023,8 +2023,8 @@ static int gotstdreply(char *from, char *msgtype, char *msg)
       snprintf(context, sizeof context, "%.*s", len, msg);
     }
     fixcolon(text);
-    }
-    putlog(LOG_SERV, "*", "%s: %s: Received a %s message from %s: %s", cmd, code, msgtype, from, text);
+  }
+  putlog(LOG_SERV, "*", "%s: %s: Received a %s message from %s: %s", cmd, code, msgtype, from, text);
   return 0;
 }
 
