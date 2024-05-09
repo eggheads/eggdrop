@@ -2001,6 +2001,54 @@ static int got730or1(char *from, char *msg, int code)
   return 0;
 }
 
+/* Got IRCv3 standard-reply
+ * <FAIL/NOTE/WARN> <command> <code> [<context>...] <description>
+ */
+static int gotstdreply(char *from, char *msgtype, char *msg)
+{
+  char *cmd, *code, *text;
+  char context[MSGMAX] = "";
+  int len;
+
+  cmd = newsplit(&msg);
+  code = newsplit(&msg);
+/* TODO: Once this feature is better implemented, consider how to handle
+ * one-word descriptions that aren't technically required to have a :
+ */
+  text = strstr(msg, " :");
+  if (text) {
+    text++;
+    if (text != msg) {
+      len = text - msg;
+      snprintf(context, sizeof context, "%.*s", len, msg);
+    }
+    fixcolon(text);
+  }
+  putlog(LOG_SERV, "*", "%s: %s: Received a %s message from %s: %s", cmd, code, msgtype, from, text);
+  return 0;
+}
+
+/* Got IRCv3 FAIL standard-reply */
+static int gotstdfail(char *from, char *msg)
+{
+  gotstdreply(from, "FAIL", msg);
+  return 0;
+}
+
+/* Got IRCv3 NOTE standard-reply */
+static int gotstdnote(char *from, char *msg)
+{
+  gotstdreply(from, "NOTE", msg);
+  return 0;
+}
+
+/* Got IRCv3 WARN standard-reply */
+static int gotstdwarn(char *from, char *msg)
+{
+  gotstdreply(from, "WARN", msg);
+  return 0;
+}
+
 /* Got 730/RPL_MONONLINE
  * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
  */
@@ -2097,6 +2145,9 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"FAIL",         "",   (IntFunc) gotstdfail,      NULL},
+  {"NOTE",         "",   (IntFunc) gotstdnote,      NULL},
+  {"WARN",         "",   (IntFunc) gotstdwarn,      NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"005",          "",   (IntFunc) got005,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
