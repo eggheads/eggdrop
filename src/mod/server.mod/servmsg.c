@@ -2003,18 +2003,20 @@ static int got730or1(char *from, char *msg, int code)
 
 /* Got IRCv3 standard-reply
  * <FAIL/NOTE/WARN> <command> <code> [<context>...] <description>
- *
- * stdtype is 0 for FAIL, 1 for NOTE, 2 for WARN
  */
 static int gotstdreply(char *from, char * msgtype, char *msg)
 {
-  char *cmd, *code, *text;
+  char *cmd, *code, *text = 0;
   char context[MSGMAX] = "";
   int len;
 
   cmd = newsplit(&msg);
   code = newsplit(&msg);
-  text = strchr(msg, ':');
+/* TODO: Once this feature is better implemented, consider how to handle
+ * one-word descriptions that aren't technically required to have a :
+ */
+  text = strstr(msg, " :");
+  text++;
   if (text != msg) {
     len = text - msg;
     strncpy(context, msg, len);
@@ -2027,24 +2029,21 @@ static int gotstdreply(char *from, char * msgtype, char *msg)
 /* Got IRCv3 FAIL standard-reply */
 static int gotstdfail(char *from, char *msg)
 {
-  char msgtype[] = "FAIL";
-  gotstdreply(from, msgtype, msg);
+  gotstdreply(from, "FAIL", msg);
   return 0;
 }
 
 /* Got IRCv3 NOTE standard-reply */
 static int gotstdnote(char *from, char *msg)
 {
-  char msgtype[] = "NOTE";
-  gotstdreply(from, msgtype, msg);
+  gotstdreply(from, "NOTE", msg);
   return 0;
 }
 
 /* Got IRCv3 WARN standard-reply */
 static int gotstdwarn(char *from, char *msg)
 {
-  char msgtype[] = "WARN";
-  gotstdreply(from, msgtype, msg);
+  gotstdreply(from, "WARN", msg);
   return 0;
 }
 
