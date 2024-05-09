@@ -1405,7 +1405,7 @@ static void bot_away(int idx, char *par)
     sock = base64_to_int(etc);
   if (sock == 0)
     sock = partysock(bot, etc);
-  else if ((sock < 0) || (sock > 0xffff)) {
+  else if (sock < 0) {
     putlog(LOG_BOTS, "*", "botcmd: bot_away() Bogus sock from %s", dcc[idx].nick);
     return;
   }
