@@ -64,15 +64,15 @@ static char base64to[256] = {
 
 int base64_to_int(char *buf)
 {
-  int i = 0;
+  int i = 0, j;
 
   while (*buf) {
-    if (i > (INT_MAX >> 6)) {
-      debug0("botcmd: base64_to_int(): Bogus input");
-      return INT_MAX; /* FIXME: return -1 and check for this return value */
+    j = base64to[(int) *buf];
+    if (i > ((INT_MAX >> 6) - j)) {
+      putlog(LOG_MISC, "*", "botcmd: base64_to_int(): bogus input");
+      return INT_MAX;
     }
-    i = i << 6;
-    i += base64to[(int) *buf];
+    i = (i << 6) + j;
     buf++;
   }
   return i;
