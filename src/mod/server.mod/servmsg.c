@@ -2006,7 +2006,7 @@ static int got730or1(char *from, char *msg, int code)
  */
 static int gotstdreply(char *from, char *msgtype, char *msg)
 {
-  char *cmd, *code, *text = 0;
+  char *cmd, *code, *text;
   char context[MSGMAX] = "";
   int len;
 
