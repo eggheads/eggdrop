@@ -68,10 +68,8 @@ int base64_to_int(char *buf)
 
   while (*buf) {
     j = base64to[(int) *buf];
-    if (i > ((INT_MAX >> 6) - j)) {
-      putlog(LOG_MISC, "*", "botcmd: base64_to_int(): bogus input");
-      return INT_MAX;
-    }
+    if (i > ((INT_MAX >> 6) - j)) /* if overflow return -1 */
+      return -1;
     i = (i << 6) + j;
     buf++;
   }
@@ -1401,13 +1399,13 @@ static void bot_away(int idx, char *par)
   etc = newsplit(&par);
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    sock = atoi(etc); /* FIXME: etc is user input, so we need to check it and/or use strtol() / strtoul() */ 
+    sock = atoi(etc);
   else
 #endif
     sock = base64_to_int(etc);
   if (sock == 0)
     sock = partysock(bot, etc);
-  if (sock > 0xffff) {
+  else if ((sock < 0) || (sock > 0xffff)) {
     putlog(LOG_BOTS, "*", "botcmd: bot_away() Bogus sock from %s", dcc[idx].nick);
     return;
   }
