@@ -2016,13 +2016,15 @@ static int gotstdreply(char *from, char * msgtype, char *msg)
  * one-word descriptions that aren't technically required to have a :
  */
   text = strstr(msg, " :");
-  text++;
-  if (text != msg) {
-    len = text - msg;
-    strncpy(context, msg, len);
-  }
-  fixcolon(text);
-  putlog(LOG_SERV, "*", "%s%s%s: Received a %s message from %s: %s", cmd, cmd ? ": " : "", code, msgtype, from, text);
+  if (text) {
+    text++;
+    if (text != msg) {
+      len = text - msg;
+      snprintf(context, sizeof context, "%.*s", len, msg);
+    }
+    fixcolon(text);
+    }
+    putlog(LOG_SERV, "*", "%s: %s: Received a %s message from %s: %s", cmd, code, msgtype, from, text);
   return 0;
 }
 
