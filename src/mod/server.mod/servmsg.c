@@ -2004,7 +2004,7 @@ static int got730or1(char *from, char *msg, int code)
 /* Got IRCv3 standard-reply
  * <FAIL/NOTE/WARN> <command> <code> [<context>...] <description>
  */
-static int gotstdreply(char *from, char * msgtype, char *msg)
+static int gotstdreply(char *from, char *msgtype, char *msg)
 {
   char *cmd, *code, *text = 0;
   char context[MSGMAX] = "";
