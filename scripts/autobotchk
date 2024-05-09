@@ -276,8 +276,8 @@ if {$systemd} {
   exit
  }
  puts "Creating systemd directory..."
- catch {file mkdir ~/.config/systemd/user } res
- if {[catch {open ~/.config/systemd/user/${botnet-nick}.service w} fd]} {
+ catch {file mkdir -p "$::env(HOME)/.config/systemd/user" } res
+ if {[catch {open "$::env(HOME)/.config/systemd/user/${botnet-nick}.service" w} fd]} {
   puts "  *** ERROR: unable to open '${botnet-nick}.service' for writing"
   puts ""
   exit
