@@ -2208,9 +2208,7 @@ encpass2 <pass>
 ^^^^^^^^^^^^^^^
 
 
-  Returns: hash = "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" (PHC string format)
-        salt and hash = base64
-        NULL = error
+  Returns: a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
 
   Module: pbkdf2
 
@@ -2218,8 +2216,7 @@ encpass2 <pass>
 pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Returns: derived key from a password using a salt and iteration count as specified in RFC 2898 as a hexadecimal string. You may request the result as binary data by giving -bin.
-
+  Returns: a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
 
   Module: pbkdf2
 
