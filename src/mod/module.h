@@ -524,7 +524,8 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define bind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[320])
 #define unbind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[321])
 #define argv0 ((char *)global[322])
-
+#define get_user_from_channel ((struct userrec * (*)(memberlist *))global[323])
+/* 324 - 327 */
 
 
 /* hostmasking */
