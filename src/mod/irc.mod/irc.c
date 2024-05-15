@@ -919,7 +919,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
-  chan = findchan_by_dname(chname);
+  chan = findchan(chname);
   m = ismember(chan, nick);
   u = get_user_from_channel(m);
   hand = u ? u->handle : "*";
@@ -949,7 +949,7 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
 
   simple_sprintf(buf, "%s %s", chname, msg);
   simple_sprintf(host, "%s!%s", nick, from);
-  chan = findchan_by_dname(chname);
+  chan = findchan(chname);
   m = ismember(chan, nick);
   u = get_user_from_channel(m);
   get_user_flagrec(u, &fr, chname);
