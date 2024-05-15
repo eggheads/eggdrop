@@ -2022,7 +2022,6 @@ static int gotjoin(char *from, char *channame)
       goto exit;
 
     /* Grab last time joined before we update it */
-    get_user_flagrec(u, &fr, chan->dname);      /* Lam: fix to work with !channels */
     if (!channel_active(chan) && !match_my_nick(nick)) {
       /* uh, what?!  i'm on the channel?! */
       putlog(LOG_MISC, chan->dname,
@@ -2034,6 +2033,7 @@ static int gotjoin(char *from, char *channame)
     } else {
       m = ismember(chan, nick);
       u = get_user_from_channel(m);
+      get_user_flagrec(u, &fr, chan->dname);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
         check_tcl_rejn(nick, uhost, u, chan->dname);
 
