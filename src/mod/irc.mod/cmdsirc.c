@@ -379,7 +379,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
   m = ismember(chan, nick);
   if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
-    u2 = m->user ? m->user : get_user_from_channel(m);
+    u2 = get_user_from_channel(m);
 
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
@@ -442,7 +442,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
   m = ismember(chan, nick);
   if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
-    u2 = m->user ? m->user : get_user_from_channel(m);
+    u2 = get_user_from_channel(m);
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
@@ -519,7 +519,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
    * - stdarg */
   if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) &&
       !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
-    u2 = m->user ? m->user : get_user_from_channel(m);
+    u2 = get_user_from_channel(m);
 
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
@@ -570,7 +570,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   m = ismember(chan, nick);
   if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) &&
       !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
-    u2 = m->user ? m->user : get_user_from_channel(m);
+    u2 = get_user_from_channel(m);
 
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
@@ -706,6 +706,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
   memberlist *m;
+  struct userrec *u;
   int maxnicklen, maxhandlen;
 
   chan = get_channel(idx, par);
@@ -729,8 +730,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (strlen(m->nick) > maxnicklen)
         maxnicklen = strlen(m->nick);
-      if ((m->user) && (strlen(m->user->handle) > maxhandlen))
-        maxhandlen = strlen(m->user->handle);
+      u = get_user_from_channel(m);
+      if (u && (strlen(u->handle) > maxhandlen))
+        maxhandlen = strlen(u->handle);
     }
     if (maxnicklen < 9)
       maxnicklen = 9;
@@ -750,14 +752,13 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       } else
         strlcpy(s, " --- ", sizeof s);
       egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-      if (m->user == NULL) {
-        m->user = get_user_from_channel(m);
-      }
-      if (m->user == NULL)
+
+      u = get_user_from_channel(m);
+      if (u == NULL)
         strlcpy(handle, "*", sizeof handle);
       else
-        strlcpy(handle, m->user->handle, sizeof handle);
-      get_user_flagrec(m->user, &user, chan->dname);
+        strlcpy(handle, u->handle, sizeof handle);
+      get_user_flagrec(u, &user, chan->dname);
       /* Determine status char to use */
       if (glob_bot(user) && (glob_op(user) || chan_op(user)))
         atrflag = 'B';

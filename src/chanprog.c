@@ -136,7 +136,8 @@ struct userrec *check_chanlist(const char *host)
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-        return m->user;
+//XXXXXXXX loop? Does this whole func come out?
+        return get_user_from_channel(m);
   return NULL;
 }
 
@@ -152,7 +153,6 @@ void clear_chanlist(void)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      m->user = NULL;
       m->tried_getuser = 0;
     }
 }
@@ -170,7 +170,6 @@ void clear_chanlist_member(const char *nick)
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!rfc_casecmp(m->nick, nick)) {
-        m->user = NULL;
         m->tried_getuser = 0;
         break;
       }
@@ -190,6 +189,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
+//XXXXXXXX Does this whole func come out?
         m->user = rec;
 }
 

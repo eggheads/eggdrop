@@ -80,6 +80,7 @@ static int expmem_mask(struct maskrec *m)
   for (; m; m = m->next) {
     result += sizeof(struct maskrec);
     result += strlen(m->mask) + 1;
+//XXXXXXXX How to handle this one?
     if (m->user)
       result += strlen(m->user) + 1;
     if (m->desc)
@@ -176,12 +177,14 @@ static struct userrec *check_dcclist_hand(char *handle)
 static struct userrec *check_chanlist_hand(const char *hand)
 {
   struct chanset_t *chan;
+  struct userrec *u;
   memberlist *m;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !strcasecmp(m->user->handle, hand))
-        return m->user;
+      u = get_user_from_channel(m);
+      if (u && !strcasecmp(u->handle, hand))
+        return u;
   return NULL;
 }
 
@@ -288,8 +291,6 @@ void clear_masks(maskrec *m)
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
-    if (m->user)
-      nfree(m->user);
     if (m->desc)
       nfree(m->desc);
     nfree(m);

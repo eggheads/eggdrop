@@ -421,10 +421,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
-  if (!m->user)
-    u = get_user_from_channel(m);
-  else
-    u = m->user;
+  u = get_user_from_channel(m);
 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
@@ -518,10 +515,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
-  if (!m->user)
-    u = get_user_from_channel(m);
-  else
-    u = m->user;
+  u = get_user_from_channel(m);
 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
@@ -1245,8 +1239,7 @@ static int gotmode(char *from, char *origmsg)
             refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-            get_user_flagrec(m->user ? m->user : get_user_from_channel(m),
-                             &victim, chan->dname);
+            get_user_flagrec(get_user_from_channel, &victim, chan->dname);
             if (ms2[0] == '+') {
               m->flags &= ~SENTVOICE;
               m->flags |= CHANVOICE;

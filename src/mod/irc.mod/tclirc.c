@@ -54,10 +54,8 @@ static int tcl_chanlist STDVAR
   minus.match = plus.match ^ (FR_AND | FR_OR);
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if (!m->user) {
-      m->user = get_user_from_channel(m);
-    }
-    get_user_flagrec(m->user, &user, argv[1]);
+    u = get_user_from_channel(m);
+    get_user_flagrec(u, &user, argv[1]);
     user.match = plus.match;
     if (flagrec_eq(&plus, &user)) {
       if (!f || !flagrec_eq(&minus, &user))
@@ -346,6 +344,7 @@ static int tcl_onchan STDVAR
 static int tcl_handonchan STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
   memberlist *m;
 
   BADARGS(2, 3, " handle ?channel?");
@@ -362,10 +361,8 @@ static int tcl_handonchan STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user) {
-        m->user = get_user_from_channel(m);
-      }
-      if (m->user && !strcasecmp(m->user->handle, argv[1])) {
+      u = get_user_from_channel(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -1025,6 +1022,7 @@ static int tcl_hand2nicks STDVAR
 {
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
   Tcl_Obj *nicks;
   Tcl_Obj **nicksv = NULL;
   int nicksc = 0, i, found;
@@ -1045,12 +1043,12 @@ static int tcl_hand2nicks STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       found = 0;
+      u = get_user_from_channel(m);
       /* Does this user have the account we're looking for? */
-      if (!m->user && !m->tried_getuser) {
+      if (!u && !m->tried_getuser) {
         m->tried_getuser = 1;
-        m->user = get_user_from_channel(m);
       }
-      if (m->user && !strcasecmp(m->user->handle, argv[1])) {
+      if (u && !strcasecmp(u->handle, argv[1])) {
         /* Is the nick of the user already in the list? */
         Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
         for (i = 0; i < nicksc; i++) {
@@ -1074,6 +1072,7 @@ static int tcl_hand2nick STDVAR
 {
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
 
   BADARGS(2, 3, " handle ?channel?");
 
@@ -1089,11 +1088,11 @@ static int tcl_hand2nick STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user && !m->tried_getuser) {
+      u = get_user_from_channel(m);
+      if (!u && !m->tried_getuser) {
         m->tried_getuser = 1;
-        m->user = get_user_from_channel(m);
       }
-      if (m->user && !strcasecmp(m->user->handle, argv[1])) {
+      if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, m->nick, NULL);
         return TCL_OK;
       }
@@ -1123,10 +1122,8 @@ static int tcl_nick2hand STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     m = ismember(chan, argv[1]);
     if (m) {
-      if (!m->user) {
-        m->user = get_user_from_channel(m);
-      }
-      Tcl_AppendResult(irp, m->user ? m->user->handle : "*", NULL);
+      u = get_user_from_channel(m);
+      Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
       return TCL_OK;
     }
     chan = chan->next;

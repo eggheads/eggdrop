@@ -669,8 +669,7 @@ static void check_expired_chanstuff()
           for (m = chan->channel.member; m && m->nick[0]; m = m->next)
             if (now - m->last >= chan->idle_kick * 60 &&
                 !match_my_nick(m->nick) && !chan_issplit(m)) {
-              get_user_flagrec(m->user ? m->user : get_user_from_channel(m),
-                               &fr, chan->dname);
+              get_user_flagrec(get_user_from_channel(m), &fr, chan->dname);
               if ((!(glob_bot(fr) || glob_friend(fr) || (glob_op(fr) &&
                   !chan_deop(fr)) || chan_friend(fr) || chan_op(fr))) &&
                   (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
@@ -683,8 +682,7 @@ static void check_expired_chanstuff()
       for (m = chan->channel.member; m && m->nick[0]; m = n) {
         n = m->next;
         if (m->split && now - m->split > wait_split) {
-          check_tcl_sign(m->nick, m->userhost,
-                         m->user ? m->user : get_user_from_channel(m),
+          check_tcl_sign(m->nick, m->userhost, get_user_from_channel(m),
                          chan->dname, "lost in the netsplit");
           putlog(LOG_JOIN, chan->dname,
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);

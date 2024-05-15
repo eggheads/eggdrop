@@ -110,7 +110,7 @@ static void setaccount(char *nick, char *account)
           } else {
             putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
           }
-          check_tcl_account(m->nick, m->userhost, m->user, chan->dname, account);
+          check_tcl_account(m->nick, m->userhost, get_user_from_channel(m), chan->dname, account);
         }
         strlcpy(m->account, account, sizeof m->account);
       }
@@ -426,7 +426,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
   flushed = 0;
   kicknick[0] = 0;
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    get_user_flagrec(m->user ? m->user : get_user_from_channel(m), &fr, chan->dname);
+    get_user_flagrec(get_user_from_channel(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         match_addr(hostmask, s) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
@@ -474,7 +474,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       if (match_addr(b->mask, user)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
-        get_user_flagrec(m->user ? m->user : get_user_from_channel(m), &fr,
+        get_user_flagrec(get_user_from_channel(m), &fr,
                          chan->dname);
         if (!glob_friend(fr) && !chan_friend(fr)) {
           add_mode(chan, '-', 'o', nick);       /* Guess it can't hurt. */
@@ -866,7 +866,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
           (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
         check_exemptlist(chan, s);
         quickban(chan, m->userhost);
-        p = get_user(&USERENTRY_COMMENT, m->user);
+        p = get_user(&USERENTRY_COMMENT, get_user_from_channel(m));
         dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
                 p ? p : IRC_POLITEKICK);
         m->flags |= SENTKICK;
@@ -885,7 +885,7 @@ static void check_this_user(char *hand, int delete, char *host)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      u = m->user ? m->user : get_user_from_channel(m);
+      u = get_user_from_channel(m);
       if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
           (!u && delete == 2 && match_addr(host, s))) {
         u = delete ? NULL : u;
@@ -910,11 +910,11 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   stacking++;
   /* Okay, sort through who needs to be deopped. */
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if (!m->user && !m->tried_getuser) {
+    if (!get_user_from_channel(m) && !m->tried_getuser) {
       m->tried_getuser = 1;
-      m->user = get_user_from_channel(m);
+      u = get_user_from_channel(m);
     }
-    get_user_flagrec(m->user, &fr, chan->dname);
+    get_user_flagrec(u, &fr, chan->dname);
     if (glob_bot(fr) && chan_hasop(m) && !match_my_nick(m->nick))
       stop_reset = 1;
     /* Perhaps we were halfop and tried to halfop/kick the user earlier but
@@ -1078,7 +1078,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
-  m->user = NULL;               /* No handle match (yet) */
   if (match_my_nick(nick))      /* Is it me? */
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
   m->flags |= WHO_SYNCED;
@@ -1109,7 +1108,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
   }
-  m->user = get_user_from_channel(m);
 
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
@@ -2053,7 +2051,6 @@ static int gotjoin(char *from, char *channame)
         m->last = now;
         m->delay = 0L;
         m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
-        m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
         putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
@@ -2069,7 +2066,6 @@ static int gotjoin(char *from, char *channame)
         m->delay = 0L;
         strlcpy(m->nick, nick, sizeof m->nick);
         strlcpy(m->userhost, uhost, sizeof m->userhost);
-        m->user = u;
         m->flags |= STOPWHO;
 
         if (extjoin) {
@@ -2091,7 +2087,6 @@ static int gotjoin(char *from, char *channame)
 
         /* The record saved in the channel record always gets updated,
          * so we can use that. */
-        u = m->user;
 
         if (match_my_nick(nick)) {
           /* It was me joining! Need to update the channel record with the
@@ -2122,9 +2117,9 @@ static int gotjoin(char *from, char *channame)
           if (u) {
             struct laston_info *li = 0;
 
-            cr = get_chanrec(m->user, chan->dname);
+            cr = get_chanrec(get_user_from_channel(m), chan->dname);
             if (!cr && no_chanrec_info)
-              li = get_user(&USERENTRY_LASTON, m->user);
+              li = get_user(&USERENTRY_LASTON, get_user_from_channel(m));
             if (channel_greet(chan) && use_info &&
                 ((cr && now - cr->laston > wait_info) ||
                 (no_chanrec_info && (!li || now - li->laston > wait_info)))) {
@@ -2182,7 +2177,7 @@ static int gotjoin(char *from, char *channame)
                    (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
             check_exemptlist(chan, from);
             quickban(chan, from);
-            p = get_user(&USERENTRY_COMMENT, m->user);
+            p = get_user(&USERENTRY_COMMENT, get_user_from_channel(m));
             dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
                     (p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
             m->flags |= SENTKICK;
