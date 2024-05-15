@@ -1273,8 +1273,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (m->user)
     u = m->user;
   else {
-    simple_sprintf(buf, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(buf);
+    u = get_user_from_channel(m);
   }
   /* Do not expire masks set by bots. */
   if (u && u->flags & USER_BOT)

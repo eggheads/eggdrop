@@ -230,17 +230,22 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   char *badnick, *victim;
   int mevictim;
   struct userrec *u, *u2;
+  memberlist *m;
+
 
   if (!chan || (type < 0))
     return;
 
   /* Get info about offender */
-  u = get_user_by_host(whobad);
   badnick = splitnick(&whobad);
+  m = ismember(chan, badnick);
+  u = get_user_from_channel(m);
+
 
   /* Get info about victim */
-  u2 = get_user_by_host(whovictim);
   victim = splitnick(&whovictim);
+  m = ismember(chan, victim);
+  u2 = get_user_from_channel(m);
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */
@@ -264,12 +269,10 @@ static void set_key(struct chanset_t *chan, char *k)
 
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
-  char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
-    if (u == get_user_by_host(s))
+    if (u == get_user_from_channel(m))
       return 1;
   }
   return 0;
@@ -531,7 +534,6 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
-  char s[NICKMAX+UHOSTLEN+1];
   int i = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
@@ -576,8 +578,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       chan->status |= CHAN_WHINED;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
+      u = get_user_from_channel(m);
       if (!match_my_nick(m->nick) && (!u || !(u->flags & USER_BOT))) {
         ok = 0;
         break;
@@ -601,7 +602,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char *key, s[NICKMAX+UHOSTLEN+1];
+  char *key;
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
@@ -670,8 +671,7 @@ static void check_expired_chanstuff()
           for (m = chan->channel.member; m && m->nick[0]; m = m->next)
             if (now - m->last >= chan->idle_kick * 60 &&
                 !match_my_nick(m->nick) && !chan_issplit(m)) {
-              sprintf(s, "%s!%s", m->nick, m->userhost);
-              get_user_flagrec(m->user ? m->user : get_user_by_host(s),
+              get_user_flagrec(m->user ? m->user : get_user_from_channel(m),
                                &fr, chan->dname);
               if ((!(glob_bot(fr) || glob_friend(fr) || (glob_op(fr) &&
                   !chan_deop(fr)) || chan_friend(fr) || chan_op(fr))) &&
@@ -685,9 +685,8 @@ static void check_expired_chanstuff()
       for (m = chan->channel.member; m && m->nick[0]; m = n) {
         n = m->next;
         if (m->split && now - m->split > wait_split) {
-          sprintf(s, "%s!%s", m->nick, m->userhost);
           check_tcl_sign(m->nick, m->userhost,
-                         m->user ? m->user : get_user_by_host(s),
+                         m->user ? m->user : get_user_from_channel(m),
                          chan->dname, "lost in the netsplit");
           putlog(LOG_JOIN, chan->dname,
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
@@ -915,12 +914,16 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   int x;
   char buf[512], *args = buf, *cmd, host[161], *hand;
+  struct chanset_t *chan;
   struct userrec *u;
+  memberlist *m;
 
   strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
-  u = get_user_by_host(host);
+  chan = findchan_by_dname(chname);
+  m = ismember(chan, nick);
+  u = get_user_from_channel(m);
   hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pub1", nick, 0);
@@ -943,10 +946,14 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   int x;
   char buf[1024], host[161];
   struct userrec *u;
+  struct chanset_t *chan;
+  memberlist *m;
 
   simple_sprintf(buf, "%s %s", chname, msg);
   simple_sprintf(host, "%s!%s", nick, from);
-  u = get_user_by_host(host);
+  chan = findchan_by_dname(chname);
+  m = ismember(chan, nick);
+  u = get_user_from_channel(m);
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pubm1", nick, 0);
   Tcl_SetVar(interp, "_pubm2", from, 0);

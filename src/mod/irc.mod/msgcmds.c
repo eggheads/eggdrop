@@ -383,7 +383,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     struct userrec *u;
 
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(s);
+    u = get_user_from_channel(m);
     info = get_user(&USERENTRY_INFO, u);
     if (u && (u->flags & USER_BOT))
       info = 0;
@@ -431,7 +431,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[UHOSTLEN + 1], s1[143], *s2, stime[14];
+  char s1[143], *s2, stime[14];
   int ok;
   struct chanset_t *chan;
   memberlist *m;
@@ -462,8 +462,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     for (chan = chanset; chan && !ok; chan = chan->next) {
       m = ismember(chan, par);
       if (m) {
-        egg_snprintf(s, sizeof s, "%s!%s", par, m->userhost);
-        u2 = get_user_by_host(s);
+        u2 = get_user_from_channel(m);
         if (u2) {
           ok = 1;
           dprintf(DP_HELP, "NOTICE %s :[%s] AKA '%s':\n", nick,

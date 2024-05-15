@@ -148,7 +148,7 @@ static int dcc_seen(struct userrec *u, int idx, char *par)
 static void do_seen(int idx, char *prefix, char *nick, char *hand,
                     char *channel, char *text)
 {
-  char stuff[512], word1[512], word2[512], whotarget[128], object[128],
+  char word1[512], word2[512], whotarget[128], object[128],
        whoredirect[512], *oix, *lastonplace = 0;
   struct userrec *urec;
   struct chanset_t *chan;
@@ -194,8 +194,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         m = ismember(chan, object);
         if (m) {
           onchan = 1;
-          snprintf(stuff, sizeof stuff, "%s!%s", object, m->userhost);
-          urec = get_user_by_host(stuff);
+          urec = get_user_from_channel(m);
           if (!urec || !strcasecmp(object, urec->handle))
             break;
           strcat(whoredirect, object);
@@ -342,7 +341,7 @@ targetcont:
     if (m) {
       onchan = 1;
       snprintf(word1, sizeof word1, "%s!%s", whotarget, m->userhost);
-      urec = get_user_by_host(word1);
+      urec = get_user_from_channel(m);
       if (!urec || !strcasecmp(whotarget, urec->handle))
         break;
       strcat(whoredirect, whotarget);
@@ -359,8 +358,7 @@ targetcont:
     while (chan) {
       m = chan->channel.member;
       while (m && m->nick[0]) {
-        snprintf(word2, sizeof word2, "%s!%s", m->nick, m->userhost);
-        urec = get_user_by_host(word2);
+        urec = get_user_from_channel(m);
         if (urec && !strcasecmp(urec->handle, whotarget)) {
           strcat(whoredirect, whotarget);
           strcat(whoredirect, " is ");
