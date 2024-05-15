@@ -237,7 +237,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     return 0;
 
 // XXXXXXXXX Check if m exists first?
-  get_user_flagrec(get_user_from_channel(m), &fr, chan->dname);
+  get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
       ((which == FLOOD_KICK) && (glob_master(fr) || chan_master(fr)) &&
@@ -2021,7 +2021,6 @@ static int gotjoin(char *from, char *channame)
       /* The channel doesn't exist anymore, so get out of here. */
       goto exit;
 
-    /* Grab last time joined before we update it */
     if (!channel_active(chan) && !match_my_nick(nick)) {
       /* uh, what?!  i'm on the channel?! */
       putlog(LOG_MISC, chan->dname,
@@ -2032,7 +2031,7 @@ static int gotjoin(char *from, char *channame)
       reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
-      u = get_user_from_channel(m);
+      u = get_user_by_host(from);
       get_user_flagrec(u, &fr, chan->dname);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
         check_tcl_rejn(nick, uhost, u, chan->dname);
