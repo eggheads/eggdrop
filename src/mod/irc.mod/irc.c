@@ -232,7 +232,6 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   struct userrec *u, *u2;
   memberlist *m;
 
-
   if (!chan || (type < 0))
     return;
 
@@ -240,7 +239,6 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   badnick = splitnick(&whobad);
   m = ismember(chan, badnick);
   u = get_user_from_channel(m);
-
 
   /* Get info about victim */
   victim = splitnick(&whovictim);
