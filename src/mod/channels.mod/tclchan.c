@@ -1731,7 +1731,7 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
     list[3] = ts1;
     snprintf(ts2, sizeof ts2, "%" PRId64, (int64_t) m->lastactive);
     list[4] = ts2;
-    list[5] = get_user_from_channel(m);
+    list[5] = m->user;
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);
     Tcl_Free((char *) p);

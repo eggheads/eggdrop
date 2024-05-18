@@ -27,6 +27,7 @@ static int tcl_chanlist STDVAR
   int f;
   memberlist *m;
   struct chanset_t *chan;
+  struct userrec *u;
   struct flag_record plus = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 },
                      minus = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
                      user = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
@@ -1106,6 +1107,7 @@ static int tcl_nick2hand STDVAR
 {
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
 
   BADARGS(2, 3, " nick ?channel?");
 

@@ -186,8 +186,8 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       fr.chan = USER_DEOP;
       fr.udef_chan = 0;
       u = get_user_by_handle(userlist, s1);
-      if ((mx = ismember(chan, badnick)))
-        mx->user = u;
+//      if ((mx = ismember(chan, badnick)))
+//        mx->user = u;
       set_user_flagrec(u, &fr, chan->dname);
       simple_sprintf(s, "(%s) %s (%s)", ct, reason, whobad);
       set_user(&USERENTRY_COMMENT, u, (void *) s);

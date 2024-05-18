@@ -706,7 +706,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
   struct chanset_t *chan;
   memberlist *m;
-  struct userrec *u;
   int maxnicklen, maxhandlen;
 
   chan = get_channel(idx, par);

@@ -1239,7 +1239,7 @@ static int gotmode(char *from, char *origmsg)
             refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-            get_user_flagrec(get_user_from_channel, &victim, chan->dname);
+            get_user_flagrec(get_user_from_channel(m), &victim, chan->dname);
             if (ms2[0] == '+') {
               m->flags &= ~SENTVOICE;
               m->flags |= CHANVOICE;

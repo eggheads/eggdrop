@@ -183,14 +183,14 @@ void set_chanlist(const char *host, struct userrec *rec)
   memberlist *m;
   struct chanset_t *chan;
 
-  strlcpy(buf, host, sizeof buf);
-  uhost = buf;
-  nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
+//  strlcpy(buf, host, sizeof buf);
+//  uhost = buf;
+//  nick = splitnick(&uhost);
+//  for (chan = chanset; chan; chan = chan->next)
+//    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+//      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
 //XXXXXXXX Does this whole func come out?
-        m->user = rec;
+//        m->user = rec;
 }
 
 /* Calculate the memory we should be using

@@ -901,6 +901,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct userrec *u;
   static int stacking = 0;
   int stop_reset = 0;
 
@@ -910,10 +911,10 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   stacking++;
   /* Okay, sort through who needs to be deopped. */
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if (!get_user_from_channel(m) && !m->tried_getuser) {
+    if (!m->tried_getuser) {
       m->tried_getuser = 1;
-      u = get_user_from_channel(m);
     }
+    u = get_user_from_channel(m);
     get_user_flagrec(u, &fr, chan->dname);
     if (glob_bot(fr) && chan_hasop(m) && !match_my_nick(m->nick))
       stop_reset = 1;
