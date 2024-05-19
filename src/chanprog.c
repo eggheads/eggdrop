@@ -116,31 +116,6 @@ struct chanset_t *findchan_by_dname(const char *name)
   return NULL;
 }
 
-
-/*
- *    "caching" functions
- */
-
-/* Shortcut for get_user_by_host -- might have user record in one
- * of the channel caches.
- */
-struct userrec *check_chanlist(const char *host)
-{
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
-
-  strlcpy(buf, host, sizeof buf);
-  uhost = buf;
-  nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-//XXXXXXXX loop? Does this whole func come out?
-        return get_user_from_channel(m);
-  return NULL;
-}
-
 /* Clear the user pointers in the chanlists.
  *
  * Necessary when a hostmask is added/removed, a user is added or a new
@@ -173,24 +148,6 @@ void clear_chanlist_member(const char *nick)
         m->tried_getuser = 0;
         break;
       }
-}
-
-/* If this user@host is in a channel, set it (it was null)
- */
-void set_chanlist(const char *host, struct userrec *rec)
-{
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
-
-//  strlcpy(buf, host, sizeof buf);
-//  uhost = buf;
-//  nick = splitnick(&uhost);
-//  for (chan = chanset; chan; chan = chan->next)
-//    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-//      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-//XXXXXXXX Does this whole func come out?
-//        m->user = rec;
 }
 
 /* Calculate the memory we should be using

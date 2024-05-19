@@ -80,7 +80,6 @@ static int expmem_mask(struct maskrec *m)
   for (; m; m = m->next) {
     result += sizeof(struct maskrec);
     result += strlen(m->mask) + 1;
-//XXXXXXXX How to handle this one?
     if (m->user)
       result += strlen(m->user) + 1;
     if (m->desc)
@@ -172,23 +171,6 @@ static struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
-/* Shortcut for get_user_by_handle -- might have user record in channels
- */
-static struct userrec *check_chanlist_hand(const char *hand)
-{
-  struct chanset_t *chan;
-  struct userrec *u;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      u = get_user_from_channel(m);
-      if (u && !strcasecmp(u->handle, hand))
-        return u;
-    }
-  return NULL;
-}
-
 /* Search userlist for a provided account name
  * Returns: userrecord for user containing the account
  */
@@ -230,11 +212,6 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
       cache_hit++;
       return ret;
     }
-//    ret = check_chanlist_hand(handle);
-//    if (ret) {
-//      cache_hit++;
-//      return ret;
-//    }
     cache_miss++;
   }
   for (u = bu; u; u = u->next)
@@ -349,12 +326,7 @@ struct userrec *get_user_by_host(char *host)
   rmspace(host);
   if (!host[0])
     return NULL;
-//  ret = check_chanlist(host);
   cnt = 0;
-//  if (ret != NULL) {
-//    cache_hit++;
-//    return ret;
-//  }
   cache_miss++;
   strlcpy(host2, host, sizeof host2);
   for (u = userlist; u; u = u->next) {
@@ -369,7 +341,6 @@ struct userrec *get_user_by_host(char *host)
   }
   if (ret != NULL) {
     lastuser = ret;
-    set_chanlist(host2, ret);
   }
   return ret;
 }

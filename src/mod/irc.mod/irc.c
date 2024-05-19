@@ -142,7 +142,6 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   /* Set the offender +d */
   if ((chan->revenge_mode > 0) && !(chan_deop(fr) || glob_deop(fr))) {
     char s[UHOSTLEN], s1[UHOSTLEN];
-    memberlist *mx = NULL;
 
     /* Removing op */
     if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
@@ -186,8 +185,6 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       fr.chan = USER_DEOP;
       fr.udef_chan = 0;
       u = get_user_by_handle(userlist, s1);
-//      if ((mx = ismember(chan, badnick)))
-//        mx->user = u;
       set_user_flagrec(u, &fr, chan->dname);
       simple_sprintf(s, "(%s) %s (%s)", ct, reason, whobad);
       set_user(&USERENTRY_COMMENT, u, (void *) s);
