@@ -1,0 +1,34 @@
+name: cppcheck
+
+on:
+  pull_request:
+    branches: 
+      - develop
+
+jobs:
+  build:
+    name: cppcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: cppcheck
+        uses: deep5050/cppcheck-action@main
+        with:
+          check_library:
+          skip_preprocessor:
+          enable:
+          exclude_check:
+          inconclusive:
+          inline_suppression:
+          force_language:
+          force: true
+          max_ctu_depth:
+          platform:
+          std:
+          output_file:
+          other_options:
+
+      - name: publish report    
+        uses: mikeal/publish-to-github-action@master
+        env:
+          BRANCH_NAME: 'develop' # your branch name goes here
