@@ -228,14 +228,14 @@ struct userrec *get_user_from_channel(memberlist *m)
   struct userrec *ret;
 
   /* Check if there is a user with a matching account if one is provided */
-  if (m->account) {
+  if (m->account[0] != '*') {
     ret = get_user_by_account(m->account);
     if (ret) {
       return ret;
     }
   }
   /* Check if there is a user with a matching hostmask if one is provided */
-  if (m->userhost && m->nick) {
+  if ((m->userhost[0] != '\0') && (m->nick[0] != '\0')) {
     char s[NICKMAX+UHOSTLEN+1];
     sprintf(s, "%s!%s", m->nick, m->userhost);
     ret = get_user_by_host(s);

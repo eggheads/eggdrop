@@ -236,7 +236,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-// XXXXXXXXX Check if m exists first?
+// TODO: Check if m exists first, add account argument?
   get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
@@ -1236,7 +1236,6 @@ static int gotchghost(char *from, char *msg){
       snprintf(m->userhost, sizeof m->userhost, "%s@%s", ident, msg);
       snprintf(mask, sizeof mask, "%s %s!%s@%s", chname, nick, ident, msg);
       check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
-//XXXXXX Duplicative now?
       get_user_flagrec(u, &fr, chan->dname);
       check_this_member(chan, m->nick, &fr);
     }
@@ -2457,10 +2456,9 @@ static int gotnick(char *from, char *msg)
     }
   }
   if (!found) {
-    u = get_user_from_channel(m);
     s1[0] = '*';
     s1[1] = 0;
-    check_tcl_nick(nick, uhost, u, s1, msg);
+    check_tcl_nick(nick, uhost, NULL, s1, msg);
   }
   return 0;
 }
@@ -2559,6 +2557,7 @@ static int gotmsg(char *from, char *msg)
   int ctcp_count = 0, ignoring;
   struct chanset_t *chan;
   struct userrec *u;
+  memberlist *m;
 
   /* Only handle if message is to a channel, or to @#channel. */
   /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc. */
@@ -2602,8 +2601,15 @@ static int gotmsg(char *from, char *msg)
         ctcp_count++;
         if (ctcp[0] != ' ') {
           code = newsplit(&ctcp);
-//XXXXXXXXXXX ctcp doesn't have msg-tags for account, does it? cant' get it here anyway
-          u = get_user_by_host(from);
+          u = NULL;
+          for (chan = chanset; chan; chan = chan->next) {
+            for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+              if (!rfc_casecmp(m->nick, nick)) {
+                u = get_user_from_channel(m);
+                break;
+              }
+            }
+          }
           if (!ignoring || trigger_on_ignore) {
             if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
               chan = findchan(realto);
@@ -2682,6 +2688,7 @@ static int gotnotice(char *from, char *msg)
   char *ctcp, *code;
   struct userrec *u;
   struct chanset_t *chan;
+  memberlist *m;
   int ignoring;
 
   if (!strchr(CHANMETA "@", *msg))
@@ -2695,9 +2702,15 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
-//XXXXXXXXXX We can't check msg-tags in this proc, and may not be part of a chan
-  u = get_user_by_host(from);
-
+  u = NULL;
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      if (!rfc_casecmp(m->nick, nick)) {
+        u = get_user_from_channel(m);
+        break;
+      }
+    }
+  }
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while (p && *p) {

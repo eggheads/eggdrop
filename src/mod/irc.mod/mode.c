@@ -1022,6 +1022,8 @@ static int gotmode(char *from, char *origmsg)
         u = get_user_from_channel(m);
         get_user_flagrec(u, &user, ch);
         m->last = now;
+      } else {
+        u = NULL;
       }
       if (m && channel_active(chan) && (me_op(chan) || (me_halfop(chan) &&
           !chan_hasop(m))) && !(glob_friend(user) || chan_friend(user) ||
