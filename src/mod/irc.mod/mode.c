@@ -602,6 +602,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   }
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
   u = get_user_from_channel(m);
   get_user_flagrec(u, &victim, chan->dname);
@@ -1017,10 +1018,11 @@ static int gotmode(char *from, char *origmsg)
              msg, from);
       nick = splitnick(&from);
       m = ismember(chan, nick);
-      u = get_user_from_channel(m);
-      get_user_flagrec(u, &user, ch);
-      if (m)
+      if (m) {
+        u = get_user_from_channel(m);
+        get_user_flagrec(u, &user, ch);
         m->last = now;
+      }
       if (m && channel_active(chan) && (me_op(chan) || (me_halfop(chan) &&
           !chan_hasop(m))) && !(glob_friend(user) || chan_friend(user) ||
           (channel_dontkickops(chan) && (chan_op(user) || (glob_op(user) &&
