@@ -251,11 +251,13 @@ static int tcl_matchattr STDVAR
 {
   struct userrec *u;
   struct flag_record plus = {0}, minus = {0}, user = {0};
-  int ok = 0, nom = 0;
+  int ok = -1;
+  int nom = 0;
 
   BADARGS(3, 4, " handle flags ?channel?");
 
   if ((u = get_user_by_handle(userlist, argv[1]))) {
+    ok = 0;
     user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
