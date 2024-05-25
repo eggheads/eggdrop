@@ -222,7 +222,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
   return NULL;
 }
 
-struct userrec *get_user_from_channel(memberlist *m)
+struct userrec *get_user_from_member(memberlist *m)
 {
   struct userrec *ret;
 

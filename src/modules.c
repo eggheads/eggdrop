@@ -627,7 +627,7 @@ Function global_table[] = {
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
   (Function) & argv0,
-  (Function) get_user_from_channel
+  (Function) get_user_from_member
 /* 324 - 327 */
 };
 

@@ -421,7 +421,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
@@ -515,7 +515,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
@@ -604,7 +604,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
   had_halfop = chan_hasop(m);
@@ -696,7 +696,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 
   strcpy(ch, chan->name);
   simple_sprintf(s1, "%s!%s", nick, from);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
   had_halfop = chan_hasop(m);
@@ -775,7 +775,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
       if (match_addr(who, s1)) {
-        targ = get_user_from_channel(m);
+        targ = get_user_from_member(m);
         if (targ) {
           get_user_flagrec(targ, &victim, chan->dname);
           if ((glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
@@ -1019,7 +1019,7 @@ static int gotmode(char *from, char *origmsg)
       nick = splitnick(&from);
       m = ismember(chan, nick);
       if (m) {
-        u = get_user_from_channel(m);
+        u = get_user_from_member(m);
         get_user_flagrec(u, &user, ch);
         m->last = now;
       } else {
@@ -1243,7 +1243,7 @@ static int gotmode(char *from, char *origmsg)
             refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-            get_user_flagrec(get_user_from_channel(m), &victim, chan->dname);
+            get_user_flagrec(get_user_from_member(m), &victim, chan->dname);
             if (ms2[0] == '+') {
               m->flags &= ~SENTVOICE;
               m->flags |= CHANVOICE;

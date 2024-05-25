@@ -72,7 +72,7 @@ static char *getnick(char *handle, struct chanset_t *chan)
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if ((u = get_user_from_channel(m)) && !strcasecmp(u->handle, handle))
+    if ((u = get_user_from_member(m)) && !strcasecmp(u->handle, handle))
       return m->nick;
   }
   return NULL;
@@ -206,7 +206,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
       !(chan_master(user) || glob_master(user))) {
@@ -291,7 +291,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if (chan_deop(victim) || (glob_deop(victim) && !glob_op(victim))) {
     dprintf(idx, "%s is currently being auto-deopped.\n", m->nick);
@@ -343,7 +343,7 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not going to deop myself.\n");
     return;
   }
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_master(victim) || glob_master(victim)) &&
       !(chan_owner(user) || glob_owner(user))) {
@@ -379,7 +379,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
   m = ismember(chan, nick);
   if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
-    u2 = get_user_from_channel(m);
+    u2 = get_user_from_member(m);
 
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
@@ -406,7 +406,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if (chan_dehalfop(victim) || (glob_dehalfop(victim) && !glob_halfop(victim))) {
     dprintf(idx, "%s is currently being auto-dehalfopped.\n", m->nick);
@@ -442,7 +442,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
   m = ismember(chan, nick);
   if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
-    u2 = get_user_from_channel(m);
+    u2 = get_user_from_member(m);
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_halfop(user) &&
         (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
@@ -472,7 +472,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not going to dehalfop myself.\n");
     return;
   }
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_master(victim) || glob_master(victim)) &&
       !(chan_owner(user) || glob_owner(user))) {
@@ -519,7 +519,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
    * - stdarg */
   if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) &&
       !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
-    u2 = get_user_from_channel(m);
+    u2 = get_user_from_member(m);
 
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
@@ -570,7 +570,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   m = ismember(chan, nick);
   if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) &&
       !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
-    u2 = get_user_from_channel(m);
+    u2 = get_user_from_member(m);
 
     if (!u2 || strcasecmp(u2->handle, dcc[idx].nick) || (!chan_voice(user) &&
         (!glob_voice(user) || chan_quiet(user)))) {
@@ -645,7 +645,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
             chan->dname);
     return;
   }
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
       !(chan_master(user) || glob_master(user))) {
@@ -729,7 +729,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (strlen(m->nick) > maxnicklen)
         maxnicklen = strlen(m->nick);
-      u = get_user_from_channel(m);
+      u = get_user_from_member(m);
       if (u && (strlen(u->handle) > maxhandlen))
         maxhandlen = strlen(u->handle);
     }
@@ -752,7 +752,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         strlcpy(s, " --- ", sizeof s);
       egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 
-      u = get_user_from_channel(m);
+      u = get_user_from_member(m);
       if (u == NULL)
         strlcpy(handle, "*", sizeof handle);
       else
@@ -1003,7 +1003,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   if (u) {
     dprintf(idx, "%s is already known as %s.\n", nick, u->handle);
     return;
@@ -1061,7 +1061,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &user, chan->dname);
-  u = get_user_from_channel(m);
+  u = get_user_from_member(m);
   if (!u) {
     dprintf(idx, "%s is not a valid user.\n", nick);
     return;

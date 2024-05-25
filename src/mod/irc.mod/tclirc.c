@@ -55,7 +55,7 @@ static int tcl_chanlist STDVAR
   minus.match = plus.match ^ (FR_AND | FR_OR);
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    u = get_user_from_channel(m);
+    u = get_user_from_member(m);
     get_user_flagrec(u, &user, argv[1]);
     user.match = plus.match;
     if (flagrec_eq(&plus, &user)) {
@@ -362,7 +362,7 @@ static int tcl_handonchan STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      u = get_user_from_channel(m);
+      u = get_user_from_member(m);
       if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
@@ -1044,7 +1044,7 @@ static int tcl_hand2nicks STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       found = 0;
-      u = get_user_from_channel(m);
+      u = get_user_from_member(m);
       /* Does this user have the account we're looking for? */
       if (!u && !m->tried_getuser) {
         m->tried_getuser = 1;
@@ -1089,7 +1089,7 @@ static int tcl_hand2nick STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      u = get_user_from_channel(m);
+      u = get_user_from_member(m);
       if (!u && !m->tried_getuser) {
         m->tried_getuser = 1;
       }
@@ -1124,7 +1124,7 @@ static int tcl_nick2hand STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     m = ismember(chan, argv[1]);
     if (m) {
-      u = get_user_from_channel(m);
+      u = get_user_from_member(m);
       Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
       return TCL_OK;
     }
