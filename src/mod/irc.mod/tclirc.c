@@ -1045,10 +1045,6 @@ static int tcl_hand2nicks STDVAR
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       found = 0;
       u = get_user_from_member(m);
-      /* Does this user have the account we're looking for? */
-      if (!u && !m->tried_getuser) {
-        m->tried_getuser = 1;
-      }
       if (u && !strcasecmp(u->handle, argv[1])) {
         /* Is the nick of the user already in the list? */
         Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
@@ -1090,9 +1086,6 @@ static int tcl_hand2nick STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       u = get_user_from_member(m);
-      if (!u && !m->tried_getuser) {
-        m->tried_getuser = 1;
-      }
       if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, m->nick, NULL);
         return TCL_OK;

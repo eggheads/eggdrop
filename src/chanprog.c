@@ -133,7 +133,7 @@ void clear_chanlist(void)
 }
 
 /* Clear the user pointer of a specific nick in the chanlists.
- *
+ 
  * Necessary when a hostmask is added/removed, a nick changes, etc.
  * Does not completely invalidate the channel cache like clear_chanlist().
  */
