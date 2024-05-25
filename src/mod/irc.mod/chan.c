@@ -207,9 +207,11 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 
 /* This is a clone of detect_flood, but works for channel specificity now
  * and handles kick & deop as well.
+ *
+ * victim for flood-deop, account for flood-join
  */
 static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-                             struct chanset_t *chan, int which, char *victim)
+                             struct chanset_t *chan, int which, char *victim_or_account)
 {
   char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
   struct userrec *u;
@@ -236,7 +238,16 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-  get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
+  if (m) {
+    u = get_user_from_member(m);
+  } else {
+    u = victim_or_account ? get_user_by_account(victim_or_account) : NULL;
+    if (!u) {
+      u = get_user_by_host(from);
+    }
+  }
+
+  get_user_flagrec(u, &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
       ((which == FLOOD_KICK) && (glob_master(fr) || chan_master(fr)) &&
@@ -307,10 +318,10 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   }
   /* Deop'n the same person, sillyness ;) - so just ignore it */
   if (which == FLOOD_DEOP) {
-    if (!rfc_casecmp(chan->deopd, victim))
+    if (!rfc_casecmp(chan->deopd, victim_or_account))
       return 0;
     else
-      strlcpy(chan->deopd, victim, sizeof chan->deopd);
+      strlcpy(chan->deopd, victim_or_account, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */
@@ -1203,7 +1214,7 @@ static int got354(char *from, char *msg)
   }
   return 0;
 }
-  
+
 /* React to IRCv3 CHGHOST command. CHGHOST changes the hostname and/or
  * ident of the user. Format:
  * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
@@ -1297,7 +1308,7 @@ static int got353(char *from, char *msg)
   }
   return 0;
 }
-      
+
 /* React to 396 numeric (HOSTHIDDEN), sent when user mode +x (hostmasking) was
  * successfully set. Format:
  * :barjavel.freenode.net 396 BeerBot unaffiliated/geo/bot/beerbot :is now your hidden host (set by services.)
@@ -2000,14 +2011,9 @@ static int gotjoin(char *from, char *channame)
       dprintf(DP_MODE, "PART %s\n", chname);
     }
   } else if (!channel_pending(chan)) {
-    /* not a member yet, manual checking like get_user_from_member would */
-    u = extjoin ? get_user_by_account(account) : NULL;
-    if (!u) {
-      u = get_user_by_host(from);
-    }
     chan->status &= ~CHAN_STOP_CYCLE;
 
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
+    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, extjoin ? account : NULL);
 
     chan = findchan(chname);
     if (!chan) {
@@ -2074,7 +2080,7 @@ static int gotjoin(char *from, char *channame)
         if (extjoin) {
           /* calls check_tcl_account which can delete the channel */
           setaccount(nick, account);
-          
+
           if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
             /* The channel doesn't exist anymore, so get out of here. */
             goto exit;
