@@ -236,8 +236,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-// TODO: Check if m exists first, add account argument?
-  get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
+  get_user_flagrec(get_user_from_channel(m), &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
       ((which == FLOOD_KICK) && (glob_master(fr) || chan_master(fr)) &&
@@ -1934,28 +1933,27 @@ static void set_delay(struct chanset_t *chan, char *nick)
  */
 static int gotjoin(char *from, char *channame)
 {
-  char *nick, *p, buf[UHOSTLEN], *uhost = buf, *chname;
+  char *nick, *p, buf[UHOSTLEN], *uhost = buf, *chname, *account = NULL;
   char *ch_dname = NULL;
-  int extjoin = 0;
   struct chanset_t *chan;
   memberlist *m;
   masklist *b;
-  struct capability *current;
+  int extjoin = 0;
+  struct capability *captmp;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  /* Check if extended-join CAP is enabled */
-  current = cap;
-  while (current != NULL) {
-    if (!strcasecmp("extended-join", current->name)) {
-      extjoin = current->enabled ? 1 : 0;
-    }
-    current = current->next;
-  }
+  captmp = find_capability("extended-join");
+  extjoin = captmp && captmp->enabled;
+
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
-  if (!extjoin) {
+  if (extjoin) {
+    // :nick!user@host JOIN #chan account :realname
+    account = newsplit(&channame);
+  } else {
+    // :nick!user@host JOIN :#chan
     fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
@@ -2005,7 +2003,13 @@ static int gotjoin(char *from, char *channame)
       dprintf(DP_MODE, "PART %s\n", chname);
     }
   } else if (!channel_pending(chan)) {
+    /* not a member yet, manual checking like get_user_from_channel would */
+    u = extjoin ? get_user_by_account(account) : NULL;
+    if (!u) {
+      u = get_user_by_host(from);
+    }
     chan->status &= ~CHAN_STOP_CYCLE;
+
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
 
     chan = findchan(chname);
@@ -2029,9 +2033,9 @@ static int gotjoin(char *from, char *channame)
       reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
-      u = get_user_by_host(from);
-      get_user_flagrec(u, &fr, chan->dname);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
+        u = get_user_from_channel(m);
+        get_user_flagrec(u, &fr, chan->dname);
         check_tcl_rejn(nick, uhost, u, chan->dname);
 
         chan = findchan(chname);
@@ -2068,16 +2072,17 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->flags |= STOPWHO;
 
+        u = get_user_from_channel(m);
+
         if (extjoin) {
           /* calls check_tcl_account which can delete the channel */
-          setaccount(nick, newsplit(&channame));
+          setaccount(nick, account);
           
           if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
             /* The channel doesn't exist anymore, so get out of here. */
             goto exit;
           }
         }
-
         check_tcl_join(nick, uhost, u, chan->dname);
 
         if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {

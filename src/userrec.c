@@ -179,12 +179,11 @@ struct userrec *get_user_by_account(char *acct)
   struct userrec *u;
   struct list_type *q;
 
-  if (acct == NULL)
+  if (!acct || !acct[0] || !strcmp(acct, "*"))
     return NULL;
   for (u = userlist; u; u = u->next) {
-    q = get_user(&USERENTRY_ACCOUNT, u);
-    for (; q; q = q->next) {
-      if(q && !strcasecmp(q->extra, acct)) {
+    for (q = get_user(&USERENTRY_ACCOUNT, u); q; q = q->next) {
+      if (!rfc_casecmp(q->extra, acct)) {
         return u;
       }
     }
