@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.5"
-#define EGG_NUMVER 1090505
-#define EGG_PATCH "python"
+#define EGG_NUMVER 1090506
+#define EGG_PATCH "accounttracking"
