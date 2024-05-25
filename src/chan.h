@@ -50,6 +50,7 @@ typedef struct memstruct {
   time_t split; /* in case they were just netsplit */
   time_t last;  /* for measuring idle time         */
   time_t delay; /* for delayed autoop              */
+  int tried_getuser; // TODO: use it to invalidate user cache
   struct memstruct *next;
 } memberlist;
 
@@ -129,7 +130,6 @@ struct chan_t {
   char *topic;
   char *key;
   unsigned int mode;
-  int tried_getuser; // TODO: use it to invalidate user cache
   int maxmembers;
   int members;
 };
