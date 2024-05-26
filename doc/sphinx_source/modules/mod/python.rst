@@ -11,7 +11,7 @@ This module adds a Python interpreter to Eggdrop, allowing you to run Python scr
 -------------------
 System Requirements
 -------------------
-Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this requires the packages python-dev AND python-is-python3 to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.
+This module requires Python version 3.8 or higher in order to run. Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this means the packages ``python``, ``python-dev`` AND ``python-is-python3`` to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.
 
 --------------
 Loading Python
@@ -55,15 +55,3 @@ pysource <path/to/file>
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``pysource`` command is analogous to the Tcl ``source`` command, except that it loads a Python script into Eggdrop instead of a Tcl script.
-
-----------------
-Config variables
-----------------
-
-There are also some variables you can set in your config file:
-
-  set allow-resync 0
-    When two bots get disconnected, this setting allows them to create a
-    resync buffer which saves all changes done to the userfile during
-    the disconnect. When they reconnect, they will not have to transfer
-    the complete user file, but, instead, just send the resync buffer.
