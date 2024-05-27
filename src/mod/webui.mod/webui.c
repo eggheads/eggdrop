@@ -317,16 +317,24 @@ static void webui_http_activity(int idx, char *buf, int len)
     dcc[idx].status |= STAT_USRONLY; /* magick */
     for (i = 0; i < dcc_total; i++) /* quick hack, we need to link from idx, dont we? */
       if (!strcmp(dcc[i].nick, "(webui)")) {
-        debug0("webui: found (webui) dcc\n");
+        debug1("webui: found (webui) dcc %i\n", i);
         break;
       }
+
+    /*
+    for (int j = 0; j < dcc_total; j++) {
+      debug4("dcc table %i %i %i %s", j, dcc[j].sock, dcc[j].ssl, dcc[j].host);
+      debug2("             %s %s", dcc[j].nick, dcc[j].type->name);
+    }
+    */
+
     dcc[idx].u.other = NULL; /* fix ATTEMPTING TO FREE NON-MALLOC'D PTR: dccutil.c (561) */
     dcc_telnet_hostresolved2(idx, i);
 
     debug2("webui: CHANGEOVER -> idx %i sock %li\n", idx, dcc[idx].sock);
   } else /* TODO: send 404 or something ? */
     debug0("webui: 404");
-  if (len == 511) {
+  if ((dcc[idx].sock != -1) && (len == 511)) { /* sock == -1 if lostdcc() in dcc_telnet_hostresolved2() */
     /* read probable remaining bytes */
     SSL *ssl = socklist[findsock(dcc[idx].sock)].ssl;
     if (ssl)
