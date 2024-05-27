@@ -630,8 +630,9 @@ Function global_table[] = {
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
   (Function) & argv0,
-  (Function) dcc_telnet_hostresolved2,
+  (Function) get_user_from_member,
 /* 324 - 327 */
+  (Function) dcc_telnet_hostresolved2,
   (Function) findsock
 };
 

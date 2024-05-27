@@ -524,10 +524,10 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define bind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[320])
 #define unbind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[321])
 #define argv0 ((char *)global[322])
-#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[323])
+#define get_user_from_member ((struct userrec * (*)(memberlist *))global[323])
 /* 324 - 327 */
-#define findsock ((int(*)(int))global[324])
-
+#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[324])
+#define findsock ((int(*)(int))global[325])
 
 
 /* hostmasking */
