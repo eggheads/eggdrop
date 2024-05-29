@@ -248,7 +248,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       dprintf(idx, "%sYour what, %s?\n", prefix, nick);
       return;
     }
-    /* Do I even KNOW the requestor? */
+    /* Do I even KNOW the requester? */
     if (hand[0] == '*' || !hand[0]) {
       dprintf(idx,
               "%sI don't know you, %s, so I don't know about your %s.\n",
