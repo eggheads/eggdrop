@@ -626,7 +626,9 @@ Function global_table[] = {
 /* 320 - 323 */
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
-  (Function) & argv0
+  (Function) & argv0,
+  (Function) get_user_from_member
+/* 324 - 327 */
 };
 
 void init_modules(void)
