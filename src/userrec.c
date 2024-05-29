@@ -171,20 +171,6 @@ static struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
-/* Shortcut for get_user_by_handle -- might have user record in channels
- */
-static struct userrec *check_chanlist_hand(const char *hand)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !strcasecmp(m->user->handle, hand))
-        return m->user;
-  return NULL;
-}
-
 /* Search userlist for a provided account name
  * Returns: userrecord for user containing the account
  */
@@ -193,12 +179,11 @@ struct userrec *get_user_by_account(char *acct)
   struct userrec *u;
   struct list_type *q;
 
-  if (acct == NULL)
+  if (!acct || !acct[0] || !strcmp(acct, "*"))
     return NULL;
   for (u = userlist; u; u = u->next) {
-    q = get_user(&USERENTRY_ACCOUNT, u);
-    for (; q; q = q->next) {
-      if(q && !strcasecmp(q->extra, acct)) {
+    for (q = get_user(&USERENTRY_ACCOUNT, u); q; q = q->next) {
+      if (!rfc_casecmp(q->extra, acct)) {
         return u;
       }
     }
@@ -226,11 +211,6 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
       cache_hit++;
       return ret;
     }
-    ret = check_chanlist_hand(handle);
-    if (ret) {
-      cache_hit++;
-      return ret;
-    }
     cache_miss++;
   }
   for (u = bu; u; u = u->next)
@@ -239,6 +219,29 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
         lastuser = u;
       return u;
     }
+  return NULL;
+}
+
+struct userrec *get_user_from_member(memberlist *m)
+{
+  struct userrec *ret;
+
+  /* Check if there is a user with a matching account if one is provided */
+  if (m->account[0] != '*') {
+    ret = get_user_by_account(m->account);
+    if (ret) {
+      return ret;
+    }
+  }
+  /* Check if there is a user with a matching hostmask if one is provided */
+  if ((m->userhost[0] != '\0') && (m->nick[0] != '\0')) {
+    char s[NICKMAX+UHOSTLEN+1];
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    ret = get_user_by_host(s);
+    if (ret) {
+      return ret;
+    }
+  }
   return NULL;
 }
 
@@ -265,8 +268,6 @@ void clear_masks(maskrec *m)
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
-    if (m->user)
-      nfree(m->user);
     if (m->desc)
       nfree(m->desc);
     nfree(m);
@@ -311,12 +312,10 @@ void clear_userlist(struct userrec *bu)
 
 /* Find CLOSEST host match
  * (if "*!*@*" and "*!*@*clemson.edu" both match, use the latter!)
- *
- * Checks the chanlist first, to possibly avoid needless search.
  */
 struct userrec *get_user_by_host(char *host)
 {
-  struct userrec *u, *ret;
+  struct userrec *u, *ret = NULL;
   struct list_type *q;
   int cnt, i;
   char host2[UHOSTLEN];
@@ -326,12 +325,7 @@ struct userrec *get_user_by_host(char *host)
   rmspace(host);
   if (!host[0])
     return NULL;
-  ret = check_chanlist(host);
   cnt = 0;
-  if (ret != NULL) {
-    cache_hit++;
-    return ret;
-  }
   cache_miss++;
   strlcpy(host2, host, sizeof host2);
   for (u = userlist; u; u = u->next) {
@@ -346,7 +340,6 @@ struct userrec *get_user_by_host(char *host)
   }
   if (ret != NULL) {
     lastuser = ret;
-    set_chanlist(host2, ret);
   }
   return ret;
 }
