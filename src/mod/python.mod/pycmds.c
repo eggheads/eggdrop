@@ -344,6 +344,34 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
   return PyUnicode_DecodeUTF8(result, strlen(result), NULL);
 }
 
+
+static PyObject *py_dir(PyObject *self, PyObject *args) {
+  PyObject *py_list, *py_s;
+  Tcl_Obj *tcl_list, **objv;
+  int objc;
+  int i;
+
+  py_list = PyList_New(0);
+  if (Tcl_VarEval(tclinterp, "info commands", NULL, NULL) == TCL_ERROR)
+    putlog(LOG_MISC, "*", "python error: Tcl_VarEval(info commands)");
+  else {
+    tcl_list = Tcl_GetObjResult(tclinterp);
+    if (Tcl_ListObjGetElements(tclinterp, tcl_list, &objc, &objv) == TCL_ERROR)
+      putlog(LOG_MISC, "*", "python error: Tcl_VarEval(info commands)");
+    else {
+      for (i = 0; i < objc; i++) {
+        const char *value = Tcl_GetString(objv[i]);
+        if (!strchr(value, ':')) {
+          py_s = PyUnicode_FromString(value);
+          PyList_Append(py_list, py_s);
+	  Py_DECREF(py_s);
+        }
+      }
+    }
+  }
+  return py_list;
+}
+
 static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
   char *cmdname;
   TclFunc *result;
@@ -372,7 +400,7 @@ static PyMethodDef MyPyMethods[] = {
 };
 
 static PyMethodDef EggTclMethods[] = {
-    // TODO: __dict__ with all valid Tcl commands?
+    {"__dir__", py_dir, METH_VARARGS, ""},
     {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
     {NULL, NULL, 0, NULL}
 };  
