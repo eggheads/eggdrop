@@ -239,9 +239,9 @@ Eggdrop v1.9.0:
       otherwise the connection will be in plaintext. A port not prefixed with a
       + can still be upgraded with STARTTLS, allowing 1.8 bots and scripts to
       initiate a secure connection, but 1.9.0 bots will not attempt the upgrade.
-    - Added granular userfile sharing flags (bcejnu). Adding these flags can limit
-      userfile sharing to a combination of bans, invites, exempts, channels,
-      users, and ignores (or still the s flag for all these).
+    - Added granular userfile sharing flags (bcejnu). Adding these flags can
+      limit userfile sharing to a combination of bans, invites, exempts,
+      channels, users, and ignores (or still the s flag for all these).
     - No longer try port+1,2,3 when connecting to a botnet port doesn't work
       the first time
 

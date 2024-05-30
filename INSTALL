@@ -70,8 +70,8 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
         make sslcert
 
-        Or, if you installed your eggdrop to a different directory in step 4, you
-        will want to run:
+        Or, if you installed your eggdrop to a different directory in step 4,
+        you will want to run:
 
         make sslcert DEST=<directory>
 
