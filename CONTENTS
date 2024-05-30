@@ -42,7 +42,8 @@ Last revised: September 21, 2018
     Contains a list of Eggdrop developers and major contributors.
 
   ChangeLog
-    Contains git commit logs from each change made to Eggdrop in the git repository.
+    Contains git commit logs from each change made to Eggdrop in the git
+    repository.
 
   COPYING
     Eggdrop legal information is contained in this file.
