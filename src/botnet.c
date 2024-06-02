@@ -342,7 +342,7 @@ void remparty(char *bot, int sock)
       if (party[i].away)
         nfree(party[i].away);
       if (i < parties)
-        memcpy(&party[i], &party[parties], sizeof(party_t));
+        party[i] = party[parties];
     }
 }
 
