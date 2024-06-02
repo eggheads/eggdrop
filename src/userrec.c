@@ -224,24 +224,34 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 
 struct userrec *get_user_from_member(memberlist *m)
 {
-  struct userrec *ret;
+  struct userrec *ret = NULL;
+
+  /* Check positive/negative cache first */
+  if (m->user || m->tried_getuser) {
+    return m->user;
+  }
 
   /* Check if there is a user with a matching account if one is provided */
   if (m->account[0] != '*') {
     ret = get_user_by_account(m->account);
     if (ret) {
-      return ret;
+      goto getuser_done;
     }
   }
+
   /* Check if there is a user with a matching hostmask if one is provided */
   if ((m->userhost[0] != '\0') && (m->nick[0] != '\0')) {
     char s[NICKMAX+UHOSTLEN+1];
     sprintf(s, "%s!%s", m->nick, m->userhost);
     ret = get_user_by_host(s);
     if (ret) {
-      return ret;
+      goto getuser_done;
     }
   }
+
+getuser_done:
+  m->user = ret;
+  m->tried_getuser = 1;
   return NULL;
 }
 
