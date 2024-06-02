@@ -767,6 +767,7 @@ Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
 {
   int stridx = 0, bufidx = 0;
   char *buf = nmalloc(len);
+  Tcl_Obj *o;
 
   while (stridx < len) {
     uint32_t low, high;
@@ -787,7 +788,10 @@ Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
       }
     }
   }
-  return Tcl_NewStringObj(buf, bufidx);
+
+  o = Tcl_NewStringObj(buf, bufidx);
+  nfree(buf);
+  return o;
 }
 
 /* C function called for ::egg_tcl_tolower/toupper/totitle
