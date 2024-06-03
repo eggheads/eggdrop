@@ -1,5 +1,5 @@
 Directory Contents - /
-Last revised: September 21, 2018
+Last revised: June 3, 2024
     _____________________________________________________________________
 
                            Directory Contents - /
@@ -46,7 +46,7 @@ Last revised: September 21, 2018
     repository.
 
   COPYING
-    Eggdrop legal information is contained in this file.
+    Contains Eggdrop legal information.
 
   disabled_modules
     Any module listed in this file will not be compiled by default.
@@ -80,7 +80,7 @@ Last revised: September 21, 2018
     Contains a full list of Eggdrop contributors.
 
   UPGRADING
-    Contains information on upgrading from a 1.6 bot to a 1.8 bot.
+    Contains information on upgrading from a 1.6 to a 1.8 and 1.9 bot.
     _____________________________________________________________________
 
   Copyright (C) 2003 - 2024 Eggheads Development Team
