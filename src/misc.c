@@ -317,7 +317,7 @@ void maskaddr(const char *s, char *nw, int type)
   u = strchr(s, '!');
   if (u)
     h = strchr(u, '@');
-  if (!h){
+  if (!h) {
     h = strchr(s, '@');
     u = 0;
   }
