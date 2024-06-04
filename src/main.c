@@ -722,7 +722,8 @@ int init_userent();
 int init_misc();
 int init_bots();
 int init_modules();
-void init_tcl(int, char **);
+void init_tcl0(int, char **);
+void init_tcl1(int, char **);
 void init_language(int);
 #ifdef TLS
 int ssl_init();
@@ -893,7 +894,7 @@ static void mainloop(int toplevel)
       }
 
       kill_tcl();
-      init_tcl(argc, argv);
+      init_tcl1(argc, argv);
       init_language(0);
 
       /* this resets our modules which we didn't unload (encryption and uptime) */
@@ -1037,6 +1038,7 @@ int main(int arg_c, char **arg_v)
   init_mem();
   if (argc > 1)
     do_arg();
+  init_tcl0(argc, argv);
   init_language(1);
 
   printf("\n%s\n", version);
@@ -1056,7 +1058,7 @@ int main(int arg_c, char **arg_v)
   init_modules();
   if (backgrd)
     bg_prepare_split();
-  init_tcl(argc, argv);
+  init_tcl1(argc, argv);
   init_language(0);
 #ifdef STATIC
   link_statics();

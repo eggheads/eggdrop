@@ -905,17 +905,10 @@ void init_unicodesup(void)
 }
 #endif /* TCL_WORKAROUND_UNICODESUP */
 
-/* Not going through Tcl's crazy main() system (what on earth was he
- * smoking?!) so we gotta initialize the Tcl interpreter
- */
-void init_tcl(int argc, char **argv)
+void init_tcl0(int argc, char **argv)
 {
   Tcl_NotifierProcs notifierprocs;
-
-  const char *encoding;
-  int i, j;
-  char *langEnv, pver[1024] = "";
-
+ 
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -927,8 +920,8 @@ void init_tcl(int argc, char **argv)
   notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-
-/* This must be done *BEFORE* Tcl_SetSystemEncoding(),
+  
+  /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */
   /* This is used for 'info nameofexecutable'.
@@ -936,6 +929,19 @@ void init_tcl(int argc, char **argv)
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
+#if TCL_MAJOR_VERSION >= 9
+  Tcl_InitSubsystems();
+#endif
+}
+
+/* Not going through Tcl's crazy main() system (what on earth was he
+ * smoking?!) so we gotta initialize the Tcl interpreter
+ */
+void init_tcl1(int argc, char **argv)
+{
+  const char *encoding;
+  int i, j;
+  char *langEnv, pver[1024] = "";
 
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
