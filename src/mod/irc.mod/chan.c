@@ -116,6 +116,8 @@ static void setaccount(char *nick, char *account)
       }
     }
   }
+  /* Username for nick could be different after account change, invalidate cache */
+  clear_chanlist_member(nick);
 }
 
 /* Returns the current channel mode.
@@ -1220,7 +1222,7 @@ static int got354(char *from, char *msg)
  * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
  * changes user hostmask to tehgeo@foo.io
  */
-static int gotchghost(char *from, char *msg){
+static int gotchghost(char *from, char *msg) {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct userrec *u;
   struct chanset_t *chan;
@@ -1247,6 +1249,8 @@ static int gotchghost(char *from, char *msg){
       check_this_member(chan, m->nick, &fr);
     }
   }
+  /* Username for nick could be different after host change, invalidate cache */
+  clear_chanlist_member(nick);
   return 0;
 }
 
