@@ -66,12 +66,18 @@ version to use, for example '2.3'. This string
 will be appended to the Python interpreter
 canonical name.])
 
-AC_PATH_PROG([PYTHON],[python[$PYTHON_VERSION]])
-  if test -z "$PYTHON"; then
-    AC_MSG_WARN([Cannot find python$PYTHON_VERSION in your system path])
-    if ! $ax_python_devel_optional; then
-      AC_MSG_ERROR([Giving up, python development not available])
-    fi
+for python in python[$PYTHON_VERSION] python3.12 python3.11 python3.10 python3.9 python3.8 python3.7 python3.6 python3.5 python3.4 python3.3 python3.2 python3.1 python3.0 python2.7 python2.6 python2.5 python2.4 python2.3 python2.2 python2.1 python; do
+  AC_CHECK_PROGS(PYTHON, [$python])
+  if test "$PYTHON"; then
+    break;
+  fi
+done
+
+if test -z "$PYTHON"; then
+  AC_MSG_WARN([Cannot find python$PYTHON_VERSION in your system path])
+  if ! $ax_python_devel_optional; then
+    AC_MSG_ERROR([Giving up, python development not available])
+  fi
   ax_python_devel_found=no
   PYTHON_VERSION=""
 fi
