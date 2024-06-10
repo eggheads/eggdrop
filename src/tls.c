@@ -570,6 +570,12 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
+  if (!bio) {
+    debug0("TLS: ssl_printtime(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data);
   if (len > 0) {
