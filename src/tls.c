@@ -799,7 +799,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              SSL_alert_desc_string_long(ret));
     } else {
       /* Ignore close notify warnings */
-      debug1("Received close notify warning during %s",
+      debug1("TLS: Received close notify warning during %s",
              (where & SSL_CB_READ) ? "read" : "write");
     }
   } else if (where & SSL_CB_EXIT) {
@@ -819,10 +819,16 @@ static void ssl_info(const SSL *ssl, int where, int ret)
                SSL_state_string_long(ssl));
       }
     }
-  } else {
-    /* Display the state of the engine for debugging purposes */
-    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
   }
+  /* Display the state of the engine for debugging purposes */
+  else if (where == SSL_CB_HANDSHAKE_START)
+    debug1("TLS: handshake start: %s", SSL_state_string_long(ssl));
+  else if (where == SSL_CB_CONNECT_LOOP)
+    debug1("TLS: connect loop: %s", SSL_state_string_long(ssl));
+  else if (where == SSL_CB_ACCEPT_LOOP)
+    debug1("TLS: accept loop: %s", SSL_state_string_long(ssl));
+  else
+    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
 }
 
 /* Switch a socket to SSL communication
