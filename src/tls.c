@@ -603,6 +603,12 @@ static char *ssl_printnum(ASN1_INTEGER *i)
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
+  if (!bio) {
+    debug0("TLS: ssl_printnum(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data);
   if (len > 0) {
