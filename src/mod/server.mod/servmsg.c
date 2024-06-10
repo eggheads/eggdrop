@@ -410,6 +410,15 @@ static int got001(char *from, char *msg)
   return 0;
 }
 
+/* 002: welcome to IRC (use it to fix the server name) */
+static void got002(char *from, char *msg)
+{
+  int i;
+  for (i = strlen(msg) - 1; (msg[i] != ' ') && (i > 0); i--);
+  strlcpy(server_version, msg + i + 1, SERVER_VERSION_MAX);
+
+}
+
 /* Got 005: ISUPPORT network information
  */
 static int got005(char *from, char *msg)
@@ -1085,6 +1094,7 @@ static void disconnect_server(int idx)
     del_capability(cap->name);
   }
   server_online = 0;
+  server_version[0] = 0;
   if (realservername)
     nfree(realservername);
   realservername = 0;
@@ -2149,6 +2159,7 @@ static cmd_t my_raw_binds[] = {
   {"NOTE",         "",   (IntFunc) gotstdnote,      NULL},
   {"WARN",         "",   (IntFunc) gotstdwarn,      NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
+  {"002",          "",   (IntFunc) got002,          NULL},
   {"005",          "",   (IntFunc) got005,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
   {"311",          "",   (IntFunc) got311,          NULL},

@@ -95,6 +95,7 @@ static int kick_method;
 static int optimize_kicks;
 static int msgrate;             /* Number of seconds between sending
                                  * queued lines to server. */
+static char server_version[SERVER_VERSION_MAX];
 #ifdef TLS
 static int use_ssl;             /* Use SSL for the next server connection? */
 static int tls_vfyserver;       /* Certificate validation mode for servers */
@@ -2165,7 +2166,7 @@ static void server_report(int idx, int details)
 
   if (server_online) {
     dprintf(idx, "    Online as: %s%s%s (%s)\n", botname, botuserhost[0] ?
-            "!" : "", botuserhost[0] ? botuserhost : "", botrealname);
+            "!" : "", botuserhost, botrealname);
     if (nick_juped)
       dprintf(idx, "    NICK IS JUPED: %s%s\n", origbotname,
               keepnick ? " (trying)" : "");
@@ -2184,12 +2185,12 @@ static void server_report(int idx, int details)
       ((servidx = findanyidx(serv)) != -1)) {
     const char *networkname = server_online ? isupport_get("NETWORK", strlen("NETWORK")) : "unknown network";
 #ifdef TLS
-    dprintf(idx, "    Connected to %s [%s]:%s%d %s\n", networkname, dcc[servidx].host,
-            dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
+    dprintf(idx, "    Connected to %s [%s]:%s%d%s%s %s\n", networkname, dcc[servidx].host,
+            dcc[servidx].ssl ? "+" : "", dcc[servidx].port, server_version[0] ? " " : "", server_version ,trying_server ?
             "(trying)" : s);
 #else
-    dprintf(idx, "    Connected to %s [%s]:%d %s\n", networkname, dcc[servidx].host,
-            dcc[servidx].port, trying_server ? "(trying)" : s);
+    dprintf(idx, "    Connected to %s [%s]:%d%s%s %s\n", networkname, dcc[servidx].host,
+            dcc[servidx].port, server_version[0] ? " " : "", server_version, trying_server ? "(trying)" : s);
 #endif
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);
@@ -2419,6 +2420,7 @@ char *server_start(Function *global_funcs)
   serverror_quit = 1;
   lastpingcheck = 0;
   server_online = 0;
+  server_version[0] = 0;
   server_cycle_wait = 60;
   strcpy(botrealname, "A deranged product of evil coders");
   server_timeout = 60;

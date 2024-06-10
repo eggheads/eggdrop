@@ -29,6 +29,7 @@
 #define MSGMAX       511    /* Max size of IRC message line    */
 #define SENDLINEMAX  CLITAGMAX + MSGMAX
 #define RECVLINEMAX  TOTALTAGMAX + MSGMAX
+#define SERVER_VERSION_MAX 64
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
