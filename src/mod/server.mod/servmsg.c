@@ -414,7 +414,7 @@ static int got001(char *from, char *msg)
 static void got002(char *from, char *msg)
 {
   int i;
-  for (i = strlen(msg) - 1; (msg[i] != ' ') && (i > 0); i--);
+  for (i = strlen(msg) - 1; (i > 0) && (msg[i] != ' '); i--);
   strlcpy(server_version, msg + i + 1, SERVER_VERSION_MAX);
 
 }
