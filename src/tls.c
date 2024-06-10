@@ -531,6 +531,12 @@ static char *ssl_printname(X509_NAME *name)
 
   /* X509_NAME_oneline() is easier and shorter, but is deprecated and
      the manual discourages it's usage, so let's not be lazy ;) */
+  if (!bio) {
+    debug0("TLS: ssl_printname(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   if (X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ)) {
     len = BIO_get_mem_data(bio, &data);
     if (len > 0) {
@@ -712,7 +718,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
           !(data->verify & TLS_VERIFYFROM)) ||
           ((err == X509_V_ERR_CERT_HAS_EXPIRED) &&
           !(data->verify & TLS_VERIFYTO))) {
-        debug1("TLS: peer certificate warning: %s",
+        putlog(data->loglevel, "*", "TLS: peer certificate warning: %s",
                X509_verify_cert_error_string(err));
         ok = 1;
       }
