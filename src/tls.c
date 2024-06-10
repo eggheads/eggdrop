@@ -799,7 +799,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              SSL_alert_desc_string_long(ret));
     } else {
       /* Ignore close notify warnings */
-      debug1("TLS: Received close notify warning during %s",
+      debug1("TLS: Received close notify during %s",
              (where & SSL_CB_READ) ? "read" : "write");
     }
   } else if (where & SSL_CB_EXIT) {
