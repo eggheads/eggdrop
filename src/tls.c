@@ -926,9 +926,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
                SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
-    struct timespec req = { 0, 1000000L };
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
+    const struct timespec req = { 0, 1000000L };
     nanosleep(&req, NULL);
 #ifdef SSL_set_tlsext_host_name
     if (*data->host)
