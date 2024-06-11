@@ -526,6 +526,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define argv0 ((char *)global[322])
 #define get_user_from_member ((struct userrec * (*)(memberlist *))global[323])
 /* 324 - 327 */
+#define do_hook_reset_member ((void (*) ())global[324])
 
 
 /* hostmasking */

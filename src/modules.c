@@ -176,6 +176,7 @@ int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
+void (*hook_reset_member) () = null_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -627,8 +628,9 @@ Function global_table[] = {
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
   (Function) & argv0,
-  (Function) get_user_from_member
+  (Function) get_user_from_member,
 /* 324 - 327 */
+  (Function) do_hook_reset_member
 };
 
 void init_modules(void)
@@ -1210,4 +1212,8 @@ void do_module_report(int idx, int details, char *which)
   }
   if (which)
     dprintf(idx, "No such module.\n");
+}
+
+void do_hook_reset_member() {
+  call_hook(HOOK_RESET_MEMBER);
 }
