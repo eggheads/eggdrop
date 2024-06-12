@@ -5,7 +5,7 @@
 from eggdrop import bind
 
 # Load any Tcl commands you want to use from the eggdrop.tcl module.
-from eggdrop.tcl import putmsg, putlog
+from eggdrop.tcl import putmsg
 
 # Load a python module as usual.
 from bs4 import BeautifulSoup
@@ -17,7 +17,7 @@ def pubGetTitle(nick, host, handle, channel, text, **kwargs):
   try:
     reqs = requests.get(text)
     soup = BeautifulSoup(reqs.text, 'html.parser')
-    putmsg(channel, "The title of the webpage is: "+soup.find_all('title')[0].get_text())
+    putmsg(channel, "The title of the webpage is: " + soup.title.string)
   except Exception as e:
     putmsg(channel, "Error: " + str(e))
 
