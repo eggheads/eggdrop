@@ -309,7 +309,7 @@ The PACKAGE_NAME variable must be defined by your TEA configure.ac])
     fi
 
     case "`uname -s`" in
-	*win32*|*WIN32*|*MINGW32_*)
+	*win32*|*WIN32*|*MINGW32_*|*MINGW64_*)
 	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)
 	    EXEEXT=".exe"
 	    TEA_PLATFORM="windows"
