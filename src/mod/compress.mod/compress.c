@@ -144,6 +144,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
 
   fout = fopen(f_target, "wb");
   if (!fout) {
+    gzclose(fin);
     putlog(LOG_MISC, "*", "Failed to uncompress file `%s': open failed: %s.",
            f_src, strerror(errno));
     return COMPF_ERROR;
@@ -154,6 +155,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if (len < 0) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzread failed.",
              f_src);
+      gzclose(fin);
       fclose(fout);
       return COMPF_ERROR;
     }
@@ -162,6 +164,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
              "failed: %s.", f_src, strerror(errno));
+      gzclose(fin);
       fclose(fout);
       return COMPF_ERROR;
     }
@@ -169,6 +172,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
   if (fclose(fout)) {
     putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fclose failed: %s.",
            f_src, strerror(errno));
+    gzclose(fin);
     return COMPF_ERROR;
   }
   if (gzclose(fin) != Z_OK) {
