@@ -1015,7 +1015,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
   if test "x$TCLLIBFN" = x; then
     AC_MSG_NOTICE([Autoconfiguring Tcl with tclConfig.sh])
     egg_tcl_changed="yes"
-    TEA_INIT("3.10")
+    TEA_INIT("3.13")
     TEA_PATH_TCLCONFIG
     TEA_LOAD_TCLCONFIG
     TEA_TCL_LINK_LIBS
