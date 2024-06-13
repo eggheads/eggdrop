@@ -1032,7 +1032,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           set_key(chan, p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           set_key(chan, p);
           *p = 0;
@@ -1055,7 +1055,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           chan->channel.maxmembers = atoi(p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           chan->channel.maxmembers = atoi(p);
           *p = 0;
