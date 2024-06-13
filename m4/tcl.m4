@@ -5,6 +5,7 @@
 #
 # Copyright (c) 1999-2000 Ajuba Solutions.
 # Copyright (c) 2002-2005 ActiveState Corporation.
+# Copyright (c) 2012-2018 Sean Woods.
 # Copyright (c) 2017 - 2024 Eggheads Development Team
 #
 # Original Tcl/TEA license.terms information for this file:
@@ -53,7 +54,7 @@ AC_PREREQ([2.71])
 
 dnl TEA extensions pass us the version of TEA they think they
 dnl are compatible with (must be set in TEA_INIT below)
-dnl TEA_VERSION="3.10"
+dnl TEA_VERSION="4.0"
 
 # Possible values for key variables defined:
 #
@@ -98,7 +99,8 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	# we reset no_tcl in case something fails here
 	no_tcl=true
 	AC_ARG_WITH(tcl,
-	    AS_HELP_STRING([--with-tcl],[directory containing tcl configuration (tclConfig.sh)]),
+	    AS_HELP_STRING([--with-tcl],
+		[directory containing tcl configuration (tclConfig.sh)]),
 	    with_tclconfig="${withval}")
 	AC_MSG_CHECKING([for Tcl configuration])
 	AC_CACHE_VAL(ac_cv_c_tclconfig,[
@@ -183,9 +185,9 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -d /usr/pkg/lib 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
 			`ls -d /usr/lib64 2>/dev/null` \
-                        `ls -d /usr/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
-                        `ls -d /usr/local/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
-                        `ls -d /usr/local/lib/tcl/tcl[[8-9]].[[0-9]] 2>/dev/null` \
+			`ls -d /usr/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl/tcl[[8-9]].[[0-9]] 2>/dev/null` \
 			; do
 		    if test -f "$i/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
@@ -437,8 +439,8 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 	    CYGPATH=echo
 	],[
 	    TEA_PLATFORM="windows"
-	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)	
-    ])
+	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)	]
+    )
     CC=$hold_cc
     AC_MSG_RESULT($TEA_PLATFORM)
 
