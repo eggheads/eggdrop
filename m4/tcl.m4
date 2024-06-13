@@ -5,7 +5,6 @@
 #
 # Copyright (c) 1999-2000 Ajuba Solutions.
 # Copyright (c) 2002-2005 ActiveState Corporation.
-# Copyright (c) 2012-2018 Sean Woods.
 # Copyright (c) 2017 - 2024 Eggheads Development Team
 #
 # Original Tcl/TEA license.terms information for this file:
@@ -59,12 +58,8 @@ dnl TEA_VERSION="4.0"
 # Possible values for key variables defined:
 #
 # TEA_WINDOWINGSYSTEM - win32 aqua x11 (mirrors 'tk windowingsystem')
-# PRACTCL_WINDOWINGSYSTEM - windows cocoa hitheme x11 sdl
 # TEA_PLATFORM        - windows unix
 # TEA_TK_EXTENSION    - True if this is a Tk extension
-# TEACUP_OS           - windows macosx linux generic
-# TEACUP_TOOLSET      - Toolset in use (gcc,mingw,msvc,llvm)
-# TEACUP_PROFILE      - win32  
 #
 
 #------------------------------------------------------------------------
@@ -227,6 +222,42 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
     fi
 ])
 
+#--------------------------------------------------------------------
+# TEA_CONFIG_SYSTEM
+#
+#	Determine what the system is (some things cannot be easily checked
+#	on a feature-driven basis, alas). This can usually be done via the
+#	"uname" command.
+#
+# Arguments:
+#	none
+#
+# Results:
+#	Defines the following var:
+#
+#	system -	System/platform/version identification code.
+#--------------------------------------------------------------------
+
+AC_DEFUN([TEA_CONFIG_SYSTEM], [
+    AC_CACHE_CHECK([system version], tcl_cv_sys_version, [
+	# TEA specific:
+	if test "${TEA_PLATFORM}" = "windows" ; then
+	    tcl_cv_sys_version=windows
+	else
+	    tcl_cv_sys_version=`uname -s`-`uname -r`
+	    if test "$?" -ne 0 ; then
+		AC_MSG_WARN([can't find uname command])
+		tcl_cv_sys_version=unknown
+	    else
+		if test "`uname -s`" = "AIX" ; then
+		    tcl_cv_sys_version=AIX-`uname -v`.`uname -r`
+		fi
+	    fi
+	fi
+    ])
+    system=$tcl_cv_sys_version
+])
+
 ##
 ## Here ends the standard Tcl configuration bits and starts the
 ## TEA specific functions
@@ -262,30 +293,21 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 #------------------------------------------------------------------------
 
 AC_DEFUN([TEA_INIT], [
-    # TEA extensions pass this us the version of TEA they think they
-    # are compatible with.
-    TEA_VERSION="3.10"
-    AC_MSG_CHECKING([for correct TEA configuration])
+    TEA_VERSION="3.13"
+
+    AC_MSG_CHECKING([TEA configuration])
     if test x"${PACKAGE_NAME}" = x ; then
 	AC_MSG_ERROR([
 The PACKAGE_NAME variable must be defined by your TEA configure.ac])
     fi
-    if test x"$1" = x ; then
-	AC_MSG_ERROR([
-TEA version not specified.])
-    elif test "$1" != "${TEA_VERSION}" ; then
-	AC_MSG_RESULT([warning: requested TEA version "$1", have "${TEA_VERSION}"])
-    else
-	AC_MSG_RESULT([ok (TEA ${TEA_VERSION})])
-    fi
+    AC_MSG_RESULT([ok (TEA ${TEA_VERSION})])
 
     # If the user did not set CFLAGS, set it now to keep macros
-    # like AC_PROG_CC and AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) from adding "-g -O2".
+    # like AC_PROG_CC and AC_TRY_COMPILE from adding "-g -O2".
     if test "${CFLAGS+set}" != "set" ; then
 	CFLAGS=""
     fi
-		TEA_TK_EXTENSION=0
-		AC_SUBST(TEA_TK_EXTENSION)
+
     case "`uname -s`" in
 	*win32*|*WIN32*|*MINGW32_*)
 	    AC_CHECK_PROG(CYGPATH, cygpath, cygpath -m, echo)
@@ -340,6 +362,9 @@ TEA version not specified.])
     AC_SUBST(PKG_INCLUDES)
     AC_SUBST(PKG_LIBS)
     AC_SUBST(PKG_CFLAGS)
+
+    # Configure the installer.
+    TEA_INSTALLER
 ])
 
 #------------------------------------------------------------------------
@@ -358,8 +383,8 @@ TEA version not specified.])
 #		TCL_BIN_DIR
 #		TCL_SRC_DIR
 #		TCL_LIB_FILE
-#               TCL_ZIP_FILE
-#               TCL_ZIPFS_SUPPORT
+#		TCL_ZIP_FILE
+#		TCL_ZIPFS_SUPPORT
 #------------------------------------------------------------------------
 
 AC_DEFUN([TEA_LOAD_TCLCONFIG], [
@@ -547,4 +572,43 @@ AC_DEFUN([TEA_TCL_LINK_LIBS], [
     TCL_LIBS='${DL_LIBS} ${LIBS} ${MATH_LIBS}'
     AC_SUBST(TCL_LIBS)
     AC_SUBST(MATH_LIBS)
+])
+
+#------------------------------------------------------------------------
+# TEA_INSTALLER --
+#
+#	Configure the installer.
+#
+# Arguments:
+#	none
+#
+# Results:
+#	Substitutes the following vars:
+#		INSTALL
+#		INSTALL_DATA_DIR
+#		INSTALL_DATA
+#		INSTALL_PROGRAM
+#		INSTALL_SCRIPT
+#		INSTALL_LIBRARY
+#------------------------------------------------------------------------
+
+AC_DEFUN([TEA_INSTALLER], [
+    INSTALL='$(SHELL) $(srcdir)/tclconfig/install-sh -c'
+    INSTALL_DATA_DIR='${INSTALL} -d -m 755'
+    INSTALL_DATA='${INSTALL} -m 644'
+    INSTALL_PROGRAM='${INSTALL} -m 755'
+    INSTALL_SCRIPT='${INSTALL} -m 755'
+
+    TEA_CONFIG_SYSTEM
+    case $system in
+	HP-UX-*) INSTALL_LIBRARY='${INSTALL} -m 755' ;;
+	      *) INSTALL_LIBRARY='${INSTALL} -m 644' ;;
+    esac
+
+    AC_SUBST(INSTALL)
+    AC_SUBST(INSTALL_DATA_DIR)
+    AC_SUBST(INSTALL_DATA)
+    AC_SUBST(INSTALL_PROGRAM)
+    AC_SUBST(INSTALL_SCRIPT)
+    AC_SUBST(INSTALL_LIBRARY)
 ])
