@@ -171,7 +171,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
     *p = 0;
     p++;
     malloc_strcpy(elem, new);
-    strcpy(new, p);
+    memmove(new, p, strlen(p) + 1);
     if (!elem[0] || !strcmp(elem, ".")) {
       p = strchr(new, '/');
       continue;
