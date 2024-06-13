@@ -88,8 +88,10 @@ static int is_compressedfile(char *filename)
   if (!zin)
     return COMPF_FAILED;
   len1 = gzread(zin, buf1, sizeof(buf1));
-  if (len1 < 0)
+  if (len1 < 0) {
+    gzclose(zin);
     return COMPF_FAILED;
+  }
   if (gzclose(zin) != Z_OK)
     return COMPF_FAILED;
 
