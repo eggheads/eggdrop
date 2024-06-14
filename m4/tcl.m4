@@ -92,7 +92,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	AC_ARG_WITH(tcl,
 	    AS_HELP_STRING([--with-tcl],
 		[directory containing tcl configuration (tclConfig.sh)]),
-	    with_tclconfig="${withval}")
+	    [with_tclconfig="${withval}"])
 	AC_MSG_CHECKING([for Tcl configuration])
 	AC_CACHE_VAL(ac_cv_c_tclconfig,[
 
