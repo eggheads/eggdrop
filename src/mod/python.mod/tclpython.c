@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-// Safety: only callable from main thread
 static int tcl_pysource STDVAR
 {
   FILE *fp;
