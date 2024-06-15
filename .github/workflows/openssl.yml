@@ -28,12 +28,12 @@ jobs:
         repository: openssl/openssl
         ref: ${{ steps.openssl.outputs.tag }}
         path: 'openssl'
-    - uses: actions/checkout@v4
-    - name: install dependencies
-      run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
       run: |
         cd $GITHUB_WORKSPACE/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install tcl tcl-dev
     - name: Build
       run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-11:
@@ -46,12 +46,12 @@ jobs:
         repository: openssl/openssl
         ref: 'OpenSSL_1_1_1w'
         path: 'openssl'
-    - uses: actions/checkout@v4
-    - name: install dependencies
-      run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
       run: |
-        cd $GITHUB_WORKSPACE/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+    - name: install dependencies
+      run: sudo apt-get install tcl tcl-dev
+    - uses: actions/checkout@v4
     - name: Build
       run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-10:
