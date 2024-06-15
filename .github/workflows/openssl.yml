@@ -12,7 +12,7 @@ jobs:
       matrix:
         ssl_version: [ '3.0', '3.1', '3.2', '3.3' ]
     continue-on-error: true
-    name: OpenSSL
+    name: OpenSSL 3.x
     runs-on: ubuntu-latest
     steps:
     - uses: oprypin/find-latest-tag@v1
@@ -33,12 +33,12 @@ jobs:
       run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
       run: |
-        cd openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd $HOME/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: Build
       run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-11:
     continue-on-error: true
-    name: OpenSSL
+    name: OpenSSL 1.1
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -51,12 +51,12 @@ jobs:
       run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
       run: |
-        cd openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd $HOME/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: Build
       run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-10:
     continue-on-error: true
-    name: OpenSSL
+    name: OpenSSL 1.0
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -65,6 +65,6 @@ jobs:
     - name: Build OpenSSL
       run: |
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz
-        cd openssl-1.0.2u && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd $HOME/openssl-1.0.2u && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: Build
       run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
