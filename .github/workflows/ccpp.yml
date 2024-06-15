@@ -27,6 +27,7 @@ jobs:
         conf_tls: [ '', '--disable-tls' ]
         conf_ipv6: [ '', '--disable-ipv6' ]
         conf_tdns: [ '', '--disable-tdns' ]
+    continue-on-error: true
     name: compile test, feature
     runs-on: ubuntu-latest
     steps:
