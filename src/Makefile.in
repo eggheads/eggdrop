@@ -6,6 +6,7 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 @SET_MAKE@
+EGGEXEC = @EGGEXEC@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -17,6 +18,8 @@ STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
+
+XLIBS = @SSL_LIBS@ @TCL_LIB_SPEC@ @LIBS@
 
 eggdrop_objs = bg.o botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 dccutil.o dns.o flags.o language.o match.o main.o mem.o misc.o misc_file.o \

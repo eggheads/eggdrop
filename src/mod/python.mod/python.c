@@ -40,6 +40,7 @@
 
 //static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
+static pthread_mutex_t tclmtx;
 
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
@@ -55,6 +56,7 @@ static int python_expmem()
 
 // TODO: Do we really have to exit eggdrop on module load failure?
 static void init_python() {
+  pthread_mutexattr_t mtxattr;
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
@@ -99,6 +101,10 @@ static void init_python() {
   PyRun_SimpleString("sys.path.append(\".\")");
   PyRun_SimpleString("import eggdrop");
   PyRun_SimpleString("sys.displayhook = eggdrop.__displayhook__");
+
+  pthread_mutexattr_init(&mtxattr);
+  pthread_mutexattr_settype(&mtxattr, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init(&tclmtx, &mtxattr);
 
   return;
 }

@@ -59,6 +59,7 @@ static PyObject *py_displayhook(PyObject *self, PyObject *o) {
   Py_RETURN_NONE;
 }
 
+// Safety: only callable in main thread
 static void cmd_python(struct userrec *u, int idx, char *par) {
   PyObject *pobj, *ptype, *pvalue, *ptraceback;
   PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
@@ -138,6 +139,7 @@ static PyObject *py_findircuser(PyObject *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+// Safety: Python GIL?
 static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *const objv[])
 {
   PyObject *args = PyTuple_New(objc > 1 ? objc - 1: 0);
@@ -314,12 +316,16 @@ static Tcl_Obj *py_to_tcl_obj(PyObject *o) {
   }
 }
 
+// Safety: One thread at a time, main thread must be in select() or calling this
 static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwargs) {
+  pthread_mutex_lock(&tclmtx);
+
   TclFunc *tf = (TclFunc *)self;
   Py_ssize_t argc = PyTuple_Size(args);
   Tcl_DString ds;
   const char *result;
   int retcode;
+  PyObject *ret;
 
   Tcl_DStringInit(&ds);
   Tcl_DStringAppendElement(&ds, tf->tclcmdname);
@@ -331,6 +337,7 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
 
   if (retcode != TCL_OK) {
     PyErr_Format(EggdropError, "Tcl error: %s", Tcl_GetStringResult(tclinterp));
+    pthread_mutex_unlock(&tclmtx);
     return NULL;
   }
   result = Tcl_GetStringResult(tclinterp);
@@ -338,12 +345,16 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
 
   if (!*result) {
     // Empty string means okay
+    pthread_mutex_unlock(&tclmtx);
     Py_RETURN_NONE;
   }
 
-  return PyUnicode_DecodeUTF8(result, strlen(result), NULL);
+  ret = PyUnicode_DecodeUTF8(result, strlen(result), NULL);
+  pthread_mutex_unlock(&tclmtx);
+  return ret;
 }
 
+// Safety: One thread at a time, main thread must be in select() or calling this
 static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
   char *cmdname;
   TclFunc *result;
@@ -352,13 +363,16 @@ static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
     PyErr_SetString(EggdropError, "wrong arguments");
     return NULL;
   }
+  pthread_mutex_lock(&tclmtx);
   // TODO: filter a bit better what is available to Python, specify return types ("list of string"), etc.
   if (!(Tcl_FindCommand(tclinterp, cmdname, NULL, TCL_GLOBAL_ONLY))) {
     PyErr_SetString(PyExc_AttributeError, cmdname);
+    pthread_mutex_unlock(&tclmtx);
     return NULL;
   }
   result = PyObject_New(TclFunc, &TclFuncType);
   strcpy(result->tclcmdname, cmdname);
+  pthread_mutex_unlock(&tclmtx);
   return (PyObject *)result;
 }
 
