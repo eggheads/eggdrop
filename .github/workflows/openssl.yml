@@ -37,7 +37,7 @@ jobs:
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev
     - name: Build
-      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib64 && LD_LIBRARY_PATH=$HOME/ssl/lib64 make config eggdrop
   ssl-version-11:
     continue-on-error: true
     name: OpenSSL 1.1
