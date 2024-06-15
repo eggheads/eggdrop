@@ -8,10 +8,10 @@ on:
 
 jobs:
   default-build:
+    name: Compile Test
     strategy:
       matrix:
         cc: [ 'gcc', 'clang' ]
-    name: compile test, default
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -22,13 +22,13 @@ jobs:
         CC: ${{ matrix.cc }}
       run: ./configure && make config && make -j4 && make install
   feature-test:
+    name: Features
+    continue-on-error: true
     strategy:
       matrix:
         conf_tls: [ '', '--disable-tls' ]
         conf_ipv6: [ '', '--disable-ipv6' ]
         conf_tdns: [ '', '--disable-tdns' ]
-    continue-on-error: true
-    name: features
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -37,11 +37,11 @@ jobs:
     - name: Build
       run: ./configure ${{ matrix.conf_tls }} ${{ matrix.conf_ipv6 }} ${{ matrix.conf_tdns }} && make config && make -j4
   tcl-versions:
+    name: Tcl Versions
     strategy:
       matrix:
         tcl_version: [ '8.5.19', '8.6.14', '8.7a5', '9.0b2' ]
     continue-on-error: true
-    name: tcl-versions
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -57,11 +57,11 @@ jobs:
     - name: Build
       run: ./configure --with-tcl=$HOME/tcl/lib && LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop
   ssl-versions-3x:
+    name: OpenSSL 3.x
     strategy:
       matrix:
         ssl_version: [ '3.0', '3.1', '3.2', '3.3' ]
     continue-on-error: true
-    name: OpenSSL 3.x
     runs-on: ubuntu-latest
     steps:
     - uses: oprypin/find-latest-tag@v1
@@ -88,8 +88,8 @@ jobs:
     - name: Build
       run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib64 && LD_LIBRARY_PATH=$HOME/ssl/lib64 make config eggdrop
   ssl-version-11:
-    continue-on-error: true
     name: OpenSSL 1.1
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -108,8 +108,8 @@ jobs:
     - name: Build
       run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-10:
-    continue-on-error: true
     name: OpenSSL 1.0
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -120,6 +120,6 @@ jobs:
     - name: Build OpenSSL
       run: |
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz && \
-        cd openssl-1.0.2u && CFLAGS=-fPIC ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd openssl-1.0.2u && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
     - name: Build
       run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
