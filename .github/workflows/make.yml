@@ -53,6 +53,6 @@ jobs:
         tar xzf tcl${{ matrix.tcl_version }}-src.tar.gz && \
         cd tcl${{ matrix.tcl_version }}/unix && \
         ./configure --prefix=$HOME/tcl && \
-        make default install
+        make && make install
     - name: Build
       run: ./configure --with-tcl=$HOME/tcl/lib && LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop
