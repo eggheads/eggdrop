@@ -28,7 +28,7 @@ jobs:
         conf_ipv6: [ '', '--disable-ipv6' ]
         conf_tdns: [ '', '--disable-tdns' ]
     continue-on-error: true
-    name: compile test, feature
+    name: features
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
