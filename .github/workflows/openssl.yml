@@ -20,7 +20,7 @@ jobs:
         repository: openssl/openssl
         releases-only: true
         prefix: 'OpenSSL '
-        regex: "${{ matrix.ssl_version }}\d+[a-z]?"
+        regex: "${{ matrix.ssl_version }}[0-9]+[a-z]?"
         sort-tags: true
       id: openssl
     - uses: actions/checkout@v4
