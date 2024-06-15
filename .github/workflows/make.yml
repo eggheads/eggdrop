@@ -50,7 +50,7 @@ jobs:
     - name: Build Tcl
       run: |
         wget http://prdownloads.sourceforge.net/tcl/tcl${{ matrix.tcl_version }}-src.tar.gz && \
-        tar xzf tcl${{ matrix.tcl_version }}.tar.gz && \
+        tar xzf tcl${{ matrix.tcl_version }}-src.tar.gz && \
         cd tcl${{ matrix.tcl_version }}/unix && \
         ./configure --prefix=$HOME/tcl && \
         make default install
