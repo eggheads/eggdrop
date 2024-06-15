@@ -30,14 +30,14 @@ jobs:
         path: 'openssl'
     - name: Build OpenSSL
       run: |
-        cd $HOME/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd $GITHUB_WORKSPACE/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - uses: actions/checkout@v4
       with:
         path: 'eggdrop'
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev
     - name: Build
-      run: cd $HOME/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-11:
     continue-on-error: true
     name: OpenSSL 1.1
@@ -50,14 +50,14 @@ jobs:
         path: 'openssl'
     - name: Build OpenSSL
       run: |
-        cd $HOME/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd $GITHUB_WORKSPACE/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev
     - uses: actions/checkout@v4
       with:
         path: 'eggdrop'
     - name: Build
-      run: cd $HOME/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-10:
     continue-on-error: true
     name: OpenSSL 1.0
@@ -73,4 +73,4 @@ jobs:
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz && \
         cd openssl-1.0.2u && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: Build
-      run: cd $HOME/eggrdop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
