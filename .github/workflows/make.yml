@@ -118,6 +118,8 @@ jobs:
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
+      env:
+        CFLAGS: -fPIC
       run: |
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz && \
         cd openssl-1.0.2u && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
