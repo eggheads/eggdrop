@@ -10,7 +10,7 @@ jobs:
   ssl-versions:
     strategy:
       matrix:
-        ssl_version: [ '1.1', '3.0', '3.1', '3.2', '3.3' ]
+        ssl_version: [ '3.0', '3.1', '3.2', '3.3' ]
     continue-on-error: true
     name: OpenSSL
     runs-on: ubuntu-latest
@@ -19,8 +19,8 @@ jobs:
       with:
         repository: openssl/openssl
         releases-only: true
-        prefix: 'OpenSSL '
-        regex: "${{ matrix.ssl_version }}[0-9]+[a-z]?"
+        prefix: 'openssl-'
+        regex: "${{ matrix.ssl_version }}.[0-9]+"
         sort-tags: true
       id: openssl
     - uses: actions/checkout@v4
@@ -34,5 +34,37 @@ jobs:
     - name: Build OpenSSL
       run: |
         cd openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+    - name: Build
+      run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+  ssl-version-11:
+    continue-on-error: true
+    name: OpenSSL
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: openssl/openssl
+        ref: 'OpenSSL_1_1_1w'
+        path: 'openssl'
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install tcl tcl-dev
+    - name: Build OpenSSL
+      run: |
+        cd openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+    - name: Build
+      run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+  ssl-version-10:
+    continue-on-error: true
+    name: OpenSSL
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install tcl tcl-dev
+    - name: Build OpenSSL
+      run: |
+        wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz
+        cd openssl-1.0.2u && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: Build
       run: ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
