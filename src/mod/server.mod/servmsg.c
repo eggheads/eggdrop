@@ -559,7 +559,9 @@ static int gotmsg(char *from, char *msg)
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
   struct userrec *u;
-  int ctcp_count = 0;
+  memberlist *m = NULL;
+  struct chanset_t *chan;
+  int found = 0, ctcp_count = 0;
   int ignoring;
 
   /* Notice to a channel, not handled here */
@@ -670,7 +672,19 @@ static int gotmsg(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-    u = lookup_user_record(NULL, NULL, from);
+    /* Search existing memberlists for matching nick */
+    for (chan = chanset; chan; chan = chan->next) {
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+        if (!rfc_casecmp(m->nick, nick)) {
+          found = 1;
+          break;
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+    u = lookup_user_record(m, NULL, from);
     code = newsplit(&msg);
     rmspace(msg);
 
@@ -694,7 +708,9 @@ static int gotnotice(char *from, char *msg)
 {
   char *to, *nick, ctcpbuf[512], *p, *p1, buf[512], *uhost = buf, *ctcp;
   struct userrec *u;
-  int ignoring;
+  struct chanset_t *chan;
+  memberlist *m;
+  int found = 0, ignoring;
 
   /* Notice to a channel, not handled here */
   if (msg[0] && ((strchr(CHANMETA, *msg) != NULL) || (*msg == '@')))
@@ -766,7 +782,19 @@ static int gotnotice(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_NOTICE);
-    u = get_user_by_host(from);
+    for (chan = chanset; chan; chan = chan->next) {
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+        if (!rfc_casecmp(m->nick, nick)) {
+          found = 1;
+          break;
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+
+    u = lookup_user_record(m, NULL, from);
 
     if (!ignoring || trigger_on_ignore)
       if (check_tcl_notc(nick, uhost, u, botname, msg) == 2)
