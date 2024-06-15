@@ -20,7 +20,7 @@ jobs:
     - name: Build
       env:
         CC: ${{ matrix.cc }}
-      run: ./configure && make config && make -j4 && make install
+      run: ./configure ${{ matrix.conf_tls }} ${{ matrix.conf_ipv6 }} ${{ matrix.conf_tdns }} && make config eggdrop install
   feature-test:
     strategy:
       matrix:
@@ -35,4 +35,4 @@ jobs:
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev openssl libssl-dev
     - name: Build
-      run: ./configure ${{ matrix.conf_tls }} ${{ matrix.conf_ipv6 }} ${{ matrix.conf_tdns }} && make config && make -j4
+      run: ./configure ${{ matrix.conf_tls }} ${{ matrix.conf_ipv6 }} ${{ matrix.conf_tdns }} && make config eggdrop install

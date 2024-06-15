@@ -1,0 +1,29 @@
+name: Tcl Versions
+
+on:
+  pull_request:
+    branches: [ develop ]
+  push:
+    branches: [ develop ]
+
+jobs:
+  tcl-versions:
+    strategy:
+      matrix:
+        tcl_version: [ '8.5.19', '8.6.14', '8.7a5', '9.0b2' ]
+    continue-on-error: true
+    name: tcl-versions
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install openssl libssl-dev
+    - name: Build Tcl
+      run: |
+        wget http://prdownloads.sourceforge.net/tcl/tcl${{ matrix.tcl_version }}-src.tar.gz && \
+        tar xzf tcl${{ matrix.tcl_version }}-src.tar.gz && \
+        cd tcl${{ matrix.tcl_version }}/unix && \
+        ./configure --prefix=$HOME/tcl && \
+        make -j4 && make install
+    - name: Build
+      run: ./configure --with-tcl=$HOME/tcl/lib && LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop
