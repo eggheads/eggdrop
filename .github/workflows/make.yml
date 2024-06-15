@@ -41,7 +41,7 @@ jobs:
       matrix:
         tcl_version: [ '8.5.19', '8.6.14', '8.7a5', '9.0b2' ]
     continue-on-error: true
-    name: features
+    name: tcl-versions
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -50,8 +50,8 @@ jobs:
     - name: Build Tcl
       run: |
         wget http://prdownloads.sourceforge.net/tcl/tcl${{ matrix.tcl_version }}-src.tar.gz && \
-        tar xzf tcl${{ matrix.tcl_version }} && \
-        cd tcl${{ matrix.tcl_version }} && \
+        tar xzf tcl${{ matrix.tcl_version }}.tar.gz && \
+        cd tcl${{ matrix.tcl_version }}/unix && \
         ./configure --prefix=$HOME/tcl && \
         make default install
     - name: Build
