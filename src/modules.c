@@ -627,7 +627,7 @@ Function global_table[] = {
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
   (Function) & argv0,
-  (Function) get_user_from_member
+  (Function) lookup_user_record
 /* 324 - 327 */
 };
 

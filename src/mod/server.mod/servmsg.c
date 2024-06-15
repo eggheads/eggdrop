@@ -670,7 +670,7 @@ static int gotmsg(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-    u = get_user_by_host(from);
+    u = lookup_user_record(NULL, NULL, from);
     code = newsplit(&msg);
     rmspace(msg);
 

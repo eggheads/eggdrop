@@ -194,7 +194,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         m = ismember(chan, object);
         if (m) {
           onchan = 1;
-          urec = get_user_from_member(m);
+          urec = lookup_user_record(m, NULL, NULL);
           if (!urec || !strcasecmp(object, urec->handle))
             break;
           strcat(whoredirect, object);
@@ -341,7 +341,7 @@ targetcont:
     if (m) {
       onchan = 1;
       snprintf(word1, sizeof word1, "%s!%s", whotarget, m->userhost);
-      urec = get_user_from_member(m);
+      urec = lookup_user_record(m, NULL, NULL);
       if (!urec || !strcasecmp(whotarget, urec->handle))
         break;
       strcat(whoredirect, whotarget);
@@ -358,7 +358,7 @@ targetcont:
     while (chan) {
       m = chan->channel.member;
       while (m && m->nick[0]) {
-        urec = get_user_from_member(m);
+        urec = lookup_user_record(m, NULL, NULL);
         if (urec && !strcasecmp(urec->handle, whotarget)) {
           strcat(whoredirect, whotarget);
           strcat(whoredirect, " is ");

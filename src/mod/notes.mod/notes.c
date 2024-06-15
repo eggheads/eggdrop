@@ -838,7 +838,7 @@ static void notes_hourly()
 
     for (chan = chanset; chan; chan = chan->next) {
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-        u = get_user_from_member(m);
+        u = lookup_user_record(m, NULL, NULL);
         if (u) {
           k = num_notes(u->handle);
           for (l = 0; l < dcc_total; l++)

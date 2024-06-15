@@ -255,6 +255,43 @@ getuser_done:
   return NULL;
 }
 
+/* Wrapper function to find an Eggdrop user record based on either a provided
+ * channel memberlist record, host, or account. This function will first check
+ * a provided memberlist and return the result. If no user record is found (or
+ * the memberlist itself was NULL), this function will try again based on a
+ * provided account, and then again on a provided host.
+ *
+ * When calling this function it is best to provide all available independent
+ * variables- ie, if you provide 'm' for the memberlist, don't provide
+ * 'm->account' for the account, use the independent source variable 'account'
+ * if available. This allows redundant checking in case of unexpected NULLs
+ */
+struct userrec *lookup_user_record(memberlist *m, const char *host, const char *account)
+{
+  struct userrec *u = NULL;
+
+/* First check for a user record tied to a memberlist */
+  if (m) {
+    u = get_user_from_member(m);
+    if (u) {
+      return u;
+    }
+  }
+/* Next check for a user record tied to an account */
+  if (account && account[0]) {
+    u = get_user_by_account(account);
+    if (u) {
+      return u;
+    }
+  }
+/* Last check for a user record tied to a hostmask */
+  if (host && host[0]) {
+    u = get_user_by_host(host);
+    return u;
+  }
+  return NULL;
+}
+
 /* Fix capitalization, etc
  */
 void correct_handle(char *handle)
