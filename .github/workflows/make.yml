@@ -118,10 +118,8 @@ jobs:
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
-      env:
-        CFLAGS: -fPIC
       run: |
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz && \
-        cd openssl-1.0.2u && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
+        cd openssl-1.0.2u && CFLAGS=-fPIC ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: Build
       run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
