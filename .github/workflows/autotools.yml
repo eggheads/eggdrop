@@ -23,4 +23,4 @@ jobs:
       run: |
         for i in `find . -name configure`; do sed -i 's/From configure.ac .*//' $i; done
     - name: Check diff
-      run: git diff | tee .gitdiff && cat .gitdiff && if [ ! -s .gitdiff ]; then exit 1; fi
+      run: git diff | tee .gitdiff && cat .gitdiff && if [ -s .gitdiff ]; then exit 1; fi
