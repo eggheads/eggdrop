@@ -1,0 +1,38 @@
+name: Eggdrop Compile
+
+on:
+  pull_request:
+    branches: [ develop ]
+  push:
+    branches: [ develop ]
+
+jobs:
+  default-build:
+    name: Compile Test
+    strategy:
+      matrix:
+        cc: [ 'gcc', 'clang' ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install clang tcl tcl-dev openssl libssl-dev
+    - name: Build
+      env:
+        CC: ${{ matrix.cc }}
+      run: ./configure && make config && make -j4 && make install
+  feature-test:
+    name: Features
+    continue-on-error: true
+    strategy:
+      matrix:
+        conf_tls: [ '', '--disable-tls' ]
+        conf_ipv6: [ '', '--disable-ipv6' ]
+        conf_tdns: [ '', '--disable-tdns' ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install tcl tcl-dev openssl libssl-dev
+    - name: Build
+      run: ./configure ${{ matrix.conf_tls }} ${{ matrix.conf_ipv6 }} ${{ matrix.conf_tdns }} && make config && make -j4
