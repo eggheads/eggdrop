@@ -1,0 +1,26 @@
+name: Autotools check
+
+on:
+  pull_request:
+    branches: [ develop ]
+  push:
+    branches: [ develop ]
+
+jobs:
+  default-build:
+    name: Check if autotools need to be run
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install build-essential autoconf autoheader
+    - name: Remove configure revision
+      run: find . -name configure -exec sed -i 's/From configure.ac (.*)//' {} \;
+    - name: Stage revision removal
+      run: find . -name configure -exec git add {} \;
+    - name: Run autotools
+      run: misc/runautotools
+    - name: Remove configure revision again
+      run: find . -name configure -exec sed -i 's/From configure.ac (.*)//' {} \;
+    - name: Check diff
+      run: git diff
