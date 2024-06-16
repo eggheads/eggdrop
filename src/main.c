@@ -53,12 +53,6 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
 #ifdef STOP_UAC                         /* OSF/1 complains a lot */
 #  include <sys/sysinfo.h>
 #  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
