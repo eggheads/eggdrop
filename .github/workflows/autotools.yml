@@ -36,5 +36,3 @@ jobs:
             exit 1
           fi
         fi
-      env:
-        NUMBER: {% raw %}${{ github.event.number }}{% endraw %}
