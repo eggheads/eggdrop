@@ -1,6 +1,8 @@
 name: Check autotools/makedepend
 
 on:
+  pull_request:
+    branches: [ develop ]
   push:
     branches: [ develop ]
 
