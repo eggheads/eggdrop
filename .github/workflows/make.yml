@@ -24,6 +24,7 @@ jobs:
   feature-test:
     name: Features
     continue-on-error: true
+    needs: default-build
     strategy:
       matrix:
         conf_tls: [ '', '--disable-tls' ]
