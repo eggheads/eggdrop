@@ -16,11 +16,12 @@ jobs:
       run: sudo apt-get install build-essential autoconf
     - name: Stage configure with revision removed
       run: |
-        for i in `find . -name configure`; do sed -i 's/From configure.ac (.*)//' $i; git add $i; done
+        echo `find . -name configure`
+        for i in `find . -name configure`; do echo $i; sed -i 's/From configure.ac (.*)//' $i; git add $i; done
     - name: Run autotools
       run: misc/runautotools
     - name: Remove configure revision again
       run: |
-        for i in `find . -name configure`; do sed -i 's/From configure.ac (.*)//' $i; done
+        for i in `find . -name configure`; do echo $i; sed -i 's/From configure.ac (.*)//' $i; done
     - name: Check diff
       run: git diff
