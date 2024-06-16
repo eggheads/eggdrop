@@ -1,15 +1,13 @@
-name: Autotools check
+name: Check autotools/makedepend
 
 on:
   push:
     branches: [ develop ]
 
 jobs:
-  default-build:
-    name: Check if autotools need to be run
+  autotools-check:
+    name: Check if misc/runautotools needs to be run
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
@@ -22,6 +20,21 @@ jobs:
     - name: Remove configure revision again
       run: |
         for i in `find . -name configure`; do sed -i 's/From configure.ac .*//' $i; done
+    - name: Check diff
+      run: |
+        git diff | tee .gitdiff
+        if [ -s .gitdiff ]; then
+          exit 1
+        fi
+  makedepend-check:
+    name: Check if misc/makedepend needs to be run
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: sudo apt-get install build-essential autoconf
+    - name: Run makedepend
+      run: misc/makedepend
     - name: Check diff
       run: |
         git diff | tee .gitdiff
