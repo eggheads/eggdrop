@@ -627,8 +627,9 @@ Function global_table[] = {
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
   (Function) & argv0,
-  (Function) lookup_user_record
+  (Function) lookup_user_record,
 /* 324 - 327 */
+  (Function) check_all_chan_records
 };
 
 void init_modules(void)

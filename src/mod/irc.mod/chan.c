@@ -2607,14 +2607,8 @@ static int gotmsg(char *from, char *msg)
           code = newsplit(&ctcp);
           u = NULL;
           /* See if we have a channel record from the same nickname */
-          for (chan = chanset; chan; chan = chan->next) {
-            for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-              if (!rfc_casecmp(m->nick, nick)) {
-                u = lookup_user_record(m, NULL, from);
-                break;
-              }
-            }
-          }
+          m = check_all_chan_records(nick);
+          u = lookup_user_record(m, NULL, from);
           if (!ignoring || trigger_on_ignore) {
             if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
               chan = findchan(realto);

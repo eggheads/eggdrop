@@ -171,6 +171,23 @@ static struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
+/* Search every channel record for the provided nickname. Used in cases where
+ * we are searching for a user record but don't have a memberlist to start from
+ */
+memberlist *check_all_chan_records(char *nick) {
+  struct chanset_t *chan;
+  memberlist *m = NULL;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      if (!rfc_casecmp(m->nick, nick)) {
+        return m;
+      }
+    }
+  }
+  return m;
+}
+
 /* Search userlist for a provided account name
  * Returns: userrecord for user containing the account
  */
@@ -266,7 +283,7 @@ getuser_done:
  * 'm->account' for the account, use the independent source variable 'account'
  * if available. This allows redundant checking in case of unexpected NULLs
  */
-struct userrec *lookup_user_record(memberlist *m, const char *host, const char *account)
+struct userrec *lookup_user_record(memberlist *m, char *host, char *account)
 {
   struct userrec *u = NULL;
 
