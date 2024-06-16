@@ -52,11 +52,11 @@ static struct chanset_t *modebind_refresh(char *chname,
   if (!chname || !(chan = findchan(chname)))
     return NULL;
   if (usrhost) {
-    u = get_user_by_host(usrhost);
+    u = lookup_user_record(NULL, NULL, usrhost);
     get_user_flagrec(u, usr, chan->dname);
   }
   if (vcrhost) {
-    u = get_user_by_host(vcrhost);
+    u = lookup_user_record(NULL, NULL, vcrhost);
     get_user_flagrec(u, vcr, chan->dname);
   }
   return chan;

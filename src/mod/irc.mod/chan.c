@@ -240,15 +240,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-  if (m) {
-    u = lookup_user_record(m, NULL, from);
-  } else {
-    u = victim_or_account ? get_user_by_account(victim_or_account) : NULL;
-    if (!u) {
-      u = get_user_by_host(from);
-    }
-  }
-
+  u = lookup_user_record(m, victim_or_account, from);
   get_user_flagrec(u, &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
@@ -2614,6 +2606,7 @@ static int gotmsg(char *from, char *msg)
         if (ctcp[0] != ' ') {
           code = newsplit(&ctcp);
           u = NULL;
+          /* See if we have a channel record from the same nickname */
           for (chan = chanset; chan; chan = chan->next) {
             for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
               if (!rfc_casecmp(m->nick, nick)) {
@@ -2715,6 +2708,7 @@ static int gotnotice(char *from, char *msg)
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   u = NULL;
+  /* Search memberlist records to see if we know the nickname */
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (!rfc_casecmp(m->nick, nick)) {

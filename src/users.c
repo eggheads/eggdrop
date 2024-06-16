@@ -524,7 +524,7 @@ void tell_user_ident(int idx, char *id)
 
   u = get_user_by_handle(userlist, id);
   if (u == NULL)
-    u = get_user_by_host(id);
+    u = lookup_user_record(NULL, NULL, id);
   if (u == NULL) {
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;

@@ -70,7 +70,7 @@ static int add_bot_hostmask(int idx, char *nick)
         struct userrec *u;
 
         egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-        u = get_user_by_host(s);
+        u = lookup_user_record(m, NULL, NULL);
         if (u) {
           dprintf(idx, "(Can't add hostmask for %s because it matches %s)\n",
                   nick, u->handle);
@@ -1907,13 +1907,13 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
       return 1;
     }
   }
-  if ( !type && !glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
+  if ( !type && !glob_botmast(fr) && !chan_master(fr) && lookup_user_record(NULL, NULL, host)) {
     dprintf(idx, "You cannot add %s matching another user!\n",
             type ? "an account" : "a host");
     return 1;
   }
   if (type) {
-    u2 = get_user_by_account(host);
+    u2 = lookup_user_record(NULL, host, NULL);
     if (u2) {
       dprintf(idx, "That account already exists for user %s\n", u2->handle);
       return 1;

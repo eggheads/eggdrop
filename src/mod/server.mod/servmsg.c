@@ -493,7 +493,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
-  u = get_user_by_host(from);
+  u = lookup_user_record(NULL, NULL, from);
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
     return 0;
@@ -539,7 +539,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     lastmsgs[which] = 0;
     lastmsgtime[which] = 0;
     lastmsghost[which][0] = 0;
-    u = get_user_by_host(from);
+    u = lookup_user_record(NULL, NULL, from);
     if (check_tcl_flud(floodnick, floodhost, u, ftype, "*"))
       return 0;
     /* Private msg */
@@ -609,7 +609,19 @@ static int gotmsg(char *from, char *msg)
               putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
                      code, ctcp, nick, uhost, to);
           } else {
-            u = get_user_by_host(from);
+            /* Search existing memberlists for matching nick */
+            for (chan = chanset; chan; chan = chan->next) {
+              for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+                if (!rfc_casecmp(m->nick, nick)) {
+                  found = 1;
+                  break;
+                }
+              }
+              if (found) {
+                break;
+              }
+            }
+            u = lookup_user_record(m, NULL, from);
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
                 if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
@@ -746,7 +758,19 @@ static int gotnotice(char *from, char *msg)
                    "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
                    nick, uhost, to);
         } else {
-          u = get_user_by_host(from);
+          /* Search existing memberlists for matching nick */
+          for (chan = chanset; chan; chan = chan->next) {
+            for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+              if (!rfc_casecmp(m->nick, nick)) {
+                found = 1;
+                break;
+              }
+            }
+            if (found) {
+              break;
+            }
+          }
+          u = lookup_user_record(m, NULL, from);
           if (!ignoring || trigger_on_ignore) {
             check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
             if (!ignoring)

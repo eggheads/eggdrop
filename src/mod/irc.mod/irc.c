@@ -224,7 +224,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 static void maybe_revenge(struct chanset_t *chan, char *whobad,
                           char *whovictim, int type)
 {
-  char *badnick, *victim;
+  char *badnick, *victim, buf[NICKLEN + UHOSTLEN];
   int mevictim;
   struct userrec *u, *u2;
   memberlist *m;
@@ -233,14 +233,16 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
     return;
 
   /* Get info about offender */
-  badnick = splitnick(&whobad);
+  strlcpy(buf, whobad, sizeof buf);
+  badnick = splitnick(&whobad)
   m = ismember(chan, badnick);
-  u = lookup_user_record(m, NULL, NULL);
+  u = lookup_user_record(m, NULL, buf);
 
   /* Get info about victim */
+  strlcpy(buf, whovictim, sizeof buf);
   victim = splitnick(&whovictim);
   m = ismember(chan, victim);
-  u2 = lookup_user_record(m, NULL, NULL);
+  u2 = lookup_user_record(m, NULL, buf);
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */

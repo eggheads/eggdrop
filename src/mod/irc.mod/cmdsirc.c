@@ -751,7 +751,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       } else
         strlcpy(s, " --- ", sizeof s);
       egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-
       u = lookup_user_record(m, NULL, NULL);
       if (u == NULL)
         strlcpy(handle, "*", sizeof handle);
