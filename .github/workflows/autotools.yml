@@ -14,13 +14,13 @@ jobs:
     - uses: actions/checkout@v4
     - name: install dependencies
       run: sudo apt-get install build-essential autoconf
-    - name: Remove configure revision
-      run: find . -name configure -exec sed -i 's/From configure.ac (.*)//' {} \;
-    - name: Stage revision removal
-      run: find . -name configure -exec git add {} \;
+    - name: Stage configure with revision removed
+      run: |
+        for i in `find . -name configure`; do sed -i 's/From configure.ac (.*)//' $i; git add $i; done
     - name: Run autotools
       run: misc/runautotools
     - name: Remove configure revision again
-      run: find . -name configure -exec sed -i 's/From configure.ac (.*)//' {} \;
+      run: |
+        for i in `find . -name configure`; do sed -i 's/From configure.ac (.*)//' $i; done
     - name: Check diff
       run: git diff
