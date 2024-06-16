@@ -21,8 +21,6 @@ jobs:
         for i in `find . -name configure`; do sed -i 's/From configure.ac .*//' $i; git add $i; done
     - name: Run autotools
       run: misc/runautotools
-    - name: Debug
-      run: grep . configure.ac configure
     - name: Remove configure revision again
       run: |
         for i in `find . -name configure`; do sed -i 's/From configure.ac .*//' $i; done
