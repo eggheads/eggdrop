@@ -234,7 +234,7 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
 
   /* Get info about offender */
   strlcpy(buf, whobad, sizeof buf);
-  badnick = splitnick(&whobad)
+  badnick = splitnick(&whobad);
   m = ismember(chan, badnick);
   u = lookup_user_record(m, NULL, buf);
 
