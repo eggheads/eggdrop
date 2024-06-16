@@ -1,8 +1,6 @@
 name: Autotools check
 
 on:
-  pull_request:
-    branches: [ develop ]
   push:
     branches: [ develop ]
 
@@ -25,18 +23,8 @@ jobs:
       run: |
         for i in `find . -name configure`; do sed -i 's/From configure.ac .*//' $i; done
     - name: Check diff
-      env:
-        GH_TOKEN: ${{ github.token }}
       run: |
         git diff | tee .gitdiff
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          if [ -s .gitdiff ]; then
-            gh pr edit "${{ github.event.number }}" --add-label "misc/runautotools"
-          else
-            gh pr edit "${{ github.event.number }}" --remove-label "misc/runautotools"
-          fi
-        else
-          if [ -s .gitdiff ]; then
-            exit 1
-          fi
+        if [ -s .gitdiff ]; then
+          exit 1
         fi
