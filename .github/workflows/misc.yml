@@ -34,7 +34,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
-      run: sudo apt-get install build-essential autoconf
+      run: sudo apt-get install build-essential autoconf tcl-dev tcl libssl-dev libssl
     - name: Run makedepend
       run: misc/makedepend
     - name: Check diff
