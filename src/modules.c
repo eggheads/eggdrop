@@ -739,7 +739,7 @@ const char *module_load(char *name)
       return MOD_BADCWD;
     }
     len = strlen(workbuf);
-    snprintf(workbuf + len, sizeof workbuf - len, "/%s%s." EGG_MOD_EXT, moddir, name);
+    snprintf(workbuf + len, (sizeof workbuf) - len, "/%s%s." EGG_MOD_EXT, moddir, name);
   } else {
     snprintf(workbuf, sizeof workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
   }
