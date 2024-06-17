@@ -54,14 +54,15 @@ static int python_expmem()
 }
 
 // TODO: Do we really have to exit eggdrop on module load failure?
-static void init_python() {
+static char *init_python() {
+  static char s[76];
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
 
-  if (PY_VERSION_HEX < 0x0308) {
-    putlog(LOG_MISC, "*", "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
-    return;
+  if (PY_VERSION_HEX < 0x03080000) {
+    snprintf(s, sizeof s, "Python: Python version %x is lower than 3.8, not loading Python module", PY_VERSION_HEX);
+    return s;
   }
   PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
@@ -100,7 +101,7 @@ static void init_python() {
   PyRun_SimpleString("import eggdrop");
   PyRun_SimpleString("sys.displayhook = eggdrop.__displayhook__");
 
-  return;
+  return NULL;
 }
 
 static void kill_python() {
@@ -135,6 +136,7 @@ static Function python_table[] = {
 
 char *python_start(Function *global_funcs)
 {
+  char *s;
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
@@ -155,7 +157,8 @@ char *python_start(Function *global_funcs)
   }
   // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
 
-  init_python();
+  if ((s = init_python()))
+    return s;
 
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
