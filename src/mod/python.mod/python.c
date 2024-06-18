@@ -31,7 +31,6 @@
 #undef interp
 #define tclinterp (*(Tcl_Interp **)(global[128]))
 #undef days
-#include <stdlib.h>
 #include <Python.h>
 #include <datetime.h>
 #include "src/mod/irc.mod/irc.h"
