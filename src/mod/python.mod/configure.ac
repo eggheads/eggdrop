@@ -29,8 +29,6 @@ if test "x$egg_enable_python" != "xno"; then
     else
       if test -x "$egg_with_python_config"; then
         python_config_bin="$egg_with_python_config"
-      else
-        AC_MSG_WARN([Specified --with-python-config=$egg_with_python_config does not exist.])
       fi
     fi
   fi
