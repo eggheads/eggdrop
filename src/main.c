@@ -107,7 +107,7 @@ int egg_numver = EGG_NUMVER;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
-int default_uflags = 0;         /* Default user-definied flags            */
+int default_uflags = 0;         /* Default user-defined flags             */
 
 int backgrd = 1;    /* Run in the background?                        */
 int con_chan = 0;   /* Foreground: constantly display channel stats? */
