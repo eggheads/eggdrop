@@ -65,7 +65,7 @@ Eggdrop v1.9.4:
 
  Tcl API changes:
     - Moved the 'gotmsg' function back as a raw bind. It was inadvertently
-      moved to a rawt bind in 1.9.3, causing issuse with scripts attempting to
+      moved to a rawt bind in 1.9.3, causing issues with scripts attempting to
       unbind this internal reference
  Module changes:
     - None
