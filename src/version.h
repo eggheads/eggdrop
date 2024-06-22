@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.9.5"
-#define EGG_NUMVER 1090506
-#define EGG_PATCH "accounttracking"
+#define EGG_NUMVER 1090507
+#define EGG_PATCH "sharefeature"
