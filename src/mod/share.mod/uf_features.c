@@ -245,9 +245,9 @@ static void uf_features_parse(int idx, char *par)
   dcc[idx].u.bot->uff_flags = 0;
 
   /* Parse string */
-  for (feature = strtok_r(buf,  " $:", &brkt);
+  for (feature = strtok_r(buf,  " ", &brkt);
        feature;
-       feature = strtok_r(NULL, " $:", &brkt)) {
+       feature = strtok_r(NULL, " ", &brkt)) {
     /* Is the feature available and active? */
     ul = uff_findentry_byname(feature);
     if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
@@ -293,9 +293,9 @@ static int uf_features_check(int idx, char *par)
   dcc[idx].u.bot->uff_flags = 0;
 
   /* Parse string */
-  for (feature = strtok_r(buf,  " $:", &brkt);
+  for (feature = strtok_r(buf,  " ", &brkt);
        feature;
-       feature = strtok_r(NULL, " $:", &brkt)) {
+       feature = strtok_r(NULL, " ", &brkt)) {
     /* Is the feature available and active? */
     ul = uff_findentry_byname(feature);
     if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)))
