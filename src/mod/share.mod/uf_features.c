@@ -253,20 +253,15 @@ static void uf_features_parse(int idx, char *par)
     ul = uff_findentry_byname(feature);
     if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
       /* Add feature to list */
-      if ((!strcmp(ul->entry->feature, "compress")) &&
-          (dcc[idx].u.bot->numver >= 1090200) &&
-          (dcc[idx].u.bot->numver <= 1090504))
-        debug2("share: uf_features_parse(): quirk workaround: compress disabled for idx %i bot version %i", idx, dcc[idx].u.bot->numver);
-      else {
-        dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
-        if (dcc[idx].u.bot->numver >= 1090507) {
-          if (len)
-            uff_sbuf[len++] = ' ';
-	  len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
-        } else
-          /* quirk workaround: add trailing whitespace */
-          len += snprintf(uff_sbuf + len, (sizeof uff_sbuf) - len, "%s ",
-                          ul->entry->feature);
+      dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
+      if (dcc[idx].u.bot->numver >= 1090507) {
+        if (len)
+          uff_sbuf[len++] = ' ';
+        len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
+      } else {
+        /* quirk workaround: add trailing whitespace */
+	len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
+        uff_sbuf[len++] = ' ';
       }
     }
   }
@@ -289,18 +284,15 @@ static char *uf_features_dump(int idx)
        ul = ul->next)
     if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
       /* Add feature to list */
-      if ((!strcmp(ul->entry->feature, "compress")) &&
-          (dcc[idx].u.bot->numver >= 1090200) &&
-          (dcc[idx].u.bot->numver <= 1090504))
-        debug2("share: uf_features_dump(): quirk workaround: compress disabled for idx %i bot version %i", idx, dcc[idx].u.bot->numver);
-      else if (dcc[idx].u.bot->numver >= 1090507) {
+      if (dcc[idx].u.bot->numver >= 1090507) {
         if (len)
           uff_sbuf[len++] = ' ';
-	len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
-      } else
+        len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
+      } else {
         /* quirk workaround: add trailing whitespace */
-        len += snprintf(uff_sbuf + len, (sizeof uff_sbuf) - len, "%s ",
-                        ul->entry->feature);
+	len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
+        uff_sbuf[len++] = ' ';
+      }
     }
   return uff_sbuf;
 }
@@ -323,14 +315,9 @@ static int uf_features_check(int idx, char *par)
        feature = strtok_r(NULL, " ", &brkt)) {
     /* Is the feature available and active? */
     ul = uff_findentry_byname(feature);
-    if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
-      if ((!strcmp(feature, "compress")) &&
-          (dcc[idx].u.bot->numver >= 1090200) &&
-          (dcc[idx].u.bot->numver <= 1090504)) {
-        debug2("share: uf_features_check(): quirk workaround: compress disabled for idx %i bot version %i", idx, dcc[idx].u.bot->numver);
-      } else
-        dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
-    } else {
+    if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)))
+      dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
+    else {
       /* It isn't, and our hub wants to use it! This either happens
        * because the hub doesn't look at the features we suggested to
        * use or because our admin changed the flags, so that formerly
@@ -341,7 +328,6 @@ static int uf_features_check(int idx, char *par)
       putlog(LOG_BOTS, "*", "Bot %s tried unsupported feature!", dcc[idx].nick);
       dprintf(idx, "s e Attempt to use an unsupported feature\n");
       zapfbot(idx);
-
       nfree(buf);
       return 0;
     }
