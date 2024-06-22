@@ -280,7 +280,7 @@ static char *uf_features_dump(int idx)
   int len = 0;
 
   uff_sbuf[0] = 0;
-  for (ul = uff_list.start; ul && (((sizeof uff_sbuf) - len) < 3);
+  for (ul = uff_list.start; ul && (((sizeof uff_sbuf) - len) > 2);
        ul = ul->next)
     if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
       /* Add feature to list */
