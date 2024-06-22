@@ -252,8 +252,8 @@ static void uf_features_parse(int idx, char *par)
     /* Is the feature available and active? */
     ul = uff_findentry_byname(feature);
     if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
-      /* Add feature to list */
       dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
+      /* Add feature to list */
       if (dcc[idx].u.bot->numver >= 1090507) {
         if (len)
           uff_sbuf[len++] = ' ';
