@@ -879,7 +879,7 @@ void safe_write(int fd, const void *buf, size_t count)
 }
 
 /* Attempts to read from all sockets in slist (upper array boundary slistmax-1)
- * fills s with up to 511 bytes if available, and returns the array index
+ * fills s with up to READMAX bytes if available, and returns the array index
  * Also calls all handler procs for Tcl sockets
  * sockread() can be called by Tcl threads
  *
