@@ -1090,18 +1090,20 @@ int main(int arg_c, char **arg_v)
   if (!pid_file[0])
     egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
-  /* Check for pre-existing eggdrop! */
+  /* Check for pre-existing eggdrop */
   f = fopen(pid_file, "r");
   if (f != NULL) {
     if (fgets(s, 10, f) != NULL) {
-      xx = atoi(s);
-      i = kill(xx, SIGCHLD);      /* Meaningless kill to determine if pid
-                                   * is used */
-      if (i == 0 || errno != ESRCH) {
-        printf(EGG_RUNNING1, botnetnick);
-        printf(EGG_RUNNING2, pid_file);
-        bg_send_quit(BG_ABORT);
-        exit(1);
+      xx = (int) strtol(s, NULL, 10);
+      if (xx != getpid()) {    /* New eggdrop got same PID as old one */
+        i = kill(xx, SIGCHLD); /* Meaningless kill to determine if pid is
+                                * used */
+        if (i == 0 || errno != ESRCH) {
+          printf(EGG_RUNNING1, botnetnick);
+          printf(EGG_RUNNING2, pid_file);
+          bg_send_quit(BG_ABORT);
+          exit(1);
+        }
       }
     } else {
       printf("Error checking for existing Eggdrop process.\n");
