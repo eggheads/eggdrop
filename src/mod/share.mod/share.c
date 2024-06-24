@@ -26,6 +26,7 @@
 
 #include <errno.h>
 #include "src/mod/module.h"
+#include <resolv.h>
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -81,6 +82,7 @@ static void dump_resync(int);
 static void q_resync(char *, struct chanset_t *);
 static void cancel_user_xfer(int, void *);
 static int private_globals_bitmask();
+static void finish_share(int);
 
 #include "share.h"
 
@@ -1224,6 +1226,49 @@ static void share_userfileq(int idx, char *par)
   }
 }
 
+/* New user file share mechanism via multiplex over already existing bot link
+ * ur <len>
+ */
+static void share_ufsend2(int idx, char *par)
+{
+  int len;
+  unsigned char *buf;
+  ssize_t i;
+
+  len = strlen(par);
+  debug2("share: share_ufsend2(): start: par = >%s< len = %i", par, len);
+  buf = nmalloc(len);
+  if ((len = b64_pton(par, buf, len)) < 0) {
+    putlog(LOG_BOTS, "*", "Share: share_ufsend2(): error b64_pton()");
+    return;
+  }
+  debug1("share: share_ufsend2(): len = %i", len);
+  char template[] = "/tmp/shareXXXXXXXX";
+  int fd;
+  if ((fd = mkstemp(template)) < 0) {
+    putlog(LOG_BOTS, "*", "Share: share_ufsend2(): error mkstemp(): %s", strerror(errno));
+    return;
+  }
+  if ((i = write(fd, buf, len)) != len) {
+    if (i < 0)
+      putlog(LOG_MISC, "*", "Share error: share_ufsend2(): write(): %s", strerror(errno));
+    else
+      putlog(LOG_MISC, "*", "Share error: share_ufsend2(): write(): Wrote %ld bytes instead of %i bytes.", (long) i, len);
+    return;
+  }
+  close(fd);
+  dcc[idx].u.xfer->filename = template;
+  /* The new method has got no extra dcc[] for the file transfer,
+   * so temporarely alter the dcc[] we habe to make share_finish() happy
+   */
+  char host[UHOSTLEN];
+  strcpy(host, dcc[idx].host);
+  strcpy(dcc[idx].host, dcc[idx].nick);
+  finish_share(idx);
+  strcpy(dcc[idx].host, host);
+  debug0("Share: share_ufsend2(): end");
+}
+
 /* us <ip> <port> <length>
  */
 static void share_ufsend(int idx, char *par)
@@ -1428,6 +1473,7 @@ static botscmd_t C_share[] = {
   {"sInv",     "psj", (IntFunc) share_stick_invite},
   {"u?",       "",  (IntFunc) share_userfileq},
   {"un",       "",  (IntFunc) share_ufno},
+  {"ur",       "",  (IntFunc) share_ufsend2},
   {"us",       "",  (IntFunc) share_ufsend},
   {"uy",       "",  (IntFunc) share_ufyes},
   {"v",        "",  (IntFunc) share_version},
@@ -1860,10 +1906,12 @@ static void finish_share(int idx)
   struct chanset_t *chan;
   int i, j = -1;
 
-  for (i = 0; i < dcc_total; i++)
+  for (i = 0; i < dcc_total; i++) {
+    printf("%i %i %s %s %i %i\n", idx, i, dcc[i].nick, dcc[idx].host, dcc[i].type->flags, DCT_BOT);
     if (!strcasecmp(dcc[i].nick, dcc[idx].host) &&
         (dcc[i].type->flags & DCT_BOT))
       j = i;
+  }
   if (j == -1)
     return;
 
@@ -2057,6 +2105,63 @@ static void start_sending_users(int idx)
     return;
   }
 
+  if (dcc[idx].u.bot->numver >= 1090508) {
+    debug0("share: start_sending_users(): multiplex: start");
+    FILE * f = tmpfile();
+    if (!f) {
+      debug1("share: start_sending_users(): multiplex: tmpfile(): error: %s", strerror(errno));
+      unlink(share_file);
+      return;
+    }
+    if (copyfilef(share_file, f)) {
+      unlink(share_file);
+      fclose(f);
+      return;
+    }
+    unlink(share_file);
+    if (fseeko(f, 0, SEEK_END) < 0) {
+      debug1("share: start_sending_users(): multiplex: fseeko(): error: %s", strerror(errno));
+      return;
+    }
+    //dcc[idx].u.xfer->length = ftello(f);
+    //rewind(f);
+    //dcc[idx].u.xfer->f = f;
+    // TODO: ggf. start time in millisecs via gettimeofday() or friends um statt dcc[idx].u.xfer->start_time ein debug mit elapsed time for share userfile zu loggen
+    // TODO: new_tbuf(dcc[idx].nick);
+
+    /* multiplexing means, we just send the userfile via tputs() as a normal botlink message */
+    /* TODO:
+     *   alloc buffer suffixsize + filesize
+     *   read file into buffer
+     *   put suffix in
+     */
+    /* Also we dont need to do pump_file_to_sock(), fread(EVERYTHING) will return short only in case of hard error, not to make us loop */
+    off_t len = ftello(f);
+    char *buf = nmalloc(len + 5 + (((len + 2) / 3) << 2) + 2); /* filesize + "s ur " + b64 + "\n\0" */
+    rewind(f);
+    if (fread(buf, 1, len, f) < len) {
+      debug1("share: start_sending_users(): multiplex: fread(): error: %s", ferror(f) ? strerror(errno) : "*unknown*");
+      return;
+    }
+    fclose(f);
+    int len2;
+    /* TODO: irgendwo hier muesen noch die feature funcs gecalled werden, wie zum bbsp. compression */
+    if ((len2 = b64_ntop((uint8_t *) buf, len, buf + len + 5, (sizeof buf) - len - 5)) == -1) {
+      putlog(LOG_SERV, "*", "share: start_sending_users(): multiplex: error: could not base64 encode");
+      nfree(buf);
+      return;
+    }
+    memcpy(buf + len, "s ur ", 5);
+    strcpy(buf + len + 5 + len2, "\n");
+    updatebot(-1, dcc[idx].nick, '+', 0);
+    dcc[idx].status |= STAT_SENDING;
+    tputs(dcc[idx].sock, buf + len, 5 + len2 + 2);
+    nfree(buf);
+    new_tbuf(dcc[idx].nick);
+    debug2("share: start_sending_users(): multiplex: end %lu %i", len, len2);
+    return;
+  }
+
   if ((i = raw_dcc_send(share_file, "*users", "(users)")) > 0) {
     unlink(share_file);
     dprintf(idx, "s e %s\n", USERF_CANTSEND);
@@ -2143,7 +2248,10 @@ static void start_sending_users(int idx)
      * for NFS setups. It's not worth the trouble.
      */
     unlink(share_file);
+    printf("++ unlink share file\n");
   }
+  printf("++ func end\n");
+
 }
 
 static void (*def_dcc_bot_kill) (int, void *) = 0;
