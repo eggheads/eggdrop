@@ -918,7 +918,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   simple_sprintf(host, "%s!%s", nick, from);
   chan = findchan(chname);
   m = ismember(chan, nick);
-  lookup_user_record(m ? m : check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+  u = lookup_user_record(m ? m : check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
   hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pub1", nick, 0);
@@ -948,7 +948,7 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   simple_sprintf(host, "%s!%s", nick, from);
   chan = findchan(chname);
   m = ismember(chan, nick);
-  lookup_user_record(m ? m : check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+  u = lookup_user_record(m ? m : check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pubm1", nick, 0);
   Tcl_SetVar(interp, "_pubm2", from, 0);

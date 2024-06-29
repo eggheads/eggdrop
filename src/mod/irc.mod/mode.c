@@ -1019,7 +1019,7 @@ static int gotmode(char *from, char *origmsg)
       nick = splitnick(&from);
       m = ismember(chan, nick);
       if (m) {
-        u = lookup_user_record(m, NULL, from);
+        u = get_user_from_member(m);
         get_user_flagrec(u, &user, ch);
         m->last = now;
       } else {
