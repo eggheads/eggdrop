@@ -325,7 +325,11 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     chan->floodwho[which][0] = 0;
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
-    u = lookup_user_record(m, NULL, from);
+    if (which == FLOOD_JOIN) {
+      u = lookup_user_record(m, victim_or_account, from);
+    } else {
+      u = get_user_from_member(m);
+    }
     if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->dname))
       return 0;
     switch (which) {
