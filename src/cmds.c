@@ -1907,13 +1907,13 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
       return 1;
     }
   }
-  if ( !type && !glob_botmast(fr) && !chan_master(fr) && lookup_user_record(NULL, NULL, host)) {
+  if ( !type && !glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
     dprintf(idx, "You cannot add a host matching another user!\n");
     return 1;
   }
   if (type) {
-    // account
-    u2 = lookup_user_record(NULL, host, NULL);
+    // host-variable contains account
+    u2 = get_user_by_account(host);
     if (u2) {
       dprintf(idx, "That account already exists for user %s\n", u2->handle);
       return 1;
