@@ -608,7 +608,7 @@ static int gotmsg(char *from, char *msg)
               putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
                      code, ctcp, nick, uhost, to);
           } else {
-            u = lookup_user_record(check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+            u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
                 if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
@@ -671,7 +671,7 @@ static int gotmsg(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-    u = lookup_user_record(check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+    u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
     code = newsplit(&msg);
     rmspace(msg);
 
@@ -732,7 +732,7 @@ static int gotnotice(char *from, char *msg)
                    "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
                    nick, uhost, to);
         } else {
-          u = lookup_user_record(check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
           if (!ignoring || trigger_on_ignore) {
             check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
             if (!ignoring)
@@ -768,7 +768,7 @@ static int gotnotice(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_NOTICE);
-    u = lookup_user_record(check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+    u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
 
     if (!ignoring || trigger_on_ignore)
       if (check_tcl_notc(nick, uhost, u, botname, msg) == 2)

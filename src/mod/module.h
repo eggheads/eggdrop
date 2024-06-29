@@ -526,7 +526,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define argv0 ((char *)global[322])
 #define lookup_user_record ((struct userrec * (*)(memberlist *, const char *, const char *))global[323])
 /* 324 - 327 */
-#define check_all_chan_records ((memberlist * (*) (char *))global[324])
+#define find_member_from_nick ((memberlist * (*) (char *))global[324])
 
 
 /* hostmasking */

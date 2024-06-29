@@ -2080,7 +2080,7 @@ static int gotjoin(char *from, char *channame)
             goto exit;
           }
         } else {
-          u = lookup_user_record(check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
         }
         check_tcl_join(nick, uhost, u, chan->dname);
 
@@ -2604,7 +2604,7 @@ static int gotmsg(char *from, char *msg)
         ctcp_count++;
         if (ctcp[0] != ' ') {
           code = newsplit(&ctcp);
-          u = lookup_user_record(check_all_chan_records(nick), NULL, from); // TODO: get account from msgtags
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
           if (!ignoring || trigger_on_ignore) {
             if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
               chan = findchan(realto);

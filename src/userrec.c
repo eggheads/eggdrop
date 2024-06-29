@@ -174,7 +174,7 @@ static struct userrec *check_dcclist_hand(char *handle)
 /* Search every channel record for the provided nickname. Used in cases where
  * we are searching for a user record but don't have a memberlist to start from
  */
-memberlist *check_all_chan_records(char *nick) {
+memberlist *find_member_from_nick(char *nick) {
   struct chanset_t *chan;
   memberlist *m = NULL;
 

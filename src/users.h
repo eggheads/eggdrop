@@ -187,7 +187,7 @@ struct userrec *get_user_by_nick(char *);
 struct userrec *get_user_from_member(memberlist *);
 struct userrec *lookup_user_record(memberlist *, const char *, const char *);
 struct userrec *check_chanlist(const char *);
-memberlist *check_all_chan_records(char *);
+memberlist *find_member_from_nick(char *);
 
 /* All the default userentry stuff, for code re-use
  */
