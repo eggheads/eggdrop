@@ -523,8 +523,6 @@ void tell_user_ident(int idx, char *id)
   struct userrec *u;
 
   u = get_user_by_handle(userlist, id);
-  if (u == NULL)
-    u = lookup_user_record(NULL, NULL, id);
   if (u == NULL) {
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;
