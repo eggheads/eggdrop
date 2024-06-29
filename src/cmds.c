@@ -1908,8 +1908,7 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
   }
   if ( !type && !glob_botmast(fr) && !chan_master(fr) && lookup_user_record(NULL, NULL, host)) {
-    dprintf(idx, "You cannot add %s matching another user!\n",
-            type ? "an account" : "a host");
+    dprintf(idx, "You cannot add a host matching another user!\n");
     return 1;
   }
   if (type) {
