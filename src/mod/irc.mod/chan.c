@@ -2683,7 +2683,6 @@ static int gotnotice(char *from, char *msg)
   char *ctcp, *code;
   struct userrec *u;
   struct chanset_t *chan;
-  memberlist *m;
   int ignoring;
 
   if (!strchr(CHANMETA "@", *msg))
@@ -2697,7 +2696,7 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
-  u = lookup_user_record(get_all_chan_records(m), NULL, from); // TODO: get account from msgtags
+  u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while (p && *p) {

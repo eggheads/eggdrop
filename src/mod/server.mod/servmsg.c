@@ -559,7 +559,6 @@ static int gotmsg(char *from, char *msg)
   char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp,
        *p, *p1, *code;
   struct userrec *u;
-  memberlist *m = NULL;
   int ctcp_count = 0;
   int ignoring;
 
@@ -695,7 +694,6 @@ static int gotnotice(char *from, char *msg)
 {
   char *to, *nick, ctcpbuf[512], *p, *p1, buf[512], *uhost = buf, *ctcp;
   struct userrec *u;
-  memberlist *m;
   int ignoring;
 
   /* Notice to a channel, not handled here */
