@@ -224,7 +224,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 static void maybe_revenge(struct chanset_t *chan, char *whobad,
                           char *whovictim, int type)
 {
-  char *badnick, *victim;
+  char *badnick, *victim, buf[NICKLEN + UHOSTLEN];
   int mevictim;
   struct userrec *u, *u2;
   memberlist *m;
@@ -233,14 +233,16 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
     return;
 
   /* Get info about offender */
+  strlcpy(buf, whobad, sizeof buf);
   badnick = splitnick(&whobad);
   m = ismember(chan, badnick);
-  u = get_user_from_member(m);
+  u = lookup_user_record(m, NULL, buf); // TODO: get account from msgtags
 
   /* Get info about victim */
+  strlcpy(buf, whovictim, sizeof buf);
   victim = splitnick(&whovictim);
   m = ismember(chan, victim);
-  u2 = get_user_from_member(m);
+  u2 = lookup_user_record(m, NULL, buf); // TODO: get account from msgtags
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */
@@ -908,7 +910,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   int x;
   char buf[512], *args = buf, *cmd, host[161], *hand;
   struct chanset_t *chan;
-  struct userrec *u;
+  struct userrec *u = NULL;
   memberlist *m;
 
   strlcpy(buf, msg, sizeof buf);
@@ -916,7 +918,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   simple_sprintf(host, "%s!%s", nick, from);
   chan = findchan(chname);
   m = ismember(chan, nick);
-  u = get_user_from_member(m);
+  u = lookup_user_record(m ? m : find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pub1", nick, 0);
@@ -946,7 +948,7 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   simple_sprintf(host, "%s!%s", nick, from);
   chan = findchan(chname);
   m = ismember(chan, nick);
-  u = get_user_from_member(m);
+  u = lookup_user_record(m ? m : find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pubm1", nick, 0);
   Tcl_SetVar(interp, "_pubm2", from, 0);
