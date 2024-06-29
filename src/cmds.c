@@ -70,7 +70,7 @@ static int add_bot_hostmask(int idx, char *nick)
         struct userrec *u;
 
         egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-        u = get_user_from_member(m);
+        u = get_user_by_host(s);
         if (u) {
           dprintf(idx, "(Can't add hostmask for %s because it matches %s)\n",
                   nick, u->handle);
