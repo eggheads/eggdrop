@@ -60,11 +60,7 @@
 #    ifndef RTLD_NOW
 #      define RTLD_NOW 1
 #    endif
-#    ifdef RTLD_LAZY
-#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#    else
-#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#    endif
+#    define DLFLAGS RTLD_NOW|RTLD_GLOBAL
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
