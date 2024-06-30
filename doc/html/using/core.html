@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Eggdrop Core Settings &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Party Line" href="partyline.html" />
     <link rel="prev" title="Eggdrop Features" href="features.html" /> 
@@ -57,6 +56,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
@@ -108,14 +108,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p>Last revised: October 25, 2010</p>
+  <p>Last revised: August 29, 2023</p>
 <section id="eggdrop-core-settings">
-<h1>Eggdrop Core Settings<a class="headerlink" href="#eggdrop-core-settings" title="Permalink to this heading">¶</a></h1>
+<h1>Eggdrop Core Settings<a class="headerlink" href="#eggdrop-core-settings" title="Link to this heading">¶</a></h1>
 <p>This file describes the syntax and all the settings of your Eggdrop
 configuration file. Please note that you don’t need to set all of these
 variables to make your bot work properly.</p>
 <section id="executable-path">
-<h2>Executable Path<a class="headerlink" href="#executable-path" title="Permalink to this heading">¶</a></h2>
+<h2>Executable Path<a class="headerlink" href="#executable-path" title="Link to this heading">¶</a></h2>
 <p>The first line in an Eggdrop configuration file should contain
 a fully qualified path to your Eggdrop executable. It has to be
 implemented in the way the example shows to make the config file
@@ -126,7 +126,7 @@ work as a shell script.</p>
 </div>
 </section>
 <section id="basic-settings">
-<h2>Basic Settings<a class="headerlink" href="#basic-settings" title="Permalink to this heading">¶</a></h2>
+<h2>Basic Settings<a class="headerlink" href="#basic-settings" title="Link to this heading">¶</a></h2>
 <p>You can change the basic Eggdrop appearance and behavior in this section.</p>
 <blockquote>
 <div><dl class="simple">
@@ -190,7 +190,7 @@ German.</p>
 </div></blockquote>
 </section>
 <section id="log-files">
-<h2>Log Files<a class="headerlink" href="#log-files" title="Permalink to this heading">¶</a></h2>
+<h2>Log Files<a class="headerlink" href="#log-files" title="Link to this heading">¶</a></h2>
 <p>Eggdrop is capable of logging various things, from channel chatter to
 partyline commands and file transfers.</p>
 <p>Logfiles are normally kept for 24 hours. Afterwards, they will be renamed
@@ -341,7 +341,7 @@ for more options.</p>
 </dl>
 </section>
 <section id="console-settings">
-<h2>Console Settings<a class="headerlink" href="#console-settings" title="Permalink to this heading">¶</a></h2>
+<h2>Console Settings<a class="headerlink" href="#console-settings" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl class="simple">
 <dt>set console “mkcoblxs”</dt><dd><p>This is the default console mode. It uses the same event flags as the
@@ -353,7 +353,7 @@ can change their console channel and modes with the ‘.console’ command.</p>
 </div></blockquote>
 </section>
 <section id="file-and-directory-settings">
-<h2>File and Directory Settings<a class="headerlink" href="#file-and-directory-settings" title="Permalink to this heading">¶</a></h2>
+<h2>File and Directory Settings<a class="headerlink" href="#file-and-directory-settings" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl>
 <dt>set userfile “LamestBot.user”</dt><dd><p>Specify here the filename your userfile should be saved as.</p>
@@ -395,7 +395,7 @@ is a fine default. Otherwise, use your head :).</p>
 </div></blockquote>
 </section>
 <section id="botnet-dcc-telnet-settings">
-<h2>Botnet/Dcc/Telnet Settings<a class="headerlink" href="#botnet-dcc-telnet-settings" title="Permalink to this heading">¶</a></h2>
+<h2>Botnet/Dcc/Telnet Settings<a class="headerlink" href="#botnet-dcc-telnet-settings" title="Link to this heading">¶</a></h2>
 <p>Settings in this section should be unimportant for you until you deal with
 botnets (multiple Eggdrops connected together to maximize efficiency). You
 should read doc/BOTNET before modifying these settings.</p>
@@ -494,7 +494,7 @@ lookup (you might want to increase this if you are on a slow network).</p>
 </div></blockquote>
 </section>
 <section id="advanced-settings">
-<h2>Advanced Settings<a class="headerlink" href="#advanced-settings" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced Settings<a class="headerlink" href="#advanced-settings" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl>
 <dt>set firewall “!sun-barr.ebay:3666”</dt><dd><p>Set this to your socks host if your Eggdrop sits behind a firewall. If
@@ -571,7 +571,7 @@ Do NOT set this, if your network/server does not support cidr!</p>
 </div></blockquote>
 </section>
 <section id="ssl-settings">
-<h2>SSL Settings<a class="headerlink" href="#ssl-settings" title="Permalink to this heading">¶</a></h2>
+<h2>SSL Settings<a class="headerlink" href="#ssl-settings" title="Link to this heading">¶</a></h2>
 <p>Settings in this section take effect when eggdrop is compiled with TLS
 support.</p>
 <blockquote>
@@ -688,7 +688,7 @@ leaf bots connecting, users telneting in and /ctcp bot chat.</p>
 </div></blockquote>
 </section>
 <section id="modules">
-<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this heading">¶</a></h2>
+<h2>Modules<a class="headerlink" href="#modules" title="Link to this heading">¶</a></h2>
 <p>After the core settings, you should start loading modules. Modules are
 loaded by the command “loadmodule &lt;module&gt;”. Eggdrop looks for modules
 in the directory you specified by the module-path setting in the files
@@ -708,13 +708,13 @@ ctcp or share modules.</p>
 </dd>
 <dt>Limbo Bot:</dt><dd><p>A limbo bot (serves as a botnet hub outside IRC) just needs the
 channels, console, dns, and maybe notes or share modules loaded. Of
-course, blowfish needs to be loaded here, too.</p>
+course, an encryption module needs to be loaded here, too.</p>
 </dd>
 </dl>
 </div></blockquote>
 </section>
 <section id="scripts">
-<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this heading">¶</a></h2>
+<h2>Scripts<a class="headerlink" href="#scripts" title="Link to this heading">¶</a></h2>
 <p>The scripts section should be placed at the end of the config file. All
 modules should be loaded and their variables should be set at this point.</p>
 <blockquote>
@@ -732,7 +732,7 @@ path to them.</p>
 </dd>
 </dl>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2024 Eggheads Development Team</p>
 </section>
 </section>
 
@@ -762,9 +762,9 @@ path to them.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Mar 11, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

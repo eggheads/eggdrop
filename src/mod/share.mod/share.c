@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define MODULE_NAME "share"
 #define MAKING_SHARE
 
+#include <errno.h>
 #include "src/mod/module.h"
 
 #include <arpa/inet.h>
@@ -1241,11 +1242,9 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (copy_to_tmp && !(f = tmpfile())) {
+  } else if (!(f = tmpfile())) {
+    debug1("share: share_ufsend(): tmpfile(): error: %s", strerror(errno));
     putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
-    zapfbot(idx);
-  } else if (!copy_to_tmp && !(f = fopen(s, "wb"))) {
-    putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
     /* Ignore longip and use botaddr, arg kept for backward compat for pre 1.8.3 */
@@ -2352,7 +2351,7 @@ char *share_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, share_table, 2, 4);
+  module_register(MODULE_NAME, share_table, 2, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

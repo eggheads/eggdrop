@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -490,5 +490,7 @@
 #define DCC_LOSTDUP             get_language(0xe33)
 #define DCC_TIMEOUTIDENT        get_language(0xe34)
 #define DCC_BADLISTEN           get_language(0xe35)
+#define DCC_NONBOT2             get_language(0xe36)
+#define DCC_NONUSER2            get_language(0xe37)
 
 #endif /* _EGG_LANG_H */

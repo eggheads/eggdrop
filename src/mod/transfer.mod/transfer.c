@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -290,7 +290,7 @@ static void eof_dcc_send(int idx)
                   + strlen(dcc[idx].u.xfer->origname) + 1);
     sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname);
 
-    if (copy_to_tmp && (l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
+    if ((l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
       putlog(LOG_MISC | LOG_FILES, "*", TRANSFER_FAILED_MOVE, nfn);
     }
     /* Only close now in case it was a tmpfile, as it's deleted upon close */
@@ -301,8 +301,8 @@ static void eof_dcc_send(int idx)
     u = get_user_by_host(s);
     hand = u ? u->handle : "*";
 
-    /* Add to file database if not tmpfile or if copyfile succeeded */
-    if (!copy_to_tmp || !l) {
+    /* Add to file database if copyfile succeeded */
+    if (!l) {
       module_entry *fs = module_find("filesys", 0, 0);
 
       if (fs != NULL) {
@@ -960,8 +960,10 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 
   zz = -1;
   f = fopen(filename, "r");
-  if (!f)
+  if (!f) {
+    debug2("transfer: raw_dcc_resend_send(): fopen(%s): error: %s", filename, strerror(errno));
     return DCCSEND_BADFN;
+  }
   fseeko(f, 0, SEEK_END);
   dccfilesize = ftello(f);
   fclose(f);
@@ -987,19 +989,15 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   else
     nfn++;
 
-  if (copy_to_tmp) {
-    f = tmpfile();
-    if (!f)
-      return DCCSEND_BADFN;
-    if (copyfilef(filename, f)) {
-      fclose(f);
-      return DCCSEND_FCOPY;
-    }
-  } else
-    f = fopen(filename, "r");
-
-  if (!f)
+  f = tmpfile();
+  if (!f) {
+    debug1("transfer: raw_dcc_resend_send(): tmpfile(): error: %s", strerror(errno));
     return DCCSEND_BADFN;
+  }
+  if (copyfilef(filename, f)) {
+    fclose(f);
+    return DCCSEND_FCOPY;
+  }
 
   if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1) {
     fclose(f);
