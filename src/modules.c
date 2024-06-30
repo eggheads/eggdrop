@@ -60,11 +60,7 @@
 #    ifndef RTLD_NOW
 #      define RTLD_NOW 1
 #    endif
-#    ifdef RTLD_LAZY
-#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#    else
-#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#    endif
+#    define DLFLAGS RTLD_NOW|RTLD_GLOBAL
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
@@ -629,7 +625,8 @@ Function global_table[] = {
   (Function) & argv0,
   (Function) lookup_user_record,
 /* 324 - 327 */
-  (Function) find_member_from_nick
+  (Function) find_member_from_nick,
+  (Function) get_user_from_member,
 };
 
 void init_modules(void)
