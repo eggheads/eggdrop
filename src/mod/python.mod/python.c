@@ -43,6 +43,7 @@ static PyObject *pirp, *pglobals;
 
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
+static PyThreadState *_pythreadsave;
 #include "src/mod/python.mod/pycmds.c"
 #include "src/mod/python.mod/tclpython.c"
 
@@ -51,6 +52,16 @@ EXPORT_SCOPE char *python_start(Function *global_funcs);
 static int python_expmem()
 {
   return 0; // TODO
+}
+
+static int python_gil_unlock() {
+  _pythreadsave = PyEval_SaveThread();
+  return 0;
+}
+
+static int python_gil_lock() {
+  PyEval_RestoreThread(_pythreadsave);
+  return 0;
 }
 
 // TODO: Do we really have to exit eggdrop on module load failure?
@@ -63,7 +74,7 @@ static void init_python() {
     putlog(LOG_MISC, "*", "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
     return;
   }
-  PyConfig_InitIsolatedConfig(&config);
+  PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
@@ -112,12 +123,15 @@ static void kill_python() {
 
 static void python_report(int idx, int details)
 {
-  // TODO
+  if (details)
+    dprintf(idx, "    python version: %s (header version " PY_VERSION ")\n", Py_GetVersion());
 }
 
 static char *python_close()
 {
   Context;
+  del_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
+  del_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
   kill_python();
   rem_builtins(H_dcc, mydcc);
   rem_tcl_commands(my_tcl_cmds);
@@ -159,5 +173,8 @@ char *python_start(Function *global_funcs)
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_tcl_commands(my_tcl_cmds);
+  add_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
+  add_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
+
   return NULL;
 }

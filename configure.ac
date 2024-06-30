@@ -91,9 +91,8 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS_ONCE([sys/time.h])
 
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -165,7 +164,6 @@ EGG_TLS_DETECT
 EGG_TDNS_ENABLE
 
 # Check for Python
-EGG_PYTHON_ENABLE
 EGG_PYTHON_WITHCONFIG
 
 
