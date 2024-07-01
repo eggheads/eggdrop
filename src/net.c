@@ -27,6 +27,7 @@
 
 #include <fcntl.h>
 #include "main.h"
+#include "modules.h"
 #include <limits.h>
 #include <string.h>
 #include <netdb.h>
@@ -924,11 +925,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
+  call_hook(HOOK_PRE_SELECT);
   x = select((SELECT_TYPE_ARG1) maxfd + 1,
              SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
              SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
              SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
+  call_hook(HOOK_POST_SELECT);
   if (x == -1)
     return -2;                  /* socket error */
   if (x == 0)

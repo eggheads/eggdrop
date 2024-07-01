@@ -176,7 +176,8 @@ modules.o: modules.c main.h ../config.h ../eggint.h ../lush.h lang.h \
 net.o: net.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ modules.h mod/modvals.h
 rfc1459.o: rfc1459.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \

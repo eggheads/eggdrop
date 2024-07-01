@@ -240,15 +240,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-  if (m) {
-    u = get_user_from_member(m);
-  } else {
-    u = victim_or_account ? get_user_by_account(victim_or_account) : NULL;
-    if (!u) {
-      u = get_user_by_host(from);
-    }
-  }
-
+  u = lookup_user_record(m, victim_or_account, from);
   get_user_flagrec(u, &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
@@ -333,7 +325,6 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     chan->floodwho[which][0] = 0;
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
-    u = get_user_from_member(m);
     if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->dname))
       return 0;
     switch (which) {
@@ -1843,7 +1834,7 @@ static int gottopic(char *from, char *msg)
     if (m != NULL)
       m->last = now;
     set_topic(chan, msg);
-    u = get_user_from_member(m);
+    u = lookup_user_record(m, NULL, from); // TODO: get account from msgtags
     check_tcl_topc(nick, from, u, chan->dname, msg);
   }
   return 0;
@@ -2079,9 +2070,8 @@ static int gotjoin(char *from, char *channame)
         strlcpy(m->userhost, uhost, sizeof m->userhost);
         m->flags |= STOPWHO;
 
-        u = get_user_from_member(m);
-
         if (extjoin) {
+          u = lookup_user_record(m, account, from);
           /* calls check_tcl_account which can delete the channel */
           setaccount(nick, account);
 
@@ -2089,6 +2079,8 @@ static int gotjoin(char *from, char *channame)
             /* The channel doesn't exist anymore, so get out of here. */
             goto exit;
           }
+        } else {
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
         }
         check_tcl_join(nick, uhost, u, chan->dname);
 
@@ -2129,9 +2121,9 @@ static int gotjoin(char *from, char *channame)
           if (u) {
             struct laston_info *li = 0;
 
-            cr = get_chanrec(get_user_from_member(m), chan->dname);
+            cr = get_chanrec(u, chan->dname);
             if (!cr && no_chanrec_info)
-              li = get_user(&USERENTRY_LASTON, get_user_from_member(m));
+              li = get_user(&USERENTRY_LASTON, u);
             if (channel_greet(chan) && use_info &&
                 ((cr && now - cr->laston > wait_info) ||
                 (no_chanrec_info && (!li || now - li->laston > wait_info)))) {
@@ -2353,7 +2345,7 @@ static int gotkick(char *from, char *origmsg)
       return 0;
 
     m = ismember(chan, whodid);
-    u = get_user_from_member(m);
+    u = lookup_user_record(m, NULL, from); // TODO: get account from msgtags
     if (m)
       m->last = now;
     /* This _needs_ to use chan->dname <cybah> */
@@ -2569,7 +2561,6 @@ static int gotmsg(char *from, char *msg)
   int ctcp_count = 0, ignoring;
   struct chanset_t *chan;
   struct userrec *u;
-  memberlist *m;
 
   /* Only handle if message is to a channel, or to @#channel. */
   /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc. */
@@ -2613,15 +2604,7 @@ static int gotmsg(char *from, char *msg)
         ctcp_count++;
         if (ctcp[0] != ' ') {
           code = newsplit(&ctcp);
-          u = NULL;
-          for (chan = chanset; chan; chan = chan->next) {
-            for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-              if (!rfc_casecmp(m->nick, nick)) {
-                u = get_user_from_member(m);
-                break;
-              }
-            }
-          }
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
           if (!ignoring || trigger_on_ignore) {
             if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
               chan = findchan(realto);
@@ -2700,7 +2683,6 @@ static int gotnotice(char *from, char *msg)
   char *ctcp, *code;
   struct userrec *u;
   struct chanset_t *chan;
-  memberlist *m;
   int ignoring;
 
   if (!strchr(CHANMETA "@", *msg))
@@ -2714,15 +2696,7 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
-  u = NULL;
-  for (chan = chanset; chan; chan = chan->next) {
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!rfc_casecmp(m->nick, nick)) {
-        u = get_user_from_member(m);
-        break;
-      }
-    }
-  }
+  u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while (p && *p) {
