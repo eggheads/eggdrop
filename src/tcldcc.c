@@ -1134,7 +1134,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       else if (IN6_IS_ADDR_UNSPECIFIED(&ipaddr6) &&
                 (!IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
           Tcl_AppendResult(irp, "this port is already bound to a specific IP "
-                "on this machine, remove it before trying to bind to this all "
+                "on this machine, remove it before trying to bind to all "
                 "interfaces", NULL);
           return TCL_ERROR;
       }
