@@ -126,8 +126,7 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-volatile sig_atomic_t sig_hup, sig_quit, sig_ill, sig_fpe, sig_bus, sig_segv, sig_alrm, sig_term,
-                      do_restart = 0; /* .restart has been called, restart ASAP */
+volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
 
@@ -341,92 +340,74 @@ static void write_debug()
 }
 #endif /* DEBUG_CONTEXT */
 
-static void got_hup() {
-  sig_hup = 1;
+static void got_bus(int z)
+{
+  write_debug();
+  fatal("BUS ERROR -- CRASHING!", 1);
+  kill(getpid(), SIGBUS);
 }
 
-static void got_quit() {
-  sig_quit = 1;
+static void got_segv(int z)
+{
+  write_debug();
+  fatal("SEGMENT VIOLATION -- CRASHING!", 1);
+  kill(getpid(), SIGSEGV);
 }
 
-static void got_ill() {
-  sig_ill = 1;
+static void got_fpe(int z)
+{
+  write_debug();
+  fatal("FLOATING POINT ERROR -- CRASHING!", 0);
 }
 
-static void got_fpe() {
-  sig_fpe = 1;
+static void got_term(int z)
+{
+  /* Now we die by default on sigterm, but scripts have the chance to
+   * catch the event themselves and cancel shutdown by returning 1
+   */
+  if (check_tcl_signal("sigterm"))
+    return;
+  kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
 }
 
-static void got_bus() {
-  sig_bus = 1;
+static void got_quit(int z)
+{
+  if (check_tcl_signal("sigquit"))
+    return;
+  putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
+  do_restart = -1;
+  return;
 }
 
-static void got_segv() {
-  sig_segv = 1;
+static void got_hup(int z)
+{
+  write_userfile(-1);
+  if (check_tcl_signal("sighup"))
+    return;
+  putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
+  do_restart = -2;
+  return;
 }
 
-static void got_alrm() {
-  sig_alrm = 1;
+/* A call to resolver (gethostbyname, etc) timed out
+ */
+static void got_alarm(int z)
+{
+  siglongjmp(alarmret, 1);
+
+  /* -Never reached- */
 }
 
-static void got_term() {
-  sig_term = 1;
-}
-
-static void check_signals() {
-  if (sig_hup) {
-    write_userfile(-1);
-    if (check_tcl_signal("sighup"))
-      return;
-    putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
-    do_restart = -2;
-    sig_hup = 0;
-  }
-  if (sig_quit) {
-    if (check_tcl_signal("sigquit"))
-      return;
-    putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
-    do_restart = -1;
-    sig_quit = 0;
-  }
-  if (sig_ill) {
-    putlog(LOG_MISC, "*", "Received ILL signal: continuing...");
-    /* Got ILL signal -- log context and continue */
-    check_tcl_signal("sigill");
+/* Got ILL signal -- log context and continue
+ */
+static void got_ill(int z)
+{
+  check_tcl_signal("sigill");
 #ifdef DEBUG_CONTEXT
-    putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
-    putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-    putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
 #endif
-    sig_ill = 0;
-  }
-  if (sig_fpe) {
-    write_debug();
-    fatal("FLOATING POINT ERROR -- CRASHING!", 0);
-  }
-  if (sig_bus) {
-    write_debug();
-    fatal("BUS ERROR -- CRASHING!", 1);
-    kill(getpid(), SIGBUS);
-  }
-  if (sig_segv) {
-    write_debug();
-    fatal("SEGMENT VIOLATION -- CRASHING!", 1);
-    kill(getpid(), SIGSEGV);
-  }
-  if (sig_alrm) {
-    /* A call to resolver (gethostbyname, etc) timed out */
-    siglongjmp(alarmret, 1);
-    /* -Never reached- */
-  }
-  if (sig_term) {
-    /* Now we die by default on sigterm, but scripts have the chance to
-     * catch the event themselves and cancel shutdown by returning 1
-     */
-    if (check_tcl_signal("sigterm"))
-      return;
-    kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
-  }
 }
 
 #ifdef DEBUG_ASSERT
@@ -846,8 +827,6 @@ static void mainloop(int toplevel)
   } else if (xx == -5)
     eggbusy = 0;
 
-  check_signals();
-
   if (do_restart) {
     if (do_restart == -2)
       rehash();
@@ -1026,7 +1005,7 @@ int main(int arg_c, char **arg_v)
   sigaction(SIGPIPE, &sv, NULL);
   sv.sa_handler = got_ill;
   sigaction(SIGILL, &sv, NULL);
-  sv.sa_handler = got_alrm;
+  sv.sa_handler = got_alarm;
   sigaction(SIGALRM, &sv, NULL);
   // Added for python.mod because the _signal handler otherwise overwrites it
   // see https://discuss.python.org/t/asyncio-skipping-signal-handling-setup-during-import-for-python-embedded-context/37054/6
