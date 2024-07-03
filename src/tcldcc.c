@@ -1024,7 +1024,7 @@ static int tcl_connect STDVAR
 
 static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *maskproc, char *flag) {
   int i, idx = -1, port, realport, found=0, ipv4=1, error;
-  char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN];
+  char s[11], msg[256], newip[EGG_INET_ADDRSTRLEN], newip2[EGG_INET_ADDRSTRLEN];
   struct portmap *pmap = NULL, *pold = NULL;
   sockname_t name;
   struct in_addr ipaddr4;
@@ -1109,9 +1109,17 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
         if ((ipaddr4.s_addr != 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr == 0)) {
           Tcl_AppendResult(irp, "This port is already bound to 0.0.0.0 on this "
             "machine, remove it (using listen [ip] <port> off) before "
-            "trying to bind to this IP.", NULL);
-          if (do_restart == -2) /* do not exit eggdrop when rehashing */
+            "trying to bind to specific IP ",
+            inet_ntop(AF_INET, &ipaddr4.s_addr, newip, sizeof newip),
+            ".", NULL);
+          if (do_restart == -2) { /* do not exit eggdrop when rehashing */
+            putlog(LOG_MISC, "*", "WARNING: Port %i is already bound to "
+              "0.0.0.0 on this machine, remove it (using listen [ip] <port> "
+              "off) before trying to bind to specific IP %s, check listen settings "
+              "in config file or restart instead of rehash.", port,
+	      inet_ntop(AF_INET, &ipaddr4.s_addr, newip, sizeof newip));
             return TCL_OK;
+          }
           return TCL_ERROR;
         }
       }
@@ -1121,8 +1129,13 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
           Tcl_AppendResult(irp, "This port is already bound to :: on this "
             "machine, remove it (using listen [ip] <port> off) before "
             "trying to bind to this IP.", NULL);
-          if (do_restart == -2) /* do not exit eggdrop when rehashing */
+          if (do_restart == -2) { /* do not exit eggdrop when rehashing */
+            putlog(LOG_MISC, "*", "WARNING: Port %i is already bound to "
+              ":: on this machine, remove it (using listen [ip] <port> "
+              "off) before trying to bind to this IP, check listen settings "
+              "in config file or restart instead of rehash.", port);
             return TCL_OK;
+          }
           return TCL_ERROR;
       }
 #endif
@@ -1134,8 +1147,15 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
             inet_ntop(AF_INET, &dcc[idx].sockname.addr.s4.sin_addr, newip, sizeof newip),
             " on this machine, remove it (using listen [ip] <port> off) "
             "before trying to bind to all interfaces.", NULL);
-          if (do_restart == -2) /* do not exit eggdrop when rehashing */
+          if (do_restart == -2) { /* do not exit eggdrop when rehashing */
+            putlog(LOG_MISC, "*", "WARNING: Port %i is already bound to "
+              "specific IP %s on this machine, remove it (using listen [ip] <port> "
+              "off) before trying to bind to IP %s, check listen settings "
+              "in config file or restart instead of rehash.", port,
+              inet_ntop(AF_INET, &dcc[idx].sockname.addr.s4.sin_addr, newip, sizeof newip),
+              inet_ntop(AF_INET, &ipaddr4.s_addr, newip2, sizeof newip2));
             return TCL_OK;
+          }
           return TCL_ERROR;
         }
       }
@@ -1146,8 +1166,14 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
           inet_ntop(AF_INET6, &dcc[idx].sockname.addr.s6.sin6_addr, newip, sizeof newip),
           " on this machine, remove it (using listen [ip] <port> off) "
           "before trying to bind to all interfaces", NULL);
-        if (do_restart == -2) /* do not exit eggdrop when rehashing */
+        if (do_restart == -2) { /* do not exit eggdrop when rehashing */
+            putlog(LOG_MISC, "*", "WARNING: Port %i is already bound to "
+              "specific IP %s on this machine, remove it (using listen [ip] <port> "
+              "off) before trying to bind to this IP, check listen settings "
+              "in config file or restart instead of rehash.", port,
+              inet_ntop(AF_INET, &dcc[idx].sockname.addr.s6.sin6_addr, newip, sizeof newip));
           return TCL_OK;
+        }
         return TCL_ERROR;
       }
 #endif
