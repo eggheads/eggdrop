@@ -1108,8 +1108,10 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       if (ipv4) {
         if ((ipaddr4.s_addr != 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr == 0)) {
           Tcl_AppendResult(irp, "This port is already bound to 0.0.0.0 on this "
-                "machine, remove it (using listen [ip] <port> off) before "
-                "trying to bind to this IP.", NULL);
+            "machine, remove it (using listen [ip] <port> off) before "
+            "trying to bind to this IP.", NULL);
+          if (do_restart == -2) /* do not exit eggdrop when rehashing */
+            return TCL_OK;
           return TCL_ERROR;
         }
       }
@@ -1119,6 +1121,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
           Tcl_AppendResult(irp, "This port is already bound to :: on this "
             "machine, remove it (using listen [ip] <port> off) before "
             "trying to bind to this IP.", NULL);
+          if (do_restart == -2) /* do not exit eggdrop when rehashing */
+            return TCL_OK;
           return TCL_ERROR;
       }
 #endif
@@ -1130,6 +1134,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
             inet_ntop(AF_INET, &dcc[idx].sockname.addr.s4.sin_addr, newip, sizeof newip),
             " on this machine, remove it (using listen [ip] <port> off) "
             "before trying to bind to all interfaces.", NULL);
+          if (do_restart == -2) /* do not exit eggdrop when rehashing */
+            return TCL_OK;
           return TCL_ERROR;
         }
       }
@@ -1140,6 +1146,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
           inet_ntop(AF_INET6, &dcc[idx].sockname.addr.s6.sin6_addr, newip, sizeof newip),
           " on this machine, remove it (using listen [ip] <port> off) "
           "before trying to bind to all interfaces", NULL);
+        if (do_restart == -2) /* do not exit eggdrop when rehashing */
+          return TCL_OK;
         return TCL_ERROR;
       }
 #endif
