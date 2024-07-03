@@ -172,7 +172,7 @@ void fatal(const char *s, int recoverable)
 
   putlog(LOG_MISC, "*", "* %s", s);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].sock >= 0)
+    if (dcc[i].sock >= 0 && dcc[i].sock != STDOUT)
       killsock(dcc[i].sock);
 #ifdef TLS
   ssl_cleanup();
@@ -344,24 +344,14 @@ static void got_bus(int z)
 {
   write_debug();
   fatal("BUS ERROR -- CRASHING!", 1);
-#ifdef SA_RESETHAND
   kill(getpid(), SIGBUS);
-#else
-  bg_send_quit(BG_ABORT);
-  exit(1);
-#endif
 }
 
 static void got_segv(int z)
 {
   write_debug();
   fatal("SEGMENT VIOLATION -- CRASHING!", 1);
-#ifdef SA_RESETHAND
   kill(getpid(), SIGSEGV);
-#else
-  bg_send_quit(BG_ABORT);
-  exit(1);
-#endif
 }
 
 static void got_fpe(int z)
@@ -998,17 +988,11 @@ int main(int arg_c, char **arg_v)
   /* Set up error traps: */
   sv.sa_handler = got_bus;
   sigemptyset(&sv.sa_mask);
-#ifdef SA_RESETHAND
   sv.sa_flags = SA_RESETHAND;
-#else
-  sv.sa_flags = 0;
-#endif
   sigaction(SIGBUS, &sv, NULL);
   sv.sa_handler = got_segv;
   sigaction(SIGSEGV, &sv, NULL);
-#ifdef SA_RESETHAND
   sv.sa_flags = 0;
-#endif
   sv.sa_handler = got_fpe;
   sigaction(SIGFPE, &sv, NULL);
   sv.sa_handler = got_term;
