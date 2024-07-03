@@ -1107,16 +1107,18 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       /* Check if IP is specific, but the already-bound IP is all-interfaces */
       if (ipv4) {
         if ((ipaddr4.s_addr != 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr == 0)) {
-          Tcl_AppendResult(irp, "this port is already bound to 0.0.0.0 on this "
-                "machine, remove it before trying to bind to this IP", NULL);
+          Tcl_AppendResult(irp, "This port is already bound to 0.0.0.0 on this "
+                "machine, remove it (using listen [ip] <port> off) before "
+                "trying to bind to this IP.", NULL);
           return TCL_ERROR;
         }
       }
 #ifdef IPV6
       else if ((!IN6_IS_ADDR_UNSPECIFIED(&ipaddr6)) &&
                 (IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
-          Tcl_AppendResult(irp, "this port is already bound to :: on this "
-                "machine, remove it before trying to bind to this IP", NULL);
+          Tcl_AppendResult(irp, "This port is already bound to :: on this "
+            "machine, remove it (using listen [ip] <port> off) before "
+            "trying to bind to this IP.", NULL);
           return TCL_ERROR;
       }
 #endif
@@ -1124,20 +1126,20 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       /* Check if IP is all-interfaces, but the already-bound IP is specific */
       if (ipv4) {
         if ((ipaddr4.s_addr == 0) && (dcc[idx].sockname.addr.s4.sin_addr.s_addr != 0)) {
-          Tcl_AppendResult(irp, "this port is already bound to specific IP ",
+          Tcl_AppendResult(irp, "This port is already bound to specific IP ",
             inet_ntop(AF_INET, &dcc[idx].sockname.addr.s4.sin_addr, newip, sizeof newip),
-            " on this machine, remove it before trying to bind to all "
-            "interfaces", NULL);
+            " on this machine, remove it (using listen [ip] <port> off) "
+            "before trying to bind to all interfaces.", NULL);
           return TCL_ERROR;
         }
       }
 #ifdef IPV6
       else if (IN6_IS_ADDR_UNSPECIFIED(&ipaddr6) &&
                 (!IN6_IS_ADDR_UNSPECIFIED(&dcc[idx].sockname.addr.s6.sin6_addr))) {
-        Tcl_AppendResult(irp, "this port is already bound to specific IP ",
+        Tcl_AppendResult(irp, "This port is already bound to specific IP ",
           inet_ntop(AF_INET6, &dcc[idx].sockname.addr.s6.sin6_addr, newip, sizeof newip),
-          " on this machine, remove it before trying to bind to all "
-          "interfaces", NULL);
+          " on this machine, remove it (using listen [ip] <port> off) "
+          "before trying to bind to all interfaces", NULL);
         return TCL_ERROR;
       }
 #endif
@@ -1153,7 +1155,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     }
     /* Remove */
     if (idx < 0) {
-      Tcl_AppendResult(irp, "no such listen port is open", NULL);
+      Tcl_AppendResult(irp, "no such listen ip/port is open", NULL);
       return TCL_ERROR;
     }
     killsock(dcc[idx].sock);
