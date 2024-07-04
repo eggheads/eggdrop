@@ -126,7 +126,8 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[81];    /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
+volatile sig_atomic_t sig_quit, sig_hup,
+                      do_restart = 0; /* .restart has been called, restart ASAP */
 int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
 char quit_msg[1024];                  /* Quit message                           */
 
@@ -372,21 +373,12 @@ static void got_term(int z)
 
 static void got_quit(int z)
 {
-  if (check_tcl_signal("sigquit"))
-    return;
-  putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
-  do_restart = -1;
-  return;
+  sig_quit = 1;
 }
 
 static void got_hup(int z)
 {
-  write_userfile(-1);
-  if (check_tcl_signal("sighup"))
-    return;
-  putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
-  do_restart = -2;
-  return;
+  sig_hup = 1;
 }
 
 /* A call to resolver (gethostbyname, etc) timed out
@@ -408,6 +400,24 @@ static void got_ill(int z)
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
   putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
 #endif
+}
+
+static void check_signals() {
+  if (sig_quit) {
+    if (check_tcl_signal("sigquit"))
+      return;
+    putlog(LOG_MISC, "*", "Received QUIT signal: restarting...");
+    do_restart = -1;
+    sig_quit = 0;
+  }
+  if (sig_hup) {
+    write_userfile(-1);
+    if (check_tcl_signal("sighup"))
+      return;
+    putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
+    do_restart = -2;
+    sig_hup = 0;
+  }
 }
 
 #ifdef DEBUG_ASSERT
@@ -753,6 +763,7 @@ static void mainloop(int toplevel)
     cleanup--;
 
   xx = sockgets(buf, &i);
+  check_signals();
   if (xx >= 0) {              /* Non-error */
     int idx;
 
