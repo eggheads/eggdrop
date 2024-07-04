@@ -113,6 +113,7 @@ AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
 AC_CHECK_FUNCS([dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton isascii memset_s snprintf strlcpy vsnprintf])
+AC_CHECK_DECL([SA_RESETHAND], [], [], [[#include <signal.h>]])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP
