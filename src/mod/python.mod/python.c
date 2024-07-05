@@ -54,15 +54,10 @@ static int python_expmem()
 
 // TODO: Do we really have to exit eggdrop on module load failure?
 static char *init_python() {
-  static char s[41];
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
 
-  if (PY_VERSION_HEX < 0x03080000) {
-    snprintf(s, sizeof s, "Python version %x is lower than 3.8", PY_VERSION_HEX);
-    return s;
-  }
   PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
