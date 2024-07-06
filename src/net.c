@@ -976,7 +976,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       {
         if (slist[i].ssl) {
           x = SSL_read(slist[i].ssl, s, grab);
-          if (x < 0) {
+          if (!x && (SSL_get_shutdown(slist[i].ssl) == SSL_RECEIVED_SHUTDOWN)) {
+            *len = slist[i].sock;
+            slist[i].flags &= ~SOCK_CONNECT;
+            debug1("net: SSL_read(): received shutdown sock %i", slist[i].sock);
+            return -1;
+          } else if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
