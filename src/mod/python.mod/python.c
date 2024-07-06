@@ -52,7 +52,6 @@ static int python_expmem()
   return 0; // TODO
 }
 
-// TODO: Do we really have to exit eggdrop on module load failure?
 static char *init_python() {
   PyObject *pmodule;
   PyStatus status;
@@ -64,26 +63,22 @@ static char *init_python() {
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    putlog(LOG_MISC, "*", "Python: Fatal error: Could not set program base path");
-    Py_ExitStatusException(status);
+    return "Python: Fatal error: Could not set program base path";
   }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
-    putlog(LOG_MISC, "*", "Python: Error: could not extend in-built modules table");
-    exit(1);
+    PyConfig_Clear(&config);
+    return "Python: Error: could not extend in-built modules table";
   }
   status = Py_InitializeFromConfig(&config);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    putlog(LOG_MISC, "*", "Python: Fatal error: Could not initialize config");
-    fatal(1);
+    return "Python: Fatal error: Could not initialize config";
   }
   PyConfig_Clear(&config);
   PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
-    PyErr_Print();
-    putlog(LOG_MISC, "*", "Error: could not import module 'eggdrop'");
-    fatal(1);
+    return "Error: could not import module 'eggdrop'";
   }
 
   pirp = PyImport_AddModule("__main__");
