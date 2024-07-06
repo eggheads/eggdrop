@@ -274,7 +274,7 @@ xdetect-modules)
 				mc_new_mod_state=enabled
 			fi
 		fi
-		if test "${mc_new_mod_state}" = enabled && [[ -n $(find $mc_mod_bin_dir/${mc_mod}".mod" -name \*.c) ]]; then
+		if test "${mc_new_mod_state}" = enabled && test -n "`find $mc_mod_bin_dir/${mc_mod}.mod -name \*.c`"; then
 			${mc_self_call} -q add ${mc_mod}
 		else
 			${mc_self_call} -q del ${mc_mod}
