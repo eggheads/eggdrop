@@ -297,7 +297,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
+  (Function) memcpy,              /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -520,10 +520,10 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
+  (Function) memset,              /* was egg_memset -- use memset() or egg_bzero() instead */
+  (Function) strcasecmp,          /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
+  (Function) strncasecmp,         /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
