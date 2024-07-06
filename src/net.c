@@ -1224,9 +1224,10 @@ int sockgets(char *s, int *len)
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
-    socklist[ret].handler.sock.inbuf = nmalloc(strlen(p) + strlen(xx) + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, p);
-    strcat(socklist[ret].handler.sock.inbuf, xx);
+    len2 = strlen(p);
+    socklist[ret].handler.sock.inbuf = nmalloc(len2 + strlen(xx) + 1);
+    memcpy(socklist[ret].handler.sock.inbuf, p, len2);
+    strcpy(socklist[ret].handler.sock.inbuf + len2, xx);
     nfree(p);
     if (strlen(socklist[ret].handler.sock.inbuf) < READMAX + 2) {
       strcpy(xx, socklist[ret].handler.sock.inbuf);
@@ -1277,10 +1278,11 @@ int sockgets(char *s, int *len)
   /* Prepend old data back */
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
-    socklist[ret].handler.sock.inbuflen = strlen(p) + strlen(xx);
+    len2 = strlen(xx);
+    socklist[ret].handler.sock.inbuflen = len2 + strlen(p);
     socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, xx);
-    strcat(socklist[ret].handler.sock.inbuf, p);
+    memcpy(socklist[ret].handler.sock.inbuf, xx, len2);
+    strcpy(socklist[ret].handler.sock.inbuf + len2, p);
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);
