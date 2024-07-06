@@ -53,12 +53,6 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
 #ifdef STOP_UAC                         /* OSF/1 complains a lot */
 #  include <sys/sysinfo.h>
 #  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
@@ -129,7 +123,7 @@ int make_userfile = 0; /* Using bot in userfile-creation mode? */
 int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
 int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 
-char version[81];    /* Version info (long form)  */
+char version[128];   /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
 volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
@@ -718,7 +712,8 @@ int init_userent();
 int init_misc();
 int init_bots();
 int init_modules();
-void init_tcl(int, char **);
+void init_tcl0(int, char **);
+void init_tcl1(int, char **);
 void init_language(int);
 #ifdef TLS
 int ssl_init();
@@ -889,7 +884,7 @@ static void mainloop(int toplevel)
       }
 
       kill_tcl();
-      init_tcl(argc, argv);
+      init_tcl1(argc, argv);
       init_language(0);
 
       /* this resets our modules which we didn't unload (encryption and uptime) */
@@ -977,15 +972,15 @@ int main(int arg_c, char **arg_v)
 #ifdef EGG_PATCH
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER, EGG_PATCH);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #endif
 
 /* For OSF/1 */
@@ -1024,6 +1019,10 @@ int main(int arg_c, char **arg_v)
   sigaction(SIGILL, &sv, NULL);
   sv.sa_handler = got_alarm;
   sigaction(SIGALRM, &sv, NULL);
+  // Added for python.mod because the _signal handler otherwise overwrites it
+  // see https://discuss.python.org/t/asyncio-skipping-signal-handling-setup-during-import-for-python-embedded-context/37054/6
+  sv.sa_handler = got_term;
+  sigaction(SIGINT, &sv, NULL);
 
   /* Initialize variables and stuff */
   now = time(NULL);
@@ -1033,6 +1032,7 @@ int main(int arg_c, char **arg_v)
   init_mem();
   if (argc > 1)
     do_arg();
+  init_tcl0(argc, argv);
   init_language(1);
 
   printf("\n%s\n", version);
@@ -1052,7 +1052,7 @@ int main(int arg_c, char **arg_v)
   init_modules();
   if (backgrd)
     bg_prepare_split();
-  init_tcl(argc, argv);
+  init_tcl1(argc, argv);
   init_language(0);
 #ifdef STATIC
   link_statics();

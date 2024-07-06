@@ -183,12 +183,8 @@
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
+#include <sys/time.h> /* gettimeofday() POSIX 2001 */
+#include <time.h> /* POSIX 2001 */
 
 /* Yikes...who would have thought finding a usable random() would be so much
  * trouble?
