@@ -60,11 +60,7 @@
 #    ifndef RTLD_NOW
 #      define RTLD_NOW 1
 #    endif
-#    ifdef RTLD_LAZY
-#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#    else
-#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#    endif
+#    define DLFLAGS RTLD_NOW|RTLD_GLOBAL
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
@@ -301,7 +297,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
+  (Function) memcpy,              /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -524,10 +520,10 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
+  (Function) memset,              /* was egg_memset -- use memset() or egg_bzero() instead */
+  (Function) strcasecmp,          /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
+  (Function) strncasecmp,         /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
@@ -627,8 +623,10 @@ Function global_table[] = {
   (Function) bind_bind_entry,
   (Function) unbind_bind_entry,
   (Function) & argv0,
-  (Function) get_user_from_member
+  (Function) lookup_user_record,
 /* 324 - 327 */
+  (Function) find_member_from_nick,
+  (Function) get_user_from_member,
 };
 
 void init_modules(void)
