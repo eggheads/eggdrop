@@ -31,7 +31,6 @@
 #undef interp
 #define tclinterp (*(Tcl_Interp **)(global[128]))
 #undef days
-#include <stdlib.h>
 #include <Python.h>
 #include <datetime.h>
 #include "src/mod/irc.mod/irc.h"
@@ -64,42 +63,33 @@ static int python_gil_lock() {
   return 0;
 }
 
-// TODO: Do we really have to exit eggdrop on module load failure?
-static void init_python() {
+static char *init_python() {
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
 
-  if (PY_VERSION_HEX < 0x0308) {
-    putlog(LOG_MISC, "*", "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
-    return;
-  }
   PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    putlog(LOG_MISC, "*", "Python: Fatal error: Could not set program base path");
-    Py_ExitStatusException(status);
+    return "Python: Fatal error: Could not set program base path";
   }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
-    putlog(LOG_MISC, "*", "Python: Error: could not extend in-built modules table");
-    exit(1);
+    PyConfig_Clear(&config);
+    return "Python: Error: could not extend in-built modules table";
   }
   status = Py_InitializeFromConfig(&config);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    putlog(LOG_MISC, "*", "Python: Fatal error: Could not initialize config");
-    fatal(1);
+    return "Python: Fatal error: Could not initialize config";
   }
   PyConfig_Clear(&config);
   PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
-    PyErr_Print();
-    putlog(LOG_MISC, "*", "Error: could not import module 'eggdrop'");
-    fatal(1);
+    return "Error: could not import module 'eggdrop'";
   }
 
   pirp = PyImport_AddModule("__main__");
@@ -111,7 +101,7 @@ static void init_python() {
   PyRun_SimpleString("import eggdrop");
   PyRun_SimpleString("sys.displayhook = eggdrop.__displayhook__");
 
-  return;
+  return NULL;
 }
 
 static void kill_python() {
@@ -148,6 +138,7 @@ static Function python_table[] = {
 
 char *python_start(Function *global_funcs)
 {
+  char *s;
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
@@ -168,7 +159,8 @@ char *python_start(Function *global_funcs)
   }
   // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
 
-  init_python();
+  if ((s = init_python()))
+    return s;
 
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
