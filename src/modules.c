@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include <signal.h>
 #include "main.h"
 #include "modules.h"
@@ -694,6 +695,7 @@ int module_register(char *name, Function *funcs, int major, int minor)
 
 const char *module_load(char *name)
 {
+  size_t len;
   module_entry *p;
   char *e;
   Function f;
@@ -702,7 +704,7 @@ const char *module_load(char *name)
 #endif
 
 #ifndef STATIC
-  char workbuf[1024];
+  char workbuf[PATH_MAX];
 #  ifdef MOD_USE_SHL
   shl_t hand;
 #  endif
@@ -728,11 +730,14 @@ const char *module_load(char *name)
 
 #ifndef STATIC
   if (moddir[0] != '/') {
-    if (getcwd(workbuf, 1024) == NULL)
+    if (getcwd(workbuf, sizeof workbuf) == NULL) {
+      debug1("modules: getcwd(): %s\n", strerror(errno));
       return MOD_BADCWD;
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
+    }
+    len = strlen(workbuf);
+    snprintf(workbuf + len, (sizeof workbuf) - len, "/%s%s." EGG_MOD_EXT, moddir, name);
   } else {
-    sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
+    snprintf(workbuf, sizeof workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
   }
 
 #  ifdef MOD_USE_SHL
