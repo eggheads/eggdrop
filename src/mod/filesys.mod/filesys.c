@@ -48,12 +48,6 @@
 #  endif
 #endif
 
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
 #include "filedb3.h"
 #include "filesys.h"
 #include "src/tandem.h"
