@@ -39,8 +39,11 @@
 #define HOOK_LOADED              13
 #define HOOK_BACKUP              14
 #define HOOK_DIE                 15
-#define HOOK_RESET_MEMBER        16
-#define REAL_HOOKS               17
+#define HOOK_PRE_SELECT          16
+#define HOOK_POST_SELECT         17
+#define HOOK_RESET_MEMBER        18
+#define REAL_HOOKS               19
+
 #define HOOK_SHAREOUT           105
 #define HOOK_SHAREIN            106
 #define HOOK_ENCRYPT_PASS       107
