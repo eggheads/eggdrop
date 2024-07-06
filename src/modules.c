@@ -64,8 +64,6 @@
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
 
-#define strncpyz strlcpy
-
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
@@ -591,7 +589,7 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
+  (Function) strlcpy,             /* was strncpyz() -- use strlcpy() instead */
 #ifndef HAVE_BASE64
   (Function) b64_ntop,
   (Function) b64_pton,
