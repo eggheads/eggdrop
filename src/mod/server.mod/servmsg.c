@@ -493,7 +493,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
-  u = get_user_by_host(from);
+  u = lookup_user_record(NULL, NULL, from); // TODO: get account somehow
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
     return 0;
@@ -539,7 +539,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     lastmsgs[which] = 0;
     lastmsgtime[which] = 0;
     lastmsghost[which][0] = 0;
-    u = get_user_by_host(from);
+    u = lookup_user_record(NULL, NULL, from); // TODO: get account somehow
     if (check_tcl_flud(floodnick, floodhost, u, ftype, "*"))
       return 0;
     /* Private msg */
@@ -607,7 +607,7 @@ static int gotmsg(char *from, char *msg)
               putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
                      code, ctcp, nick, uhost, to);
           } else {
-            u = get_user_by_host(from);
+            u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
                 if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
@@ -670,7 +670,7 @@ static int gotmsg(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-    u = get_user_by_host(from);
+    u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
     code = newsplit(&msg);
     rmspace(msg);
 
@@ -730,7 +730,7 @@ static int gotnotice(char *from, char *msg)
                    "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
                    nick, uhost, to);
         } else {
-          u = get_user_by_host(from);
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
           if (!ignoring || trigger_on_ignore) {
             check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
             if (!ignoring)
@@ -766,7 +766,7 @@ static int gotnotice(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_NOTICE);
-    u = get_user_by_host(from);
+    u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
 
     if (!ignoring || trigger_on_ignore)
       if (check_tcl_notc(nick, uhost, u, botname, msg) == 2)
