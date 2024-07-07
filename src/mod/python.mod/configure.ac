@@ -21,6 +21,7 @@ python_avail="false"
 
 if test "x$egg_enable_python" != "xno"; then
   if test "x$egg_with_python_config" = "x"; then
+    # based on serial 20 https://www.gnu.org/software/autoconf-archive/ax_python.html
     AC_PATH_PROGS([python_config_bin], [python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python3.7-config python3.6-config python3.5-config python3.4-config python3.3-config python3.2-config python3.1-config python3.0-config python3-config python2.7 python2.6 python2.5 python2.4 python2.3 python2.2 python2.1 python-config])
   else
     if test -d "$egg_with_python_config"; then
