@@ -465,7 +465,7 @@ proc achannels {{attr ""}} {
   } else {
     if {[catch {set atype [chansettype $attr]}]} { set atype "unknow" }
     if {$atype ne "flag"} {
-      throw {TCL ATTRUNK "$attr is unknow or not flag attribute"} "$attr is unknow or not flag attribute"
+      throw {TCL ATTRUNK "$attr is unknown or not flag attribute"} "$attr is unknown or not flag attribute"
       return
     }
     foreach c [channels] {
