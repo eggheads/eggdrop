@@ -1908,11 +1908,11 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
   }
   if ( !type && !glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
-    dprintf(idx, "You cannot add %s matching another user!\n",
-            type ? "an account" : "a host");
+    dprintf(idx, "You cannot add a host matching another user!\n");
     return 1;
   }
   if (type) {
+    // host-variable contains account
     u2 = get_user_by_account(host);
     if (u2) {
       dprintf(idx, "That account already exists for user %s\n", u2->handle);
@@ -1920,6 +1920,7 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
     addaccount_by_handle(handle, host);
   } else {
+    // host
     for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next) {
       if (!strcasecmp(q->extra, host)) {
         dprintf(idx, "That %s is already there.\n",
