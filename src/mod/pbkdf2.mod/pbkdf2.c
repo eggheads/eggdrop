@@ -10,7 +10,7 @@
 #include "src/mod/module.h"
 
 #if OPENSSL_VERSION_NUMBER >= 0x1000000fL /* 1.0.0 */
-#include "src/mod/pbkdf2.mod/tclpbkdf2.c"
+#include "tclpbkdf2.c"
 
 #define MODULE_NAME "encryption2"
 
