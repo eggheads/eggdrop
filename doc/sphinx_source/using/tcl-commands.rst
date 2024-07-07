@@ -2200,6 +2200,26 @@ setflags <dir> [<flags> [channel]]
 
   Module: filesys
 
+PBKDF2 Module
+-------------
+
+^^^^^^^^^^^^^^^
+encpass2 <pass>
+^^^^^^^^^^^^^^^
+
+
+  Returns: a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
+
+  Module: pbkdf2
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
+
+  Module: pbkdf2
+
 Miscellaneous Commands
 ----------------------
 
