@@ -260,7 +260,7 @@ static void uf_features_parse(int idx, char *par)
         len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
       } else {
         /* quirk workaround: add trailing whitespace */
-	len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
+        len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
         uff_sbuf[len++] = ' ';
       }
     }
@@ -290,7 +290,7 @@ static char *uf_features_dump(int idx)
         len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
       } else {
         /* quirk workaround: add trailing whitespace */
-	len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
+        len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
         uff_sbuf[len++] = ' ';
       }
     }
