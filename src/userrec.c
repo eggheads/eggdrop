@@ -171,6 +171,23 @@ static struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
+/* Search every channel record for the provided nickname. Used in cases where
+ * we are searching for a user record but don't have a memberlist to start from
+ */
+memberlist *find_member_from_nick(char *nick) {
+  struct chanset_t *chan;
+  memberlist *m = NULL;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      if (!rfc_casecmp(m->nick, nick)) {
+        return m;
+      }
+    }
+  }
+  return m;
+}
+
 /* Search userlist for a provided account name
  * Returns: userrecord for user containing the account
  */
@@ -252,6 +269,43 @@ struct userrec *get_user_from_member(memberlist *m)
 getuser_done:
   m->user = ret;
   m->tried_getuser = 1;
+  return NULL;
+}
+
+/* Wrapper function to find an Eggdrop user record based on either a provided
+ * channel memberlist record, host, or account. This function will first check
+ * a provided memberlist and return the result. If no user record is found (or
+ * the memberlist itself was NULL), this function will try again based on a
+ * provided account, and then again on a provided host.
+ *
+ * When calling this function it is best to provide all available independent
+ * variables- ie, if you provide 'm' for the memberlist, don't provide
+ * 'm->account' for the account, use the independent source variable 'account'
+ * if available. This allows redundant checking in case of unexpected NULLs
+ */
+struct userrec *lookup_user_record(memberlist *m, char *host, char *account)
+{
+  struct userrec *u = NULL;
+
+/* First check for a user record tied to a memberlist */
+  if (m) {
+    u = get_user_from_member(m);
+    if (u) {
+      return u;
+    }
+  }
+/* Next check for a user record tied to an account */
+  if (account && account[0]) {
+    u = get_user_by_account(account);
+    if (u) {
+      return u;
+    }
+  }
+/* Last check for a user record tied to a hostmask */
+  if (host && host[0]) {
+    u = get_user_by_host(host);
+    return u;
+  }
   return NULL;
 }
 
