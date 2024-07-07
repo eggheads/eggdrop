@@ -123,7 +123,7 @@ int make_userfile = 0; /* Using bot in userfile-creation mode? */
 int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
 int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 
-char version[81];    /* Version info (long form)  */
+char version[128];   /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
 volatile sig_atomic_t sig_quit, sig_hup,
@@ -977,15 +977,15 @@ int main(int arg_c, char **arg_v)
 #ifdef EGG_PATCH
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER, EGG_PATCH);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #endif
 
 /* For OSF/1 */
