@@ -91,7 +91,6 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_HEADER_RESOLV
 
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h time.h unistd.h wchar.h])
 
