@@ -1270,12 +1270,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
    * present in the channel and has op.
    */
 
-  if (m->user)
-    u = m->user;
-  else {
-    simple_sprintf(buf, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(buf);
-  }
+  u = get_user_from_member(m);
   /* Do not expire masks set by bots. */
   if (u && u->flags & USER_BOT)
     return 0;
