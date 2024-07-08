@@ -27,6 +27,7 @@
 
 #include <fcntl.h>
 #include "main.h"
+#include "modules.h"
 #include <limits.h>
 #include <string.h>
 #include <netdb.h>
@@ -924,11 +925,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
+  call_hook(HOOK_PRE_SELECT);
   x = select((SELECT_TYPE_ARG1) maxfd + 1,
              SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
              SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
              SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
+  call_hook(HOOK_POST_SELECT);
   if (x == -1)
     return -2;                  /* socket error */
   if (x == 0)
@@ -973,7 +976,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       {
         if (slist[i].ssl) {
           x = SSL_read(slist[i].ssl, s, grab);
-          if (x < 0) {
+          if (!x && (SSL_get_shutdown(slist[i].ssl) == SSL_RECEIVED_SHUTDOWN)) {
+            *len = slist[i].sock;
+            slist[i].flags &= ~SOCK_CONNECT;
+            debug1("net: SSL_read(): received shutdown sock %i", slist[i].sock);
+            return -1;
+          } else if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
@@ -1216,9 +1224,10 @@ int sockgets(char *s, int *len)
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
-    socklist[ret].handler.sock.inbuf = nmalloc(strlen(p) + strlen(xx) + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, p);
-    strcat(socklist[ret].handler.sock.inbuf, xx);
+    len2 = strlen(p);
+    socklist[ret].handler.sock.inbuf = nmalloc(len2 + strlen(xx) + 1);
+    memcpy(socklist[ret].handler.sock.inbuf, p, len2);
+    strcpy(socklist[ret].handler.sock.inbuf + len2, xx);
     nfree(p);
     if (strlen(socklist[ret].handler.sock.inbuf) < READMAX + 2) {
       strcpy(xx, socklist[ret].handler.sock.inbuf);
@@ -1269,10 +1278,11 @@ int sockgets(char *s, int *len)
   /* Prepend old data back */
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
-    socklist[ret].handler.sock.inbuflen = strlen(p) + strlen(xx);
+    len2 = strlen(xx);
+    socklist[ret].handler.sock.inbuflen = len2 + strlen(p);
     socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, xx);
-    strcat(socklist[ret].handler.sock.inbuf, p);
+    memcpy(socklist[ret].handler.sock.inbuf, xx, len2);
+    strcpy(socklist[ret].handler.sock.inbuf + len2, p);
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);

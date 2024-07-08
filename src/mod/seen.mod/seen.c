@@ -73,12 +73,6 @@
 
 #include "src/mod/module.h"
 
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
 #include "src/users.h"
 #include "src/chan.h"
 #include "channels.mod/channels.h"
