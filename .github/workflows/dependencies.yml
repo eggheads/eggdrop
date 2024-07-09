@@ -28,7 +28,7 @@ jobs:
     - name: Build
       run: ./configure --with-tcl=$HOME/tcl/lib && LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop
   ssl-version-098:
-    name: OpenSSL 0.9.8zh
+    name: OpenSSL 0.9.8
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
