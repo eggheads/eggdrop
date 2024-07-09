@@ -2,7 +2,7 @@ dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
 AC_PREREQ([2.71])
 AC_INIT([Eggdrop],[1.9.5],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
-AC_COPYRIGHT([Copyright (C) 1999 - 2024 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2025 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
 AC_CONFIG_SRCDIR(src/eggdrop.h)
