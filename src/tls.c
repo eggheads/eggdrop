@@ -113,10 +113,13 @@ void verify_cert_expiry(int idx) {
   X509 *x509;
   if ((x509 = SSL_CTX_get0_certificate(ssl_ctx)) &&
       (ASN1_TIME_cmp_time_t(X509_get0_notAfter(x509), time(NULL)) < 0)) {
-    if (idx)
-        dprintf(idx, "WARNING: certificate expired: %s\n", tls_certfile);
-    else
-      putlog(LOG_MISC, "*", "WARNING: certificate expired: %s", tls_certfile);
+    if (idx) {
+      dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
+      dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n");
+    } else {
+      putlog(LOG_MISC, "*", "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
+      putlog(LOG_MISC, "*", "You can generate new certificates by running 'make sslcert' from the source directory\n");
+    }
   }
 }
 
