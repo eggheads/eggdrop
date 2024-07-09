@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,8 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
 
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
-void truncate_mask_hostname(char *s) {
-char *r = NULL;
+static void truncate_mask_hostname(char *s) {
+  char *r = NULL;
 
   if ( (r = strchr(s, '@')) ) {
     r++;
@@ -1191,7 +1191,7 @@ static void cmd_mns_chrec(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_chan(struct userrec *u, int idx, char *par)
 {
-  int i, argc;
+  Tcl_Size i, argc;
   EGG_CONST char **argv;
   char *chname;
   struct chanset_t *chan;

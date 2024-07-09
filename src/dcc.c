@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 
 #include "main.h"
 #include <errno.h>
-#include "modules.h"
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
@@ -355,10 +354,25 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
          dcc[idx].nick);
 }
 
+static char *get_bot_pass(struct userrec *u) {
+    char *pass2 = get_user(&USERENTRY_PASS2, u);
+    char *pass = get_user(&USERENTRY_PASS, u);
+    if (pass2) {
+      if (!pass) {
+        pass = pass2;
+        if (encrypt_pass)
+          set_user(&USERENTRY_PASS, u, pass);
+      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        pass = pass2;
+    } else if (pass && encrypt_pass2)
+        set_user(&USERENTRY_PASS2, u, pass);
+    return pass;
+}
+
 static void dcc_bot_new(int idx, char *buf, int x)
 {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
-  char *code, *pass2 = NULL, *pass = NULL;
+  char *code, *pass;
 
   if (raw_log) {
     if (!strncmp(buf, "s ", 2))
@@ -376,17 +390,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     /* We entered the wrong password */
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   else if (!strcasecmp(code, "passreq")) {
-    pass2 = get_user(&USERENTRY_PASS2, u);
-    pass = get_user(&USERENTRY_PASS, u);
-    if (pass2) {
-      if (!pass) {
-        pass = pass2;
-        if (encrypt_pass)
-          set_user(&USERENTRY_PASS, u, pass);
-      } else if (strcmp(pass2, pass) && encrypt_pass2)
-        pass = pass2;
-    } else if (pass && encrypt_pass2)
-        set_user(&USERENTRY_PASS2, u, pass);
+    pass = get_bot_pass(u);
     if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
@@ -596,7 +600,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   char digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
   int i, ret;
-  char *password = get_user(&USERENTRY_PASS, dcc[idx].user);
+  char *password = get_bot_pass(dcc[idx].user);
 
   if (!password)
     return 1;
@@ -1269,7 +1273,7 @@ static void dcc_telnet(int idx, char *buf, int i)
     putlog(LOG_MISC, "*", DCC_FAILED, strerror(errno));
     return;
   }
-  /* Buffer data received on this socket.  */
+  /* Buffer data received on this socket. */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
   if (port < 1024) {
@@ -1601,8 +1605,16 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 #endif
   /* Make sure users-only/bots-only connects are honored */
   if ((dcc[idx].status & STAT_BOTONLY) && !glob_bot(fr)) {
-    dprintf(idx, "This telnet port is for bots only.\n");
-    putlog(LOG_BOTS, "*", DCC_NONBOT, dcc[idx].host);
+    if (dcc[idx].user) {
+      dprintf(idx, "%s\n", DCC_NONBOT2);
+      putlog(LOG_BOTS, "*", DCC_NONBOT, dcc[idx].host);
+    }
+    else {
+      if (!stealth_telnets) {
+        dprintf(idx, "You don't have access.\n");
+      }
+      putlog(LOG_MISC, "*", DCC_INVHANDLE, dcc[idx].host, buf);
+    }
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1610,7 +1622,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   if ((dcc[idx].status & STAT_USRONLY) && glob_bot(fr)) {
     /* change here temp to use bot output */
     dcc[idx].type = &DCC_BOT_NEW;
-    dprintf(idx, "error Only users may connect at this port.\n");
+    dprintf(idx, "%s\n", DCC_NONUSER2);
     dcc[idx].type = old;
     putlog(LOG_BOTS, "*", DCC_NONUSER, dcc[idx].host);
     killsock(dcc[idx].sock);
@@ -1635,7 +1647,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     ok = 1;
 
   if (!ok) {
-    dprintf(idx, "You don't have access.\n");
+    if (!stealth_telnets)
+      dprintf(idx, "You don't have access.\n");
     putlog(LOG_MISC, "*", DCC_INVHANDLE, dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
