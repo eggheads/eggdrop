@@ -705,7 +705,9 @@ static void core_secondly()
             movefile(logs[i].filename, s);
           }
       }
+#ifdef TLS
       verify_cert_expiry(0);
+#endif
     }
   }
 }
