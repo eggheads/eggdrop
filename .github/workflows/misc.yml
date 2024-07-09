@@ -26,7 +26,7 @@ jobs:
       run: |
         git diff | tee .gitdiff
         if [ -s .gitdiff ]; then
-          git commit -a -m 'Run autoconf' && git push || (echo "Please run misc/runautotools"; exit 1)
+          exit 1
         fi
   makedepend-check:
     name: Check if misc/makedepend needs to be run
@@ -41,5 +41,5 @@ jobs:
       run: |
         git diff | tee .gitdiff
         if [ -s .gitdiff ]; then
-          git commit -a -m 'Run makedepend' && git push || (echo "Please run misc/makedepend"; exit 1)
+          exit 1
         fi
