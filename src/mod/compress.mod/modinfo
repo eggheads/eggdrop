@@ -1,5 +1,5 @@
-DESC:The compress module provides support for file compression. With share
-DESC:module loaded this allows the bot to transfer compressed user files and
+DESC:The compress module provides support for file compression. With the share
+DESC:module loaded, this allows the bot to transfer compressed user files and
 DESC:therefore saves a significant amount of bandwidth, especially on very
 DESC:active hubs.  The module depends on the zlib library.
 DESC:
