@@ -112,15 +112,28 @@ static int ssl_seed(void)
 void verify_cert_expiry(int idx) {
   X509 *x509;
 
-  if ((x509 = SSL_CTX_get0_certificate(ssl_ctx)) &&
-      (X509_cmp_current_time(X509_get_notAfter(x509)) < 0)) {
-    if (idx) {
-      dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
-      dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n\n");
-    } else {
-      putlog(LOG_MISC, "*", "\nWARNING: SSL/TLS certificate %s expired", tls_certfile);
-      putlog(LOG_MISC, "*", "You can generate new certificates by running 'make sslcert' from the source directory\n");
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+  x509 = SSL_CTX_get0_certificate(ssl_ctx);
+#else
+  BIO *bio = BIO_new_file(tls_certfile, "r");
+  if (!bio)
+    return;
+  x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
+#endif
+  if (x509) {
+    if (X509_cmp_current_time(X509_get_notAfter(x509)) < 0) {
+      if (idx) {
+        dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
+        dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n\n");
+      } else {
+        putlog(LOG_MISC, "*", "\nWARNING: SSL/TLS certificate %s expired", tls_certfile);
+        putlog(LOG_MISC, "*", "You can generate new certificates by running 'make sslcert' from the source directory\n");
+      }
     }
+#if OPENSSL_VERSION_NUMBER < 0x10002000L /* 1.0.2 */
+  X509_free(x509);
+  BIO_free(bio);
+#endif
   }
 }
 
