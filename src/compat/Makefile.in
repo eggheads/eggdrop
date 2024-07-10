@@ -43,20 +43,11 @@ compat: $(OBJS)
 base64.o: base64.c ../../config.h
 explicit_bzero.o: explicit_bzero.c ../../config.h
 in6.o: in6.c in6.h
-inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../eggint.h \
- ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
- ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
- ../../src/cmdt.h ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
- ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
- ../../src/compat/inet_aton.h ../../src/main.h \
- ../../src/compat/snprintf.h ../../src/compat/explicit_bzero.h \
- ../../src/compat/strlcpy.h inet_aton.h
 snprintf.o: snprintf.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
  ../../src/cmdt.h ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
- ../../src/compat/inet_aton.h ../../src/main.h \
- ../../src/compat/snprintf.h ../../src/compat/explicit_bzero.h \
- ../../src/compat/strlcpy.h snprintf.h
+ ../../src/compat/snprintf.h ../../src/main.h \
+ ../../src/compat/explicit_bzero.h ../../src/compat/strlcpy.h snprintf.h
 strlcpy.o: strlcpy.c ../../config.h
