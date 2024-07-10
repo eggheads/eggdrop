@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2021 Eggheads Development Team
+ * Copyright (C) 2019 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,7 +75,7 @@ static void ident_activity(int idx, char *buf, int len)
     if (i < 0)
       putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     else
-      putlog(LOG_MISC, "*", "Ident error: Wrote %i bytes instead of %i bytes.", i, count);
+      putlog(LOG_MISC, "*", "Ident error: Wrote %ld bytes instead of %ld bytes.", (long)i, (long)count);
     return;
   }
   putlog(LOG_MISC, "*", "Ident: Responded.");
@@ -97,6 +97,7 @@ static struct dcc_table DCC_IDENTD = {
   ident_display,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
@@ -106,12 +107,8 @@ static void ident_oidentd()
   FILE *fd;
   long filesize;
   char *data = NULL;
-  char path[121], line[256], buf[256], identstr[256];
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
+  char path[PATH_MAX], line[256], buf[256], identstr[256];
+  char s[EGG_INET_ADDRSTRLEN];
   int ret, prevtime, servidx, i;
   socklen_t namelen;
   struct sockaddr_storage ss;
@@ -193,16 +190,16 @@ static void ident_oidentd()
     }
     if (ss.ss_family == AF_INET) {
       struct sockaddr_in *saddr = (struct sockaddr_in *)&ss;
-      fprintf(fd, "lport %i from %s { reply \"%s\" } "
+      fprintf(fd, "lport %" PRIu16 " from %s { reply \"%s\" } "
                 "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin_port),
-                inet_ntop(AF_INET, &(saddr->sin_addr), s, INET_ADDRSTRLEN),
+                inet_ntop(AF_INET, &(saddr->sin_addr), s, sizeof s),
                 botuser, pid_file, (int64_t) now);
 #ifdef IPV6
     } else if (ss.ss_family == AF_INET6) {
       struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)&ss;
-      fprintf(fd, "lport %i from %s { reply \"%s\" } "
+      fprintf(fd, "lport %" PRIu16 " from %s { reply \"%s\" } "
                 "### eggdrop_%s !%" PRId64 "\n", ntohs(saddr->sin6_port),
-                inet_ntop(AF_INET6, &(saddr->sin6_addr), s, INET6_ADDRSTRLEN),
+                inet_ntop(AF_INET6, &(saddr->sin6_addr), s, sizeof s),
                 botuser, pid_file, (int64_t) now);
 #endif
     } else {
@@ -295,7 +292,7 @@ char *ident_start(Function *global_funcs)
 {
   global = global_funcs;
 
-  module_register(MODULE_NAME, ident_table, 0, 9);
+  module_register(MODULE_NAME, ident_table, 1, 0);
 
   if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);

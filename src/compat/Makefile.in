@@ -17,8 +17,7 @@ STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) -I$(top_srcdir)/src @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 
-OBJS = base64.o explicit_bzero.o gethostbyname2.o in6.o inet_aton.o snprintf.o \
-       strlcpy.o
+OBJS = base64.o explicit_bzero.o in6.o inet_aton.o snprintf.o strlcpy.o
 
 doofus:
 	@echo ""
@@ -43,15 +42,6 @@ compat: $(OBJS)
 #safety hash
 base64.o: base64.c ../../config.h
 explicit_bzero.o: explicit_bzero.c ../../config.h
-gethostbyname2.o: gethostbyname2.c gethostbyname2.h ../../src/main.h \
- ../../config.h ../../eggint.h ../../lush.h ../../src/lang.h \
- ../../src/eggdrop.h ../../src/compat/in6.h ../../src/flags.h \
- ../../src/proto.h ../../src/misc_file.h ../../src/cmdt.h \
- ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
- ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
- ../../src/compat/inet_aton.h ../../src/compat/snprintf.h \
- ../../src/compat/gethostbyname2.h ../../src/compat/explicit_bzero.h \
- ../../src/compat/strlcpy.h
 in6.o: in6.c in6.h
 inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
@@ -59,14 +49,14 @@ inet_aton.o: inet_aton.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/cmdt.h ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
  ../../src/compat/inet_aton.h ../../src/main.h \
- ../../src/compat/snprintf.h ../../src/compat/gethostbyname2.h \
- ../../src/compat/explicit_bzero.h ../../src/compat/strlcpy.h inet_aton.h
+ ../../src/compat/snprintf.h ../../src/compat/explicit_bzero.h \
+ ../../src/compat/strlcpy.h inet_aton.h
 snprintf.o: snprintf.c ../../src/main.h ../../config.h ../../eggint.h \
  ../../lush.h ../../src/lang.h ../../src/eggdrop.h ../../src/compat/in6.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
  ../../src/cmdt.h ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
  ../../src/compat/inet_aton.h ../../src/main.h \
- ../../src/compat/snprintf.h ../../src/compat/gethostbyname2.h \
- ../../src/compat/explicit_bzero.h ../../src/compat/strlcpy.h snprintf.h
+ ../../src/compat/snprintf.h ../../src/compat/explicit_bzero.h \
+ ../../src/compat/strlcpy.h snprintf.h
 strlcpy.o: strlcpy.c ../../config.h

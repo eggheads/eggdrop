@@ -656,7 +656,7 @@ support.
 
   set ssl-verify-clients 0
 
-      Control cerfificate verification for SSL listening ports. This
+      Control certificate verification for SSL listening ports. This
       includes leaf bots connecting, users telneting in and /ctcp bot
       chat.
 
@@ -712,4 +712,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2021 Eggheads Development Team
+Copyright (C) 2000 - 2024 Eggheads Development Team

@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,13 +27,10 @@
 
 #include <sys/stat.h>
 #include "main.h"
-#include <errno.h>
-#include "chan.h"
-#include "modules.h"
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total, dcc_flood_thr, backgrd, copy_to_tmp, max_socks;
+extern int dcc_total, dcc_flood_thr, backgrd, max_socks;
 extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
@@ -149,15 +146,14 @@ char *add_cr(char *buf)
 
 extern void (*qserver) (int, char *, int);
 
-void dprintf EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+void dprintf(int idx, const char *format, ...)
 {
   char buf[LOGLINEMAX];
-  char *format;
-  int idx, len;
+  int len;
   va_list va;
 
-  idx = EGG_VARARGS_START(int, arg1, va);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   egg_vsnprintf(buf, LOGLINEMAX-1, format, va);
   va_end(va);
@@ -218,14 +214,14 @@ void dprint(int idx, char *buf, int len)
   }
 }
 
-void chatout EGG_VARARGS_DEF(char *, arg1)
+ATTRIBUTE_FORMAT(printf,1,2)
+void chatout(const char *format, ...)
 {
   int i, len;
-  char *format;
   char s[601];
   va_list va;
 
-  format = EGG_VARARGS_START(char *, arg1, va);
+  va_start(va, format);
 
   egg_vsnprintf(s, 511, format, va);
   va_end(va);
@@ -243,16 +239,14 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
 
 /* Print to all on this channel but one.
  */
-void chanout_but EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+void chanout_but(int x, int chan, const char *format, ...)
 {
-  int i, x, chan, len;
-  char *format;
+  int i, len;
   char s[601];
   va_list va;
 
-  x = EGG_VARARGS_START(int, arg1, va);
-  chan = va_arg(va, int);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   egg_vsnprintf(s, 511, format, va);
   va_end(va);
@@ -321,7 +315,7 @@ void killtransfer(int n)
       fclose(dcc[n].u.xfer->f);
       dcc[n].u.xfer->f = NULL;
     }
-    if (dcc[n].u.xfer->filename && copy_to_tmp) {
+    if (dcc[n].u.xfer->filename) {
       for (i = 0; i < dcc_total; i++) {
         if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) &&
             (dcc[i].u.xfer->filename) &&
@@ -615,7 +609,7 @@ void do_boot(int idx, char *by, char *reason)
 {
   int files = (dcc[idx].type != &DCC_CHAT);
 
-  dprintf(idx, DCC_BOOTED1);
+  dprintf(idx, "%s", DCC_BOOTED1);
   dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
           by, reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */

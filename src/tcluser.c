@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +22,6 @@
  */
 
 #include "main.h"
-#include "users.h"
-#include "chan.h"
-#include "tandem.h"
 #include "modules.h"
 #include "string.h"
 
@@ -57,9 +54,18 @@ static int tcl_finduser STDVAR
 {
   struct userrec *u;
 
-  BADARGS(2, 2, " nick!user@host");
+  BADARGS(2, 3, " ?-account? searchString");
 
-  u = get_user_by_host(argv[1]);
+  if (argc == 3) {
+    if (!strcasecmp(argv[1], "-account")) {
+      u = get_user_by_account(argv[2]);
+    } else {
+      Tcl_AppendResult(irp, "invalid option, must be -account", NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    u = get_user_by_host(argv[1]);
+  }
   Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
   return TCL_OK;
 }
@@ -260,8 +266,9 @@ static int tcl_matchattr STDVAR
       nom = 1;
       if (!plus.global && !plus.udef_global && !plus.chan &&
           !plus.udef_chan && !plus.bot) {
-        Tcl_AppendResult(irp, "Unknown flag specified for matching", NULL);
-        return TCL_ERROR;
+        /* No flags (e.g. "-" or "+" or "-|-" matches anyone */
+        Tcl_AppendResult(irp, "1", NULL);
+        return TCL_OK;
       }
     }
     if (flagrec_eq(&plus, &user)) {
@@ -601,8 +608,7 @@ static int tcl_killignore STDVAR
 
 static int tcl_ignorelist STDVAR
 {
-  char expire[11], added[11], *p;
-  long tv;
+  char expire[21], added[21], *p;
   EGG_CONST char *list[5];
   struct igrec *i;
 
@@ -611,15 +617,10 @@ static int tcl_ignorelist STDVAR
   for (i = global_ign; i; i = i->next) {
     list[0] = i->igmask;
     list[1] = i->msg;
-
-    tv = i->expire;
-    egg_snprintf(expire, sizeof expire, "%lu", tv);
+    snprintf(expire, sizeof expire, "%" PRId64, (int64_t) i->expire);
     list[2] = expire;
-
-    tv = i->added;
-    egg_snprintf(added, sizeof added, "%lu", tv);
+    snprintf(added, sizeof added, "%" PRId64, (int64_t) i->added);
     list[3] = added;
-
     list[4] = i->user;
     p = Tcl_Merge(5, list);
     Tcl_AppendElement(irp, p);

@@ -2,7 +2,7 @@
 #
 # releaseprep - prepares the tree for release
 #
-# Copyright (C) 2004 - 2021 Eggheads Development Team
+# Copyright (C) 2004 - 2024 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -81,8 +81,8 @@ regenerate_changelog() {
 	if git rev-parse -q --verify release/${TRIMVERSION} > /dev/null; then
 	  INCLUDE="${INCLUDE} -i ./release/${TRIMVERSION}"
 	fi
-        echo "misc/genchanges -l -e v1.8.4 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9"
-	misc/genchanges -l -e v1.8.4 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.9
+        echo "misc/genchanges -l -e v1.8.4 -e v1.9.5 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.10"
+	misc/genchanges -l -e v1.8.4 -e v1.9.5 $INCLUDE -v ${EGGVERSION}${EGG_RC} -r origin short > doc/Changes1.10
 	git commit -m "Generate ChangeLog/Changes files for ${EGGVERSION}" > /dev/null
 
 	if test -f ChangeLog.gz; then
@@ -99,8 +99,8 @@ regenerate_changelog() {
 		exit 1
 	fi
 	git add ChangeLog.gz
-	git add doc/Changes1.8
-        git commit -m "Generate ChangeLog/Changes files for ${EGGVERSION}${EGG_RC}" > /dev/null
+	git add doc/Changes1.10
+    git commit -m "Generate ChangeLog/Changes files for ${EGGVERSION}${EGG_RC}" > /dev/null
 }
 
 change_default_make() {

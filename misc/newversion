@@ -2,7 +2,7 @@
 #
 # newversion - prepares the tree for a new version number in git
 #
-# Copyright (C) 2004 - 2021 Eggheads Development Team
+# Copyright (C) 2004 - 2024 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 # the same distribution terms that you use for the rest of that program.
 
 MOD_CONFIGURE_ACS="src/mod/compress.mod/configure.ac src/mod/dns.mod/configure.ac"
-DOCS="doc/COMPILE-GUIDE doc/sphinx_source/mainDocs/patch.rst \
-      doc/sphinx_source/mainDocs/tcl-commands.rst \
-      doc/sphinx_source/appendices/text-sub.rst"
+DOCS="doc/sphinx_source/using/tcl-commands.rst \
+      doc/sphinx_source/using/text-sub.rst"
 
 fix_version_h() {
 	sed -ie 's:^#define EGG_NUMVER.*$:#define EGG_NUMVER '${NEW_NUMVERSION}':' src/version.h

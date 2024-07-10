@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,22 +21,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include "main.h"
 #include "modules.h"
-#include "tandem.h"
 #include "md5/md5.h"
-
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
-#endif
-
 #include <sys/stat.h>
 #include <sys/utsname.h>
 
@@ -73,7 +61,7 @@ int expmem_tclmisc()
 static int tcl_logfile STDVAR
 {
   int i;
-  char s[151];
+  char s[256];
 
   BADARGS(1, 4, " ?logModes channel logFile?");
 
@@ -81,7 +69,7 @@ static int tcl_logfile STDVAR
     /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
       if (logs[i].filename != NULL) {
-        egg_snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
+        snprintf(s, sizeof s, "%s %s %s", masktype(logs[i].mask),
                  logs[i].chname, logs[i].filename);
         Tcl_AppendElement(interp, s);
       }
@@ -246,51 +234,73 @@ static int tcl_binds STDVAR
   return TCL_OK;
 }
 
-static int tcl_timer STDVAR
-{
-  unsigned long x;
-  char s[26];
-
-  BADARGS(3, 4, " minutes command ?count?");
+int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
+  char *endptr;
+  long val;
 
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
+    return 1;
   }
-  if (argc == 4 && atoi(argv[3]) < 0) {
-    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
-    return TCL_ERROR;
+  if (argc >=4) {
+    val = strtol(argv[3], &endptr, 0);
+    if ((*endptr != '\0') || (val < 0)) {
+      Tcl_AppendResult(irp, "count value must be >=0", NULL);
+      return 1;
+    }
   }
   if (argv[2][0] != '#') {
-    x = add_timer(&timer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
-                  argv[2], 0L);
-    snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
+    if (argc == 5) {
+      /* Prevent collisions with unnamed timers */
+      if (strncmp(argv[4], "timer", 5) == 0) {
+        Tcl_AppendResult(irp, "timer name may not begin with \"timer\"", NULL);
+        return 1;
+      }
+      /* Check for existing timers by same name */
+      if (find_timer(timer, argv[4])) {
+        Tcl_AppendResult(irp, "timer already exists by that name", NULL);
+        return 1;
+      }
+    }
   }
+  return 0;
+}
+
+static int tcl_timer STDVAR
+{
+  char *x;
+
+  BADARGS(3, 5, " minutes command ?count ?name??");
+
+  if (check_timer_syntax(irp, argc, argv)) {
+    return TCL_ERROR;
+  }
+  x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : NULL), 0L);
+  if (!x) {
+    Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
+    return TCL_ERROR;
+  }
+  Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
 
 static int tcl_utimer STDVAR
 {
-  unsigned long x;
-  char s[26];
+  char *x;
 
-  BADARGS(3, 4, " seconds command ?count?");
+  BADARGS(3, 5, " seconds command ?count ?name??");
 
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
+  if (check_timer_syntax(irp, argc, argv)) {
     return TCL_ERROR;
   }
-  if (argc == 4 && atoi(argv[3]) < 0) {
-    Tcl_AppendResult(irp, "count value must be >= 0", NULL);
+  x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+                  argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
+  if (!x) {
+    Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
     return TCL_ERROR;
   }
-  if (argv[2][0] != '#') {
-    x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
-                  argv[2], 0L);
-    snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
-  }
+  Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
 
@@ -298,27 +308,20 @@ static int tcl_killtimer STDVAR
 {
   BADARGS(2, 2, " timerID");
 
-  if (strncmp(argv[1], "timer", 5)) {
-    Tcl_AppendResult(irp, "argument is not a timerID", NULL);
-    return TCL_ERROR;
-  }
-  if (remove_timer(&timer, atol(&argv[1][5])))
+  if (remove_timer(&timer, argv[1]))
     return TCL_OK;
-  Tcl_AppendResult(irp, "invalid timerID", NULL);
+  Tcl_AppendResult(irp, "invalid timer name", NULL);
   return TCL_ERROR;
 }
 
 static int tcl_killutimer STDVAR
 {
-  BADARGS(2, 2, " timerID");
+  BADARGS(2, 2, " timerName");
 
-  if (strncmp(argv[1], "timer", 5)) {
-    Tcl_AppendResult(irp, "argument is not a timerID", NULL);
-    return TCL_ERROR;
-  }
-  if (remove_timer(&utimer, atol(&argv[1][5])))
+  if (remove_timer(&utimer, argv[1])) {
     return TCL_OK;
-  Tcl_AppendResult(irp, "invalid timerID", NULL);
+  }
+  Tcl_AppendResult(irp, "invalid utimer name", NULL);
   return TCL_ERROR;
 }
 
@@ -389,12 +392,12 @@ static int tcl_duration STDVAR
 
 static int tcl_unixtime STDVAR
 {
-  char s[11];
+  char s[21];
   time_t now2 = time(NULL);
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%li", (long) now2);
+  snprintf(s, sizeof s, "%" PRId64, (int64_t) now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -425,22 +428,22 @@ static int tcl_strftime STDVAR
   else
     t = now;
   tm1 = localtime(&t);
+  if (!tm1) {
+    Tcl_AppendResult(irp, "tcl_strftime(): localtime(): error = ",
+                     strerror(errno), NULL);
+    return TCL_ERROR;
+  }
   if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }
-  Tcl_AppendResult(irp, " error with strftime", NULL);
+  Tcl_AppendResult(irp, "tcl_strftime(): strftime(): error", NULL);
   return TCL_ERROR;
 }
 
 static int tcl_myip STDVAR
 {
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
-
+  char s[EGG_INET_ADDRSTRLEN];
 
   BADARGS(1, 1, "");
 
@@ -635,9 +638,13 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_callevent STDVAR
 {
-  BADARGS(2, 2, " event");
+  BADARGS(2, 3, " event ?arg?");
 
-  check_tcl_event(argv[1]);
+  if (argc == 2) {
+    check_tcl_event(argv[1]);
+  } else {
+    check_tcl_event_arg(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 
@@ -689,26 +696,29 @@ static int tcl_stripcodes STDVAR
   return TCL_OK;
 }
 
-static int tcl_md5(cd, irp, objc, objv)
-ClientData cd;
-Tcl_Interp *irp;
-int objc;
-Tcl_Obj *CONST objv[];
+static int tcl_md5 STDVAR
 {
-  MD5_CTX md5context;
-  char digest_string[33], *string;
+  char digest_string[33];
   unsigned char digest[16];
-  int i, len;
+  int i;
 
-  if (objc != 2) {
-    Tcl_WrongNumArgs(irp, 1, objv, "string");
-    return TCL_ERROR;
-  }
-  string = Tcl_GetStringFromObj(objv[1], &len);
+  BADARGS(2, 2, " string");
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
+  EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+  const EVP_MD *md = EVP_md5();
+  unsigned int md_len;
+  EVP_DigestInit_ex(mdctx, md, NULL);
+  EVP_DigestUpdate(mdctx, argv[1], strlen(argv[1]));
+  EVP_DigestFinal_ex(mdctx, digest, &md_len);
+  EVP_MD_CTX_free(mdctx);
+#else
+  MD5_CTX md5context;
   MD5_Init(&md5context);
-  MD5_Update(&md5context, (unsigned char *) string, len);
+  MD5_Update(&md5context, (unsigned char *) argv[1], strlen(argv[1]));
   MD5_Final(digest, &md5context);
+#endif
+
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
   Tcl_AppendResult(irp, digest_string, NULL);
@@ -747,11 +757,6 @@ static int tcl_matchstr STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
-
-tcl_cmds tclmisc_objcmds[] = {
-  {"md5", tcl_md5},
-  {NULL,     NULL}
-};
 
 static int tcl_status STDVAR
 {
@@ -844,5 +849,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchstr",         tcl_matchstr},
   {"status",             tcl_status},
   {"rfcequal",         tcl_rfcequal},
+  {"md5",                   tcl_md5},
   {NULL,                       NULL}
 };

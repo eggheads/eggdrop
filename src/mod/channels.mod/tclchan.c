@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -974,14 +974,14 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
       continue;
 
     if (ul->type == UDEF_FLAG) {
-      simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
-                     ul->name);
+      snprintf(s, sizeof s, "%c%s",
+               getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
       Tcl_AppendElement(irp, s);
     } else if (ul->type == UDEF_INT) {
       char *x;
 
       egg_snprintf(a, sizeof a, "%s", ul->name);
-      egg_snprintf(b, sizeof b, "%d", getudef(ul->values, chan->dname));
+      snprintf(b, sizeof b, "%" PRIdPTR, getudef(ul->values, chan->dname));
       args[0] = a;
       args[1] = b;
       x = Tcl_Merge(2, args);
@@ -1013,7 +1013,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
 {
   char s[121], *str;
   EGG_CONST char **argv = NULL;
-  int argc = 0;
+  Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   /* String values first */
@@ -1120,7 +1120,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
         APPEND_KEYVAL(ul->name, argv[0]);
       Tcl_Free((char *) argv);
     } else {
-      simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+      snprintf(s, sizeof s, "%" PRIdPTR, getudef(ul->values, chan->dname));
       APPEND_KEYVAL(ul->name, s);
     }
   }
@@ -1133,7 +1133,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
 {
   char s[121], *str = NULL;
   EGG_CONST char **argv = NULL;
-  int argc = 0;
+  Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   if (!strcmp(setting, "chanmode"))
@@ -1228,7 +1228,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
       Tcl_Free((char *) argv);
     } else {
       /* Flag or int, all the same. */
-      simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+      snprintf(s, sizeof s, "%" PRIdPTR, getudef(ul->values, chan->dname));
       Tcl_AppendResult(irp, s, NULL);
     }
     return TCL_OK;
@@ -1720,25 +1720,17 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
 {
   char ts[21], ts1[21], ts2[21], *p;
-  long tv;
   EGG_CONST char *list[6];
 
   for (; m; m = m->next) {
     list[0] = m->mask;
     list[1] = m->desc;
-
-    tv = m->expire;
-    sprintf(ts, "%lu", tv);
+    snprintf(ts, sizeof ts, "%" PRId64, (int64_t) m->expire);
     list[2] = ts;
-
-    tv = m->added;
-    sprintf(ts1, "%lu", tv);
+    snprintf(ts1, sizeof ts1, "%" PRId64, (int64_t) m->added);
     list[3] = ts1;
-
-    tv = m->lastactive;
-    sprintf(ts2, "%lu", tv);
+    snprintf(ts2, sizeof ts2, "%" PRId64, (int64_t) m->lastactive);
     list[4] = ts2;
-
     list[5] = m->user;
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);
@@ -2006,17 +1998,17 @@ static void init_masklist(masklist *m)
 static void init_channel(struct chanset_t *chan, int reset)
 {
   int flags = reset ? reset : CHAN_RESETALL;
+  memberlist *m, *m1;
 
   if (flags & CHAN_RESETWHO) {
-    if (chan->channel.member) {
-      nfree(chan->channel.member); 
+    for (m = chan->channel.member; m; m = m1) {
+      m1 = m->next;
+      nfree(m);
     }
     chan->channel.members = 0;
     chan->channel.member = nmalloc(sizeof *chan->channel.member);
     /* Since we don't have channel_malloc, manually bzero */
     egg_bzero(chan->channel.member, sizeof *chan->channel.member);
-    chan->channel.member->nick[0] = 0;
-    chan->channel.member->next = NULL;
   }
 
   if (flags & CHAN_RESETMODES) {
@@ -2097,7 +2089,7 @@ static void clear_channel(struct chanset_t *chan, int reset)
  */
 static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 {
-  int items;
+  Tcl_Size items;
   int ret = TCL_OK;
   int join = 0;
   char buf[2048], buf2[256];
@@ -2117,10 +2109,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   }
 
   convert_element(glob_chanmode, buf2);
-  simple_sprintf(buf, "chanmode %s ", buf2);
-  strncat(buf, glob_chanset, 2047 - strlen(buf));
-  strncat(buf, options, 2047 - strlen(buf));
-  buf[2047] = 0;
+  snprintf(buf, sizeof buf, "chanmode %s %s%s", buf2, glob_chanset, options);
 
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;
@@ -2133,8 +2122,6 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Hells bells, why set *every* variable to 0 when we have bzero? */
     egg_bzero(chan, sizeof(struct chanset_t));
 
-    chan->limit_prot = 0;
-    chan->limit = 0;
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;
     chan->flood_ctcp_thr = gfld_ctcp_thr;
@@ -2295,7 +2282,7 @@ static int tcl_deludef STDVAR
 static int tcl_getudefs STDVAR
 {
   struct udef_struct *ul;
-  int type = 0, count = 0;
+  int type = 0;
 
   BADARGS(1, 2, " ?type?");
 
@@ -2315,7 +2302,6 @@ static int tcl_getudefs STDVAR
   for (ul = udef; ul; ul = ul->next)
     if (!type || (ul->type == type)) {
       Tcl_AppendElement(irp, ul->name);
-      count++;
     }
 
   return TCL_OK;
