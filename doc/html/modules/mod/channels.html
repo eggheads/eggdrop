@@ -1,27 +1,22 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Channels Module &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Compress Module" href="compress.html" />
     <link rel="prev" title="Blowfish Module" href="blowfish.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../../index.html">
-            <img class="logo" src="../../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
           href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
@@ -49,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -88,6 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="irc.html">IRC Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notes.html">Notes Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python.html">Python Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="seen.html">Seen Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server.html">Server Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="share.html">Share Module</a></li>
@@ -123,7 +120,7 @@
             
   <p>Last revised: October 25, 2010</p>
 <section id="channels-module">
-<span id="channels"></span><h1>Channels Module<a class="headerlink" href="#channels-module" title="Permalink to this headline">¶</a></h1>
+<span id="channels"></span><h1>Channels Module<a class="headerlink" href="#channels-module" title="Link to this heading">¶</a></h1>
 <p>This module provides channel related support for the bot. Without it,
 you won’t be able to make the bot join a channel or save channel specific
 userfile information.</p>
@@ -153,17 +150,25 @@ floods.</p>
 </dd>
 <dt>channel add #channel { SETTINGS }</dt><dd><p>This command adds a static channel to your bot (it cannot be removed via the partyline- we recommend using the .+chan command on the partyline instead). This command will add the channel preconfigured with the specified settings. A full list of settings is defined in <a class="reference internal" href="#channel-settings">Channel Settings</a>.</p>
 </dd>
-<dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt><dd><p>This command modifies a specific channel setting for a channel. There are many different options for channels which you can define. A full list of settings is defined in <a class="reference internal" href="#channel-settings">Channel Settings</a>.
+</dl>
+</div></blockquote>
+<section id="channel-settings">
+<h2>Channel Settings<a class="headerlink" href="#channel-settings" title="Link to this heading">¶</a></h2>
+<p>There are two types of channel settings: value-based settings (where you configure a setting with a number or string), and enable/disable-based settings (where you turn a setting on or off). These settings can be configured via Tcl using the ‘channel set’ command:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>channel set &lt;chan&gt; &lt;setting&gt;</dt><dd><p>This command modifies a specific channel setting for a channel. There are many different options for channels which you can define.
 Some settings are enabled or disabled by a plus or minus in front of them, and others directly take text or integer values.</p>
 </dd>
 </dl>
 </div></blockquote>
-<section id="channel-settings">
-<h2>Channel Settings<a class="headerlink" href="#channel-settings" title="Permalink to this headline">¶</a></h2>
 <section id="value-based-channel-settings">
-<h3>Value-based Channel Settings<a class="headerlink" href="#value-based-channel-settings" title="Permalink to this headline">¶</a></h3>
+<h3>Value-based Channel Settings<a class="headerlink" href="#value-based-channel-settings" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><dl>
+<dt>chanmode +/-&lt;modes&gt;</dt><dd><p>This setting makes the bot enforce channel modes. It will always enforce
+the +&lt;modes&gt; and remove the -&lt;modes&gt; modes.</p>
+</dd>
 <dt>idle-kick 0</dt><dd><p>This setting will make the bot check every minute for idle users. Set
 this to 0 to disable idle check.</p>
 </dd>
@@ -171,10 +176,6 @@ this to 0 to disable idle check.</p>
 with serverops. There are seven different modes for this settings:</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 95%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>turn off</p></td>
@@ -209,10 +210,6 @@ with serverops. There are seven different modes for this settings:</p>
 revenging. There are four possible settings:</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 96%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>0</p></td>
 <td><p>Deop the user.</p></td>
@@ -234,10 +231,6 @@ revenging. There are four possible settings:</p>
 +k users or when revenge-mode is 3. Available types are:</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 11%" />
-<col style="width: 89%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td colspan="2"><p>0 *!user&#64;host</p></td>
 </tr>
@@ -291,10 +284,6 @@ a channel while another op or voice is pending, the bot will attempt to
 put both modes on one line.</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>aop-delay 0</p></td>
 <td><p>No delay is used.</p></td>
@@ -365,17 +354,12 @@ protection for the channel, where X is an integer &gt;= 0.</p>
 </div></blockquote>
 </section>
 <section id="enable-disable-channel-settings">
-<h3>Enable/Disable Channel Settings<a class="headerlink" href="#enable-disable-channel-settings" title="Permalink to this headline">¶</a></h3>
+<h3>Enable/Disable Channel Settings<a class="headerlink" href="#enable-disable-channel-settings" title="Link to this heading">¶</a></h3>
+<p>These settings should be preceded by a + or - to enable or disable the setting, respctively.</p>
 <blockquote>
 <div><dl>
-<dt>chanmode +/-&lt;modes&gt;</dt><dd><p>This setting makes the bot enforce channel modes. It will always enforce
-the +&lt;modes&gt; and remove the -&lt;modes&gt; modes.</p>
-</dd>
-<dt>channel set &lt;chan&gt; +/-&lt;setting&gt;</dt><dd><p>There are many different options for channels which you can define.
-They can be enabled or disabled by a plus or minus in front of them.</p>
-</dd>
 <dt>enforcebans</dt><dd><p>When a ban is set, kick people who are on the channel and match
-the ban?</p>
+the ban</p>
 </dd>
 <dt>dynamicbans</dt><dd><p>Only activate bans on the channel when necessary? This keeps the
 channel’s ban list from getting excessively long. The bot still
@@ -403,21 +387,21 @@ invite. Once set, the invite remains until the channel goes to -i.</p>
 <dt>userinvites</dt><dd><p>Allow invites to be made by users directly? If turned off, the bot
 will require all invites to be made through the bot’s console.</p>
 </dd>
-<dt>autoop</dt><dd><p>Op users with the +o flag as soon as they join the channel?
+<dt>autoop</dt><dd><p>Op users with the +o flag as soon as they join the channel
 This is insecure and not recommended.</p>
 </dd>
 <dt>autohalfop</dt><dd><p>Halfop users with the +l flag as soon as they join the channel?
 This is insecure and not recommended.</p>
 </dd>
-<dt>bitch</dt><dd><p>Only let users with the +o flag have op on the channel?</p>
+<dt>bitch</dt><dd><p>Only let users with the +o flag have op on the channel</p>
 </dd>
-<dt>greet</dt><dd><p>Say a user’s info line when they join the channel?</p>
+<dt>greet</dt><dd><p>Say a user’s info line when they join the channel</p>
 </dd>
 <dt>protectops</dt><dd><p>Re-op a user with the +o flag if they get deopped?</p>
 </dd>
-<dt>protecthalfops</dt><dd><p>Re-halfop a user with the +l flag if they get dehalfopped?</p>
+<dt>protecthalfops</dt><dd><p>Re-halfop a user with the +l flag if they get dehalfopped</p>
 </dd>
-<dt>protectfriends</dt><dd><p>Re-op a user with the +f flag if they get deopped?</p>
+<dt>protectfriends</dt><dd><p>Re-op a user with the +f flag if they get deopped</p>
 </dd>
 <dt>statuslog</dt><dd><p>Log the channel status line every 5 minutes? This shows the bot’s
 status on the channel (op, voice, etc.), the channel’s modes, and
@@ -457,14 +441,14 @@ loaded for this to work.</p>
 fighting with services such as ChanServ, or from kicking IRCops when
 setting channel modes without having ops.</p>
 </dd>
-<dt>static</dt><dd><p>Allow only permanent owners to remove the channel?</p>
+<dt>static</dt><dd><p>Allow only permanent owners to remove the channel</p>
 </dd>
 </dl>
 </div></blockquote>
 </section>
 </section>
 <section id="default-channel-values">
-<h2>Default Channel Values<a class="headerlink" href="#default-channel-values" title="Permalink to this headline">¶</a></h2>
+<h2>Default Channel Values<a class="headerlink" href="#default-channel-values" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><blockquote>
 <div><p>The following settings are used as default values when you .+chan #chan or .tcl
@@ -519,7 +503,7 @@ channel add #chan. You can modify these default values by adding the below value
 <p>}</p>
 </div></blockquote>
 </div></blockquote>
-<p>Copyright (C) 2000 - 2023 Eggheads Development Team</p>
+<p>Copyright (C) 2000 - 2024 Eggheads Development Team</p>
 </div></blockquote>
 </section>
 </section>
@@ -550,9 +534,9 @@ channel add #chan. You can modify these default values by adding the below value
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Jul 08, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

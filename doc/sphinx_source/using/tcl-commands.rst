@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: January 24, 2021
+Last revised: January 6, 2024
 
 ====================
 Eggdrop Tcl Commands
@@ -1136,7 +1136,7 @@ nick2hand <nickname> [channel]
   Module: irc
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-account2nicks <handle> [channel]
+account2nicks <account> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
@@ -2011,8 +2011,7 @@ dccsend <filename> <ircnick>
   | 4     | the file was queued for later transfer, which means that person has |
   |       | too many file transfers going right now                             |
   +-------+---------------------------------------------------------------------+
-  | 5     | copy-to-tmp is enabled and the file already exists in the temp      |
-  |       | directory                                                           |
+  | 5     | the file could not be opened or temporary file could not be created |
   +-------+---------------------------------------------------------------------+
 
   Module: transfer
@@ -2201,6 +2200,26 @@ setflags <dir> [<flags> [channel]]
 
   Module: filesys
 
+PBKDF2 Module
+-------------
+
+^^^^^^^^^^^^^^^
+encpass2 <pass>
+^^^^^^^^^^^^^^^
+
+
+  Returns: a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
+
+  Module: pbkdf2
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
+
+  Module: pbkdf2
+
 Miscellaneous Commands
 ----------------------
 
@@ -2227,6 +2246,8 @@ unbind <type> <flags> <keyword/mask> <proc-name>
 ^^^^^^^^^^^^^^^^^
 binds [type/mask]
 ^^^^^^^^^^^^^^^^^
+
+  Description: By default, lists Tcl binds registered with the Eggdrop. You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and 'python' to view Python binds. Alternately, you can specify a bind type (pub, msg, etc) to view all binds that match that type of bind, or a mask that is matched against the command associated with the bind.
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
         {<type> <flags> <name> <hits> <proc>}
@@ -2898,6 +2919,7 @@ Removing a bind
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+.. _tcl_binds:
 
 ^^^^^^^^^^
 Flag Masks
@@ -2947,6 +2969,8 @@ Some additional examples:
 +------------+-----------------------------------------------------------------+
 
 As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
+
+.. _bind_types:
 
 ^^^^^^^^^^
 Bind Types
@@ -3278,7 +3302,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <idx> <text>
 
-  Description: party line and file system users have their text sent through filt before being processed. If the proc returns a blank string, the text is considered parsed. Otherwise, the bot will use the text returned from the proc and continue parsing that
+  Description: party line and file system users have their text sent through filt before being processed. 'mask' is a text mask that can contain wildcards and is used for matching text sent on the partyline. If the proc returns a blank string, the partyline texr is continued to be parsed as-is. Otherwise, the bot will instead use the text returned from the proc for continued parsing.
 
   Module: core
 
@@ -3757,4 +3781,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2023 Eggheads Development Team
+  Copyright (C) 1999 - 2024 Eggheads Development Team
