@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,10 @@
  */
 static int tcl_chanlist STDVAR
 {
-  char nuh[1024];
   int f;
   memberlist *m;
   struct chanset_t *chan;
+  struct userrec *u;
   struct flag_record plus = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 },
                      minus = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
                      user = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
@@ -55,11 +55,8 @@ static int tcl_chanlist STDVAR
   minus.match = plus.match ^ (FR_AND | FR_OR);
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if (!m->user) {
-      egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-      m->user = get_user_by_host(nuh);
-    }
-    get_user_flagrec(m->user, &user, argv[1]);
+    u = get_user_from_member(m);
+    get_user_flagrec(u, &user, argv[1]);
     user.match = plus.match;
     if (flagrec_eq(&plus, &user)) {
       if (!f || !flagrec_eq(&minus, &user))
@@ -67,81 +64,6 @@ static int tcl_chanlist STDVAR
     }
   }
   return TCL_OK;
-}
-
-static int tcl_monitor STDVAR
-{
-  Tcl_Obj *monitorlist;
-  int ret;
-  BADARGS(2, 3, " command ?nick?");
-
-  monitorlist = Tcl_NewListObj(0, NULL);
-  if (!strcmp(argv[1], "add")) {
-    if (argc == 3) {
-      ret = monitor_add(argv[2], 1);
-      if (!ret) {
-        Tcl_AppendResult(irp, "1", NULL);
-        return TCL_OK;
-      } else if (ret == 1) {
-        Tcl_AppendResult(irp, "nickname already present in monitor list", NULL);
-        return TCL_ERROR;
-        /* ret = 2 */
-      } else {
-        Tcl_AppendResult(irp,
-                "maximum number of nicknames allowed by server reached", NULL);
-        return TCL_ERROR;
-      }
-    } else {
-      Tcl_AppendResult(irp, "nickname required", NULL);
-      return TCL_ERROR;
-    }
-  } else if (!strcmp(argv[1], "delete")) {
-    if (argc == 3) {
-      ret = monitor_del(argv[2]);
-      if (ret) {
-        Tcl_AppendResult(irp, "nickname not found", NULL);
-        return TCL_ERROR;
-      } else {
-        Tcl_AppendResult(irp, "1", NULL);
-        return TCL_OK;
-      }
-    } else {
-      Tcl_AppendResult(irp, "nickname required", NULL);
-      return TCL_ERROR;
-    }
-  } else if (!strcmp(argv[1], "list")) {
-    monitor_show(monitorlist, 0, NULL);
-    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
-    return TCL_OK;
-  } else if (!strcmp(argv[1], "online")) {
-    monitor_show(monitorlist, 1, NULL);
-    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
-    return TCL_OK;
-  } else if (!strcmp(argv[1], "offline")) {
-    monitor_show(monitorlist, 2, NULL);
-    Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
-    return TCL_OK;
-  } else if (!strcmp(argv[1], "status")) {
-    if (argc < 3) {
-      Tcl_AppendResult(irp, "nickname required", NULL);
-      return TCL_OK;
-    }
-    ret = monitor_show(monitorlist, 3, argv[2]);
-    if (!ret) {
-      Tcl_AppendResult(irp, Tcl_GetString(monitorlist), NULL);
-      return TCL_OK;
-    } else {
-      Tcl_AppendResult(irp, "nickname not found", NULL);
-      return TCL_ERROR;
-    }
-  } else if (!strcasecmp(argv[1], "clear")) {
-    monitor_clear();
-    Tcl_AppendResult(irp, "MONITOR list cleared.", NULL);
-    return TCL_OK;
-  } else {
-    Tcl_AppendResult(irp, "command must be add, delete, list, clear, online, offline, status", NULL);
-    return TCL_ERROR;
-  }
 }
 
 static int tcl_botisop STDVAR
@@ -422,8 +344,8 @@ static int tcl_onchan STDVAR
 
 static int tcl_handonchan STDVAR
 {
-  char nuh[1024];
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
   memberlist *m;
 
   BADARGS(2, 3, " handle ?channel?");
@@ -440,11 +362,8 @@ static int tcl_handonchan STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->user = get_user_by_host(nuh);
-      }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      u = get_user_from_member(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -586,7 +505,7 @@ static int tcl_accounttracking STDVAR
   if (current->enabled) {
     acctnotify = 1;
   }
-  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", NULL);
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", TCL_STATIC);
   return TCL_OK;
 }
 
@@ -1061,7 +980,8 @@ static int tcl_account2nicks STDVAR
   struct chanset_t *chan, *thechan = NULL;
   Tcl_Obj *nicks;
   Tcl_Obj **nicksv = NULL;
-  int nicksc = 0, i, found;
+  Tcl_Size nicksc = 0, i;
+  int found;
 
   BADARGS(2, 3, " account ?channel?");
 
@@ -1102,12 +1022,13 @@ static int tcl_account2nicks STDVAR
 
 static int tcl_hand2nicks STDVAR
 {
-  char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
   Tcl_Obj *nicks;
   Tcl_Obj **nicksv = NULL;
-  int nicksc = 0, i, found;
+  Tcl_Size nicksc = 0, i;
+  int found;
 
   BADARGS(2, 3, " handle ?channel?");
 
@@ -1125,13 +1046,8 @@ static int tcl_hand2nicks STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       found = 0;
-      /* Does this user have the account we're looking for? */
-      if (!m->user && !m->tried_getuser) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->tried_getuser = 1;
-        m->user = get_user_by_host(nuh);
-      }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      u = get_user_from_member(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
         /* Is the nick of the user already in the list? */
         Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
         for (i = 0; i < nicksc; i++) {
@@ -1153,9 +1069,9 @@ static int tcl_hand2nicks STDVAR
 
 static int tcl_hand2nick STDVAR
 {
-  char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
 
   BADARGS(2, 3, " handle ?channel?");
 
@@ -1171,12 +1087,8 @@ static int tcl_hand2nick STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user && !m->tried_getuser) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->tried_getuser = 1;
-        m->user = get_user_by_host(nuh);
-      }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      u = get_user_from_member(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, m->nick, NULL);
         return TCL_OK;
       }
@@ -1188,9 +1100,9 @@ static int tcl_hand2nick STDVAR
 
 static int tcl_nick2hand STDVAR
 {
-  char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
 
   BADARGS(2, 3, " nick ?channel?");
 
@@ -1207,11 +1119,8 @@ static int tcl_nick2hand STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     m = ismember(chan, argv[1]);
     if (m) {
-      if (!m->user) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->user = get_user_by_host(nuh);
-      }
-      Tcl_AppendResult(irp, m->user ? m->user->handle : "*", NULL);
+      u = get_user_from_member(m);
+      Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
       return TCL_OK;
     }
     chan = chan->next;
@@ -1325,7 +1234,6 @@ static tcl_cmds tclchan_cmds[] = {
   {"putkick",        tcl_putkick},
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
-  {"monitor",        tcl_monitor},
   {"accounttracking",tcl_accounttracking},
   {NULL,             NULL}
 };

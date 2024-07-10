@@ -6,6 +6,7 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 @SET_MAKE@
+EGGEXEC = @EGGEXEC@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -17,6 +18,8 @@ STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
+
+XLIBS = @SSL_LIBS@ @TCL_LIB_SPEC@ @LIBS@
 
 eggdrop_objs = bg.o botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 dccutil.o dns.o flags.o language.o match.o main.o mem.o misc.o misc_file.o \
@@ -118,13 +121,12 @@ dcc.o: dcc.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
  ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
- modules.h mod/modvals.h tandem.h md5/md5.h
+ tandem.h md5/md5.h
 dccutil.o: dccutil.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
- tandem.h
+ compat/explicit_bzero.h compat/strlcpy.h tandem.h
 dns.o: dns.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
@@ -144,7 +146,7 @@ main.o: main.c ../config.h main.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
  ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
- version.h modules.h mod/modvals.h tandem.h bg.h
+ version.h modules.h mod/modvals.h bg.h
 match.o: match.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
@@ -175,7 +177,7 @@ net.o: net.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
  ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
- mod/server.mod/server.h
+ modules.h mod/modvals.h
 rfc1459.o: rfc1459.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
@@ -201,13 +203,12 @@ tclmisc.o: tclmisc.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
  compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h \
- tandem.h md5/md5.h
+ md5/md5.h
 tcluser.o: tcluser.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \
  compat/inet_aton.h ../src/main.h compat/snprintf.h \
- compat/explicit_bzero.h compat/strlcpy.h tandem.h modules.h \
- mod/modvals.h
+ compat/explicit_bzero.h compat/strlcpy.h modules.h mod/modvals.h
 tls.o: tls.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \

@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,22 +41,26 @@ p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof, H_load, H_unld, H_link,
                 H_note, H_filt, H_event, H_die, H_cron, H_log = NULL;
 #ifdef TLS
 p_tcl_bind_list H_tls = NULL;
-static int builtin_idx();
+static int builtin_idx STDVAR;
 #endif
 
-static int builtin_2char();
-static int builtin_3char();
-static int builtin_5int();
-static int builtin_cron();
-static int builtin_char();
-static int builtin_chpt();
-static int builtin_chjn();
-static int builtin_idxchar();
-static int builtin_charidx();
-static int builtin_chat();
-static int builtin_dcc();
-static int builtin_log();
+static int builtin_2char STDVAR;
+static int builtin_3char STDVAR;
+static int builtin_5int STDVAR;
+static int builtin_cron STDVAR;
+static int builtin_char STDVAR;
+static int builtin_chpt STDVAR;
+static int builtin_chjn STDVAR;
+static int builtin_evnt STDVAR;
+static int builtin_idxchar STDVAR;
+static int builtin_charidx STDVAR;
+static int builtin_chat STDVAR;
+static int builtin_dcc STDVAR;
+static int builtin_log STDVAR;
 
+#ifdef DEBUG_CONTEXT
+char last_bind_called[512] = "";
+#endif
 
 /* Allocate and initialise a chunk of memory.
  */
@@ -203,9 +207,8 @@ int expmem_tclhash(void)
   return tot;
 }
 
-
 extern cmd_t C_dcc[];
-static int tcl_bind();
+static int tcl_bind STDVAR;
 
 static cd_tcl_cmd cd_cmd_table[] = {
   {"bind",   tcl_bind, (void *) 0},
@@ -216,7 +219,6 @@ static cd_tcl_cmd cd_cmd_table[] = {
 void init_bind(void)
 {
   bind_table_list = NULL;
-  Context;
   add_cd_tcl_cmds(cd_cmd_table);
   H_unld = add_bind_table("unld", HT_STACKABLE, builtin_char);
   H_time = add_bind_table("time", HT_STACKABLE, builtin_5int);
@@ -237,14 +239,13 @@ void init_bind(void)
   H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
-  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
+  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_evnt);
   H_die = add_bind_table("die", HT_STACKABLE, builtin_char);
   H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
 #ifdef TLS
   H_tls = add_bind_table("tls", HT_STACKABLE, builtin_idx);
 #endif
   add_builtins(H_dcc, C_dcc);
-  Context;
 }
 
 void kill_bind(void)
@@ -348,7 +349,7 @@ static void dump_bind_tables(Tcl_Interp *irp)
   }
 }
 
-static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                              const char *cmd, const char *proc)
 {
   tcl_bind_mask_t *tm;
@@ -380,7 +381,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
 /* Add command (remove old one if necessary)
  */
-static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                            const char *cmd, const char *proc)
 {
   tcl_cmd_t *tc;
@@ -595,6 +596,21 @@ static int builtin_chjn STDVAR
   return TCL_OK;
 }
 
+static int builtin_evnt STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(2, 3, " event ?arg?");
+
+  CHECKVALIDITY(builtin_evnt);
+  if (argc==2) {
+    F(argv[1]);
+  } else {
+    F(argv[1], argv[2]);
+  }
+  return TCL_OK;
+}
+
 static int builtin_idxchar STDVAR
 {
   Function F = (Function) cd;
@@ -712,44 +728,28 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
   int x;
   struct rusage ru1, ru2;
   int r = 0;
-#ifdef DEBUG_CONTEXT
-  #define FORMAT "Tcl proc: %s, param: %s"
-  char *buf;
 
-  /* We now try to debug the Tcl_VarEval() call below by remembering both
-   * the called proc name and it's parameters. This should render us a bit
-   * less helpless when we see context dumps.
-   */
-  Context;
-  /* reuse x */
-  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
-  buf = nmalloc(x + 1);
-  sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
-  ContextNote(buf);
-  nfree(buf);
-#endif /* DEBUG_CONTEXT */
 
   /* Set the lastbind variable before evaluating the proc so that the name
    * of the command that triggered the bind will be available to the proc.
    * This feature is used by scripts such as userinfo.tcl
    */
-  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "lastbind", mask, TCL_GLOBAL_ONLY);
 
   if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
+#ifdef DEBUG_CONTEXT
+    strlcpy(last_bind_called, proc, sizeof last_bind_called);
+#endif
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
-  Context;
-  if (proc && proc[0] != '*' && !r) {
-    if (!getrusage(RUSAGE_SELF, &ru2)) {
-      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
-             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-    }
-  }
+  if (proc && proc[0] != '*' && !r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -1214,6 +1214,14 @@ void check_tcl_event(const char *event)
                  MATCH_EXACT | BIND_STACKABLE);
 }
 
+void check_tcl_event_arg(const char *event, const char *arg)
+{
+    Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "_event2", (char *) arg, TCL_GLOBAL_ONLY);
+    check_tcl_bind(H_event, event, 0, " $::_event1 $::_event2",
+                   MATCH_EXACT | BIND_STACKABLE);
+}
+
 int check_tcl_signal(const char *event)
 {
   int x;
@@ -1261,6 +1269,7 @@ void tell_binds(int idx, char *par)
   tcl_bind_list_t *tl, *tl_kind;
   tcl_bind_mask_t *tm;
   int fnd = 0, showall = 0, patmatc = 0, maxname = 0;
+  int ok = 0, showpy = 0, showtcl = 0;
   tcl_cmd_t *tc;
   char *name, *proc, *s, flg[100];
 
@@ -1281,7 +1290,13 @@ void tell_binds(int idx, char *par)
   if ((name && name[0] && !strcasecmp(name, "all")) ||
       (s && s[0] && !strcasecmp(s, "all")))
     showall = 1;
-  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
+  if ((name && name[0] && !strcasecmp(name, "tcl")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
+    showtcl = 1;
+  if ((name && name[0] && !strcasecmp(name, "python")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
+    showpy = 1;
+  if (tl_kind == NULL && !showpy && !showtcl && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
@@ -1303,7 +1318,6 @@ void tell_binds(int idx, char *par)
   dprintf(idx, "%s", MISC_CMDBINDS);
   dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
-
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {
     if (tl->flags & HT_DELETED)
@@ -1316,26 +1330,28 @@ void tell_binds(int idx, char *par)
           continue;
         proc = tc->func_name;
         build_flags(flg, &(tc->flags), NULL);
-        if (!strcmp(flg, "-|-")) {
-          flg[0] = '*';
-          flg[1] = '\0';
-        }
-        if (showall || proc[0] != '*') {
-          int ok = 0;
-
-          if (patmatc == 1) {
+        ok = 0;
+        if (showall) {
+          ok = 1;
+        } else if (patmatc || showpy || showtcl) {
+          if ((patmatc == 1) && (proc[0] != '*')) {
             if (wild_match_per(name, tl->name) ||
                 wild_match_per(name, tm->mask) ||
-                wild_match_per(name, tc->func_name))
+                wild_match_per(name, tc->func_name)) {
               ok = 1;
-          } else
+            }
+          } else if (showpy && !(strncasecmp(tc->func_name, "*python:", strlen("*python:")))) {
             ok = 1;
-
-          if (ok) {
-            dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
-                    tm->mask, tc->hits, tc->func_name);
-            fnd = 1;
+          } else if (showtcl && (strncasecmp(tc->func_name, "*", strlen("*")))) {
+            ok = 1;
           }
+        } else if (proc[0] != '*') {
+          ok = 1;
+        }
+        if (ok) {
+          dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
+                  tm->mask, tc->hits, tc->func_name);
+          fnd = 1;
         }
       }
     }

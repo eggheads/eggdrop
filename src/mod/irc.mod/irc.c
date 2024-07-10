@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
-static p_tcl_bind_list H_monitor, H_account;
+static p_tcl_bind_list H_account, H_chghost;
 
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
@@ -142,7 +142,6 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   /* Set the offender +d */
   if ((chan->revenge_mode > 0) && !(chan_deop(fr) || glob_deop(fr))) {
     char s[UHOSTLEN], s1[UHOSTLEN];
-    memberlist *mx = NULL;
 
     /* Removing op */
     if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
@@ -186,8 +185,6 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       fr.chan = USER_DEOP;
       fr.udef_chan = 0;
       u = get_user_by_handle(userlist, s1);
-      if ((mx = ismember(chan, badnick)))
-        mx->user = u;
       set_user_flagrec(u, &fr, chan->dname);
       simple_sprintf(s, "(%s) %s (%s)", ct, reason, whobad);
       set_user(&USERENTRY_COMMENT, u, (void *) s);
@@ -227,20 +224,25 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 static void maybe_revenge(struct chanset_t *chan, char *whobad,
                           char *whovictim, int type)
 {
-  char *badnick, *victim;
+  char *badnick, *victim, buf[NICKLEN + UHOSTLEN];
   int mevictim;
   struct userrec *u, *u2;
+  memberlist *m;
 
   if (!chan || (type < 0))
     return;
 
   /* Get info about offender */
-  u = get_user_by_host(whobad);
+  strlcpy(buf, whobad, sizeof buf);
   badnick = splitnick(&whobad);
+  m = ismember(chan, badnick);
+  u = lookup_user_record(m, NULL, buf); // TODO: get account from msgtags
 
   /* Get info about victim */
-  u2 = get_user_by_host(whovictim);
+  strlcpy(buf, whovictim, sizeof buf);
   victim = splitnick(&whovictim);
+  m = ismember(chan, victim);
+  u2 = lookup_user_record(m, NULL, buf); // TODO: get account from msgtags
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */
@@ -264,12 +266,10 @@ static void set_key(struct chanset_t *chan, char *k)
 
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
-  char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
-    if (u == get_user_by_host(s))
+    if (u == get_user_from_member(m))
       return 1;
   }
   return 0;
@@ -445,7 +445,7 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
     /* done here to keep expmem happy, as this is accounted in
        irc.mod, not channels.mod where clear_channel() resides */
     nfree(chan->channel.key);
-    chan->channel.key = (char *) channel_malloc (1);
+    chan->channel.key = (char *) channel_malloc(1);
     chan->channel.key[0] = 0;
     chan->status &= ~CHAN_ASKEDMODES;
     dprintf(DP_MODE, "MODE %s\n", chan->name);
@@ -531,7 +531,6 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
-  char s[NICKMAX+UHOSTLEN+1];
   int i = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
@@ -576,8 +575,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       chan->status |= CHAN_WHINED;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
+      u = get_user_from_member(m);
       if (!match_my_nick(m->nick) && (!u || !(u->flags & USER_BOT))) {
         ok = 0;
         break;
@@ -601,7 +599,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char *key, s[NICKMAX+UHOSTLEN+1];
+  char *key;
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
@@ -670,9 +668,7 @@ static void check_expired_chanstuff()
           for (m = chan->channel.member; m && m->nick[0]; m = m->next)
             if (now - m->last >= chan->idle_kick * 60 &&
                 !match_my_nick(m->nick) && !chan_issplit(m)) {
-              sprintf(s, "%s!%s", m->nick, m->userhost);
-              get_user_flagrec(m->user ? m->user : get_user_by_host(s),
-                               &fr, chan->dname);
+              get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
               if ((!(glob_bot(fr) || glob_friend(fr) || (glob_op(fr) &&
                   !chan_deop(fr)) || chan_friend(fr) || chan_op(fr))) &&
                   (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
@@ -685,9 +681,7 @@ static void check_expired_chanstuff()
       for (m = chan->channel.member; m && m->nick[0]; m = n) {
         n = m->next;
         if (m->split && now - m->split > wait_split) {
-          sprintf(s, "%s!%s", m->nick, m->userhost);
-          check_tcl_sign(m->nick, m->userhost,
-                         m->user ? m->user : get_user_by_host(s),
+          check_tcl_sign(m->nick, m->userhost, get_user_from_member(m),
                          chan->dname, "lost in the netsplit");
           putlog(LOG_JOIN, chan->dname,
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
@@ -743,17 +737,6 @@ static int channels_4char STDVAR
   return TCL_OK;
 }
 
-static int monitor_2char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(3, 3, "nick online");
-
-  CHECKVALIDITY(monitor_2char);
-  F(argv[1], argv[2]);
-  return TCL_OK; 
-}
-
 static int channels_2char STDVAR
 {
   Function F = (Function) cd;
@@ -776,6 +759,27 @@ static int invite_4char STDVAR
   return TCL_OK;
 }
 
+static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec *u,
+                             char *chan, char *ident, char * host)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  char usermask[UHOSTMAX];
+  int x;
+
+  get_user_flagrec(u, &fr, NULL);
+  snprintf(usermask, sizeof usermask, "%s!%s@%s", nick, ident, host);
+
+  Tcl_SetVar(interp, "_chghost1", nick, 0);
+  Tcl_SetVar(interp, "_chghost2", from, 0);
+  Tcl_SetVar(interp, "_chghost3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_chghost4", chan, 0);
+  Tcl_SetVar(interp, "_chghost5", usermask, 0);
+  x = check_tcl_bind(H_chghost, mask, &fr,
+                " $_chghost1 $_chghost2 $_chghost3 $_chghost4 $_chghost5",
+                MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_ircaway(char *nick, char *from, char *mask,
             struct userrec *u, char *chan, char *msg)
 {
@@ -790,17 +794,6 @@ static int check_tcl_ircaway(char *nick, char *from, char *mask,
   Tcl_SetVar(interp, "_ircaway5", msg ? msg : "", 0);
   x = check_tcl_bind(H_ircaway, mask, &fr, " $_ircaway1 $_ircaway2 $_ircaway3 "
                         "$_ircaway4 $_ircaway5", MATCH_MASK | BIND_STACKABLE);
-  return (x == BIND_EXEC_LOG);
-}
-
-static int check_tcl_monitor(char *nick, int online)
-{
-  int x;
-
-  Tcl_SetVar(interp, "_monitor1", nick, 0);
-  Tcl_SetVar(interp, "_monitor2", online ? "1" : "0", 0);
-  x = check_tcl_bind(H_monitor, nick, 0, " $_monitor1 $_monitor2", BIND_STACKABLE);
-
   return (x == BIND_EXEC_LOG);
 }
 
@@ -916,12 +909,16 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   int x;
   char buf[512], *args = buf, *cmd, host[161], *hand;
-  struct userrec *u;
+  struct chanset_t *chan;
+  struct userrec *u = NULL;
+  memberlist *m;
 
   strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
-  u = get_user_by_host(host);
+  chan = findchan(chname);
+  m = ismember(chan, nick);
+  u = lookup_user_record(m ? m : find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pub1", nick, 0);
@@ -944,10 +941,14 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   int x;
   char buf[1024], host[161];
   struct userrec *u;
+  struct chanset_t *chan;
+  memberlist *m;
 
   simple_sprintf(buf, "%s %s", chname, msg);
   simple_sprintf(host, "%s!%s", nick, from);
-  u = get_user_by_host(host);
+  chan = findchan(chname);
+  m = ismember(chan, nick);
+  u = lookup_user_record(m ? m : find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   get_user_flagrec(u, &fr, chname);
   Tcl_SetVar(interp, "_pubm1", nick, 0);
   Tcl_SetVar(interp, "_pubm2", from, 0);
@@ -1338,8 +1339,8 @@ static char *irc_close()
   del_bind_table(H_pub);
   del_bind_table(H_need);
   del_bind_table(H_ircaway);
-  del_bind_table(H_monitor);
   del_bind_table(H_account);
+  del_bind_table(H_chghost);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1402,7 +1403,8 @@ static Function irc_table[] = {
   (Function) & twitch,          /* int                          */
   /* 28 - 31 */
   (Function) & H_ircaway,       /* p_tcl_bind_list              */
-  (Function) & H_monitor        /* p_tcl_bind_list              */
+  (Function) NULL,              /* Was H_monitor                */
+  (Function) & H_chghost        /* p_tcl_bind_list              */
 };
 
 char *irc_start(Function *global_funcs)
@@ -1470,8 +1472,8 @@ char *irc_start(Function *global_funcs)
   H_pub = add_bind_table("pub", 0, channels_5char);
   H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
   H_ircaway = add_bind_table("ircaway", HT_STACKABLE, channels_5char);
-  H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
   H_account = add_bind_table("account", HT_STACKABLE, channels_5char);
+  H_chghost = add_bind_table("chghost", HT_STACKABLE, channels_5char);
   do_nettype();
   return NULL;
 }
