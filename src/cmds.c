@@ -22,6 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/resource.h>
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
@@ -1907,11 +1908,11 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
   }
   if ( !type && !glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
-    dprintf(idx, "You cannot add %s matching another user!\n",
-            type ? "an account" : "a host");
+    dprintf(idx, "You cannot add a host matching another user!\n");
     return 1;
   }
   if (type) {
+    // host-variable contains account
     u2 = get_user_by_account(host);
     if (u2) {
       dprintf(idx, "That account already exists for user %s\n", u2->handle);
@@ -1919,6 +1920,7 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
     addaccount_by_handle(handle, host);
   } else {
+    // host
     for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next) {
       if (!strcasecmp(q->extra, host)) {
         dprintf(idx, "That %s is already there.\n",
@@ -2834,6 +2836,8 @@ static void cmd_page(struct userrec *u, int idx, char *par)
  */
 static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
+  struct rusage ru1, ru2;
+  int r = 0;
   int code;
   char *result;
   Tcl_DString dstr;
@@ -2842,8 +2846,15 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
-  debug1("tcl: evaluate (.tcl): %s", msg);
+  debug1("tcl: evaluating .tcl %s", msg);
+  r = getrusage(RUSAGE_SELF, &ru1);
   code = Tcl_GlobalEval(interp, msg);
+  if (!r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("tcl: evaluated .tcl %s, user %.3fms sys %.3fms", msg,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);

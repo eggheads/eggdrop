@@ -649,7 +649,7 @@ static int tcl_language STDVAR
   strcpy(buf, argv[1]);
 
   if (!split_lang(buf, &lang, &section)) {
-    Tcl_AppendResult(irp, "Invalid parameter", NULL);
+    Tcl_SetResult(irp, "Invalid parameter", TCL_STATIC);
     nfree(buf);
     return TCL_ERROR;
   }
@@ -677,7 +677,7 @@ static int tcl_mnslang STDVAR
   BADARGS(2, 2, " language");
 
   if (!del_lang(argv[1])) {
-    Tcl_AppendResult(irp, "Language not found.", NULL);
+    Tcl_SetResult(irp, "Language not found.", TCL_STATIC);
     return TCL_ERROR;
   }
   recheck_lang_sections();
@@ -698,7 +698,7 @@ static int tcl_dellangsection STDVAR
   BADARGS(2, 2, " section");
 
   if (!del_lang_section(argv[1])) {
-    Tcl_AppendResult(irp, "Section not found", NULL);
+    Tcl_SetResult(irp, "Section not found", TCL_STATIC);
     return TCL_ERROR;
   }
   return TCL_OK;

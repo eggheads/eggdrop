@@ -89,13 +89,6 @@
 #define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
 #define PASSWORDLEN PASSWORDMAX + 1
 
-
-/* We have to generate compiler errors in a weird way since not all compilers
- * support the #error preprocessor directive. */
-#ifndef STDC_HEADERS
-#  include "Error: Your system must have standard ANSI C headers."
-#endif
-
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
@@ -190,12 +183,8 @@
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
+#include <sys/time.h> /* gettimeofday() POSIX 2001 */
+#include <time.h> /* POSIX 2001 */
 
 /* Yikes...who would have thought finding a usable random() would be so much
  * trouble?
@@ -757,7 +746,7 @@ struct dns_thread_node {
   int type;
   sockname_t addr;
   char host[256];
-  int ok;
+  char strerror[3 * 64]; /* msg + gai_strerror() + strerror() */
   struct dns_thread_node *next;
 };
 

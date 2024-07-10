@@ -1419,7 +1419,7 @@ static int botfl_tcl_get(Tcl_Interp *interp, struct userrec *u,
 
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
-  Tcl_AppendResult(interp, x, NULL);
+  Tcl_SetResult(interp, x, TCL_STATIC);
   return TCL_OK;
 }
 

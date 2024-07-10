@@ -834,13 +834,11 @@ static void notes_hourly()
     memberlist *m;
     int k;
     int l;
-    char s1[NICKMAX+UHOSTLEN+1];
     struct userrec *u;
 
     for (chan = chanset; chan; chan = chan->next) {
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-        sprintf(s1, "%s!%s", m->nick, m->userhost);
-        u = get_user_by_host(s1);
+        u = get_user_from_member(m);
         if (u) {
           k = num_notes(u->handle);
           for (l = 0; l < dcc_total; l++)

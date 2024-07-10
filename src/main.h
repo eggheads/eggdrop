@@ -41,15 +41,18 @@
 #include "eggint.h"
 #include "lush.h"
 
+#ifndef TCL_SIZE_MAX
+    typedef int Tcl_Size;
+# define Tcl_GetSizeIntFromObj Tcl_GetIntFromObj
+# define TCL_SIZE_MAX      INT_MAX
+# define TCL_SIZE_MODIFIER ""
+#endif
+
 #ifndef TCL_PATCH_LEVEL
 #  define TCL_PATCH_LEVEL "*unknown*"
 #endif
 
-#ifdef CONST
-#  define EGG_CONST CONST
-#else
-#  define EGG_CONST
-#endif
+#define EGG_CONST const
 
 #ifdef CONST86
 #  define TCL_CONST86 CONST86
@@ -57,12 +60,7 @@
 #  define TCL_CONST86
 #endif
 
-#ifdef HAVE_STDARG_H
-#  include <stdarg.h>
-#else
-#  error "Must have stdarg.h"
-#endif
-
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
