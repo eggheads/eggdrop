@@ -1596,12 +1596,14 @@ int crypto_verify(const char *x_, const char *y_)
  */
 char *add_cr(const char *p, const int escape_telnet)
 {
-  static int buf_size = 0;
+  size_t len;
+  static size_t buf_size = 0;
   static char *buf;
   char *q;
 
-  if ((strlen(p) << 1) > buf_size) {
-    buf_size = strlen(p) << 1;
+  len = (strlen(p) << 1) + 1;
+  if (len > buf_size) {
+    buf_size = len;
     buf = nrealloc(buf, buf_size);
   }
   for (q = buf; *p; *q++ = *p++) {
