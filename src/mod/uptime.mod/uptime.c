@@ -35,6 +35,7 @@
 
 #include <fcntl.h>
 #include <netdb.h>
+#include <stddef.h>
 #include <sys/stat.h>
 #include "uptime.h"
 #include "../module.h"
