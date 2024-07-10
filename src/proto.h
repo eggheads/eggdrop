@@ -138,8 +138,8 @@ int check_ansi(char *);
 void dupwait_notify(char *);
 #ifdef TLS
 int dcc_fingerprint(int);
-void dcc_telnet_hostresolved2(int, int);
 #endif
+void dcc_telnet_hostresolved2(int, int);
 
 /* dccutil.c */
 int increase_socks_max(void);
