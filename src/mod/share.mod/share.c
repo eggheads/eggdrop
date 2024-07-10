@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define MODULE_NAME "share"
 #define MAKING_SHARE
 
+#include <errno.h>
 #include "src/mod/module.h"
 
 #include <netinet/in.h>
@@ -73,7 +74,7 @@ tandbuf *tbuf;
 
 /* Prototypes */
 static void start_sending_users(int);
-static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
+static void shareout_but(struct chanset_t *chan, int x, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 static int flush_tbuf(char *);
 static int can_resync(char *);
 static void dump_resync(int);
@@ -568,6 +569,22 @@ static void share_newchan(int idx, char *par)
   }
 }
 
+static void share_pls_account(int idx, char *par)
+{
+  char *hand;
+  struct userrec *u;
+
+  if ((dcc[idx].status & STAT_SHARE) && !private_user) {
+    hand = newsplit(&par);
+    if ((u = get_user_by_handle(userlist, hand)) &&
+        !(u->flags & USER_UNSHARED)) {
+      shareout_but(NULL, idx, "+a %s %s\n", hand, par);
+      set_user(&USERENTRY_ACCOUNT, u, par);
+      putlog(LOG_CMDS, "*", "%s: +account %s %s", dcc[idx].nick, hand, par);
+    }
+  }
+}
+
 static void share_pls_host(int idx, char *par)
 {
   char *hand;
@@ -580,6 +597,33 @@ static void share_pls_host(int idx, char *par)
       shareout_but(NULL, idx, "+h %s %s\n", hand, par);
       set_user(&USERENTRY_HOSTS, u, par);
       putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
+    }
+  }
+}
+
+static void share_pls_botaccount(int idx, char *par)
+{
+  char *hand, pass[PASSWORDLEN];
+  struct userrec *u;
+
+  if ((dcc[idx].status & STAT_SHARE) && !private_user) {
+    hand = newsplit(&par);
+    if (!(u = get_user_by_handle(userlist, hand)) ||
+        !(u->flags & USER_UNSHARED)) {
+      if (!(dcc[idx].status & STAT_GETTING))
+        shareout_but(NULL, idx, "+ba %s %s\n", hand, par);
+      /* Add bot to userlist if not there */
+      if (u) {
+        if (!(u->flags & USER_BOT))
+          return;               /* ignore */
+        set_user(&USERENTRY_ACCOUNT, u, par);
+      } else {
+        makepass(pass);
+        userlist = adduser(userlist, hand, par, pass, USER_BOT);
+        explicit_bzero(pass, sizeof pass);
+      }
+      if (!(dcc[idx].status & STAT_GETTING))
+        putlog(LOG_CMDS, "*", "%s: +account %s %s", dcc[idx].nick, hand, par);
     }
   }
 }
@@ -607,6 +651,24 @@ static void share_pls_bothost(int idx, char *par)
       }
       if (!(dcc[idx].status & STAT_GETTING))
         putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
+    }
+  }
+}
+
+static void share_mns_account(int idx, char *par)
+{
+  char *hand;
+  struct userrec *u;
+
+  if ((dcc[idx].status & STAT_SHARE) && !private_user) {
+    hand = newsplit(&par);
+    if ((u = get_user_by_handle(userlist, hand)) &&
+        !(u->flags & USER_UNSHARED)) {
+      shareout_but(NULL, idx, "-a %s %s\n", hand, par);
+      noshare = 1;
+      delaccount_by_handle(hand, par);
+      noshare = 0;
+      putlog(LOG_CMDS, "*", "%s: -account %s %s", dcc[idx].nick, hand, par);
     }
   }
 }
@@ -1171,7 +1233,8 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%" PRId64 ".users", botnetnick,
+           (int64_t) now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -1180,11 +1243,9 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (copy_to_tmp && !(f = tmpfile())) {
+  } else if (!(f = tmpfile())) {
+    debug1("share: share_ufsend(): tmpfile(): error: %s", strerror(errno));
     putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
-    zapfbot(idx);
-  } else if (!copy_to_tmp && !(f = fopen(s, "wb"))) {
-    putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
     /* Ignore longip and use botaddr, arg kept for backward compat for pre 1.8.3 */
@@ -1328,7 +1389,9 @@ static void share_feats(int idx, char *par)
  */
 static botscmd_t C_share[] = {
   {"!",        "",  (IntFunc) share_endstartup},
+  {"+a",       "psu", (IntFunc) share_pls_account},
   {"+b",       "psb", (IntFunc) share_pls_ban},
+  {"+ba",      "psb", (IntFunc) share_pls_botaccount},
   {"+bc",      "psb", (IntFunc) share_pls_banchan},
   {"+bh",      "psu", (IntFunc) share_pls_bothost},
   {"+cr",      "psc", (IntFunc) share_pls_chrec},
@@ -1338,6 +1401,7 @@ static botscmd_t C_share[] = {
   {"+i",       "psn", (IntFunc) share_pls_ignore},
   {"+inv",     "psj", (IntFunc) share_pls_invite},
   {"+invc",    "psj", (IntFunc) share_pls_invitechan},
+  {"-a",       "psu", (IntFunc) share_mns_account},
   {"-b",       "psb", (IntFunc) share_mns_ban},
   {"-bc",      "psb", (IntFunc) share_mns_banchan},
   {"-cr",      "psc", (IntFunc) share_mns_chrec},
@@ -1398,18 +1462,15 @@ static void sharein_mod(int idx, char *msg)
   }
 }
 
-static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
+ATTRIBUTE_FORMAT(printf,2,3)
+static void shareout_mod(struct chanset_t *chan, const char *format, ...)
 {
   int i, l;
-  char *format;
   char s[601];
-  struct chanset_t *chan;
   va_list va;
 
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
-
   if (!chan || channel_shared(chan)) {
-    format = va_arg(va, char *);
+    va_start(va, format);
 
     strcpy(s, "s ");
     if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1428,21 +1489,18 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
         }
       }
     q_resync(s, chan);
+    va_end(va);
   }
-  va_end(va);
 }
 
-static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+static void shareout_but(struct chanset_t *chan, int x, const char *format, ...)
 {
-  int i, x, l;
-  char *format;
+  int i, l;
   char s[601];
-  struct chanset_t *chan;
   va_list va;
 
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
-  x = va_arg(va, int);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   strcpy(s, "s ");
   if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1716,7 +1774,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     fclose(f);
   }
   if (!ok)
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+    putlog(LOG_MISC, "*", "%s", USERF_ERRWRITE2);
   return ok;
 }
 
@@ -1978,14 +2036,10 @@ static void start_sending_users(int idx)
   int i = 1;
   struct chanuserrec *ch;
   struct chanset_t *cst;
-#ifdef IPV6
-  char s[INET6_ADDRSTRLEN];
-#else
-  char s[INET_ADDRSTRLEN];
-#endif
+  char s[EGG_INET_ADDRSTRLEN];
 
-  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
-               now);
+  snprintf(share_file, sizeof share_file, ".share.%s.%" PRId64, dcc[idx].nick,
+           (int64_t) now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
            dcc[idx].nick);
@@ -2142,12 +2196,12 @@ static void cancel_user_xfer(int idx, void *x)
 }
 
 static tcl_ints my_ints[] = {
-  {"allow-resync",      &allow_resync},
-  {"resync-time",        &resync_time},
-  {"private-global",  &private_global},
-  {"private-user",      &private_user},
-  {"override-bots", &overr_local_bots},
-  {NULL,                         NULL}
+  {"allow-resync",      &allow_resync, 0},
+  {"resync-time",        &resync_time, 0},
+  {"private-global",  &private_global, 0},
+  {"private-user",      &private_user, 0},
+  {"override-bots", &overr_local_bots, 0},
+  {NULL,                         NULL, 0}
 };
 
 static tcl_strings my_strings[] = {
@@ -2298,7 +2352,7 @@ char *share_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, share_table, 2, 4);
+  module_register(MODULE_NAME, share_table, 2, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

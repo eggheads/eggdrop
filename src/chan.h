@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2021 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,8 +50,8 @@ typedef struct memstruct {
   time_t split; /* in case they were just netsplit */
   time_t last;  /* for measuring idle time         */
   time_t delay; /* for delayed autoop              */
-  struct userrec *user;
-  int tried_getuser;
+  struct userrec *user; /* cached user lookup */
+  int tried_getuser; /* negative user lookup cache */
   struct memstruct *next;
 } memberlist;
 
@@ -208,7 +208,7 @@ struct chanset_t {
     char *op;
     int type;
   } cmode[MODES_PER_LINE_MAX];
-  char floodwho[FLOOD_CHAN_MAX][81];
+  char floodwho[FLOOD_CHAN_MAX][256]; /* can be nick or host */
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];
   char deopd[NICKLEN];   /* last user deopped                 */

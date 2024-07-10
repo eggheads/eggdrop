@@ -4,7 +4,7 @@
 # reStructuredText format files. -Geo
 #
 #
-# Copyright (C) 2004 - 2021 Eggheads Development Team
+# Copyright (C) 2004 - 2024 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -102,45 +102,50 @@ echo "*** Generating HTML files..."
 
 echo "*** Stupid housecleaning..."
 mv tmpdocs/about.txt $BASEDIR/../doc/ABOUT
-mv tmpdocs/assoc.txt $BASEDIR/../doc/settings/mod.assoc
-mv tmpdocs/bans.txt $BASEDIR/../doc/BANS
-mv tmpdocs/blowfish.txt $BASEDIR/../doc/settings/mod.blowfish
-mv tmpdocs/botnet.txt $BASEDIR/../doc/BOTNET
-mv tmpdocs/channels.txt $BASEDIR/../doc/settings/mod.channels
-mv tmpdocs/compress.txt $BASEDIR/../doc/settings/mod.compress
-mv tmpdocs/console.txt $BASEDIR/../doc/settings/mod.console
-mv tmpdocs/core.txt $BASEDIR/../doc/settings/core.settings
-mv tmpdocs/ctcp.txt $BASEDIR/../doc/settings/mod.ctcp
-mv tmpdocs/dns.txt $BASEDIR/../doc/settings/mod.dns
-mv tmpdocs/faq.txt $BASEDIR/../doc/FAQ
-mv tmpdocs/features.txt $BASEDIR/../FEATURES
-mv tmpdocs/filesys.txt $BASEDIR/../doc/settings/mod.filesys
-mv tmpdocs/first-script.txt $BASEDIR/../doc/FIRST-SCRIPT
-mv tmpdocs/ident.txt $BASEDIR/../doc/settings/mod.ident
+mv tmpdocs/legal.txt $BASEDIR/../doc/LEGAL
 mv tmpdocs/install.txt $BASEDIR/../INSTALL
-mv tmpdocs/ircv3.txt $BASEDIR/../doc/IRCv3
+mv tmpdocs/readme.txt $BASEDIR/../README
+mv tmpdocs/upgrading.txt $BASEDIR/../UPGRADING
+mv tmpdocs/included.txt $BASEDIR/../doc/modules/MODULES
+mv tmpdocs/writing.txt $BASEDIR/../doc/modules/writing-modules
+mv tmpdocs/assoc.txt $BASEDIR/../doc/modules/mod.assoc
+mv tmpdocs/blowfish.txt $BASEDIR/../doc/modules/mod.blowfish
+mv tmpdocs/channels.txt $BASEDIR/../doc/modules/mod.channels
+mv tmpdocs/compress.txt $BASEDIR/../doc/modules/mod.compress
+mv tmpdocs/console.txt $BASEDIR/../doc/modules/mod.console
+mv tmpdocs/ctcp.txt $BASEDIR/../doc/modules/mod.ctcp
+mv tmpdocs/dns.txt $BASEDIR/../doc/modules/mod.dns
+mv tmpdocs/filesys.txt $BASEDIR/../doc/modules/mod.filesys
+mv tmpdocs/ident.txt $BASEDIR/../doc/modules/mod.ident
+mv tmpdocs/irc.txt $BASEDIR/../doc/modules/mod.irc
+mv tmpdocs/notes.txt $BASEDIR/../doc/modules/mod.notes
+mv tmpdocs/pbkdf2.txt $BASEDIR/../doc/modules/mod.pbkdf2
+mv tmpdocs/python.txt $BASEDIR/../doc/modules/mod.python
+mv tmpdocs/seen.txt $BASEDIR/../doc/modules/mod.seen
+mv tmpdocs/server.txt $BASEDIR/../doc/modules/mod.server
+mv tmpdocs/share.txt $BASEDIR/../doc/modules/mod.share
+mv tmpdocs/transfer.txt $BASEDIR/../doc/modules/mod.transfer
+mv tmpdocs/twitch.txt $BASEDIR/../doc/modules/mod.twitch
+mv tmpdocs/uptime.txt $BASEDIR/../doc/modules/mod.uptime
+mv tmpdocs/woobie.txt $BASEDIR/../doc/modules/mod.woobie
+mv tmpdocs/firstscript.txt $BASEDIR/../doc/FIRST-SCRIPT
+mv tmpdocs/bans.txt $BASEDIR/../doc/BANS
+mv tmpdocs/botnet.txt $BASEDIR/../doc/BOTNET
+mv tmpdocs/core.txt $BASEDIR/../doc/core.settings
+mv tmpdocs/features.txt $BASEDIR/../FEATURES
 mv tmpdocs/ipv6.txt $BASEDIR/../doc/IPV6
-mv tmpdocs/irc.txt $BASEDIR/../doc/settings/mod.irc
-mv tmpdocs/known-probs.txt $BASEDIR/../doc/KNOWN-PROBLEMS
-mv tmpdocs/modules.txt $BASEDIR/../doc/MODULES
-mv tmpdocs/notes.txt $BASEDIR/../doc/settings/mod.notes
+mv tmpdocs/ircv3.txt $BASEDIR/../doc/IRCv3
 mv tmpdocs/partyline.txt $BASEDIR/../doc/PARTYLINE
 mv tmpdocs/patch.txt $BASEDIR/../doc/PATCH-HOWTO
-mv tmpdocs/pbkdf2.txt $BASEDIR/../doc/PBKDF2
-mv tmpdocs/readme.txt $BASEDIR/../README
-mv tmpdocs/seen.txt $BASEDIR/../doc/settings/mod.seen
-mv tmpdocs/server.txt $BASEDIR/../doc/settings/mod.server
-mv tmpdocs/share.txt $BASEDIR/../doc/settings/mod.share
+mv tmpdocs/pbkdf2info.txt $BASEDIR/../doc/PBKDF2
 mv tmpdocs/tcl-commands.txt $BASEDIR/../doc/tcl-commands.doc
-mv tmpdocs/text-sub.txt $BASEDIR/../doc/TEXT-SUBSTITUTIONS
+mv tmpdocs/twitch-tcl-commands.txt $BASEDIR/../doc/twitch-tcl-commands.doc
 mv tmpdocs/tls.txt $BASEDIR/../doc/TLS
-mv tmpdocs/transfer.txt $BASEDIR/../doc/settings/mod.transfer
 mv tmpdocs/tricks.txt $BASEDIR/../doc/TRICKS
-mv tmpdocs/twitch.txt $BASEDIR/../doc/TWITCH
-mv tmpdocs/uptime.txt $BASEDIR/../doc/settings/mod.uptime
+mv tmpdocs/twitchinfo.txt $BASEDIR/../doc/TWITCH
 mv tmpdocs/users.txt $BASEDIR/../doc/USERS
-mv tmpdocs/weird-msgs.txt $BASEDIR/../doc/WEIRD-MESSAGES
-mv tmpdocs/woobie.txt $BASEDIR/../doc/settings/mod.woobie
+mv tmpdocs/accounts.txt $BASEDIR/../doc/ACCOUNTS
+mv tmpdocs/autoscripts.txt $BASEDIR/../doc/AUTOSCRIPTS
 rm -rf tmpdocs
 rm -rf $BASEDIR/../doc/html/_sources
 rm -rf $BASEDIR/../doc/doctrees/

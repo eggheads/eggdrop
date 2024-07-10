@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Encryption/Hashing &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Twitch" href="twitchinfo.html" />
+    <link rel="prev" title="Account tracking in Eggdrop" href="accounts.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="accounts.html" title="Account tracking in Eggdrop"
+             accesskey="P">previous</a> |
+          <a href="twitchinfo.html" title="Twitch"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoscripts.html">Eggdrop Autoscripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Encryption/Hashing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tcl-interface">Tcl Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="encryption-hashing">
+<h1>Encryption/Hashing<a class="headerlink" href="#encryption-hashing" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><p>With the release of Eggdrop 1.9.0, an updated crytopgraphy module (PBKDF2) was released for use with Eggdrop. PBKDF2 is a one-way hashing algorithm used to protect the contents of the password file, as well as for use via the Tcl interface. Prior to this, blowfish was used for cryptographic requirements, such as hashing passwords for storage in the userfile.</p>
+</div></blockquote>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><p>Prior to Eggdrop 1.9.0, the blowfish module was included with Eggdrop to protect sensitive data such as passwords stored in the userfile. While there are no known practical attacks against blowfish at the time of this writing, it was decided that a more modern crypto solution was desirable to be included with Eggdrop. The PBKDF2 (Password-based Key Derivation Function 2) uses a password and salt value to create a password hash (the salt value ensures that the hashes of two identical passwords are different). This process is one-way, which means the hashes cannot be cryptographically reversed and thus are safe for storing in a file.</p>
+<p>The default configuration of Eggdrop 1.9.0 has both the blowfish and pbkdf2 modules enabled (see <a class="reference internal" href="#hybrid-configuration">Hybrid Configuration</a> below). This will allow users upgrading a seamless transition to the PBKDF2 module. For users starting an Eggdrop for the first time, it is recommended to comment out the ‘loadmodule blowfish’ line, in order to implement the <a class="reference internal" href="#solo-configuration">Solo Configuration</a>.</p>
+<p>Also of note, the maximum password length is increased to 30 with PBKDF2, up from 15 with Blowfish. The automatically-generated botnet passwords are now 30 characters instead of the maximum-allowed 16 used with the blowfish module, and pull from a larger character set than what was used with the blowfish module. Finally, if you are linking bots, you’ll need to ensure the same module is loaded on both bots (ie, if the hub bot is using the pbkdf2 module, the leaf bots must have pbkdf2 loaded as well in order to enable authentication checks).</p>
+</div></blockquote>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><p>There are two ways to implement PBKDF2- Hybrid configuration, which is recommended for transitioning an already-existing userfile to PBKDF2 by working with the blowfish module, and Solo configuration, which is recommended for use when starting a new Eggdrop for the first time.</p>
+</div></blockquote>
+<section id="hybrid-configuration">
+<h3>Hybrid Configuration<a class="headerlink" href="#hybrid-configuration" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>With a hybrid configuration, Eggdrop will run both the blowfish and the pbkdf2 modules concurrently. This will allow Eggdrop to authenticate users against their existing blowfish passwords stored in the userfile. However, the first time a user logs in, the pbkdf2 module will hash the (correct) password they enter and save it to the userfile. The pbkdf2-hashed password will then be used for all future logins.</p>
+</div></blockquote>
+<section id="enabling-hybrid-configuration">
+<h4>Enabling hybrid configuration<a class="headerlink" href="#enabling-hybrid-configuration" title="Link to this heading">¶</a></h4>
+<ol class="arabic simple">
+<li><p>BACK UP YOUR USERFILE! This is the file that usually ends with ‘.user’.</p></li>
+<li><p>Ensure</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">blowfish</span>
+</pre></div>
+</div>
+<p>is added to the config file and not commented out (it should already be there).</p>
+<ol class="arabic simple">
+<li><p>Ensure</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">pbkdf2</span>
+</pre></div>
+</div>
+<p>is uncommented in the config file (or added, if this is a config file from 1.8)</p>
+<ol class="arabic simple">
+<li><p>Start Eggdrop</p></li>
+<li><p>If this is your first time starting this Eggdrop, follow the instructions it gives you at startup to identify yourself. Otherwise, for an existing Eggdrop where you are already added to the userfile, log in as usual to the partyline via telnet or DCC, or authenticate via a message command like /msg bot op &lt;password&gt;</p></li>
+<li><p>Sit back and enjoy a cold beverage, you did it! Now encourage the rest of your users to log in so that their passwords are updated to the new format as well.</p></li>
+</ol>
+</section>
+</section>
+<section id="solo-configuration">
+<h3>Solo configuration<a class="headerlink" href="#solo-configuration" title="Link to this heading">¶</a></h3>
+<blockquote>
+<div><p>With a solo configuration, Eggdrop will only run the pbkdf2 module. Eggdrop will not be able to authenticate against passwords in an already-existing userfile and thus will require every user to set a password again, as if they were just added to Eggdrop. This can be done via the PASS msg command (/msg bot PASS &lt;password&gt;) or by having a user with appropriate permissions (and an already-set password) log into the partyline and use the ‘.chpass’ command.</p>
+<p>SECURITY CONSIDERATION: This configuration is not ideal for transitioning an existing userfile to PBKDF2. Without the blowfish module loaded, every user in the userfile essentially has no password set. This means any other user that matches a hostmask applied to a handle (<em>!*&#64;</em>.aol.com, I’m looking at you) could set the password and gain access to that user’s Eggdrop account.</p>
+</div></blockquote>
+<section id="enabling-solo-configuration">
+<h4>Enabling solo configuration<a class="headerlink" href="#enabling-solo-configuration" title="Link to this heading">¶</a></h4>
+<ol class="arabic">
+<li><p>BACK UP YOUR USERFILE! This is the file that usually ends with ‘.user’.</p></li>
+<li><p>Remove or comment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># loadmodule blowfish</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>from your config file.</p>
+<ol class="arabic">
+<li><p>Ensure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">pbkdf2</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>is uncommented (or added, if this is a config file from 1.8) from your config file.</p>
+<ol class="arabic simple">
+<li><p>Start Eggdrop</p></li>
+<li><p>If this is your first time starting this Eggdrop, follow the instructions it gives you at startup to identify yourself. Otherwise, for an existing Eggdrop where you are already added to the userfile, set a new password via /msg bot PASS &lt;password&gt;</p></li>
+<li><p>Sit back and enjoy a fancy lobster dinner, you did it! If there are other users already added to the bot, DEFINITELY encourage them to set a new password IMMEDIATELY!</p></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="tcl-interface">
+<h2>Tcl Interface<a class="headerlink" href="#tcl-interface" title="Link to this heading">¶</a></h2>
+<p>The PBKDF2 module adds the ‘encpass2’ command to the Tcl library. This command takes a string and hashes it using the PBKDF2 algorithm, and returns a string in the following format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$&lt;PBK method&gt;$rounds=&lt;rounds&gt;$&lt;salt&gt;$&lt;password hash&gt;
+</pre></div>
+</div>
+<p>where ‘PBK method’ is the method specified in the configuration file, ‘rounds’ is the number of rounds specified in the configuration file, ‘salt’ is the value used for the salt, and ‘password hash’ is the output of the hashing algorithm.</p>
+<p>Copyright (C) 2000 - 2024 Eggheads Development Team</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="accounts.html" title="Account tracking in Eggdrop"
+              >previous</a> |
+            <a href="twitchinfo.html" title="Twitch"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
