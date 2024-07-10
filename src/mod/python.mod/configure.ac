@@ -21,16 +21,15 @@ python_avail="false"
 
 if test "x$egg_enable_python" != "xno"; then
   if test "x$egg_with_python_config" = "x"; then
-    AC_PATH_PROGS([python_config_bin], [python3-config python-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config])
+    # based on serial 20 https://www.gnu.org/software/autoconf-archive/ax_python.html
+    AC_PATH_PROGS([python_config_bin], [python3-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python-config])
   else
     if test -d "$egg_with_python_config"; then
       AC_MSG_NOTICE([Checking for python-config binaries in $egg_with_python_config])
-      AC_PATH_PROGS([python_config_bin], [python3-config python-config], [], [$egg_with_python_config])
+      AC_PATH_PROGS([python_config_bin], [python3-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python-config], [], [$egg_with_python_config])
     else
       if test -x "$egg_with_python_config"; then
         python_config_bin="$egg_with_python_config"
-      else
-        AC_MSG_WARN([Specified --with-python-config=$egg_with_python_config does not exist.])
       fi
     fi
   fi
@@ -66,28 +65,18 @@ version to use, for example '2.3'. This string
 will be appended to the Python interpreter
 canonical name.])
 
-AC_PATH_PROG([PYTHON],[python[$PYTHON_VERSION]])
-  if test -z "$PYTHON"; then
-    AC_MSG_WARN([Cannot find python$PYTHON_VERSION in your system path])
-    if ! $ax_python_devel_optional; then
-      AC_MSG_ERROR([Giving up, python development not available])
-    fi
-  ax_python_devel_found=no
-  PYTHON_VERSION=""
-fi
+PYTHON_VERSION=`echo $PYTHON_LDFLAGS | sed 's/.*-lpython\(.*[[0-9]]\).*/\1/'`
 
 # Check for python version
-  python_ver=`$PYTHON -c "import sys; \
-  print(sys.version.split ()[[0]])"`
-  AX_COMPARE_VERSION([$python_ver],[ge],[3.8.0], [ax_check_ver="yes"], [ax_check_ver="no"])
-  AC_MSG_CHECKING([$PYTHON version is >= 3.8.0])
-  if test "x$ax_check_ver" = x"no"; then
-    python_avail="false"
-    AC_MSG_RESULT([no ($python_ver)])
-    AC_MSG_WARN([Eggdrop requires python version 3.8.0 or higher])
-  else
-    AC_MSG_RESULT([yes ($python_ver)])
-  fi
+AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.8.0], [ax_check_ver="yes"], [ax_check_ver="no"])
+AC_MSG_CHECKING([python version is >= 3.8.0])
+if test "x$ax_check_ver" = x"no"; then
+  python_avail="false"
+  AC_MSG_RESULT([no ($PYTHON_VERSION)])
+  AC_MSG_WARN([Eggdrop requires python version 3.8.0 or higher])
+else
+  AC_MSG_RESULT([yes ($PYTHON_VERSION)])
+fi
 
 # Disable the module
 if test "x$python_avail" = "xfalse"; then
