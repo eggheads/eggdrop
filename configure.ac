@@ -91,9 +91,8 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS_ONCE([sys/time.h])
 
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -113,7 +112,7 @@ AX_TYPE_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton isascii memset_s snprintf strlcpy vsnprintf])
+AC_CHECK_FUNCS([dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton memset_s snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP
@@ -165,7 +164,6 @@ EGG_TLS_DETECT
 EGG_TDNS_ENABLE
 
 # Check for Python
-EGG_PYTHON_ENABLE
 EGG_PYTHON_WITHCONFIG
 
 

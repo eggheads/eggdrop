@@ -171,6 +171,23 @@ static struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
+/* Search every channel record for the provided nickname. Used in cases where
+ * we are searching for a user record but don't have a memberlist to start from
+ */
+memberlist *find_member_from_nick(char *nick) {
+  struct chanset_t *chan;
+  memberlist *m = NULL;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      if (!rfc_casecmp(m->nick, nick)) {
+        return m;
+      }
+    }
+  }
+  return m;
+}
+
 /* Search userlist for a provided account name
  * Returns: userrecord for user containing the account
  */
@@ -224,23 +241,70 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 
 struct userrec *get_user_from_member(memberlist *m)
 {
-  struct userrec *ret;
+  struct userrec *ret = NULL;
+
+  /* Check positive/negative cache first */
+  if (m->user || m->tried_getuser) {
+    return m->user;
+  }
 
   /* Check if there is a user with a matching account if one is provided */
   if (m->account[0] != '*') {
     ret = get_user_by_account(m->account);
     if (ret) {
-      return ret;
+      goto getuser_done;
     }
   }
+
   /* Check if there is a user with a matching hostmask if one is provided */
   if ((m->userhost[0] != '\0') && (m->nick[0] != '\0')) {
     char s[NICKMAX+UHOSTLEN+1];
     sprintf(s, "%s!%s", m->nick, m->userhost);
     ret = get_user_by_host(s);
     if (ret) {
-      return ret;
+      goto getuser_done;
     }
+  }
+
+getuser_done:
+  m->user = ret;
+  m->tried_getuser = 1;
+  return NULL;
+}
+
+/* Wrapper function to find an Eggdrop user record based on either a provided
+ * channel memberlist record, host, or account. This function will first check
+ * a provided memberlist and return the result. If no user record is found (or
+ * the memberlist itself was NULL), this function will try again based on a
+ * provided account, and then again on a provided host.
+ *
+ * When calling this function it is best to provide all available independent
+ * variables- ie, if you provide 'm' for the memberlist, don't provide
+ * 'm->account' for the account, use the independent source variable 'account'
+ * if available. This allows redundant checking in case of unexpected NULLs
+ */
+struct userrec *lookup_user_record(memberlist *m, char *host, char *account)
+{
+  struct userrec *u = NULL;
+
+/* First check for a user record tied to a memberlist */
+  if (m) {
+    u = get_user_from_member(m);
+    if (u) {
+      return u;
+    }
+  }
+/* Next check for a user record tied to an account */
+  if (account && account[0]) {
+    u = get_user_by_account(account);
+    if (u) {
+      return u;
+    }
+  }
+/* Last check for a user record tied to a hostmask */
+  if (host && host[0]) {
+    u = get_user_by_host(host);
+    return u;
   }
   return NULL;
 }
