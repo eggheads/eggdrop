@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notes Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="PBKDF2 Module" href="pbkdf2.html" />
+    <link rel="prev" title="IRC Module" href="irc.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="irc.html" title="IRC Module"
+             accesskey="P">previous</a> |
+          <a href="pbkdf2.html" title="PBKDF2 Module"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/autoscripts.html">Eggdrop Autoscripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../included.html">Modules included with Eggdrop</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assoc.html">Assoc Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blowfish.html">Blowfish Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html">Channels Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compress.html">Compress Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="console.html">Console Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ctcp.html">CTCP Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dns.html">DNS Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesys.html">Filesys Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ident.html">Ident Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="irc.html">IRC Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Notes Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python.html">Python Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="seen.html">Seen Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">Server Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="share.html">Share Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html">Twitch Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Last revised: January 1, 2002</p>
+<section id="notes-module">
+<span id="notes"></span><h1>Notes Module<a class="headerlink" href="#notes-module" title="Link to this heading">¶</a></h1>
+<p>This module provides support for storing of notes for users from each other.
+Note sending between currently online users is supported in the core, this
+is only for storing the notes for later retrieval.</p>
+<p>This module requires: none</p>
+<p>Put this line into your Eggdrop configuration file to load the notes
+module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">notes</span>
+</pre></div>
+</div>
+<p>There are also some variables you can set in your config file:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>set notefile “LamestBot.notes”</dt><dd><p>Set here the filename where private notes between users are stored.</p>
+</dd>
+<dt>set max-notes 50</dt><dd><p>Set here the maximum number of notes to allow to be stored for each user
+(to prevent flooding).</p>
+</dd>
+<dt>set note-life 60</dt><dd><p>Set here how long (in days) to store notes before expiring them.</p>
+</dd>
+<dt>set allow-fwd 0</dt><dd><p>Set this to 1 if you want to allow users to specify a forwarding address
+for forwarding notes to another account on another bot.</p>
+</dd>
+<dt>set notify-users 1</dt><dd><p>Set this to 1 if you want the bot to let people know hourly if they have
+any notes.</p>
+</dd>
+<dt>set notify-onjoin 1</dt><dd><p>Set this to 1 if you want the bot to let people know on join if they have
+any notes.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>Copyright (C) 2000 - 2024 Eggheads Development Team</p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="irc.html" title="IRC Module"
+              >previous</a> |
+            <a href="pbkdf2.html" title="PBKDF2 Module"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

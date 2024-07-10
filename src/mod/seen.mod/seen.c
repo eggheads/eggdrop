@@ -11,7 +11,7 @@
  * 1.2a    1997-08-24      Minor fixes. [BB]
  */
 /*
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,17 +72,6 @@
 #define MAKING_SEEN
 
 #include "src/mod/module.h"
-
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
-#endif
 
 #include "src/users.h"
 #include "src/chan.h"
@@ -153,7 +142,7 @@ static int dcc_seen(struct userrec *u, int idx, char *par)
 static void do_seen(int idx, char *prefix, char *nick, char *hand,
                     char *channel, char *text)
 {
-  char stuff[512], word1[512], word2[512], whotarget[128], object[128],
+  char word1[512], word2[512], whotarget[128], object[128],
        whoredirect[512], *oix, *lastonplace = 0;
   struct userrec *urec;
   struct chanset_t *chan;
@@ -184,7 +173,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       !oix[2]) || (!oix[1] && (oix[-1] == 's' || oix[-1] == 'z' ||
       oix[-1] == 'x' || oix[-1] == 'S' || oix[-1] == 'Z' ||
       oix[-1] == 'X')))) {
-    strncpy(object, word1, oix - word1);
+    strlcpy(object, word1, sizeof object);
     object[oix - word1] = 0;
     wordshift(word1, text);
     if (!word1[0]) {
@@ -199,8 +188,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         m = ismember(chan, object);
         if (m) {
           onchan = 1;
-          snprintf(stuff, sizeof stuff, "%s!%s", object, m->userhost);
-          urec = get_user_by_host(stuff);
+          urec = get_user_from_member(m);
           if (!urec || !strcasecmp(object, urec->handle))
             break;
           strcat(whoredirect, object);
@@ -347,7 +335,7 @@ targetcont:
     if (m) {
       onchan = 1;
       snprintf(word1, sizeof word1, "%s!%s", whotarget, m->userhost);
-      urec = get_user_by_host(word1);
+      urec = get_user_from_member(m);
       if (!urec || !strcasecmp(whotarget, urec->handle))
         break;
       strcat(whoredirect, whotarget);
@@ -364,10 +352,8 @@ targetcont:
     while (chan) {
       m = chan->channel.member;
       while (m && m->nick[0]) {
-        snprintf(word2, sizeof word2, "%s!%s", m->nick, m->userhost);
-        urec = get_user_by_host(word2);
+        urec = get_user_from_member(m);
         if (urec && !strcasecmp(urec->handle, whotarget)) {
-          onchan = 1;
           strcat(whoredirect, whotarget);
           strcat(whoredirect, " is ");
           strcat(whoredirect, m->nick);
@@ -396,7 +382,7 @@ targetcont:
             prefix, whoredirect, whotarget);
     return;
   }
-  /* Target not on this channel.   Check other channels */
+  /* Target not on this channel. Check other channels */
   chan = chanset;
   while (chan) {
     m = ismember(chan, whotarget);
@@ -443,7 +429,7 @@ targetcont:
       }
     }
   }
-  /* Target known, but nowhere to be seen.  Give last IRC and botnet time */
+  /* Target known, but nowhere to be seen. Give last IRC and botnet time */
   wordshift(word1, text);
   if (!strcasecmp(word1, "anywhere"))
     cr = NULL;
@@ -472,23 +458,23 @@ targetcont:
   work = now - laston;
   if (work >= 86400) {
     tv = work / 86400;
-    snprintf(word2, sizeof word2, "%lu day%s, ", tv, (tv == 1) ? "" : "s");
+    snprintf(word2, sizeof word2, "%li day%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 86400;
   }
   if (work >= 3600) {
     tv = work / 3600;
-    sprintf(word2 + strlen(word2), "%lu hour%s, ", tv, (tv == 1) ? "" : "s");
+    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%li hour%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 3600;
   }
   if (work >= 60) {
     tv = work / 60;
-    sprintf(word2 + strlen(word2), "%lu minute%s, ", tv,
+    snprintf(word2 + strlen(word2), (sizeof word2) - strlen(word2), "%li minute%s, ", tv,
             (tv == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
     strlcpy(word2, "just moments ago!!", sizeof word2);
   } else {
-    strcpy(word2 + strlen(word2) - 2, " ago.");
+    strlcpy(word2 + strlen(word2) - 2, " ago.", (sizeof word2) - strlen(word2) + 2);
   }
   if (lastonplace[0] && (strchr(CHANMETA, lastonplace[0]) != NULL))
     snprintf(word1, sizeof word1, "on IRC channel %s", lastonplace);

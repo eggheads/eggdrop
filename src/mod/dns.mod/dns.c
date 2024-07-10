@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +22,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "src/mod/module.h"
+
+#ifndef EGG_TDNS
 #define MODULE_NAME "dns"
 
-#include "src/mod/module.h"
 #include "dns.h"
 
 static void dns_event_success(struct resolve *rp, int type);
@@ -119,6 +121,7 @@ static struct dcc_table DCC_DNS = {
   display_dns_socket,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
@@ -165,8 +168,9 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
       if (myres.nscount >= MAXNS) {
-        putlog(LOG_MISC, "*", "WARNING: %i dns-servers configured but kernel-defined "
-               "limit is %i, ignoring extra servers\n", lc, MAXNS);
+        putlog(LOG_MISC, "*", "DNS: WARNING: %i dns-servers configured but "
+               "kernel-defined limit is %i, ignoring extra servers\n", lc,
+               MAXNS);
         break;
       }
       if ((p = strchr(list[i], ':'))) {
@@ -180,9 +184,10 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
         myres.nsaddr_list[myres.nscount].sin_port = htons(port);
         myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
         myres.nscount++;
+        debug1("DNS: Valid dns-server %s", list[i]);
       }
       else
-        putlog(LOG_MISC, "*", "WARNING: Invalid dns-server %s", list[i]);
+        putlog(LOG_MISC, "*", "DNS: WARNING: Invalid dns-server %s", list[i]);
     }
     Tcl_Free((char *) list);
   }
@@ -291,9 +296,13 @@ static Function dns_table[] = {
   (Function) dns_report,
   /* 4 - 7 */
 };
+#endif /* EGG_TDNS */
 
 char *dns_start(Function *global_funcs)
 {
+#ifdef EGG_TDNS
+  return "Eggdrop was compiled with threaded DNS core; this module will not run with it. Not loading...";
+#else
   int idx;
 
   global = global_funcs;
@@ -328,4 +337,5 @@ char *dns_start(Function *global_funcs)
   add_tcl_ints(dnsints);
   add_tcl_strings(dnsstrings);
   return NULL;
+#endif /* EGG_TDNS */
 }

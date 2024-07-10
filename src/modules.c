@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include <signal.h>
 #include "main.h"
 #include "modules.h"
@@ -60,29 +61,26 @@
 #    ifndef RTLD_NOW
 #      define RTLD_NOW 1
 #    endif
-#    ifdef RTLD_LAZY
-#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#    else
-#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#    endif
+#    define DLFLAGS RTLD_NOW|RTLD_GLOBAL
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
-
-#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 
 extern char botnetnick[], botname[], origbotname[], botuser[], ver[], log_ts[],
-            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[];
+            admin[], userfile[], notify_new[], helpdir[], version[], quit_msg[],
+            pid_file[];
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
            require_p, share_greet, use_invites, use_exempts, password_timeout,
            force_expire, protect_readonly, reserved_port_min, reserved_port_max,
-           copy_to_tmp, quiet_reject;
+           quiet_reject;
 extern volatile sig_atomic_t do_restart;
+
+int copy_to_tmp = 1; /* TODO: remove from module API for eggdrop 2.0 */
 
 #ifdef IPV6
 extern int pref_af;
@@ -97,8 +95,9 @@ extern time_t now, online_since;
 extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
+extern char argv0;
 
-int cmd_die();
+
 int xtra_kill();
 int xtra_unpack();
 static int module_rename(char *name, char *newname);
@@ -156,6 +155,8 @@ static void null_share(int idx, char *x)
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
+char *(*encrypt_pass2) (char *) = 0;
+char *(*verify_pass2) (char *, char *) = 0;
 char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
 void (*shareout) () = null_func;
@@ -168,8 +169,8 @@ int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
 int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
 int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
-void (*dns_hostbyip) (sockname_t *) = block_dns_hostbyip;
-void (*dns_ipbyhost) (char *) = block_dns_ipbyhost;
+void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
+void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -182,11 +183,7 @@ Function global_table[] = {
   /* 0 - 3 */
   (Function) mod_malloc,
   (Function) mod_free,
-#ifdef DEBUG_CONTEXT
-  (Function) eggContext,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,                   /* was eggContext()                    */
   (Function) module_rename,
   /* 4 - 7 */
   (Function) module_register,
@@ -299,7 +296,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
+  (Function) memcpy,              /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -341,7 +338,7 @@ Function global_table[] = {
   (Function) & tls_vfyclients,    /* int                                 */
   (Function) & tls_vfydcc,        /* int                                 */
 #else
-  (Function) 0,                   /* was natip -- use getmyip() instead  */
+  (Function) 0,                   /* was natip                           */
   (Function) 0,                   /* was myip -- use getvhost() instead  */
 #endif
   (Function) origbotname,         /* char *                              */
@@ -491,11 +488,7 @@ Function global_table[] = {
   (Function) mod_realloc,
   (Function) xtra_set,
   /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-  (Function) eggContextNote,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,                   /* was eggContextNote()                */
 #ifdef DEBUG_ASSERT
   (Function) eggAssert,
 #else
@@ -526,10 +519,10 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
+  (Function) memset,              /* was egg_memset -- use memset() or egg_bzero() instead */
+  (Function) strcasecmp,          /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
+  (Function) strncasecmp,         /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
@@ -597,14 +590,42 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
+  (Function) strlcpy,             /* was strncpyz() -- use strlcpy() instead */
 #ifndef HAVE_BASE64
   (Function) b64_ntop,
-  (Function) b64_pton
+  (Function) b64_pton,
 #else
   (Function) 0,
-  (Function) 0
+  (Function) 0,
 #endif
+  (Function) check_validpass,
+  /* 308 - 311 */
+  (Function) make_rand_str_from_chars,
+  (Function) add_tcl_objcommands,
+  (Function) pid_file,            /* char                                */
+#ifndef HAVE_EXPLICIT_BZERO
+  (Function) explicit_bzero,
+#else
+  (Function) 0,
+#endif
+/* 312 - 315 */    
+  (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
+  (Function) crypto_verify,
+  (Function) egg_uname,
+  (Function) get_expire_time,
+/* 316 - 319 */
+  (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
+  (Function) get_user_by_account,
+  (Function) delhost_by_handle,
+  (Function) check_tcl_event_arg,
+/* 320 - 323 */
+  (Function) bind_bind_entry,
+  (Function) unbind_bind_entry,
+  (Function) & argv0,
+  (Function) lookup_user_record,
+/* 324 - 327 */
+  (Function) find_member_from_nick,
+  (Function) get_user_from_member,
 };
 
 void init_modules(void)
@@ -674,6 +695,7 @@ int module_register(char *name, Function *funcs, int major, int minor)
 
 const char *module_load(char *name)
 {
+  size_t len;
   module_entry *p;
   char *e;
   Function f;
@@ -682,7 +704,7 @@ const char *module_load(char *name)
 #endif
 
 #ifndef STATIC
-  char workbuf[1024];
+  char workbuf[PATH_MAX];
 #  ifdef MOD_USE_SHL
   shl_t hand;
 #  endif
@@ -708,11 +730,14 @@ const char *module_load(char *name)
 
 #ifndef STATIC
   if (moddir[0] != '/') {
-    if (getcwd(workbuf, 1024) == NULL)
+    if (getcwd(workbuf, sizeof workbuf) == NULL) {
+      debug1("modules: getcwd(): %s\n", strerror(errno));
       return MOD_BADCWD;
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
+    }
+    len = strlen(workbuf);
+    snprintf(workbuf + len, (sizeof workbuf) - len, "/%s%s." EGG_MOD_EXT, moddir, name);
   } else {
-    sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
+    snprintf(workbuf, sizeof workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
   }
 
 #  ifdef MOD_USE_SHL
@@ -1029,6 +1054,12 @@ void add_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
       break;
+    case HOOK_ENCRYPT_PASS2:
+      encrypt_pass2 = (char *(*)(char *)) func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      verify_pass2 = (char *(*)(char *, char*)) func;
+      break;
     case HOOK_ENCRYPT_STRING:
       encrypt_string = (char *(*)(char *, char *)) func;
       break;
@@ -1069,11 +1100,11 @@ void add_hook(int hook_num, Function func)
         match_noterej = (int (*)(struct userrec *, char *)) func;
       break;
     case HOOK_DNS_HOSTBYIP:
-      if (dns_hostbyip == block_dns_hostbyip)
+      if (dns_hostbyip == core_dns_hostbyip)
         dns_hostbyip = (void (*)(sockname_t *)) func;
       break;
     case HOOK_DNS_IPBYHOST:
-      if (dns_ipbyhost == block_dns_ipbyhost)
+      if (dns_ipbyhost == core_dns_ipbyhost)
         dns_ipbyhost = (void (*)(char *)) func;
       break;
     }
@@ -1101,6 +1132,14 @@ void del_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)
         encrypt_pass = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_ENCRYPT_PASS2:
+      if (encrypt_pass2 == (char *(*)(char *)) func)
+        encrypt_pass2 = (char *(*)(char *)) null_func;
+      break;
+    case HOOK_VERIFY_PASS2:
+      if (verify_pass2 == (char *(*)(char *, char *)) func)
+        verify_pass2 = (char *(*)(char *, char *)) null_func;
       break;
     case HOOK_ENCRYPT_STRING:
       if (encrypt_string == (char *(*)(char *, char *)) func)
@@ -1132,11 +1171,11 @@ void del_hook(int hook_num, Function func)
       break;
     case HOOK_DNS_HOSTBYIP:
       if (dns_hostbyip == (void (*)(sockname_t *)) func)
-        dns_hostbyip = block_dns_hostbyip;
+        dns_hostbyip = core_dns_hostbyip;
       break;
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == (void (*)(char *)) func)
-        dns_ipbyhost = block_dns_ipbyhost;
+        dns_ipbyhost = core_dns_ipbyhost;
       break;
     }
 }

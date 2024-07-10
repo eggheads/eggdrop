@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,8 +43,7 @@ extern struct chanset_t *chanset;
 
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
             motdfile[], ver[], botnetnick[], bannerfile[], textdir[];
-extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-            quick_logs;
+extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
 extern Tcl_Interp *interp;
@@ -57,8 +56,8 @@ log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Max log files, mismatch config on purpose */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
 int raw_log = 0;                /* Display output to server to LOG_SERVEROUT */
-
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
+int show_uname = 1;
 
 struct help_list_t {
   struct help_list_t *next;
@@ -232,11 +231,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   if (first != NULL)
     strlcpy(first, rest, max);
   if (first != rest)
-    /*    In most circumstances, strcpy with src and dst being the same buffer
-     *  can produce undefined results. We're safe here, as the src is
-     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
-     */
-    strcpy(rest, p + 1);
+    memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
 char *splitnick(char **blah)
@@ -430,7 +425,7 @@ void dumplots(int idx, const char *prefix, const char *data)
     n = strchr(p, '\n');
     if (n && n < q) {
       /* Great! dump that first line then start over */
-      dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
       p = n + 1;
     } else {
       /* Search backwards for the last space */
@@ -438,7 +433,7 @@ void dumplots(int idx, const char *prefix, const char *data)
         q--;
       if (q == p)
         q = p + max_data_len;
-      dprintf(idx, "%s%.*s\n", prefix, q - p, p);
+      dprintf(idx, "%s%.*s\n", prefix, (int)(q - p), p);
       p = q;
       if (*q == ' ')
         p++;
@@ -447,7 +442,7 @@ void dumplots(int idx, const char *prefix, const char *data)
   /* Last trailing bit: split by linefeeds if possible */
   n = strchr(p, '\n');
   while (n) {
-    dprintf(idx, "%s%.*s\n", prefix, n - p, p);
+    dprintf(idx, "%s%.*s\n", prefix, (int)(n - p), p);
     p = n + 1;
     n = strchr(p, '\n');
   }
@@ -513,11 +508,12 @@ void daysdur(time_t now, time_t then, char *out)
 /* Log something
  * putlog(level,channel_name,format,...);
  */
-void putlog EGG_VARARGS_DEF(int, arg1)
+ATTRIBUTE_FORMAT(printf,3,4)
+void putlog (int type, char *chname, const char *format, ...)
 {
   static int inhere = 0;
-  int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[LOGLINELEN], *out, ct[81], *s2, stamp[34];
+  int i, tsl = 0;
+  char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
@@ -528,9 +524,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     t = localtime(&now2);
   }
 
-  type = EGG_VARARGS_START(int, arg1, va);
-  chname = va_arg(va, char *);
-  format = va_arg(va, char *);
+  va_start(va, format);
 
   /* Create the timestamp */
   if (shtime) {
@@ -583,10 +577,11 @@ void putlog EGG_VARARGS_DEF(int, arg1)
         if (logs[i].f == NULL) {
           /* Open this logfile */
           if (keep_all_logs) {
-            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-            logs[i].f = fopen(s1, "a");
-          } else
-            logs[i].f = fopen(logs[i].filename, "a");
+            snprintf(path, sizeof path, "%s%s", logs[i].filename, ct);
+            if ((logs[i].f = fopen(path, "a")))
+              setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
+          } else if ((logs[i].f = fopen(logs[i].filename, "a")))
+            setvbuf(logs[i].f, NULL, _IOLBF, 0); /* line buffered */
         }
         if (logs[i].f != NULL) {
           /* Check if this is the same as the last line added to
@@ -619,7 +614,8 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     }
   }
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
+    if (((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) ||
+        ((dcc[i].type == &DCC_PRE_RELAY) && (dcc[i].u.relay->chat->con_flags & type))) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
           !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
         dprintf(i, "%s", out);
@@ -657,7 +653,6 @@ void logsuffix_change(char *s)
   }
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f) {
-      fflush(logs[i].f);
       fclose(logs[i].f);
       logs[i].f = NULL;
     }
@@ -682,7 +677,6 @@ void check_logsize()
           if (logs[i].f) {
             /* write to the log before closing it huh.. */
             putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
-            fflush(logs[i].f);
             fclose(logs[i].f);
             logs[i].f = NULL;
           }
@@ -696,39 +690,6 @@ void check_logsize()
     }
   }
 }
-
-/* Flush the logfiles to disk
- */
-void flushlogs()
-{
-  int i;
-
-  /* Logs may not be initialised yet. */
-  if (!logs)
-    return;
-
-  /* Now also checks to see if there's a repeat message and
-   * displays the 'last message repeated...' stuff too <cybah>
-   */
-  for (i = 0; i < max_logs; i++) {
-    if (logs[i].f != NULL) {
-      if ((logs[i].repeats > 0) && quick_logs) {
-        /* Repeat.. if quicklogs used then display 'last message
-         * repeated x times' and reset repeats.
-         */
-        char stamp[33];
-
-        strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
-        fprintf(logs[i].f, "%s ", stamp);
-        fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-        /* Reset repeats */
-        logs[i].repeats = 0;
-      }
-      fflush(logs[i].f);
-    }
-  }
-}
-
 
 /*
  *     String substitution functions
@@ -778,6 +739,23 @@ static void subst_addcol(char *s, char *newcol)
   }
 }
 
+char *egg_uname()
+{
+  struct utsname u;
+  static char sysrel[(sizeof u.sysname) + (sizeof u.release)];
+
+  if (show_uname) {
+    if (uname(&u) < 0)
+      return "*unknown*";
+    else {
+      snprintf(sysrel, sizeof sysrel, "%s %s", u.sysname, u.release);
+      return sysrel;
+    }
+  }
+  else
+    return "";
+}
+
 /* Substitute %x codes in help files
  *
  * %B = bot nickname
@@ -805,12 +783,11 @@ static void subst_addcol(char *s, char *newcol)
 void help_subst(char *s, char *nick, struct flag_record *flags,
                 int isdcc, char *topic)
 {
-  char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx,
-       *readidx, *towrite;
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
-  struct utsname uname_info;
+  char xx[HELP_BUF_LEN + 1], *current, *q, chr, *writeidx, *readidx, *towrite,
+       sub[512];
 
   if (s == NULL) {
     /* Used to reset substitutions */
@@ -900,12 +877,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       }
       break;
     case 'U':
-      if (uname(&uname_info) >= 0) {
-        egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
-                     uname_info.release);
-        towrite = sub;
-      } else
-        towrite = "*UNKNOWN*";
+      towrite = egg_uname();
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
@@ -923,7 +895,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = network;
       break;
     case 'T':
-      strftime(sub, 6, "%H:%M", localtime(&now));
+      strftime(sub, sizeof sub, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':
@@ -1201,7 +1173,7 @@ FILE *resolve_help(int dcc, char *file)
     return NULL;
   }
   /* Since we're not dealing with help files, we should just prepend the filename with textdir */
-  simple_sprintf(s, "%s%s", textdir, file);
+  snprintf(s, sizeof s, "%s%s", textdir, file);
   if (is_file(s))
     return fopen(s, "r");
   else
@@ -1432,20 +1404,25 @@ void show_banner(int idx)
   fclose(vv);
 }
 
+void make_rand_str_from_chars(char *s, const int len, char *chars)
+{
+  int i;
+
+  for (i = 0; i < len; i++)
+    s[i] = chars[randint(strlen(chars))];
+  s[len] = 0;
+}
+
 /* Create a string with random lower case letters and digits
  */
 void make_rand_str(char *s, const int len)
 {
-  int i;
-  static const char chars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-
-  for (i = 0; i < len; i++)
-    s[i] = chars[randint((sizeof chars) - 1)];
-  s[len] = 0;
+  make_rand_str_from_chars(s, len, CHARSET_LOWER_ALPHA_NUM);
 }
 
 /* Convert an octal string into a decimal integer value.  If the string
  * is empty or contains non-octal characters, -1 is returned.
+ * Deprecated, use strtol() instead.
  */
 int oatoi(const char *octal)
 {
@@ -1570,4 +1547,46 @@ void kill_bot(char *s1, char *s2)
   botnet_send_bye();
   write_userfile(-1);
   fatal(s2, 2);
+}
+
+/* Compares two strings with constant-time algorithm to avoid timing attack and
+ * returns 0, if strings match, similar to strcmp().
+ */
+/* https://github.com/jedisct1/libsodium/blob/451bafc0d3d95d18f916dd7051687d343597228c/src/libsodium/crypto_verify/sodium/verify.c */
+/*
+ * ISC License
+ *
+ * Copyright (c) 2013-2020
+ * Frank Denis <j at pureftpd dot org>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+int crypto_verify(const char *x_, const char *y_)
+{
+  const volatile unsigned char *volatile x =
+    (const volatile unsigned char *volatile) x_;
+  const volatile unsigned char *volatile y =
+    (const volatile unsigned char *volatile) y_;
+  volatile uint_fast16_t d = 0U;
+  int n, i;
+
+  /* Could leak string length */
+  n = strlen(x_);
+  if (n != strlen(y_))
+    return 1;
+
+  for (i = 0; i < n; i++) {
+    d |= x[i] ^ y[i];
+  }
+  return (1 & ((d - 1) >> 8)) - 1;
 }

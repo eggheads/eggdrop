@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -412,7 +412,7 @@ static int tcl_erasenotes STDVAR
   while (!feof(f) && fgets(s, sizeof s, f) != NULL) {
     if (s[strlen(s) - 1] == '\n')
       s[strlen(s) - 1] = 0;
-      rmspace(s);
+    rmspace(s);
     if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {   /* Not comment */
       s1 = s;
       to = newsplit(&s1);
@@ -834,13 +834,11 @@ static void notes_hourly()
     memberlist *m;
     int k;
     int l;
-    char s1[NICKMAX+UHOSTLEN+1];
     struct userrec *u;
 
     for (chan = chanset; chan; chan = chan->next) {
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-        sprintf(s1, "%s!%s", m->nick, m->userhost);
-        u = get_user_by_host(s1);
+        u = get_user_from_member(m);
         if (u) {
           k = num_notes(u->handle);
           for (l = 0; l < dcc_total; l++)
@@ -1111,12 +1109,12 @@ static cmd_t notes_msgs[] = {
 };
 
 static tcl_ints notes_ints[] = {
-  {"note-life",         &note_life},
-  {"max-notes",          &maxnotes},
-  {"allow-fwd",         &allow_fwd},
-  {"notify-users",   &notify_users},
-  {"notify-onjoin", &notify_onjoin},
-  {NULL,                      NULL}
+  {"note-life",         &note_life, 0},
+  {"max-notes",          &maxnotes, 0},
+  {"allow-fwd",         &allow_fwd, 0},
+  {"notify-users",   &notify_users, 0},
+  {"notify-onjoin", &notify_onjoin, 0},
+  {NULL,                      NULL, 0}
 };
 
 static tcl_strings notes_strings[] = {

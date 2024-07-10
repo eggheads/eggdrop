@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@
  * FILE FORMAT: language.lang
  *              <textidx>,<text>
  * TEXT MESSAGE USAGE:
- *              get_language(<textidx> [,<PARMS>])
+ *              get_language(<textidx> [,<PARAMS>])
  *
  * ADDING LANGUAGES:
  *              o       Copy an existing <section>.<oldlanguage>.lang to a
@@ -103,7 +103,7 @@ char language[64];
 /* Add a new preferred language to the list of languages. Newly added
  * languages get the highest priority.
  */
-void add_lang(char *lang)
+static void add_lang(char *lang)
 {
   lang_pri *lp = langpriority, *lpo = NULL;
 
@@ -132,7 +132,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  debug1("LANG: Language loaded: %s", lang);
+  debug1("LANG: Language added to list: %s", lang);
 }
 
 /* Remove a language from the list of preferred languages.
@@ -649,7 +649,7 @@ static int tcl_language STDVAR
   strcpy(buf, argv[1]);
 
   if (!split_lang(buf, &lang, &section)) {
-    Tcl_AppendResult(irp, "Invalid parameter", NULL);
+    Tcl_SetResult(irp, "Invalid parameter", TCL_STATIC);
     nfree(buf);
     return TCL_ERROR;
   }
@@ -677,7 +677,7 @@ static int tcl_mnslang STDVAR
   BADARGS(2, 2, " language");
 
   if (!del_lang(argv[1])) {
-    Tcl_AppendResult(irp, "Language not found.", NULL);
+    Tcl_SetResult(irp, "Language not found.", TCL_STATIC);
     return TCL_ERROR;
   }
   recheck_lang_sections();
@@ -698,7 +698,7 @@ static int tcl_dellangsection STDVAR
   BADARGS(2, 2, " section");
 
   if (!del_lang_section(argv[1])) {
-    Tcl_AppendResult(irp, "Section not found", NULL);
+    Tcl_SetResult(irp, "Section not found", TCL_STATIC);
     return TCL_ERROR;
   }
   return TCL_OK;

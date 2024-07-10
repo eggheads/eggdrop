@@ -1,14 +1,9 @@
-Your First Eggdrop Script Last revised: December 07, 2003
-
-
-
-YOUR FIRST EGGDROP SCRIPT
-
+Writing an Eggdrop Script
 
 So you want to write an Eggdrop script, but you don't really know where
 to begin. This file will give you a very basic idea about what Eggdrop
-scripting is like. There are far too many topics to be covered all at
-once, but this may help you get started with your own scripts.
+scripting is like, using a very simple script that may help you get
+started with your own scripts.
 
 This guide assumes you know a bit about Eggdrops and IRC. You should
 have already installed Eggdrop. The bot should not be on any important
@@ -17,83 +12,225 @@ bugs). If you plan on doing a lot of development, enable the .tcl and
 .set commands, and make sure nobody else has access to your bot. The
 .tcl and .set commands are helpful in debugging and testing your code.
 
-First, read through the script. You may be unfamiliar with some of the
-commands, especially if you haven't at least browsed through
-tcl-commands.doc. You may find it helpful to open up tcl-commands.doc in
-another window so that you can immediately look up commands you don't
-know.
+First, read through the script. Very few commands are listed here
+intentionally, but as you want to develop more advanced scripts, you
+will definitely want to get familiar with the core Tcl language
+commands, especially the string- and list-related commands, as well as
+Eggdrop's own library of custom Tcl commands, located in
+tcl-commands.doc
 
-Then, open up another window and copy the script into its own file. If
-you have the .tcl command enabled, you can type '.tcl source
-scripts/file.tcl' to load it. Otherwise, add it to your config file like
-normal and '.rehash' or '.restart' your bot.
+If you have the .tcl command enabled, you can load a script by typing
+'.tcl source script/file.tcl' to load it. Otherwise, add it to your
+config file like normal (examples to do so are at the bottom of the
+config file) and '.rehash' or '.restart' your bot.
 
-From your own IRC client, join the bot's channel and type some lines
-that start with "hello". Example: hello I love you won't you tell me
-your name
+Let's look at a very basic example script that greets users as they join
+a channel:
 
-After your thrill abates, try playing around with your copy of the
-script. Get it to change the text it says, make it send notices instead
-of messages. Try changing the names of some variables (uhost -> userhost
-maybe).
-
+    # GreetScript.tcl
+    # Version: 1.0
+    # Author: Geo <geo@eggheads.org>
     #
-    # Here's the start of the script.
-    # The '#' in Tcl means this line is a comment and doesn't get executed.
+    # Description:
+    # A simple script that greets users as they join a channel
     #
+    ### Config Section ###
+    # How would you like the bot to gree users?
+    # 0 - via public message to channel
+    # 1 - via private message
+    set pmsg 0
+    # What message would you like to send to users when they join?
+    set greetmsg "Hi! Welcome to the channel!"
+    ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING! ###
 
-    #
-    # Most scripts start off with a configuration section.
-    #
+    bind join - * greet
 
-    # Change this to the channel you want this script to work on.
-    set our_chan "#baa"
-
-    # After configuration, scripts generally do a bit of initialization work.
-    # This could include checking the validity of the config variables, setting
-    # timers, loading helper scripts, establishing database connections, or
-    # most frequently, creating our Eggdrop binds.
-    #
-    # A bind lets you attach your script to events that Eggdrop encounters. Events
-    # include IRC events (someone joining a channel, talking, etc), botnet events,
-    # and internal events (like receiving signals via the kill command).
-    #
-
-    # This bind will make Eggdrop call "my_talk_handler" whenever someone
-    # says hello on one of our channels.
-    bind pub - hello my_talk_handler
-
-    # Here is where we define "my_talk_handler"
-    proc my_talk_handler {nick uhost hand chan text} {
-      #
-      # nick - the person's nickname
-      # uhost - the person's user@host
-      # hand - the person's bothandle (if he is a valid user)
-      # chan - the channel this event happened on
-      # text - the text the person said (not counting the trigger word)
-      #
-      # You can name these variables any way you want, but these names
-      # are pretty much standard.
-      #
-
-      # The 'global' command imports global variables into our local scope.
-      # Any variable set outside of a procedure (like in the config section)
-      # is a global variable.
-      global our_chan
-
-      # We only want to respond on the $our_chan channel.
-      # The string tolower command converts a string to lowercase.
-      if {[string tolower $chan] != $our_chan} {
-        return 0
+    proc greet {nick uhost hand chan} {
+      global pmsg
+      global greetmsg
+      if {$pmsg} {
+        putserv "PRIVMSG $nick :$greetmsg"
+      } else {
+        putserv "PRIVMSG $chan :$greetmsg"
       }
+    } 
 
-      # The putserv commands lets us send text to the server.
-      putserv "privmsg $chan :$text too!"
+    putlog "greetscript.tcl v1.0 by Geo"
 
-      # All done! Log this command by returning 1.
-      return 1
+Whew! There's a lot going on here. You'll generally see scripts broken
+into a few key parts- the header, the config section, and the code
+section. Ok, let's go over this piece by piece. First, the header of the
+script:
+
+    # GreetScript.tcl
+    # Version: 1.0
+    # Author: Geo <geo@eggheads.org> or #eggdrop on Libera
+    #
+    # Description:
+    # A simple script that greets users as they join a channel
+
+Any line prefixed by a # means it is comment, and thus ignored. You can
+type whatever you want, and it won't matter. When writing scripts
+(especially if you want to give them to other people, it is good to use
+comments in the code to show what you're doing. Here though, we use it
+to describe what the script is and, most importantly, who wrote it!
+Let's give credit where credit is due, right? You may want to give users
+a way to contact you as well.
+
+Next, let's look at the configuration section:
+
+    ### Config Section ###
+    # How would you like the bot to gree users?
+    # 0 - via public message to channel
+    # 1 - via private message
+    set pmsg 0
+    # What message would you like to send to users when they join?
+    set greetmsg "Hi! Welcome to the channel!"
+    ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING! ###
+
+To make scripts easy to use, you'll want to have a section that allows
+users to easily change the way the script operates, without having to
+edit the script itself. Here, we have two settings: one that controls
+which method the Eggdrop uses to greet a user, and a second with the
+message to greet the user with. Sure, we could hard-code that into the
+code section below, but in larger scripts that makes things harder to
+find, and also forces you to potentially have to make the same change
+multiple times in code. Why not make it simple and do it once, up top?
+Notice the settings do not have #s in front of them- they are variables
+that will be used by the script later on. And of course, the standard
+ominous warning not to change anything below!
+
+Now, let's look start to dissect the actual code!:
+
+    bind join - * greet
+
+This is a bind. This sets up an action that Eggdrop will react to. You
+can read all the binds that Eggdrop uses here. Generally, we like to
+place all binds towards the top of the script so that they are together
+and easy to find. Now, let's look at documentation of the bind join
+together.
+
+  ---------------------------------------------------------------------------
+  bind JOIN         
+  ----------------- ---------------------------------------------------------
+  bind join <flags> 
+  <mask> <proc>     
+
+  procname <nick>   
+  <user@host>       
+  <handle>          
+  <channel>         
+
+  Description:      
+  triggered by      
+  someone joining   
+  the channel. The  
+  mask in the bind  
+  is matched        
+  against "#channel 
+  nick!user@host"   
+  and can contain   
+  wildcards.        
+  ---------------------------------------------------------------------------
+
+So here, we can start to match the bind listed in the code to how it is
+described in the documentation. The first term after the bind command is
+'join', showing that it is a join bind, which means the action we define
+here will take place each time a user joins a channel. The next term is
+'mask', and it says it is in the form "#channel nick!user@host". This is
+where we can start to refine exactly when this bind is triggered. If we
+want it to work for every person joining every channel Eggdrop is on,
+then a simple '' will suffice here- that will match everything. If we
+wanted this bind to only work in #foo, then the mask would be "#foo *".
+If we wanted to greet users on every channel, but only those who are on
+AOL, the mask would be " *!*@*.aol.com". Finally the 'proc' argument is
+the name of the Tcl proc we want to call, where the code that actually
+does stuff is located.
+
+So to sum up this line from the example script: When a user joins on any
+channel and with any hostmask, run the code located in proc 'greet'.
+
+Now that we told the Eggdrop what action to look for, we need to tell it
+what to do when that action occurs!:
+
+    proc greet {nick uhost hand chan} { 
+
+This is how we declare a Tcl proc. As we said above, this is where the
+magic happens. To set up the proc (this will look differently for
+different binds), lets refer back to the bind JOIN documentation. The
+second line shows procname <nick> <user@host> <handle> <channel>.
+Eggdrop does a lot of stuff in the background when a bind is triggered,
+and this is telling you how Eggdrop will present that information to
+you. Here, Eggdrop is telling you it is going to pass the proc you
+created four variables: One that contains the nickname of the person who
+triggered the bind (in this case, the user who joined), the user@host of
+that user, the handle of that user (if the user has one on the bot), and
+the channel that the bind was triggered on.
+
+So let's say someone with the nickname Geo with a hostmask of
+awesome@aol.com joined #sexystuff and that person is not added to the
+bot as a user. Eggdrop will pass 4 values to the variables you set up in
+that proc: The first variable will get the value "Geo", the second
+"awesome@aol.com", the third "", and the fourth "#sexystuff". (That
+third value was a trick, we didn't talk about that- if the user is not
+added to the bot, handle will get a "" as a value). Now, let's use those
+variables!:
+
+    global pmsg
+    global greetmsg
+
+This is a simple one- because we're using variables declared in the main
+body of the script (remember way up top?), we have to tell this proc to
+use that variable, not not create a new local variable for this proc.
+
+And finally, let's actually send a message to the user:
+
+    if {pmsg}
+      putserv "PRIVMSG $nick :$greetmsg"
+    } else {
+      putserv "PRIVMSG $chan :$greetmsg"
     }
 
-    # Here's the end of the script.
+Here, we're going to check if pmsg is true (any value that is not 0)
+and, if yes, send a private message to the user. If pmsg is not true (it
+is 0), then we will send the message to the channel. You can see that
+the first putserv message sends a PRIVMSG message to $nick - this is the
+nickname of the user that joined, and that Eggdrop stored for us in the
+first variable of the proc, which we called 'nick'. The second putserv
+message will send a PRIVMSG message to the $chan - this is the channel
+the user joined, and that Eggdrop stored for us in the fourth variable
+of the proc, which we called 'chan'.
 
-Copyright (C) 2003 - 2020 Eggheads Development Team
+And finally: get the credit you deserve when the script loads!:
+
+    putlog "greetscript.tcl v1.0 by Geo"
+
+Like your variables at the top of the script, this line is not inside a
+Tcl proc and will execute when the script is loaded. You can put this or
+any other initialization code you want to run.
+
+And there you have it- your first script! Take this, modify it and
+experiment. A few challenges for you:
+
+-   How can you configure which channel it should run on, without
+    hard-coding it into the bind? (Maybe with a variable...)
+-   How can you configure it to only message a user with the nickname
+    "FancyPants"? (Sounds like something a bind could handle)
+-   How can you delay the message from sending by 5 seconds? (Hint:
+    utimer)
+-   How can you send different messages to different channels? (A new
+    setting may be in order...)
+-   How can you get the bot to not greet itself when it joins the
+    channel? (Eggdrop stores its own nickname in a variable called
+    $botnick)
+-   How can you add the person joining the channel's nickname to the
+    greet message? (You can put variables inside variables...)
+
+If you want to try these out, join #eggdrop on Libera and check your
+answers (and remember, there are dozens of ways to do this, so a) don't
+be defensive of your choices, and b) take others' answers with a grain
+of salt!)
+
+  <br>
+
+Copyright (C) 2003 - 2024 Eggheads Development Team

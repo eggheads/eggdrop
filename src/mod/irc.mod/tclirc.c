@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,10 @@
  */
 static int tcl_chanlist STDVAR
 {
-  char nuh[1024];
   int f;
   memberlist *m;
   struct chanset_t *chan;
+  struct userrec *u;
   struct flag_record plus = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 },
                      minus = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
                      user = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
@@ -55,11 +55,8 @@ static int tcl_chanlist STDVAR
   minus.match = plus.match ^ (FR_AND | FR_OR);
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if (!m->user) {
-      egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-      m->user = get_user_by_host(nuh);
-    }
-    get_user_flagrec(m->user, &user, argv[1]);
+    u = get_user_from_member(m);
+    get_user_flagrec(u, &user, argv[1]);
     user.match = plus.match;
     if (flagrec_eq(&plus, &user)) {
       if (!f || !flagrec_eq(&minus, &user))
@@ -347,8 +344,8 @@ static int tcl_onchan STDVAR
 
 static int tcl_handonchan STDVAR
 {
-  char nuh[1024];
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
   memberlist *m;
 
   BADARGS(2, 3, " handle ?channel?");
@@ -365,11 +362,8 @@ static int tcl_handonchan STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->user = get_user_by_host(nuh);
-      }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      u = get_user_from_member(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -431,6 +425,87 @@ static int tcl_ischaninvite STDVAR
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+/* Checks internal tracking of IRC server away status, as updated by IRC
+ * server 352 and AWAY messages. Meant mostly for use with the IRCv3 away-notify
+ * capability, it may not be accurate using only 352s.
+ */
+static int tcl_isaway STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *m;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircaway(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+/* Checks if user is registered with the server as a bot. This requires the
+ * server to have the 005 BOT feature advertised, and the user to have set
+ * the corresponding usermode.
+ */
+static int tcl_isircbot STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *m;
+
+  BADARGS(2, 3, " nick ?channel?");
+
+  if (argc > 2) { /* If channel specified, does it exist? */
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else {
+    chan = chanset;
+  }
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((m = ismember(chan, argv[1])) && chan_ircbot(m)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_accounttracking STDVAR
+{
+  struct capability *current =0;
+  int extjoin = 0, acctnotify = 0;
+
+  current = find_capability("extended-join");
+  if (current->enabled) {
+    extjoin = 1;
+  }
+  current = find_capability("account-notify");
+  if (current->enabled) {
+    acctnotify = 1;
+  }
+  Tcl_SetResult(irp, use_354 && extjoin && acctnotify ? "1" : "0", TCL_STATIC);
   return TCL_OK;
 }
 
@@ -534,13 +609,13 @@ static int tcl_getchanidle STDVAR
 
 static int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
-  char work[20], *p;
+  char work[21], *p;
   EGG_CONST char *list[3];
 
   for (; m && m->mask && m->mask[0]; m = m->next) {
     list[0] = m->mask;
     list[1] = m->who;
-    simple_sprintf(work, "%d", now - m->timer);
+    snprintf(work, sizeof work, "%" PRId64, (int64_t) (now - m->timer));
     list[2] = work;
     p = Tcl_Merge(3, list);
     Tcl_AppendElement(irp, p);
@@ -802,9 +877,38 @@ static int tcl_resetchanjoin STDVAR
   return TCL_OK;
 }
 
-static int tcl_resetchan STDVAR
-{
+static int setflags(int *flags, char *argflags) {
   char *c;
+
+  for (c = argflags; *c; c++) {
+    switch(*c) {
+    case 'w':
+      *flags |= CHAN_RESETWHO;
+      break;
+    case 'm':
+      *flags |= CHAN_RESETMODES;
+      break;
+    case 'b':
+      *flags |= CHAN_RESETBANS;
+      break;
+    case 'e':
+      *flags |= CHAN_RESETEXEMPTS;
+      break;
+    case 'I':
+      *flags |= CHAN_RESETINVITED;
+      break;
+    case 't':
+      *flags |= CHAN_RESETTOPIC;
+      break;
+    default:
+      return 1; /* Found a flag we don't support, return an error */
+    }
+  }
+  return 0;
+}
+
+static int tcl_refreshchan STDVAR
+{
   int flags = 0;
   struct chanset_t *chan;
 
@@ -817,36 +921,41 @@ static int tcl_resetchan STDVAR
   }
 
   if (argc == 2) {
-    reset_chan_info(chan, CHAN_RESETALL);
+    reset_chan_info(chan, CHAN_RESETALL, 0);
     return TCL_OK;
   }
-  for (c = argv[2]; *c; c++) {
-    switch(*c) {
-    case 'w':
-      flags |= CHAN_RESETWHO;
-      break;
-    case 'm':
-      flags |= CHAN_RESETMODES;
-      break;
-    case 'b':
-      flags |= CHAN_RESETBANS;
-      break;
-    case 'e':
-      flags |= CHAN_RESETEXEMPTS;
-      break;
-    case 'I':
-      flags |= CHAN_RESETINVITED;
-      break;
-    case 't':
-      flags |= CHAN_RESETTOPIC;
-      break;
-    default:
+  if (setflags(&flags, argv[2])) {       /* Set flags to refresh */
+      Tcl_AppendResult(irp, "invalid refresh flags: ", argv[2], NULL);
+      return TCL_ERROR;
+  } else {
+    reset_chan_info(chan, flags, 0);
+  }
+  return TCL_OK;
+}
+
+static int tcl_resetchan STDVAR
+{
+  int flags = 0;
+  struct chanset_t *chan;
+
+  BADARGS(2, 3, " channel ?flags?");
+
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+
+  if (argc == 2) {
+    reset_chan_info(chan, CHAN_RESETALL, 1);
+    return TCL_OK;
+  }
+  if (setflags(&flags, argv[2])) {       /* Set flags to refresh */
       Tcl_AppendResult(irp, "invalid reset flags: ", argv[2], NULL);
       return TCL_ERROR;
-    }
+  } else {
+    reset_chan_info(chan, flags, 1);
   }
-  if (flags)
-    reset_chan_info(chan, flags);
   return TCL_OK;
 }
 
@@ -865,11 +974,104 @@ static int tcl_topic STDVAR
   return TCL_OK;
 }
 
-static int tcl_hand2nick STDVAR
+static int tcl_account2nicks STDVAR
 {
-  char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  Tcl_Obj *nicks;
+  Tcl_Obj **nicksv = NULL;
+  Tcl_Size nicksc = 0, i;
+  int found;
+
+  BADARGS(2, 3, " account ?channel?");
+
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else
+    chan = chanset;
+
+  nicks = Tcl_NewListObj(0, NULL);
+  while (chan && (thechan == NULL || thechan == chan)) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      found = 0;
+      /* Does this user have the account we're looking for? */
+      if (!rfc_casecmp(m->account, argv[1])) {
+        /* Is the nick of the user already in the list? */
+        Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
+        for (i = 0; i < nicksc; i++) {
+          if (!rfc_casecmp(m->nick, Tcl_GetString(nicksv[i]))) {
+            found = 1;
+            break;
+          }
+        }
+        if (!found) {
+          Tcl_ListObjAppendElement(irp, nicks, Tcl_NewStringObj(m->nick, -1));
+        }
+      }
+    }
+    chan = chan->next;
+  }
+  Tcl_SetObjResult(irp, nicks);
+  return TCL_OK;
+}
+
+static int tcl_hand2nicks STDVAR
+{
+  memberlist *m;
+  struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
+  Tcl_Obj *nicks;
+  Tcl_Obj **nicksv = NULL;
+  Tcl_Size nicksc = 0, i;
+  int found;
+
+  BADARGS(2, 3, " handle ?channel?");
+
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else
+    chan = chanset;
+
+  nicks = Tcl_NewListObj(0, NULL);
+  while (chan && (thechan == NULL || thechan == chan)) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      found = 0;
+      u = get_user_from_member(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
+        /* Is the nick of the user already in the list? */
+        Tcl_ListObjGetElements(irp, nicks, &nicksc, &nicksv);
+        for (i = 0; i < nicksc; i++) {
+          if (!rfc_casecmp(m->nick, Tcl_GetString(nicksv[i]))) {
+            found = 1;
+            break;
+          }
+        }
+        if (!found) {
+          Tcl_ListObjAppendElement(irp, nicks, Tcl_NewStringObj(m->nick, -1));
+        }
+      }
+    }
+    chan = chan->next;
+  }
+  Tcl_SetObjResult(irp, nicks);
+  return TCL_OK;
+}
+
+static int tcl_hand2nick STDVAR
+{
+  memberlist *m;
+  struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
 
   BADARGS(2, 3, " handle ?channel?");
 
@@ -885,12 +1087,8 @@ static int tcl_hand2nick STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user && !m->tried_getuser) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->tried_getuser = 1;
-        m->user = get_user_by_host(nuh);
-      }
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      u = get_user_from_member(m);
+      if (u && !strcasecmp(u->handle, argv[1])) {
         Tcl_AppendResult(irp, m->nick, NULL);
         return TCL_OK;
       }
@@ -902,9 +1100,9 @@ static int tcl_hand2nick STDVAR
 
 static int tcl_nick2hand STDVAR
 {
-  char nuh[1024];
   memberlist *m;
   struct chanset_t *chan, *thechan = NULL;
+  struct userrec *u;
 
   BADARGS(2, 3, " nick ?channel?");
 
@@ -921,11 +1119,8 @@ static int tcl_nick2hand STDVAR
   while (chan && (thechan == NULL || thechan == chan)) {
     m = ismember(chan, argv[1]);
     if (m) {
-      if (!m->user) {
-        egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
-        m->user = get_user_by_host(nuh);
-      }
-      Tcl_AppendResult(irp, m->user ? m->user->handle : "*", NULL);
+      u = get_user_from_member(m);
+      Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
       return TCL_OK;
     }
     chan = chan->next;
@@ -1014,9 +1209,13 @@ static tcl_cmds tclchan_cmds[] = {
   {"onchansplit",    tcl_onchansplit},
   {"maskhost",       tcl_maskhost},
   {"getchanidle",    tcl_getchanidle},
+  {"isaway",         tcl_isaway},
+  {"isircbot",       tcl_isircbot},
   {"chanbans",       tcl_chanbans},
   {"chanexempts",    tcl_chanexempts},
   {"chaninvites",    tcl_chaninvites},
+  {"account2nicks",  tcl_account2nicks},
+  {"hand2nicks",     tcl_hand2nicks},
   {"hand2nick",      tcl_hand2nick},
   {"nick2hand",      tcl_nick2hand},
   {"getchanmode",    tcl_getchanmode},
@@ -1029,10 +1228,12 @@ static tcl_cmds tclchan_cmds[] = {
   {"resetchanidle",  tcl_resetchanidle},
   {"resetchanjoin",  tcl_resetchanjoin},
   {"resetchan",      tcl_resetchan},
+  {"refreshchan",    tcl_refreshchan},
   {"topic",          tcl_topic},
   {"botonchan",      tcl_botonchan},
   {"putkick",        tcl_putkick},
   {"channame2dname", tcl_channame2dname},
   {"chandname2name", tcl_chandname2name},
+  {"accounttracking",tcl_accounttracking},
   {NULL,             NULL}
 };

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,10 +60,15 @@
 #define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
 #define DIRMAX      512           /* paranoia                            */
 #define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
+#define READMAX     16384         /* for read() and SSL_read()           */
 
 /* Invalid characters */
-#define BADNICKCHARS "-,+*=:!.@#;$%&"
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
+
+/* And now valid characters! */
+#define CHARSET_LOWER_ALPHA     "abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_LOWER_ALPHA_NUM "0123456789abcdefghijklmnopqrstuvwxyz"
+#define CHARSET_PASSWORD        "0123456789?ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 
 
 /* Language stuff */
@@ -76,23 +81,13 @@
 /* The 'configure' script should make this next part automatic, so you
  * shouldn't need to adjust anything below.
  */
-#define NICKLEN      NICKMAX + 1
-#define UHOSTLEN     UHOSTMAX + 1
-#define DIRLEN       DIRMAX + 1
-#define LOGLINELEN   LOGLINEMAX + 1
-#define NOTENAMELEN  ((HANDLEN * 2) + 1)
-#define PASSWORDLEN  16
-
-
-/* We have to generate compiler errors in a weird way since not all compilers
- * support the #error preprocessor directive. */
-#ifndef STDC_HEADERS
-#  include "Error: Your system must have standard ANSI C headers."
-#endif
-
-#ifndef HAVE_VPRINTF
-#  include "Error: You need vsprintf to compile eggdrop."
-#endif
+#define NICKLEN     NICKMAX + 1
+#define UHOSTLEN    UHOSTMAX + 1
+#define DIRLEN      DIRMAX + 1
+#define LOGLINELEN  LOGLINEMAX + 1
+#define NOTENAMELEN ((HANDLEN * 2) + 1)
+#define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
+#define PASSWORDLEN PASSWORDMAX + 1
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
@@ -183,22 +178,17 @@
 #  endif
 #endif
 
-/* Almost every module needs some sort of time thingy, so... */
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+#ifndef PATH_MAX
+#  define PATH_MAX 4096
 #endif
 
+/* Almost every module needs some sort of time thingy, so... */
+#include <sys/time.h> /* gettimeofday() POSIX 2001 */
+#include <time.h> /* POSIX 2001 */
 
 /* Yikes...who would have thought finding a usable random() would be so much
  * trouble?
- * Note: random(), rand(), and lrand48() are *not* thread safe.
+ * Note: random() is *not* thread safe.
  *
  * QNX doesn't include random() and srandom() in libc.so, only in libc.a
  * So we can only use these functions in static builds on QNX.
@@ -208,49 +198,15 @@
 #  undef HAVE_SRANDOM
 #endif
 
-#ifdef HAVE_RANDOM
-  /* On systems with random(), RANDOM_MAX may or may not be defined.
-   *
-   * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
-   * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
-   * assumes random() uses a 32 bit long int type per the standards.
-   */
-#  ifndef RANDOM_MAX
-#    define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
-#  endif
-#else                              /* !HAVE_RANDOM */
-   /* This shouldn't exist in this case, but just to be safe... */
-#  ifdef RANDOM_MAX
-#    undef RANDOM_MAX
-#  endif
-  /* If we don't have random() it's safe to assume we also don't have
-   * srandom(), and we need both.
-   */
-#  ifdef HAVE_RAND
-#    define random() rand()
-#    define srandom(x) srand(x)
-    /* Depending on the system int size, RAND_MAX can be either 0x7FFFFFFF
-     * (2^31-1), or 2147483647 for a 32 bit int, or 0x7FFF (2^15-1), or
-     * 32767 for a 16 bit int. The standards only state that RAND_MAX must
-     * be _at least_ 32767 but some systems with 16 bit int define it as
-     * 32767. See: SVr4, 4.3BSD, C89, C99, POSIX.1-2001.
-     */
-#    define RANDOM_MAX RAND_MAX    /* rand() -- 2^31-1 or 2^15-1 */
-#  else                            /* !HAVE_RAND */
-#    ifdef  HAVE_LRAND48
-#      define random() lrand48()
-#      define srandom(x) srand48(x)
-      /* For lrand48() we define RANDOM_MAX as 0x7FFFFFFF (2^31-1), or
-       * 2147483647 since this is what the SVr4 and POSIX.1-2001 standards
-       * call for. Note: SVID 3 declares these functions as obsolete and
-       * states rand() should be used instead.
-       */
-#      define RANDOM_MAX 0x7FFFFFFF /* lrand48() -- 2^31-1 */
-#    else                          /* !HAVE_LRAND48 */
-#      include "Error: Must define one of HAVE_RANDOM, HAVE_RAND, or HAVE_LRAND48"
-#    endif                         /* HAVE_LRAND48 */
-#  endif                           /* HAVE_RAND */
-#endif                             /* HAVE_RANDOM */
+/* On systems with random(), RANDOM_MAX may or may not be defined.
+ *
+ * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
+ * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
+ * assumes random() uses a 32 bit long int type per the standards.
+ */
+#ifndef RANDOM_MAX
+#  define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
+#endif
 
 
 /* Use high-order bits for getting the random integer. With a modern
@@ -273,14 +229,6 @@
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x)      n_free((x),__FILE__,__LINE__)
 
-#ifdef DEBUG_CONTEXT
-#  define Context           eggContext(__FILE__, __LINE__, NULL)
-#  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#else
-#  define Context           do {} while (0)
-#  define ContextNote(note) do {} while (0)
-#endif
-
 #ifdef DEBUG_ASSERT
 #  define Assert(expr) do {                                             \
           if (!(expr))                                                  \
@@ -301,11 +249,12 @@
 typedef uint32_t IP;
 
 /* Debug logging macros */
-#define debug0(x)             putlog(LOG_DEBUG,"*",x)
-#define debug1(x,a1)          putlog(LOG_DEBUG,"*",x,a1)
-#define debug2(x,a1,a2)       putlog(LOG_DEBUG,"*",x,a1,a2)
-#define debug3(x,a1,a2,a3)    putlog(LOG_DEBUG,"*",x,a1,a2,a3)
-#define debug4(x,a1,a2,a3,a4) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug0(x)                putlog(LOG_DEBUG,"*",x)
+#define debug1(x,a1)             putlog(LOG_DEBUG,"*",x,a1)
+#define debug2(x,a1,a2)          putlog(LOG_DEBUG,"*",x,a1,a2)
+#define debug3(x,a1,a2,a3)       putlog(LOG_DEBUG,"*",x,a1,a2,a3)
+#define debug4(x,a1,a2,a3,a4)    putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug5(x,a1,a2,a3,a4,a5) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4,a5)
 
 /* These apparently are unsafe without recasting. */
 #define egg_isdigit(x)  isdigit((int)  (unsigned char) (x))
@@ -330,7 +279,10 @@ typedef intptr_t (*Function) ();
 typedef int (*IntFunc) ();
 
 #ifdef IPV6
-#include "compat/in6.h"
+  #include "compat/in6.h"
+  #define EGG_INET_ADDRSTRLEN INET6_ADDRSTRLEN
+#else
+  #define EGG_INET_ADDRSTRLEN INET_ADDRSTRLEN
 #endif
 
 #include <sys/socket.h>
@@ -374,6 +326,7 @@ struct userrec;
 
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane. */
+                                /* ^-- Disagreed with, but changing back to int would break ABI */
   IP addr;                      /* IP address in host network byte order. */
   sockname_t sockname;          /* IPv4/IPv6 sockaddr placeholder */
   unsigned int port;
@@ -536,6 +489,7 @@ struct dupwait_info {
 #define STAT_BOTONLY 0x00020    /* telnet on bots-only connect          */
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
+#define STAT_SERV    0x00100    /* this is a server connection          */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -772,5 +726,31 @@ enum {
 #define TLN_ECHO_C      "\001"
 #define TLN_STATUS      5       /* STATUS (RFC 859)      */
 #define TLN_STATUS_C    "\005"
+
+/* From tcl.h */
+#ifndef STRINGIFY
+#  define STRINGIFY(x) STRINGIFY1(x)
+#  define STRINGIFY1(x) #x
+#endif
+
+#ifdef EGG_TDNS
+#include <pthread.h>
+#define DTN_TYPE_HOSTBYIP 0
+#define DTN_TYPE_IPBYHOST 1
+
+/* linked list instead of array because of multi threading */
+struct dns_thread_node {
+  pthread_t thread_id;
+  pthread_mutex_t mutex;
+  int fildes[2];
+  int type;
+  sockname_t addr;
+  char host[256];
+  char strerror[3 * 64]; /* msg + gai_strerror() + strerror() */
+  struct dns_thread_node *next;
+};
+
+extern struct dns_thread_node *dns_thread_head;
+#endif
 
 #endif /* _EGG_EGGDROP_H */
