@@ -119,7 +119,6 @@ static void python_report(int idx, int details)
 
 static char *python_close()
 {
-  Context;
   del_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
   del_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
   kill_python();
@@ -144,7 +143,6 @@ char *python_start(Function *global_funcs)
    */
   global = global_funcs;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, python_table, 0, 1);
 

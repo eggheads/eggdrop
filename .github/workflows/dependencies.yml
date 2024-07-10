@@ -27,6 +27,24 @@ jobs:
         make -j4 && make install
     - name: Build
       run: ./configure --with-tcl=$HOME/tcl/lib && LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop
+  ssl-version-098:
+    name: OpenSSL 0.9.8
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with: 
+        path: 'eggdrop'
+    - name: install dependencies
+      run: sudo apt-get install tcl tcl-dev
+    - name: Build OpenSSL
+      run: |
+        wget https://www.openssl.org/source/old/0.9.x/openssl-0.9.8zh.tar.gz && \
+        sha256sum --status --check <(echo f1d9f3ed1b85a82ecf80d0e2d389e1fda3fca9a4dba0bf07adbf231e1a5e2fd6 openssl-0.9.8zh.tar.gz) && \
+        tar xzf openssl-0.9.8zh.tar.gz && \
+        cd openssl-0.9.8zh && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
+    - name: Build
+      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
   ssl-version-10:
     name: OpenSSL 1.0
     continue-on-error: true
@@ -39,7 +57,9 @@ jobs:
       run: sudo apt-get install tcl tcl-dev
     - name: Build OpenSSL
       run: |
-        wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && tar xzf openssl-1.0.2u.tar.gz && \
+        wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && \
+        sha256sum --status --check <(echo ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16 openssl-1.0.2u.tar.gz) && \
+        tar xzf openssl-1.0.2u.tar.gz && \
         cd openssl-1.0.2u && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
     - name: Build
       run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
