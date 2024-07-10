@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -493,7 +493,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   if (!strcasecmp(floodhost, botuserhost))
     return 0;
 
-  u = get_user_by_host(from);
+  u = lookup_user_record(NULL, NULL, from); // TODO: get account somehow
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
     return 0;
@@ -539,7 +539,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     lastmsgs[which] = 0;
     lastmsgtime[which] = 0;
     lastmsghost[which][0] = 0;
-    u = get_user_by_host(from);
+    u = lookup_user_record(NULL, NULL, from); // TODO: get account somehow
     if (check_tcl_flud(floodnick, floodhost, u, ftype, "*"))
       return 0;
     /* Private msg */
@@ -607,7 +607,7 @@ static int gotmsg(char *from, char *msg)
               putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
                      code, ctcp, nick, uhost, to);
           } else {
-            u = get_user_by_host(from);
+            u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
             if (!ignoring || trigger_on_ignore) {
               if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) && !ignoring) {
                 if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
@@ -670,7 +670,7 @@ static int gotmsg(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-    u = get_user_by_host(from);
+    u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
     code = newsplit(&msg);
     rmspace(msg);
 
@@ -730,7 +730,7 @@ static int gotnotice(char *from, char *msg)
                    "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
                    nick, uhost, to);
         } else {
-          u = get_user_by_host(from);
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
           if (!ignoring || trigger_on_ignore) {
             check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
             if (!ignoring)
@@ -766,7 +766,7 @@ static int gotnotice(char *from, char *msg)
     }
 
     detect_flood(nick, uhost, from, FLOOD_NOTICE);
-    u = get_user_by_host(from);
+    u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
 
     if (!ignoring || trigger_on_ignore)
       if (check_tcl_notc(nick, uhost, u, botname, msg) == 2)
@@ -1523,21 +1523,24 @@ static int gotauthenticate(char *from, char *msg)
   return 0;
 }
 
-/* Got 900: RPL_SASLLOGGEDIN, user account name is set */
+/* Got 900: RPL_LOGGEDIN, users account name is set (whether by SASL or otherwise) */
 static int got900(char *from, char *msg)
 {
   newsplit(&msg); /* nick */
   newsplit(&msg); /* nick!ident@host */
   newsplit(&msg); /* account */
   fixcolon(msg);
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  putlog(LOG_SERV, "*", "%s: %s", from, msg);
   return 0;
 }
 
-/* Got 901: RPL_LOGGEDOUT, user account is logged out */
+/* Got 901: RPL_LOGGEDOUT, users account name is unset (whether by SASL or otherwise) */
 static int got901(char *from, char *msg)
 {
-  putlog(LOG_SERV, "*", "SASL: Account has been logged out");
+  newsplit(&msg); /* nick */
+  newsplit(&msg); /* nick!ident@host */
+  fixcolon(msg);
+  putlog(LOG_SERV, "*", "%s: %s", from, msg);
   return 0;
 }
 
@@ -1998,6 +2001,54 @@ static int got730or1(char *from, char *msg, int code)
   return 0;
 }
 
+/* Got IRCv3 standard-reply
+ * <FAIL/NOTE/WARN> <command> <code> [<context>...] <description>
+ */
+static int gotstdreply(char *from, char *msgtype, char *msg)
+{
+  char *cmd, *code, *text;
+  char context[MSGMAX] = "";
+  int len;
+
+  cmd = newsplit(&msg);
+  code = newsplit(&msg);
+/* TODO: Once this feature is better implemented, consider how to handle
+ * one-word descriptions that aren't technically required to have a :
+ */
+  text = strstr(msg, " :");
+  if (text) {
+    text++;
+    if (text != msg) {
+      len = text - msg;
+      snprintf(context, sizeof context, "%.*s", len, msg);
+    }
+    fixcolon(text);
+  }
+  putlog(LOG_SERV, "*", "%s: %s: Received a %s message from %s: %s", cmd, code, msgtype, from, text);
+  return 0;
+}
+
+/* Got IRCv3 FAIL standard-reply */
+static int gotstdfail(char *from, char *msg)
+{
+  gotstdreply(from, "FAIL", msg);
+  return 0;
+}
+
+/* Got IRCv3 NOTE standard-reply */
+static int gotstdnote(char *from, char *msg)
+{
+  gotstdreply(from, "NOTE", msg);
+  return 0;
+}
+
+/* Got IRCv3 WARN standard-reply */
+static int gotstdwarn(char *from, char *msg)
+{
+  gotstdreply(from, "WARN", msg);
+  return 0;
+}
+
 /* Got 730/RPL_MONONLINE
  * :<server> 730 <nick> :target[!user@host][,target[!user@host]]*
  */
@@ -2094,6 +2145,9 @@ static cmd_t my_raw_binds[] = {
   {"PING",         "",   (IntFunc) gotping,         NULL},
   {"PONG",         "",   (IntFunc) gotpong,         NULL},
   {"WALLOPS",      "",   (IntFunc) gotwall,         NULL},
+  {"FAIL",         "",   (IntFunc) gotstdfail,      NULL},
+  {"NOTE",         "",   (IntFunc) gotstdnote,      NULL},
+  {"WARN",         "",   (IntFunc) gotstdwarn,      NULL},
   {"001",          "",   (IntFunc) got001,          NULL},
   {"005",          "",   (IntFunc) got005,          NULL},
   {"303",          "",   (IntFunc) got303,          NULL},
