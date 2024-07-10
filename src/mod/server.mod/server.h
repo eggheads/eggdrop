@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -98,6 +98,11 @@
 /* #define check_tcl_account NULL */
 #define find_capability ((struct capability *(*)(char *))(server_funcs[50]))
 #define encode_msgtags ((char *(*)(Tcl_Obj *))(server_funcs[51]))
+/* 52 - 55 */
+#define H_monitor (*(p_tcl_bind_list *)(server_funcs[52]))
+#define isupport_get_prefixchars ((const char *(*)(void))server_funcs[53])
+
+
 #endif /* MAKING_SERVER */
 
 struct server_list {
