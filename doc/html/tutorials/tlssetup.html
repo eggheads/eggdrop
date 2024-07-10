@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Enabling TLS Security on Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Writing an Eggdrop Script" href="firstscript.html" />
     <link rel="prev" title="Common First Steps" href="firststeps.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -103,11 +103,11 @@
           <div class="body" role="main">
             
   <section id="enabling-tls-security-on-eggdrop">
-<h1>Enabling TLS Security on Eggdrop<a class="headerlink" href="#enabling-tls-security-on-eggdrop" title="Permalink to this heading">¶</a></h1>
+<h1>Enabling TLS Security on Eggdrop<a class="headerlink" href="#enabling-tls-security-on-eggdrop" title="Link to this heading">¶</a></h1>
 <p>There are several ways TLS encryption can protect communication between your Eggdrop and the world. This guide will walk you through a few common scenarios and how to properly set up TLS protection.</p>
 <p>Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term “SSL” is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term “SSL” used to describe a secure connection method, to include with within Eggdrop’s own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term “SSL” be sure to correct them, we’re sure they will <em>definitely</em> appreciate it :)</p>
 <section id="pre-requisites">
-<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Permalink to this heading">¶</a></h2>
+<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">¶</a></h2>
 <p>Your server must have OpenSSL (or an equivalent fork) installed. Most commonly this is done through your OS’s package manager. Both the main package as well as the development headers must be installed. On a Debian/Ubuntu distro, this can be done by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openssl</span> <span class="n">libssl</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
@@ -127,7 +127,7 @@
 </div>
 </section>
 <section id="connecting-to-a-tls-enabled-irc-server">
-<h2>Connecting to a TLS-enabled IRC server<a class="headerlink" href="#connecting-to-a-tls-enabled-irc-server" title="Permalink to this heading">¶</a></h2>
+<h2>Connecting to a TLS-enabled IRC server<a class="headerlink" href="#connecting-to-a-tls-enabled-irc-server" title="Link to this heading">¶</a></h2>
 <p>Many, if not most, IRC servers offer connection ports that add TLS protection around the data. Eggdrop uses a ‘+’ symbol in front of the port to denote a port as a TLS-enabled port. To add a server in the config file that supports TLS, add it as normal but simply prefix the port with a ‘+’. For example, if irc.pretendNet.org says it offers TLS on port 7000, you would add it to your configuration file as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="n">add</span> <span class="n">irc</span><span class="o">.</span><span class="n">pretendNet</span><span class="o">.</span><span class="n">org</span> <span class="o">+</span><span class="mi">7000</span>
 </pre></div>
@@ -135,10 +135,10 @@
 <p>No other action is necessary.</p>
 </section>
 <section id="protecting-botnet-communications">
-<h2>Protecting Botnet Communications<a class="headerlink" href="#protecting-botnet-communications" title="Permalink to this heading">¶</a></h2>
+<h2>Protecting Botnet Communications<a class="headerlink" href="#protecting-botnet-communications" title="Link to this heading">¶</a></h2>
 <p>Eggdrop has the ability to protect botnet (direct bot to bot) communications with TLS.</p>
 <section id="configuration-file-preparation-generating-keys">
-<h3>Configuration File Preparation - Generating Keys<a class="headerlink" href="#configuration-file-preparation-generating-keys" title="Permalink to this heading">¶</a></h3>
+<h3>Configuration File Preparation - Generating Keys<a class="headerlink" href="#configuration-file-preparation-generating-keys" title="Link to this heading">¶</a></h3>
 <p>If an Eggdrop is going to listen/accept connections on a TLS port (more on that in a moment), it must have a public/private certificate pair generated and configured. For most users, a self-signed certificate is sufficient for encryption (a certificate signed by a certificate authority would be more secure, but obtaining one is outside the scope of this tutorial. However, the implementation of a signed keypair is no different than a self-signed pair). To generate a self-signed key pair, enter the Eggdrop source directory (the directory you first compiled Eggdrop from, usually named eggdrop-X.Y.Z) and type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">sslcert</span>
 </pre></div>
@@ -147,7 +147,7 @@
 <p>In your config file, uncomment the “ssl-privatekey” and “ssl-certificate” settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop’d directory.</p>
 </section>
 <section id="configuration-file-preparation-listening-with-tls">
-<h3>Configuration File Preparation - Listening with TLS<a class="headerlink" href="#configuration-file-preparation-listening-with-tls" title="Permalink to this heading">¶</a></h3>
+<h3>Configuration File Preparation - Listening with TLS<a class="headerlink" href="#configuration-file-preparation-listening-with-tls" title="Link to this heading">¶</a></h3>
 <p>Now you need to tell Eggdrop to accept TLS connections. As an example, to listen with TLS on port 5555 on all available IPs, add to the config file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">5555</span> <span class="nb">all</span>
 </pre></div>
@@ -155,7 +155,7 @@
 <p>(There are numerous ways to format the listen command; read the config file and documentation for other alternatives)</p>
 </section>
 <section id="connecting-to-an-eggdrop-listening-with-tls">
-<h3>Connecting to an Eggdrop listening with TLS<a class="headerlink" href="#connecting-to-an-eggdrop-listening-with-tls" title="Permalink to this heading">¶</a></h3>
+<h3>Connecting to an Eggdrop listening with TLS<a class="headerlink" href="#connecting-to-an-eggdrop-listening-with-tls" title="Link to this heading">¶</a></h3>
 <p>To connect to a bot listening with TLS, prefix the port number with a ‘+’. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.+</span><span class="n">bot</span> <span class="n">HubBot</span> <span class="mf">1.2.3.4</span> <span class="o">+</span><span class="mi">5555</span>
 </pre></div>
@@ -164,7 +164,7 @@
 </section>
 </section>
 <section id="additional-information">
-<h2>Additional Information<a class="headerlink" href="#additional-information" title="Permalink to this heading">¶</a></h2>
+<h2>Additional Information<a class="headerlink" href="#additional-information" title="Link to this heading">¶</a></h2>
 <p>For additional information and a more thorough explanation of Eggdrop’s TLS implementation, please read the <a class="reference external" href="https://docs.egheads.org/using/tls.html">TLS docs</a></p>
 </section>
 </section>
@@ -195,9 +195,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Feb 13, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

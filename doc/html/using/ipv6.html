@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>IPv6 support &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TLS support" href="tls.html" />
     <link rel="prev" title="Botnet Sharing and Linking" href="botnet.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="botnet.html">Botnet Sharing and Linking</a></li>
@@ -106,11 +106,11 @@
   <p>IPv6 support
 Last revised: Mar 24, 2021</p>
 <section id="ipv6-support">
-<h1>IPv6 support<a class="headerlink" href="#ipv6-support" title="Permalink to this heading">¶</a></h1>
+<h1>IPv6 support<a class="headerlink" href="#ipv6-support" title="Link to this heading">¶</a></h1>
 <p>This document provides information about IPv6 support which is a new
 eggdrop feature since version 1.8.0.</p>
 <section id="about">
-<h2>About<a class="headerlink" href="#about" title="Permalink to this heading">¶</a></h2>
+<h2>About<a class="headerlink" href="#about" title="Link to this heading">¶</a></h2>
 <p>Eggdrop can be compiled with IPv6 support. To make use of this, you need an
 IPv6-enabled OS and IPv6 connectivity.
 Every possible type of TCP connection can be established over IPv6 now,
@@ -119,7 +119,7 @@ connections, Tcl script connections initiated with the listen/connect
 commands, telnet and ident lookups.</p>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>./configure and install as usual, the configure script will detect if your
 system supports IPv6 and will enable it automatically. You can override this
 behavior and manually enable or disable IPv6 with ./configure –enable-ipv6
@@ -132,7 +132,7 @@ includes IPv6 only since version 1.7. Unofficial patches are available for
 1.5.x.</p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <p>You can use IPv6 addresses wherever you could specify IPv4 ones. IPs and
 hostnames are interchangeable everywhere. For certain settings and
 commands, you can enclose IPv6 addresses in square brackets to prevent
@@ -141,11 +141,11 @@ are documented in the help files and the html documentation, so you can
 consult them when in doubt.</p>
 </section>
 <section id="ctcp-chat-chat4-chat6">
-<h2>CTCP CHAT/CHAT4/CHAT6<a class="headerlink" href="#ctcp-chat-chat4-chat6" title="Permalink to this heading">¶</a></h2>
+<h2>CTCP CHAT/CHAT4/CHAT6<a class="headerlink" href="#ctcp-chat-chat4-chat6" title="Link to this heading">¶</a></h2>
 <p>When a user sends a CTCP chat request, the request is passed to the bot via the IRC server, hiding the user’s IP. Since Eggdrop is unable to ‘see’ the type IP of the user is using (IPv4 or IPv6), it is thus unable to determine whether it should send back an IPv4 or an IPv6 address for the user to connect to. To work around this problem, the CHAT4 and CHAT6 commands were added to Eggdrop to force it to present an IPv4 or IPv6 address for use with a DCC connection, respectively. Otherwise, the traditional CHAT command will likely result in the Eggdrop presenting an IPv4 address to the user. So in short, if you’re on an IPv6 address and want to use CTCP CHAT to initiate a DCC session for the partyline, use CHAT6, not CHAT as the CTCP argument.</p>
 </section>
 <section id="settings">
-<h2>Settings<a class="headerlink" href="#settings" title="Permalink to this heading">¶</a></h2>
+<h2>Settings<a class="headerlink" href="#settings" title="Link to this heading">¶</a></h2>
 <p>There are four new IPv6 related config variables:</p>
 <blockquote>
 <div><p>vhost4</p>
@@ -171,7 +171,7 @@ vhost4 and the listen command.</p>
 <p>nat-ip works with IPv4 as it used to. It has no meaning for IPv6 and is
 not queried for IPv6 connections.</p>
 </div></blockquote>
-<p>Copyright (C) 2010 - 2023 Eggheads Development Team</p>
+<p>Copyright (C) 2010 - 2024 Eggheads Development Team</p>
 </section>
 </section>
 
@@ -201,9 +201,9 @@ not queried for IPv6 connections.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Feb 13, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

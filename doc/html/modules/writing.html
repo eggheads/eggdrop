@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>How to Write an Eggdrop Module &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Bind Internals" href="internals.html" />
     <link rel="prev" title="Uptime Module" href="mod/uptime.html" /> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -101,7 +101,7 @@
           <div class="body" role="main">
             
   <section id="how-to-write-an-eggdrop-module">
-<span id="writing-module"></span><h1>How to Write an Eggdrop Module<a class="headerlink" href="#how-to-write-an-eggdrop-module" title="Permalink to this heading">¶</a></h1>
+<span id="writing-module"></span><h1>How to Write an Eggdrop Module<a class="headerlink" href="#how-to-write-an-eggdrop-module" title="Link to this heading">¶</a></h1>
 <p>Note: This is for a simple module of 1 source file.</p>
 <blockquote>
 <div><ol class="arabic">
@@ -143,7 +143,7 @@ you can’t call any Eggdrop functions (the module won’t even load).</p>
 </div></blockquote>
 </div></blockquote>
 <section id="module-requirements">
-<h2>Module requirements<a class="headerlink" href="#module-requirements" title="Permalink to this heading">¶</a></h2>
+<h2>Module requirements<a class="headerlink" href="#module-requirements" title="Link to this heading">¶</a></h2>
 <p>In most modules, all functions/variables (except global and MODULE_start)
 should be static. This will drastically reduce the size of modules on
 decent systems.</p>
@@ -152,7 +152,7 @@ decent systems.</p>
 </dd>
 </dl>
 <section id="module-start">
-<h3>MODULE_start<a class="headerlink" href="#module-start" title="Permalink to this heading">¶</a></h3>
+<h3>MODULE_start<a class="headerlink" href="#module-start" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">char</span> <span class="o">*</span><span class="n">MODULE_start</span><span class="p">(</span><span class="n">Function</span> <span class="o">*</span><span class="n">func_table</span><span class="p">)</span>
 
 <span class="n">This</span> <span class="n">function</span> <span class="ow">is</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">module</span> <span class="ow">is</span> <span class="n">first</span> <span class="n">loaded</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span>
@@ -189,7 +189,7 @@ message. The module (and any other dependent modules) will stop
 loading and an error will be returned.</p>
 </section>
 <section id="module-table">
-<h3>MODULE_table<a class="headerlink" href="#module-table" title="Permalink to this heading">¶</a></h3>
+<h3>MODULE_table<a class="headerlink" href="#module-table" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">Function</span> <span class="o">*</span><span class="n">MODULE_table</span> <span class="o">=</span> <span class="p">{</span>
        <span class="n">MODULE_start</span><span class="p">,</span>
        <span class="n">MODULE_close</span><span class="p">,</span>
@@ -206,7 +206,7 @@ loading and an error will be returned.</p>
 </div>
 </section>
 <section id="module-close">
-<h3>MODULE_close ()<a class="headerlink" href="#module-close" title="Permalink to this heading">¶</a></h3>
+<h3>MODULE_close ()<a class="headerlink" href="#module-close" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">char</span> <span class="o">*</span><span class="n">MODULE_close</span> <span class="p">()</span>
 
 <span class="n">This</span> <span class="ow">is</span> <span class="n">called</span> <span class="n">when</span> <span class="n">the</span> <span class="n">module</span> <span class="ow">is</span> <span class="n">unloaded</span><span class="o">.</span> <span class="n">Apart</span> <span class="kn">from</span> <span class="nn">tidying</span> <span class="nb">any</span>
@@ -226,7 +226,7 @@ loading and an error will be returned.</p>
 </div>
 </section>
 <section id="module-expmem">
-<h3>MODULE_expmem<a class="headerlink" href="#module-expmem" title="Permalink to this heading">¶</a></h3>
+<h3>MODULE_expmem<a class="headerlink" href="#module-expmem" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">MODULE_expmem</span> <span class="p">()</span>
 
 <span class="n">This</span> <span class="n">should</span> <span class="n">tally</span> <span class="nb">all</span> <span class="n">memory</span> <span class="n">you</span> <span class="n">allocate</span><span class="o">/</span><span class="n">deallocate</span> <span class="n">within</span> <span class="n">the</span> <span class="n">module</span>
@@ -236,7 +236,7 @@ loading and an error will be returned.</p>
 </div>
 </section>
 <section id="module-report">
-<h3>MODULE_report<a class="headerlink" href="#module-report" title="Permalink to this heading">¶</a></h3>
+<h3>MODULE_report<a class="headerlink" href="#module-report" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">void</span> <span class="n">MODULE_report</span> <span class="p">(</span><span class="nb">int</span> <span class="n">idx</span><span class="p">)</span>
 
 <span class="n">This</span> <span class="n">should</span> <span class="n">provide</span> <span class="n">a</span> <span class="n">relatively</span> <span class="n">short</span> <span class="n">report</span> <span class="n">of</span> <span class="n">the</span> <span class="n">module</span><span class="s1">&#39;s status</span>
@@ -247,7 +247,7 @@ loading and an error will be returned.</p>
 can be found in src/mod/module.h.</p>
 </section>
 <section id="additional-functions">
-<h3>Additional functions<a class="headerlink" href="#additional-functions" title="Permalink to this heading">¶</a></h3>
+<h3>Additional functions<a class="headerlink" href="#additional-functions" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="o">*</span><span class="n">nmalloc</span><span class="p">(</span><span class="nb">int</span> <span class="n">j</span><span class="p">);</span>
 
 <span class="n">This</span> <span class="n">allocates</span> <span class="n">j</span> <span class="nb">bytes</span> <span class="n">of</span> <span class="n">memory</span><span class="o">.</span>
@@ -387,7 +387,7 @@ can be found in src/mod/module.h.</p>
 </section>
 </section>
 <section id="what-to-do-with-a-module">
-<h2>What to do with a module?<a class="headerlink" href="#what-to-do-with-a-module" title="Permalink to this heading">¶</a></h2>
+<h2>What to do with a module?<a class="headerlink" href="#what-to-do-with-a-module" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>If you have written a module and feel that you wish to share it with the
 rest of the Eggdrop community, find us in #eggdrop on Libera. Make sure you
@@ -423,9 +423,9 @@ to mention in your text file which version Eggdrop the module is written for.</p
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Feb 13, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
         <div class="clearer"></div>

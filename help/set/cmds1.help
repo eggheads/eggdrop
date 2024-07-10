@@ -199,13 +199,6 @@
    This value is in kilobytes, so '550' would mean cycle logs when it
    reaches the size of 550 kilobytes. Note that this only works if you
    have keep-all-logs 0 (OFF).
-%{help=set quick-logs}%{+n}
-###  %bset quick-logs%b <0/1>
-   This could be good if you have had problem with the logfile
-   filling your quota/hard disk or if you log +p and publish it to
-   the web and need more up-to-date info. Note that this setting
-   might increase the CPU usage of your bot (on the other hand it will
-   decrease your mem usage).
 %{help=set logfile-suffix}%{+n}
 ###  %bset logfile-suffix%b <suffix>
    If keep-all-logs is 1, this setting will define the suffix of the

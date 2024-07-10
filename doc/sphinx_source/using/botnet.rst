@@ -69,17 +69,22 @@ The following are some common terms used in this document:
 **Port**
   The telnet port is used by the bot to communicate with other bots and/or users. Note that you can define separate ports for user and bot connections.
 
-Example bottree
----------------
+Example bottrees
+----------------
 
 ::
 
   BotA
     |-+BotB
-    `-+BotC
+    |==BotC
+    |=+BotD
+    `--BotC
 
-BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.
-
+Legend:
+* -- means the bots are linked, but not sharing userfiles
+* -+ means the bots are sharing userfiles
+* == means the bots have an encrypted link between them, and are not sharing userfiles
+* =+ means the bots have an encrypted link between them, and are sharing userfiles
 
 Bot Flags
 ---------
@@ -320,6 +325,6 @@ Making bots share user records
 
 Using certificates to authenticate Eggdrops
 -------------------------------------------
-Eggdrops can use certificates to authenticate when linking to each other instead of a password. First, you must ensure you have set the appropriate certificates in the `ssl-privatekey` and `ssl-certificate` settings in the config file, and then enable the `ssl-cert-auth` setting. Next, add the certificate on the partyline by using `.fprint +` to add the fingerprint for the certificate currently in use, or `.fprint <SHA1 fingerprint>` to manually add a fingerprint. Once the config file settings are set 0and fingerprints are added on the partyline, Eggdrops will attempt to use their certificates intead of passwords for authentication.
+Eggdrops can use certificates to authenticate when linking to each other instead of a password. First, you must ensure you have set the appropriate certificates in the `ssl-privatekey` and `ssl-certificate` settings in the config file, and then enable the `ssl-cert-auth` setting. Next, add the certificate on the partyline by using `.fprint +` to add the fingerprint for the certificate currently in use, or `.fprint <SHA1 fingerprint>` to manually add a fingerprint. Once the config file settings are set 0and fingerprints are added on the partyline, Eggdrops will attempt to use their certificates instead of passwords for authentication.
 
-Copyright (C) 1999 - 2023 Eggheads Development Team
+Copyright (C) 1999 - 2024 Eggheads Development Team
