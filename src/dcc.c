@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 
 #include "main.h"
 #include <errno.h>
-#include "modules.h"
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
@@ -355,10 +354,25 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
          dcc[idx].nick);
 }
 
+static char *get_bot_pass(struct userrec *u) {
+    char *pass2 = get_user(&USERENTRY_PASS2, u);
+    char *pass = get_user(&USERENTRY_PASS, u);
+    if (pass2) {
+      if (!pass) {
+        pass = pass2;
+        if (encrypt_pass)
+          set_user(&USERENTRY_PASS, u, pass);
+      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        pass = pass2;
+    } else if (pass && encrypt_pass2)
+        set_user(&USERENTRY_PASS2, u, pass);
+    return pass;
+}
+
 static void dcc_bot_new(int idx, char *buf, int x)
 {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
-  char *code, *pass2 = NULL, *pass = NULL;
+  char *code, *pass;
 
   if (raw_log) {
     if (!strncmp(buf, "s ", 2))
@@ -376,17 +390,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     /* We entered the wrong password */
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   else if (!strcasecmp(code, "passreq")) {
-    pass2 = get_user(&USERENTRY_PASS2, u);
-    pass = get_user(&USERENTRY_PASS, u);
-    if (pass2) {
-      if (!pass) {
-        pass = pass2;
-        if (encrypt_pass)
-          set_user(&USERENTRY_PASS, u, pass);
-      } else if (strcmp(pass2, pass) && encrypt_pass2)
-        pass = pass2;
-    } else if (pass && encrypt_pass2)
-        set_user(&USERENTRY_PASS2, u, pass);
+    pass = get_bot_pass(u);
     if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
@@ -596,7 +600,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   char digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
   int i, ret;
-  char *password = get_user(&USERENTRY_PASS, dcc[idx].user);
+  char *password = get_bot_pass(dcc[idx].user);
 
   if (!password)
     return 1;

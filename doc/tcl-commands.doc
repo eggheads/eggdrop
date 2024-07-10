@@ -1,4 +1,4 @@
-Eggdrop Tcl Commands Last revised: January 24, 2021
+Eggdrop Tcl Commands Last revised: January 6, 2024
 
 Eggdrop Tcl Commands
 
@@ -1166,7 +1166,7 @@ monitor <add/delete/list/online/offline/status/clear> [nickname]
   currently offline.
 
   Returns: The 'add' sub-command returns a '1' if the nick was
-  succssfully added, a '0' if the nick is already in the monitor list,
+  successfully added, a '0' if the nick is already in the monitor list,
   and a '2' if the nick could not be added. The 'delete' sub-command
   returns a '1' if the nick is removed, or an error if the nick is not
   found. The 'status' sub-command returns a '1' if 'nickname' is online
@@ -1182,7 +1182,7 @@ accounttracking
   This checks if the extended-join and account-notify IRCv3 capabilities
   are currently enabled, and checks if the server supports WHOX (based
   on the type of server selected in the config file, or the use-354
-  variable being set to 1 when seleceting an "Other" server).
+  variable being set to 1 when selecting an "Other" server).
 
   Returns: a '1' if all three functionalities are present, a '0' if one
   or more are missing.
@@ -1421,10 +1421,11 @@ onchansplit <nick> [channel]
 
 chanlist <channel> [flags][<&|>chanflags]
 
-  Description: flags are any global flags; the '&' or '|' denotes to
-  look for channel specific flags, where '&' will return users having
-  ALL chanflags and '|' returns users having ANY of the chanflags (See
-  Flag Masks for additional information).
+  Description: lists all users on a channel Eggdrop has joined. flags
+  are any global flags; the '&' or '|' denotes to look for channel
+  specific flags, where '&' will return users having ALL chanflags and
+  '|' returns users having ANY of the chanflags (See Flag Masks for
+  additional information).
 
   Returns: Searching for flags optionally preceded with a '+' will
   return a list of nicknames that have all the flags listed. Searching
@@ -2097,8 +2098,8 @@ dccsend <filename> <ircnick>
     4       the file was queued for later transfer, which means that person
             has too many file transfers going right now
 
-    5       copy-to-tmp is enabled and the file already exists in the temp
-            directory
+    5       the file could not be opened or temporary file could not be
+            created
     ------- ---------------------------------------------------------------
 
   Module: transfer
@@ -2301,6 +2302,13 @@ unbind <type> <flags> <keyword/mask> <proc-name>
   Module: core
 
 binds [type/mask]
+
+  Description: By default, lists Tcl binds registered with the Eggdrop.
+  You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and
+  'python' to view Python binds. Alternately, you can specify a bind
+  type (pub, msg, etc) to view all binds that match that type of bind,
+  or a mask that is matched against the command associated with the
+  bind.
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
 
@@ -3705,7 +3713,7 @@ the Tcl proc, and an explanation.
 
   bind evnt <flags> <type> <proc>
 
-  procname <type>
+  procname <type> [arg]
 
   Description: triggered whenever one of these events happen. flags are
   ignored. Pre-defined events triggered by Eggdrop are:
@@ -3727,6 +3735,7 @@ the Tcl proc, and an explanation.
       disconnect-server - called when we disconnect from our IRC server
       fail-server       - called when an IRC server fails to respond 
       hidden-host       - called after the bot's host is hidden by the server
+      got-chanlist      - called after Eggdrop receives the channel userlist from the server. Passes a second [arg] value to the Tcl proc
 
   Note that Tcl scripts can trigger arbitrary events, including ones
   that are not pre-defined or used by Eggdrop.
@@ -4161,4 +4170,4 @@ the four special characters:
         well, so a bind would have to use "\*" or {*} for a mask argument
   ----- -----------------------------------------------------------------
 
-  Copyright (C) 1999 - 2023 Eggheads Development Team
+  Copyright (C) 1999 - 2024 Eggheads Development Team

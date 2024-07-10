@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -138,7 +139,7 @@
 <h2>Getting the source<a class="headerlink" href="#getting-the-source" title="Link to this heading">¶</a></h2>
 <section id="history">
 <h3>History<a class="headerlink" href="#history" title="Link to this heading">¶</a></h3>
-<p>The current supported version of Eggdrop is the 1.9.x tree. The 1.8 and 1.6 series, while still popular, are no longer supported by the developers.</p>
+<p>The current supported version of Eggdrop is the 1.9.x tree. Only the current major version (1.9.x) is supported; earlier major versions are not.</p>
 <p>The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you’re just starting out with Eggdrop, you should use 1.9.5.</p>
 <p>Prior to that, the 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. 1.6.21, which is now over 10 years old, was the last release of the 1.6 series. Because Eggdrop remained at the 1.6.21 patchlevel for several years it is still often run by users who have become comfortable with that version and don’t wish to move to a newer version- however, it is getting harder and harder to continue running 1.6 bots on modern Linux systems. Tcl scripts written for bots as far back as the 1.6 series generally work on all later versions of Eggdrop as well, so if you haven’t already- upgrade!</p>
 <p>The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the <a class="reference external" href="https://github.com/eggheads/eggdrop/issues">Eggheads GitHub issues page.</a></p>
@@ -257,7 +258,7 @@
 <section id="no-show">
 <h3>No show?<a class="headerlink" href="#no-show" title="Link to this heading">¶</a></h3>
 <p>If your bot didn’t appear on IRC, you should log in to the shell and view the bot’s logfile (the default in the config file is “logs/eggdrop.log”). Note that logfile entries are not written to disk immediately unless quick-logs is enabled, so you may have to wait a few minutes before the logfile appears, or contains messages that indicate why your bot isn’t showing up.</p>
-<p>Additionally, you can kill the bot via the command line (<code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">pid</span></code>, the pid is shown to you when you started the bot or can be viewed by running <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">x</span></code>) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -nt flag, the bot will not persist and you will kill it once you quit the partyline.</p>
+<p>Additionally, you can kill the bot via the command line (<code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">pid</span></code>, the pid is shown to you when you started the bot or can be viewed by running <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">x</span></code>) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -t flag, the bot will not persist and you will kill it once you quit the partyline.</p>
 <p>If you’re still unsure what the problem is, try asking in #eggdrop on Libera, and be sure to include any relevant information from the logfile. Good luck!</p>
 </section>
 </section>
@@ -289,8 +290,8 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2023, Eggheads.
-      Last updated on Dec 31, 2023.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Jan 14, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
