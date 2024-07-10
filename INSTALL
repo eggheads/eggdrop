@@ -1,37 +1,11 @@
-Compilation and Installation of Eggdrop Last revised: July 24, 2004
-
-
-
-INSTALLING EGGDROP
-
+Installing Eggdrop
 
 This is the quick install guide; if you have had little or no experience
-with UNIX or Eggdrop, READ THE README FILE NOW! This file is only for
+with UNIX or Eggdrop, READ THE README FILE NOW! This file is best for
 experienced users.
 
 For more information on compiling Eggdrop, see the Compile Guide in
 doc/COMPILE-GUIDE (and of course, the README FILE).
-
-
-OVERVIEW
-
-1.  What is Eggdrop?
-2.  Quick Startup
-3.  Cygwin Requirements (Windows)
-4.  Modules
-5.  Frequently Asked Questions
-
-
-WHAT IS EGGDROP?
-
-Please, read the README file before attempting to set up this bot. This
-file is a quick setup guide, not a miracle worker. If you enter this
-file without basic Eggdrop knowledge, you will NOT leave with a working
-bot! Before asking ANY questions, READ THE README FILE OR YOU WILL BE
-BURNED TO A HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE I WILL
-PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By
-the way, read the README file.
-
 
 QUICK STARTUP
 
@@ -90,30 +64,29 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
         Note that you must use full path for every file to be correctly
         installed.
 
-        [The following is performed from the directory installed above.]
+5.  Since version 1.8, Eggdrop can use SSL to protect botnet links. If
+    you intend on protecting botnet traffic between Eggdrops, you must
+    generate SSL certificates by running:
 
-5.  
+        make sslcert
 
-    By default, version 1.8 uses SSL to protect botnet links. If you intend
+        Or, if you installed your eggdrop to a different directory in step 4, you
+        will want to run:
 
-        on linking 1.8 bots together, you must run:
+        make sslcert DEST=<directory>
 
-            make sslcert
-
-        Or, if you installed your eggdrop to a different directory in
-        step 4, you will want to run:
-
-          make sslcert DEST=<directory>
-
-    For those using scripts to install Eggdrop, you can non-interactively
-
+        For those using scripts to install Eggdrop, you can non-interactively
         generate a key and certificate by running:
 
-          make sslsilent
+        make sslsilent
 
-          Read docs/TLS for more info on this process.
+        Read docs/TLS for more info on this process.
+
+[The following steps are performed in the directory you just installed
+Eggdrop into from the previous step]
 
 6.  Edit your config file completely.
+
 7.  Start the bot with the "-m" option to create a user file, i.e. :
 
         ./eggdrop -m LamestBot.conf
@@ -141,12 +114,17 @@ Eggdrop uses the GNU autoconfigure scripts to make things easier.
     It's advisable to run your bot via crontab, so that it will
 
         automatically restart if the machine goes down or (heaven
-        forbid) the bot should crash. Look at 'scripts/botchk' and
-        'scripts/autobotchk' for a great start with crontabbing the bot.
+        forbid) the bot should crash. Eggdrop includes a helper script
+        to auto-generate either a systemd or crontab entry. To add a
+        systemd job, run:
 
-10. Smile, and if you haven't already read the README file in its
-    entirety, go take a long walk off a short pier.
+            ./scripts/autobotchk [yourconfig.conf] -systemd
 
+        or to add a crontab job, run:
+
+            ./scripts/autobotchk [yourconfig.conf]
+
+10. Smile. You have an Eggdrop!
 
 CYGWIN REQUIREMENTS (WINDOWS)
 
@@ -157,7 +135,6 @@ installation tool prior to compiling:
     Net:          openssl-devel
     Devel:        autoconf, gcc-core, git, make
     Utils:        diffutils
-
 
 MODULES
 
@@ -176,25 +153,10 @@ paragraph 2. After you have moved the appropriate files, you will only
 need to type 'make modules' to compile only the modules portion of the
 bot.
 
-
-FREQUENTLY ASKED QUESTIONS
-
-  (Q) What do I do if...?
-  (R) READ THE README FILE!
-  (S) The readme does not answer...!
-  (T) READ THE README FILE AGAIN!
-  (U) I still don't know how to...
-  (V) MEMORIZE THE README FILE!
-  (W) But...
-  (X) Well, go to www.egghelp.org or www.eggheads.org and see if you can
-      find there what you're looking for. There are also lots of IRC
-      help channels and various mailing lists, as seen in the README
-      FILE.
-
 This is the end. If you read to this point, hopefully you have also read
 the README file. If not, then READ IT!&@#%@!
 
 Have fun with Eggdrop!
 
-  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2020 Eggheads
+  Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2024 Eggheads
   Development Team

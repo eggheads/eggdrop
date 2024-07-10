@@ -34,7 +34,6 @@ distclean: clean
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
  ../../../src/compat/base64.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/gethostbyname2.h \
- ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
- .././uptime.mod/../modvals.h ../../../src/tandem.h \
- .././uptime.mod/../server.mod/server.h
+ ../../../src/compat/snprintf.h ../../../src/compat/explicit_bzero.h \
+ ../../../src/compat/strlcpy.h .././uptime.mod/../modvals.h \
+ ../../../src/tandem.h .././uptime.mod/../server.mod/server.h

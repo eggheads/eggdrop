@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2017 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ int tcl_isupport STDOBJVAR
 
 static int tcl_isupport_get STDOBJVAR
 {
-  int keylen;
+  Tcl_Size keylen;
   const char *key, *value;
   Tcl_Obj *tclres;
 
@@ -95,13 +95,13 @@ static int tcl_isupport_get STDOBJVAR
 
 static int tcl_isupport_isset STDOBJVAR
 {
-  int keylen;
+  Tcl_Size keylen;
   const char *key, *value;
 
   BADOBJARGS(3, 3, 2, "setting");
   key = Tcl_GetStringFromObj(objv[2], &keylen);
   value = isupport_get(key, keylen);
-  Tcl_SetResult(interp, value ? "1" : "0", NULL);
+  Tcl_SetResult(interp, value ? "1" : "0", TCL_STATIC);
   return TCL_OK;
 }
 
@@ -109,7 +109,7 @@ static int tcl_isupport_isset STDOBJVAR
 /* not exposed for now */
 static int tcl_isupport_set STDOBJVAR
 {
-  int keylen, valuelen;
+  Tcl_Size keylen, valuelen;
   const char *key, *value;
 
   /* First one to check for type validity only */
@@ -126,7 +126,7 @@ static int tcl_isupport_set STDOBJVAR
 static int tcl_isupport_unset STDOBJVAR
 {
   struct isupport *data;
-  int keylen;
+  Tcl_Size keylen;
   const char *key;
 
   BADOBJARGS(3, 3, 2, "setting");
@@ -138,7 +138,7 @@ static int tcl_isupport_unset STDOBJVAR
     TCL_ERR_NOTSET(irp, objv[2]);
   }
   if (!data->value) {
-    Tcl_SetResult(interp, "no server value set, cannot unset default values, change 'set isupport-default' instead", NULL);
+    Tcl_SetResult(interp, "no server value set, cannot unset default values, change 'set isupport-default' instead", TCL_STATIC);
     return TCL_ERROR;
   }
   isupport_unset(key, keylen);
@@ -170,7 +170,7 @@ char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
     }
     /* remove trailing space */
     if (Tcl_DStringLength(&ds))
-      Tcl_DStringTrunc(&ds, Tcl_DStringLength(&ds) - 1);
+      Tcl_DStringSetLength(&ds, Tcl_DStringLength(&ds) - 1);
     Tcl_SetVar2(interp, name1, name2, Tcl_DStringValue(&ds), TCL_GLOBAL_ONLY);
     Tcl_DStringFree(&ds);
 

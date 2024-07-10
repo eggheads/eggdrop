@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -226,7 +226,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
   if (!par[0]) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :You must supply a hostmask\n", nick);
-  } else if (rfc_casecmp(u->handle, origbotname)) {
+  } else if (strcasecmp(u->handle, origbotname)) {
     /* This could be used as detection... */
     if (u_pass_match(u, "-")) {
       if (!quiet_reject)
@@ -351,7 +351,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   memberlist *m;
-  char s[UHOSTLEN], also[512], *info;
+  char s[NICKLEN + UHOSTLEN], also[512], *info;
   int i;
 
   if (!use_info || match_my_nick(nick))
@@ -383,7 +383,8 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     struct userrec *u;
 
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(s);
+    /* Don't use s for host here, b/c if we don't have m, we won't have s */
+    u = get_user_from_member(m);
     info = get_user(&USERENTRY_INFO, u);
     if (u && (u->flags & USER_BOT))
       info = 0;
@@ -431,7 +432,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[UHOSTLEN], s1[81], *s2;
+  char s1[143], *s2, stime[14], uhost[NICKLEN + UHOSTLEN];
   int ok;
   struct chanset_t *chan;
   memberlist *m;
@@ -454,7 +455,8 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   }
   if (strlen(par) > NICKMAX)
     par[NICKMAX] = 0;
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHOIS %s", nick, host, u->handle, par);
+  egg_snprintf(uhost, sizeof uhost, "%s!%s", nick, host);
+  putlog(LOG_CMDS, "*", "(%s) !%s! WHOIS %s", uhost, u->handle, par);
   u2 = get_user_by_handle(userlist, par);
   if (!u2) {
     /* No such handle -- maybe it's a nickname of someone on a chan? */
@@ -462,8 +464,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     for (chan = chanset; chan && !ok; chan = chan->next) {
       m = ismember(chan, par);
       if (m) {
-        egg_snprintf(s, sizeof s, "%s!%s", par, m->userhost);
-        u2 = get_user_by_host(s);
+        u2 = get_user_from_member(m);
         if (u2) {
           ok = 1;
           dprintf(DP_HELP, "NOTICE %s :[%s] AKA '%s':\n", nick,
@@ -498,10 +499,10 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
           hand_on_chan(chan, u) || (glob_op(fr) && !chan_deop(fr)) ||
           glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
         tt = cr->laston;
-        strftime(s, 14, "%b %d %H:%M", localtime(&tt));
+        strftime(stime, sizeof stime, "%b %d %H:%M", localtime(&tt));
         ok = 1;
         egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s on %s", nick,
-                     u2->handle, IRC_LASTSEENAT, s, chan->dname);
+                     u2->handle, IRC_LASTSEENAT, stime, chan->dname);
       }
     }
   }
@@ -780,20 +781,10 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[256], *vers_t, *uni_t, *pass;
+  char s[256], *pass, *sysrel;
   int i;
   struct chanset_t *chan;
   time_t now2 = now - online_since, hr, min;
-
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    vers_t = " ";
-    uni_t  = "*unknown*";
-  } else {
-    vers_t = un.release;
-    uni_t  = un.sysname;
-  }
 
   if (match_my_nick(nick))
     return 1;
@@ -835,7 +826,9 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   if (admin[0])
     dprintf(DP_HELP, "NOTICE %s :Admin: %s.\n", nick, admin);
-  dprintf(DP_HELP, "NOTICE %s :OS: %s %s.\n", nick, uni_t, vers_t);
+  sysrel = egg_uname();
+  if (*sysrel)
+    dprintf(DP_HELP, "NOTICE %s :OS: %s.\n", nick, sysrel);
   dprintf(DP_HELP, "NOTICE %s :Online as: %s!%s.\n", nick, botname, botuserhost);
 
   /* This shouldn't overflow anymore -Wcc */
@@ -1109,7 +1102,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP", nick, host, u->handle);
     dprintf(-serv, "NOTICE %s :%s\n", nick, IRC_JUMP);
     cycle_time = 0;
-    nuke_server("changing servers");
+    nuke_server(IRC_CHANGINGSERV);
   } else
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
   return 1;

@@ -1,20 +1,20 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.61)
-AC_INIT([Eggdrop],[1.9.0],[bugs@eggheads.org])
-AC_COPYRIGHT([Copyright (C) 1999 - 2020 Eggheads Development Team])
+AC_PREREQ([2.71])
+AC_INIT([Eggdrop],[1.9.5],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
+AC_COPYRIGHT([Copyright (C) 1999 - 2024 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 AC_PRESERVE_HELP_ORDER
 
 dnl config.h stuff
 AH_TOP([/*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,13 +43,12 @@ EGG_SAVE_PARAMETERS
 # Check for a working C compiler
 AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
-AC_PROG_CC_C99
 EGG_CHECK_CC_C99
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
-AC_AIX
-AC_ISC_POSIX
-AC_MINIX
+AC_USE_SYSTEM_EXTENSIONS
+AC_SEARCH_LIBS([strerror],[cposix])
+AC_USE_SYSTEM_EXTENSIONS
 
 # Check C compiler characteristics.
 EGG_CHECK_ICC
@@ -92,8 +91,8 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -113,7 +112,7 @@ AX_TYPE_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([dprintf explicit_bzero explicit_memset getrandom getrusage inet_aton isascii memset_s random rand lrand48 snprintf strlcpy vsnprintf])
+AC_CHECK_FUNCS([dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton memset_s snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP
@@ -122,7 +121,7 @@ AC_FUNC_MMAP
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.6.X"
-tclrecommendsite="ftp://ftp.tcl.tk/pub/tcl/tcl8_6/"
+tclrecommendsite="https://sourceforge.net/projects/tcl/files/Tcl/"
 
 # Tcl header filenames.
 tclheadernames="tcl.h"
@@ -136,7 +135,6 @@ EGG_TCL_WITH_TCLLIB
 EGG_TCL_WITH_TCLINC
 EGG_TCL_TCLCONFIG
 EGG_TCL_CHECK_VERSION
-EGG_TCL_CHECK_NOTIFIER_INIT
 EGG_TCL_LUSH
 
 
@@ -161,6 +159,12 @@ EGG_IPV6_COMPAT
 EGG_TLS_ENABLE
 EGG_TLS_WITHSSL
 EGG_TLS_DETECT
+
+# Threaded DNS core
+EGG_TDNS_ENABLE
+
+# Check for Python
+EGG_PYTHON_WITHCONFIG
 
 
 # Substitute Makefile variables.

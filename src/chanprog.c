@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,13 +28,7 @@
 
 #include "main.h"
 
-#ifdef HAVE_GETRUSAGE
-#  include <sys/resource.h>
-#  ifdef HAVE_SYS_RUSAGE_H
-#    include <sys/rusage.h>
-#  endif
-#endif
-
+#include <sys/resource.h>
 #include <sys/utsname.h>
 
 #include "modules.h"
@@ -62,6 +56,7 @@ char admin[121] = "";              /* Admin info                   */
 char origbotname[NICKLEN];
 char botname[NICKLEN];             /* Primary botname              */
 char owner[121] = "";              /* Permanent botowner(s)        */
+void remove_timer_from_list(tcl_timer_t ** stack);
 
 
 /* Remove leading and trailing whitespaces.
@@ -121,48 +116,13 @@ struct chanset_t *findchan_by_dname(const char *name)
   return NULL;
 }
 
-
-/*
- *    "caching" functions
- */
-
-/* Shortcut for get_user_by_host -- might have user record in one
- * of the channel caches.
- */
-struct userrec *check_chanlist(const char *host)
-{
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
-
-  strlcpy(buf, host, sizeof buf);
-  uhost = buf;
-  nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-        return m->user;
-  return NULL;
-}
-
-/* Shortcut for get_user_by_handle -- might have user record in channels
- */
-struct userrec *check_chanlist_hand(const char *hand)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !strcasecmp(m->user->handle, hand))
-        return m->user;
-  return NULL;
-}
-
 /* Clear the user pointers in the chanlists.
  *
- * Necessary when a hostmask is added/removed, a user is added or a new
- * userfile is loaded.
+ * Necessary when:
+ * - a hostmask is added/removed
+ * - an account is added/removed
+ * - a user is added
+ * - new userfile is loaded
  */
 void clear_chanlist(void)
 {
@@ -178,8 +138,9 @@ void clear_chanlist(void)
 
 /* Clear the user pointer of a specific nick in the chanlists.
  *
- * Necessary when a hostmask is added/removed, a nick changes, etc.
- * Does not completely invalidate the channel cache like clear_chanlist().
+ * Necessary when:
+ * - their hostmask changed (chghost)
+ * - their account changed
  */
 void clear_chanlist_member(const char *nick)
 {
@@ -193,23 +154,6 @@ void clear_chanlist_member(const char *nick)
         m->tried_getuser = 0;
         break;
       }
-}
-
-/* If this user@host is in a channel, set it (it was null)
- */
-void set_chanlist(const char *host, struct userrec *rec)
-{
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
-
-  strlcpy(buf, host, sizeof buf);
-  uhost = buf;
-  nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-        m->user = rec;
 }
 
 /* Calculate the memory we should be using
@@ -228,7 +172,6 @@ int expmem_chanprog()
 
 float getcputime()
 {
-#ifdef HAVE_GETRUSAGE
   float stime, utime;
   struct rusage ru;
 
@@ -236,9 +179,6 @@ float getcputime()
   utime = ru.ru_utime.tv_sec + (ru.ru_utime.tv_usec / 1000000.00);
   stime = ru.ru_stime.tv_sec + (ru.ru_stime.tv_usec / 1000000.00);
   return (utime + stime);
-#else
-  return (clock() / (CLOCKS_PER_SEC * 1.00));
-#endif
 }
 
 /* Dump uptime info out to dcc (guppy 9Jan99)
@@ -280,26 +220,15 @@ void tell_verbose_uptime(int idx)
  */
 void tell_verbose_status(int idx)
 {
-  char s[256], s1[121], s2[81];
-  char *vers_t, *uni_t;
+  char s[256], s1[121], s2[81], *sysrel;
   int i;
   time_t now2 = now - online_since, hr, min;
   double cputime, cache_total;
-  struct utsname un;
-
-  if (uname(&un) < 0) {
-    vers_t = " ";
-    uni_t  = "*unknown*";
-  } else {
-    vers_t = un.release;
-    uni_t  = un.sysname;
-  }
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
           botnetnick, ver, i, i == 1 ? "" : "s",
           (int) (expected_memory() / 1024));
-
   s[0] = 0;
   if (now2 > 86400) {
     /* days */
@@ -326,7 +255,7 @@ void tell_verbose_status(int idx)
   }
   cputime = getcputime();
   if (cputime < 0)
-    sprintf(s2, "CPU: unknown");
+    strlcpy(s2, "CPU: unknown", sizeof s2);
   else {
     hr = cputime / 60;
     cputime -= hr * 60;
@@ -334,16 +263,17 @@ void tell_verbose_status(int idx)
   }
   if (cache_hit + cache_miss) {      /* 2019, still can't divide by zero */
     cache_total = 100.0 * (cache_hit) / (cache_hit + cache_miss);
-  } else cache_total = 0;
-    dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
-            s, s1, s2, MISC_CACHEHIT, cache_total);
-
+  } else
+    cache_total = 0;
+  dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR, s, s1, s2,
+          MISC_CACHEHIT, cache_total);
   dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
     dprintf(idx, "Admin: %s\n", admin);
-
   dprintf(idx, "Config file: %s\n", configfile);
-  dprintf(idx, "OS: %s %s\n", uni_t, vers_t);
+  sysrel = egg_uname();
+  if (*sysrel)
+    dprintf(idx, "OS: %s\n", sysrel);
   dprintf(idx, "Process ID: %d (parent %d)\n", getpid(), getppid());
 
   /* info library */
@@ -355,22 +285,22 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
           ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
           tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-          tcl_resultstring() : "*unknown*", MISC_TCLHVERSION, TCL_PATCH_LEVEL);
+          tcl_resultstring() : "*unknown*", MISC_HEADERVERSION, TCL_PATCH_LEVEL);
 
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
 #ifdef TLS
   dprintf(idx, "TLS support is enabled.\n"
   #if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n             (no elliptic curve support)\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve support)\n",
   #elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n             (no MD5 support)\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no MD5 support)\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s\n             (no elliptic curve or MD5 support)\n",
+               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
-          SSLeay_version(SSLEAY_VERSION));
+          SSLeay_version(SSLEAY_VERSION), MISC_HEADERVERSION);
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
@@ -378,6 +308,11 @@ void tell_verbose_status(int idx)
   dprintf(idx, "IPv6 support is enabled.\n"
 #else
   dprintf(idx, "IPv6 support is not available.\n"
+#endif
+#ifdef EGG_TDNS
+               "Threaded DNS core is enabled.\n"
+#else
+               "Threaded DNS core is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
 }
@@ -421,7 +356,7 @@ void tell_settings(int idx)
 
 void reaffirm_owners()
 {
-  char *p, *q, s[121];
+  char *p, *q, s[sizeof owner];
   struct userrec *u;
 
   /* Please stop breaking this function. */
@@ -498,9 +433,9 @@ void chanprog()
 
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile) {
-      char tmp[178];
+      char tmp[256];
 
-      egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
+      snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
       fatal(tmp, 0);
     }
     printf("\n\n%s\n", MISC_NOUSERFILE2);
@@ -525,7 +460,7 @@ void chanprog()
 void reload()
 {
   if (!file_readable(userfile)) {
-    putlog(LOG_MISC, "*", MISC_CANTRELOADUSER);
+    putlog(LOG_MISC, "*", "%s", MISC_CANTRELOADUSER);
     return;
   }
 
@@ -558,10 +493,12 @@ void rehash()
 
 /* Add a timer
  */
-unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
-                        char *cmd, unsigned long prev_id)
+char * add_timer(tcl_timer_t ** stack, int elapse, int count,
+                        char *cmd, char *name, unsigned long prev_id)
 {
   tcl_timer_t *old = (*stack);
+  char stringid[8];
+  unsigned int ret;
 
   *stack = nmalloc(sizeof **stack);
   (*stack)->next = old;
@@ -576,25 +513,48 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, int count,
     (*stack)->id = prev_id;
   else
     (*stack)->id = timer_id++;
-  return (*stack)->id;
+  if (name) {
+    (*stack)->name = nmalloc(strlen(name) + 1);
+    strcpy((*stack)->name, name);
+  } else {
+    (*stack)->name = NULL;
+    ret = snprintf(stringid, sizeof stringid, "%lu", (*stack)->id);
+    if (ret >= (sizeof stringid)) {
+      remove_timer_from_list(stack);
+      return NULL;
+    }
+    (*stack)->name = nmalloc(strlen(stringid) + 6); /* 6 = strlen of "timer" + null */
+    snprintf((*stack)->name, (strlen(stringid) + 6), "timer%s", stringid);
+  }
+  return (*stack)->name;
 }
 
-/* Remove a timer, by id
- */
-int remove_timer(tcl_timer_t ** stack, unsigned long id)
+/* Remove timer from linked list */
+void remove_timer_from_list(tcl_timer_t ** stack)
 {
   tcl_timer_t *old;
+
+  old = *stack;
+  *stack = ((*stack)->next);
+  nfree(old->cmd);
+  if (old->name)
+    nfree(old->name);
+  nfree(old);
+}
+
+/* Remove a timer (via name, not ID)
+ */
+int remove_timer(tcl_timer_t **stack, char *name)
+{
   int ok = 0;
 
   while (*stack) {
-    if ((*stack)->id == id) {
+    if ((*stack)->name && !strcasecmp((*stack)->name, name)) {
       ok++;
-      old = *stack;
-      *stack = ((*stack)->next);
-      nfree(old->cmd);
-      nfree(old);
-    } else
+      remove_timer_from_list(stack);
+    } else {
       stack = &((*stack)->next);
+    }
   }
   return ok;
 }
@@ -604,7 +564,7 @@ int remove_timer(tcl_timer_t ** stack, unsigned long id)
 void do_check_timers(tcl_timer_t ** stack)
 {
   tcl_timer_t *mark = *stack, *old = NULL;
-  char x[16];
+  char x[26];
 
   /* New timers could be added by a Tcl script inside a current timer
    * so i'll just clear out the timer list completely, and add any
@@ -617,10 +577,12 @@ void do_check_timers(tcl_timer_t ** stack)
     old = mark;
     mark = mark->next;
     if (!old->mins) {
-      egg_snprintf(x, sizeof x, "timer%lu", old->id);
+      snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
       if (old->count == 1) {
         nfree(old->cmd);
+        if (old->name)
+          nfree(old->name);
         nfree(old);
         continue;
       } else {
@@ -644,6 +606,8 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
     old = mark;
     mark = mark->next;
     nfree(old->cmd);
+    if (old->name)
+      nfree(old->name);
     nfree(old);
   }
   *stack = NULL;
@@ -653,22 +617,37 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
  */
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
-  char mins[10], count[10], id[16], *x;
+  char mins[11], count[11], *x;
   EGG_CONST char *argv[4];
   tcl_timer_t *mark;
 
   for (mark = stack; mark; mark = mark->next) {
-    egg_snprintf(mins, sizeof mins, "%u", mark->mins);
-    egg_snprintf(id, sizeof id, "timer%lu", mark->id);
-    egg_snprintf(count, sizeof count, "%u", mark->count);
+    snprintf(mins, sizeof mins, "%u", mark->mins);
+    snprintf(count, sizeof count, "%u", mark->count);
     argv[0] = mins;
     argv[1] = mark->cmd;
-    argv[2] = id;
+    argv[2] = mark->name;
     argv[3] = count;
     x = Tcl_Merge(sizeof(argv)/sizeof(*argv), argv);
     Tcl_AppendElement(irp, x);
     Tcl_Free((char *) x);
   }
+}
+
+/* Find a timer by name. Returns 1 if found, 0 if not
+ */
+int find_timer(tcl_timer_t *stack, char *name)
+{
+  tcl_timer_t *mark;
+
+  for (mark = stack; mark; mark = mark->next) {
+    if (mark->name) {
+      if (!strcasecmp(mark->name, name)) {
+        return 1;
+      }
+    }
+  }
+  return 0;
 }
 
 int isowner(char *name) {

@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +24,6 @@
 
 #include "main.h"
 #include "tandem.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 
 extern char botnetnick[], ver[], admin[], network[], motdfile[];
@@ -668,14 +666,24 @@ static void bot_nlinked(int idx, char *par)
            dcc[idx].nick);
     simple_sprintf(s, "%s %s (%s)", MISC_DISCONNECTED, dcc[idx].nick,
                    MISC_INVALIDBOT);
-    dprintf(idx, "error invalid eggnet protocol for 'nlinked'\n");
+#ifndef NO_OLD_BOTNET
+    if (b_numver(idx) < NEAT_BOTNET)
+      dprintf(idx, "error invalid eggnet protocol for 'nlinked'\n");
+    else
+#endif
+      dprintf(idx, "e invalid eggnet protocol for 'nlinked'\n");
   } else if ((in_chain(newbot)) || (!strcasecmp(newbot, botnetnick))) {
     /* Loop! */
     putlog(LOG_BOTS, "*", "%s %s (mutual: %s)",
            BOT_LOOPDETECT, dcc[idx].nick, newbot);
     simple_sprintf(s, "%s %s: disconnecting %s", MISC_LOOP, newbot,
                    dcc[idx].nick);
-    dprintf(idx, "error Loop (%s)\n", newbot);
+#ifndef NO_OLD_BOTNET
+    if (b_numver(idx) < NEAT_BOTNET)
+      dprintf(idx, "error Loop (%s)\n", newbot);
+    else
+#endif
+      dprintf(idx, "e Loop (%s)\n", newbot);
   }
   if (!s[0]) {
     for (p = newbot; *p; p++)
@@ -690,14 +698,24 @@ static void bot_nlinked(int idx, char *par)
            next, newbot);
     simple_sprintf(s, "%s: %s %s", BOT_BOGUSLINK, dcc[idx].nick,
                    MISC_DISCONNECTED);
-    dprintf(idx, "error %s (%s -> %s)\n", BOT_BOGUSLINK, next, newbot);
+#ifndef NO_OLD_BOTNET
+    if (b_numver(idx) < NEAT_BOTNET)
+      dprintf(idx, "error %s (%s -> %s)\n", BOT_BOGUSLINK, next, newbot);
+    else
+#endif
+      dprintf(idx, "e %s (%s -> %s)\n", BOT_BOGUSLINK, next, newbot);
   }
   if (bot_flags(dcc[idx].user) & BOT_LEAF) {
     putlog(LOG_BOTS, "*", "%s %s  (%s %s)",
            BOT_DISCONNLEAF, dcc[idx].nick, newbot, BOT_LINKEDTO);
     simple_sprintf(s, "%s %s (to %s): %s",
                    BOT_ILLEGALLINK, dcc[idx].nick, newbot, MISC_DISCONNECTED);
-    dprintf(idx, "error %s\n", BOT_YOUREALEAF);
+#ifndef NO_OLD_BOTNET
+    if (b_numver(idx) < NEAT_BOTNET)
+      dprintf(idx, "error %s\n", BOT_YOUREALEAF);
+    else
+#endif
+      dprintf(idx, "e %s\n", BOT_YOUREALEAF);
   }
   if (s[0]) {
     putlog(LOG_BOTS, "*", "%s.", s);
@@ -723,7 +741,11 @@ static void bot_nlinked(int idx, char *par)
     putlog(LOG_BOTMSG, "*", "(%s) %s %s.", next, NET_LINKEDTO, newbot);
     x = '-';
   }
-  addbot(newbot, dcc[idx].nick, next, x, i);
+#ifdef TLS
+  addbot(newbot, dcc[idx].nick, next, x, i, dcc[idx].ssl);
+#else
+  addbot(newbot, dcc[idx].nick, next, x, i, 0);
+#endif
   check_tcl_link(newbot, next);
   u = get_user_by_handle(userlist, newbot);
   if (bot_flags(u) & BOT_REJECT) {
@@ -833,8 +855,8 @@ static void bot_traced(int idx, char *par)
               if (*c == ':')
                 j++;
           }
-          dprintf(i, "%s -> %s (%lu secs, %d hop%s)\n", BOT_TRACERESULT, p,
-                  now - t, j, (j != 1) ? "s" : "");
+          dprintf(i, "%s -> %s (%" PRId64 " secs, %d hop%s)\n", BOT_TRACERESULT,
+                  p, (int64_t) (now - t), j, (j != 1) ? "s" : "");
         } else
           dprintf(i, "%s -> %s\n", BOT_TRACERESULT, p);
       }
@@ -1126,7 +1148,7 @@ static void bot_filereq(int idx, char *tobot)
       module_entry *fs = module_find("filesys", 0, 0);
 
       if (fs == NULL)
-        botnet_send_priv(idx, botnetnick, from, NULL, MOD_NOFILESYSMOD);
+        botnet_send_priv(idx, botnetnick, from, NULL, "%s", MOD_NOFILESYSMOD);
       else {
         Function f = fs->funcs[FILESYS_REMOTE_REQ];
 

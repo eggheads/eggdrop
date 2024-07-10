@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2020 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@
 #define CHAN_RESETEXEMPTS 0x10
 #define CHAN_RESETINVITED 0x20
 #define CHAN_RESETAWAY    0x40
-#define CHAN_RESETALL     0x7F
+#define CHAN_RESETALL     0xFF
 
 #ifdef MAKING_CHANNELS
 
