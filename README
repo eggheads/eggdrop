@@ -61,7 +61,7 @@ FTP
   The latest Eggdrop stable source code is always located at
   https://geteggdrop.com. You can also download the current stable,
   previous stable, and development snapshot via FTP at
-  ftp.eggheads.org/pub/Eggdrop/source
+  ftp://ftp.eggheads.org/pub/eggdrop/source
 
 Git Development Snapshot
 
@@ -216,5 +216,5 @@ OBTAINING HELP
     -   Don't ask to ask- just state your question, along with any
         relevant details and error messages
 
-Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2023 Eggheads
+Copyright (C) 1997 Robey Pointer Copyright (C) 1999 - 2024 Eggheads
 Development Team

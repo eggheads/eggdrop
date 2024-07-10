@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,6 @@
 
 #include <sys/stat.h>
 #include "main.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 #include "tandem.h"
 
@@ -161,7 +159,9 @@ int count_users(struct userrec *bu)
   return tot;
 }
 
-struct userrec *check_dcclist_hand(char *handle)
+/* Shortcut for get_user_by_handle -- might have user record in dccs
+ */
+static struct userrec *check_dcclist_hand(char *handle)
 {
   int i;
 
@@ -169,6 +169,23 @@ struct userrec *check_dcclist_hand(char *handle)
     if (!strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
   return NULL;
+}
+
+/* Search every channel record for the provided nickname. Used in cases where
+ * we are searching for a user record but don't have a memberlist to start from
+ */
+memberlist *find_member_from_nick(char *nick) {
+  struct chanset_t *chan;
+  memberlist *m = NULL;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      if (!rfc_casecmp(m->nick, nick)) {
+        return m;
+      }
+    }
+  }
+  return m;
 }
 
 /* Search userlist for a provided account name
@@ -179,19 +196,17 @@ struct userrec *get_user_by_account(char *acct)
   struct userrec *u;
   struct list_type *q;
 
-  if (acct == NULL)
+  if (!acct || !acct[0] || !strcmp(acct, "*"))
     return NULL;
   for (u = userlist; u; u = u->next) {
-    q = get_user(&USERENTRY_ACCOUNT, u);
-    for (; q; q = q->next) {
-      if(q && !strcasecmp(q->extra, acct)) {
+    for (q = get_user(&USERENTRY_ACCOUNT, u); q; q = q->next) {
+      if (!rfc_casecmp(q->extra, acct)) {
         return u;
       }
     }
   }
   return NULL;
 }
-
 
 struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 {
@@ -213,11 +228,6 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
       cache_hit++;
       return ret;
     }
-    ret = check_chanlist_hand(handle);
-    if (ret) {
-      cache_hit++;
-      return ret;
-    }
     cache_miss++;
   }
   for (u = bu; u; u = u->next)
@@ -226,6 +236,76 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
         lastuser = u;
       return u;
     }
+  return NULL;
+}
+
+struct userrec *get_user_from_member(memberlist *m)
+{
+  struct userrec *ret = NULL;
+
+  /* Check positive/negative cache first */
+  if (m->user || m->tried_getuser) {
+    return m->user;
+  }
+
+  /* Check if there is a user with a matching account if one is provided */
+  if (m->account[0] != '*') {
+    ret = get_user_by_account(m->account);
+    if (ret) {
+      goto getuser_done;
+    }
+  }
+
+  /* Check if there is a user with a matching hostmask if one is provided */
+  if ((m->userhost[0] != '\0') && (m->nick[0] != '\0')) {
+    char s[NICKMAX+UHOSTLEN+1];
+    sprintf(s, "%s!%s", m->nick, m->userhost);
+    ret = get_user_by_host(s);
+    if (ret) {
+      goto getuser_done;
+    }
+  }
+
+getuser_done:
+  m->user = ret;
+  m->tried_getuser = 1;
+  return NULL;
+}
+
+/* Wrapper function to find an Eggdrop user record based on either a provided
+ * channel memberlist record, host, or account. This function will first check
+ * a provided memberlist and return the result. If no user record is found (or
+ * the memberlist itself was NULL), this function will try again based on a
+ * provided account, and then again on a provided host.
+ *
+ * When calling this function it is best to provide all available independent
+ * variables- ie, if you provide 'm' for the memberlist, don't provide
+ * 'm->account' for the account, use the independent source variable 'account'
+ * if available. This allows redundant checking in case of unexpected NULLs
+ */
+struct userrec *lookup_user_record(memberlist *m, char *host, char *account)
+{
+  struct userrec *u = NULL;
+
+/* First check for a user record tied to a memberlist */
+  if (m) {
+    u = get_user_from_member(m);
+    if (u) {
+      return u;
+    }
+  }
+/* Next check for a user record tied to an account */
+  if (account && account[0]) {
+    u = get_user_by_account(account);
+    if (u) {
+      return u;
+    }
+  }
+/* Last check for a user record tied to a hostmask */
+  if (host && host[0]) {
+    u = get_user_by_host(host);
+    return u;
+  }
   return NULL;
 }
 
@@ -252,8 +332,6 @@ void clear_masks(maskrec *m)
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
-    if (m->user)
-      nfree(m->user);
     if (m->desc)
       nfree(m->desc);
     nfree(m);
@@ -298,12 +376,10 @@ void clear_userlist(struct userrec *bu)
 
 /* Find CLOSEST host match
  * (if "*!*@*" and "*!*@*clemson.edu" both match, use the latter!)
- *
- * Checks the chanlist first, to possibly avoid needless search.
  */
 struct userrec *get_user_by_host(char *host)
 {
-  struct userrec *u, *ret;
+  struct userrec *u, *ret = NULL;
   struct list_type *q;
   int cnt, i;
   char host2[UHOSTLEN];
@@ -313,12 +389,7 @@ struct userrec *get_user_by_host(char *host)
   rmspace(host);
   if (!host[0])
     return NULL;
-  ret = check_chanlist(host);
   cnt = 0;
-  if (ret != NULL) {
-    cache_hit++;
-    return ret;
-  }
   cache_miss++;
   strlcpy(host2, host, sizeof host2);
   for (u = userlist; u; u = u->next) {
@@ -333,7 +404,6 @@ struct userrec *get_user_by_host(char *host)
   }
   if (ret != NULL) {
     lastuser = ret;
-    set_chanlist(host2, ret);
   }
   return ret;
 }

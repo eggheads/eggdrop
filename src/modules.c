@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include <signal.h>
 #include "main.h"
 #include "modules.h"
@@ -60,15 +61,9 @@
 #    ifndef RTLD_NOW
 #      define RTLD_NOW 1
 #    endif
-#    ifdef RTLD_LAZY
-#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#    else
-#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#    endif
+#    define DLFLAGS RTLD_NOW|RTLD_GLOBAL
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
-
-#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -100,6 +95,8 @@ extern time_t now, online_since;
 extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
+extern char argv0;
+
 
 int xtra_kill();
 int xtra_unpack();
@@ -299,7 +296,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
+  (Function) memcpy,              /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -522,10 +519,10 @@ Function global_table[] = {
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
+  (Function) memset,              /* was egg_memset -- use memset() or egg_bzero() instead */
+  (Function) strcasecmp,          /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
+  (Function) strncasecmp,         /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
@@ -593,7 +590,7 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
+  (Function) strlcpy,             /* was strncpyz() -- use strlcpy() instead */
 #ifndef HAVE_BASE64
   (Function) b64_ntop,
   (Function) b64_pton,
@@ -620,8 +617,15 @@ Function global_table[] = {
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
   (Function) get_user_by_account,
   (Function) delhost_by_handle,
-  (Function) check_tcl_event_arg
+  (Function) check_tcl_event_arg,
 /* 320 - 323 */
+  (Function) bind_bind_entry,
+  (Function) unbind_bind_entry,
+  (Function) & argv0,
+  (Function) lookup_user_record,
+/* 324 - 327 */
+  (Function) find_member_from_nick,
+  (Function) get_user_from_member,
 };
 
 void init_modules(void)
@@ -691,6 +695,7 @@ int module_register(char *name, Function *funcs, int major, int minor)
 
 const char *module_load(char *name)
 {
+  size_t len;
   module_entry *p;
   char *e;
   Function f;
@@ -699,7 +704,7 @@ const char *module_load(char *name)
 #endif
 
 #ifndef STATIC
-  char workbuf[1024];
+  char workbuf[PATH_MAX];
 #  ifdef MOD_USE_SHL
   shl_t hand;
 #  endif
@@ -725,11 +730,14 @@ const char *module_load(char *name)
 
 #ifndef STATIC
   if (moddir[0] != '/') {
-    if (getcwd(workbuf, 1024) == NULL)
+    if (getcwd(workbuf, sizeof workbuf) == NULL) {
+      debug1("modules: getcwd(): %s\n", strerror(errno));
       return MOD_BADCWD;
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
+    }
+    len = strlen(workbuf);
+    snprintf(workbuf + len, (sizeof workbuf) - len, "/%s%s." EGG_MOD_EXT, moddir, name);
   } else {
-    sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
+    snprintf(workbuf, sizeof workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
   }
 
 #  ifdef MOD_USE_SHL

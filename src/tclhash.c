@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -349,7 +349,7 @@ static void dump_bind_tables(Tcl_Interp *irp)
   }
 }
 
-static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                              const char *cmd, const char *proc)
 {
   tcl_bind_mask_t *tm;
@@ -381,7 +381,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
 /* Add command (remove old one if necessary)
  */
-static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                            const char *cmd, const char *proc)
 {
   tcl_cmd_t *tc;
@@ -738,21 +738,18 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
 
   if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
 #ifdef DEBUG_CONTEXT
-    snprintf(last_bind_called, sizeof last_bind_called, proc);
+    strlcpy(last_bind_called, proc, sizeof last_bind_called);
 #endif
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
-  if (proc && proc[0] != '*' && !r) {
-    if (!getrusage(RUSAGE_SELF, &ru2)) {
-      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
-             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-    }
-  }
+  if (proc && proc[0] != '*' && !r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -1272,6 +1269,7 @@ void tell_binds(int idx, char *par)
   tcl_bind_list_t *tl, *tl_kind;
   tcl_bind_mask_t *tm;
   int fnd = 0, showall = 0, patmatc = 0, maxname = 0;
+  int ok = 0, showpy = 0, showtcl = 0;
   tcl_cmd_t *tc;
   char *name, *proc, *s, flg[100];
 
@@ -1292,7 +1290,13 @@ void tell_binds(int idx, char *par)
   if ((name && name[0] && !strcasecmp(name, "all")) ||
       (s && s[0] && !strcasecmp(s, "all")))
     showall = 1;
-  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
+  if ((name && name[0] && !strcasecmp(name, "tcl")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
+    showtcl = 1;
+  if ((name && name[0] && !strcasecmp(name, "python")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
+    showpy = 1;
+  if (tl_kind == NULL && !showpy && !showtcl && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
@@ -1314,7 +1318,6 @@ void tell_binds(int idx, char *par)
   dprintf(idx, "%s", MISC_CMDBINDS);
   dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
-
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {
     if (tl->flags & HT_DELETED)
@@ -1327,26 +1330,28 @@ void tell_binds(int idx, char *par)
           continue;
         proc = tc->func_name;
         build_flags(flg, &(tc->flags), NULL);
-        if (!strcmp(flg, "-|-")) {
-          flg[0] = '*';
-          flg[1] = '\0';
-        }
-        if (showall || proc[0] != '*') {
-          int ok = 0;
-
-          if (patmatc == 1) {
+        ok = 0;
+        if (showall) {
+          ok = 1;
+        } else if (patmatc || showpy || showtcl) {
+          if ((patmatc == 1) && (proc[0] != '*')) {
             if (wild_match_per(name, tl->name) ||
                 wild_match_per(name, tm->mask) ||
-                wild_match_per(name, tc->func_name))
+                wild_match_per(name, tc->func_name)) {
               ok = 1;
-          } else
+            }
+          } else if (showpy && !(strncasecmp(tc->func_name, "*python:", strlen("*python:")))) {
             ok = 1;
-
-          if (ok) {
-            dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
-                    tm->mask, tc->hits, tc->func_name);
-            fnd = 1;
+          } else if (showtcl && (strncasecmp(tc->func_name, "*", strlen("*")))) {
+            ok = 1;
           }
+        } else if (proc[0] != '*') {
+          ok = 1;
+        }
+        if (ok) {
+          dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
+                  tm->mask, tc->hits, tc->func_name);
+          fnd = 1;
         }
       }
     }

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,12 +46,6 @@
 #  ifdef HAVE_NDIR_H
 #    include <ndir.h>
 #  endif
-#endif
-
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
 #endif
 
 #include "filedb3.h"
@@ -212,11 +206,14 @@ static void dcc_files_pass(int idx, char *buf, int x)
  */
 static int got_files_cmd(int idx, char *msg)
 {
+  const char *filt;
   char *code;
 
-  strcpy(msg, check_tcl_filt(idx, msg));
-  if (!msg[0])
+  filt = check_tcl_filt(idx, msg);
+  if (!filt[0])
     return 1;
+  if (filt != msg)
+    strcpy(msg, filt);
   if (msg[0] == '.')
     msg++;
   code = newsplit(&msg);
@@ -225,13 +222,17 @@ static int got_files_cmd(int idx, char *msg)
 
 static void dcc_files(int idx, char *buf, int i)
 {
+  const char*filt;
+
   if (buf[0] && detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.file->chat,
       idx))
     return;
   dcc[idx].timeval = now;
-  strcpy(buf, check_tcl_filt(idx, buf));
-  if (!buf[0])
+  filt = check_tcl_filt(idx, buf);
+  if (!filt[0])
     return;
+  if (filt != buf)
+    strcpy(buf, filt);
   touch_laston(dcc[idx].user, "filearea", now);
   if (buf[0] == ',') {
     for (i = 0; i < dcc_total; i++) {

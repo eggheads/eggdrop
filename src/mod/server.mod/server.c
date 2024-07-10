@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1413,7 +1413,7 @@ static int server_raw STDVAR
 
 static int server_rawt STDVAR
 {
-  int unused;
+  Tcl_Size unused;
   Tcl_Obj *tagdict;
   Function F = (Function) cd;
 
@@ -1809,7 +1809,8 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
                            EGG_CONST char *name1,
                            EGG_CONST char *name2, int flags)
 {
-  int lc, code, i;
+  Tcl_Size lc, i;
+  int code;
   char x[1024];
   EGG_CONST char **list, *slist;
   struct server_list *q;
@@ -2385,7 +2386,8 @@ static Function server_table[] = {
   (Function) & find_capability,
   (Function) encode_msgtags,
   /* 52 - 55 */
-  (Function) & H_monitor
+  (Function) & H_monitor,
+  (Function) isupport_get_prefixchars
 };
 
 char *server_start(Function *global_funcs)

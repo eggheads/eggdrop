@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -738,7 +738,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
                                 EGG_CONST char *name1,
                                 EGG_CONST char *name2, int flags)
 {
-  int i, items;
+  Tcl_Size i, items;
   char *t, *s;
   EGG_CONST char **item, *s2;
 

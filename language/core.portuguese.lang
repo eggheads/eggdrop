@@ -431,4 +431,4 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0xe34,Timeout em ligação de identificação
 0xe35,Por favor, remova o #comentário na configuração de listen e tente novamente
 0xe36,Esta porta é apenas para bots
-0xe37,Esta porta é apenas para utilizadores (sem bots)
+0xe37,Esta porta é apenas para utilizadores (não bots)
