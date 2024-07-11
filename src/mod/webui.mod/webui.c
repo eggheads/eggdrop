@@ -21,6 +21,9 @@
  *
  */
 
+#include "src/mod/module.h"
+
+#ifdef TLS
 #define MODULE_NAME "webui"
 
 #include <errno.h>
@@ -31,7 +34,7 @@
 #include <sys/stat.h>
 #include <openssl/sha.h>
 #include "src/version.h"
-#include "src/mod/module.h"
+
 
 #define WS_GUID   "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 #define WS_KEY    "Sec-WebSocket-Key:"
@@ -478,6 +481,7 @@ static Function webui_table[] = {
   NULL,
 };
 
+#endif
 char *webui_start(Function *global_funcs)
 {
 #ifdef TLS
