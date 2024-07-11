@@ -136,7 +136,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define zapfbot ((void (*)(int))global[36])
 #define n_free ((void (*)(void *,char *, int))global[37])
 #define u_pass_match ((int (*)(struct userrec *,char *))global[38])
-#define user_malloc(x) ((void *(*)(int,char *,int))global[39])(x,__FILE__,__LINE__)
+#define user_malloc(x) ((void *(*)(int, const char *, int))global[39])(x,__FILE__,__LINE__)
 /* 40 - 43 */
 #define get_user ((void *(*)(struct user_entry_type *,struct userrec *))global[40])
 #define set_user ((int(*)(struct user_entry_type *,struct userrec *,void *))global[41])
@@ -415,7 +415,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
 #define protect_readonly (*(int *)(global[244]))
-#define findchan_by_dname ((struct chanset_t *(*)(char *))global[245])
+#define findchan_by_dname ((struct chanset_t *(*)(const char *))global[245])
 #define removedcc ((void (*) (int))global[246])
 #define userfile_perm (*(int *)global[247])
 /* 248 - 251 */
