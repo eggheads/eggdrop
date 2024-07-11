@@ -222,10 +222,12 @@ int ssl_init()
           tls_certfile, ERR_error_string(ERR_get_error(), NULL));
       fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
+
     /* TODO: sha256 fingerprint
      *       print this fingerprint to every user / every partyline login
-     *       maybe only print it when webui is enabled */
-
+     *       maybe only print it when webui is enabled
+     *       compatibility to older openssl is possible, similar to #1411
+     *       this functionality could be sepped into a side-PR */
     putlog(LOG_MISC, "*", "Certificate loaded: %s (sha1 fingerprint %s)",
            tls_certfile,
            ssl_getfp_from_cert(SSL_CTX_get0_certificate(ssl_ctx)));
