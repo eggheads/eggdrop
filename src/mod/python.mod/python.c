@@ -104,13 +104,6 @@ static char *init_python() {
   return NULL;
 }
 
-static void kill_python() {
-  if (Py_FinalizeEx() < 0) {
-    exit(120);
-  }
-  return;
-}
-
 static void python_report(int idx, int details)
 {
   if (details)
@@ -119,13 +112,12 @@ static void python_report(int idx, int details)
 
 static char *python_close()
 {
-  del_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
-  del_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
-  kill_python();
-  rem_builtins(H_dcc, mydcc);
-  rem_tcl_commands(my_tcl_cmds);
-  module_undepend(MODULE_NAME);
-  return NULL;
+  /* Forbid unloading, because:
+   * - Reloading (Reexecuting PyDateTime_IMPORT) would crash
+   * - Py_FinalizeEx() does not clean up everything
+   * - Complexity regarding running python threads
+   */
+  return "The " MODULE_NAME " module is not allowed to be unloaded.";
 }
 
 static Function python_table[] = {
@@ -137,13 +129,7 @@ static Function python_table[] = {
 
 char *python_start(Function *global_funcs)
 {
-  static int forbid_reload = 0;
   char *s;
-
-  if (forbid_reload)
-    /* Reloading, reexecuting PyDateTime_IMPORT, would crash */
-    return "You can't reload the " MODULE_NAME " module (it would crash the bot)";
-
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
@@ -163,7 +149,6 @@ char *python_start(Function *global_funcs)
   }
   // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
 
-  forbid_reload = 1;
   if ((s = init_python()))
     return s;
 
