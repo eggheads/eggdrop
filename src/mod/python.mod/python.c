@@ -64,6 +64,8 @@ static int python_gil_lock() {
 }
 
 static char *init_python() {
+  const char *venv;
+  char venvpython[PATH_MAX];
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
@@ -71,6 +73,14 @@ static char *init_python() {
   PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
+  if ((venv = getenv("VIRTUAL_ENV"))) {
+    snprintf(venvpython, sizeof venvpython, "%s/bin/python3", venv);
+    status = PyConfig_SetBytesString(&config, &config.executable, venvpython);
+    if (PyStatus_Exception(status)) {
+      PyConfig_Clear(&config);
+      return "Python: Fatal error: Could not set venv executable";
+    }
+  }
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
