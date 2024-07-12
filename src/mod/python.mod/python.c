@@ -137,7 +137,14 @@ static Function python_table[] = {
 
 char *python_start(Function *global_funcs)
 {
+  static int forbid_reload = 0;
   char *s;
+
+  if (forbid_reload)
+    /* Reloading, reexecuting PyDateTime_IMPORT, would crash */
+    return "You can't reload the " MODULE_NAME " module (it would crash the bot)";
+  forbid_reload = 1;
+
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
