@@ -143,7 +143,6 @@ char *python_start(Function *global_funcs)
   if (forbid_reload)
     /* Reloading, reexecuting PyDateTime_IMPORT, would crash */
     return "You can't reload the " MODULE_NAME " module (it would crash the bot)";
-  forbid_reload = 1;
 
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
@@ -164,6 +163,7 @@ char *python_start(Function *global_funcs)
   }
   // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
 
+  forbid_reload = 1;
   if ((s = init_python()))
     return s;
 
