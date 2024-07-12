@@ -13,7 +13,7 @@ About
 -----
 
 Eggdrop can be optionally compiled with TLS support. This requires OpenSSL
-1.0.2 or later installed on your system.
+0.9.8 or later installed on your system.
 TLS support includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.
 
