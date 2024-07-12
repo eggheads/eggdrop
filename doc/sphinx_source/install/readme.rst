@@ -110,7 +110,7 @@ Some components of Eggdrop relies on a variety of third-party libraries, documen
 +===============================+===================+===================+
 | Tcl interpreter (required)    | Tcl Dev Library   | 8.6.0             |
 +-------------------------------+-------------------+-------------------+
-| Secure communication          | OpenSSL           | 1.0.2             |
+| Secure communication          | OpenSSL           | 0.9.8             |
 +-------------------------------+-------------------+-------------------+
 | Python module                 | Python            | 3.8.0             |
 +-------------------------------+-------------------+-------------------+
