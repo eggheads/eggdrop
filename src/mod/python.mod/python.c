@@ -116,6 +116,7 @@ static char *python_close()
    * - Reloading (Reexecuting PyDateTime_IMPORT) would crash
    * - Py_FinalizeEx() does not clean up everything
    * - Complexity regarding running python threads
+   * see https://bugs.python.org/issue34309 for details
    */
   return "The " MODULE_NAME " module is not allowed to be unloaded.";
 }
