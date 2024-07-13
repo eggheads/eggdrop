@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -110,12 +110,14 @@ static void setaccount(char *nick, char *account)
           } else {
             putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
           }
-          check_tcl_account(m->nick, m->userhost, m->user, chan->dname, account);
+          check_tcl_account(m->nick, m->userhost, get_user_from_member(m), chan->dname, account);
         }
         strlcpy(m->account, account, sizeof m->account);
       }
     }
   }
+  /* Username for nick could be different after account change, invalidate cache */
+  clear_chanlist_member(nick);
 }
 
 /* Returns the current channel mode.
@@ -207,9 +209,11 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 
 /* This is a clone of detect_flood, but works for channel specificity now
  * and handles kick & deop as well.
+ *
+ * victim for flood-deop, account for flood-join
  */
 static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-                             struct chanset_t *chan, int which, char *victim)
+                             struct chanset_t *chan, int which, char *victim_or_account)
 {
   char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
   struct userrec *u;
@@ -236,7 +240,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m && (which != FLOOD_JOIN))
     return 0;
 
-  get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
+  u = lookup_user_record(m, victim_or_account, from);
+  get_user_flagrec(u, &fr, chan->dname);
   if (glob_bot(fr) || ((which == FLOOD_DEOP) && (glob_master(fr) ||
       chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
       ((which == FLOOD_KICK) && (glob_master(fr) || chan_master(fr)) &&
@@ -307,10 +312,10 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   }
   /* Deop'n the same person, sillyness ;) - so just ignore it */
   if (which == FLOOD_DEOP) {
-    if (!rfc_casecmp(chan->deopd, victim))
+    if (!rfc_casecmp(chan->deopd, victim_or_account))
       return 0;
     else
-      strlcpy(chan->deopd, victim, sizeof chan->deopd);
+      strlcpy(chan->deopd, victim_or_account, sizeof chan->deopd);
   }
   chan->floodnum[which]++;
   if (chan->floodnum[which] >= thr) {   /* FLOOD */
@@ -320,7 +325,6 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     chan->floodwho[which][0] = 0;
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
-    u = get_user_by_host(from);
     if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->dname))
       return 0;
     switch (which) {
@@ -426,7 +430,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
   kicknick[0] = 0;
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
-    get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
+    get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         match_addr(hostmask, s) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
@@ -474,10 +478,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       if (match_addr(b->mask, user)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
-        char s[NICKMAX+UHOSTLEN+1];
-
-        sprintf(s, "%s!%s", m->nick, m->userhost);
-        get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr,
+        get_user_flagrec(get_user_from_member(m), &fr,
                          chan->dname);
         if (!glob_friend(fr) && !chan_friend(fr)) {
           add_mode(chan, '-', 'o', nick);       /* Guess it can't hurt. */
@@ -869,7 +870,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
           (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
         check_exemptlist(chan, s);
         quickban(chan, m->userhost);
-        p = get_user(&USERENTRY_COMMENT, m->user);
+        p = get_user(&USERENTRY_COMMENT, get_user_from_member(m));
         dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
                 p ? p : IRC_POLITEKICK);
         m->flags |= SENTKICK;
@@ -888,8 +889,7 @@ static void check_this_user(char *hand, int delete, char *host)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = m->user ? m->user : get_user_by_host(s);
+      u = get_user_from_member(m);
       if ((u && !strcasecmp(u->handle, hand) && delete < 2) ||
           (!u && delete == 2 && match_addr(host, s))) {
         u = delete ? NULL : u;
@@ -904,8 +904,8 @@ static void check_this_user(char *hand, int delete, char *host)
 static void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
-  char s[NICKMAX+UHOSTLEN+1];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct userrec *u;
   static int stacking = 0;
   int stop_reset = 0;
 
@@ -915,12 +915,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   stacking++;
   /* Okay, sort through who needs to be deopped. */
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
-    if (!m->user && !m->tried_getuser) {
-      m->tried_getuser = 1;
-      m->user = get_user_by_host(s);
-    }
-    get_user_flagrec(m->user, &fr, chan->dname);
+    u = get_user_from_member(m);
+    get_user_flagrec(u, &fr, chan->dname);
     if (glob_bot(fr) && chan_hasop(m) && !match_my_nick(m->nick))
       stop_reset = 1;
     /* Perhaps we were halfop and tried to halfop/kick the user earlier but
@@ -1084,7 +1080,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
-  m->user = NULL;               /* No handle match (yet) */
   if (match_my_nick(nick))      /* Is it me? */
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
   m->flags |= WHO_SYNCED;
@@ -1115,7 +1110,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
   }
-  m->user = get_user_by_host(userhost);
 
   /* Update accountname in channel records, 0 means logged out */
   /* A 0 is not a change from "" */
@@ -1220,7 +1214,7 @@ static int got354(char *from, char *msg)
  * :geo!awesome@eggdrop.com CHGHOST tehgeo foo.io
  * changes user hostmask to tehgeo@foo.io
  */
-static int gotchghost(char *from, char *msg){
+static int gotchghost(char *from, char *msg) {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct userrec *u;
   struct chanset_t *chan;
@@ -1234,18 +1228,78 @@ static int gotchghost(char *from, char *msg){
   if (match_my_nick(nick)) {
     snprintf(botuserhost, UHOSTMAX, "%s@%s", ident, msg);
   }
-  u = get_user_by_host(from);
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
     m = ismember(chan, nick);
     if (m) {
+      u = get_user_from_member(m);
       snprintf(m->userhost, sizeof m->userhost, "%s@%s", ident, msg);
       snprintf(mask, sizeof mask, "%s %s!%s@%s", chname, nick, ident, msg);
       check_tcl_chghost(nick, from, mask, u, chname, ident, msg);
-      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
-                       chan->dname);
+      get_user_flagrec(u, &fr, chan->dname);
       check_this_member(chan, m->nick, &fr);
+    }
+  }
+  /* Username for nick could be different after host change, invalidate cache */
+  clear_chanlist_member(nick);
+  return 0;
+}
+
+/* got 353: NAMES
+ * <server> 353 <client> <symbol> <chan> :[+/@]nick [+/@]nick ....
+ *
+ * if userhost-in-names is enabled, nick is nick@userhost.com
+ * this function is added solely to handle userhost-in-names stuff, and will
+ * update hostnames for nicks received
+ */
+static int got353(char *from, char *msg)
+{
+  char prefixchars[64];
+  char *nameptr, *chname, *uhost, *nick, *p, *host = NULL;
+  struct chanset_t *chan = NULL;
+  int i;
+
+  if (find_capability("userhost-in-names")) {
+    strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
+    newsplit(&msg);
+    newsplit(&msg); /* Get rid of =, @, or * symbol */
+    chname = newsplit(&msg);
+    nameptr = newsplit(&msg);
+    fixcolon(nameptr);
+    while ((uhost = newsplit(&nameptr))) {
+      if (!strcmp(uhost, "")) {
+        break;
+      }
+      fixcolon(uhost);
+      nick = splitnick(&uhost);
+      /* Strip @, +, etc chars prefixed to nicks in NAMES */
+      for (i = 0; prefixchars[i]; i++) {
+        if(nick[0] == prefixchars[i]) {
+          nick=nick+1;
+        }
+      }
+      if ((nick[0] == '+') || (nick[0] == '%')) {
+        nick=nick+1;
+      }
+      p = strchr(uhost, '@');
+      if (p) {
+        *p = 0;
+        host = p+1;
+      }
+      chan = findchan(chname);      /* See if I'm on channel */
+      if (chan && host) {
+        /* Pretend we got a WHO and pass the info we got from NAMES */
+        got352or4(chan, uhost, host, nick, "", NULL);
+      }
+    }
+    /* The assumption here is the user enabled userhost-in-names because WHO
+     * is disabled. We remove the pending flag here because we'll never get a
+     * a WHO to do it
+     */
+    if (chan) {
+      chan->status |= CHAN_ACTIVE;
+      chan->status &= ~CHAN_PEND;
     }
   }
   return 0;
@@ -1289,6 +1343,7 @@ static int got315(char *from, char *msg)
   sync_members(chan);
   chan->status |= CHAN_ACTIVE;
   chan->status &= ~CHAN_PEND;
+  check_tcl_event_arg("got-chanlist", chname);
   if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
     putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
            chan->dname);
@@ -1340,12 +1395,12 @@ static int gotaway(char *from, char *msg)
 
   strlcpy(s1, from, sizeof buf);
   nick = splitnick(&s1);
-  u = get_user_by_host(from);
   /* Run the bind for each channel the user is on */
   for (chan = chanset; chan; chan = chan->next) {
     chname = chan->dname;
     m = ismember(chan, nick);
     if (m) {
+      u = get_user_from_member(m);
       snprintf(mask, sizeof mask, "%s %s", chname, from);
       check_tcl_ircaway(nick, from, mask, u, chname, msg);
       if (strlen(msg)) {
@@ -1771,7 +1826,6 @@ static int gottopic(char *from, char *msg)
 
   chname = newsplit(&msg);
   fixcolon(msg);
-  u = get_user_by_host(from);
   nick = splitnick(&from);
   chan = findchan(chname);
   if (chan) {
@@ -1781,6 +1835,7 @@ static int gottopic(char *from, char *msg)
     if (m != NULL)
       m->last = now;
     set_topic(chan, msg);
+    u = lookup_user_record(m, NULL, from); // TODO: get account from msgtags
     check_tcl_topc(nick, from, u, chan->dname, msg);
   }
   return 0;
@@ -1882,28 +1937,27 @@ static void set_delay(struct chanset_t *chan, char *nick)
  */
 static int gotjoin(char *from, char *channame)
 {
-  char *nick, *p, buf[UHOSTLEN], *uhost = buf, *chname;
+  char *nick, *p, buf[UHOSTLEN], *uhost = buf, *chname, *account = NULL;
   char *ch_dname = NULL;
-  int extjoin = 0;
   struct chanset_t *chan;
   memberlist *m;
   masklist *b;
-  struct capability *current;
+  int extjoin = 0;
+  struct capability *captmp;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  /* Check if extended-join CAP is enabled */
-  current = cap;
-  while (current != NULL) {
-    if (!strcasecmp("extended-join", current->name)) {
-      extjoin = current->enabled ? 1 : 0;
-    }
-    current = current->next;
-  }
+  captmp = find_capability("extended-join");
+  extjoin = captmp && captmp->enabled;
+
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
   chname = newsplit(&channame);
-  if (!extjoin) {
+  if (extjoin) {
+    // :nick!user@host JOIN #chan account :realname
+    account = newsplit(&channame);
+  } else {
+    // :nick!user@host JOIN :#chan
     fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
@@ -1954,7 +2008,8 @@ static int gotjoin(char *from, char *channame)
     }
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
+
+    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, extjoin ? account : NULL);
 
     chan = findchan(chname);
     if (!chan) {
@@ -1967,9 +2022,6 @@ static int gotjoin(char *from, char *channame)
       /* The channel doesn't exist anymore, so get out of here. */
       goto exit;
 
-    /* Grab last time joined before we update it */
-    u = get_user_by_host(from);
-    get_user_flagrec(u, &fr, chan->dname);      /* Lam: fix to work with !channels */
     if (!channel_active(chan) && !match_my_nick(nick)) {
       /* uh, what?!  i'm on the channel?! */
       putlog(LOG_MISC, chan->dname,
@@ -1981,6 +2033,8 @@ static int gotjoin(char *from, char *channame)
     } else {
       m = ismember(chan, nick);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
+        u = get_user_from_member(m);
+        get_user_flagrec(u, &fr, chan->dname);
         check_tcl_rejn(nick, uhost, u, chan->dname);
 
         chan = findchan(chname);
@@ -1995,12 +2049,11 @@ static int gotjoin(char *from, char *channame)
           goto exit;
 
         /* The tcl binding might have deleted the current user. Recheck. */
-        u = get_user_by_host(from);
+        u = get_user_from_member(m);
         m->split = 0;
         m->last = now;
         m->delay = 0L;
         m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
-        m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
         putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
@@ -2016,19 +2069,20 @@ static int gotjoin(char *from, char *channame)
         m->delay = 0L;
         strlcpy(m->nick, nick, sizeof m->nick);
         strlcpy(m->userhost, uhost, sizeof m->userhost);
-        m->user = u;
         m->flags |= STOPWHO;
 
         if (extjoin) {
+          u = lookup_user_record(m, account, from);
           /* calls check_tcl_account which can delete the channel */
-          setaccount(nick, newsplit(&channame));
-          
+          setaccount(nick, account);
+
           if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
             /* The channel doesn't exist anymore, so get out of here. */
             goto exit;
           }
+        } else {
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
         }
-
         check_tcl_join(nick, uhost, u, chan->dname);
 
         if (!(chan = findchan(chname)) && !(chan = findchan_by_dname(ch_dname ? ch_dname : chname))) {
@@ -2038,7 +2092,6 @@ static int gotjoin(char *from, char *channame)
 
         /* The record saved in the channel record always gets updated,
          * so we can use that. */
-        u = m->user;
 
         if (match_my_nick(nick)) {
           /* It was me joining! Need to update the channel record with the
@@ -2069,9 +2122,9 @@ static int gotjoin(char *from, char *channame)
           if (u) {
             struct laston_info *li = 0;
 
-            cr = get_chanrec(m->user, chan->dname);
+            cr = get_chanrec(u, chan->dname);
             if (!cr && no_chanrec_info)
-              li = get_user(&USERENTRY_LASTON, m->user);
+              li = get_user(&USERENTRY_LASTON, u);
             if (channel_greet(chan) && use_info &&
                 ((cr && now - cr->laston > wait_info) ||
                 (no_chanrec_info && (!li || now - li->laston > wait_info)))) {
@@ -2129,7 +2182,7 @@ static int gotjoin(char *from, char *channame)
                    (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
             check_exemptlist(chan, from);
             quickban(chan, from);
-            p = get_user(&USERENTRY_COMMENT, m->user);
+            p = get_user(&USERENTRY_COMMENT, get_user_from_member(m));
             dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
                     (p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
             m->flags |= SENTKICK;
@@ -2189,6 +2242,7 @@ static int gotpart(char *from, char *msg)
   char *nick, *chname, *key;
   struct chanset_t *chan;
   struct userrec *u;
+  memberlist *m;
 
   chname = newsplit(&msg);
   fixcolon(chname);
@@ -2200,8 +2254,9 @@ static int gotpart(char *from, char *msg)
     return 0;
   }
   if (chan && !channel_pending(chan)) {
-    u = get_user_by_host(from);
     nick = splitnick(&from);
+    m = ismember(chan, nick);
+    u = get_user_from_member(m);
     if (!channel_active(chan)) {
       /* whoa! */
       putlog(LOG_MISC, chan->dname,
@@ -2281,7 +2336,6 @@ static int gotkick(char *from, char *origmsg)
   }
   if (channel_active(chan)) {
     fixcolon(msg);
-    u = get_user_by_host(from);
     strlcpy(buf, from, sizeof buf);
     uhost = buf;
     whodid = splitnick(&uhost);
@@ -2292,6 +2346,7 @@ static int gotkick(char *from, char *origmsg)
       return 0;
 
     m = ismember(chan, whodid);
+    u = lookup_user_record(m, NULL, from); // TODO: get account from msgtags
     if (m)
       m->last = now;
     /* This _needs_ to use chan->dname <cybah> */
@@ -2308,7 +2363,7 @@ static int gotkick(char *from, char *origmsg)
       struct userrec *u2;
 
       simple_sprintf(s1, "%s!%s", m->nick, m->userhost);
-      u2 = get_user_by_host(s1);
+      u2 = get_user_from_member(m);
       set_handle_laston(chan->dname, u2, now);
       maybe_revenge(chan, from, s1, REVENGE_KICK);
     }
@@ -2391,12 +2446,11 @@ static int gotnick(char *from, char *msg)
       m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTDEHALFOP | SENTHALFOP |
                     SENTVOICE | SENTDEVOICE);
       /* nick-ban or nick is +k or something? */
-      get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr,
-                       chan->dname);
+      u = get_user_from_member(m);
+      get_user_flagrec(u, &fr, chan->dname);
       check_this_member(chan, m->nick, &fr);
       /* Make sure this is in the loop, someone could have changed the record
        * in an earlier iteration of the loop. */
-      u = get_user_by_host(from);
       found = 1;
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
 
@@ -2407,10 +2461,9 @@ static int gotnick(char *from, char *msg)
     }
   }
   if (!found) {
-    u = get_user_by_host(from);
     s1[0] = '*';
     s1[1] = 0;
-    check_tcl_nick(nick, uhost, u, s1, msg);
+    check_tcl_nick(nick, uhost, NULL, s1, msg);
   }
   return 0;
 }
@@ -2454,7 +2507,7 @@ static int gotquit(char *from, char *msg)
     chname = chan->dname;
     m = ismember(chan, nick);
     if (m) {
-      u = get_user_by_host(from2);
+      u = get_user_from_member(m);
       if (u)
         /* If you remove this, the bot will crash when the user record in
          * question is removed/modified during the tcl binds below, and the
@@ -2552,7 +2605,7 @@ static int gotmsg(char *from, char *msg)
         ctcp_count++;
         if (ctcp[0] != ' ') {
           code = newsplit(&ctcp);
-          u = get_user_by_host(from);
+          u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
           if (!ignoring || trigger_on_ignore) {
             if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
               chan = findchan(realto);
@@ -2644,8 +2697,7 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
-  u = get_user_by_host(from);
-
+  u = lookup_user_record(find_member_from_nick(nick), NULL, from); // TODO: get account from msgtags
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while (p && *p) {
@@ -2819,6 +2871,7 @@ static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
 static cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
+  {"353",     "",   (IntFunc) got353,          "irc:353"},
   {"354",     "",   (IntFunc) got354,          "irc:354"},
   {"315",     "",   (IntFunc) got315,          "irc:315"},
   {"366",     "",   (IntFunc) gottwitch366,   "irc:t366"},

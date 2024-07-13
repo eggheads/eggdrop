@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,15 +41,18 @@
 #include "eggint.h"
 #include "lush.h"
 
+#ifndef TCL_SIZE_MAX
+    typedef int Tcl_Size;
+# define Tcl_GetSizeIntFromObj Tcl_GetIntFromObj
+# define TCL_SIZE_MAX      INT_MAX
+# define TCL_SIZE_MODIFIER ""
+#endif
+
 #ifndef TCL_PATCH_LEVEL
 #  define TCL_PATCH_LEVEL "*unknown*"
 #endif
 
-#ifdef CONST
-#  define EGG_CONST CONST
-#else
-#  define EGG_CONST
-#endif
+#define EGG_CONST const
 
 #ifdef CONST86
 #  define TCL_CONST86 CONST86
@@ -57,12 +60,7 @@
 #  define TCL_CONST86
 #endif
 
-#ifdef HAVE_STDARG_H
-#  include <stdarg.h>
-#else
-#  error "Must have stdarg.h"
-#endif
-
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -122,16 +120,12 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGCUBES */
 
-/* Handle for the user that's used when starting eggdrop with -tn */
+/* Handle for the user that's used when starting eggdrop with -t */
 #define EGG_BG_HANDLE "-HQ"
 /* Default recommended flags for this user, use | as splitter */
 #define EGG_BG_CONMASK LOG_MISC /* "o" */
 
-/* Stringify macros */
-#define EGG_MACRO_STR(x) EGG_STR(x)
-#define EGG_STR(x) #x
-
-#define EGG_AC_ARGS EGG_MACRO_STR(EGG_AC_ARGS_RAW)
+#define EGG_AC_ARGS STRINGIFY(EGG_AC_ARGS_RAW)
 
 #define ARRAY_SIZE(x) (sizeof (x) / sizeof *(x))
 

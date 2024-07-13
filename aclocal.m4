@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2023 Eggheads Development Team
+dnl Copyright (C) 1999 - 2024 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -19,6 +19,9 @@ dnl
 
 dnl Load tcl macros
 builtin(include,m4/tcl.m4)
+
+dnl Load python macros
+builtin(include,m4/python.m4)
 
 dnl Load gnu autoconf archive macros
 builtin(include,m4/ax_create_stdint_h.m4)
@@ -313,7 +316,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+  AC_RUN_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <resolv.h>
@@ -325,7 +328,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
     AC_MSG_CHECKING(for b64_ntop with -lresolv)
     OLD_LIBS="$LIBS"
     LIBS="$LIBS -lresolv"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
@@ -338,7 +341,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
       AC_MSG_CHECKING(for b64_ntop with -lnetwork)
       OLD_LIBS="$LIBS"
       LIBS="-lnetwork"
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+      AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
@@ -1517,7 +1520,7 @@ AC_DEFUN([EGG_TLS_ENABLE],
   AC_MSG_CHECKING([whether to enable TLS support])
   AC_ARG_ENABLE(tls,
     [  --disable-tls           disable TLS support ], [tls_enabled="$enableval"],
-    [tls_enabled="$enableval"])
+    [tls_enabled="yes"])
 
   AC_MSG_RESULT([$tls_enabled])
 ])
