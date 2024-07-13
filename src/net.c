@@ -1003,7 +1003,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
               } else
                 debug2("net: sockread(): SSL_read() error = %s (%i)",
                        ERR_error_string(ERR_get_error(), 0), err);
-              putlog(LOG_MISC, "*", "NET: SSL read failed. Unexpected EOF or Non-SSL connection?");
+              putlog(LOG_MISC, "*", "net: SSL read failed. Unexpected EOF or Non-SSL connection?");
             }
             x = -1;
           }
