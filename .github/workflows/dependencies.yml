@@ -32,7 +32,10 @@ jobs:
         ./configure --prefix=$HOME/tcl && \
         make -j4 && make install
     - name: Build
-      run: ./configure --with-tcl=$HOME/tcl/lib | tee configure.log && LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop && fgrep -q "Tcl version: ${{ matrix.tcl_version }}" configure.log
+      run: |
+        ./configure --with-tcl=$HOME/tcl/lib | tee configure.log
+        LD_LIBRARY_PATH=$HOME/tcl/lib make config eggdrop
+        fgrep -q "Tcl version: ${{ matrix.tcl_version }}" configure.log
   ssl-version-098:
     name: OpenSSL 0.9.8
     continue-on-error: true
@@ -56,7 +59,11 @@ jobs:
         tar xzf openssl-0.9.8zh.tar.gz && \
         cd openssl-0.9.8zh && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
     - name: Build
-      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop && fgrep -q "SSL/TLS Support: yes" configure.log
+      run: |
+        cd $GITHUB_WORKSPACE/eggdrop
+        ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log
+        LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+        fgrep -q "SSL/TLS Support: yes" configure.log
   ssl-version-10:
     name: OpenSSL 1.0
     continue-on-error: true
@@ -80,7 +87,11 @@ jobs:
         tar xzf openssl-1.0.2u.tar.gz && \
         cd openssl-1.0.2u && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
     - name: Build
-      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop && fgrep -q "SSL/TLS Support: yes" configure.log
+      run: |
+        cd $GITHUB_WORKSPACE/eggdrop
+        ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log
+        LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+        fgrep -q "SSL/TLS Support: yes" configure.log
   ssl-version-11:
     name: OpenSSL 1.1
     continue-on-error: true
@@ -107,7 +118,11 @@ jobs:
       with:
         path: 'eggdrop'
     - name: Build
-      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log && LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop && fgrep -q "SSL/TLS Support: yes" configure.log
+      run: |
+        cd $GITHUB_WORKSPACE/eggdrop
+        ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log
+        LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
+        fgrep -q "SSL/TLS Support: yes" configure.log
   ssl-versions-3x:
     name: OpenSSL 3.x
     strategy:
@@ -145,4 +160,8 @@ jobs:
     - name: install dependencies
       run: sudo apt-get install tcl tcl-dev
     - name: Build
-      run: cd $GITHUB_WORKSPACE/eggdrop && ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib64 | tee configure.log && LD_LIBRARY_PATH=$HOME/ssl/lib64 make config eggdrop && fgrep -q "SSL/TLS Support: yes" configure.log
+      run: |
+        cd $GITHUB_WORKSPACE/eggdrop
+        ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib64 | tee configure.log
+        LD_LIBRARY_PATH=$HOME/ssl/lib64 make config eggdrop
+        fgrep -q "SSL/TLS Support: yes" configure.log
