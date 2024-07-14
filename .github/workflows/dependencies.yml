@@ -63,7 +63,7 @@ jobs:
         cd $GITHUB_WORKSPACE/eggdrop
         ./configure --with-sslinc=$HOME/ssl/include --with-ssllib=$HOME/ssl/lib | tee configure.log
         LD_LIBRARY_PATH=$HOME/ssl/lib make config eggdrop
-        fgrep -q "SSL/TLS Support: no" configure.log
+        fgrep -q "SSL/TLS Support: yes" configure.log
   ssl-version-10:
     name: OpenSSL 1.0
     continue-on-error: true
