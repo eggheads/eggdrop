@@ -46,7 +46,7 @@ jobs:
     - uses: actions/cache@v4
       id: ssl-cache
       with:
-        path: $HOME/ssl
+        path: ~/ssl
         key: ${{ runner.os }}-ssl-0.9.8zh
     - name: Build OpenSSL
       if: steps.ssl-cache.outputs.cache-hit != true
@@ -70,7 +70,7 @@ jobs:
     - uses: actions/cache@v4
       id: ssl-cache
       with:
-        path: $HOME/ssl
+        path: ~/ssl
         key: ${{ runner.os }}-ssl-1.0.2u
     - name: Build OpenSSL
       if: steps.ssl-cache.outputs.cache-hit != true
@@ -89,7 +89,7 @@ jobs:
     - uses: actions/cache@v4
       id: ssl-cache
       with:
-        path: $HOME/ssl
+        path: ~/ssl
         key: ${{ runner.os }}-ssl-1.1.1w
     - uses: actions/checkout@v4
       if: steps.ssl-cache.outputs.cache-hit != true
@@ -127,7 +127,7 @@ jobs:
     - uses: actions/cache@v4
       id: ssl-cache
       with:
-        path: $HOME/ssl
+        path: ~/ssl
         key: ${{ runner.os }}-ssl-${{ steps.openssl.outputs.tag }}
     - uses: actions/checkout@v4
       if: steps.ssl-cache.outputs.cache-hit != true
