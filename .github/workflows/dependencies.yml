@@ -24,7 +24,7 @@ jobs:
         path: ~/tcl
         key: ${{ runner.os }}-tcl-${{ matrix.tcl_version }}
     - name: Build Tcl
-      if: steps.tcl-cache.outputs.cache-hit != true
+      if: steps.tcl-cache.outputs.cache-hit != 'true'
       run: |
         wget http://prdownloads.sourceforge.net/tcl/tcl${{ matrix.tcl_version }}-src.tar.gz && \
         tar xzf tcl${{ matrix.tcl_version }}-src.tar.gz && \
@@ -49,7 +49,7 @@ jobs:
         path: ~/ssl
         key: ${{ runner.os }}-ssl-0.9.8zh
     - name: Build OpenSSL
-      if: steps.ssl-cache.outputs.cache-hit != true
+      if: steps.ssl-cache.outputs.cache-hit != 'true'
       run: |
         wget https://www.openssl.org/source/old/0.9.x/openssl-0.9.8zh.tar.gz && \
         sha256sum --status --check <(echo f1d9f3ed1b85a82ecf80d0e2d389e1fda3fca9a4dba0bf07adbf231e1a5e2fd6 openssl-0.9.8zh.tar.gz) && \
@@ -73,7 +73,7 @@ jobs:
         path: ~/ssl
         key: ${{ runner.os }}-ssl-1.0.2u
     - name: Build OpenSSL
-      if: steps.ssl-cache.outputs.cache-hit != true
+      if: steps.ssl-cache.outputs.cache-hit != 'true'
       run: |
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz && \
         sha256sum --status --check <(echo ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16 openssl-1.0.2u.tar.gz) && \
@@ -92,13 +92,13 @@ jobs:
         path: ~/ssl
         key: ${{ runner.os }}-ssl-1.1.1w
     - uses: actions/checkout@v4
-      if: steps.ssl-cache.outputs.cache-hit != true
+      if: steps.ssl-cache.outputs.cache-hit != 'true'
       with:
         repository: openssl/openssl
         ref: 'OpenSSL_1_1_1w'
         path: 'openssl'
     - name: Build OpenSSL
-      if: steps.ssl-cache.outputs.cache-hit != true
+      if: steps.ssl-cache.outputs.cache-hit != 'true'
       run: |
         cd $GITHUB_WORKSPACE/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - name: install dependencies
@@ -130,13 +130,13 @@ jobs:
         path: ~/ssl
         key: ${{ runner.os }}-ssl-${{ steps.openssl.outputs.tag }}
     - uses: actions/checkout@v4
-      if: steps.ssl-cache.outputs.cache-hit != true
+      if: steps.ssl-cache.outputs.cache-hit != 'true'
       with:
         repository: openssl/openssl
         ref: ${{ steps.openssl.outputs.tag }}
         path: 'openssl'
     - name: Build OpenSSL
-      if: steps.ssl-cache.outputs.cache-hit != true
+      if: steps.ssl-cache.outputs.cache-hit != 'true'
       run: |
         cd $GITHUB_WORKSPACE/openssl && ./config --prefix=$HOME/ssl && make -j4 && make install_sw
     - uses: actions/checkout@v4
