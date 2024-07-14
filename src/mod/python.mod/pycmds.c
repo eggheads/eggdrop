@@ -27,14 +27,14 @@
 
 typedef struct {
   PyObject_HEAD
-  char tclcmdname[512];
+  char tclcmdname[128];
 } TclFunc;
 
 typedef struct {
   PyObject_HEAD
-  char tclcmdname[512];
-  char flags[256];
-  char mask[256];
+  char tclcmdname[128];
+  char *flags;
+  char *mask;
   tcl_bind_list_t *bindtable;
   PyObject *callback;
 } PythonBind;
@@ -223,14 +223,23 @@ static PyObject *py_unbind(PyObject *self, PyObject *args) {
  
   bind = (PythonBind *)self;
   unbind_bind_entry(bind->bindtable, bind->flags, bind->mask, bind->tclcmdname);
-  Tcl_DeleteCommand(tclinterp, bind->tclcmdname);
-  Py_DECREF(self);
+  // cleanup in python_bind_destroyed callback when Tcl command is destroyed
   Py_RETURN_NONE;
+}
+
+void python_bind_destroyed(ClientData cd) {
+  PythonBind *bind = cd;
+
+  Py_DECREF(bind->callback);
+  nfree(bind->mask);
+  nfree(bind->flags);
+  Py_DECREF((PyObject *)bind);
 }
 
 static PyObject *py_bind(PyObject *self, PyObject *args) {
   PyObject *callback;
   PythonBind *bind;
+  Py_hash_t hash;
   char *bindtype, *mask, *flags;
   tcl_bind_list_t *tl;
  
@@ -254,15 +263,16 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
   Py_IncRef(callback);
 
   bind = PyObject_New(PythonBind, &PythonBindType);
-  snprintf(bind->tclcmdname, sizeof bind->tclcmdname, "*python:%s:%s:%" PRIxPTR, bindtype, mask, (uintptr_t)callback);
-  strlcpy(bind->mask, mask, sizeof bind->mask);
-  strlcpy(bind->flags, flags, sizeof bind->mask);
+  bind->mask = strdup(mask);
+  bind->flags = strdup(flags);
   bind->bindtable = tl;
   bind->callback = callback;
-  // TODO: deleteproc
-  Tcl_CreateObjCommand(tclinterp, bind->tclcmdname, tcl_call_python, bind, NULL);
-  // TODO: flags?
+  hash = PyObject_Hash((PyObject *)bind);
+  snprintf(bind->tclcmdname, sizeof bind->tclcmdname, "*python:%s:%" PRIx64, bindtype, (int64_t)hash);
+
+  Tcl_CreateObjCommand(tclinterp, bind->tclcmdname, tcl_call_python, bind, python_bind_destroyed);
   bind_bind_entry(tl, flags, mask, bind->tclcmdname);
+
   return (PyObject *)bind;  
 }
 
@@ -374,7 +384,7 @@ static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
     return NULL;
   }
   result = PyObject_New(TclFunc, &TclFuncType);
-  strcpy(result->tclcmdname, cmdname);
+  strlcpy(result->tclcmdname, sizeof result->tclcmdname, cmdname);
   return (PyObject *)result;
 }
 
