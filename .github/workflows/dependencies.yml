@@ -21,7 +21,7 @@ jobs:
     - uses: actions/cache@v4
       id: tcl-cache
       with:
-        path: $HOME/tcl
+        path: ~/tcl
         key: ${{ runner.os }}-tcl-${{ matrix.tcl_version }}
     - name: Build Tcl
       if: steps.tcl-cache.outputs.cache-hit != true
