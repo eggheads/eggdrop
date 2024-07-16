@@ -384,7 +384,7 @@ static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
     return NULL;
   }
   result = PyObject_New(TclFunc, &TclFuncType);
-  strlcpy(result->tclcmdname, sizeof result->tclcmdname, cmdname);
+  strlcpy(result->tclcmdname, cmdname, sizeof result->tclcmdname);
   return (PyObject *)result;
 }
 
