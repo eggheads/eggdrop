@@ -260,7 +260,7 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
     PyErr_SetString(EggdropError, "callback is not callable");
     return NULL;
   }
-  Py_IncRef(callback);
+  Py_INCREF(callback);
 
   bind = PyObject_New(PythonBind, &PythonBindType);
   bind->mask = strdup(mask);
@@ -273,6 +273,7 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
   Tcl_CreateObjCommand(tclinterp, bind->tclcmdname, tcl_call_python, bind, python_bind_destroyed);
   bind_bind_entry(tl, flags, mask, bind->tclcmdname);
 
+  Py_INCREF((PyObject *)bind);
   return (PyObject *)bind;  
 }
 
