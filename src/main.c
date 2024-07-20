@@ -63,10 +63,6 @@
 #include "modules.h"
 #include "bg.h"
 
-#ifdef DEBUG                            /* For debug compile */
-#  include <sys/resource.h>             /* setrlimit() */
-#endif
-
 #ifdef HAVE_GETRANDOM
 #  include <sys/random.h>
 #endif
