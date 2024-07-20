@@ -35,7 +35,7 @@
 #include <datetime.h>
 #include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
-#include "src/mod/python.mod/python.h"
+#include "python.h"
 
 //static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
@@ -43,8 +43,8 @@ static PyObject *pirp, *pglobals;
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
 static PyThreadState *_pythreadsave;
-#include "src/mod/python.mod/pycmds.c"
-#include "src/mod/python.mod/tclpython.c"
+#include "pycmds.c"
+#include "tclpython.c"
 
 EXPORT_SCOPE char *python_start(Function *global_funcs);
 
