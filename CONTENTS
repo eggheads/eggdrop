@@ -1,5 +1,5 @@
 Directory Contents - /
-Last revised: June 3, 2024
+Last revised: September 21, 2018
     _____________________________________________________________________
 
                            Directory Contents - /
@@ -42,11 +42,10 @@ Last revised: June 3, 2024
     Contains a list of Eggdrop developers and major contributors.
 
   ChangeLog
-    Contains git commit logs from each change made to Eggdrop in the git
-    repository.
+    Contains git commit logs from each change made to Eggdrop in the git repository.
 
   COPYING
-    Contains Eggdrop legal information.
+    Eggdrop legal information is contained in this file.
 
   disabled_modules
     Any module listed in this file will not be compiled by default.
@@ -80,7 +79,7 @@ Last revised: June 3, 2024
     Contains a full list of Eggdrop contributors.
 
   UPGRADING
-    Contains information on upgrading from a 1.6 to a 1.8 and 1.9 bot.
+    Contains information on upgrading from a 1.6 bot to a 1.8 bot.
     _____________________________________________________________________
 
   Copyright (C) 2003 - 2024 Eggheads Development Team

@@ -47,4 +47,4 @@ Lastly, the +g flag is used on both bot records to indicate that Hubalicious is 
 
 One more commonly used flag is the `+a` flag. This flag specifies an alternate hub to connect to in case the primary hub goes down. The alternate hub should be linked to hub and maintain all channel userfiles the hub maintains to ensure there is no desynchronization while the hub bot is down. Should the hub bot go down, and assuming the `+h` flag is set for the hub on a leaf, the leafbost will automatically try to reconnect to the hub every minute, even if it makes a connection with the alternate hub in the meantime. An alternate hub is added the same as a hub, except swapping out the `h` for the `a`: `.botattr AltRock +agp`.
 
-Now that you have a hub and leaf bot successfully connected and sharing userfiles, you can repeat the `On the Leaf Bot`_ section to add additional leaves to your hub.
+Now that you have a hub and leaf bot successfully connected and sharing userfiles, you can repeat the `On the Leaf Bot`_ section to add additional leafs to your hub.
