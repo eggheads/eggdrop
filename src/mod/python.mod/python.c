@@ -158,7 +158,7 @@ char *python_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires irc module 1.5 or later.";
   }
-  // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
+  // irc.mod depends on server.mod and channels.mod, so those were implicitly loaded
 
   if ((s = init_python()))
     return s;
