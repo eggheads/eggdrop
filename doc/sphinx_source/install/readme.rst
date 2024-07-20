@@ -108,7 +108,7 @@ Some components of Eggdrop relies on a variety of third-party libraries, documen
 +-------------------------------+-------------------+-------------------+
 | Functionality                 | Package           | Minimum Version   |
 +===============================+===================+===================+
-| Tcl interpreter (required)    | Tcl Dev Library   | 8.6.0             |
+| Tcl interpreter (required)    | Tcl Dev Library   | 8.5.0             |
 +-------------------------------+-------------------+-------------------+
 | Secure communication          | OpenSSL           | 0.9.8             |
 +-------------------------------+-------------------+-------------------+
