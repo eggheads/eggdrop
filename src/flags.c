@@ -280,7 +280,7 @@ int sanity_check(int atr)
  * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
  * which can cause conflict.
  * Arguments are: pointer to old attr (to modify attr to save),
- *		  attr to add, attr to remove
+ *                attr to add, attr to remove
  * Returns: int with number corresponding to zero or more messages
  */
 int user_sanity_check(int * const atr, int const pls_atr, int const min_atr)
@@ -530,7 +530,7 @@ int user_sanity_check(int * const atr, int const pls_atr, int const min_atr)
  * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
  * which can cause conflict.
  * Arguments are: pointer to old attr (to modify attr to save),
- *		  attr to add, attr to remove, user attr
+ *                attr to add, attr to remove, user attr
  * Returns: int with number corresponding to zero or more messages
  */
 int chan_sanity_check(int * const atr, int const pls_atr, int const min_atr, int const usr_atr)
@@ -748,7 +748,7 @@ int chan_sanity_check(int * const atr, int const pls_atr, int const min_atr, int
  * Wanted attributes (pls_atr) take precedence over existing (atr) attributes
  * which can cause conflict.
  * Arguments are: pointer to old attr (to modify attr to save),
- *		  attr to add, attr to remove
+ *                attr to add, attr to remove
  * Returns: int with number corresponding to zero or more messages
  */
 int bot_sanity_check(intptr_t * const atr, intptr_t const pls_atr, intptr_t const min_atr)

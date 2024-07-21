@@ -169,8 +169,8 @@ static int send_uptime(void)
   }
 
   uptimecount++;
-  upPack.packets_sent = htonl(uptimecount); /* Tell the server how many uptime
-                                               packets we've sent. */
+  upPack.packets_sent = htonl(uptimecount); /* Tell the server how many
+                                             * uptime packets we've sent. */
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
 
