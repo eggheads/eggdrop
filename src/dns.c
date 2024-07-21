@@ -549,7 +549,7 @@ void *thread_dns_ipbyhost(void *arg)
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-	error = 0;
+        error = 0;
         *dtn->strerror = 0;
         break;
       }

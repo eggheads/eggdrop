@@ -224,7 +224,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
 
         default_uflags = fr.udef_global;
       } else if ((int *) ii->var == &userfile_perm) {
-	p = strtol(s, &endptr, 8);
+        p = strtol(s, &endptr, 8);
         if ((p < 01) || (p > 0777) || (*endptr))
           return "Invalid userfile permissions, must be octal between 01 and 0777";
         userfile_perm = p;

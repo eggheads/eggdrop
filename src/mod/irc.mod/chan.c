@@ -429,6 +429,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
   flushed = 0;
   kicknick[0] = 0;
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         match_addr(hostmask, s) && !chan_sentkick(m) &&
