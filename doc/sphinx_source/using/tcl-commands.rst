@@ -909,7 +909,7 @@ channel add <name> [option-list]
 channel set <name> <options...>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.
+  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels. Note: string settings such as the need-* settings must be surrounded by {}s, for example ``channel set #lamest need-op { putmsg Nickserv "op #lamest" }``
 
   Returns: nothing
 
