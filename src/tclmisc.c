@@ -25,13 +25,6 @@
 #include "main.h"
 #include "modules.h"
 #include "md5/md5.h"
-
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
 #include <sys/stat.h>
 #include <sys/utsname.h>
 
@@ -241,7 +234,7 @@ static int tcl_binds STDVAR
   return TCL_OK;
 }
 
-int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
+int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[], tcl_timer_t *stack) {
   char *endptr;
   long val;
 
@@ -264,7 +257,7 @@ int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
         return 1;
       }
       /* Check for existing timers by same name */
-      if (find_timer(timer, argv[4])) {
+      if (find_timer(stack, argv[4])) {
         Tcl_AppendResult(irp, "timer already exists by that name", NULL);
         return 1;
       }
@@ -279,7 +272,7 @@ static int tcl_timer STDVAR
 
   BADARGS(3, 5, " minutes command ?count ?name??");
 
-  if (check_timer_syntax(irp, argc, argv)) {
+  if (check_timer_syntax(irp, argc, argv, timer)) {
     return TCL_ERROR;
   }
   x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
@@ -298,7 +291,7 @@ static int tcl_utimer STDVAR
 
   BADARGS(3, 5, " seconds command ?count ?name??");
 
-  if (check_timer_syntax(irp, argc, argv)) {
+  if (check_timer_syntax(irp, argc, argv, utimer)) {
     return TCL_ERROR;
   }
   x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),

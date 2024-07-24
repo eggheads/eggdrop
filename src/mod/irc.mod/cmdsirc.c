@@ -751,7 +751,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       } else
         strlcpy(s, " --- ", sizeof s);
       egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-
       u = get_user_from_member(m);
       if (u == NULL)
         strlcpy(handle, "*", sizeof handle);

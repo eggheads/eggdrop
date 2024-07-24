@@ -31,20 +31,20 @@
 #undef interp
 #define tclinterp (*(Tcl_Interp **)(global[128]))
 #undef days
-#include <stdlib.h>
 #include <Python.h>
 #include <datetime.h>
 #include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
-#include "src/mod/python.mod/python.h"
+#include "python.h"
 
 //static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
 
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
-#include "src/mod/python.mod/pycmds.c"
-#include "src/mod/python.mod/tclpython.c"
+static PyThreadState *_pythreadsave;
+#include "pycmds.c"
+#include "tclpython.c"
 
 EXPORT_SCOPE char *python_start(Function *global_funcs);
 
@@ -53,42 +53,53 @@ static int python_expmem()
   return 0; // TODO
 }
 
-// TODO: Do we really have to exit eggdrop on module load failure?
-static void init_python() {
+static int python_gil_unlock() {
+  _pythreadsave = PyEval_SaveThread();
+  return 0;
+}
+
+static int python_gil_lock() {
+  PyEval_RestoreThread(_pythreadsave);
+  return 0;
+}
+
+static char *init_python() {
+  const char *venv;
+  char venvpython[PATH_MAX];
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
 
-  if (PY_VERSION_HEX < 0x0308) {
-    putlog(LOG_MISC, "*", "Python: Python version %d is lower than 3.8, not loading Python module", PY_VERSION_HEX);
-    return;
-  }
   PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
+  if ((venv = getenv("VIRTUAL_ENV"))) {
+    snprintf(venvpython, sizeof venvpython, "%s/bin/python3", venv);
+    status = PyConfig_SetBytesString(&config, &config.executable, venvpython);
+    if (PyStatus_Exception(status)) {
+      PyConfig_Clear(&config);
+      return "Python: Fatal error: Could not set venv executable";
+    }
+  }
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    putlog(LOG_MISC, "*", "Python: Fatal error: Could not set program base path");
-    Py_ExitStatusException(status);
+    return "Python: Fatal error: Could not set program base path";
   }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
-    putlog(LOG_MISC, "*", "Python: Error: could not extend in-built modules table");
-    exit(1);
+    PyConfig_Clear(&config);
+    return "Python: Error: could not extend in-built modules table";
   }
   status = Py_InitializeFromConfig(&config);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
-    putlog(LOG_MISC, "*", "Python: Fatal error: Could not initialize config");
-    fatal(1);
+    return "Python: Fatal error: Could not initialize config";
   }
   PyConfig_Clear(&config);
   PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
-    PyErr_Print();
-    putlog(LOG_MISC, "*", "Error: could not import module 'eggdrop'");
-    fatal(1);
+    return "Error: could not import module 'eggdrop'";
   }
 
   pirp = PyImport_AddModule("__main__");
@@ -100,14 +111,7 @@ static void init_python() {
   PyRun_SimpleString("import eggdrop");
   PyRun_SimpleString("sys.displayhook = eggdrop.__displayhook__");
 
-  return;
-}
-
-static void kill_python() {
-  if (Py_FinalizeEx() < 0) {
-    exit(120);
-  }
-  return;
+  return NULL;
 }
 
 static void python_report(int idx, int details)
@@ -118,12 +122,13 @@ static void python_report(int idx, int details)
 
 static char *python_close()
 {
-  Context;
-  kill_python();
-  rem_builtins(H_dcc, mydcc);
-  rem_tcl_commands(my_tcl_cmds);
-  module_undepend(MODULE_NAME);
-  return NULL;
+  /* Forbid unloading, because:
+   * - Reloading (Reexecuting PyDateTime_IMPORT) would crash
+   * - Py_FinalizeEx() does not clean up everything
+   * - Complexity regarding running python threads
+   * see https://bugs.python.org/issue34309 for details
+   */
+  return "The " MODULE_NAME " module is not allowed to be unloaded.";
 }
 
 static Function python_table[] = {
@@ -135,12 +140,12 @@ static Function python_table[] = {
 
 char *python_start(Function *global_funcs)
 {
+  char *s;
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
   global = global_funcs;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, python_table, 0, 1);
 
@@ -155,10 +160,14 @@ char *python_start(Function *global_funcs)
   }
   // irc.mod depends on server.mod and channels.mod, so those were implicitly loaded
 
-  init_python();
+  if ((s = init_python()))
+    return s;
 
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_tcl_commands(my_tcl_cmds);
+  add_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
+  add_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
+
   return NULL;
 }

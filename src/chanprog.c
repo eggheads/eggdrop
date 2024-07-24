@@ -27,10 +27,7 @@
  */
 
 #include "main.h"
-
-#include <sys/resource.h>
 #include <sys/utsname.h>
-
 #include "modules.h"
 
 extern struct dcc_t *dcc;
@@ -118,8 +115,11 @@ struct chanset_t *findchan_by_dname(const char *name)
 
 /* Clear the user pointers in the chanlists.
  *
- * Necessary when a hostmask is added/removed, a user is added or a new
- * userfile is loaded.
+ * Necessary when:
+ * - a hostmask is added/removed
+ * - an account is added/removed
+ * - a user is added
+ * - new userfile is loaded
  */
 void clear_chanlist(void)
 {
@@ -128,14 +128,16 @@ void clear_chanlist(void)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      m->user = NULL;
       m->tried_getuser = 0;
     }
 }
 
 /* Clear the user pointer of a specific nick in the chanlists.
- 
- * Necessary when a hostmask is added/removed, a nick changes, etc.
- * Does not completely invalidate the channel cache like clear_chanlist().
+ *
+ * Necessary when:
+ * - their hostmask changed (chghost)
+ * - their account changed
  */
 void clear_chanlist_member(const char *nick)
 {
@@ -145,6 +147,7 @@ void clear_chanlist_member(const char *nick)
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!rfc_casecmp(m->nick, nick)) {
+        m->user = NULL;
         m->tried_getuser = 0;
         break;
       }
