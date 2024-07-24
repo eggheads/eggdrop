@@ -909,7 +909,7 @@ channel add <name> [option-list]
 channel set <name> <options...>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.
+  Description: sets options for the channel specified. `options` is a flat list of either +/-settings or key/value pairs. The full list of possible options are given in doc/settings/mod.channels. Note: Tcl code settings such as the need-* settings must be valid Tcl code as a single word, for example ``channel set #lamest need-op { putmsg Nickserv "op #lamest" }``
 
   Returns: nothing
 
