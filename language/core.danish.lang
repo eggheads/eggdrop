@@ -10,77 +10,77 @@
 0x131,sidst brugt
 0x132,inaktiv
 0x133,placeret af
-0x135,ikke aktiv på
+0x135,ikke aktiv pÃ¥
 0x137,ikke aktiv
 0x138,ikke placeret af bot
 
 # BANS_
 0x104,Globale bans
-0x106,Kanal bans på
+0x106,Kanal bans pÃ¥
 0x109,Brug '.bans all' for at se den totale liste
-0x10a,Banner ikke længere
+0x10a,Banner ikke lÃ¦ngere
 
 # EXEMPTS_
 0x114,Globale exempts
-0x116,Kanal exempts på
+0x116,Kanal exempts pÃ¥
 0x119,Brug '.exempts all' for at se den totale liste
-0x11a,Banundtager ikke længere
+0x11a,Banundtager ikke lÃ¦ngere
 
 # INVITES_
 0x124,Globale invites
-0x126,Kanal invites på
+0x126,Kanal invites pÃ¥
 0x129,Brug '.invites all' for at se den totale liste
-0x12a,Inviter ikke længere
+0x12a,Inviter ikke lÃ¦ngere
 
 # MOD_
-0x200,Allerede indlæst.
-0x201,Kan ikke bestemme nuværrende bibliotek.
+0x200,Allerede indlÃ¦st.
+0x201,Kan ikke bestemme nuvÃ¦rrende bibliotek.
 0x202,Ingen startfunktion angivet.
-0x204,Krævet af et andet modul
+0x204,KrÃ¦vet af et andet modul
 0x205,Ingen lukkefunktion
 0x206,Modul fjernet:
 0x207,Modul findes ikke
-0x209,Fejl under indlæsning af modul:
+0x209,Fejl under indlÃ¦sning af modul:
 0x20a,Fejl under fjernelse af module:
-0x20b,Kan ikke indlæse modulet
-0x20c,Stillestående modules; der VIL opstå hukommelseslækager!
+0x20b,Kan ikke indlÃ¦se modulet
+0x20c,StillestÃ¥ende modules; der VIL opstÃ¥ hukommelseslÃ¦kager!
 0x20d,Du har installeret moduler, men ikke valgt noget krypterings\n\
-modul, venligst rådfør dig med standard config filen for info.\n
-0x20e,Filesys modul ikke indlæst.
+modul, venligst rÃ¥dfÃ¸r dig med standard config filen for info.\n
+0x20e,Filesys modul ikke indlÃ¦st.
 0x20f,Modul loadet: %-16s (med sprog support)
 0x210,Modul loadet: %-16s
 
 # USERF_
-0x400,Brugerliste overførsel fuldført; skiftet
-0x402,KAN IKKE LÆSE NY BRUGERFIL
+0x400,Brugerliste overfÃ¸rsel fuldfÃ¸rt; skiftet
+0x402,KAN IKKE LÃ†SE NY BRUGERFIL
 0x403,Kan ikke sende brugerfil til dig (intern fejl)
 0x404,Kan ikke finde nogen, som matcher det
 0x405,Gammel brugerfil, brug 'tclsh scripts/weed <brugerfil> c' for at konvertere
 0x406,Ugyldigt brugerfilsformat.
 0x407,Korrupt bruger optegnelse
 0x408,Dublet bruger optegnelse
-0x409,Korrupt password reset på
+0x409,Korrupt password reset pÃ¥
 0x40a,Ignorede masker for kanal(erne):
 0x40b,Skriver brugerfil...
 0x40c,FEJL under skrivning af brugerfil.
-0x40d,FEJL under skrivning af brugertil til overførsel.
-0x40e,Brugerfiloprettelse ikke nødvendig--springer over
+0x40d,FEJL under skrivning af brugertil til overfÃ¸rsel.
+0x40e,Brugerfiloprettelse ikke nÃ¸dvendig--springer over
 0x40f,Rehasher...
 0x410,Jeg kender ingen ved det navn.\n
 0x411,Ingen bruger optegnelse.
 0x412,Laver backup af brugerfil...
-0x413,Forbindelsen fejlede; afbryder brugerfilsoverførsel.
-0x414,Gammel type delingsforespørgsel af
-0x415,Forældet delingsforespørgsel
+0x413,Forbindelsen fejlede; afbryder brugerfilsoverfÃ¸rsel.
+0x414,Gammel type delingsforespÃ¸rgsel af
+0x415,ForÃ¦ldet delingsforespÃ¸rgsel
 0x416,Brugerfil afvist af
 
 # MISC_
-0x500,udløbet
+0x500,udlÃ¸bet
 0x501,Total
 0x502,Slettet
-0x504,på
+0x504,pÃ¥
 0x505,Matcher
-0x506,skipper første
+0x506,skipper fÃ¸rste
 0x507,(mere end %d som matcher; listen er afkortet)\n
 0x508,--- Fandt %d som matcher%s.\n
 0x509,Flertydig kommando.\n
@@ -90,21 +90,21 @@ modul, venligst rådfør dig med standard config filen for info.\n
 0x50d,es
 0x50e,Skifter logfiler...
 0x512,idle
-0x513,VÆK
+0x513,VÃ†K
 0x516,Afbrudt
 0x517,ugyldig bot
 0x518,Lykke opdaget: to bots eksisterer navngivet
 0x51a,fra
-0x51b,forældet
+0x51b,forÃ¦ldet
 0x51c,afvist
 0x51d,falsk/bedrager
-0x51e,prøver
+0x51e,prÃ¸ver
 0x51f,MOTD fil:
 0x520,Ingen MOTD fil.
 0x521,Brug:
 0x522,<adresse> <port#>[/<relay-port#>]
 0x526,afventende
-0x527,ønsker ops
+0x527,Ã¸nsker ops
 0x529,baggrund
 0x52a,terminal mode
 0x52b,status mode
@@ -116,21 +116,21 @@ modul, venligst rådfør dig med standard config filen for info.\n
 0x531,underrette
 0x532,Permanente ejer(e)
 0x534,CONFIG FIL IKKE LOADET (IKKE FUNDET ELLER FEJL)
-0x535,BRUGERFIL IKKE FUNDET!  (prøv './eggdrop -m %s' for at lave en)\n
+0x535,BRUGERFIL IKKE FUNDET!  (prÃ¸v './eggdrop -m %s' for at lave en)\n
 0x536,STARTER BOTTEN I BRUGERFILOPRETTELSES MODE.\n\
 Telnet botten og skriv 'NEW' som dit nick.\n
-0x537,ELLER gå på IRC og skriv:  /msg %s hello\n
-0x538,Dette vil få botten til at genkende dig som master.
+0x537,ELLER gÃ¥ pÃ¥ IRC og skriv:  /msg %s hello\n
+0x538,Dette vil fÃ¥ botten til at genkende dig som master.
 0x539,BRUGERFIL FINDES ALLEREDE (brug ikke '-m')
 # 0x53a  unused / ubrugt
-0x53b,Kan ikke genindlæse brugerfil!
+0x53b,Kan ikke genindlÃ¦se brugerfil!
 0x53c,Brugerfil mangler!
 0x53e,%B  (%E)\n\nSkriv venligst dit nick.\n
 0x53f,Skifter logfil %s, over max-logsize (%d)
 # 0x540  unused / ubrugt
 0x541,Sidste besked gentaget %d gange\n
 0x542,juped
-0x543,Ingen ledige sockets tilgængelig.
+0x543,Ingen ledige sockets tilgÃ¦ngelig.
 0x544,Tcl version:
 0x545,header version
 
@@ -138,19 +138,19 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x600,Banned
 0x601,Du er banned
 0x602,Ville banne mig selv--afviger.
-0x603,det var sjovt, lad os gøre det igen!
+0x603,det var sjovt, lad os gÃ¸re det igen!
 0x604,Hej
 0x605,Farveller
 0x606,Du er banned.
 0x607,NOTICE %s :Dit nick var for langt og derfor blev det afkortet til '%s'.\n
 0x608,Introduceret til
-0x609,almindeligt/fælles site
+0x609,almindeligt/fÃ¦lles site
 0x60a,NOTICE %s :Hej %s!  Jeg er %s, en Eggdrop bot.\n
-0x60b,NOTICE %s :Jeg genkender dig på hostmasken '%s' fra nu af.\n
-0x60c,Da du kommer fra et almindeligt/fælles irc site, betyder dette at du bør
-0x60d,brug altid dette nick når du snakker til mig.
+0x60b,NOTICE %s :Jeg genkender dig pÃ¥ hostmasken '%s' fra nu af.\n
+0x60c,Da du kommer fra et almindeligt/fÃ¦lles irc site, betyder dette at du bÃ¸r
+0x60d,brug altid dette nick nÃ¥r du snakker til mig.
 0x60e,DU ER NU EJER AF DENNE BOT
-0x60f,Bot installation fuldført, første master er%s
+0x60f,Bot installation fuldfÃ¸rt, fÃ¸rste master er%s
 0x610,Velkommen til Eggdrop! =]
 0x611,introduceret til %s fra %s
 0x612,Du har sat et password.
@@ -160,83 +160,83 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x617,Password sat til:
 0x618,Forkert password.
 0x619,Password skiftet til:
-0x61a,Du er på et almindeligt/fælles site; Du kan ikke IDENT.
+0x61a,Du er pÃ¥ et almindeligt/fÃ¦lles site; Du kan ikke IDENT.
 0x61b,NOTICE %s :Du er ikke %s, du er %s.\n
-0x61c,Adgang nægtet.
+0x61c,Adgang nÃ¦gtet.
 0x61d,Jeg genkender dig her.
-0x61e,Hostmask tilføjet
-0x620,For øjeblikket:
+0x61e,Hostmask tilfÃ¸jet
+0x620,For Ã¸jeblikket:
 0x621,Nu:
 0x622,For at fjerne den:
-0x624,Din info linie er låst
-0x625,Fjernede din info linie på
+0x624,Din info linie er lÃ¥st
+0x625,Fjernede din info linie pÃ¥
 0x626,Fjernede din info linie.
-0x627,Du har ingen info sat på
+0x627,Du har ingen info sat pÃ¥
 0x628,Du har ingen info sat.
-0x629,Jeg overvåger ikke den kanal.
+0x629,Jeg overvÃ¥ger ikke den kanal.
 0x62a,Resetter kanal info.
 0x62b,Skifter servere...
-0x62c,Kanalen er for øjeblikket skjult.
-0x62d,Nu på kanalen
+0x62c,Kanalen er for Ã¸jeblikket skjult.
+0x62d,Nu pÃ¥ kanalen
 0x62e,Har aldrig joinet en af mine kanaler.
 0x62f,Sidst set (at)
-0x630,Jeg kender dig ikke; Venligst introducer dig selv først.
-0x631,Ingen hjælp.
-0x632,Ingen hjælp tilgængelig til det.
+0x630,Jeg kender dig ikke; Venligst introducer dig selv fÃ¸rst.
+0x631,Ingen hjÃ¦lp.
+0x632,Ingen hjÃ¦lp tilgÃ¦ngelig til det.
 # 0x633 - unused
-0x634,Er ikke på den kanal lige nu.
+0x634,Er ikke pÃ¥ den kanal lige nu.
 0x635,Skifter tilbage til nicket %s
 0x636,Serveren siger, at mit nick er ugyldigt.
-0x637,NICK OPTAGET: Prøver '%s'
-0x638,Kan ikke skifte nick på %s.  Er mit nick banned?
+0x637,NICK OPTAGET: PrÃ¸ver '%s'
+0x638,Kan ikke skifte nick pÃ¥ %s.  Er mit nick banned?
 0x639,Nick er blevet juped
 0x63a,Kanal %s er juped. :(
-0x63b,%s siger, at jeg ikke er registreret, prøver den næste.
+0x63b,%s siger, at jeg ikke er registreret, prÃ¸ver den nÃ¦ste.
 0x63c,Serveren siger, at vi ikke er registreret endnu..
-0x63d,Flood fra @%s!  Smider på ignore!
+0x63d,Flood fra @%s!  Smider pÃ¥ ignore!
 0x63f,JOIN flood fra @%s!  Banner.
 0x640,Kanal flood fra %s -- kicker
-0x641,Prøver server
+0x641,PrÃ¸ver server
 0x642,DNS lookup fejlede
 0x643,Kunne ikke forbindes til
-0x644,Server frøs; skifter...
+0x644,Server frÃ¸s; skifter...
 0x645,Afbrudt fra
-0x646,For øjeblikket ingen server.
-0x647,Modekø er på
-0x648,Serverkø er på
-0x649,Hjælpekø er på
+0x646,For Ã¸jeblikket ingen server.
+0x647,ModekÃ¸ er pÃ¥
+0x648,ServerkÃ¸ er pÃ¥
+0x649,HjÃ¦lpekÃ¸ er pÃ¥
 0x64a,Vhost set in config can not be used to connect to this address 
 0x64b,Vhost set in config is not available on this machine
 0x64c,Behandler kanal
 0x64d,Kanal
-0x64e,Ønsker kanal
+0x64e,Ã˜nsker kanal
 0x64f,Kanal Topic
 0x650,afventende +o -- Jeg lagger
 0x651,afventende -o -- Jeg lagger
 0x652,afventende kick
 0x653,FALSK CHANOP GIVET AF SERVER
-0x654,Slut på kanal info.
+0x654,Slut pÃ¥ kanal info.
 0x655,mass kick, go sit in a corner
 0x656,Fjernede ban
-0x657,Hmm, mode info fra en kanal jeg ikke er på
+0x657,Hmm, mode info fra en kanal jeg ikke er pÃ¥
 0x658,...and thank you for playing.
-0x659,Skifter servere (kræver %d servere, har kun %d)
+0x659,Skifter servere (krÃ¦ver %d servere, har kun %d)
 0x65a,skifter server
-0x65b,Jeg er på for mange kanaler--kan ikke joine: %s
+0x65b,Jeg er pÃ¥ for mange kanaler--kan ikke joine: %s
 0x65c,Kanalen er fuld--kan ikke joine: %s
 0x65d,Kanalen er invite only--kan ikke joine: %s
 0x65e,Banned fra kanalen--kan ikke joine: %s
-0x65f,Serveren siger jeg ikke er på kanalen: %s
+0x65f,Serveren siger jeg ikke er pÃ¥ kanalen: %s
 0x660,Forkert key--Kan ikke joine: %s
 0x661,NOTICE %s :Alle kommandoer bruges via /MSG. For en komplet liste, /MSG %s help   Ses!\n
 0x662,NOTICE %s :Jeg genkender dig ikke fra den host.\n
 0x663,NOTICE %s :Enten bruger du en andens nick, ellers skal du skrive: /MSG %s IDENT (password)\n
-0x664,NOTICE %s :Som en master bør du virkelig have sat et password med: /MSG %s pass <dit-ønskede-password>.\n
-0x665,NOTICE %s :Alle vigtigere kommandoer bruges fra DCC chat. Fra nu af, behøver du ikke længere at starte botten med -m.  Enjoy !!!\n
-0x666,Dette er telnet brugerfladen på %s, en eggdrop bot.\nMisbrug det ikke, og det vil også være åbent for alle dine venner.\n
-0x667,Du skal nu vælge et nick at bruge på botten,\nog et password, så ingen andre kan give sig ud for at være dig.\nVenligst husk begge dele!
-0x668,Fra nu af, behøver du ikke at starte botten med -m.\nEnjoy !!
-0x669,Telnet forbindelses flood fra %s!  Smider på ignore!
+0x664,NOTICE %s :Som en master bÃ¸r du virkelig have sat et password med: /MSG %s pass <dit-Ã¸nskede-password>.\n
+0x665,NOTICE %s :Alle vigtigere kommandoer bruges fra DCC chat. Fra nu af, behÃ¸ver du ikke lÃ¦ngere at starte botten med -m.  Enjoy !!!\n
+0x666,Dette er telnet brugerfladen pÃ¥ %s, en eggdrop bot.\nMisbrug det ikke, og det vil ogsÃ¥ vÃ¦re Ã¥bent for alle dine venner.\n
+0x667,Du skal nu vÃ¦lge et nick at bruge pÃ¥ botten,\nog et password, sÃ¥ ingen andre kan give sig ud for at vÃ¦re dig.\nVenligst husk begge dele!
+0x668,Fra nu af, behÃ¸ver du ikke at starte botten med -m.\nEnjoy !!
+0x669,Telnet forbindelses flood fra %s!  Smider pÃ¥ ignore!
 0x66a,Bannet:
 0x66b,join flood
 0x66c,kick ikke mine venner
@@ -250,7 +250,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 
 # EGG_
 #0x700 - unused / ubrugt
-0x701,Jeg observerer, at %s allerede kører fra dette bibliotek.\n
+0x701,Jeg observerer, at %s allerede kÃ¸rer fra dette bibliotek.\n
 0x702,Hvis dette er forkert, slet %s\n
 0x703,* Advarsel!  Kunne ikke skrive filen %s!\n
 
@@ -260,24 +260,24 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x802,  (er en master)
 
 # CHAN_
-0x900,Ingen sådan kanal defineret
-0x902,* Mode skifte på %s for ikke-eksisterende %s!
-0x903,Masse deop på %s af %s
+0x900,Ingen sÃ¥dan kanal defineret
+0x902,* Mode skifte pÃ¥ %s for ikke-eksisterende %s!
+0x903,Masse deop pÃ¥ %s af %s
 0x904,Mass deop.  Go sit in a corner.
 0x907,Oops. Nogen fik mig til at joine %s... smutter...
-0x908,Mode skifte af falsk op på %s!  Modsætter...
+0x908,Mode skifte af falsk op pÃ¥ %s!  ModsÃ¦tter...
 0x909,Misbruger ulovligt server ops
-0x90a,Mode skifte af ikke-chanop på %s!  Modsætter...
+0x90a,Mode skifte af ikke-chanop pÃ¥ %s!  ModsÃ¦tter...
 0x90b,Misbruger desync
 0x90c,flood
 
 0xa00,Ingen ignoreringer
 0xa01,Ignorerer lige nu
-0xa02,Ignorerer ikke længere
+0xa02,Ignorerer ikke lÃ¦ngere
 
 0xb00,Den bot er her ikke.\n
 0xb01,Det er en bot. Du kan ikke sende notitser til en bot.\n
-0xb02,er væk
+0xb02,er vÃ¦k
 0xb07,Notits til dig er ankommet
 0xb08,Besked gemt
 0xb18,Bot nedlukning begyndt....
@@ -285,14 +285,14 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xb1a,Ingen kanaler
 0xb1b,Party line medlemmer:
 0xb1c,Bots forbundet
-0xb1d,Andre mennesker på botten
-0xb1f,Forsøger at linke
+0xb1d,Andre mennesker pÃ¥ botten
+0xb1f,ForsÃ¸ger at linke
 0xb20,Ikke online; notits gemt.
-0xb21,Notitsboks er fyldt, desværre.
-0xb22,er væk, notits gemt.
+0xb21,Notitsboks er fyldt, desvÃ¦rre.
+0xb22,er vÃ¦k, notits gemt.
 0xb23,Notits sendt til
 0xb24,Afbrudt fra:
-0xb25,Mennesker på kanalen
+0xb25,Mennesker pÃ¥ kanalen
 0xb26,Kan ikke linke dertil
 0xb27,Kan ikke afbryde link
 0xb28,Lykke fundet
@@ -300,24 +300,24 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xb2b,Disconnected left
 0xb2c,Linket til
 0xb2d,Ugyldigt link a af leaf bot
-0xb2e,Du skal være en leaf bot!
+0xb2e,Du skal vÃ¦re en leaf bot!
 0xb2f,Afviser bot
-0xb30,Ældre bot fundet (usupporteret)
+0xb30,Ã†ldre bot fundet (usupporteret)
 0xb31,Sporingsresultat
 0xb32,eksisterer ikke
 0xb33,Fjerne spark er ikke tilladt.
 0xb34,Kan ikke sparke bot ejeren af.
-0xb35,FILOVERFØRSEL AFVIST
-0xb37,Brugere på tværs af botnettet
+0xb35,FILOVERFÃ˜RSEL AFVIST
+0xb37,Brugere pÃ¥ tvÃ¦rs af botnettet
 0xb38,Party line
 0xb39,Lokal kanal
-0xb3a,Bruger på kanalen
+0xb3a,Bruger pÃ¥ kanalen
 0xb3b,Ingen bots linket.
-0xb3c,Ingen sporingsinfo på:
-0xb3d,Træ for komplekst!
+0xb3c,Ingen sporingsinfo pÃ¥:
+0xb3d,TrÃ¦ for komplekst!
 0xb3e,Afbryder links til alle bots...
-0xb3f,Dræbte link forsøg til
-0xb40,Forsøger ikke længere at linke:
+0xb3f,DrÃ¦bte link forsÃ¸g til
+0xb40,ForsÃ¸ger ikke lÃ¦ngere at linke:
 0xb41,Afbryder link med
 0xb42,Afbrudt link fra:
 0xb43,Ikke forbundet til den bot.
@@ -329,26 +329,26 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xb49,Linker til
 0xb4a,Kan ikke finde bruger til relay!
 0xb4b,Kunne ikke linke til
-0xb4c,Relay til mig selv? Hvad skal det gøre godt for?!
+0xb4c,Relay til mig selv? Hvad skal det gÃ¸re godt for?!
 0xb4d,Forbinder til
-0xb4e,(Skriv *BYE* på en linie for sig selv for at afbryde.)
-0xb4f,Afbryder relay forsøg til
-0xb50,Du er nu tilbage på
+0xb4e,(Skriv *BYE* pÃ¥ en linie for sig selv for at afbryde.)
+0xb4f,Afbryder relay forsÃ¸g til
+0xb50,Du er nu tilbage pÃ¥
 0xb51,Relay afbrudt:
 0xb53,Mistede dcc forbindelse til
-0xb54,Dropper relay forsøg til
+0xb54,Dropper relay forsÃ¸g til
 0xb55,Succes!\n\nNU FORBUNDET TIL RELAY BOT
 0xb56,(Du kan skrive *BYE* for at forhaste lukningen af forbindelsen.)
 0xb57,Relay link:
 0xb58,har forladt party line.
 0xb59,Stoppede relay link
-0xb5a,RELAY FORBINDELSE DROPPET.\nDu er nu tilbage på
+0xb5a,RELAY FORBINDELSE DROPPET.\nDu er nu tilbage pÃ¥
 0xb5b,genjoinede party line.
 0xb5c,Lukker relay link til
 0xb5d,Afbryder forbindelsen til
 0xb5e,Relay brudt
 0xb5f,Ping timeout
-0xb60,ikke-leaf-lignende opførsel
+0xb60,ikke-leaf-lignende opfÃ¸rsel
 0xb61,Mistede bot
 0xb62,Linker allerede til den bot.
 
@@ -357,14 +357,14 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xc02,Ingen adgang
 0xc03,Du skal have sat et password.
 0xc04,Afviste DCC chat (intet password)
-0xc05,Afviste DCC chat (+x men intet filområde)
-0xc07,For mange mennesker er i filområdet lige nu.
-0xc0c,Desværre, for mange DCC forbindelser
+0xc05,Afviste DCC chat (+x men intet filomrÃ¥de)
+0xc07,For mange mennesker er i filomrÃ¥det lige nu.
+0xc0c,DesvÃ¦rre, for mange DCC forbindelser
 0xc0d,DCC forbindelser fyldte: %s %s (%s!%s)
 0xc19,Kunne ikke forbinde
 0xc1a,DCC forbindelse fejlede
 0xc1c,Skriv dit password.
-0xc1d,%s er blevet tvunget væk for at floode.\n
+0xc1d,%s er blevet tvunget vÃ¦k for at floode.\n
 0xc1e,-=- poof -=-\n
 0xc1f,Du er blevet sparket af %s af %s%s%s\n
 0xc20,%s sparkede %s af party line%s%s
@@ -376,19 +376,19 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 # BOTNET
 0xe00,Falsk besked afvist
 0xe01,Linket til
-0xe02,Forkert bot--ønskede %s, fik %s
+0xe02,Forkert bot--Ã¸nskede %s, fik %s
 0xe03,har forladt
 0xe04,har forladt
-0xe05,er nu væk
-0xe06,er ikke længere væk
+0xe05,er nu vÃ¦k
+0xe06,er ikke lÃ¦ngere vÃ¦k
 0xe07,Nick Skifte:
 
 # dcc.c Messages
 0xe08,Afviste link fra %s
 0xe09,Linket til %s.
 0xe0a,Fejlede link til %s.
-0xe0b,Ugyldigt password ved forbindelsesforsøg til %s.
-0xe0c,Password kræver for forbindelse til %s.
+0xe0b,Ugyldigt password ved forbindelsesforsÃ¸g til %s.
+0xe0c,Password krÃ¦ver for forbindelse til %s.
 0xe0d,FEJL ved linkning %s: %s
 0xe0e,Mistede Bot: %s
 0xe0f,Timeout: bot link til %s ved %s:%d
@@ -399,13 +399,13 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xe14,Mistede dcc forbindelsen to %s (%s/%d)
 0xe15,Password timeout ved dcc chat: [%s]%s
 0xe16,DCC forbindelse lukket (%s!%s)
-0xe17,Fejlede indgående TELNET (%s)
+0xe17,Fejlede indgÃ¥ende TELNET (%s)
 0xe18,Afviste %s/%d (ugyldig kilde port)
 0xe19,*** %s er vendt tilbage.\n 
 0xe1a,Afviste %s (ugyldigt hostname)
 0xe1b,Telnet forbindelse: %s/%d
 0xe1c,Ident fejlede for %s: %s
-0xe1d,(!) Listening port %d pludselig død.
+0xe1d,(!) Listening port %d pludselig dÃ¸d.
 0xe1e,Afviste %s (ugyldigt nick)
 0xe1f,Afviste %s (non-bot)
 0xe20,Afviste %s (non-bruger)
@@ -414,7 +414,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xe23,Afviste [%s]%s (intet password)
 0xe24,Mistede telnet forbindelsen til %s/%d
 0xe25,Ident timeout ved telnet: %s
-0xe26,Bot installation fuldført, Første mater er %s
+0xe26,Bot installation fuldfÃ¸rt, FÃ¸rste mater er %s
 0xe27,Ny bruger via telnet: [%s]%s/%d
 0xe28,Mistede ny telnet bruger (%s/%d)
 0xe29,Mistede ny telnet bruger %s (%s/%d)
@@ -426,7 +426,7 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0xe2f,EOF ident forbindelse
 0xe30,Mistede ident wait telnet socket!!
 0xe31,Afviste telnet: %s, Ingen Adgang
-0xe32,Afviste telnet forbindelse fra %s (forsøg på at bruge mit botnetnick)
+0xe32,Afviste telnet forbindelse fra %s (forsÃ¸g pÃ¥ at bruge mit botnetnick)
 0xe33,Mistede telnet forbindelse fra %s mens der blev tjekket for dubletter
 0xe34,TIMEOUT ident forbindelse
 0xe35,Please remove the #comment from your listen setting and try again
