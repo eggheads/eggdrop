@@ -1,0 +1,21 @@
+name: Run and Commit autotools
+on:
+  workflow_dispatch:
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install pre-requisites
+        run: sudo apt-get update && apt-get install -y build-essential autoconf
+      - name: Run autotools
+        run: bash ./misc/runautotools
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Run autotools"
+          git push origin develop
+
