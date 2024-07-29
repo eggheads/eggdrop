@@ -133,8 +133,8 @@ See also: tcl
 
    %bNOTE:%b This command is NOT used to replace .chattr. It modifies bot flags,
          such as s, h, a, u, etc.
-   %bNOTE:%b You can't use this command on bots which are directly linked to your
-         bot at the current moment.
+   %bNOTE:%b You can't use this command on bots which are directly linked to
+         your bot at the current moment.
 
 See also: whois, chattr
 %{help=botinfo}%{-}
