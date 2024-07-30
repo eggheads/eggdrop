@@ -565,7 +565,7 @@ void *thread_dns_ipbyhost(void *arg)
   else if (error == EAI_NONAME)
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
   else if (error == EAI_SYSTEM) {
-    char ebuf[2048];
+    char ebuf[146];
     if (strerror_r(errno, ebuf, sizeof ebuf))
       strcpy(ebuf, "strerror_r()");
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: %s", gai_strerror(error), ebuf);
