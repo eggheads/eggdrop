@@ -1177,8 +1177,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       setsockname(&name, newip, port, 1);
       i = open_address_listen(&name);
       if (i < 0) {
-        snprintf(msg, sizeof msg, "Couldn't listen on port %d on the given "
-                 "address '%s': %s. Please check that the port is not already in use",
+        snprintf(msg, sizeof msg, "Couldn't listen on port %d on %s: %s. "
+                 "Please check that the port is not already in use",
                   realport, newip, strerror(errno));
         Tcl_AppendResult(irp, msg, NULL);
         return TCL_ERROR;
