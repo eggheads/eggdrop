@@ -2,62 +2,62 @@
 #   language messages for transfer module
 
 0xf00,Afviste dcc get %s: kopi til midlertidig placering FEJLEDE!
-0xf01,NOTICE %s :Filsystem fejl; fjerner filer fra køen.\n
+0xf01,NOTICE %s :Filsystem fejl; fjerner filer fra kÃ¸en.\n
 0xf02,NOTICE %s :Her er en fil fra %s ...\n
 0xf03,DCC forbindelser fyldt: GET %s [%s]
-0xf04,NOTICE %s :DCC forbindelser fyldt; fjerner filer fra køen.\n
+0xf04,NOTICE %s :DCC forbindelser fyldt; fjerner filer fra kÃ¸en.\n
 0xf05,DCC socket fejl: GET %s [%s]
-0xf06,NOTICE %s :DCC socket fejl; fjerner filer fra køen.\n
+0xf06,NOTICE %s :DCC socket fejl; fjerner filer fra kÃ¸en.\n
 0xf07,Stoppede dcc get %s: File er tom!
-0xf08,NOTICE %s :File %s er tom, stopper overførsel.\n
+0xf08,NOTICE %s :File %s er tom, stopper overfÃ¸rsel.\n
 0xf09,  Send til  %s  Filnavn\n
 0xf0a,  ---------%s  --------------------\n
 0xf0b,  %s%s  %s  [VENTER]\n
-0xf0c,  %s%s  %s  (%.1f%% færdig)\n
-0xf0d,Ingen filer i kø.\n
+0xf0c,  %s%s  %s  (%.1f%% fÃ¦rdig)\n
+0xf0d,Ingen filer i kÃ¸.\n
 0xf0e,Total: %d\n
 0xf0f,Annulleret: %s til %s\n
 0xf10,Annulleret: %s  (annullerede dcc send)\n
-0xf11,NOTICE %s :Overførsel af %s annulleret af %s\n
-0xf12,DCC annulleret: GET %s (%s) på %lu/%lu
+0xf11,NOTICE %s :OverfÃ¸rsel af %s annulleret af %s\n
+0xf12,DCC annulleret: GET %s (%s) pÃ¥ %lu/%lu
 0xf13,Ingen matcher.\n
 0xf14,Annullerede %d fil%s.\n
-0xf15,Færdiggjorde dcc send %s fra %s!%s
-0xf16,Filnavn %d længde. Alt for LANG.
-0xf17,NOTICE %s :Filnavn %d længde alt for LANG!\n
+0xf15,FÃ¦rdiggjorde dcc send %s fra %s!%s
+0xf16,Filnavn %d lÃ¦ngde. Alt for LANG.
+0xf17,NOTICE %s :Filnavn %d lÃ¦ngde alt for LANG!\n
 0xf18,To Bad So Sad Your Dad!
 0xf19,NOTICE %s :To Bad So Sad Your Dad!\n
 0xf1a,FEJLEDE flyt `%s' fra midlertidig placering! Fil mistet!
 0xf1b,Tak for filen!\n
 0xf1c,NOTICE %s :Tak for filen!\n
-0xf1d,Mistede brugerfil overførsel fra %s; annullerer.
+0xf1d,Mistede brugerfil overfÃ¸rsel fra %s; annullerer.
 # 0xf1e, < this one is now empty / denne er nu tom
-0xf1f,Afbrudt %s (annullerede brugerfil overførsel)
+0xf1f,Afbrudt %s (annullerede brugerfil overfÃ¸rsel)
 0xf20,Mistede dcc send %s fra %s!%s (%lu/%lu)
 0xf21,(!) reget pakke fra %s til %s er ugyldig!
-0xf22,!! Genoptager filoverførsel efter fil slutning fra %s til %s
-0xf23,!!! Prøver at springe forud ved brugerfil overførsel
-0xf24,Genoptager filoverførsel på %dk for %s til %s
-0xf25,Gennemførte brugerfil overførsel til %s.
-0xf26,Gennemførte dcc send %s til %s
-0xf27,Mistede brugerfil overførsel; annullerer.
+0xf22,!! Genoptager filoverfÃ¸rsel efter fil slutning fra %s til %s
+0xf23,!!! PrÃ¸ver at springe forud ved brugerfil overfÃ¸rsel
+0xf24,Genoptager filoverfÃ¸rsel pÃ¥ %dk for %s til %s
+0xf25,GennemfÃ¸rte brugerfil overfÃ¸rsel til %s.
+0xf26,GennemfÃ¸rte dcc send %s til %s
+0xf27,Mistede brugerfil overfÃ¸rsel; annullerer.
 0xf28,Mistede dcc get %s fra %s!%s
-0xf29,NOTICE %s :Falsk fillængde.\n
+0xf29,NOTICE %s :Falsk fillÃ¦ngde.\n
 0xf2a,Fil for lang: dropper dcc send %s fra %s!%s
-0xf2b,Timeout ved brugerfil overførsel.
-0xf2c,Afbrudt %s (timed-out brugerfil overførsel)
-0xf2d,NOTICE %s :Timeout under overførsel, annullerer %s.\n
+0xf2b,Timeout ved brugerfil overfÃ¸rsel.
+0xf2c,Afbrudt %s (timed-out brugerfil overfÃ¸rsel)
+0xf2d,NOTICE %s :Timeout under overfÃ¸rsel, annullerer %s.\n
 0xf2f,DCC timeout: GET %s (%s) ved %lu/%lu
 0xf30,DCC timeout: SEND %s (%s) ved %lu/%lu
 0xf31,send  (%lu)/%lu\n    Filnavn: %s\n
 0xf32,send  ventede %lus\n    Filnavn: %s\n
 0xf33,conn  send
 0xf34,DCC forbindelse: SEND %s (%s)
-0xf35,NOTICE %s :Dårlig forbindelse (%s)\n
-0xf36,DCC dårlig forbindelse: GET %s (%s!%s)
+0xf35,NOTICE %s :DÃ¥rlig forbindelse (%s)\n
+0xf36,DCC dÃ¥rlig forbindelse: GET %s (%s!%s)
 0xf37,Begynd DCC %ssend %s til %s
 0xf38,re
 0xf39,NOTICE %s :Ignorerer genoptagelse af `%s': ingen data anmodet.\n
-0xf40,Fjener overførsel (transfer) modul, dræber alle overførsel (transfer) forbindelser...
-0xf41,    DCC blok størrelse: %d%s\n
+0xf40,Fjener overfÃ¸rsel (transfer) modul, drÃ¦ber alle overfÃ¸rsel (transfer) forbindelser...
+0xf41,    DCC blok stÃ¸rrelse: %d%s\n
 0xf42,    Max samtidige downloads per bruger: %d\n
