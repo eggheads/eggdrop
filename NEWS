@@ -65,7 +65,7 @@ Eggdrop v1.9.4:
 
  Tcl API changes:
     - Moved the 'gotmsg' function back as a raw bind. It was inadvertently
-      moved to a rawt bind in 1.9.3, causing issuse with scripts attempting to
+      moved to a rawt bind in 1.9.3, causing issues with scripts attempting to
       unbind this internal reference
  Module changes:
     - None
@@ -219,7 +219,7 @@ Eggdrop v1.9.0:
     - Added Twitch support
     - Added support for users that change hosts mid-session, usually associated
       with authenticating with services (396 raw code and CHGHOST capability).
-    - Added support for the users that change their realname value mis-session
+    - Added support for the users that change their realname value mid-session
       (SETNAME capability)
     - Added the ability for Eggdrop to internally track the away status of an
       individual, with some limitations.
@@ -239,9 +239,9 @@ Eggdrop v1.9.0:
       otherwise the connection will be in plaintext. A port not prefixed with a
       + can still be upgraded with STARTTLS, allowing 1.8 bots and scripts to
       initiate a secure connection, but 1.9.0 bots will not attempt the upgrade.
-    - Added granular userfile sharing flags (bcejnu). Adding these flags can limit
-      userfile sharing to a combination of bans, invites, exempts, channels,
-      users, and ignores (or still the s flag for all these).
+    - Added granular userfile sharing flags (bcejnu). Adding these flags can
+      limit userfile sharing to a combination of bans, invites, exempts,
+      channels, users, and ignores (or still the s flag for all these).
     - No longer try port+1,2,3 when connecting to a botnet port doesn't work
       the first time
 
