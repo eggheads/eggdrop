@@ -429,6 +429,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
   flushed = 0;
   kicknick[0] = 0;
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+    sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         match_addr(hostmask, s) && !chan_sentkick(m) &&
@@ -1079,8 +1080,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
-  if (match_my_nick(nick))      /* Is it me? */
+  if (match_my_nick(nick)) {    /* Is it me? */
+    if (!m->joined)
+      m->joined = now;
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
+  }
   m->flags |= WHO_SYNCED;
   if (strpbrk(flags, opchars) != NULL)
     m->flags |= (CHANOP | WASOP);

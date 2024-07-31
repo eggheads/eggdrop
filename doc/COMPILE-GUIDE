@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: November 17, 2022
+Last revised: May 14, 2023
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -145,7 +145,7 @@ Last revised: November 17, 2022
 
       If your system does not have 'gmake', you can download it from:
 
-        http://ftp.gnu.org/pub/gnu/make/
+        ftp.gnu.org/pub/gnu/make/
 
       It can be installed in your home directory, as with Tcl, but that is
       beyond the scope of this document. Read the INSTALL file that comes with
@@ -354,8 +354,8 @@ Last revised: November 17, 2022
 
         If you do not have Tcl installed on your system, you can compile it in
         your /home directory. Download Tcl from Tcl's SourceForge project page
-        at http://www.sourceforge.net/projects/tcl/, or from ActiveState at
-        ftp://tcl.activestate.com/pub/tcl/tcl8_4/. Read Tcl's README file for
+        at https://sourceforge.net/projects/tcl/, or from ActiveState at
+        https://www.activestate.com/products/tcl/. Read Tcl's README file for
         help with compiling and installing it. After you compile Tcl, follow
         the steps above to allow Eggdrop to detect Tcl.
 
