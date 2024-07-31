@@ -1080,8 +1080,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   simple_sprintf(m->userhost, "%s@%s", user, host);
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
-  if (match_my_nick(nick))      /* Is it me? */
+  if (match_my_nick(nick)) {    /* Is it me? */
+    if (!m->joined)
+      m->joined = now;
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
+  }
   m->flags |= WHO_SYNCED;
   if (strpbrk(flags, opchars) != NULL)
     m->flags |= (CHANOP | WASOP);
