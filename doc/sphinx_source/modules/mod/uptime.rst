@@ -7,7 +7,7 @@ Uptime Module
 -------------
 
 This module reports uptime statistics to the uptime contest web
-site at https://www.eggheads.org/uptime/. Go look
+site at `<https://www.eggheads.org/uptime>`_. Go look
 and see what your uptime is! It takes about 9 hours to show up, so if your
 bot isn't listed, try again later.
 

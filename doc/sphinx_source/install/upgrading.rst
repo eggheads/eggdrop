@@ -44,7 +44,7 @@ To migrate from a 1.8 to a |majversion| Eggdrop, some changes are suggested to b
 Modules
 ^^^^^^^
 
-While most 3rd party modules that worked on older Eggdrop versions should still work with Eggdrop |majversion|, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<ftp.eggheads.org/pub/eggdrop/modules/1.10/>`_
+While most 3rd party modules that worked on older Eggdrop versions should still work with Eggdrop |majversion|, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<https://ftp.eggheads.org/pub/eggdrop/modules/1.10/>`_
 
 Scripts
 ^^^^^^^

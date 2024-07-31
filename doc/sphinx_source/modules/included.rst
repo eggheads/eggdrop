@@ -83,9 +83,7 @@ Modules included with Eggdrop
     This module provides very basic seen commands via msg, on channel
     or via dcc. This module works only for users in the bot's
     userlist. If you are looking for a better and more advanced seen
-    module, try the gseen module by G'Quann. You can find it at
-    https://www.kreativrauschen.com/gseen.mod/ and
-    https://github.com/michaelortmann/gseen.mod.
+    module, try the gseen module, originally written by G'Quann and forked/updated for modern Eggdrop by mortmann. You can find it at `<https://github.com/michaelortmann/gseen.mod>`_
 
 :ref:`server`
     This module provides the core server support. You have to load
@@ -105,7 +103,7 @@ Modules included with Eggdrop
 
 :ref:`uptime`
     This module reports uptime statistics to the uptime contest
-    web site at https://www.eggheads.org/uptime/. Go look and see what
+    web site at `<https://www.eggheads.org/uptime>`_. Go look and see what
     your uptime is! It takes about 9 hours to show up, so if your
     bot isn't listed, try again later. See doc/settings/mod.uptime
     for more information, including details on what information is
