@@ -9,7 +9,7 @@
 ###  %bdump%b <text>
    Dumps the given text to the IRC server.
 
-   See http://www.ietf.org/rfc/rfc1459.txt for more information on the
+   See https://www.ietf.org/rfc/rfc1459.txt for more information on the
    IRC protocol.
 %{help=jump}%{+m}
 ###  %bjump%b [server [[+]port [pass]]]
