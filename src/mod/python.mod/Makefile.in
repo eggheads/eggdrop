@@ -42,6 +42,5 @@ distclean: clean
  ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
  ../../../src/mod/irc.mod/irc.h ../../../src/mod/server.mod/server.h \
- ../../../src/mod/python.mod/python.h \
- ../../../src/mod/python.mod/pycmds.c \
- ../../../src/mod/python.mod/tclpython.c
+ .././python.mod/python.h .././python.mod/pycmds.c \
+ .././python.mod/tclpython.c
