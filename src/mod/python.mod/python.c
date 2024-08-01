@@ -35,7 +35,7 @@
 #include <datetime.h>
 #include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
-#include "src/mod/python.mod/python.h"
+#include "python.h"
 
 //static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
@@ -43,8 +43,8 @@ static PyObject *pirp, *pglobals;
 #undef global
 static Function *global = NULL, *irc_funcs = NULL;
 static PyThreadState *_pythreadsave;
-#include "src/mod/python.mod/pycmds.c"
-#include "src/mod/python.mod/tclpython.c"
+#include "pycmds.c"
+#include "tclpython.c"
 
 EXPORT_SCOPE char *python_start(Function *global_funcs);
 
@@ -64,6 +64,8 @@ static int python_gil_lock() {
 }
 
 static char *init_python() {
+  const char *venv;
+  char venvpython[PATH_MAX];
   PyObject *pmodule;
   PyStatus status;
   PyConfig config;
@@ -71,6 +73,14 @@ static char *init_python() {
   PyConfig_InitPythonConfig(&config);
   config.install_signal_handlers = 0;
   config.parse_argv = 0;
+  if ((venv = getenv("VIRTUAL_ENV"))) {
+    snprintf(venvpython, sizeof venvpython, "%s/bin/python3", venv);
+    status = PyConfig_SetBytesString(&config, &config.executable, venvpython);
+    if (PyStatus_Exception(status)) {
+      PyConfig_Clear(&config);
+      return "Python: Fatal error: Could not set venv executable";
+    }
+  }
   status = PyConfig_SetBytesString(&config, &config.program_name, argv0);
   if (PyStatus_Exception(status)) {
     PyConfig_Clear(&config);
@@ -104,13 +114,6 @@ static char *init_python() {
   return NULL;
 }
 
-static void kill_python() {
-  if (Py_FinalizeEx() < 0) {
-    exit(120);
-  }
-  return;
-}
-
 static void python_report(int idx, int details)
 {
   if (details)
@@ -119,13 +122,13 @@ static void python_report(int idx, int details)
 
 static char *python_close()
 {
-  del_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
-  del_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
-  kill_python();
-  rem_builtins(H_dcc, mydcc);
-  rem_tcl_commands(my_tcl_cmds);
-  module_undepend(MODULE_NAME);
-  return NULL;
+  /* Forbid unloading, because:
+   * - Reloading (Reexecuting PyDateTime_IMPORT) would crash
+   * - Py_FinalizeEx() does not clean up everything
+   * - Complexity regarding running python threads
+   * see https://bugs.python.org/issue34309 for details
+   */
+  return "The " MODULE_NAME " module is not allowed to be unloaded.";
 }
 
 static Function python_table[] = {
@@ -155,7 +158,7 @@ char *python_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires irc module 1.5 or later.";
   }
-  // irc.mod depends on server.mod and channels.mod, so those were implicitely loaded
+  // irc.mod depends on server.mod and channels.mod, so those were implicitly loaded
 
   if ((s = init_python()))
     return s;

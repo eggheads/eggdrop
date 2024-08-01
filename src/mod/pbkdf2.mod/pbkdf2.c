@@ -15,7 +15,6 @@
 #define MODULE_NAME "encryption2"
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
-#include <sys/resource.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
