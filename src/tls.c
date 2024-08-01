@@ -227,10 +227,16 @@ int ssl_init()
      *       print this fingerprint to every user / every partyline login
      *       maybe only print it when webui is enabled
      *       compatibility to older openssl is possible, similar to #1411
-     *       this functionality could be sepped into a side-PR */
+     *       this functionality could be sepped into a side-PR
+     *       or functionality of #1411 can be reused once merged
+     *
+     *       for now, just disable the fingerprint for openssl < 1.0.2
+     */
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
     putlog(LOG_MISC, "*", "Certificate loaded: %s (sha1 fingerprint %s)",
            tls_certfile,
            ssl_getfp_from_cert(SSL_CTX_get0_certificate(ssl_ctx)));
+#endif
 
     if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
