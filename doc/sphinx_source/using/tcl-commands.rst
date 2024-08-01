@@ -909,7 +909,7 @@ channel add <name> [option-list]
 channel set <name> <options...>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.
+  Description: sets options for the channel specified. `options` is a flat list of either +/-settings or key/value pairs. The full list of possible options are given in doc/settings/mod.channels. Note: Tcl code settings such as the need-* settings must be valid Tcl code as a single word, for example ``channel set #lamest need-op { putmsg ChanServ "op #lamest" }``
 
   Returns: nothing
 
@@ -1136,7 +1136,7 @@ nick2hand <nickname> [channel]
   Module: irc
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-account2nicks <handle> [channel]
+account2nicks <account> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
@@ -2199,6 +2199,26 @@ setflags <dir> [<flags> [channel]]
   Returns: 0 on success; -1 or -3 on failure
 
   Module: filesys
+
+PBKDF2 Module
+-------------
+
+^^^^^^^^^^^^^^^
+encpass2 <pass>
+^^^^^^^^^^^^^^^
+
+
+  Returns: a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
+
+  Module: pbkdf2
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
+
+  Module: pbkdf2
 
 Miscellaneous Commands
 ----------------------
@@ -3282,7 +3302,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <idx> <text>
 
-  Description: party line and file system users have their text sent through filt before being processed. If the proc returns a blank string, the text is considered parsed. Otherwise, the bot will use the text returned from the proc and continue parsing that
+  Description: party line and file system users have their text sent through filt before being processed. 'mask' is a text mask that can contain wildcards and is used for matching text sent on the partyline. If the proc returns a blank string, the partyline texr is continued to be parsed as-is. Otherwise, the bot will instead use the text returned from the proc for continued parsing.
 
   Module: core
 

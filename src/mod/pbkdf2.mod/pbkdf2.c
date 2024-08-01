@@ -10,10 +10,11 @@
 #include "src/mod/module.h"
 
 #if OPENSSL_VERSION_NUMBER >= 0x1000000fL /* 1.0.0 */
+#include "tclpbkdf2.c"
+
 #define MODULE_NAME "encryption2"
 
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
-#include <sys/resource.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
@@ -108,7 +109,7 @@ static char *pbkdf2_hash(const char *pass, const char *digest_name,
                          digestlen, buf)) {
     explicit_bzero(buf, digestlen);
     explicit_bzero(out, outlen);
-    putlog(LOG_MISC, "*", "PBKDF2 error: PKCS5_PBKDF2_HMAC(): %s.",
+    putlog(LOG_MISC, "*", "PBKDF2 key derivation error: %s.",
            ERR_error_string(ERR_get_error(), NULL));
     nfree(buf);
     return NULL;
@@ -222,21 +223,6 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
     return pbkdf2_encrypt(pass);
   return (char *) encrypted;
 }
-
-static int tcl_encpass2 STDVAR
-{
-  BADARGS(2, 2, " string");
-  if (strlen(argv[1]) > 0)
-    Tcl_AppendResult(irp, pbkdf2_encrypt(argv[1]), NULL);
-  else
-    Tcl_AppendResult(irp, "", NULL);
-  return TCL_OK;
-}
-
-static tcl_cmds my_tcl_cmds[] = {
-  {"encpass2", tcl_encpass2},
-  {NULL,       NULL}
-};
 
 static tcl_ints my_tcl_ints[] = {
   {"pbkdf2-re-encode", &pbkdf2_re_encode, 0},

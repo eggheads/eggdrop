@@ -88,8 +88,10 @@ static int is_compressedfile(char *filename)
   if (!zin)
     return COMPF_FAILED;
   len1 = gzread(zin, buf1, sizeof(buf1));
-  if (len1 < 0)
+  if (len1 < 0) {
+    gzclose(zin);
     return COMPF_FAILED;
+  }
   if (gzclose(zin) != Z_OK)
     return COMPF_FAILED;
 
@@ -142,6 +144,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
 
   fout = fopen(f_target, "wb");
   if (!fout) {
+    gzclose(fin);
     putlog(LOG_MISC, "*", "Failed to uncompress file `%s': open failed: %s.",
            f_src, strerror(errno));
     return COMPF_ERROR;
@@ -152,6 +155,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if (len < 0) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzread failed.",
              f_src);
+      gzclose(fin);
       fclose(fout);
       return COMPF_ERROR;
     }
@@ -160,6 +164,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
              "failed: %s.", f_src, strerror(errno));
+      gzclose(fin);
       fclose(fout);
       return COMPF_ERROR;
     }
@@ -167,6 +172,7 @@ static int uncompress_to_file(char *f_src, char *f_target)
   if (fclose(fout)) {
     putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fclose failed: %s.",
            f_src, strerror(errno));
+    gzclose(fin);
     return COMPF_ERROR;
   }
   if (gzclose(fin) != Z_OK) {
@@ -396,7 +402,7 @@ static int compress_report(int idx, int details)
   if (details) {
     int size = compress_expmem();
 
-    dprintf(idx, "    zlib version %s\n", ZLIB_VERSION);
+    dprintf(idx, "    zlib version: %s (header version " ZLIB_VERSION ")\n", zlibVersion());
     dprintf(idx, "    %u file%s compressed\n", compressed_files,
             (compressed_files != 1) ? "s" : "");
     dprintf(idx, "    %u file%s uncompressed\n", uncompressed_files,

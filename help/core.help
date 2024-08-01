@@ -7,15 +7,17 @@ DCC commands for %B, %V:
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
       %bbotinfo      relay        -host        fprint%b
-      %bchfinger%b
+      %bchfinger     back         note         -account%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
+      %bresetconsole%b
 %{+t}
    For botnet masters:
       %b+bot         botattr      chhandle     chpass%b
       %b+host        -bot         link         chaddr%b
       %bboot         unlink       banner       dccstat%b
+      %b+account%b
 %{+m|m}
    For channel masters:
       %bchattr       save         backup       reload%b

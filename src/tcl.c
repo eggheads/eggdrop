@@ -183,9 +183,10 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
                         EGG_CONST char *name1,
                         EGG_CONST char *name2, int flags)
 {
-  char *s, s1[40];
+  char *s, s1[40], *endptr;
   long l;
   intinfo *ii = (intinfo *) cdata;
+  int p;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Special cases */
@@ -223,10 +224,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
 
         default_uflags = fr.udef_global;
       } else if ((int *) ii->var == &userfile_perm) {
-        int p = oatoi(s);
-
-        if (p <= 0)
-          return "Invalid userfile permissions";
+        p = strtol(s, &endptr, 8);
+        if ((p < 01) || (p > 0777) || (*endptr))
+          return "Invalid userfile permissions, must be octal between 01 and 0777";
         userfile_perm = p;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
         return "Read-only variable";
@@ -767,6 +767,7 @@ Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
 {
   int stridx = 0, bufidx = 0;
   char *buf = nmalloc(len);
+  Tcl_Obj *o;
 
   while (stridx < len) {
     uint32_t low, high;
@@ -787,7 +788,10 @@ Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
       }
     }
   }
-  return Tcl_NewStringObj(buf, bufidx);
+
+  o = Tcl_NewStringObj(buf, bufidx);
+  nfree(buf);
+  return o;
 }
 
 /* C function called for ::egg_tcl_tolower/toupper/totitle
@@ -901,17 +905,10 @@ void init_unicodesup(void)
 }
 #endif /* TCL_WORKAROUND_UNICODESUP */
 
-/* Not going through Tcl's crazy main() system (what on earth was he
- * smoking?!) so we gotta initialize the Tcl interpreter
- */
-void init_tcl(int argc, char **argv)
+void init_tcl0(int argc, char **argv)
 {
   Tcl_NotifierProcs notifierprocs;
-
-  const char *encoding;
-  int i, j;
-  char *langEnv, pver[1024] = "";
-
+ 
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -923,8 +920,8 @@ void init_tcl(int argc, char **argv)
   notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-
-/* This must be done *BEFORE* Tcl_SetSystemEncoding(),
+  
+  /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */
   /* This is used for 'info nameofexecutable'.
@@ -932,6 +929,19 @@ void init_tcl(int argc, char **argv)
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
+#if TCL_MAJOR_VERSION >= 9
+  Tcl_InitSubsystems();
+#endif
+}
+
+/* Not going through Tcl's crazy main() system (what on earth was he
+ * smoking?!) so we gotta initialize the Tcl interpreter
+ */
+void init_tcl1(int argc, char **argv)
+{
+  const char *encoding;
+  int i, j;
+  char *langEnv, pver[1024] = "";
 
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
@@ -1242,17 +1252,17 @@ time_t get_expire_time(Tcl_Interp * irp, const char *s) {
   long expire_foo = strtol(s, &endptr, 10);
 
   if (*endptr) {
-    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    Tcl_SetResult(irp, "bogus expire time", TCL_STATIC);
     return -1;
   }
   if (expire_foo < 0) {
-    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    Tcl_SetResult(irp, "expire time must be 0 (perm) or greater than 0 days", TCL_STATIC);
     return -1;
   }
   if (expire_foo == 0)
     return 0;
   if (expire_foo > (60 * 24 * 2000)) {
-    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    Tcl_SetResult(irp, "expire time must be equal to or less than 2000 days", TCL_STATIC);
     return -1;
   }
   return now + 60 * expire_foo;

@@ -226,7 +226,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
   if (!par[0]) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :You must supply a hostmask\n", nick);
-  } else if (rfc_casecmp(u->handle, origbotname)) {
+  } else if (strcasecmp(u->handle, origbotname)) {
     /* This could be used as detection... */
     if (u_pass_match(u, "-")) {
       if (!quiet_reject)
@@ -383,7 +383,8 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     struct userrec *u;
 
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(s);
+    /* Don't use s for host here, b/c if we don't have m, we won't have s */
+    u = get_user_from_member(m);
     info = get_user(&USERENTRY_INFO, u);
     if (u && (u->flags & USER_BOT))
       info = 0;
@@ -431,7 +432,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[UHOSTLEN + 1], s1[143], *s2, stime[14];
+  char s1[143], *s2, stime[14], uhost[NICKLEN + UHOSTLEN];
   int ok;
   struct chanset_t *chan;
   memberlist *m;
@@ -454,7 +455,8 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   }
   if (strlen(par) > NICKMAX)
     par[NICKMAX] = 0;
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHOIS %s", nick, host, u->handle, par);
+  egg_snprintf(uhost, sizeof uhost, "%s!%s", nick, host);
+  putlog(LOG_CMDS, "*", "(%s) !%s! WHOIS %s", uhost, u->handle, par);
   u2 = get_user_by_handle(userlist, par);
   if (!u2) {
     /* No such handle -- maybe it's a nickname of someone on a chan? */
@@ -462,8 +464,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     for (chan = chanset; chan && !ok; chan = chan->next) {
       m = ismember(chan, par);
       if (m) {
-        egg_snprintf(s, sizeof s, "%s!%s", par, m->userhost);
-        u2 = get_user_by_host(s);
+        u2 = get_user_from_member(m);
         if (u2) {
           ok = 1;
           dprintf(DP_HELP, "NOTICE %s :[%s] AKA '%s':\n", nick,

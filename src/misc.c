@@ -317,7 +317,7 @@ void maskaddr(const char *s, char *nw, int type)
   u = strchr(s, '!');
   if (u)
     h = strchr(u, '@');
-  if (!h){
+  if (!h) {
     h = strchr(s, '@');
     u = 0;
   }
@@ -1422,6 +1422,7 @@ void make_rand_str(char *s, const int len)
 
 /* Convert an octal string into a decimal integer value.  If the string
  * is empty or contains non-octal characters, -1 is returned.
+ * Deprecated, use strtol() instead.
  */
 int oatoi(const char *octal)
 {

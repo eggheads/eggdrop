@@ -531,6 +531,12 @@ static char *ssl_printname(X509_NAME *name)
 
   /* X509_NAME_oneline() is easier and shorter, but is deprecated and
      the manual discourages it's usage, so let's not be lazy ;) */
+  if (!bio) {
+    debug0("TLS: ssl_printname(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   if (X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ)) {
     len = BIO_get_mem_data(bio, &data);
     if (len > 0) {
@@ -564,6 +570,12 @@ static char *ssl_printtime(ASN1_UTCTIME *t)
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
+  if (!bio) {
+    debug0("TLS: ssl_printtime(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data);
   if (len > 0) {
@@ -591,6 +603,12 @@ static char *ssl_printnum(ASN1_INTEGER *i)
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
+  if (!bio) {
+    debug0("TLS: ssl_printnum(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data);
   if (len > 0) {
@@ -712,7 +730,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
           !(data->verify & TLS_VERIFYFROM)) ||
           ((err == X509_V_ERR_CERT_HAS_EXPIRED) &&
           !(data->verify & TLS_VERIFYTO))) {
-        debug1("TLS: peer certificate warning: %s",
+        putlog(data->loglevel, "*", "TLS: peer certificate warning: %s",
                X509_verify_cert_error_string(err));
         ok = 1;
       }
@@ -740,7 +758,6 @@ static void ssl_info(const SSL *ssl, int where, int ret)
 #endif
   SSL_CIPHER *cipher;
   int secret, processed, i;
-  EVP_PKEY *key;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
     return;
@@ -783,11 +800,14 @@ static void ssl_info(const SSL *ssl, int where, int ret)
       buf[i - 1] = 0;
     debug1("TLS: cipher details: %s", buf);
 
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+    EVP_PKEY *key;
     if (SSL_get_server_tmp_key((SSL *) ssl, &key)) {
       putlog(LOG_DEBUG, "*", "TLS: diffie–hellman ephemeral key used: %s, bits %d",
              OBJ_nid2sn(EVP_PKEY_id(key)), EVP_PKEY_bits(key));
       EVP_PKEY_free(key);
     }
+#endif
   } else if (where & SSL_CB_ALERT) {
     if (strcmp(SSL_alert_type_string(ret), "W") ||
         strcmp(SSL_alert_desc_string(ret), "CN")) {
@@ -797,7 +817,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              SSL_alert_desc_string_long(ret));
     } else {
       /* Ignore close notify warnings */
-      debug1("Received close notify warning during %s",
+      debug1("TLS: Received close notify during %s",
              (where & SSL_CB_READ) ? "read" : "write");
     }
   } else if (where & SSL_CB_EXIT) {
@@ -817,10 +837,16 @@ static void ssl_info(const SSL *ssl, int where, int ret)
                SSL_state_string_long(ssl));
       }
     }
-  } else {
-    /* Display the state of the engine for debugging purposes */
-    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
   }
+  /* Display the state of the engine for debugging purposes */
+  else if (where == SSL_CB_HANDSHAKE_START)
+    debug1("TLS: handshake start: %s", SSL_state_string_long(ssl));
+  else if (where == SSL_CB_CONNECT_LOOP)
+    debug1("TLS: connect loop: %s", SSL_state_string_long(ssl));
+  else if (where == SSL_CB_ACCEPT_LOOP)
+    debug1("TLS: accept loop: %s", SSL_state_string_long(ssl));
+  else
+    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
 }
 
 /* Switch a socket to SSL communication
@@ -900,9 +926,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
                SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
-    struct timespec req = { 0, 1000000L };
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
+    const struct timespec req = { 0, 1000000L };
     nanosleep(&req, NULL);
 #ifdef SSL_set_tlsext_host_name
     if (*data->host)

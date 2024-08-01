@@ -53,12 +53,6 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#else
-#  include <time.h>
-#endif
-
 #ifdef STOP_UAC                         /* OSF/1 complains a lot */
 #  include <sys/sysinfo.h>
 #  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
@@ -67,12 +61,7 @@
 #include "version.h"
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "bg.h"
-
-#ifdef DEBUG                            /* For debug compile */
-#  include <sys/resource.h>             /* setrlimit() */
-#endif
 
 #ifdef HAVE_GETRANDOM
 #  include <sys/random.h>
@@ -108,7 +97,7 @@ int egg_numver = EGG_NUMVER;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
-int default_uflags = 0;         /* Default user-definied flags            */
+int default_uflags = 0;         /* Default user-defined flags             */
 
 int backgrd = 1;    /* Run in the background?                        */
 int con_chan = 0;   /* Foreground: constantly display channel stats? */
@@ -130,7 +119,7 @@ int make_userfile = 0; /* Using bot in userfile-creation mode? */
 int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
 int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 
-char version[81];    /* Version info (long form)  */
+char version[128];   /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
 volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
@@ -303,10 +292,10 @@ static void write_debug()
             tcl_resultstring() : "*unknown*");
 
     /* info tclversion/patchlevel */
-    dprintf(-x, "Tcl version: %s (header version %s)\n",
+    dprintf(-x, "Tcl version: %s (header version " TCL_PATCH_LEVEL ")\n",
             ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
             tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-            tcl_resultstring() : "*unknown*", TCL_PATCH_LEVEL);
+            tcl_resultstring() : "*unknown*");
 
     if (tcl_threaded())
       dprintf(-x, "Tcl is threaded\n");
@@ -565,6 +554,7 @@ static void core_secondly()
   int miltime;
   time_t nowmins;
   int i;
+  uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
   cnt++;
@@ -595,14 +585,14 @@ static void core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowmins != lastmin) {
       /* Timer drift, dammit */
-      debug1("timer: drift (%" PRId64 " seconds)", (int64_t) (nowmins - lastmin));
+      drift_mins = nowmins - lastmin;
+      debug2("timer: drift (%" PRId64 " minute%s)", drift_mins, drift_mins == 1 ? "" : "s");
       i++;
       ++lastmin;
       call_hook(HOOK_MINUTELY);
     }
-    if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %" PRId64 " minutes",
-             ((int64_t) (nowmins - lastmin)) / 60);
+    if (i)
+      putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
@@ -722,7 +712,8 @@ int init_userent();
 int init_misc();
 int init_bots();
 int init_modules();
-void init_tcl(int, char **);
+void init_tcl0(int, char **);
+void init_tcl1(int, char **);
 void init_language(int);
 #ifdef TLS
 int ssl_init();
@@ -893,14 +884,17 @@ static void mainloop(int toplevel)
       }
 
       kill_tcl();
-      init_tcl(argc, argv);
+      init_tcl1(argc, argv);
       init_language(0);
 
       /* this resets our modules which we didn't unload (encryption and uptime) */
       for (p = module_list; p; p = p->next) {
         if (p->funcs) {
           startfunc = p->funcs[MODCALL_START];
-          startfunc(NULL);
+          if (startfunc)
+            startfunc(NULL);
+          else
+            debug2("module: %s: %s", p->name, MOD_NOSTARTDEF);
         }
       }
 
@@ -925,7 +919,7 @@ static void mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+  if (getrandom(&seed, sizeof seed, 0) != (sizeof seed)) {
     if (errno != ENOSYS) {
       fatal("ERROR: getrandom()\n", 0);
     } else {
@@ -933,9 +927,15 @@ static void init_random(void) {
        * This can happen with glibc>=2.25 and linux<3.17
        */
 #endif
+#ifdef HAVE_CLOCK_GETTIME
+      struct timespec tp;
+      clock_gettime(CLOCK_REALTIME, &tp);
+      seed = ((uint64_t) tp.tv_sec * tp.tv_nsec) ^ getpid();
+#else
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
+      seed = ((uint64_t) tp.tv_sec * tp.tv_usec) ^ getpid();
+#endif
 #ifdef HAVE_GETRANDOM
     }
   }
@@ -978,15 +978,15 @@ int main(int arg_c, char **arg_v)
 #ifdef EGG_PATCH
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER, EGG_PATCH);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #endif
 
 /* For OSF/1 */
@@ -1025,6 +1025,10 @@ int main(int arg_c, char **arg_v)
   sigaction(SIGILL, &sv, NULL);
   sv.sa_handler = got_alarm;
   sigaction(SIGALRM, &sv, NULL);
+  // Added for python.mod because the _signal handler otherwise overwrites it
+  // see https://discuss.python.org/t/asyncio-skipping-signal-handling-setup-during-import-for-python-embedded-context/37054/6
+  sv.sa_handler = got_term;
+  sigaction(SIGINT, &sv, NULL);
 
   /* Initialize variables and stuff */
   now = time(NULL);
@@ -1034,6 +1038,7 @@ int main(int arg_c, char **arg_v)
   init_mem();
   if (argc > 1)
     do_arg();
+  init_tcl0(argc, argv);
   init_language(1);
 
   printf("\n%s\n", version);
@@ -1053,7 +1058,7 @@ int main(int arg_c, char **arg_v)
   init_modules();
   if (backgrd)
     bg_prepare_split();
-  init_tcl(argc, argv);
+  init_tcl1(argc, argv);
   init_language(0);
 #ifdef STATIC
   link_statics();

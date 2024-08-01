@@ -227,9 +227,4 @@ To call the bind, Eggdrop coding style is to name that function "check_tcl_bindn
     return (x == BIND_EXEC_LOG);
   }
 
-Now that we have encountered a condition that triggers the bind type (in code by calling ``check_tcl_woobie()`` ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with ``check_tcl_bind()``, called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from ``check_tcl_bind()`` to take additional action by Eggdrop. You can read more about the specific calues used in ``check_tcl_bind`` in :ref:`triggering_any_bind`
-
-Exporting the Bind
-------------------
-
-Do we need to do this?
+Now that we have encountered a condition that triggers the bind type (in code by calling ``check_tcl_woobie()`` ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with ``check_tcl_bind()``, called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from ``check_tcl_bind()`` to take additional action by Eggdrop. You can read more about the specific values used in ``check_tcl_bind`` in :ref:`triggering_any_bind`
