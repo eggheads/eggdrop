@@ -1010,7 +1010,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
       char *body = "(WIP) webui: plain HTTP request received on an SSL port";
       i = snprintf(response, sizeof response,
         "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
-        "Content-Length: %li\r\n"
+        "Content-Length: %zu\r\n"
         "Server: Eggdrop/%s+%s\r\n"
         "\r\n%.*s", strlen(body), EGG_STRINGVER, EGG_PATCH, (int) strlen(body), body);
       write(sock, response, i); // TODO: tputs(sock, response, i); after reading of remaining bytes / ssl shutdown ?
