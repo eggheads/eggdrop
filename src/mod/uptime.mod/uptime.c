@@ -1,8 +1,8 @@
 /*
- * This module reports uptime information about your bot to
- * http://uptime.eggheads.org. The purpose for this is to see how your bot rates
- * against many others (including EnergyMechs and Eggdrops) -- It is a fun
- * little project, jointly run by Eggheads.org and EnergyMech.net.
+ * This module reports uptime statistics to the uptime contest web site at
+ * https://www.eggheads.org/uptime/. The purpose for this is to see how your
+ * bot rates against many others (including EnergyMechs and Eggdrops) -- It is
+ * a fun little project, jointly run by Eggheads.org and EnergyMech.net.
  *
  * If you don't like being a part of it please just unload this module.
  *
