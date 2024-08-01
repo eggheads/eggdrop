@@ -132,9 +132,9 @@ Eggdrop requires the following packages to be added from the Cygwin
 installation tool prior to compiling:
 
     Interpreters: tcl, tcl-devel
-    Net:          openssl, libssl-devel
+    Net:          openssl-devel
     Devel:        autoconf, gcc-core, git, make
-    Libs:         zlib-devel
+    Utils:        diffutils
 
 MODULES
 
