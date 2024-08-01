@@ -1028,10 +1028,8 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
              "TLS: handshake failed due to the following error: %s",
              ERR_reason_error_string(err));
       debug0("TLS: handshake failed due to the following errors: ");
-      while ((err = ERR_get_error())) {
-	printf("err = %ul\n", err);
+      while ((err = ERR_get_error()))
         debug1("TLS: %s", ERR_error_string(err, NULL));
-      }
     }
   }
 
