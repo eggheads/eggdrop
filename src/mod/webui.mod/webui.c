@@ -286,7 +286,7 @@ static void webui_http_activity(int idx, char *buf, int len)
 #else
     SHA_CTX c;
     SHA1_Init(&c);
-    SHA1_Update(&c, buf, KEYLEN);
+    SHA1_Update(&c, buf, WS_KEYLEN);
     SHA1_Update(&c, WS_GUID, (sizeof WS_GUID) - 1);
     SHA1_Final(hash, &c);
 #endif
