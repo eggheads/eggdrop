@@ -998,9 +998,31 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   }
   if ((err = ERR_peek_error())) {
     if (ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
-        ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST)
+        ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST) {
+
+
+
       /* TODO: check if this is really a webui port, report source host (info in dcc[i]?) and give hint to use https:// */
       putlog(LOG_MISC, "*", "TLS: error: plain HTTP request received on an SSL port, sock %i", sock);
+      #include "version.h"
+      int i;
+      char response[4096];
+      char *body = "(WIP) webui: plain HTTP request received on an SSL port";
+      i = snprintf(response, sizeof response,
+        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "Content-Length: %li\r\n"
+        "Server: Eggdrop/%s+%s\r\n"
+        "\r\n%.*s", strlen(body), EGG_STRINGVER, EGG_PATCH, (int) strlen(body), body);
+      write(sock, response, i); // TODO: tputs(sock, response, i); after reading of remaining bytes / ssl shutdown ?
+      /*
+      do/for/while read(sock, ...);
+      SSL_set_shutdown(td->socklist[i].ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
+      */
+      debug2("webui: tputs(): >>>%s<<< %i", response, i);
+
+
+
+    }
     else {
       putlog(data->loglevel, "*",
              "TLS: handshake failed due to the following error: %s",
