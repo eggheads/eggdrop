@@ -27,9 +27,9 @@ What is Eggdrop?
     information, hosting games, etc.
 
     One of the features that makes Eggdrop stand out from other bots is module
-    and Tcl scripting support. With scripts and modules you can make the bot
-    perform almost any task you want. They can do anything: from preventing
-    floods to greeting users and banning advertisers from channels.
+    and Tcl and Python scripting support. With scripts and modules you can
+    make the bot perform almost any task you want. They can do anything: from
+    preventing floods to greeting users and banning advertisers from channels.
 
     You can also link multiple Eggdrop bots together to form a botnet. This
     can allow bots to op each other securely, control floods efficiently and
