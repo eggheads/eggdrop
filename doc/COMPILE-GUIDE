@@ -150,6 +150,10 @@ Last revised: Auf 2, 2024
 
         ./configure --with-tcl=/System/Volumes/Data/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh -with-sslinc=/usr/local/Cellar/openssl@3/3.0.7/include --with-ssllib=/usr/local/Cellar/openssl@3/3.0.7/lib
 
+      You can also try try MacPorts (formerly DarwinPorts):
+
+        https://ports.macports.org/port/eggdrop
+
 
     C. Cygwin / Windows
       To compile and install Eggdrop on windows, perform the steps listed
