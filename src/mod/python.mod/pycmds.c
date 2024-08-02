@@ -156,7 +156,7 @@ static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *co
 }
 
 static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
-  int max;
+  Tcl_Size max;
   const char *str;
   Tcl_Obj *strobj;
   PyObject *result;
@@ -175,7 +175,7 @@ static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
   for (int i = 0; i < max; i++) {
     Tcl_Obj *tclobj;
     const char *tclstr;
-    int tclstrlen;
+    Tcl_Size tclstrlen;
 
     Tcl_ListObjIndex(tclinterp, strobj, i, &tclobj);
     tclstr = Tcl_GetStringFromObj(tclobj, &tclstrlen);
@@ -203,7 +203,7 @@ static PyObject *py_parse_tcl_dict(PyObject *self, PyObject *args) {
   }
   result = PyDict_New();
   while (!done) {
-    int len;
+    Tcl_Size len;
     const char *valstr = Tcl_GetStringFromObj(value, &len);
     PyObject *pyval = PyUnicode_DecodeUTF8(valstr, len, NULL);
     PyDict_SetItemString(result, Tcl_GetString(key), pyval);
