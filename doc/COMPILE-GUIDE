@@ -155,24 +155,34 @@ Last revised: Jul 31, 2024
       To compile and install Eggdrop on windows, perform the steps listed
       below.
 
-        1. Download and install Cygwin (www.cygwin.com). Make sure to install
-           things like GCC, zlib, minires, autoconf, and automake. DO NOT
-           install the Tcl provided by Cygwin's installer. After installing,
-           open the Cygwin bash prompt.
+        1. Download and install Cygwin (https://cygwin.com). Select packages:
+             autoconf
+             automake
+             binutils
+             gcc-core
+             git
+             make
+             mingw64-x86_64-gcc-core
+             openssl
+             libssl-devel
+             tcl
+             tcl-devel
+           After installing, open the Cygwin bash prompt.
 
-        2. Download and install TCL 8.5.9. You can get Tcl for Cygwin at
-           http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz.
-           http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz.
-           Extract this to the Cygwin root directory:
+        2. Optional: Instead of Cygwins OpenSSL, you can download and install
+           OpenSSL 3.3.1:
+             curl -LO https://github.com/openssl/openssl/releases/download/openssl-3.3.1/openssl-3.3.1.tar.gz
+             tar -zxf openssl-3.3.1.tar.gz
+             cd openssl-3.3.1
+             ./config
+             make
+             make install
 
-             cd /
-             tar -zxf tcl-8.5.9.tar.gz
-
-        3. Download Eggdrop from https://geteggdrop.com/ to your home directory.
+        3. Download Eggdrop from https://geteggdrop.com to your home directory.
            This is usually something like 'C:\cygwin\home\<username>\'. After
            downloading, extract the Eggdrop tarball:
 
-             tar -zxf eggdrop-1.9.2.tar.gz
+             tar -zxf eggdrop-1.9.5.tar.gz
 
         4. Run './configure --enable-strip'. Debugging information under
            Windows is basically useless to the development team, and this will
@@ -191,13 +201,13 @@ Last revised: Jul 31, 2024
            Make sure to enclose the destination directory/folder in single
            quotes (''), especially if it contains spaces.
 
-        8. Perform the following commands:
+        8. Remove symbolic links:
 
              cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
              rm eggdrop.exe
-             mv eggdrop.exe-1.9.2 eggdrop.exe
-             mv modules-1.9.2 modules
+             mv eggdrop.exe-1.9.5 eggdrop.exe
+             mv modules-1.9.5 modules
 
         9. Create a 'lib' directory and copy needed libraries using the
            following commands. This assumes that you installed your Eggdrop in
@@ -206,16 +216,15 @@ Last revised: Jul 31, 2024
            directory, replacing all '\'s with '/'s.
 
              cp /bin/cygwin1.dll 'C:/eggdrop'
-             cp /usr/local/bin/libtcl8.5.dll 'C:/eggdrop'
+             cp /usr/local/bin/libtcl8.6.dll 'C:/eggdrop'
              cp /usr/local/bin/tclpip84.dll 'C:/eggdrop'
-             cp /bin/cyggcc_s-1.dll 'C:/eggdrop'
 
-             cp /bin/cygcrypto-0.9.8.dll 'C:/eggdrop' (if compiled with ssl)
-             cp /bin/cygssl-0.9.8.dll 'C:/eggdrop' (if compiled with ssl)
+             cp /bin/cygcrypto-3.dll 'C:/eggdrop' (if compiled with ssl)
+             cp /bin/cygssl-3.dll 'C:/eggdrop' (if compiled with ssl)
 
              mkdir C:/eggdrop/lib
              cp -r /usr/local/lib/tcl 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/tcl8.5 'C:/eggdrop/lib'
+             cp -r /usr/local/lib/tcl8.6 'C:/eggdrop/lib'
 
              cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
 
