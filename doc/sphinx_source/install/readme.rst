@@ -65,11 +65,7 @@ FTP
 Git Development Snapshot
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-    Eggdrop development is based on git. If you are interested in trying out
-    the VERY LATEST updates to Eggdrop, you may be interested in pulling the
-    most recent code from there. BE WARNED, the development branch of Eggdrop
-    is not to be considered stable and may (haha) have some significant bugs
-    in it.
+    Eggdrop developers use git to manage the Eggdrop codebase for development. If you are interested in trying out the VERY LATEST updates to Eggdrop, you can use git to obtain most recent code from the Eggheads repository. BE WARNED, the development branch of Eggdrop is not to be considered stable and may (haha) contain significant bugs still being worked on.
 
     To obtain Eggdrop via the git repository (hosted by GitHub), you can
     either clone the repository via git or download a development snapshot.
