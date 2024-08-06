@@ -27,9 +27,9 @@ What is Eggdrop?
     information, hosting games, etc.
 
     One of the features that makes Eggdrop stand out from other bots is module
-    and Tcl scripting support. With scripts and modules you can make the bot
-    perform almost any task you want. They can do anything: from preventing
-    floods to greeting users and banning advertisers from channels.
+    and Tcl and Python scripting support. With scripts and modules you can
+    make the bot perform almost any task you want. They can do anything: from
+    preventing floods to greeting users and banning advertisers from channels.
 
     You can also link multiple Eggdrop bots together to form a botnet. This
     can allow bots to op each other securely, control floods efficiently and
@@ -65,11 +65,7 @@ FTP
 Git Development Snapshot
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-    Eggdrop development has moved from a CVS-based version control system to
-    git. If you are interested in trying out the VERY LATEST updates to
-    Eggdrop, you may be interested in pulling the most recent code from
-    there. BE WARNED, the development branch of Eggdrop is not to be
-    considered stable and may (haha) have some significant bugs in it.
+    Eggdrop developers use git to manage the Eggdrop codebase for development. If you are interested in trying out the VERY LATEST updates to Eggdrop, you can use git to obtain most recent code from the Eggheads repository. BE WARNED, the development branch of Eggdrop is not to be considered stable and may (haha) contain significant bugs still being worked on.
 
     To obtain Eggdrop via the git repository (hosted by GitHub), you can
     either clone the repository via git or download a development snapshot.
