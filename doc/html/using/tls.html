@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TLS support &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>TLS support &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="ipv6.html" title="IPv6 support"
              accesskey="P">previous</a> |
@@ -60,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="text-sub.html">Textfile Substitutions</a></li>
@@ -72,6 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -108,11 +110,11 @@ Last revised: Jan 26, 2020</p>
 <section id="tls-support">
 <h1>TLS support<a class="headerlink" href="#tls-support" title="Link to this heading">¶</a></h1>
 <p>This document provides information about TLS support which is a new
-eggdrop feature since version 1.8.0.</p>
+Eggdrop feature since version 1.8.0.</p>
 <section id="about">
 <h2>About<a class="headerlink" href="#about" title="Link to this heading">¶</a></h2>
 <p>Eggdrop can be optionally compiled with TLS support. This requires OpenSSL
-0.9.8 or more recent installed on your system.
+0.9.8 or later installed on your system.
 TLS support includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.</p>
 </section>
@@ -180,7 +182,7 @@ starttls Tcl/bot command</p></td>
 </tr>
 </tbody>
 </table>
-<p>In short, a bot added to your Eggdrop with a +port in the address can only connect to a bot listening with a +port in the config. Conversely, a bot added to your eggdrop without a + prefix can only connect to a bot listening without a + prefix in the config.</p>
+<p>In short, a bot added to your Eggdrop with a +port in the address can only connect to a bot listening with a +port in the config. Conversely, a bot added to your Eggdrop without a + prefix can only connect to a bot listening without a + prefix in the config.</p>
 <p>If TLS negotiation fails, the connection is deliberately aborted and no clear text is ever sent by the TLS-requiring party.</p>
 <p>Eggdrop can also upgrade a plaintext connection with the starttls Tcl command. To use this, a plaintext connection is first made to a non-TLS port (ie, one that is not prefixed with a plus), then the starttls command is issued to upgrade that link to a TLS connection. In the Eggdrop 1.8 series, Eggdrop automatically attempted a starttls upgrade on all botnet connections. As such, if a 1.8 Eggdrop connects to a plain listening port on a 1.9.0 or later Eggdrop, it will automatically attempt to upgrade the link to TLS.</p>
 </section>
@@ -198,7 +200,7 @@ from the bot with /ctcp bot chat), consult the KVIrc documentation.</p>
 port with a plus sign. Alternatively, the connection could be
 established as plaintext and later switched on with the starttls Tcl
 command. (Note that the other side should also switch to TLS at the same
-time - the synchronization is the script’s job, not eggdrop’s.)</p>
+time - the synchronization is the script’s job, not Eggdrop’s.)</p>
 </section>
 </section>
 <section id="keys-certificates-and-authentication">
@@ -209,7 +211,7 @@ bots and TLS listening ports. General information about certificates and
 public key infrastructure can be obtained from Internet. This document
 only contains eggdrop-specific information on the subject.
 The easy way to create a key and a certificate is to type ‘make sslcert’
-after compiling your bot (If you installed eggdrop to a non-standard
+after compiling your bot (If you installed Eggdrop to a non-standard
 location, use make sslcert DEST=/path/to/eggdrop). This will generate a
 4096-bit private key (eggdrop.key) and a certificate (eggdrop.crt) after
 you fill in the required fields. Alternatively, you can use ‘make sslsilent’
@@ -220,12 +222,12 @@ make a ssl certificate for yourself and enable ssl-cert-auth in the config
 file. Then either connect to the bot using TLS and type “.fprint +” or
 enter your certificate fingerprint with .fprint SHA1-FINGERPRINT.
 To generate a ssl certificate for yourself, you can run the following
-command from the eggdrop source directory:</p>
+command from the Eggdrop source directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">nodes</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">config</span> <span class="n">ssl</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
 <p>When asked about bot’s handle, put your handle instead. How to use your
-new certificate to connect to eggdrop, depends on your irc client.
+new certificate to connect to Eggdrop, depends on your irc client.
 To connect to your bot from the command line, you can use the OpenSSL
 ssl client:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">s_client</span> <span class="o">-</span><span class="n">cert</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">key</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">connect</span> <span class="n">host</span><span class="p">:</span><span class="n">sslport</span>
@@ -325,7 +327,7 @@ or expired certificates. Details are documented in eggdrop.conf.</p>
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>

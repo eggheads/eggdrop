@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Botnet Sharing and Linking &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Botnet Sharing and Linking &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="bans.html" title="Bans, Invites, and Exempts"
              accesskey="P">previous</a> |
@@ -50,7 +50,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Botnet Sharing and Linking</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-is-a-botnet">What is a botnet?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#terms">Terms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-bottree">Example bottree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-bottrees">Example bottrees</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bot-flags">Bot Flags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-and-linking-bots">Adding and linking bots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-botflags">Using botflags</a></li>
@@ -63,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="text-sub.html">Textfile Substitutions</a></li>
@@ -75,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -158,14 +160,20 @@ could be useful to you. It also covers botflags userfile sharing.</p>
 </dd>
 </dl>
 </section>
-<section id="example-bottree">
-<h2>Example bottree<a class="headerlink" href="#example-bottree" title="Link to this heading">¶</a></h2>
+<section id="example-bottrees">
+<h2>Example bottrees<a class="headerlink" href="#example-bottrees" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>BotA
   |-+BotB
-  `-+BotC
+  |==BotC
+  |=+BotD
+  `--BotC
 </pre></div>
 </div>
-<p>BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. BotB shares passively with [receives from] BotA and shares aggressively with [sends to] BotC.</p>
+<p>Legend:
+* – means the bots are linked, but not sharing userfiles
+* -+ means the bots are sharing userfiles
+* == means the bots have an encrypted link between them, and are not sharing userfiles
+* =+ means the bots have an encrypted link between them, and are sharing userfiles</p>
 </section>
 <section id="bot-flags">
 <h2>Bot Flags<a class="headerlink" href="#bot-flags" title="Link to this heading">¶</a></h2>
@@ -431,7 +439,7 @@ them, but you would not do it on the hub or beldin.</p>
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>

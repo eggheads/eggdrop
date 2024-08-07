@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Setting Up Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Setting Up Eggdrop &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../using/patch.html" title="Patching Eggdrop"
              accesskey="P">previous</a> |
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
@@ -73,6 +74,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -122,10 +124,10 @@
 <h2>The super-short version<a class="headerlink" href="#the-super-short-version" title="Link to this heading">¶</a></h2>
 <p>You can read the <a class="reference internal" href="#installation">Installation</a> section for a more detailed explanation of these steps.</p>
 <ol class="arabic simple">
-<li><p>Download <span class="raw-html"><a href=https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.5.tar.gz>the current version of Eggdrop</a></span> to your shell via FTP, or simply type: <code class="code docutils literal notranslate"><span class="pre">wget</span> <span class="pre">geteggdrop.com</span> <span class="pre">-O</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code></p></li>
+<li><p>Download <span class="raw-html"><a href=https://ftp.eggheads.org/pub/eggdrop/source/1.10/eggdrop-1.10.0.tar.gz>the current version of Eggdrop</a></span> to your shell via FTP, or simply type: <code class="code docutils literal notranslate"><span class="pre">wget</span> <span class="pre">geteggdrop.com</span> <span class="pre">-O</span> <span class="pre">eggdrop-1.10.0.tar.gz</span></code></p></li>
 <li><p>Next, from the commandline of the shell, ensure you are in the same directory that you downloaded the tar file into</p></li>
-<li><p>Type: <code class="code docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code></p></li>
-<li><p>Type: <code class="code docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.9.5</span></code></p></li>
+<li><p>Type: <code class="code docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.10.0.tar.gz</span></code></p></li>
+<li><p>Type: <code class="code docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.10.0</span></code></p></li>
 <li><p>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code></p></li>
 <li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">config</span></code></p></li>
 <li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span></code></p></li>
@@ -139,31 +141,31 @@
 <h2>Getting the source<a class="headerlink" href="#getting-the-source" title="Link to this heading">¶</a></h2>
 <section id="history">
 <h3>History<a class="headerlink" href="#history" title="Link to this heading">¶</a></h3>
-<p>The current supported version of Eggdrop is the 1.9.x tree. Only the current major version (1.9.x) is supported; earlier major versions are not.</p>
-<p>The most current version of Eggdrop, and the one appropriate for most users, is the current 1.9 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you’re just starting out with Eggdrop, you should use 1.9.5.</p>
+<p>The current supported version of Eggdrop is the 1.10.x tree. Only the current major version (1.10.x) is supported; earlier major versions are not.</p>
+<p>The most current version of Eggdrop, and the one appropriate for most users, is the current 1.10 series. It added many features such as SASL support, multi-ip listening, and a new password hashing module. It is the most complete, feature-rich, and functional version of Eggdrop. If you’re just starting out with Eggdrop, you should use 1.10.0.</p>
 <p>Prior to that, the 1.8 series added several major features, to include IPv6 support and SSL/TLS connections. 1.6.21, which is now over 10 years old, was the last release of the 1.6 series. Because Eggdrop remained at the 1.6.21 patchlevel for several years it is still often run by users who have become comfortable with that version and don’t wish to move to a newer version- however, it is getting harder and harder to continue running 1.6 bots on modern Linux systems. Tcl scripts written for bots as far back as the 1.6 series generally work on all later versions of Eggdrop as well, so if you haven’t already- upgrade!</p>
-<p>The 1.9 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the <a class="reference external" href="https://github.com/eggheads/eggdrop/issues">Eggheads GitHub issues page.</a></p>
+<p>The 1.10 Eggdrop tree is currently under active development and the most recent changes are available in daily snapshots for users to download for testing. While the development snapshot will contain the most current, up-to-date features of Eggdrop, it is not yet considered stable and users stand a higher chance of encountering bugs during use. If you do use it and find a bug, it is highly encouraged to report it via the <a class="reference external" href="https://github.com/eggheads/eggdrop/issues">Eggheads GitHub issues page.</a></p>
 </section>
 <section id="download-locations">
 <h3>Download locations<a class="headerlink" href="#download-locations" title="Link to this heading">¶</a></h3>
-<p>The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.9.5 source, for example, would be named <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.9.5.tar.gz</span></code>.</p>
-<p><a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/">The Eggheads FTP</a> is a repository for <span class="raw-html"><a href=https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.5.tar.gz>the current version of Eggdrop</a></span>, as well as the most current development snapshot and previous stable releases.</p>
-<p>Eggdrop also maintains a <a class="reference external" href="https://github.com/eggheads/eggdrop">GitHub page</a> where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/eggheads/eggdrop.git</span></code>, then <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop</span></code>. This gives you the development version. To switch to the most recent stable version, type <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">stable/1.9</span></code>. You can then skip to step 4 in the Installation section below.</p>
+<p>The developers distribute Eggdrop via two main methods: FTP, and GitHub. For FTP, it is packaged in tarball format (with the .tar.gz filename extension), with the version number in the filename. The Eggdrop 1.10.0 source, for example, would be named <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.10.0.tar.gz</span></code>.</p>
+<p><a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/">The Eggheads FTP</a> is a repository for <span class="raw-html"><a href=https://ftp.eggheads.org/pub/eggdrop/source/1.10/eggdrop-1.10.0.tar.gz>the current version of Eggdrop</a></span>, as well as the most current development snapshot and previous stable releases.</p>
+<p>Eggdrop also maintains a <a class="reference external" href="https://github.com/eggheads/eggdrop">GitHub page</a> where you can download the development snapshot or a stable version, via either git commandline or by downloading a tarball. To download via git, type <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/eggheads/eggdrop.git</span></code>, then <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop</span></code>. This gives you the development version. To switch to the most recent stable version, type <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">stable/1.10</span></code>. You can then skip to step 4 in the Installation section below.</p>
 </section>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>Installing Eggdrop is a relatively simple process provided your shell has the required tools for successful compilation. On most commercial shell accounts which allow Eggdrop bots you won’t have any problems with installation, but on some private boxes or a shell on your ISP you may experience errors during compilation.</p>
-<p>Below is a step by step guide to the installation process. These instructions apply to 1.9 bots. It assumes you will be installing <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.9.5.tar.gz</span></code>, so just change the numbers if you are installing another version.</p>
+<p>Below is a step by step guide to the installation process. These instructions apply to 1.10 bots. It assumes you will be installing <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.10.0.tar.gz</span></code>, so just change the numbers if you are installing another version.</p>
 <ol class="arabic simple">
-<li><p>Put the Eggdrop source on your shell using one of the specified download locations, either by downloading <span class="raw-html"><a href=https://ftp.eggheads.org/pub/eggdrop/source/1.9/eggdrop-1.9.5.tar.gz>the current version of Eggdrop</a></span> to your local system and then uploading it to the shell via FTP, or downloading it directly to the shell via the shell’s FTP client, git, wget, or curl. You don’t need to put the .tar.gz file in its own directory (it’ll be done automatically in the next step).</p></li>
-<li><p>SSH to the shell (if you haven’t already), and type <code class="code docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code> (if this doesn’t work, try <code class="code docutils literal notranslate"><span class="pre">gunzip</span> <span class="pre">eggdrop-1.9.5.tar.gz</span></code> then <code class="code docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xvf</span> <span class="pre">eggdrop-1.9.5.tar</span></code>). This will extract the Eggdrop source into its installation directory, named <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.9.5</span></code>.</p></li>
-<li><p>Type <code class="code docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.9.5</span></code> switch to the directory the Eggdrop source was extracted to.</p></li>
+<li><p>Put the Eggdrop source on your shell using one of the specified download locations, either by downloading <span class="raw-html"><a href=https://ftp.eggheads.org/pub/eggdrop/source/1.10/eggdrop-1.10.0.tar.gz>the current version of Eggdrop</a></span> to your local system and then uploading it to the shell via FTP, or downloading it directly to the shell via the shell’s FTP client, git, wget, or curl. You don’t need to put the .tar.gz file in its own directory (it’ll be done automatically in the next step).</p></li>
+<li><p>SSH to the shell (if you haven’t already), and type <code class="code docutils literal notranslate"><span class="pre">tar</span> <span class="pre">zxvf</span> <span class="pre">eggdrop-1.10.0.tar.gz</span></code> (if this doesn’t work, try <code class="code docutils literal notranslate"><span class="pre">gunzip</span> <span class="pre">eggdrop-1.10.0.tar.gz</span></code> then <code class="code docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xvf</span> <span class="pre">eggdrop-1.10.0.tar</span></code>). This will extract the Eggdrop source into its installation directory, named <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.10.0</span></code>.</p></li>
+<li><p>Type <code class="code docutils literal notranslate"><span class="pre">cd</span> <span class="pre">eggdrop-1.10.0</span></code> switch to the directory the Eggdrop source was extracted to.</p></li>
 <li><p>Type <code class="docutils literal notranslate"><span class="pre">./configure</span></code> (that’s a period followed by a slash followed by the word ‘configure’).  This makes sure the shell has all the right tools for compiling Eggdrop, and helps Eggdrop figure out how to compile on the shell.</p></li>
 <li><p>When configure is done, type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">config</span></code>. This sets up which modules are to be compiled. For a more efficient installation, you can use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">iconfig</span></code> to select the modules to compile, but if you’re not sure just use make config.</p></li>
 <li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span></code>. This compiles the Eggdrop. The process takes a brief moment on fast systems, longer on slow systems.</p></li>
 <li><p>Type <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span> <span class="pre">DEST=~/botdir</span></code>. This will install Eggdrop into a directory named ‘botdir’ in your home directory. You can change ‘botdir’ to anything you like. Note that in some cases you may need to specify the full path, e.g. <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span> <span class="pre">DEST=/home/cooldude/botdir</span></code>, using the ~ character in make install won’t always work. You can get the full path by typing <code class="docutils literal notranslate"><span class="pre">pwd</span></code>.</p></li>
-<li><p>You can safely delete the installation directory named <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.9.5</span></code> (to do this, type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~</span></code> then <code class="code docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">eggdrop-1.9.5</span></code>) that was created previously, although some people may find it handy to keep that directory for performing additional or future installations of the same version without recompiling.</p></li>
+<li><p>You can safely delete the installation directory named <code class="code docutils literal notranslate"><span class="pre">eggdrop-1.10.0</span></code> (to do this, type <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~</span></code> then <code class="code docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">eggdrop-1.10.0</span></code>) that was created previously, although some people may find it handy to keep that directory for performing additional or future installations of the same version without recompiling.</p></li>
 </ol>
 <p>That’s it! Eggdrop is now installed into its own directory on the shell. It’s time to edit the configuration files to make Eggdrop work the way you want it to.</p>
 </section>
@@ -257,7 +259,7 @@
 <p>Now that your Eggdrop is on IRC and you’ve introduced yourself as owner, it’s time to learn how to use your Eggdrop!</p>
 <section id="no-show">
 <h3>No show?<a class="headerlink" href="#no-show" title="Link to this heading">¶</a></h3>
-<p>If your bot didn’t appear on IRC, you should log in to the shell and view the bot’s logfile (the default in the config file is “logs/eggdrop.log”). Note that logfile entries are not written to disk immediately unless quick-logs is enabled, so you may have to wait a few minutes before the logfile appears, or contains messages that indicate why your bot isn’t showing up.</p>
+<p>If your bot didn’t appear on IRC, you should log in to the shell and view the bot’s logfile (the default in the config file is “logs/eggdrop.log”).</p>
 <p>Additionally, you can kill the bot via the command line (<code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">pid</span></code>, the pid is shown to you when you started the bot or can be viewed by running <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">x</span></code>) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -t flag, the bot will not persist and you will kill it once you quit the partyline.</p>
 <p>If you’re still unsure what the problem is, try asking in #eggdrop on Libera, and be sure to include any relevant information from the logfile. Good luck!</p>
 </section>
@@ -291,7 +293,7 @@
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>

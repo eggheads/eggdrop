@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modules included with Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Modules included with Eggdrop &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="index.html" title="Eggdrop Module Information"
              accesskey="P">previous</a> |
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
@@ -65,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -172,6 +174,7 @@
 <li class="toctree-l1"><a class="reference internal" href="mod/notes.html">Notes Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/pbkdf2.html">PBKDF2 Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mod/python.html">Python Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mod/python.html#system-requirements">System Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/python.html#loading-python">Loading Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mod/python.html#partyline-commands">Partyline Commands</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="mod/python.html#python-expression">python &lt;expression&gt;</a></li>
@@ -182,19 +185,6 @@
 <li class="toctree-l3"><a class="reference internal" href="mod/python.html#pysource-path-to-file">pysource &lt;path/to/file&gt;</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="mod/python.html#eggdrop-python-commands">Eggdrop Python Commands</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="mod/python.html#bind-arguments">bind &lt;arguments&gt;</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mod/python.html#parse-tcl-list-string">parse_tcl_list &lt;string&gt;</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mod/python.html#parse-tcl-dict-string">parse_tcl_dict &lt;string&gt;</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="mod/python.html#config-variables">Config variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mod/python.html#writing-an-eggdrop-python-script">Writing an Eggdrop Python script</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="mod/python.html#header-section">Header section</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mod/python.html#code-section">Code Section</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="mod/python.html#writing-a-module-for-use-with-eggdrop">Writing a module for use with Eggdrop</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mod/seen.html">Seen Module</a></li>
@@ -257,8 +247,7 @@ later retrieval.</p>
 <dt><a class="reference internal" href="mod/seen.html#seen"><span class="std std-ref">Seen Module</span></a></dt><dd><p>This module provides very basic seen commands via msg, on channel
 or via dcc. This module works only for users in the bot’s
 userlist. If you are looking for a better and more advanced seen
-module, try the gseen module by G’Quann. You can find it at
-<a class="reference external" href="http://www.kreativrauschen.com/gseen.mod/">http://www.kreativrauschen.com/gseen.mod/</a>.</p>
+module, try the gseen module, originally written by G’Quann and forked/updated for modern Eggdrop by mortmann. You can find it at <a class="reference external" href="https://github.com/michaelortmann/gseen.mod">https://github.com/michaelortmann/gseen.mod</a></p>
 </dd>
 <dt><a class="reference internal" href="mod/server.html#server"><span class="std std-ref">Server Module</span></a></dt><dd><p>This module provides the core server support. You have to load
 this if you want your bot to come on IRC. Not loading this is
@@ -273,7 +262,7 @@ transfer support for userfile sharing.</p>
 <dt><a class="reference internal" href="mod/twitch.html#twitch"><span class="std std-ref">Twitch Module</span></a></dt><dd><p>The Twitch module modifies Eggdrop to interact with the Twitch service. Twitch uses a modified implementation of IRC so not all functionality will be present. Please read doc/TWITCH for specifics on how to best use the Tiwtch module.</p>
 </dd>
 <dt><a class="reference internal" href="mod/uptime.html#uptime"><span class="std std-ref">Uptime Module</span></a></dt><dd><p>This module reports uptime statistics to the uptime contest
-web site at <a class="reference external" href="http://uptime.eggheads.org">http://uptime.eggheads.org</a>. Go look and see what
+web site at <a class="reference external" href="https://www.eggheads.org/uptime">https://www.eggheads.org/uptime</a>. Go look and see what
 your uptime is! It takes about 9 hours to show up, so if your
 bot isn’t listed, try again later. See doc/settings/mod.uptime
 for more information, including details on what information is
@@ -312,7 +301,7 @@ starting point in writing modules, woobie is the right thing.</p>
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>

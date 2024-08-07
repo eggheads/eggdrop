@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Python Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Python Module &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="pbkdf2.html" title="PBKDF2 Module"
              accesskey="P">previous</a> |
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../using/text-sub.html">Textfile Substitutions</a></li>
@@ -65,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -122,6 +124,10 @@
 <section id="python-module">
 <span id="python"></span><h1>Python Module<a class="headerlink" href="#python-module" title="Link to this heading">¶</a></h1>
 <p>This module adds a Python interpreter to Eggdrop, allowing you to run Python scripts.</p>
+<section id="system-requirements">
+<h2>System Requirements<a class="headerlink" href="#system-requirements" title="Link to this heading">¶</a></h2>
+<p>This module requires Python version 3.8 or higher in order to run. Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this means the packages <code class="docutils literal notranslate"><span class="pre">python</span></code>, <code class="docutils literal notranslate"><span class="pre">python-dev</span></code> AND <code class="docutils literal notranslate"><span class="pre">python-is-python3</span></code> to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.</p>
+</section>
 <section id="loading-python">
 <h2>Loading Python<a class="headerlink" href="#loading-python" title="Link to this heading">¶</a></h2>
 <p>Put this line into your Eggdrop configuration file to load the python module:</p>
@@ -154,84 +160,8 @@
 <h2>Tcl Commands<a class="headerlink" href="#tcl-commands" title="Link to this heading">¶</a></h2>
 <section id="pysource-path-to-file">
 <h3>pysource &lt;path/to/file&gt;<a class="headerlink" href="#pysource-path-to-file" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">pysource</span></code> command is analgous to the Tcl <code class="docutils literal notranslate"><span class="pre">source</span></code> command, except that it loads a Python script into Eggdrop instead of a Tcl script.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">pysource</span></code> command is analogous to the Tcl <code class="docutils literal notranslate"><span class="pre">source</span></code> command, except that it loads a Python script into Eggdrop instead of a Tcl script.</p>
 </section>
-</section>
-<section id="eggdrop-python-commands">
-<h2>Eggdrop Python Commands<a class="headerlink" href="#eggdrop-python-commands" title="Link to this heading">¶</a></h2>
-<p>The Python module is built to use the existing core Tcl commands integrated into Eggdrop via the <code class="docutils literal notranslate"><span class="pre">eggdrop.tcl</span></code> module. To call an existing Tcl command from Python, you can either load the entire catalog by running <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">eggdrop.tcl</span></code>, or be more specific by <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">eggdrop.tcl</span> <span class="pre">import</span> <span class="pre">putserv,</span> <span class="pre">putlog,</span> <span class="pre">chanlist</span></code>, etc.</p>
-<p>Arguments to the Tcl functions are automatically converted as follows:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> is converted to an empty Tcl object (the empty string, <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">List</span></code> and <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> is converted to a <code class="docutils literal notranslate"><span class="pre">Tcl</span> <span class="pre">list</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Dict</span></code> is converted to a <code class="docutils literal notranslate"><span class="pre">Tcl</span> <span class="pre">dictionary</span></code></p></li>
-<li><p>Everything else is converted to a string using the str() method</p></li>
-</ul>
-<p>Return values from Tcl functions must be manually converted:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> the empty string is automatically converted to None</p></li>
-<li><p>everything else is returned as string</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Tcl</span> <span class="pre">list</span></code> as string can be converted to a Python <code class="docutils literal notranslate"><span class="pre">List</span></code> using <code class="docutils literal notranslate"><span class="pre">parse_tcl_list</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Tcl</span> <span class="pre">dictionary</span></code> as string can be converted to a Python <code class="docutils literal notranslate"><span class="pre">Dict</span></code> using <code class="docutils literal notranslate"><span class="pre">parse_tcl_list</span></code></p></li>
-</ul>
-<p>Additionally, a few extra python commands have been created for use without these conversions:</p>
-<section id="bind-arguments">
-<h3>bind &lt;arguments&gt;<a class="headerlink" href="#bind-arguments" title="Link to this heading">¶</a></h3>
-<p>The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, but here each argument is passed individually. For example, a bind that would look like <code class="docutils literal notranslate"><span class="pre">bind</span> <span class="pre">pub</span> <span class="pre">*</span> <span class="pre">!foo</span> <span class="pre">myproc</span></code> in Tcl is written as <code class="docutils literal notranslate"><span class="pre">bind(&quot;pub&quot;,</span> <span class="pre">&quot;*&quot;,</span> <span class="pre">&quot;!foo&quot;,</span> <span class="pre">myproc)</span></code>. For more information on Eggsrop bind argument syntax please see <a class="reference internal" href="../../using/tcl-commands.html#bind-types"><span class="std std-ref">Bind Types</span></a>. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc.</p>
-</section>
-<section id="parse-tcl-list-string">
-<h3>parse_tcl_list &lt;string&gt;<a class="headerlink" href="#parse-tcl-list-string" title="Link to this heading">¶</a></h3>
-<p>When a python script calls a Tcl command that returns a list via the eggdrop.tcl module, the return value will be a Tcl-formatted list- also simply known as a string. The <code class="docutils literal notranslate"><span class="pre">parse_tcl_list</span></code> command will convert the Tcl-formatted list into a Python list, which can then freely be used within the Python script.</p>
-</section>
-<section id="parse-tcl-dict-string">
-<h3>parse_tcl_dict &lt;string&gt;<a class="headerlink" href="#parse-tcl-dict-string" title="Link to this heading">¶</a></h3>
-<p>When a python script calls a Tcl command that returns a dict via the eggdrop.tcl module, the return value will be a Tcl-formatted dict- also simply known as a string. The <code class="docutils literal notranslate"><span class="pre">parse_tcl_dict</span></code> command will c
-onvert the Tcl-formatted dict into a Python list, which can then freely be used within the Python script.</p>
-</section>
-</section>
-<section id="config-variables">
-<h2>Config variables<a class="headerlink" href="#config-variables" title="Link to this heading">¶</a></h2>
-<p>There are also some variables you can set in your config file:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>set allow-resync 0</dt><dd><p>When two bots get disconnected, this setting allows them to create a
-resync buffer which saves all changes done to the userfile during
-the disconnect. When they reconnect, they will not have to transfer
-the complete user file, but, instead, just send the resync buffer.</p>
-</dd>
-</dl>
-</div></blockquote>
-</section>
-<section id="writing-an-eggdrop-python-script">
-<h2>Writing an Eggdrop Python script<a class="headerlink" href="#writing-an-eggdrop-python-script" title="Link to this heading">¶</a></h2>
-<p>This is how to write a python script for Eggdrop.</p>
-<p>You can view examples of Python scripts in the exampleScripts folder included with this module.</p>
-<dl class="simple glossary">
-<dt id="term-bestfriend.py">bestfriend.py<a class="headerlink" href="#term-bestfriend.py" title="Link to this term">¶</a></dt><dd><p>This example script demonstrates how to use the parse_tcl_list() python command to convert a list returned by a Tcl command into a list that is usable by Python.</p>
-</dd>
-<dt id="term-greet.py">greet.py<a class="headerlink" href="#term-greet.py" title="Link to this term">¶</a></dt><dd><p>This is a very basic script that demonstrates how a Python script with binds can be run by Eggdrop.</p>
-</dd>
-<dt id="term-imdb.py">imdb.py<a class="headerlink" href="#term-imdb.py" title="Link to this term">¶</a></dt><dd><p>This script shows how to use an existing third-party module to extend a Python script, in this case retrieving information from imdb.com.</p>
-</dd>
-<dt id="term-listtls.py">listtls.py<a class="headerlink" href="#term-listtls.py" title="Link to this term">¶</a></dt><dd><p>This script demonstrates how to use parse-tcl_list() and parse_tcl_dict() to convert a list of dicts provided by Tcl into something that is usuable by Python.</p>
-</dd>
-<dt id="term-urltitle.py">urltitle.py<a class="headerlink" href="#term-urltitle.py" title="Link to this term">¶</a></dt><dd><p>This script shows how to use an existing third-party module to extend a Python script, in this case using an http parser to collect title information from a provided web page.</p>
-</dd>
-</dl>
-<section id="header-section">
-<h3>Header section<a class="headerlink" href="#header-section" title="Link to this heading">¶</a></h3>
-<p>An Eggdrop python script requires you to import X Y and Z, in this format.</p>
-</section>
-<section id="code-section">
-<h3>Code Section<a class="headerlink" href="#code-section" title="Link to this heading">¶</a></h3>
-<p>Normal python code works here. To run a command from the Eggdrop Tcl library, use this format.</p>
-<p>Use this format all over.</p>
-</section>
-</section>
-<section id="writing-a-module-for-use-with-eggdrop">
-<h2>Writing a module for use with Eggdrop<a class="headerlink" href="#writing-a-module-for-use-with-eggdrop" title="Link to this heading">¶</a></h2>
-<p>This is how you import a module for use with an egg python script.</p>
-<p>Copyright (C) 2000 - 2024 Eggheads Development Team</p>
 </section>
 </section>
 
@@ -262,7 +192,7 @@ the complete user file, but, instead, just send the resync buffer.</p>
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>

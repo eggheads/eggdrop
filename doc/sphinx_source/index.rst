@@ -64,6 +64,7 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     using/ircv3
     using/accounts
     using/pbkdf2info
+    using/python
     using/twitchinfo
     using/tricks
     using/text-sub
