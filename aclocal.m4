@@ -1249,7 +1249,6 @@ AC_DEFUN([EGG_DEBUG_DEFAULTS],
 
   debug_cflags_debug="-g3 -DDEBUG"
   AX_CHECK_COMPILE_FLAG([-Og], [debug_cflags_debug="-Og $debug_cflags_debug"])
-  AX_CHECK_COMPILE_FLAG([-fsanitize=address], [debug_cflags_debug="$debug_cflags_debug -fsanitize=address"])
   debug_cflags_debug_assert="-DDEBUG_ASSERT"
   debug_cflags_debug_mem="-DDEBUG_MEM"
   debug_cflags_debug_dns="-DDEBUG_DNS"
