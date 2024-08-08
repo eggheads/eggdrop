@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: May 14, 2023
+Last revised: Aug 2, 2024
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -18,13 +18,13 @@ Last revised: May 14, 2023
   Contents:
     Compile Guide:
       A. Standard compile process (Linux, FreeBSD, NetBSD, OpenBSD, etc)
-      B. HP-UX B.11.*
-      C. Ultrix
-      D. macOS (previously OS X and originally Mac OS X)
-      E. AIX
-      F. IRIX
-      G. Solaris / SunOS
-      H. Cygwin / Windows
+      B. macOS (previously OS X and originally Mac OS X)
+      C. Cygwin / Windows
+      D. HP-UX B.11.*
+      E. Ultrix
+      F. AIX
+      G. IRIX
+      H. Solaris / SunOS
       I. Haiku
       J. Tcl Detection and Installation
 
@@ -114,7 +114,126 @@ Last revised: May 14, 2023
            make install DEST=/home/user/otherdir
 
 
-    B. HP-UX B.11.*
+    B. macOS
+      Follow the standard compile process in Section A. To compile dynamically
+      (with module support), use 'make eggdrop' instead of 'make'.
+
+      To get third-party modules to compile, you may need to edit the module's
+      Makefile and add "$(XLIBS) $(MODULE_XLIBS)" to the end of the
+      ../../../MODULE.$(MOD_EXT) target's $(LD) line.
+
+      For example:
+
+        ../../../mymodule.$(MOD_EXT): ../mymodule.o
+        $(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o
+        $(STRIP) ../../../mymodule.$(MOD_EXT)
+
+      Would become:
+
+        ../../../mymodule.$(MOD_EXT): ../mymodule.o
+        $(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o $(XLIBS) $(MODULE_XLIBS)
+        $(STRIP) ../../../mymodule.$(MOD_EXT)
+
+      If you notice a module that requires these changes, it would probably be
+      a good idea to let the module's developer know, so it can be fixed.
+
+      Note that on macOS, the DYLD_LIBRARY_PATH environment variable should
+      be used instead of LD_LIBRARY_PATH.
+
+      Install OpenSSL using homebrew:
+
+        Install homebrew from https://brew.sh/
+        brew update
+        brew install openssl
+
+      Tell configure where to find tcl and openssl:
+
+        ./configure --with-tcl=/System/Volumes/Data/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh -with-sslinc=/usr/local/Cellar/openssl@3/3.0.7/include --with-ssllib=/usr/local/Cellar/openssl@3/3.0.7/lib
+
+      You can also try MacPorts (formerly DarwinPorts):
+
+        https://ports.macports.org/port/eggdrop
+
+
+    C. Cygwin / Windows
+      To compile and install Eggdrop on windows, perform the steps listed
+      below.
+
+        1. Download and install Cygwin (https://cygwin.com). Select packages:
+             autoconf
+             automake
+             binutils
+             gcc-core
+             git
+             make
+             mingw64-x86_64-gcc-core
+             openssl
+             libssl-devel
+             tcl
+             tcl-devel
+           After installing, open the Cygwin bash prompt.
+
+        2. Optional: Instead of Cygwins OpenSSL, you can download and install
+           OpenSSL 3.3.1:
+             curl -LO https://github.com/openssl/openssl/releases/download/openssl-3.3.1/openssl-3.3.1.tar.gz
+             tar -zxf openssl-3.3.1.tar.gz
+             cd openssl-3.3.1
+             ./config
+             make
+             make install
+
+        3. Download Eggdrop from https://geteggdrop.com to your home directory.
+           This is usually something like 'C:\cygwin\home\<username>\'. After
+           downloading, extract the Eggdrop tarball:
+
+             tar -zxf eggdrop-1.9.5.tar.gz
+
+        4. Run './configure --enable-strip'. Debugging information under
+           Windows is basically useless to the development team, and this will
+           reduce the size of your Eggdrop binary.
+
+        5. Type either 'make config', or 'make iconfig' to determine which
+           modules will be compiled.
+
+        6. Compile the bot using 'make eggdrop'.
+
+        7. Install the bot by typing 'make install DEST=<install path>'.
+           For example:
+
+             make install DEST='C:/eggdrop/'
+
+           Make sure to enclose the destination directory/folder in single
+           quotes (''), especially if it contains spaces.
+
+        8. Remove symbolic links:
+
+             cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
+             rm modules
+             rm eggdrop.exe
+             mv eggdrop.exe-1.9.5 eggdrop.exe
+             mv modules-1.9.5 modules
+
+        9. Create a 'lib' directory and copy needed libraries using the
+           following commands. This assumes that you installed your Eggdrop in
+           'C:\eggdrop'. If you chose a different installation path, replace
+           'C:/eggdrop' in the following steps with your installation
+           directory, replacing all '\'s with '/'s.
+
+             cp /bin/cygwin1.dll 'C:/eggdrop'
+             cp /usr/local/bin/libtcl8.6.dll 'C:/eggdrop'
+             cp /usr/local/bin/tclpip84.dll 'C:/eggdrop'
+
+             cp /bin/cygcrypto-3.dll 'C:/eggdrop' (if compiled with ssl)
+             cp /bin/cygssl-3.dll 'C:/eggdrop' (if compiled with ssl)
+
+             mkdir C:/eggdrop/lib
+             cp -r /usr/local/lib/tcl 'C:/eggdrop/lib'
+             cp -r /usr/local/lib/tcl8.6 'C:/eggdrop/lib'
+
+             cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
+
+
+    D. HP-UX B.11.*
       Follow the standard compile process in Section A. To compile dynamically
       (with module support), use 'make eggdrop' instead of 'make'.
 
@@ -138,7 +257,7 @@ Last revised: May 14, 2023
       instead of LD_LIBRARY_PATH.
 
 
-    C. Ultrix
+    E. Ultrix
       There are some known problems with 'make' and Eggdrop on Ultrix systems.
       We recommend using 'gmake' (GNU make) for this reason, as in the steps
       below.
@@ -187,43 +306,7 @@ Last revised: May 14, 2023
                gmake install DEST=/home/user/otherdir
 
 
-    D. macOS
-      Follow the standard compile process in Section A. To compile dynamically
-      (with module support), use 'make eggdrop' instead of 'make'.
-
-      To get third-party modules to compile, you may need to edit the module's
-      Makefile and add "$(XLIBS) $(MODULE_XLIBS)" to the end of the
-      ../../../MODULE.$(MOD_EXT) target's $(LD) line.
-
-      For example:
-
-        ../../../mymodule.$(MOD_EXT): ../mymodule.o
-        $(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o
-        $(STRIP) ../../../mymodule.$(MOD_EXT)
-
-      Would become:
-
-        ../../../mymodule.$(MOD_EXT): ../mymodule.o
-        $(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o $(XLIBS) $(MODULE_XLIBS)
-        $(STRIP) ../../../mymodule.$(MOD_EXT)
-
-      If you notice a module that requires these changes, it would probably be
-      a good idea to let the module's developer know, so it can be fixed.
-
-      Note that on macOS, the DYLD_LIBRARY_PATH environment variable should
-      be used instead of LD_LIBRARY_PATH.
-
-      Install OpenSSL using homebrew:
-
-        Install homebrew from https://brew.sh/
-        brew update
-        brew install openssl
-
-      Tell configure where to find tcl and openssl:
-
-        ./configure --with-tcl=/System/Volumes/Data/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh -with-sslinc=/usr/local/Cellar/openssl@3/3.0.7/include --with-ssllib=/usr/local/Cellar/openssl@3/3.0.7/lib
-
-    E. AIX
+    F. AIX
       Follow the standard compile process in Section A. To compile dynamically
       (with module support), use 'make eggdrop' instead of 'make'.
 
@@ -231,7 +314,7 @@ Last revised: May 14, 2023
       of LD_LIBRARY_PATH.
 
 
-    F. IRIX
+    G. IRIX
       Follow the standard compile process in Section A. To compile dynamically
       (with module support), use 'make eggdrop' instead of 'make'.
 
@@ -239,82 +322,13 @@ Last revised: May 14, 2023
       variables should be used instead of LD_LIBRARY_PATH.
 
 
-    G. Solaris / SunOS
+    H. Solaris / SunOS
       Follow the standard compile process in Section A. To compile dynamically
       (with module support), use 'make eggdrop' instead of 'make'.
 
       Note that on Solaris / SunOS, the LD_LIBRARY_PATH_32 and LD_LIBRARY_PATH_64
       environment variables may need to be set instead of (or in addition to, to
       be safe) LD_LIBRARY_PATH.
-
-
-    H. Cygwin / Windows
-      To compile and install Eggdrop on windows, perform the steps listed
-      below.
-
-        1. Download and install Cygwin (www.cygwin.com). Make sure to install
-           things like GCC, zlib, minires, autoconf, and automake. DO NOT
-           install the Tcl provided by Cygwin's installer. After installing,
-           open the Cygwin bash prompt.
-
-        2. Download and install TCL 8.5.9. You can get Tcl for Cygwin at
-           http://prdownloads.sourceforge.net/windrop/tcl-8.5.9.tar.gz.
-           http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz.
-           Extract this to the Cygwin root directory:
-
-             cd /
-             tar -zxf tcl-8.5.9.tar.gz
-
-        3. Download Eggdrop from https://geteggdrop.com/ to your home directory.
-           This is usually something like 'C:\cygwin\home\<username>\'. After
-           downloading, extract the Eggdrop tarball:
-
-             tar -zxf eggdrop-1.9.2.tar.gz
-
-        4. Run './configure --enable-strip'. Debugging information under
-           Windows is basically useless to the development team, and this will
-           reduce the size of your Eggdrop binary.
-
-        5. Type either 'make config', or 'make iconfig' to determine which
-           modules will be compiled.
-
-        6. Compile the bot using 'make eggdrop'.
-
-        7. Install the bot by typing 'make install DEST=<install path>'.
-           For example:
-
-             make install DEST='C:/eggdrop/'
-
-           Make sure to enclose the destination directory/folder in single
-           quotes (''), especially if it contains spaces.
-
-        8. Perform the following commands:
-
-             cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
-             rm modules
-             rm eggdrop.exe
-             mv eggdrop.exe-1.9.2 eggdrop.exe
-             mv modules-1.9.2 modules
-
-        9. Create a 'lib' directory and copy needed libraries using the
-           following commands. This assumes that you installed your Eggdrop in
-           'C:\eggdrop'. If you chose a different installation path, replace
-           'C:/eggdrop' in the following steps with your installation
-           directory, replacing all '\'s with '/'s.
-
-             cp /bin/cygwin1.dll 'C:/eggdrop'
-             cp /usr/local/bin/libtcl8.5.dll 'C:/eggdrop'
-             cp /usr/local/bin/tclpip84.dll 'C:/eggdrop'
-             cp /bin/cyggcc_s-1.dll 'C:/eggdrop'
-
-             cp /bin/cygcrypto-0.9.8.dll 'C:/eggdrop' (if compiled with ssl)
-             cp /bin/cygssl-0.9.8.dll 'C:/eggdrop' (if compiled with ssl)
-
-             mkdir C:/eggdrop/lib
-             cp -r /usr/local/lib/tcl 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/tcl8.5 'C:/eggdrop/lib'
-
-             cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
 
 
     I. Haiku
