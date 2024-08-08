@@ -39,7 +39,7 @@ fi
 
 umask 022
 
-OLD_EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\])//g')
+OLD_EGGVERSION=$(grep AC_INIT configure.ac| sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\].*//g')
 NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
 #NEW_EGGVERSION="1.9.0"
 NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
