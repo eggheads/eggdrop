@@ -374,13 +374,14 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
 
 static PyObject *py_dir(PyObject *self, PyObject *args) {
   PyObject *py_list, *py_s;
-  int i, j;
+  size_t i;
+  int j;
   const char *info[] = {"info commands", "info procs"}, *s, *value;
   Tcl_Obj *tcl_list, **objv;
   int objc;
 
   py_list = PyList_New(0);
-  for (i = 0; i < (sizeof info / sizeof info[0]); i++) {
+  for (i = 0; i < sizeof info / sizeof info[0]; i++) {
     s = info[i];
     if (Tcl_VarEval(tclinterp, s, NULL, NULL) == TCL_ERROR)
       putlog(LOG_MISC, "*", "python error: Tcl_VarEval(%s)", s);
