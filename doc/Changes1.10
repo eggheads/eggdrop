@@ -1,0 +1,288 @@
+
+Eggdrop Changes (Last Updated 2024-08-08):
+__________________________________________
+
+Eggdrop v1.10.0rc1:
+
+  2024-08-08 * Revert strerror_r to strerror for now
+             * Fix compiler warning
+             * Match misc/newversion to handle #1507 string change
+             * Update patchlevel to 1.10.0 alpha
+  2024-08-07 * Add Tcl 9 compatibility - Tcl_Size in python module
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Revert adding -fsanitize=address
+             * Update Tcl MacOS search paths
+             * python.mod: add dir(eggdrop.tcl) (#1596)
+             * Update NEWS
+             * Update docs
+  2024-08-06 * Update README source
+  2024-08-01 * Add IP to listen error message
+                 [Patch by: michaelortmann]
+  2024-07-31 * Update doc URLs, etc
+                 [Patch by: michaelortmann]
+  2024-07-30 * Convert language file encoding to UTF-8
+  2024-07-29 * Add github action to perform autoconf
+             * Add more compile flags for debug builds
+                 [Patch by: michaelortmann]
+             * Use the clock_gettime() instead of obsolescent gettimeofday()
+                 [Patch by: michaelortmann]
+             * Run autotools
+             * Make autobotchk Tcl9 compatible
+                 [Found by: DasBrain / Patch by: TehPeGaSuS]
+             * Fix french lang typos/readability
+                 [Patch by: ZarTek-Creole]
+  2024-07-28 * Update tcl-commands example
+             * Fix prototypes
+                 [Patch by: michaelortmann]
+             * Fix locking/race for tdns error logging
+                 [Patch by: michaelortmann]
+             * Fix file descriptor leak in compress.mod
+                 [Patch by: michaelortmann]
+             * Properly set chanjoin time for Eggdrop
+                 [Found by: Empus / Patch by: michaelortmann]
+  2024-07-24 * Update Tcl doc with need-* guidance
+                 [Found by: Koragg]
+  2024-07-20 * Fix python reference counting for binds
+             * Add Tcl9 Tcl_Size to dns module
+                 [Found by: DasBrain / Patch by: DasBrain]
+             * Convert some tabs to whitespace
+             * Document minimum library versions
+             * Cleanup python.mod includes
+             * Fix utimer name duplication check
+                 [Found by: ZarTek / Patch by: thommey]
+             * Update sys/resource.h includes
+                 [Patch by: michaelortmann]
+             * Typo fixes
+                 [Patch by: michaelortmann]
+  2024-07-16 * Add unbind capability for python mod
+                 [Patch by: thommey]
+  2024-07-14 * Github actions: use cache for Tcl/SSL compilations (#1652)
+             * Github actions: actually check if SSL support is enabled (#1653)
+  2024-07-12 * Forbid reloading of python mod (it would crash the bot)
+             * later
+             * Forbid unload
+             * Update src/mod/python.mod/python.c
+             * Python venv support added
+                 [Found by: simple / Patch by: thommey]
+  2024-07-11 * Swap lookup_user_record args
+                 [Found by: DasBrain]
+  2024-07-10 * Fix accidentally removed hostmask from #1585
+  2024-07-09 * Github Actions: Test OpenSSL 0.9.8 (#1642)
+  2024-07-07 * Remove old Contexts
+             * Remove isacii from configure.ac
+             * Add python configure search paths
+                 [Patch by: michaelortmann]
+             * run autotools/makedepend
+             * Add tcl pbkdf2 function
+                 [Patch by: michaelortmann]
+             * Fix --disable-tls breakage from pbkdf2 tcl
+  2024-07-06 * Enhance ssl log
+             * Restore exported functions for module back-compat
+             * Remove runtime python version check artifact
+             * Change strncpyz define to strlcpy
+             * Only configure modules containing code
+             * Add error reporting, increase path limits for module loads
+             * Update switch logic
+                 [Patch by: @crazycatdevs]
+             * Remove strcats
+             * Fix copyrights
+                 [Patch by: michaelortmann]
+             * Fix for sh-compatibility in 085583e80f64314ef08360fd66531f23c84654b8
+  2024-06-30 * Fix module export for get_user_from_member (#1633)
+                 [Found by: Mystery-X / Patch by: thommey]
+  2024-06-29 * add lookup_user_record() (#1618)
+                 [Found by: Mystery-X / Patch by: Geo, thommey]
+             * Fix python configure
+                 [Found by: Csibesz` / Patch by: Geo]
+             * Allow python threads and async io
+                 [Patch by: thommey]
+  2024-06-16 * Github CI with matrix tests (#1620)
+             * Fix include sys/time.h and time.h. Both are POSIX 2001.
+                 [Found by: thommey / Patch by: michaelortmann]
+             * Run autotools
+             * CI: Dependency check cannot depend on other workflow
+  2024-06-05 * Reintroduce user lookup cache
+                 [Found by: mortmann / Patch by: thommey]
+  2024-06-04 * Add Tcl 9 compatibility
+  2024-06-02 * Fix memory leak in egg_string_unicodesup_desurrogate()
+                 [Patch by: michaelortmann]
+             * Fix leak
+                 [Patch by: michaelortmann]
+  2024-05-25 * Full account tacking (#1585)
+                 [Patch by: Geo, thommey]
+  2024-05-09 * Add IRCv3 standard-replies
+  2024-05-06 * run autotools, makedepend
+  2024-05-05 * Update core.portuguese.lang
+                 [Patch by: @TehPeGaSuS]
+             * Un-hardcode buffer size
+             * Fix timer drift log (#1556)
+                 [Found by: SergioR / Patch by: michaelortmann]
+             * Fix autoconf of tls action-if-not-given
+                 [Found by: ZarTek-Creole / Patch by: michaelortmann]
+             * strncpy() -> strlcpy()
+                 [Patch by: michaelortmann]
+             * Cleanup console.mod
+                 [Patch by: michaelortmann]
+             * Tcl_AppendResult() -> Tcl_SetResult() (#1571)
+                 [Patch by: michaelortmann]
+             * Add logging of user/sys times for evaluated .tcl
+             * Do not call modules restart() function if null pointer
+                 [Patch by: michaelortmann]
+             * Enhance module status report for zlib and python (#1563)
+                 [Patch by: michaelortmann]
+             * Enhance auto detection of python-config
+                 [Patch by: michaelortmann]
+             * Fix possible memleak from dns threads to main
+                 [Patch by: michaelortmann]
+             * Enhance verification of userfile perm
+                 [Patch by: michaelortmann]
+             * Fix SERVER_NICKLEN off-by-one error
+                 [Patch by: michaelortmann]
+             * Fix strcpy-param-overlap
+                 [Patch by: michaelortmann]
+             * Cleanup includes
+             * Cleanup get_user_by_handle()
+                 [Patch by: michaelortmann]
+             * Fix strcmp handle
+                 [Patch by: michaelortmann]
+             * TCL_INTERP_DESTROYED -> Tcl_InterpDeleted()
+                 [Patch by: michaelortmann]
+             * Cleanup includes
+                 [Patch by: michaelortmann]
+             * Fix pbkdf2 bot linking
+                 [Found by: @michaelortmann / Patch by: @michaelortmann]
+  2024-04-14 * Fix typo
+                 [Patch by: ZarTek-Creole]
+  2024-03-03 * Update releaseprep for 1.10
+  2024-03-02 * Add userfile sharing tutorial
+             * Check python version at compile
+  2024-03-01 * uniqueify console procname
+                 [Found by: DasBrain]
+  2024-02-25 * fix autoscript requires logic
+             * hide autoscript manifest entry
+  2024-02-18 * Update FILT bind doc
+             * Fix b64_ntop -lresolv detection for -fsanitize=address
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix format string
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * refix format string
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Join threads instead of detach
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2024-02-11 * add check for isidentified
+                 [Found by: @crazycatdevs / Patch by: Geo]
+  2024-02-05 * fix autoscript filt bind
+  2024-02-03 * allow python.mod static builds
+             * fix sasl-mechanism name
+             * Don't load autoscripts if packages missing
+             * update UPGRADING
+  2024-01-28 * any user can use .-account
+             * Update core.help with current commands
+             * update gendocs to create mod.python file
+             * initialize vars
+             * doc typos
+  2024-01-21 * Fix SSL_get_server_tmp_key not available
+                 [Found by: Jobe]
+  2024-01-20 * Add internal bind values to docs
+             * Properly report channel bans in .bans
+                 [Found by: @wilkowy / Patch by: Geo]
+             * Add userhost-in-names capability (#1374)
+                 [Patch by: Geo]
+             * Additional internals doc tweaks
+  2024-01-18 * Switch autoscripts to GitHub
+  2024-01-15 * change py init from Isolated to Python
+  2024-01-14 * Add Python intpreter to Eggdrop
+                 [Patch by: Geo, thommey]
+             * Update docs
+             * Update copyright
+             * remove quick-logs option
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2024-01-07 * Remove copy-to-tmp option
+                 [Found by: Geo / Patch by: michaelortmann]
+             * Enhance crash reporting
+                 [Patch by: michaelortmann]
+  2024-01-05 * Allow overwriting misc/runautotools version check
+  2024-01-03 * Properly queue/log QUIT message
+                 [Patch by: michaelortmann]
+  2024-01-02 * Fix hangs on some SSL connections
+                 [Found by: pym67, @PeGaSuS-Coder / Patch by: michaelortmann]
+  2024-01-01 * Replace hard-coded docs version with variable
+                 [Patch by: Geo]
+  2023-12-31 * Add grammar to channel status
+                 [Found by: jackal / Patch by: jackal]
+             * Typo fixes
+             * Enhance restricted port error msgs
+                 [Patch by: michaelortmann]
+  2023-12-30 * Call threaddata() once before loop
+                 [Patch by: michaelortmann]
+             * Call time() only once
+             * Add homepage to configure.ac
+             * Cleanup stringify
+             * Various small doc updates
+             * Add log for TLS DH ephemeral key info
+  2023-12-02 * Update manpage
+                 [Patch by: michaelortmann]
+             * Add got-chanlist event bind type
+                 [Found by: Many / Patch by: Geo, thommey]
+             * Update legacy botnet command
+                 [Found by: Cizzle / Patch by: michaelortmann]
+  2023-12-01 * Change logging for got900/901
+                 [Found by: Geo / Patch by: michaelortmann]
+  2023-10-09 * Update autoconf to 2.71
+                 [Found by: Geo / Patch by: Geo, thommey]
+             * text cleanup
+             * Add logging during relay
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix maskname() buffer size
+                 [Found by: jack3 / Patch by: michaelortmann]
+  2023-10-08 * Require TLS by default
+                 [Patch by: michaelortmann]
+  2023-10-07 * Fix function declarations
+             * POSIX functions cleanup
+  2023-10-01 * Cleanup alloc()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix prototypes
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update explicit_bzero.c for win32 support, add C23 memset_explicit() support
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update misc/config.guess, misc/config.sub
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix connection refused detection under Cygwin
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Use POSIX PATH_MAX (#1439)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix strcpy-param-overlap
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2023-09-08 * Fix egg_set if logic
+  2023-08-28 * Add linewraps to autoscript config function
+  2023-08-27 * Update autpscript doc with code tips
+  2023-08-15 * Modifications for autoscripts (#1459)
+                 [Patch by: CrazyCat, thommy, Geo]
+  2023-07-09 * Updates/fixes for autoscript
+  2023-07-08 * Remove stale MODULES file
+                 [Found by: @jHackenthal]
+             * Lots of docs fixes (#1457)
+                 [Found by: Various / Patch by: Geo]
+             * Fix egggdrop typo
+                 [Found by: @iamnimnul / Patch by: @iamnimnul]
+             * reformat channel doc
+             * Add Autoscript feature
+  2023-05-20 * Fix openssl3 md5 deprecation warning
+                 [Patch by: michaelortmann]
+  2023-05-17 * Bug/monitorwildcard (#1448)
+                 [Found by: CrazyCat / Patch by: Geo]
+  2023-04-11 * Add CHGHOST bind
+                 [Found by: thommey / Patch by: Geo]
+             * Fix more openssl3 deprecation (#1385)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Roll patch level to chghost run autoconf
+             * Update jquery
+  2023-04-04 * Fix date in autobotchk comments
+                 [Found by: @docgonzo2015]
+  2023-03-11 * Adjust motd alignment
+             * Typo fixes
+             * Update THANKS
+             * Fix localtime() returning NULL
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * update docs
+             * Update patchlevel
