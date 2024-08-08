@@ -98,8 +98,9 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	# we reset no_tcl in case something fails here
 	no_tcl=true
 	AC_ARG_WITH(tcl,
-	    AS_HELP_STRING([--with-tcl],[directory containing tcl configuration (tclConfig.sh)]),
-	    with_tclconfig="${withval}")
+	    AS_HELP_STRING([--with-tcl],
+		[directory containing tcl configuration (tclConfig.sh)]),
+	    [with_tclconfig="${withval}"])
 	AC_MSG_CHECKING([for Tcl configuration])
 	AC_CACHE_VAL(ac_cv_c_tclconfig,[
 
@@ -151,7 +152,9 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 		for i in `ls -d ~/Library/Frameworks 2>/dev/null` \
 			`ls -d /Library/Frameworks 2>/dev/null` \
 			`ls -d /Network/Library/Frameworks 2>/dev/null` \
-			`ls -d /System/Library/Frameworks 2>/dev/null` \
+			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Library/Frameworks/Tcl.framework 2>/dev/null` \
+			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Network/Library/Frameworks/Tcl.framework 2>/dev/null` \
+			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tcl.framework 2>/dev/null` \
 			; do
 		    if test -f "$i/Tcl.framework/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i/Tcl.framework; pwd)`"
@@ -178,14 +181,14 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 		for i in `ls -d ${libdir} 2>/dev/null` \
 			`ls -d ${exec_prefix}/lib 2>/dev/null` \
 			`ls -d ${prefix}/lib 2>/dev/null` \
-			`ls -d /usr/contrib/lib 2>/dev/null` \
 			`ls -d /usr/local/lib 2>/dev/null` \
+			`ls -d /usr/contrib/lib 2>/dev/null` \
 			`ls -d /usr/pkg/lib 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
 			`ls -d /usr/lib64 2>/dev/null` \
-                        `ls -d /usr/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
-                        `ls -d /usr/local/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
-                        `ls -d /usr/local/lib/tcl/tcl[[8-9]].[[0-9]] 2>/dev/null` \
+			`ls -d /usr/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl[[8-9]].[[0-9]] 2>/dev/null` \
+			`ls -d /usr/local/lib/tcl/tcl[[8-9]].[[0-9]] 2>/dev/null` \
 			; do
 		    if test -f "$i/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
@@ -224,7 +227,6 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	fi
     fi
 ])
-
 ##
 ## Here ends the standard Tcl configuration bits and starts the
 ## TEA specific functions

@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Eggdrop, an open source IRC bot &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Eggdrop, an open source IRC bot &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/eggdrop.css?v=ab48a1b6" />
-    <script src="_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="_static/documentation_options.js?v=0c3350b6"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="search.html" />
@@ -17,7 +17,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="#">Eggdrop 1.9.5 documentation</a></div>
+          href="#">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="install/readme.html" title="README"
              accesskey="N">next</a>
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using/text-sub.html">Textfile Substitutions</a></li>
@@ -62,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -136,6 +138,7 @@
 <li class="toctree-l2"><a class="reference internal" href="install/readme.html#what-is-eggdrop">What is Eggdrop?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install/readme.html#how-to-get-eggdrop">How to Get Eggdrop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install/readme.html#system-pre-requisites">System Pre-Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/readme.html#minimum-requirements">Minimum Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install/readme.html#quick-startup">Quick Startup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install/readme.html#upgrading">Upgrading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install/readme.html#command-line">Command Line</a></li>
@@ -152,7 +155,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install/upgrading.html">Upgrading Eggdrop</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install/upgrading.html#how-to-upgrade">How to Upgrade</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install/upgrading.html#must-read-changes-for-eggdrop-v1-9">Must-read changes for Eggdrop v1.9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/upgrading.html#must-read-changes-for-eggdrop-v1-10">Must-read changes for Eggdrop v1.10</a></li>
 </ul>
 </li>
 </ul>
@@ -187,7 +190,7 @@
 <li class="toctree-l1"><a class="reference internal" href="using/botnet.html">Botnet Sharing and Linking</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="using/botnet.html#what-is-a-botnet">What is a botnet?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/botnet.html#terms">Terms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="using/botnet.html#example-bottree">Example bottree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/botnet.html#example-bottrees">Example bottrees</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/botnet.html#bot-flags">Bot Flags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/botnet.html#adding-and-linking-bots">Adding and linking bots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/botnet.html#using-botflags">Using botflags</a></li>
@@ -215,6 +218,7 @@
 <li class="toctree-l2"><a class="reference internal" href="using/ircv3.html#about">About</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/ircv3.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/ircv3.html#supported-cap-capabilities">Supported CAP capabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/ircv3.html#errata">Errata</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="using/accounts.html">Account tracking in Eggdrop</a><ul>
@@ -230,6 +234,14 @@
 <li class="toctree-l2"><a class="reference internal" href="using/pbkdf2info.html#background">Background</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/pbkdf2info.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/pbkdf2info.html#tcl-interface">Tcl Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="using/python.html">Using the Python Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="using/python.html#system-requirements">System Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/python.html#loading-python">Loading Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/python.html#eggdrop-python-commands">Eggdrop Python Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/python.html#writing-an-eggdrop-python-script">Writing an Eggdrop Python script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/python.html#writing-a-module-for-use-with-eggdrop">Writing a module for use with Eggdrop</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="using/twitchinfo.html">Twitch</a><ul>
@@ -259,6 +271,7 @@
 <li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#assoc-module">Assoc Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#compress-module">Compress Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#filesys-module">Filesys Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#pbkdf2-module">PBKDF2 Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#miscellaneous-commands">Miscellaneous Commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#global-variables">Global Variables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/tcl-commands.html#binds">Binds</a></li>
@@ -305,6 +318,11 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tlssetup.html#additional-information">Additional Information</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/userfilesharing.html">Sharing Userfiles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/userfilesharing.html#how-to-share-userfiles-the-super-short-version">How to share userfiles- the super-short version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/userfilesharing.html#explaining-the-linking-sharing-process">Explaining the Linking/Sharing Process</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/module.html">Writing a Basic Eggdrop Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#module-header">Module Header</a></li>
@@ -312,7 +330,6 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#adding-a-partyline-command">Adding a Partyline Command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#adding-a-tcl-command">Adding a Tcl Command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#adding-a-tcl-bind">Adding a Tcl Bind</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/module.html#exporting-the-bind">Exporting the Bind</a></li>
 </ul>
 </li>
 </ul>
@@ -355,10 +372,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/internals.html">Eggdrop Bind Internals</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#bind-table-creation">Bind Table Creation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#stackable-binds-ht-stackable">Stackable Binds: HT_STACKABLE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#tcl-binding">Tcl Binding</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#triggering-the-bind">Triggering the Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#general-workflow-to-create-a-new-bind">General Workflow To Create a New Bind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#adding-a-new-bind-type-to-the-bind-table">Adding a New Bind Type to the Bind Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#adding-bind-functionality">Adding Bind Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/internals.html#using-the-bind-in-tcl">Using the Bind in Tcl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/internals.html#triggering-any-bind">Triggering any Bind</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/internals.html#c-binding">C Binding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/internals.html#c-handler">C Handler</a></li>
@@ -402,7 +419,7 @@
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>

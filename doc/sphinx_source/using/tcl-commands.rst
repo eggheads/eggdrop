@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.5. Scripts written for v1.3, v1.4,
+This list is accurate for Eggdrop v1.10.0. Scripts written for v1.3, v1.4,
 1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -1135,9 +1135,9 @@ nick2hand <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 account2nicks <account> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
