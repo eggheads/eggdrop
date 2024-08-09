@@ -63,10 +63,6 @@
 #include "modules.h"
 #include "bg.h"
 
-#ifdef DEBUG                            /* For debug compile */
-#  include <sys/resource.h>             /* setrlimit() */
-#endif
-
 #ifdef HAVE_GETRANDOM
 #  include <sys/random.h>
 #endif
@@ -101,7 +97,7 @@ int egg_numver = EGG_NUMVER;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
-int default_uflags = 0;         /* Default user-definied flags            */
+int default_uflags = 0;         /* Default user-defined flags             */
 
 int backgrd = 1;    /* Run in the background?                        */
 int con_chan = 0;   /* Foreground: constantly display channel stats? */
@@ -923,7 +919,7 @@ static void mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+  if (getrandom(&seed, sizeof seed, 0) != (sizeof seed)) {
     if (errno != ENOSYS) {
       fatal("ERROR: getrandom()\n", 0);
     } else {
@@ -931,9 +927,15 @@ static void init_random(void) {
        * This can happen with glibc>=2.25 and linux<3.17
        */
 #endif
+#ifdef HAVE_CLOCK_GETTIME
+      struct timespec tp;
+      clock_gettime(CLOCK_REALTIME, &tp);
+      seed = ((uint64_t) tp.tv_sec * tp.tv_nsec) ^ getpid();
+#else
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
+      seed = ((uint64_t) tp.tv_sec * tp.tv_usec) ^ getpid();
+#endif
 #ifdef HAVE_GETRANDOM
     }
   }

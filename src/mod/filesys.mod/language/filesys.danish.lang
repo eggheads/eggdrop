@@ -2,7 +2,7 @@
 #   language messages for filesys module
 
 0x300,Konverterer filsystem billede i %s ...
-0x301,filedb-update: bibliotek kan ikke åbnes!
+0x301,filedb-update: bibliotek kan ikke Ã¥bnes!
 0x302,(!) Beskadiget konvertering til filedb i %s
 0x303,Filnavn                         Str   Sendt af/Dato        # Hits\n
 0x304,------------------------------  ----  -------------------  ------\n
@@ -14,43 +14,43 @@
 0x30a,(fjern)
 0x30b,Fejl under afsendelse af fil
 0x30c,(sender)
-0x30d,Fjern-forespørgsel på /%s%s%s (sender)
-0x30e,\nFilesystemet ser ud til at være beskadiget nu her.\n
+0x30d,Fjern-forespÃ¸rgsel pÃ¥ /%s%s%s (sender)
+0x30e,\nFilesystemet ser ud til at vÃ¦re beskadiget nu her.\n
 0x30f,(files-path er sat til en ugyldig sti.)\n
 0x310,Aktuelt bibliotek
 0x311,Nyt aktuelt bibliotek
-0x312,Intet sådanne bibliotek.\n
+0x312,Intet sÃ¥danne bibliotek.\n
 0x313,Ugyldigt bibliotek.\n
-0x314,Vær fornuftig.\n
-0x315,%s er ikke tilgængelig lige nu.\n
-0x316,Ønsket %s fra %s ...\n
+0x314,VÃ¦r fornuftig.\n
+0x315,%s er ikke tilgÃ¦ngelig lige nu.\n
+0x316,Ã˜nsket %s fra %s ...\n
 0x317,%s er allerede en normal fil.\n
-0x318,Ændrede link til %s\n
+0x318,Ã†ndrede link til %s\n
 0x319,Du uploadede ikke %s\n
 0x31a,Oprettede bibliotek
-0x31b,Kræver +%s for adgang\n
-0x31c,Ændrede %s/ til at kræve +%s for adgang\n
-0x31d,Ændrede %s/ til at kræve ingen flags for adgang\n
+0x31b,KrÃ¦ver +%s for adgang\n
+0x31c,Ã†ndrede %s/ til at krÃ¦ve +%s for adgang\n
+0x31d,Ã†ndrede %s/ til at krÃ¦ve ingen flags for adgang\n
 0x31e,Fjernede bibliotek
 0x31f,Ugyldigt kildebibliotek.\n
 0x320,Ugyldigt destinationsbibliotek.\n
-0x321,Du kan ikke %s filer på toppen af dem selv.\n
+0x321,Du kan ikke %s filer pÃ¥ toppen af dem selv.\n
 0x322,findes som et bibliotek -- springer over
-0x323,På sig selv?  Nuh uh.
+0x323,PÃ¥ sig selv?  Nuh uh.
 0x324,Destination
 0x325,kopi
 0x326,Kopieret
 0x327,flyt
 0x328,Flyttet
 0x329,Kunne ikke skrive
-0x32a,kræver
+0x32a,krÃ¦ver
 0x32b,Skjult
 0x32c,Uskjult
 0x32d,Delt
 0x32e,Udelt
 0x32f,Added link
-0x330,Ændret
-0x331,Tømt
+0x330,Ã†ndret
+0x331,TÃ¸mt
 0x332,Slettet
 0x33a,Velkommen til %B's filserver\n
-0x33b,Alle filoverførsler vil blive sendt til '%N' som standard.\n(Du kan angive et supplerende nick med 'get' funktionen.)\nSkriv 'help' for hjælp.\n
+0x33b,Alle filoverfÃ¸rsler vil blive sendt til '%N' som standard.\n(Du kan angive et supplerende nick med 'get' funktionen.)\nSkriv 'help' for hjÃ¦lp.\n

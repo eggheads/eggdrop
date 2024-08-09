@@ -51,9 +51,9 @@ copyright = u'2024, Eggheads'
 # built documents.
 #
 # The short X.Y version.
-version = '1.9.5'
+version = '1.10.0'
 # The full version, including alpha/beta/rc tags.
-release = '1.9.5'
+release = '1.10.0rc1'
 # Just X.Y, for use in doc links (Geo)
 maj_version = ".".join(version.split(".")[:2])
 

@@ -504,6 +504,7 @@ void *thread_dns_hostbyip(void *arg)
 
   i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
                   dtn->host, sizeof dtn->host, NULL, 0, 0);
+  pthread_mutex_lock(&dtn->mutex);
   if (!i)
     *dtn->strerror = 0;
   else {
@@ -515,7 +516,6 @@ void *thread_dns_hostbyip(void *arg)
 #endif
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
   }
-  pthread_mutex_lock(&dtn->mutex);
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
@@ -530,6 +530,7 @@ void *thread_dns_ipbyhost(void *arg)
 
   error = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
+  pthread_mutex_lock(&dtn->mutex);
   if (!error) {
     *dtn->strerror = 0;
 #ifdef IPV6
@@ -549,7 +550,7 @@ void *thread_dns_ipbyhost(void *arg)
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-	error = 0;
+        error = 0;
         *dtn->strerror = 0;
         break;
       }
@@ -563,11 +564,10 @@ void *thread_dns_ipbyhost(void *arg)
   }
   else if (error == EAI_NONAME)
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
-  else if (error == EAI_SYSTEM)
+  else if (error == EAI_SYSTEM) {
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: %s", gai_strerror(error), strerror(errno));
-  else
+  } else
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s", gai_strerror(error));
-  pthread_mutex_lock(&dtn->mutex);
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;

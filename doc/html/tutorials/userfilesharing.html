@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sharing Userfiles &#8212; Eggdrop 1.10.0rc1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Writing an Eggdrop Script" href="firstscript.html" />
+    <link rel="prev" title="Enabling TLS Security on Eggdrop" href="tlssetup.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="tlssetup.html" title="Enabling TLS Security on Eggdrop"
+             accesskey="P">previous</a> |
+          <a href="firstscript.html" title="Writing an Eggdrop Script"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/python.html">Using the Python Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sharing Userfiles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-share-userfiles-the-super-short-version">How to share userfiles- the super-short version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#explaining-the-linking-sharing-process">Explaining the Linking/Sharing Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/included.html">Modules included with Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="sharing-userfiles">
+<h1>Sharing Userfiles<a class="headerlink" href="#sharing-userfiles" title="Link to this heading">¶</a></h1>
+<p>One of the great features of Eggdrop is bot linking, allowing you to create your own ‘botnet’. A botnet can consist of two linked bots to as many as hundreds of linked bots. If you’re using an Eggdrop for channel management, the most important feature of linked bots is userfile sharing. With userfile sharing, the bots can keep their user lists, ban lists, and ignore lists in sync with one another. A botnet also has many other possible capabilities, such as allowing bots to op one another securely, and making all bots join a channel with one command.</p>
+<p>Linking bots can be a confusing process for first timers, but it’s quite simple if you know how. The first thing you need to do is chose a hub bot. The hub is the main bot which all the other bots on the botnet (which will become leaf bots) connect to. Even if you are only using two bots, it’s best to use one as a hub bot, and the other as a leaf. The hub bot should be the most reliable bot on your botnet, running on a fast, stable, and secure shell - so keep that in mind when deciding which bot will be the hub.</p>
+<p>Once you’ve decided on the hub, it’s time to set up the linking.</p>
+<section id="how-to-share-userfiles-the-super-short-version">
+<h2>How to share userfiles- the super-short version<a class="headerlink" href="#how-to-share-userfiles-the-super-short-version" title="Link to this heading">¶</a></h2>
+<p>(This example steps assume Eggdrop has been compiled with TLS support, and you are sharing all channels)</p>
+<section id="on-the-hub-bot">
+<h3>On the Hub Bot<a class="headerlink" href="#on-the-hub-bot" title="Link to this heading">¶</a></h3>
+<p># Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">3333</span><span class="o">/+</span><span class="mi">4444</span> <span class="nb">all</span>
+</pre></div>
+</div>
+<p># On the hub (for this example, the Hub is called Hubalicious), add the leaf bot (for this example, the Leaf is called LeifErikson) with <cite>.+bot LeifErikson &lt;IP_address_of_LiefErikson&gt; +4444/+3333 &lt;LiefErikson_hostmask&gt;</cite>.</p>
+<p># On the hub, give the leaf bot the appropriate leaf sharing flags with <cite>.botattr LiefErikson +gs</cite>.</p>
+</section>
+<section id="on-the-leaf-bot">
+<h3>On the Leaf Bot<a class="headerlink" href="#on-the-leaf-bot" title="Link to this heading">¶</a></h3>
+<p># Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">5555</span><span class="o">/+</span><span class="mi">6666</span> <span class="nb">all</span>
+</pre></div>
+</div>
+<p># Now on the leaf, add the hub bot with <cite>.+bot Hubalicious &lt;IP_address_of_Hubalicious&gt; +6666/+5555 &lt;Hubalicious hostmask&gt;</cite>.</p>
+<p># On the leaf, give the hub bot the appropriate hub and sharing flags with <cite>.botattr Hubalicious +ghp</cite>.</p>
+<p>At this point, the leaf bot should attempt to connect to the hub bot within the next minute, or you can force the link connection with <cite>.link Hubalicious</cite>. You can also use .bottree to see your botnet structure.</p>
+</section>
+</section>
+<section id="explaining-the-linking-sharing-process">
+<h2>Explaining the Linking/Sharing Process<a class="headerlink" href="#explaining-the-linking-sharing-process" title="Link to this heading">¶</a></h2>
+<p>Eggdrop bots can talk to each other for a variety of reasons. In order for an Eggdrop to talk to another Eggdrop for anything, they must link. This is done by adding a bot record the remote bot on the hub bot (In our example above, using <cite>.+bot LeifErikson</cite> on Hubalicious, and using <cite>.+bot Hubalicious</cite> on LiefErikson). Once the bot records are added, bots can be manually connected using the <cite>.link</cite> command.</p>
+<p>In the example above, we add the +s bot flag to LiefErikson’s bot record on Hubalicious to tell Hubalicious that LiefErikson is not only allowed to connect, but is authorized to download the userfiles from Hubalicious. Similarly, we add the +p bot flag to Hubalicious’s bot record on LiefErikson to tell LiefErikson that Hubalicous is authorized to send userfiles to LiefErikson. The +h bot flag is added to Hubalicious’s bot record on LiefErikson so tell LiefErikson that Hubalicious is the hub, and it should always try to automatically connect to Hubalicious.</p>
+<p>Lastly, the +g flag is used on both bot records to indicate that Hubalicious is authorized to send userfiles for all channels. This is a shortcut method to sharing all channels instead of setting the <cite>+shared</cite> channel setting on the hub for each channel userfile you wish the hub to share (set via .chanset), and using the <cite>|+s #channel</cite> bot flag for each channel userfile that the leaf is authorized to receive userfiles from the hub. As an example of channel-specific userfile sharing, you would use <cite>.botattr LiefErikson |+s #theforest</cite> on Hubalicious to set #theforest as a channel authorized to be shared to LiefErikson, and <cite>chanset #theforest +shared</cite> to tell LiefErikson to accept the channel userfile for #theforest.</p>
+<p>One more commonly used flag is the <cite>+a</cite> flag. This flag specifies an alternate hub to connect to in case the primary hub goes down. The alternate hub should be linked to hub and maintain all channel userfiles the hub maintains to ensure there is no desynchronization while the hub bot is down. Should the hub bot go down, and assuming the <cite>+h</cite> flag is set for the hub on a leaf, the leafbost will automatically try to reconnect to the hub every minute, even if it makes a connection with the alternate hub in the meantime. An alternate hub is added the same as a hub, except swapping out the <cite>h</cite> for the <cite>a</cite>: <cite>.botattr AltRock +agp</cite>.</p>
+<p>Now that you have a hub and leaf bot successfully connected and sharing userfiles, you can repeat the <a class="reference internal" href="#on-the-leaf-bot">On the Leaf Bot</a> section to add additional leafs to your hub.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="tlssetup.html" title="Enabling TLS Security on Eggdrop"
+              >previous</a> |
+            <a href="firstscript.html" title="Writing an Eggdrop Script"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Aug 07, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

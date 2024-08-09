@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Upgrading Eggdrop &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Upgrading Eggdrop &#8212; Eggdrop 1.10.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc1 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="install.html" title="Installing Eggdrop"
              accesskey="P">previous</a> |
@@ -39,7 +39,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Eggdrop</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Upgrading Eggdrop</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-upgrade">How to Upgrade</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#must-read-changes-for-eggdrop-v1-9">Must-read changes for Eggdrop v1.9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#must-read-changes-for-eggdrop-v1-10">Must-read changes for Eggdrop v1.10</a></li>
 </ul>
 </li>
 </ul>
@@ -57,6 +57,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
@@ -69,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -114,12 +116,12 @@
 <p>Then, simply follow the same steps you followed to install Eggdrop previously. Download the source, unzip/untar it, and run the ‘./configure’, ‘make config’, ‘make’, and ‘make install’ commands. Restart your Eggdrop and you will be up and running with the latest version of Eggdrop.</p>
 </div></blockquote>
 </section>
-<section id="must-read-changes-for-eggdrop-v1-9">
-<h2>Must-read changes for Eggdrop v1.9<a class="headerlink" href="#must-read-changes-for-eggdrop-v1-9" title="Link to this heading">¶</a></h2>
+<section id="must-read-changes-for-eggdrop-v1-10">
+<h2>Must-read changes for Eggdrop v1.10<a class="headerlink" href="#must-read-changes-for-eggdrop-v1-10" title="Link to this heading">¶</a></h2>
 <p>These are NOT all the changes or new settings; rather just the “killer” changes that may directly affect Eggdrop’s previous performance without modification.</p>
 <section id="config-file-changes">
 <h3>Config file changes<a class="headerlink" href="#config-file-changes" title="Link to this heading">¶</a></h3>
-<p>To migrate from a 1.8 to a 1.9 Eggdrop, some changes are suggested to be made in your configuration file:</p>
+<p>To migrate from a 1.8 to a 1.10 Eggdrop, some changes are suggested to be made in your configuration file:</p>
 <ul>
 <li><p>Eggdrop has deprecated the blowfish module for password hashing in favor of the PBKDF2 module. This is a BIG change which, if done carelessly, has the potential to render stored passwords useless. Please see doc/PBKDF2 for information on how to properly migrate your userfiles and passwords to the new module.</p></li>
 <li><p>Eggdrop 1.9 switched from the “set servers {}” syntax to the “server add” command. For example, if your configuration file previously had:</p>
@@ -139,15 +141,15 @@
 </section>
 <section id="modules">
 <h3>Modules<a class="headerlink" href="#modules" title="Link to this heading">¶</a></h3>
-<p>While most 3rd party modules that worked on Eggdrop v1.6/v1.8 should still work with Eggdrop v1.9, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at <a class="reference external" href="ftp://eggheads.org/pub/eggdrop/modules/1.9/">ftp://eggheads.org/pub/eggdrop/modules/1.9/</a></p>
+<p>While most 3rd party modules that worked on older Eggdrop versions should still work with Eggdrop 1.10, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/modules/1.10/">https://ftp.eggheads.org/pub/eggdrop/modules/1.10/</a></p>
 </section>
 <section id="scripts">
 <h3>Scripts<a class="headerlink" href="#scripts" title="Link to this heading">¶</a></h3>
-<p>All 3rd party Tcl scripts that work with Eggdrop v1.6/v1.8 should fully work with Eggdrop v1.9.</p>
+<p>All 3rd party Tcl scripts that worked with Eggdrop versions as early as v1.6 should still fully work with Eggdrop 1.10.</p>
 </section>
 <section id="botnet">
 <h3>Botnet<a class="headerlink" href="#botnet" title="Link to this heading">¶</a></h3>
-<p>In Eggdrop v1.8, Eggdrop bots would automatically attempt to upgrade any botnet link to an SSL/TLS connection. In v1.9, the user is required to explicitly request an SSL/TLS connection by prefixing the port with a ‘+’. If you wish your botnet to take advantage of encryption, use the .chaddr command to update your ports to start with a ‘+’.</p>
+<p>In Eggdrop v1.8, Eggdrop bots would automatically attempt to upgrade any botnet link to an SSL/TLS connection. Since v1.9, the user is required to explicitly request an SSL/TLS connection by prefixing the port with a ‘+’. If you wish your botnet to take advantage of encryption, use the .chaddr command to update your ports to start with a ‘+’.</p>
 </section>
 <section id="tcl-commands">
 <h3>Tcl Commands<a class="headerlink" href="#tcl-commands" title="Link to this heading">¶</a></h3>
@@ -187,7 +189,7 @@
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
+      Last updated on Aug 07, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
         </div>
