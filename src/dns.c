@@ -566,7 +566,7 @@ void *thread_dns_ipbyhost(void *arg)
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
   else if (error == EAI_SYSTEM) {
     /* print raw errno, dont use strerror() in thread and dont use strerror_r() due to GNU / POSIX portability complexity */
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: errno %i ", gai_strerror(error), errno);
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: errno %i", gai_strerror(error), errno);
   } else
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s", gai_strerror(error));
   close(dtn->fildes[1]);
