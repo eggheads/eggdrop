@@ -2035,11 +2035,10 @@ static int gotjoin(char *from, char *channame)
       reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
+      u = lookup_user_record(m, account ? account : NULL, from);
+      get_user_flagrec(u, &fr, chan->dname);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
-        u = get_user_from_member(m);
-        get_user_flagrec(u, &fr, chan->dname);
         check_tcl_rejn(nick, uhost, u, chan->dname);
-
         chan = findchan(chname);
         if (!chan) {
           if (ch_dname)
@@ -2057,6 +2056,7 @@ static int gotjoin(char *from, char *channame)
         m->last = now;
         m->delay = 0L;
         m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
+        m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
         putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
@@ -2072,6 +2072,7 @@ static int gotjoin(char *from, char *channame)
         m->delay = 0L;
         strlcpy(m->nick, nick, sizeof m->nick);
         strlcpy(m->userhost, uhost, sizeof m->userhost);
+        m->user = u;
         m->flags |= STOPWHO;
 
         if (extjoin) {
@@ -2092,9 +2093,6 @@ static int gotjoin(char *from, char *channame)
           /* The channel doesn't exist anymore, so get out of here. */
           goto exit;
         }
-
-        /* The record saved in the channel record always gets updated,
-         * so we can use that. */
 
         if (match_my_nick(nick)) {
           /* It was me joining! Need to update the channel record with the
