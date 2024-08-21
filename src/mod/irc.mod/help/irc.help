@@ -48,7 +48,7 @@ See also: deluser, +host, -host, +user, -user
    the channel. The next field is the user's status flag. These are the same
    as the flags listed in %b.help whois%b. Global flags are uppercase. Only
    the 'highest' flag is displayed. The last two fields are the user's idle
-   time, and the user@host they are connecting from
+   time, and the user@host they are connecting from.
 
 See also: console, whois%{m|m}, status%{-}
 %{help=deluser}%{+m|m}
