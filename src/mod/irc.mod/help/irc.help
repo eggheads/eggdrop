@@ -40,7 +40,7 @@ See also: deluser, +host, -host, +user, -user
    channel, with each entry looking like this:
 
        NICKNAME HANDLE ACCOUNT JOIN   F IDLE         USER@HOST
-      @Wcc      Wcc    *       00:42                 Wcc@example.org
+      @Wcc      Wcc    *       00:42  N              Wcc@example.org
 
    The "@Wcc" means that the user's nickname is Wcc and that he is a chanop.
    The second "Wcc" is the user's handle. Sometimes this will differ from the
