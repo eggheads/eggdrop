@@ -39,8 +39,8 @@ See also: deluser, +host, -host, +user, -user
    #hiya, 0 members, mode +:" instead. Next is a list of the users on the
    channel, with each entry looking like this:
 
-      <D|Ares>  NICKNAME HANDLE ACCOUNT JOIN   F IDLE         USER@HOST
-      <D|Ares> @Wcc      Wcc    *       00:42                 Wcc@example.org
+       NICKNAME HANDLE ACCOUNT JOIN   F IDLE         USER@HOST
+      @Wcc      Wcc    *       00:42                 Wcc@example.org
 
    The "@Wcc" means that the user's nickname is Wcc and that he is a chanop.
    The second "Wcc" is the user's handle. Sometimes this will differ from the
