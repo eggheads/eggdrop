@@ -1940,7 +1940,7 @@ uncompressfile <src-file> [target-file]
 
   Description: compresses or un-compresses files. The level option specifies the compression mode to use when compressing. Available modes are from 0 (minimum CPU usage, minimum compression) all the way up to 9 (maximum CPU usage, maximum compression). If you don't specify the target-file, the src-file will be overwritten.
 
-  Returns: nothing
+  Returns: 1 if successful; 0 otherwise
 
   Module: compress
 
