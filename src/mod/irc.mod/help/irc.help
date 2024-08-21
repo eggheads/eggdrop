@@ -50,6 +50,9 @@ See also: deluser, +host, -host, +user, -user
    the 'highest' flag is displayed. The last two fields are the user's idle
    time (if more than 3 minutes), and the user@host they are connecting from.
 
+   IDLE could display "(away)" as last away status known to the bot. It could
+   be out of sync, if not tracked via away-notify capability or otherwise.
+
 See also: console, whois%{m|m}, status%{-}
 %{help=deluser}%{+m|m}
 ###  %bdeluser%b <nickname>
