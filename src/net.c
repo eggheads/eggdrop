@@ -922,8 +922,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     maxfd = maxfd_e;
 
   /* select() may modify the timeval argument - copy it */
-  t.tv_sec = td->blocktime.tv_sec;
-  t.tv_usec = td->blocktime.tv_usec;
+  t = td->blocktime;
 
   call_hook(HOOK_PRE_SELECT);
   x = select((SELECT_TYPE_ARG1) maxfd + 1,

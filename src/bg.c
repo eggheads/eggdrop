@@ -23,7 +23,6 @@
  */
 
 #include "main.h"
-#include <signal.h>
 #include "bg.h"
 
 extern char pid_file[];
