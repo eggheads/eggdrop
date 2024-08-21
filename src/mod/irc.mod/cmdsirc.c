@@ -745,7 +745,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       maxuserhostlen = 9;
 
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n"
-            " %-*s %-*s %-*s JOIN   F IDLE   USER@HOST\n", maxnicklen,
+            " %-*s %-*s %-*s JOIN   F IDLE         USER@HOST\n", maxnicklen,
             "NICKNAME", maxhandlen, "HANDLE", maxaccountlen, "ACCOUNT");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
@@ -837,31 +837,31 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c        %-*s <- netsplit, %" PRId64 "s\n",
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c              %-*s <- netsplit, %" PRId64 "s\n",
                 chanflag, maxnicklen, m->nick, maxhandlen, handle,
                 maxaccountlen, m->account, join, atrflag, maxuserhostlen,
                 m->userhost, (int64_t) (now - m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c        %-*s <- it's me!\n",
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c              %-*s <- it's me!\n",
                 chanflag, maxnicklen, m->nick, maxhandlen, handle,
                 maxaccountlen, m->account, join, atrflag, maxuserhostlen,
                 m->userhost);
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
-          snprintf(s, sizeof s, "%" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
+          snprintf(s, sizeof s, "%4" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
         else if (now - (m->last) > 3600)
-          snprintf(s, sizeof s, "%" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
+          snprintf(s, sizeof s, "%4" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
         else if (now - (m->last) > 180)
-          snprintf(s, sizeof s, "%" PRId64 "m", ((int64_t) (now - m->last)) / 60);
+          snprintf(s, sizeof s, "%4" PRId64 "m", ((int64_t) (now - m->last)) / 60);
         else
-          strlcpy(s, "", sizeof s);
+          strcpy(s, "     ");
         if (chan_ircaway(m)) {
-          strlcpy(s+strlen(s), "(away)", ((sizeof s) - strlen(s)));
+          strlcpy(s + strlen(s), " (away)", ((sizeof s) - strlen(s)));
         } else {
-          strlcpy(s+strlen(s), "      ", ((sizeof s) - strlen(s)));
+          strlcpy(s + strlen(s), "       ", ((sizeof s) - strlen(s)));
         }
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %-6s %s\n", chanflag,
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s %s\n", chanflag,
                 maxnicklen, m->nick, maxhandlen, handle, maxaccountlen,
                 m->account, join, atrflag, s, m->userhost);
       }
