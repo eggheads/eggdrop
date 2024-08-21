@@ -849,11 +849,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
-          snprintf(s, sizeof s, "%2" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
+          snprintf(s, sizeof s, "%" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
         else if (now - (m->last) > 3600)
-          snprintf(s, sizeof s, "%2" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
+          snprintf(s, sizeof s, "%" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
         else if (now - (m->last) > 180)
-          snprintf(s, sizeof s, "%2" PRId64 "m", ((int64_t) (now - m->last)) / 60);
+          snprintf(s, sizeof s, "%" PRId64 "m", ((int64_t) (now - m->last)) / 60);
         else
           strlcpy(s, "", sizeof s);
         if (chan_ircaway(m)) {
