@@ -44,6 +44,7 @@ static int monitor_add(char * nick, int send);
 static int monitor_del (char *nick);
 static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
 static void monitor_clear();
+struct batch_list *batchlist;
 int account_notify = 1, extended_join = 1, account_tag = 0;
 Tcl_Obj *ncapeslist;
 
@@ -192,6 +193,46 @@ static int check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   return 1;
 }
 
+static int check_tcl_batch(char *type, struct batch_line *line)
+{
+//  Tcl_Obj *dictObj = Tcl_NewDictObj();
+//  Tcl_Obj *tfrom, *tcode, *tdata;
+  int i = 0, x, listlength, done;
+  Tcl_DictSearch search;
+  Tcl_Obj *outer_list = Tcl_NewListObj(0, NULL);
+  Tcl_Obj *taglist, *inner_list, *dictKey, *dictValue;
+  Tcl_Obj **elemPtrs;
+
+  while (line != NULL) {
+    inner_list = Tcl_NewListObj(0, NULL);
+    taglist = Tcl_NewListObj(0, NULL);
+    Tcl_ListObjAppendElement(interp, inner_list, Tcl_NewStringObj(line->from, strlen(line->from)));
+    Tcl_ListObjAppendElement(interp, inner_list, Tcl_NewStringObj(line->code, strlen(line->code)));
+    Tcl_ListObjAppendElement(interp, inner_list, Tcl_NewStringObj(line->data, strlen(line->data)));
+    Tcl_DictObjFirst(interp, line->tagdict, &search, &dictKey, &dictValue, &done);
+    while (!done) {
+      Tcl_ListObjAppendElement(interp, taglist, dictKey);
+      Tcl_ListObjAppendElement(interp, taglist, dictValue);
+      Tcl_DictObjNext(&search, &dictKey, &dictValue, &done);
+    }
+    Tcl_DictObjDone(&search);
+    Tcl_ListObjAppendElement(interp, inner_list, taglist);
+    Tcl_ListObjAppendElement(interp, outer_list, inner_list);
+    line = line->next;
+  }
+  if (Tcl_ListObjGetElements(interp, outer_list, &listlength, &elemPtrs) == TCL_OK) {
+    for (i = 0; i < listlength; i++) {
+      putlog(LOG_DEBUG, "*", "batch session item: %s ", Tcl_GetString(elemPtrs[i]));
+    }
+  }
+
+  Tcl_SetVar(interp, "_batch1", type, 0);
+  x = check_tcl_bind(H_batch, type, 0, " $_batch1",
+                    MATCH_EXACT | BIND_STACKABLE);
+
+  return (x == BIND_EXEC_LOG);
+}
+
 static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
@@ -219,6 +260,7 @@ static int check_tcl_rawt(char *from, char *code, char *msg, char *tagdict)
                     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
   return (x == BIND_EXEC_LOG);
 }
+
 
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
                            char *dest, char *keyword, char *args,
@@ -793,6 +835,117 @@ static int gottagmsg(char *from, char *msg, Tcl_Obj *tagdict) {
   return 0;
 }
 
+static int create_batch_session(char *ref, char *type, char *args) {
+  struct batch_list *session;
+
+  session = nmalloc(sizeof *session);
+  memset(session, 0, sizeof *session);
+  session->lines = NULL;    /* Just being thorough.... */
+  strlcpy(session->ref, ref, sizeof session->ref);
+  strlcpy(session->type, type, sizeof session->type);
+  strlcpy(session->args, args, sizeof session->args);
+  session->next = batchlist;
+  batchlist = session;
+  return 0;
+}
+
+static int end_batch_session(char *ref) {
+  struct batch_list *prev, *session;
+  struct batch_line *tmp = NULL;
+
+
+  /* Find the batch session */
+  for (prev = NULL, session = batchlist; session; session = prev ? prev->next: batchlist) {
+    if (!strcmp(session->ref, ref)) {
+      check_tcl_batch(session->type, session->lines);
+      if (prev) {
+        prev->next = session->next; // Remove middle node
+      } else { // Remove first node
+        batchlist = session->next;
+      }
+      while (session->lines) {
+        tmp = session->lines->next;
+        nfree(session->lines);
+        session->lines = tmp;
+      }
+      nfree(session);
+    } else {
+      prev = session;
+    }
+  }
+  if (session) {
+    nfree(session);
+  }
+  return 0;
+}
+
+static int add_line_to_session(char *from, char *ref, char *data, Tcl_Obj *tagdict) {
+  int found = 0;
+  struct batch_line *line, *last;
+  struct batch_list *session;
+  char code[MSGMAX], *spaceptr, *dataptr;
+
+  /* Create the line record */
+  line = nmalloc(sizeof *line);
+  memset(line, 0, sizeof *line);
+ 
+  /* Split the irc code from the data */
+  strlcpy(code, data, sizeof code);
+  spaceptr = strchr(code, ' ');
+  dataptr = spaceptr + 1;
+  *spaceptr = '\0';
+  strlcpy(line->from, from, sizeof line->from);
+  strlcpy(line->ref, ref, sizeof line->ref);
+  strlcpy(line->code, code, sizeof line->code);
+  strlcpy(line->data, dataptr, sizeof line->data);
+  line->tagdict = tagdict;
+  line->next = NULL;
+
+  /* Find the session it belongs to and add it */
+  for (session = batchlist; session; session = session->next) {
+    if (!session) {
+      putlog(LOG_DEBUG, "*", "Can't find the batch list!");
+      return 0;
+    }
+    if (!strcmp(session->ref, ref)) {
+      /* If session doesn't have any lines yet, add the head here */
+      if (!session->lines) {
+        session->lines = line;
+      } else {
+        last = session->lines;
+        while (last->next != NULL) {
+          last = last->next;
+        }
+        last->next = line;
+      }
+      found = 1;
+      break;
+    }
+  }
+  if (!found) {
+    putlog(LOG_DEBUG, "*", "Can't find the session. TBD: Create a session");
+  }
+  return 0;
+}
+
+static int gotbatch(char *from, char *msg) {
+  char *ref, *type;
+
+  ref = newsplit(&msg);
+  if (ref[0] == '+') {
+    ref++;
+    type = newsplit(&msg);
+    fixcolon(msg);
+    create_batch_session(ref, type, msg);
+  }
+  if (ref[0] == '-') {
+    fixcolon(ref);
+    ref++;
+    end_batch_session(ref);
+  }
+  return 0;
+}
+
 /* WALLOPS: oper's nuisance
  */
 static int gotwall(char *from, char *msg)
@@ -1218,10 +1371,10 @@ static char *decode_msgtag_value(char *value, char **endptr)
 
 static void server_activity(int idx, char *tagmsg, int len)
 {
-  char *from, *code, *msgptr;
+  char *from, *code, *msgptr, *ref = NULL;
   char rawmsg[RECVLINEMAX+7];
   int ret;
-  Tcl_Obj *tagdict = Tcl_NewDictObj();
+  Tcl_Obj *valueobj, *tagdict = Tcl_NewDictObj();
 
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
@@ -1242,6 +1395,11 @@ static void server_activity(int idx, char *tagmsg, int len)
 
       if (*value == '=') {
         Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj(decode_msgtag_value(value + 1, &lastendptr), -1));
+        if (!strncmp("batch=", key, 6)) {
+//          if (TCL_OK != Tcl_DictObjGet(interp, tagdict, Tcl_NewStringObj("batch", -1), &valueobj)) {
+          Tcl_DictObjGet(interp, tagdict, Tcl_NewStringObj("batch", -1), &valueobj);
+          ref = Tcl_GetString(valueobj);
+        }
       } else {
         Tcl_DictObjPut(interp, tagdict, Tcl_NewStringObj(key, value - key), Tcl_NewStringObj("", -1));
         lastendptr = value;
@@ -1254,6 +1412,10 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (*msgptr == ':') {
     msgptr++;
     from = newsplit(&msgptr);
+  }
+  /* Check if it is part of a batch session */
+  if (ref) {
+    add_line_to_session(from, ref, msgptr, tagdict);
   }
   code = newsplit(&msgptr);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
@@ -1646,6 +1808,11 @@ static int got421(char *from, char *msg) {
   return 1;
 }
 
+/* Helper function to find a batch session */
+struct batch_line *find_batch(char *ref) {
+  return 0;
+}
+
 /* Helper function to quickly find a capability record */
 struct capability *find_capability(char *capname) {
   struct capability *current = cap;
@@ -1705,7 +1872,7 @@ static int del_capability(char *name) {
   putlog(LOG_SERV, "*", "CAP: %s not found, can't remove", name);
   return -1;
 }
-  
+
 
 /* Remove multiple capabilities from the linked list
  * msg is in format "multi-prefix sasl server-time"
@@ -2185,6 +2352,7 @@ static cmd_t my_raw_binds[] = {
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
+  {"BATCH",        "",   (IntFunc) gotbatch,        NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
