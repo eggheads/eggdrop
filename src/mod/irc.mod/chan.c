@@ -1024,7 +1024,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           set_key(chan, p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           set_key(chan, p);
           *p = 0;
@@ -1047,7 +1047,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           chan->channel.maxmembers = atoi(p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           chan->channel.maxmembers = atoi(p);
           *p = 0;
@@ -2592,7 +2592,7 @@ static int gotmsg(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strlcpy(buf2, p1, sizeof buf2);
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
@@ -2710,7 +2710,7 @@ static int gotnotice(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strcpy(ctcp, p1);
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?

@@ -169,9 +169,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   p = strchr(new, '/');
   while (p) {
     *p = 0;
-    p++;
     malloc_strcpy(elem, new);
-    strcpy(new, p);
+    memmove(new, p + 1, strlen(p + 1) + 1);
     if (!elem[0] || !strcmp(elem, ".")) {
       p = strchr(new, '/');
       continue;
@@ -446,7 +445,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
   if (p != NULL) {
     *p = 0;
     malloc_strcpy(s, what);
-    strcpy(what, p + 1);
+    memmove(what, p + 1, strlen(p + 1) + 1);
     if (!resolve_dir(dcc[idx].u.file->dir, s, &destdir, idx)) {
       my_free(destdir);
       my_free(s);
@@ -806,8 +805,8 @@ static void cmd_desc(int idx, char *par)
   /* Replace | with linefeeds, limit 5 lines */
   lin = 0;
   q = desc;
-  while ((*q <= 32) && (*q))
-    strcpy(q, &q[1]);           /* Zapf leading spaces */
+  while ((*q <= 32) && (*q)) /* Zapf leading spaces */
+    memmove(q, q + 1, strlen(q));
   p = strchr(q, '|');
   while (p != NULL) {
     /* Check length */
@@ -827,8 +826,8 @@ static void cmd_desc(int idx, char *par)
     *p = '\n';
     q = p + 1;
     lin++;
-    while ((*q <= 32) && (*q))
-      strcpy(q, &q[1]);
+    while ((*q <= 32) && (*q)) /* Zapf leading spaces */
+      memmove(q, q + 1, strlen(q));
     if (lin == 5) {
       *p = 0;
       p = NULL;
@@ -1112,7 +1111,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
   if (p != NULL) {
     *p = 0;
     malloc_strcpy(s, fn);
-    strcpy(fn, p + 1);
+    memmove(fn, p + 1, strlen(p + 1) + 1);
     if (!resolve_dir(dcc[idx].u.file->dir, s, &oldpath, idx)) {
       dprintf(idx, "%s", FILES_ILLSOURCE);
       my_free(s);

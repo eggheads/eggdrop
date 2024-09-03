@@ -449,7 +449,7 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
   if (p != NULL) {
     *p = 0;
     malloc_strcpy(s, fn);
-    strcpy(fn, p + 1);
+    memmove(fn, p + 1, strlen(p + 1) + 1);
     if (!resolve_dir("/", s, &oldpath, -1)) {
       /* Tcl can do * anything */
       Tcl_AppendResult(irp, "-1", NULL);        /* Invalid source */
