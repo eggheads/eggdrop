@@ -703,54 +703,58 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
 
 static void cmd_channel(struct userrec *u, int idx, char *par)
 {
-  char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag;
+  char s[UHOSTLEN], join[7], handle[HANDLEN + 1], atrflag, chanflag;
   struct chanset_t *chan;
   memberlist *m;
-  int maxnicklen, maxhandlen;
+  int maxnicklen = 0, maxhandlen = 0, maxaccountlen = 0, maxuserhostlen = 0;
 
   chan = get_channel(idx, par);
   if (!chan || !has_oporhalfop(idx, chan))
     return;
   putlog(LOG_CMDS, "*", "#%s# (%s) channel", dcc[idx].nick, chan->dname);
-  strlcpy(s, getchanmode(chan), sizeof s);
   if (channel_pending(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
+    snprintf(s, sizeof s, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
   else if (channel_active(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_CHANNEL, chan->dname);
+    snprintf(s, sizeof s, "%s %s", IRC_CHANNEL, chan->dname);
   else
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_DESIRINGCHAN, chan->dname);
-  dprintf(idx, "%s, %d member%s, mode %s:\n", s1, chan->channel.members,
-          chan->channel.members == 1 ? "" : "s", s);
+    snprintf(s, sizeof s, "%s %s", IRC_DESIRINGCHAN, chan->dname);
+  dprintf(idx, "%s, %d member%s, mode %s:\n", s, chan->channel.members,
+          chan->channel.members == 1 ? "" : "s", getchanmode(chan));
   if (chan->channel.topic)
     dprintf(idx, "%s: %s\n", IRC_CHANNELTOPIC, chan->channel.topic);
   if (channel_active(chan)) {
-    /* find max nicklen and handlen */
-    maxnicklen = maxhandlen = 0;
+    /* find max nicklen, handlen and accountlen */
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (strlen(m->nick) > maxnicklen)
         maxnicklen = strlen(m->nick);
+      if (strlen(m->account) > maxaccountlen)
+        maxaccountlen = strlen(m->account);
+      if (strlen(m->userhost) > maxuserhostlen)
+        maxuserhostlen = strlen(m->userhost);
       u = get_user_from_member(m);
       if (u && (strlen(u->handle) > maxhandlen))
         maxhandlen = strlen(u->handle);
     }
-    if (maxnicklen < 9)
-      maxnicklen = 9;
-    if (maxhandlen < 9)
-      maxhandlen = 9;
+    if (maxnicklen < 8)
+      maxnicklen = 8;
+    if (maxhandlen < 6)
+      maxhandlen = 6;
+    if (maxaccountlen < 7)
+      maxaccountlen = 7;
+    if (maxuserhostlen < 9)
+      maxuserhostlen = 9;
 
-    dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    dprintf(idx, " %-*s %-*s %-*s  %-6s %-5s        %s\n", maxnicklen, "NICKNAME",
-              maxhandlen, "HANDLE", maxnicklen, "ACCOUNT", "JOIN", "IDLE",
-              "USER@HOST");
+    dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n"
+            " %-*s %-*s %-*s JOIN   F IDLE         USER@HOST\n", maxnicklen,
+            "NICKNAME", maxhandlen, "HANDLE", maxaccountlen, "ACCOUNT");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
         if ((now - (m->joined)) > 86400)
-          strftime(s, 6, "%d%b", localtime(&(m->joined)));
+          strftime(join, sizeof join, "%y%m%d", localtime(&(m->joined)));
         else
-          strftime(s, 6, "%H:%M", localtime(&(m->joined)));
+          strftime(join, sizeof join, "%H:%M", localtime(&(m->joined)));
       } else
-        strlcpy(s, " --- ", sizeof s);
-      egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+        strcpy(join, "*");
       u = get_user_from_member(m);
       if (u == NULL)
         strlcpy(handle, "*", sizeof handle);
@@ -833,31 +837,33 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
         chanflag = ' ';
       if (chan_issplit(m)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- netsplit, %" PRId64 "s\n",
-                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
-                m->account, s, atrflag, (int64_t) (now - m->split));
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c              %-*s <- netsplit, %" PRId64 "s\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle,
+                maxaccountlen, m->account, join, atrflag, maxuserhostlen,
+                m->userhost, (int64_t) (now - m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c             <- it's me!\n",
-                chanflag, maxnicklen, m->nick, maxhandlen, handle, maxnicklen,
-                m->account, s, atrflag);
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c              %-*s <- it's me!\n",
+                chanflag, maxnicklen, m->nick, maxhandlen, handle,
+                maxaccountlen, m->account, join, atrflag, maxuserhostlen,
+                m->userhost);
       } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
-          snprintf(s1, sizeof s1, "%2" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
+          snprintf(s, sizeof s, "%4" PRId64 "d", ((int64_t) (now - m->last)) / 86400);
         else if (now - (m->last) > 3600)
-          snprintf(s1, sizeof s1, "%2" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
+          snprintf(s, sizeof s, "%4" PRId64 "h", ((int64_t) (now - m->last)) / 3600);
         else if (now - (m->last) > 180)
-          snprintf(s1, sizeof s1, "%2" PRId64 "m", ((int64_t) (now - m->last)) / 60);
+          snprintf(s, sizeof s, "%4" PRId64 "m", ((int64_t) (now - m->last)) / 60);
         else
-          strlcpy(s1, "   ", sizeof s1);
+          strcpy(s, "     ");
         if (chan_ircaway(m)) {
-          strlcpy(s1+strlen(s1), " (away)", ((sizeof s1)-strlen(s1)));
+          strlcpy(s + strlen(s), " (away)", ((sizeof s) - strlen(s)));
         } else {
-          strlcpy(s1+strlen(s1), "       ", ((sizeof s1)-strlen(s1)));
+          strlcpy(s + strlen(s), "       ", ((sizeof s) - strlen(s)));
         }
-        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s  %s\n", chanflag, maxnicklen,
-              m->nick, maxhandlen, handle, maxnicklen, m->account, s, atrflag,
-              s1, m->userhost);
+        dprintf(idx, "%c%-*s %-*s %-*s %-6s %c %s %s\n", chanflag,
+                maxnicklen, m->nick, maxhandlen, handle, maxaccountlen,
+                m->account, join, atrflag, s, m->userhost);
       }
       if (chan_fakeop(m))
         dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);
