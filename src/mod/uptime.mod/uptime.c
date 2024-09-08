@@ -68,7 +68,7 @@ typedef struct PackUp {
   unsigned long ontime;
   unsigned long now2;
   unsigned long sysup;
-  char string[3];
+  char string[FLEXIBLE_ARRAY_MEMBER];
 } PackUp;
 
 PackUp upPack;
@@ -213,7 +213,7 @@ static int send_uptime(void)
     upPack.sysup = htonl(st.st_ctime);
 
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
-        strlen(uptime_version);
+        strlen(uptime_version) + 8;
   mem = (PackUp *) nmalloc(len);
   egg_bzero(mem, len); /* mem *should* be completely filled before it's
                              * sent to the server.  But belt-and-suspenders
