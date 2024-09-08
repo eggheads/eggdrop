@@ -1,13 +1,27 @@
 
-Eggdrop Changes (Last Updated 2024-08-08):
+Eggdrop Changes (Last Updated 2024-09-08):
 __________________________________________
 
-Eggdrop v1.10.0rc1:
+Eggdrop v1.10.0rc2:
+
+  2024-09-08 * Fix user/chanrecord checking on join (#1678)
+             * Add additional MacOS Tcl search path
+             * Fix get_user_from_member return value
+                 [Found by: mortmann]
+             * Update version info in tcl-commands.doc
+             * Typo fixes
+             * Fix .channel formatting
+                 [Found by: Geo / Patch by: Geo]
+             * fix broken doc links, small tweaks
+             * Update docs for rc2
+
+Eggdrop v1.10.0rc1 (2024-08-08):
 
   2024-08-08 * Revert strerror_r to strerror for now
              * Fix compiler warning
              * Match misc/newversion to handle #1507 string change
              * Update patchlevel to 1.10.0 alpha
+             * Eggdrop v1.10.0 Release Candidate 1
   2024-08-07 * Add Tcl 9 compatibility - Tcl_Size in python module
                  [Found by: michaelortmann / Patch by: michaelortmann]
              * Revert adding -fsanitize=address
