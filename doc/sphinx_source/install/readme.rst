@@ -117,12 +117,12 @@ Some components of Eggdrop relies on a variety of third-party libraries, documen
 Quick Startup
 -------------
 
-    Please see the `Install <install/install.html>`_ file after you finish reading this file.
+    Please see the `Install <install.html>`_ file after you finish reading this file.
 
 Upgrading
 ---------
 
-    The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see `Upgrading <install/upgrading.html>`_ for full details.
+    The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see `Upgrading <upgrading.html>`_ for full details.
 
 Command Line
 ------------
