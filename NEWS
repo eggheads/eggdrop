@@ -93,6 +93,11 @@ Eggdrop v1.10.0:
       created to hedge against frequent writes to disk, but is less
       relveant with today's technology. Eggdrop now writes logfiles to
       disk immediately.
+    - The old DNS module section was removed
+    - A Python module section was added, but does not load the python
+      module by default.
+    - The Autoscripts capability to load and manage some scripts from the
+      partyline is loaded by default
 
  Documentation changes:
     - Added documentation that covers values commonly used when writing
