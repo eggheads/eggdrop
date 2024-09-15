@@ -2836,7 +2836,7 @@ static void cmd_page(struct userrec *u, int idx, char *par)
 static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
   struct rusage ru1, ru2;
-  int r = 0;
+  int r = 0, r2 = 0;
   int code;
   char *result;
   Tcl_DString dstr;
@@ -2848,17 +2848,18 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   debug1("tcl: evaluating .tcl %s", msg);
   r = getrusage(RUSAGE_SELF, &ru1);
   code = Tcl_GlobalEval(interp, msg);
-  if (!r && !getrusage(RUSAGE_SELF, &ru2))
+  r2 = getrusage(RUSAGE_SELF, &ru2);
+  /* properly convert string to system encoding. */
+  Tcl_DStringInit(&dstr);
+  Tcl_UtfToExternalDString(NULL, tcl_resultstring(), -1, &dstr);
+  result = Tcl_DStringValue(&dstr);
+  if (!r && !r2)
     debug3("tcl: evaluated .tcl %s, user %.3fms sys %.3fms", msg,
            (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
            (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
            (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
            (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
-  /* properly convert string to system encoding. */
-  Tcl_DStringInit(&dstr);
-  Tcl_UtfToExternalDString(NULL, tcl_resultstring(), -1, &dstr);
-  result = Tcl_DStringValue(&dstr);
 
   if (code == TCL_OK)
     dumplots(idx, "Tcl: ", result);
