@@ -25,17 +25,17 @@ To load a python script from your config file, place the .py file in the scripts
 
 If you need to install dependencies we recommend using virtual environments, see https://docs.python.org/3/library/venv.html for more details.
 
-Creating the venv (only necessary once)::
+To create the virtual environent in a hidden directory called .venv (only necessary once)::
 
   cd eggdrop && python3 -m venv .venv
 
-Installing python packages::
+To install a python package in the above .venv directory (in this example, the requests package)::
 
-  cd eggdrop && . .venv/bin/activate && pip install requests
+  cd eggdrop && source .venv/bin/activate && pip install requests
 
-Starting eggdrop with activated venv::
+Starting eggdrop with activated venv (must be run every time for proper functionality)::
 
-  cd eggdrop && . .venv/bin/activate && ./eggdrop
+  cd eggdrop && source .venv/bin/activate && ./eggdrop
 
 You always need to start Eggdrop with the activated venv to set the necessary environment variables.
 
@@ -44,6 +44,22 @@ Reloading Python Scripts
 ------------------------
 
 Unfortunately, reloading python scripts with rehash like Tcl scripts is currently unsupported. Scripts can unbind their existing binds and re-bind them on being loaded again (see the bind section). For now, you should restart your bot when the Python scripts change.
+
+You can (should?) also write scripts that manually unload their binds upon a reshash, example code looks like this:
+
+  # Create a list to track the join binds
+  if 'JOIN_BINDS' in globals():
+    for joinbind in JOIN_BINDS:
+      joinbind.unbind()
+    del JOIN_BINDS
+
+  JOIN_BINDS = list()
+
+  <...>
+
+  # Create the binds in the script like this
+  JOIN_BINDS.append(bind("join", "*", "*", joinGreetUser))
+  JOIN_BINDS.append(bind("join", "o", "*", joinGreetOp))
 
 ------------------------
 Multithreading and async
