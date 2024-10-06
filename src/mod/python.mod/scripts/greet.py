@@ -15,9 +15,15 @@ def joinGreetUser(nick, host, handle, channel, **kwargs):
 def joinGreetOp(nick, host, handle, channel, **kwargs):
   putmsg(channel, f"{nick} is an operator on this channel!")
 
+if 'GREET_BINDS' in globals():
+  for greetbind in GREET_BINDS:
+    greetbind.unbind()
+  del GREET_BINDS
+
+GREET_BINDS = list()
 # Call binds at the end of the script, not the top- the functions must be defined!
-bind("join", "*", "*", joinGreetUser)
+GREET_BINDS.append(bind("join", "*", "*", joinGreetUser))
 # Again, arguments are separated with a comma. This bind requires the 'o' flag to be triggered.
-bind("join", "o", "*", joinGreetOp)
+GREET_BINDS.append(bind("join", "o", "*", joinGreetOp))
 
 print('Loaded greet.py')
