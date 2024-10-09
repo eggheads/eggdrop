@@ -378,7 +378,7 @@ static PyObject *py_dir(PyObject *self, PyObject *args) {
   int j;
   const char *info[] = {"info commands", "info procs"}, *s, *value;
   Tcl_Obj *tcl_list, **objv;
-  int objc;
+  Tcl_Size objc;
 
   py_list = PyList_New(0);
   for (i = 0; i < sizeof info / sizeof info[0]; i++) {
