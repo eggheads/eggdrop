@@ -45,7 +45,7 @@ Reloading Python Scripts
 
 Unfortunately, reloading python scripts with rehash like Tcl scripts is currently unsupported. Scripts can unbind their existing binds and re-bind them on being loaded again (see the bind section). For now, you should restart your bot when the Python scripts change.
 
-You can (should?) also write scripts that manually unload their binds upon a reshash, example code looks like this:
+You can (should?) also write scripts that manually unload their binds upon a reshash, example code looks like this::
 
   # Create a list to track the join binds
   if 'JOIN_BINDS' in globals():
