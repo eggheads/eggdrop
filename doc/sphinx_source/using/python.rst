@@ -9,6 +9,8 @@ System Requirements
 -------------------
 Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this requires the packages python-dev AND python-is-python3 to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.
 
+The minimum supported Python version is 3.8 and we do require the Global Interpreter Lock for thread safety, even if you use latest Python.
+
 --------------
 Loading Python
 --------------
@@ -20,6 +22,50 @@ Put this line into your Eggdrop configuration file to load the python module::
 To load a python script from your config file, place the .py file in the scripts/ folder and add the following line to your config::
 
   pysource scripts/myscript.py
+
+If you need to install dependencies we recommend using virtual environments, see https://docs.python.org/3/library/venv.html for more details.
+
+To create the virtual environment in a hidden directory called .venv (only necessary once)::
+
+  cd eggdrop && python3 -m venv .venv
+
+To install a python package in the above .venv directory (in this example, the requests package)::
+
+  cd eggdrop && source .venv/bin/activate && pip install requests
+
+Starting eggdrop with activated venv (must be run every time for proper functionality)::
+
+  cd eggdrop && source .venv/bin/activate && ./eggdrop
+
+You always need to start Eggdrop with the activated venv to set the necessary environment variables.
+
+------------------------
+Reloading Python Scripts
+------------------------
+
+Unfortunately, reloading python scripts with rehash like Tcl scripts is currently unsupported. Scripts can unbind their existing binds and re-bind them on being loaded again (see the bind section). For now, you should restart your bot when the Python scripts change.
+
+You can (should?) also write scripts that manually unload their binds upon a reshash, example code looks like this:
+
+  # Create a list to track the join binds
+  if 'JOIN_BINDS' in globals():
+    for joinbind in JOIN_BINDS:
+      joinbind.unbind()
+    del JOIN_BINDS
+
+  JOIN_BINDS = list()
+
+  <...>
+
+  # Create the binds in the script like this
+  JOIN_BINDS.append(bind("join", "*", "*", joinGreetUser))
+  JOIN_BINDS.append(bind("join", "o", "*", joinGreetOp))
+
+------------------------
+Multithreading and async
+------------------------
+
+``pysource`` loads a Python script in the main Eggdrop thread but is free to use both async Python and threads.
 
 -----------------------
 Eggdrop Python Commands
@@ -48,6 +94,11 @@ bind <arguments>
 An important difference to note is that Eggdrop Python has its own ``bind`` command implemented. You will generally want to create binds using the Python ``bind`` command and not import bind from eggdrop.tcl because a Python bind will call a Python function, whereas using the Tcl bind will call a Tcl function (not one from the script you are writing).
 
 The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, but here each argument is passed individually. For example, a bind that would look like ``bind pub * !foo myproc`` in Tcl is written as ``bind("pub", "*", "!foo", myproc)``. For more information on Eggsrop bind argument syntax please see :ref:`bind_types`. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc.
+
+The ``bind`` command returns a PythonBind object that has an ``unbind`` method::
+
+  x = bind("pub", "*", "!foo", myproc)
+  x.unbind()
 
 ^^^^^^^^^^^^^^^^^^^^^^^
 parse_tcl_list <string>
@@ -101,13 +152,6 @@ and then call it using::
 
 An important difference to note is that Eggdrop Python has its own ``bind`` command implemented. You will generally want to create binds using the Python ``bind`` command and not import bind from eggdrop.tcl because a Python bind will call a Python function, whereas using the Tcl bind will call a Tcl function (not one from the script you are writing).
 
-Where does python print go?
-
--------------------------------------
-Writing a module for use with Eggdrop
--------------------------------------
-
-This is how you import a module for use with an egg python script.
 
 Copyright (C) 2000 - 2024 Eggheads Development Team
 
