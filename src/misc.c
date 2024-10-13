@@ -1247,6 +1247,13 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
 
   if (f)
     lines = display_tellhelp(idx, file, f, flags);
+  else if (!strstr(file, " module")) {
+    char file_module[1024];
+    snprintf(file_module, sizeof file_module, "%s module", file);
+    f = resolve_help(HELP_DCC | fl, file_module);
+    if (f)
+      lines = display_tellhelp(idx, file_module, f, flags);
+  }
   if (!lines && !(fl & HELP_TEXT))
     dprintf(idx, "%s\n", IRC_NOHELP2);
 }
