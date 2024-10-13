@@ -25,7 +25,7 @@ To load a python script from your config file, place the .py file in the scripts
 
 If you need to install dependencies we recommend using virtual environments, see https://docs.python.org/3/library/venv.html for more details.
 
-To create the virtual environent in a hidden directory called .venv (only necessary once)::
+To create the virtual environment in a hidden directory called .venv (only necessary once)::
 
   cd eggdrop && python3 -m venv .venv
 
