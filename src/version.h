@@ -27,4 +27,4 @@
  */
 
 #define EGG_STRINGVER "1.10.0"
-#define EGG_NUMVER 1100003
+#define EGG_NUMVER 1100004
