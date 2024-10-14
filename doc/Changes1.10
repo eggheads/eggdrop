@@ -1,8 +1,18 @@
 
-Eggdrop Changes (Last Updated 2024-09-08):
+Eggdrop Changes (Last Updated 2024-10-14):
 __________________________________________
 
-Eggdrop v1.10.0rc2:
+Eggdrop v1.10.0:
+
+  2024-10-14 * Update docs
+  2024-10-13 * Update FEATURES
+             * Update Github-actions Tcl9.0 to release
+             * Problem matcher for compiler warnings (#1694)
+             * Update missed python var type for Tcl9
+             * Update python docs
+             * Remove reference to non-user-configurable use_354
+
+Eggdrop v1.10.0rc2 (2024-09-08):
 
   2024-09-08 * Fix user/chanrecord checking on join (#1678)
              * Add additional MacOS Tcl search path
@@ -14,6 +24,9 @@ Eggdrop v1.10.0rc2:
                  [Found by: Geo / Patch by: Geo]
              * fix broken doc links, small tweaks
              * Update docs for rc2
+             * Fix python version check
+                 [Found by: phuzion]
+             * Eggdrop v1.10.0 Release Candidate 2
 
 Eggdrop v1.10.0rc1 (2024-08-08):
 
