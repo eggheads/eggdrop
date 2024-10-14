@@ -106,9 +106,9 @@ static void setaccount(char *nick, char *account)
         /* account was known */
         if (m->account[0]) {
           if (!strcmp(account, "*")) {
-            putlog(LOG_MODES, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
+            putlog(LOG_JOIN, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
           } else {
-            putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
+            putlog(LOG_JOIN, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
           }
           check_tcl_account(m->nick, m->userhost, get_user_from_member(m), chan->dname, account);
         }
