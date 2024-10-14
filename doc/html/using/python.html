@@ -56,9 +56,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Python Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#system-requirements">System Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#loading-python">Loading Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reloading-python-scripts">Reloading Python Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multithreading-and-async">Multithreading and async</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#eggdrop-python-commands">Eggdrop Python Commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#writing-an-eggdrop-python-script">Writing an Eggdrop Python script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#writing-a-module-for-use-with-eggdrop">Writing a module for use with Eggdrop</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="twitchinfo.html">Twitch</a></li>
@@ -111,6 +112,7 @@
 <section id="system-requirements">
 <h2>System Requirements<a class="headerlink" href="#system-requirements" title="Link to this heading">¶</a></h2>
 <p>Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this requires the packages python-dev AND python-is-python3 to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.</p>
+<p>The minimum supported Python version is 3.8 and we do require the Global Interpreter Lock for thread safety, even if you use latest Python.</p>
 </section>
 <section id="loading-python">
 <h2>Loading Python<a class="headerlink" href="#loading-python" title="Link to this heading">¶</a></h2>
@@ -122,6 +124,44 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pysource</span> <span class="n">scripts</span><span class="o">/</span><span class="n">myscript</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
+<p>If you need to install dependencies we recommend using virtual environments, see <a class="reference external" href="https://docs.python.org/3/library/venv.html">https://docs.python.org/3/library/venv.html</a> for more details.</p>
+<p>To create the virtual environment in a hidden directory called .venv (only necessary once):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">eggdrop</span> <span class="o">&amp;&amp;</span> <span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">.</span><span class="n">venv</span>
+</pre></div>
+</div>
+<p>To install a python package in the above .venv directory (in this example, the requests package):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">eggdrop</span> <span class="o">&amp;&amp;</span> <span class="n">source</span> <span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span> <span class="o">&amp;&amp;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">requests</span>
+</pre></div>
+</div>
+<p>Starting eggdrop with activated venv (must be run every time for proper functionality):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">eggdrop</span> <span class="o">&amp;&amp;</span> <span class="n">source</span> <span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">eggdrop</span>
+</pre></div>
+</div>
+<p>You always need to start Eggdrop with the activated venv to set the necessary environment variables.</p>
+</section>
+<section id="reloading-python-scripts">
+<h2>Reloading Python Scripts<a class="headerlink" href="#reloading-python-scripts" title="Link to this heading">¶</a></h2>
+<p>Unfortunately, reloading python scripts with rehash like Tcl scripts is currently unsupported. Scripts can unbind their existing binds and re-bind them on being loaded again (see the bind section). For now, you should restart your bot when the Python scripts change.</p>
+<p>You can (should?) also write scripts that manually unload their binds upon a reshash, example code looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a list to track the join binds</span>
+<span class="k">if</span> <span class="s1">&#39;JOIN_BINDS&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">():</span>
+  <span class="k">for</span> <span class="n">joinbind</span> <span class="ow">in</span> <span class="n">JOIN_BINDS</span><span class="p">:</span>
+    <span class="n">joinbind</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+  <span class="k">del</span> <span class="n">JOIN_BINDS</span>
+
+<span class="n">JOIN_BINDS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<span class="o">&lt;...&gt;</span>
+
+<span class="c1"># Create the binds in the script like this</span>
+<span class="n">JOIN_BINDS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;join&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">joinGreetUser</span><span class="p">))</span>
+<span class="n">JOIN_BINDS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;join&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">joinGreetOp</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="multithreading-and-async">
+<h2>Multithreading and async<a class="headerlink" href="#multithreading-and-async" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pysource</span></code> loads a Python script in the main Eggdrop thread but is free to use both async Python and threads.</p>
 </section>
 <section id="eggdrop-python-commands">
 <h2>Eggdrop Python Commands<a class="headerlink" href="#eggdrop-python-commands" title="Link to this heading">¶</a></h2>
@@ -144,6 +184,11 @@
 <h3>bind &lt;arguments&gt;<a class="headerlink" href="#bind-arguments" title="Link to this heading">¶</a></h3>
 <p>An important difference to note is that Eggdrop Python has its own <code class="docutils literal notranslate"><span class="pre">bind</span></code> command implemented. You will generally want to create binds using the Python <code class="docutils literal notranslate"><span class="pre">bind</span></code> command and not import bind from eggdrop.tcl because a Python bind will call a Python function, whereas using the Tcl bind will call a Tcl function (not one from the script you are writing).</p>
 <p>The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, but here each argument is passed individually. For example, a bind that would look like <code class="docutils literal notranslate"><span class="pre">bind</span> <span class="pre">pub</span> <span class="pre">*</span> <span class="pre">!foo</span> <span class="pre">myproc</span></code> in Tcl is written as <code class="docutils literal notranslate"><span class="pre">bind(&quot;pub&quot;,</span> <span class="pre">&quot;*&quot;,</span> <span class="pre">&quot;!foo&quot;,</span> <span class="pre">myproc)</span></code>. For more information on Eggsrop bind argument syntax please see <a class="reference internal" href="tcl-commands.html#bind-types"><span class="std std-ref">Bind Types</span></a>. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">bind</span></code> command returns a PythonBind object that has an <code class="docutils literal notranslate"><span class="pre">unbind</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">bind</span><span class="p">(</span><span class="s2">&quot;pub&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;!foo&quot;</span><span class="p">,</span> <span class="n">myproc</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="parse-tcl-list-string">
 <h3>parse_tcl_list &lt;string&gt;<a class="headerlink" href="#parse-tcl-list-string" title="Link to this heading">¶</a></h3>
@@ -180,13 +225,8 @@
 </pre></div>
 </div>
 <p>An important difference to note is that Eggdrop Python has its own <code class="docutils literal notranslate"><span class="pre">bind</span></code> command implemented. You will generally want to create binds using the Python <code class="docutils literal notranslate"><span class="pre">bind</span></code> command and not import bind from eggdrop.tcl because a Python bind will call a Python function, whereas using the Tcl bind will call a Tcl function (not one from the script you are writing).</p>
-<p>Where does python print go?</p>
-</section>
-</section>
-<section id="writing-a-module-for-use-with-eggdrop">
-<h2>Writing a module for use with Eggdrop<a class="headerlink" href="#writing-a-module-for-use-with-eggdrop" title="Link to this heading">¶</a></h2>
-<p>This is how you import a module for use with an egg python script.</p>
 <p>Copyright (C) 2000 - 2024 Eggheads Development Team</p>
+</section>
 </section>
 </section>
 
@@ -217,7 +257,7 @@
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Sep 08, 2024.
+      Last updated on Oct 13, 2024.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
         </div>
