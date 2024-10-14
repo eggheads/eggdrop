@@ -36,8 +36,8 @@ Eggdrop Features
     -   Console mode: you can view each channel through dcc chat or
         telnet, selectively looking at mode changes, joins and parts,
         channel talk, or any combination of the above.
-    -   Scripting languages: commands and features can be easily added
-        to the bot by means of the Tcl or Python scripting language, giving you
+    -   A scripting language: commands and features can be easily added
+        to the bot by means of the Tcl scripting language, giving you
         the power of TOTAL customization of your bot.
     -   Module support: you can remove/add features to your bot by
         adding or removing modules.
