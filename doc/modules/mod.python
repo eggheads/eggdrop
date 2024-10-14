@@ -59,19 +59,16 @@ should restart your bot when the Python scripts change.
 You can (should?) also write scripts that manually unload their binds
 upon a reshash, example code looks like this:
 
-    # Create a list to track the join binds
-    if 'JOIN_BINDS' in globals():
-      for joinbind in JOIN_BINDS:
-        joinbind.unbind()
-      del JOIN_BINDS
+  # Create a list to track the join binds if 'JOIN_BINDS' in globals():
+  for joinbind in JOIN_BINDS: joinbind.unbind() del JOIN_BINDS
 
-    JOIN_BINDS = list()
+  JOIN_BINDS = list()
 
-    <...>
+  <...>
 
-    # Create the binds in the script like this
-    JOIN_BINDS.append(bind("join", "*", "*", joinGreetUser))
-    JOIN_BINDS.append(bind("join", "o", "*", joinGreetOp))
+  # Create the binds in the script like this
+  JOIN_BINDS.append(bind("join", "", "", joinGreetUser))
+  JOIN_BINDS.append(bind("join", "o", "*", joinGreetOp))
 
 MULTITHREADING AND ASYNC
 

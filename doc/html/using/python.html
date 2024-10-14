@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Using the Python Module &#8212; Eggdrop 1.10.0rc2 documentation</title>
+    <title>Using the Python Module &#8212; Eggdrop 1.10.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=3bcbdadc"></script>
+    <script src="../_static/documentation_options.js?v=1d24b1d9"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="pbkdf2info.html" title="Encryption/Hashing"
              accesskey="P">previous</a> |
@@ -143,21 +143,22 @@
 <h2>Reloading Python Scripts<a class="headerlink" href="#reloading-python-scripts" title="Link to this heading">¶</a></h2>
 <p>Unfortunately, reloading python scripts with rehash like Tcl scripts is currently unsupported. Scripts can unbind their existing binds and re-bind them on being loaded again (see the bind section). For now, you should restart your bot when the Python scripts change.</p>
 <p>You can (should?) also write scripts that manually unload their binds upon a reshash, example code looks like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a list to track the join binds</span>
-<span class="k">if</span> <span class="s1">&#39;JOIN_BINDS&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">():</span>
-  <span class="k">for</span> <span class="n">joinbind</span> <span class="ow">in</span> <span class="n">JOIN_BINDS</span><span class="p">:</span>
-    <span class="n">joinbind</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
-  <span class="k">del</span> <span class="n">JOIN_BINDS</span>
-
-<span class="n">JOIN_BINDS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-
-<span class="o">&lt;...&gt;</span>
-
-<span class="c1"># Create the binds in the script like this</span>
-<span class="n">JOIN_BINDS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;join&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">joinGreetUser</span><span class="p">))</span>
-<span class="n">JOIN_BINDS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;join&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">joinGreetOp</span><span class="p">))</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p># Create a list to track the join binds
+if ‘JOIN_BINDS’ in globals():</p>
+<blockquote>
+<div><dl class="simple">
+<dt>for joinbind in JOIN_BINDS:</dt><dd><p>joinbind.unbind()</p>
+</dd>
+</dl>
+<p>del JOIN_BINDS</p>
+</div></blockquote>
+<p>JOIN_BINDS = list()</p>
+<p>&lt;…&gt;</p>
+<p># Create the binds in the script like this
+JOIN_BINDS.append(bind(“join”, “*”, “*”, joinGreetUser))
+JOIN_BINDS.append(bind(“join”, “o”, “*”, joinGreetOp))</p>
+</div></blockquote>
 </section>
 <section id="multithreading-and-async">
 <h2>Multithreading and async<a class="headerlink" href="#multithreading-and-async" title="Link to this heading">¶</a></h2>
