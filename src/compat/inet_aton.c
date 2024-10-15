@@ -106,8 +106,8 @@ int egg_inet_aton(const char *cp, struct in_addr *addr) {
   u_long val;
   int base, n;
   char c;
-  u_int8_t parts[4];
-  u_int8_t *pp = parts;
+  uint8_t parts[4];
+  uint8_t *pp = parts;
   int digit;
 
   c = *cp;
