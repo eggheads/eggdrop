@@ -1906,6 +1906,10 @@ static int gotcap(char *from, char *msg) {
           }
 
           if ((sasl) && (!strcasecmp(current->name, "sasl")) && (current->enabled)) {
+            if ((sasl_mechanism < 0) || (sasl_mechanism >= SASL_MECHANISM_NUM)) {
+              return sasl_error("ERROR: sasl-mechanism is not set to an"
+                                " allowed value, please check it and try again");
+            }
             putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
             if (current->value && !checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
               snprintf(buf, sizeof buf,
