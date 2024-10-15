@@ -1155,7 +1155,8 @@ int main(int arg_c, char **arg_v)
       putlog(LOG_MISC, "*", "Error renaming stderr file handle: %s", strerror(errno));
     }
 #ifdef CYGWIN_HACKS
-    FreeConsole();
+    if (!FreeConsole())
+      putlog(LOG_MISC, "*", "FreeConsole() failed with error %lu", GetLastError());
 #endif
   }
 

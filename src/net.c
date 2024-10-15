@@ -588,7 +588,9 @@ int open_telnet_raw(int sock, sockname_t *addr)
       FD_SET(sock, &sockset);
       select(sock + 1, &sockset, NULL, NULL, &tv);
       res_len = sizeof(res);
-      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+      if (getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len) < 0)
+        debug2("net: open_telnet_raw(): getsockopt() s %i level SOL_SOCKET optname SO_ERROR error %s",
+               sock, strerror(errno));
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
@@ -652,7 +654,9 @@ int open_address_listen(sockname_t *addr)
 #if defined IPV6 && IPV6_V6ONLY
   if (addr->family == AF_INET6) {
     int on = 0;
-    setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &on, sizeof(on));
+    if (setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &on, sizeof on))
+      debug2("net: open_address_listen(): setsockopt() s %i level IPPROTO_IPV6 optname IPV6_V6ONLY error %s",
+             sock, strerror(errno));
   }
 #endif
   if (bind(sock, &addr->addr.sa, addr->addrlen) < 0) {
@@ -1243,7 +1247,7 @@ int sockgets(char *s, int *len)
     }
   }
   /* Look for EOL marker; if it's there, i have something to show */
-  for (p = xx; *p != 0 ; p++) {
+  for (p = xx; *p != 0; p++) {
     if ((*p == '\r') || (*p == '\n')) {
       memcpy(s, xx, p - xx);
       s[p - xx] = 0;
@@ -1427,13 +1431,15 @@ void dequeue_sockets()
       socklen_t res_len;
       if (socklist[i].flags == SOCK_CONNECT) {
         res_len = sizeof(res);
-        getsockopt(socklist[i].sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
+        if (getsockopt(socklist[i].sock, SOL_SOCKET, SO_ERROR, &res, &res_len) < 0)
+          debug2("net: dequeue_sockets(): getsockopt() s %i level SOL_SOCKET optname SO_ERROR error %s",
+                 socklist[i].sock, strerror(errno));
         if (res == ECONNREFUSED) { /* Connection refused */
           int idx = findanyidx(socklist[i].sock);
           putlog(LOG_MISC, "*", "Connection refused: %s:%i", dcc[idx].host,
                  dcc[idx].port);
           socklist[i].flags |= SOCK_EOFD;
-          return ;
+          return;
         }
       }
 #endif
