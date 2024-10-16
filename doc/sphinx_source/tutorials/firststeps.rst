@@ -16,9 +16,9 @@ You can either telnet to the bot, or connect to the bot using DCC Chat. To telne
 
 You can find the IP and port the bot is listening on by a) remembering what you set in the config file ;) or b) reading the display the bot presented when it started up. Look for a line that looks similar to this::
 
-  Listening for telnet connections on 2.4.6.9:3183 (all).
+  Listening for telnet connections on 192.0.2.1:3183 (all).
 
-This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.
+This tells you that the bot is listening on IP 192.0.2.1, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.
 
 
 If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
