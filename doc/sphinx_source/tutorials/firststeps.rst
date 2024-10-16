@@ -170,14 +170,14 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
 
-You will need to determine your public key fingerprint by using::
+    You will need to determine your public key fingerprint by using::
 
     openssl x509 -in eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
 
-Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
+    Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
 
-Alternatively you could connect via ssl and if NickServ supports it, make it automatically determine and add your fingerprint in just the right format:
+    Alternatively you could connect via ssl and if NickServ supports it, make it automatically determine and add your fingerprint in just the right format:
 
     /msg NickServ cert add
