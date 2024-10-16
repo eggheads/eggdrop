@@ -59,9 +59,9 @@ Connecting to an Eggdrop listening with TLS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 To connect to a bot listening with TLS, prefix the port number with a '+'. For example::
 
-  .+bot HubBot 1.2.3.4 +5555
+  .+bot HubBot 192.0.2.1 +5555
 
-will use TLS to connect to 1.2.3.4 on port 5555 the next time a connection is attempted to HubBot.
+will use TLS to connect to 192.0.2.1 on port 5555 the next time a connection is attempted to HubBot.
 
 Additional Information
 ----------------------

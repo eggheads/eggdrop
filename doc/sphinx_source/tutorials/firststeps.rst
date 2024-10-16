@@ -16,9 +16,9 @@ You can either telnet to the bot, or connect to the bot using DCC Chat. To telne
 
 You can find the IP and port the bot is listening on by a) remembering what you set in the config file ;) or b) reading the display the bot presented when it started up. Look for a line that looks similar to this::
 
-  Listening for telnet connections on 2.4.6.9:3183 (all).
+  Listening for telnet connections on 192.0.2.1:3183 (all).
 
-This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.
+This tells you that the bot is listening on IP 192.0.2.1, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.
 
 
 If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
@@ -150,15 +150,19 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
 * **PLAIN**: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
 
-* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-mechanism to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
+* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-mechanism to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you must generate a certificate pair using::
 
     openssl ecparam -genkey -name prime256v1 -out eggdrop-ecdsa.pem
 
   You will need to determine your public key fingerprint by using::
 
-    openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem | grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | xxd -r -p | base64
+    openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem 2>/dev/null | grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | xxd -r -p | base64
 
-  Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Libera for example, it is done by::
+  If error "xxd: command not found" you could install vim, because xxd is a part of vim, or you could try python::
+
+    openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem 2>/dev/null| grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | python -c "import base64,sys;print(base64.b64encode(bytearray.fromhex(sys.stdin.readline())).decode())"
+
+  Then, authenticate with your NickServ service and register your public certificate with NickServ. On Libera for example, it is done by::
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
 
@@ -166,10 +170,14 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
 
-You will need to determine your public key fingerprint by using::
+    You will need to determine your public key fingerprint by using::
 
     openssl x509 -in eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
 
-Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
+    Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
+
+    Alternatively you could connect via ssl and if NickServ supports it, make it automatically determine and add your fingerprint in just the right format:
+
+    /msg NickServ cert add
