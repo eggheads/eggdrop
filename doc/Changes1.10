@@ -217,7 +217,7 @@ Eggdrop v1.10.0rc1 (2024-08-08):
              * Additional internals doc tweaks
   2024-01-18 * Switch autoscripts to GitHub
   2024-01-15 * change py init from Isolated to Python
-  2024-01-14 * Add Python intpreter to Eggdrop
+  2024-01-14 * Add Python interpreter to Eggdrop
                  [Patch by: Geo, thommey]
              * Update docs
              * Update copyright
