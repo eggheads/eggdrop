@@ -615,10 +615,14 @@ int tclthreadmainloop(int zero)
   return (i == -5);
 }
 
+struct threaddata *td_main = 0;
+
 struct threaddata *threaddata()
 {
   static Tcl_ThreadDataKey tdkey;
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
+  if (!(td->mainloopfunc) && td_main) /* python thread */
+    return td_main;
   return td;
 }
 
@@ -638,6 +642,8 @@ void init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
+  if (mainthread)
+    td_main = td;
 }
 
 /* workaround for Tcl that does not support unicode outside BMP (3 byte utf-8 characters) */
