@@ -32,6 +32,8 @@ static Function *global = NULL;
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
 
+static p_tcl_bind_list H_chanset;
+
 static struct udef_struct *udef;
 
 static int use_info, chan_hack, quiet_save, global_revenge_mode,
@@ -239,6 +241,27 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
     strcat(s, " ");
     strcat(s, s1);
   }
+}
+
+static int builtin_chanset STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, " chan setting value");
+
+  CHECKVALIDITY(builtin_chanset);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+int check_tcl_chanset(const char *chan, const char *setting, const char *value)
+{
+  Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
+  Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
+  Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
+
+  return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
 }
 
 /* Returns true if this is one of the channel masks
@@ -1007,6 +1030,7 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);
