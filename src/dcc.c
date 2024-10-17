@@ -2408,39 +2408,41 @@ static void dcc_telnet_got_ident(int i, char *host)
   dcc[i].u.chat = get_data_ptr(sizeof(struct chat_info));
   egg_bzero(dcc[i].u.chat, sizeof(struct chat_info));
 
-  /* Note: we don't really care about telnet status here. We use the
-   * STATUS option as a hopefully harmless way to detect if the other
-   * side is a telnet client or not. */
-#ifdef TLS
-  if (!dcc[i].ssl)
-    dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
-#endif
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
   if (!strcmp(dcc[idx].nick, "(bots)"))
     dcc[i].status |= STAT_BOTONLY;
-  if (!strcmp(dcc[idx].nick, "(users)"))
-    dcc[i].status |= STAT_USRONLY;
-  /* Copy acceptable-nick/host mask */
+  else {
+    /* Note: we don't really care about telnet status here. We use the STATUS
+     * option as a hopefully harmless way to detect if the other side is a
+     * telnet client or not. */
+#ifdef TLS
+    if (!dcc[i].ssl)
+      dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
+#endif
+    /* Displays a customizable banner. */
+    if (use_telnet_banner)
+      show_banner(i);
+    /* This is so we don't tell someone doing a portscan anything about
+     * ourselves. <cybah>
+     */
+    if (stealth_telnets) {
+      /* Show here so it doesn't interfere with newline-less stealth_prompt */
+      if (allow_new_telnets)
+        dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+      dprintf(i, "%s", stealth_prompt);
+    } else {
+      dprintf(i, "\n\n");
+      sub_lang(i, MISC_BANNER);
+      /* Show here so it doesn't get lost before the banner */
+      if (allow_new_telnets)
+        dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+    }
+    /* Copy acceptable-nick/host mask */
+    if (!strcmp(dcc[idx].nick, "(users)"))
+      dcc[i].status |= STAT_USRONLY;
+  }
   strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN);
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
-  /* Displays a customizable banner. */
-  if (use_telnet_banner)
-    show_banner(i);
-  /* This is so we don't tell someone doing a portscan anything
-   * about ourselves. <cybah>
-   */
-  if (stealth_telnets) {
-    /* Show here so it doesn't interfere with newline-less stealth_prompt */
-    if (allow_new_telnets)
-      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
-    dprintf(i, "%s", stealth_prompt);
-  } else {
-    dprintf(i, "\n\n");
-    sub_lang(i, MISC_BANNER);
-    /* Show here so it doesn't get lost before the banner */
-    if (allow_new_telnets)
-      dprintf(i, "(If you are new, enter 'NEW' here.)\n");
-  }
 }
