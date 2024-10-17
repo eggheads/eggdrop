@@ -171,6 +171,9 @@ int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
+void (*webui_dcc_telnet_hostresolved) (int) = 0;
+void (*webui_frame) (char **, unsigned int *) = 0;
+void (*webui_unframe) (char *, int *) = 0;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -626,6 +629,8 @@ Function global_table[] = {
 /* 324 - 327 */
   (Function) find_member_from_nick,
   (Function) get_user_from_member,
+  (Function) dcc_telnet_hostresolved2,
+  (Function) findsock
 };
 
 void init_modules(void)
@@ -1107,6 +1112,15 @@ void add_hook(int hook_num, Function func)
       if (dns_ipbyhost == core_dns_ipbyhost)
         dns_ipbyhost = (void (*)(char *)) func;
       break;
+    case HOOK_DCC_TELNET_HOSTRESOLVED:
+      webui_dcc_telnet_hostresolved = (void (*)(int)) func;
+      break;
+    case HOOK_WEBUI_FRAME:
+      webui_frame = (void (*)(char **, unsigned int *)) func;
+      break;
+    case HOOK_WEBUI_UNFRAME:
+      webui_unframe = (void (*)(char *, int *)) func;
+      break;
     }
 }
 
@@ -1176,6 +1190,18 @@ void del_hook(int hook_num, Function func)
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == (void (*)(char *)) func)
         dns_ipbyhost = core_dns_ipbyhost;
+      break;
+    case HOOK_DCC_TELNET_HOSTRESOLVED:
+      if (webui_dcc_telnet_hostresolved == (void (*)(int)) func)
+        webui_dcc_telnet_hostresolved = (void (*)(int)) null_func;
+      break;
+    case HOOK_WEBUI_FRAME:
+      if (webui_frame == (void (*)(char **, unsigned int *)) func)
+        webui_frame = (void (*)(char **, unsigned int *)) null_func;
+      break;
+    case HOOK_WEBUI_UNFRAME:
+      if (webui_unframe == (void (*)(char *, int *)) func)
+        webui_unframe = (void (*)(char *, int *)) null_func;
       break;
     }
 }

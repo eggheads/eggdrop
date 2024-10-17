@@ -491,6 +491,7 @@ struct dupwait_info {
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
 #define STAT_SERV    0x00100    /* this is a server connection          */
+#define STAT_WS      0x00200    /* webui websocket                      */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -602,6 +603,7 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#define SOCK_WS         0x1000  /* webui websocket                      */
 
 /* Flags to sock_has_data
  */
@@ -753,5 +755,8 @@ struct dns_thread_node {
 
 extern struct dns_thread_node *dns_thread_head;
 #endif
+
+#define WS_ECHO_ON  "\x01" /* echo on */
+#define WS_ECHO_OFF "\x02" /* echo off */
 
 #endif /* _EGG_EGGDROP_H */

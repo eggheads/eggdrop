@@ -1,0 +1,46 @@
+<!--
+SPDX-License-Identifier: GPL-2.0-only
+Copyright (C) 2023 - 2024 Michael Ortmann MIT License
+Copyright (C) 2024 Eggheads Development Team
+-->
+<!DOCTYPE html>
+<html lang="en" style="height:100%;">
+  <head>
+    <meta charset="utf-8">
+    <title>Eggdrop</title>
+  </head>
+  <body style="display:grid;grid-template-rows:1fr auto;margin:0px;height:100%;background-color:#282828;color:#ebdbb2;"> <!--gruvbox colors-->
+    <pre id="out" style="overflow:auto;"></pre>
+    <input id="d" type="text" class="b" onkeydown="b(this)" autofocus style="width:100%;">
+    <script>
+      WS_ECHO_ON  = '\x01'
+      WS_ECHO_OFF = '\x02'
+      ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws:") + location.host + "/w");
+      out = document.getElementById("out");
+      echo = 1
+      ws.addEventListener("message", (event) => {
+        out.innerHTML = out.innerHTML + event.data.replace(/[\x01-\x02]/g, "");
+        out.scrollTop = out.scrollHeight;
+        if (event.data.indexOf(WS_ECHO_ON) > -1) {
+          d.type = "text";
+          echo = 1;
+          console.log("echo on");
+        }
+        else if (event.data.indexOf(WS_ECHO_OFF) > -1) {
+          d.type = "password"
+          echo = 0;
+          console.log("echo off");
+        }
+      });
+      function b(c) {
+        if(event.key === "Enter") {
+          ws.send(c.value);
+          if (echo)
+            out.innerHTML = out.innerHTML + c.value + '\n';
+            out.scrollTop = out.scrollHeight;
+          c.value = "";
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -158,10 +158,6 @@ unsigned long itraffic_unknown_today = 0;
 extern char last_bind_called[];
 #endif
 
-#ifdef TLS
-int ssl_cleanup();
-#endif
-
 void fatal(const char *s, int recoverable)
 {
   int i;

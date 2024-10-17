@@ -109,6 +109,71 @@ static int ssl_seed(void)
   return 0;
 }
 
+/* Get the certificate, corresponding to the connection
+ * identified by sock.
+ *
+ * Return value: pointer to a X509 certificate or NULL if we couldn't
+ * look up the certificate.
+ */
+static X509 *ssl_getcert(int sock)
+{
+  int i;
+  struct threaddata *td = threaddata();
+
+  i = findsock(sock);
+  if (i == -1 || !td->socklist[i].ssl)
+    return NULL;
+  return SSL_get_peer_certificate(td->socklist[i].ssl);
+}
+
+/* Get the certificate fingerprint of the connection corresponding
+ * to the socket.
+ *
+ * Return value: ptr to the hexadecimal representation of the fingerprint
+ * or NULL in case of error.
+ */
+static char *ssl_getfp_from_cert(X509 *cert)
+{
+  char *p;
+  unsigned int i;
+  static char fp[SHA_DIGEST_LENGTH * 3];
+  unsigned char md[SHA_DIGEST_LENGTH];
+
+  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+    putlog(LOG_MISC, "*", "ERROR: TLS: ssl_getfp_from_cert(): X509_digest()");
+    X509_free(cert);
+    return NULL;
+  }
+  if (!(p = OPENSSL_buf2hexstr(md, i))) {
+    putlog(LOG_MISC, "*", "ERROR: TLS: ssl_getfp_from_cert(): OPENSSL_buf2hexstr()");
+    X509_free(cert);
+    return NULL;
+  }
+  strlcpy(fp, p, sizeof fp);
+  OPENSSL_free(p);
+
+  return fp;
+}
+
+/* Get the certificate fingerprint of the connection corresponding
+ * to the socket.
+ *
+ * Return value: ptr to the hexadecimal representation of the fingerprint
+ * or NULL if there's no certificate associated with the connection or in case
+ * of error.
+ */
+char *ssl_getfp(int sock)
+{
+  char *fp;
+  X509 *cert;
+
+  if (!(cert = ssl_getcert(sock)))
+    return NULL;
+  fp = ssl_getfp_from_cert(cert);
+  X509_free(cert);
+  return fp;
+}
+
 /* Prepares and initializes SSL stuff
  *
  * Creates a context object, supporting SSLv2/v3 & TLSv1 protocols;
@@ -157,6 +222,22 @@ int ssl_init()
           tls_certfile, ERR_error_string(ERR_get_error(), NULL));
       fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
+
+    /* TODO: sha256 fingerprint
+     *       print this fingerprint to every user / every partyline login
+     *       maybe only print it when webui is enabled
+     *       compatibility to older openssl is possible, similar to #1411
+     *       this functionality could be sepped into a side-PR
+     *       or functionality of #1411 can be reused once merged
+     *
+     *       for now, just disable the fingerprint for openssl < 1.0.2
+     */
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+    putlog(LOG_MISC, "*", "Certificate loaded: %s (sha1 fingerprint %s)",
+           tls_certfile,
+           ssl_getfp_from_cert(SSL_CTX_get0_certificate(ssl_ctx)));
+#endif
+
     if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
           tls_keyfile, ERR_error_string(ERR_get_error(), NULL));
@@ -317,53 +398,6 @@ char *ssl_fpconv(char *in, char *out)
     OPENSSL_free(sha1);
   }
   return NULL;
-}
-
-/* Get the certificate, corresponding to the connection
- * identified by sock.
- *
- * Return value: pointer to a X509 certificate or NULL if we couldn't
- * look up the certificate.
- */
-static X509 *ssl_getcert(int sock)
-{
-  int i;
-  struct threaddata *td = threaddata();
-
-  i = findsock(sock);
-  if (i == -1 || !td->socklist[i].ssl)
-    return NULL;
-  return SSL_get_peer_certificate(td->socklist[i].ssl);
-}
-
-/* Get the certificate fingerprint of the connection corresponding
- * to the socket.
- *
- * Return value: ptr to the hexadecimal representation of the fingerprint
- * or NULL if there's no certificate associated with the connection.
- */
-char *ssl_getfp(int sock)
-{
-  char *p;
-  unsigned int i;
-  X509 *cert;
-  static char fp[64];
-  unsigned char md[EVP_MAX_MD_SIZE];
-
-  if (!(cert = ssl_getcert(sock)))
-    return NULL;
-  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
-    X509_free(cert);
-    return NULL;
-  }
-  if (!(p = OPENSSL_buf2hexstr(md, i))) {
-    X509_free(cert);
-    return NULL;
-  }
-  strlcpy(fp, p, sizeof fp);
-  OPENSSL_free(p);
-  X509_free(cert);
-  return fp;
 }
 
 /* Get the UID field from the certificate subject name.
@@ -963,12 +997,40 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     return 0;
   }
   if ((err = ERR_peek_error())) {
-    putlog(data->loglevel, "*",
-           "TLS: handshake failed due to the following error: %s",
-           ERR_reason_error_string(err));
-    debug0("TLS: handshake failed due to the following errors: ");
-    while ((err = ERR_get_error()))
-      debug1("TLS: %s", ERR_error_string(err, NULL));
+    if (ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
+        ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST) {
+
+
+
+      /* TODO: check if this is really a webui port, report source host (info in dcc[i]?) and give hint to use https:// */
+      putlog(LOG_MISC, "*", "TLS: error: plain HTTP request received on an SSL port, sock %i", sock);
+      #include "version.h"
+      int i;
+      char response[4096];
+      char *body = "(WIP) webui: plain HTTP request received on an SSL port";
+      i = snprintf(response, sizeof response,
+        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "Content-Length: %zu\r\n"
+        "Server: Eggdrop/%s+%s\r\n"
+        "\r\n%.*s", strlen(body), EGG_STRINGVER, EGG_PATCH, (int) strlen(body), body);
+      write(sock, response, i); // TODO: tputs(sock, response, i); after reading of remaining bytes / ssl shutdown ?
+      /*
+      do/for/while read(sock, ...);
+      SSL_set_shutdown(td->socklist[i].ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
+      */
+      debug2("webui: tputs(): >>>%s<<< %i", response, i);
+
+
+
+    }
+    else {
+      putlog(data->loglevel, "*",
+             "TLS: handshake failed due to the following error: %s",
+             ERR_reason_error_string(err));
+      debug0("TLS: handshake failed due to the following errors: ");
+      while ((err = ERR_get_error()))
+        debug1("TLS: %s", ERR_error_string(err, NULL));
+    }
   }
 
   /* Attempt failed, cleanup and abort */
