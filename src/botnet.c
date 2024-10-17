@@ -341,17 +341,8 @@ void remparty(char *bot, int sock)
         nfree(party[i].from);
       if (party[i].away)
         nfree(party[i].away);
-      if (i < parties) {
-        strcpy(party[i].bot, party[parties].bot);
-        strcpy(party[i].nick, party[parties].nick);
-        party[i].chan = party[parties].chan;
-        party[i].sock = party[parties].sock;
-        party[i].flag = party[parties].flag;
-        party[i].status = party[parties].status;
-        party[i].timer = party[parties].timer;
-        party[i].from = party[parties].from;
-        party[i].away = party[parties].away;
-      }
+      if (i < parties)
+        party[i] = party[parties];
     }
 }
 

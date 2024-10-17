@@ -364,7 +364,7 @@ void removedcc(int n)
     nfree(dcc[n].u.other);
   dcc_total--;
   if (n < dcc_total)
-    memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
+    dcc[n] = dcc[dcc_total];
   else
     egg_bzero(&dcc[n], sizeof(struct dcc_t));   /* drummer */
 }
