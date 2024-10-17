@@ -568,13 +568,16 @@ static void check_queues(char *oldnick, char *newnick)
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm = NULL;
-  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX], newmsg[SENDLINEMAX];
+  char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX - 8],
+       newmsg[SENDLINEMAX];
   int changed;
+  size_t len;
 
   for (m = q->head; m;) {
     changed = 0;
-    if (optimize_kicks == 2 && !strncasecmp(m->msg, "KICK ", 5)) {
+    if (optimize_kicks == 2 && !strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
+      len = 0;
       strlcpy(buf, m->msg, sizeof buf);
       msg = buf;
       newsplit(&msg);
@@ -586,13 +589,13 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
           if (newnick)
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
+            len += snprintf(newnicks + len, (sizeof newnicks) - len, ",%s",
+                            newnick); /* Concatenation */
           changed = 1;
         } else
-          egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
+          snprintf(newnicks, sizeof newnicks, ",%s", nick);
       }
-      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
-                   newnicks + 1, msg);
+
     }
     if (changed) {
       if (newnicks[0] == 0) {
@@ -607,9 +610,11 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         if (!q->head)
           q->last = 0;
       } else {
+        len = snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+                       newnicks + 1, msg);
         nfree(m->msg);
-        m->msg = nmalloc(strlen(newmsg) + 1);
-        m->len = strlen(newmsg);
+        m->msg = nmalloc(len + 1);
+        m->len = len;
         strcpy(m->msg, newmsg);
       }
     }
