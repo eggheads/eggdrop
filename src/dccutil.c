@@ -155,7 +155,7 @@ void dprintf(int idx, const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(buf, LOGLINEMAX-1, format, va);
+  vsnprintf(buf, LOGLINEMAX-1, format, va);
   va_end(va);
   /* We can not use the return value vsnprintf() to determine where
    * to null terminate. The C99 standard specifies that vsnprintf()
@@ -223,7 +223,7 @@ void chatout(const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -248,7 +248,7 @@ void chanout_but(int x, int chan, const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
