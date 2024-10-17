@@ -1,14 +1,15 @@
 /*
- * This module reports uptime statistics to the uptime contest web
- * site at https://www.eggheads.org/uptime/. The
- * purpose for this is to see how your bot rates against many others (including EnergyMechs
- * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
+ * This module reports uptime statistics to the uptime contest web site at
+ * https://www.eggheads.org/uptime/. The purpose for this is to see how your
+ * bot rates against many others (including EnergyMechs and Eggdrops) -- It is
+ * a fun little project, jointly run by Eggheads.org and EnergyMech.net.
  *
  * If you don't like being a part of it please just unload this module.
  *
- * Also for bot developers feel free to modify this code to make it a part of your bot and
- * e-mail webmaster@eggheads.org for more information on registering your bot type. See how
- * your bot's stability rates against ours and ours against yours <g>.
+ * Also for bot developers feel free to modify this code to make it a part of
+ * your bot and e-mail webmaster@eggheads.org for more information on
+ * registering your bot type. See how your bot's stability rates against ours
+ * and ours against yours <g>.
  */
 /*
  * Copyright (C) 2001 proton
@@ -32,43 +33,36 @@
 #define MODULE_NAME "uptime"
 #define MAKING_UPTIME
 
+#include <fcntl.h>
+#include <netdb.h>
+#include <stddef.h>
+#include <sys/stat.h>
 #include "uptime.h"
 #include "../module.h"
 #include "../server.mod/server.h"
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
+
+#define UPDATE_INTERVAL (12 * 60) /* random(0..12) hours: ~6 hour average. */
 
 /*
- * regnr is unused; however, it must be here inorder for
- * us to create a proper struct for the uptime server.
+ * regnr is unused; however, it must be here inorder for us to create a proper
+ * struct for the uptime server.
  *
- * "packets_sent" was originally defined as "cookie",
- * however this field was deprecated and set to zero
- * for most versions of the uptime client.  It has been
- * repurposed and renamed as of uptime v1.3 to reflect
- * the number of packets the client thinks it has sent
- * over the life of the module.  Only the name has changed -
- * the type (unsigned long) is still the same.
+ * "packets_sent" was originally defined as "cookie", however this field was
+ * deprecated and set to zero for most versions of the uptime client. It has
+ * been repurposed and renamed as of uptime v1.3 to reflect the number of
+ * packets the client thinks it has sent over the life of the module. Only the
+ * name has changed - the type is still the same.
  */
-
 typedef struct PackUp {
-  int regnr;
-  int pid;
-  int type;
-  unsigned long packets_sent;
-  unsigned long uptime;
-  unsigned long ontime;
-  unsigned long now2;
-  unsigned long sysup;
-  char string[3];
+  uint32_t regnr;
+  uint32_t pid;
+  uint32_t type;
+  uint32_t packets_sent;
+  uint32_t uptime;
+  uint32_t ontime;
+  uint32_t now2;
+  uint32_t sysup;
+  char string[FLEXIBLE_ARRAY_MEMBER];
 } PackUp;
 
 PackUp upPack;
@@ -79,15 +73,14 @@ static int minutes = 0;
 static int seconds = 0;
 static int next_seconds = 0;
 static int next_minutes = 0;
-static int update_interval = 720; /* rand(0..12) hours: ~6 hour average. */
 static time_t next_update = 0;
 static int uptimesock;
 static int uptimecount;
 static unsigned long uptimeip;
 static char uptime_version[48] = "";
 
-void check_secondly(void);
-void check_minutely(void);
+static void check_secondly(void);
+static void check_minutely(void);
 
 static int uptime_expmem()
 {
@@ -111,26 +104,6 @@ static void uptime_report(int idx, int details)
   }
 }
 
-static unsigned long get_ip()
-{
-  struct hostent *hp;
-  IP ip;
-  struct in_addr *in;
-
-  /* could be pre-defined */
-  if (uptime_host[0]) {
-    if ((uptime_host[strlen(uptime_host) - 1] >= '0') &&
-        (uptime_host[strlen(uptime_host) - 1] <= '9'))
-      return (IP) inet_addr(uptime_host);
-  }
-  hp = gethostbyname(uptime_host);
-  if (hp == NULL)
-    return -1;
-  in = (struct in_addr *) (hp->h_addr_list[0]);
-  ip = (IP) (in->s_addr);
-  return ip;
-}
-
 static int init_uptime(void)
 {
   struct sockaddr_in sai;
@@ -138,7 +111,7 @@ static int init_uptime(void)
 
   upPack.regnr = 0;  /* unused */
   upPack.pid = 0;    /* must set this later */
-  upPack.type = htonl(uptime_type);
+  upPack.type = htonl(UPTIME_TYPE);
   upPack.packets_sent = 0; /* reused (abused?) to send our packet count */
   upPack.uptime = 0; /* must set this later */
   uptimecount = 0;
@@ -161,8 +134,8 @@ static int init_uptime(void)
   }
   fcntl(uptimesock, F_SETFL, O_NONBLOCK | fcntl(uptimesock, F_GETFL));
 
-  next_minutes = rand() % update_interval; /* Initial update delay */
-  next_seconds = rand() % 59;
+  next_minutes = random() % UPDATE_INTERVAL; /* Initial update delay */
+  next_seconds = random() % 59;
   next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
     next_seconds);
 
@@ -172,17 +145,27 @@ static int init_uptime(void)
 
 static int send_uptime(void)
 {
-  struct sockaddr_in sai;
+  struct addrinfo hints, *res0;
+  int error;
   struct stat st;
   PackUp *mem;
   int len, servidx;
-  char servhost[UHOSTLEN] = "none";
+  char *servhost = "none";
   module_entry *me;
 
-  if (uptimeip == -1) {
-    uptimeip = get_ip();
-    if (uptimeip == -1)
-      return -2;
+  egg_bzero(&hints, sizeof hints);
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_DGRAM;
+  error = getaddrinfo(UPTIME_HOST, UPTIME_PORT, &hints, &res0);
+  if (error) {
+    if (error == EAI_NONAME)
+      putlog(LOG_MISC, "*",
+             "send_uptime(): getaddrinfo(): hostname:port '%s:%s' not known",
+             UPTIME_HOST, UPTIME_PORT);
+    else
+      putlog(LOG_MISC, "*", "send_uptime(): getaddrinfo(): error = %s",
+             gai_strerror(error));
+    return -2;
   }
 
   uptimecount++;
@@ -196,7 +179,7 @@ static int send_uptime(void)
 
     if (server_online) {
       servidx = findanyidx(serv);
-      strlcpy(servhost, dcc[servidx].host, sizeof servhost);
+      servhost = dcc[servidx].host;
       upPack.ontime = htonl(server_online);
     }
   }
@@ -212,26 +195,20 @@ static int send_uptime(void)
   else
     upPack.sysup = htonl(st.st_ctime);
 
-  len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
-        strlen(uptime_version);
+  len = offsetof(struct PackUp, string) + strlen(botnetnick) + strlen(servhost)
+        + strlen(uptime_version) + 3; /* whitespace + whitespace + \0 */
   mem = (PackUp *) nmalloc(len);
-  egg_bzero(mem, len); /* mem *should* be completely filled before it's
-                             * sent to the server.  But belt-and-suspenders
-                             * is always good.
-                             */
   memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
-  egg_bzero(&sai, sizeof(sai));
-  sai.sin_family = AF_INET;
-  sai.sin_addr.s_addr = uptimeip;
-  sai.sin_port = htons(uptime_port);
-  len = sendto(uptimesock, (void *) mem, len, 0, (struct sockaddr *) &sai,
-               sizeof(sai));
+  len = sendto(uptimesock, (void *) mem, len, 0, res0->ai_addr,
+               res0->ai_addrlen);
+  if (len < 0)
+    putlog(LOG_DEBUG, "*", "send_uptime(): sendto(): %s", gai_strerror(error));
   nfree(mem);
   return len;
 }
 
-void check_minutely()
+static void check_minutely()
 {
   minutes++;
   if (minutes >= next_minutes) {
@@ -241,7 +218,7 @@ void check_minutely()
   }
 }
 
-void check_secondly()
+static void check_secondly()
 {
   seconds++;
   if (seconds >= next_seconds) {  /* DING! */
@@ -251,8 +228,8 @@ void check_secondly()
 
     minutes = 0; /* Reset for the next countdown. */
     seconds = 0;
-    next_minutes = rand() % update_interval;
-    next_seconds = rand() % 59;
+    next_minutes = random() % UPDATE_INTERVAL;
+    next_seconds = random() % 59;
     next_update = (time_t) ((time(NULL) / 60 * 60) + (next_minutes * 60) +
       next_seconds);
 
@@ -286,7 +263,7 @@ char *uptime_start(Function *global_funcs)
   if (global_funcs) {
     global = global_funcs;
 
-    module_register(MODULE_NAME, uptime_table, 1, 4);
+    module_register(MODULE_NAME, uptime_table, 1, 5);
     if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
       module_undepend(MODULE_NAME);
       return "This module requires Eggdrop 1.8.0 or later.";
