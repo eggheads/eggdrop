@@ -524,10 +524,7 @@ static void disp_dcc_files(int idx, char *buf)
 
 static void disp_dcc_files_pass(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "fpas  waited %lis", tv);
+  sprintf(buf, "fpas  waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 static void kill_dcc_files(int idx, void *x)
