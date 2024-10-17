@@ -49,10 +49,11 @@
  *       You should leave this at 32 characters and modify nick-len in the
  *       configuration file instead.
  */
-#define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
-#define HANDLEN    32 /* valid values 9->NICKMAX                             */
-#define NICKMAX    32 /* valid values HANDLEN->32                            */
-#define USERLEN    10
+#define CHANNELLEN  80  /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
+#define HANDLEN     32  /* valid values 9->NICKMAX                             */
+#define NICKMAX     32  /* valid values HANDLEN->32                            */
+#define USERLEN     10
+#define REALNAMELEN 120
 
 
 /* Handy string lengths */
