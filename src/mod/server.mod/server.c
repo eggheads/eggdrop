@@ -570,6 +570,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
   struct msgq *m, *lm = NULL;
   char buf[SENDLINEMAX], *msg, *nicks, *nick, *chan, newnicks[SENDLINEMAX], newmsg[SENDLINEMAX];
   int changed;
+  size_t pos;
 
   for (m = q->head; m;) {
     changed = 0;
@@ -580,19 +581,23 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       newsplit(&msg);
       chan = newsplit(&msg);
       nicks = newsplit(&msg);
+      pos = 0;
       while (strlen(nicks) > 0) {
         nick = splitnicks(&nicks);
         if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
-          if (newnick)
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
+          if (newnick) {
+            if (pos)
+              pos += strlcpy(newnicks + pos, ",", (sizeof newnicks) - pos);
+            pos += strlcpy(newnicks + pos, newnick, (sizeof newnicks) - pos);
+          }
           changed = 1;
         } else
-          egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
+          strlcpy(newnicks, nick, sizeof newnicks);
       }
       egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
-                   newnicks + 1, msg);
+                   newnicks, msg);
     }
     if (changed) {
       if (newnicks[0] == 0) {
@@ -628,6 +633,7 @@ static void purge_kicks(struct msgq_head *q)
        newmsg[MSGMAX], chans[MSGMAX], *chns, *ch;
   int changed, found;
   struct chanset_t *cs;
+  size_t pos;
 
   for (m = q->head; m;) {
     if (!strncasecmp(m->msg, "KICK", 4)) {
@@ -638,6 +644,7 @@ static void purge_kicks(struct msgq_head *q)
       newsplit(&reason);
       chan = newsplit(&reason);
       nicks = newsplit(&reason);
+      pos = 0;
       while (strlen(nicks) > 0) {
         found = 0;
         nick = splitnicks(&nicks);
@@ -651,8 +658,11 @@ static void purge_kicks(struct msgq_head *q)
           if (ismember(cs, nick))
             found = 1;
         }
-        if (found)
-          egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
+        if (found) {
+          if (pos)
+            pos += strlcpy(newnicks + pos, ",", (sizeof newnicks) - pos);
+          pos += strlcpy(newnicks + pos, nick, (sizeof newnicks) - pos);
+        }
         else {
           putlog(LOG_SRVOUT, "*", "%s isn't on any target channel; removing "
                  "kick.", nick);
@@ -674,7 +684,7 @@ static void purge_kicks(struct msgq_head *q)
         } else {
           nfree(m->msg);
           egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
-                       newnicks + 1, reason);
+                       newnicks, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
           strcpy(m->msg, newmsg);
@@ -696,6 +706,7 @@ static int deq_kick(int which)
   char buf[MSGMAX], buf2[MSGMAX], *reason2, *nicks, *chan, *chan2, *reason, *nick,
        newnicks[MSGMAX], newnicks2[MSGMAX], newmsg[MSGMAX];
   int changed = 0, nr = 0;
+  size_t pos;
 
   if (!optimize_kicks)
     return 0;
@@ -733,9 +744,11 @@ static int deq_kick(int which)
   newsplit(&reason);
   chan = newsplit(&reason);
   nicks = newsplit(&reason);
+  pos = 0;
   while (strlen(nicks) > 0) {
-    egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks,
-                 newsplit(&nicks));
+    if (pos)
+      pos += strlcpy(newnicks + pos, ",", (sizeof newnicks) - pos);
+    pos += strlcpy(newnicks + pos, newsplit(&nicks), (sizeof newnicks) - pos);
     nr++;
   }
   for (m = msg->next, lm = NULL; m && (nr < kick_method);) {
@@ -748,15 +761,21 @@ static int deq_kick(int which)
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
       if (!strcasecmp(chan, chan2) && !strcasecmp(reason, reason2)) {
+        pos = 0;
         while (strlen(nicks) > 0) {
           nick = splitnicks(&nicks);
           if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
               strlen(nick) + strlen(reason)) < 510)) {
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
+            if (pos)
+              pos += strlcpy(newnicks + pos, ",", (sizeof newnicks) - pos);
+            pos += strlcpy(newnicks + pos, nick, (sizeof newnicks) - pos);
             nr++;
             changed = 1;
-          } else
-            egg_snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
+          } else {
+            if (pos)
+              pos += strlcpy(newnicks2 + pos, ",", (sizeof newnicks2) - pos);
+            pos += strlcpy(newnicks2 + pos, nick, (sizeof newnicks2) - pos);
+          }
         }
       }
       if (changed) {
@@ -774,7 +793,7 @@ static int deq_kick(int which)
         } else {
           nfree(m->msg);
           egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan2,
-                       newnicks2 + 1, reason);
+                       newnicks2, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
           strcpy(m->msg, newmsg);
@@ -787,7 +806,7 @@ static int deq_kick(int which)
     else
       m = h->head->next;
   }
-  egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
+  egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks,
                reason);
   check_tcl_out(which, newmsg, 1);
   write_to_server(newmsg, strlen(newmsg));
