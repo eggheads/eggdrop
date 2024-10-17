@@ -74,8 +74,8 @@ static int exclusive_binds;     /* configures PUBM and MSGM binds to be
 static int answer_ctcp;         /* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;      /* answer lowercase CTCP's (non-standard) */
 static int check_mode_r;        /* check for IRCnet +r modes */
-static char net_type[9];
-static int net_type_int;
+static char net_type[9] = "EFnet";
+static int net_type_int = NETT_EFNET;
 static char connectserver[121]; /* what, if anything, to do before connect
                                  * to the server */
 static int resolvserv;          /* in the process of resolving a server host */
@@ -1588,7 +1588,7 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
-static void do_nettype(void)
+void do_nettype_server()
 {
   switch (net_type_int) {
   case NETT_EFNET:
@@ -1643,69 +1643,6 @@ static void do_nettype(void)
     nick_len = 30;
     break;
   }
-}
-
-static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
-                            EGG_CONST char *name1,
-                            EGG_CONST char *name2, int flags)
-{
-  int warn = 0;
-
-  if (!strcasecmp(net_type, "DALnet"))
-    net_type_int = NETT_DALNET;
-  else if (!strcasecmp(net_type, "EFnet"))
-    net_type_int = NETT_EFNET;
-  else if (!strcasecmp(net_type, "freenode"))
-    net_type_int = NETT_FREENODE;
-  else if (!strcasecmp(net_type, "IRCnet"))
-    net_type_int = NETT_IRCNET;
-  else if (!strcasecmp(net_type, "Libera"))
-    net_type_int = NETT_LIBERA;
-  else if (!strcasecmp(net_type, "QuakeNet"))
-    net_type_int = NETT_QUAKENET;
-  else if (!strcasecmp(net_type, "Rizon"))
-    net_type_int = NETT_RIZON;
-  else if (!strcasecmp(net_type, "Undernet"))
-    net_type_int = NETT_UNDERNET;
-  else if (!strcasecmp(net_type, "Twitch"))
-    net_type_int = NETT_TWITCH;
-  else if (!strcasecmp(net_type, "Other"))
-    net_type_int = NETT_OTHER;
-  else if (!strcasecmp(net_type, "0")) { /* For backwards compatibility */
-    net_type_int = NETT_EFNET;
-    warn = 1;
-  }
-  else if (!strcasecmp(net_type, "1")) { /* For backwards compatibility */
-    net_type_int = NETT_IRCNET;
-    warn = 1;
-  }
-  else if (!strcasecmp(net_type, "2")) { /* For backwards compatibility */
-    net_type_int = NETT_UNDERNET;
-    warn = 1;
-  }
-  else if (!strcasecmp(net_type, "3")) { /* For backwards compatibility */
-    net_type_int = NETT_DALNET;
-    warn = 1;
-  }
-  else if (!strcasecmp(net_type, "4")) { /* For backwards compatibility */
-    net_type_int = NETT_HYBRID_EFNET;
-    warn = 1;
-  }
-  else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
-    net_type_int = NETT_OTHER; 
-    warn = 1;
-  } else {
-    fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
-          "Libera, IRCnet, Quakenet, Rizon, Undernet, Other.", 0);
-  }
-  if (warn) {
-    putlog(LOG_MISC, "*",
-        "INFO: The config setting for \"net-type\" has transitioned from a number\n"
-        "to a text string. Please update your choice to one of the allowed values\n"
-        "listed in the current configuration file from the source directory\n");
-  }
-  do_nettype();
-  return NULL;
 }
 
 static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
@@ -2295,9 +2232,6 @@ static char *server_close()
   Tcl_UntraceVar(interp, "serveraddress",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_serveraddress, NULL);
-  Tcl_UntraceVar(interp, "net-type",
-                 TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-                 traced_nettype, NULL);
   Tcl_UntraceVar(interp, "nick-len",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nicklen, NULL);
@@ -2387,7 +2321,8 @@ static Function server_table[] = {
   (Function) encode_msgtags,
   /* 52 - 55 */
   (Function) & H_monitor,
-  (Function) isupport_get_prefixchars
+  (Function) isupport_get_prefixchars,
+  (Function) do_nettype_server
 };
 
 char *server_start(Function *global_funcs)
@@ -2433,7 +2368,6 @@ char *server_start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  strlcpy(net_type, "EFnet", sizeof net_type);
   double_mode = 0;
   double_server = 0;
   double_help = 0;
@@ -2481,9 +2415,6 @@ char *server_start(Function *global_funcs)
   Tcl_TraceVar(interp, "serveraddress",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_serveraddress, NULL);
-  Tcl_TraceVar(interp, "net-type",
-               TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-               traced_nettype, NULL);
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
@@ -2546,7 +2477,6 @@ char *server_start(Function *global_funcs)
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;
-  /* Because this reads the interp variable, the read trace MUST be after */
-  do_nettype();
+  do_nettype_server();
   return NULL;
 }
