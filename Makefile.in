@@ -432,6 +432,7 @@ install-text: install-start
 	if test ! -f $(DEST)/text/banner; then \
 		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
 	fi
+	cd src/mod/ && $(MAKE_INSTALL) install-text
 
 install-help: install-start
 	+@echo "Copying help files." && \
