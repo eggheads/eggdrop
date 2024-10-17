@@ -115,9 +115,9 @@ installation tool prior to compiling:
 ::
 
   Interpreters: tcl, tcl-devel
-  Net:          openssl-devel
+  Net:          openssl, libssl-devel
   Devel:        autoconf, gcc-core, git, make
-  Utils:        diffutils
+  Libs:         zlib-devel
 
 Modules
 -------
