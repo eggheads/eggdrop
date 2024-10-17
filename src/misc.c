@@ -1590,3 +1590,28 @@ int crypto_verify(const char *x_, const char *y_)
   }
   return (1 & ((d - 1) >> 8)) - 1;
 }
+
+/* Prepend CR to LF (Replace \n with \r\n) and escape telnet IAC if
+ * escape_telnet is set
+ */
+char *add_cr(const char *p, const int escape_telnet)
+{
+  size_t len;
+  static size_t buf_size = 0;
+  static char *buf;
+  char *q;
+
+  len = (strlen(p) << 1) + 1;
+  if (len > buf_size) {
+    buf_size = len;
+    buf = nrealloc(buf, buf_size);
+  }
+  for (q = buf; *p; *q++ = *p++) {
+    if (escape_telnet && ((unsigned char) *p == TLN_IAC))
+      *q++ = *p;
+    else if (*p == '\n')
+      *q++ = '\r';
+  }
+  *q = 0;
+  return buf;
+}

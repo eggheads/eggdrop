@@ -141,7 +141,6 @@ int dcc_fingerprint(int);
 int increase_socks_max(void);
 int findidx(int);
 int findanyidx(int);
-char *add_cr(char *);
 void dprint(int, char *, int);
 void dprintf (int, const char *format, ...) ATTRIBUTE_FORMAT(printf,2,3);
 void chatout (const char *format, ...) ATTRIBUTE_FORMAT(printf,1,2);
@@ -267,6 +266,7 @@ void maskaddr(const char *, char *, int);
 #define maskhost(a,b) maskaddr((a),(b),3)
 #define maskban(a,b)  maskaddr((a),(b),3)
 int crypto_verify(const char *, const char *);
+char *add_cr(const char *, const int);
 
 /* net.c */
 IP my_atoul(char *);
