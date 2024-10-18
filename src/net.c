@@ -1015,6 +1015,10 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           continue;           /* EAGAIN */
         }
       }
+#ifdef TLS
+      if (socklist[i].flags & SOCK_WS)
+        webui_unframe(s, &x);
+#endif /* TLS */
       s[x] = 0;
       *len = x;
       if (slist[i].flags & SOCK_PROXYWAIT) {
@@ -1343,6 +1347,8 @@ void tputs(int z, char *s, unsigned int len)
         return;
       }
 #ifdef TLS
+      if (socklist[i].flags & SOCK_WS) /* TODO: early enough for un-tls ws? */
+        webui_frame(&s, &len);
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, s, len);
         if (x < 0) {
