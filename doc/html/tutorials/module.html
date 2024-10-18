@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Writing a Basic Eggdrop Module &#8212; Eggdrop 1.9.5 documentation</title>
+    <title>Writing a Basic Eggdrop Module &#8212; Eggdrop 1.10.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=9cc2bd95"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/documentation_options.js?v=3bcbdadc"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Eggdrop Module Information" href="../modules/index.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="firstscript.html" title="Writing an Eggdrop Script"
              accesskey="P">previous</a> |
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
@@ -65,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Writing a Basic Eggdrop Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-header">Module Header</a></li>
@@ -72,7 +74,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#adding-a-partyline-command">Adding a Partyline Command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-a-tcl-command">Adding a Tcl Command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-a-tcl-bind">Adding a Tcl Bind</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exporting-the-bind">Exporting the Bind</a></li>
 </ul>
 </li>
 </ul>
@@ -320,85 +321,8 @@ static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
 }
 </pre></div>
 </div>
-<p>Now that we have encountered a condition that triggers the bind type (in code by calling check_tcl_woobie() ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with check_tcl_bind(), called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from check_tcl_bind() to take additional action by Eggdrop.</p>
-<section id="bind-configuration-settings">
-<h4>Bind Configuration Settings<a class="headerlink" href="#bind-configuration-settings" title="Link to this heading">¶</a></h4>
-<p>The last argument to check_tcl_bind sets additional configurations for the bind, these are the defined values:</p>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Value</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-</tr>
-<tr class="row-even"><td><p>MATCH_PARTIAL</p></td>
-<td><p>Check the triggering value against the beginning of the bind mask, ie DIR triggers a mask for DIRECTORY (case insensitive)</p></td>
-</tr>
-<tr class="row-odd"><td><p>MATCH_EXACT</p></td>
-<td><p>Check the triggering value exactly against the bind mask value (case insensitive)</p></td>
-</tr>
-<tr class="row-even"><td><p>MATCH_CASE</p></td>
-<td><p>Check the triggering value exactly against the bind mask value (case sensitive)</p></td>
-</tr>
-<tr class="row-odd"><td><p>MATCH_MASK</p></td>
-<td><p>Check if the bind mask is contained within the triggering value, as a wildcarded value</p></td>
-</tr>
-<tr class="row-even"><td><p>MATCH_MODE</p></td>
-<td><p>Check if the triggering value is contained within the bind mask, as a wildcarded value</p></td>
-</tr>
-<tr class="row-odd"><td><p>MATCH_CRON</p></td>
-<td><p>Check the triggering value against a bind mask formatted as a cron entry, ie “30 7 6 7 * “ triggers a mask for “30 7 * * * “</p></td>
-</tr>
-<tr class="row-even"><td><p>BIND_USE_ATTR</p></td>
-<td><p>Check the flags of the user match the flags required to trigger the bind</p></td>
-</tr>
-<tr class="row-odd"><td><p>BIND_STACKABLE</p></td>
-<td><p>Allow multiple binds to call the same Tcl proc</p></td>
-</tr>
-<tr class="row-even"><td><p>BIND_WANTRET</p></td>
-<td><p>With stacked binds, if the called Tcl proc called returns a ‘1’, halt processing any further binds triggered by the action</p></td>
-</tr>
-<tr class="row-odd"><td><p>BIND_STACKRET</p></td>
-<td><p>Used with BIND_WANTRET; allow stacked binds to continue despite receiving a ‘1’</p></td>
-</tr>
-<tr class="row-even"><td><p>BIND_ALTER_ARGS</p></td>
-<td><p>Replaces arguments (which ones?) with the result returned from the called Tcl proc</p></td>
-</tr>
-</tbody>
-</table>
-<p>The value returned by the bind is often matched against a desired value to return a ‘1’ (often used with BIND_WANTRET and BIND_STACKRET) to the calling function.</p>
+<p>Now that we have encountered a condition that triggers the bind type (in code by calling <code class="docutils literal notranslate"><span class="pre">check_tcl_woobie()</span></code> ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with <code class="docutils literal notranslate"><span class="pre">check_tcl_bind()</span></code>, called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from <code class="docutils literal notranslate"><span class="pre">check_tcl_bind()</span></code> to take additional action by Eggdrop. You can read more about the specific values used in <code class="docutils literal notranslate"><span class="pre">check_tcl_bind</span></code> in <a class="reference internal" href="../modules/internals.html#triggering-any-bind"><span class="std std-ref">Triggering any Bind</span></a></p>
 </section>
-<section id="bind-return-values">
-<h4>Bind Return Values<a class="headerlink" href="#bind-return-values" title="Link to this heading">¶</a></h4>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Value</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-</tr>
-<tr class="row-even"><td><p>BIND_NOMATCH</p></td>
-<td><p>The bind was not triggered due to not meeting the criteria set for the bind</p></td>
-</tr>
-<tr class="row-odd"><td><p>BIND_AMBIGUOUS</p></td>
-<td><p>The bind was ambiguous, similar to this explanation</p></td>
-</tr>
-<tr class="row-even"><td><p>BIND_MATCHED</p></td>
-<td><p>The bind criteria was met, but the Tcl proc it tried to call could not be found</p></td>
-</tr>
-<tr class="row-odd"><td><p>BIND_EXECUTED</p></td>
-<td><p>The bind criteria was met and the Tcl proc was called</p></td>
-</tr>
-<tr class="row-even"><td><p>BIND_EXEC_LOG</p></td>
-<td><p>The bind criteria was met, the Tcl proc was called, and Eggdrop logged the bind being called</p></td>
-</tr>
-<tr class="row-odd"><td><p>BIND_QUIT</p></td>
-<td><p>The bind was triggered in conjunction with the target leaving the partyline or filesys area (?)</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-</section>
-<section id="exporting-the-bind">
-<h2>Exporting the Bind<a class="headerlink" href="#exporting-the-bind" title="Link to this heading">¶</a></h2>
-<p>Do we need to do this?</p>
 </section>
 </section>
 
@@ -429,8 +353,8 @@ static int check_tcl_woobie(char *chan, char *nick, char *userhost) {
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024, Eggheads.
-      Last updated on Jan 14, 2024.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+      Last updated on Oct 13, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
         </div>
         <div class="clearer"></div>

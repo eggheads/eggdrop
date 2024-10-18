@@ -1,5 +1,6 @@
 /*
- * This module reports uptime information about your bot to http://uptime.eggheads.org. The
+ * This module reports uptime statistics to the uptime contest web
+ * site at https://www.eggheads.org/uptime/. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
  * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
  *
@@ -185,7 +186,7 @@ static int send_uptime(void)
 
   uptimecount++;
   upPack.packets_sent = htonl(uptimecount); /* Tell the server how many
-					       uptime packets we've sent. */
+                                             * uptime packets we've sent. */
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
 

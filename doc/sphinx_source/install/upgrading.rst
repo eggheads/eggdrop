@@ -1,7 +1,7 @@
 Upgrading Eggdrop
 =================
 
-  It is easy to upgrade Eggdrop to a new version! To have a full picture of the changes made since your last upgrade, we recommend reading the NEWS file. Upgrades from the 1.6 and 1.8 lines of Eggdrop should take place with little to no issues. The config file, user files, and channel files can all be reused.
+  It is easy to upgrade Eggdrop to a new version! To have a full picture of the changes made since your last upgrade, we recommend reading the NEWS file. Upgrades from the 1.8 and 1.9 lines of Eggdrop should take place with little to no issues. While the config file, user files, and channel files can all be reused, it is recommended to review the NEWS files for each release to identify new configuration settings that have been added.
 
   For support, feel free to visit us on Libera #eggdrop.
 
@@ -44,7 +44,7 @@ To migrate from a 1.8 to a |majversion| Eggdrop, some changes are suggested to b
 Modules
 ^^^^^^^
 
-While most 3rd party modules that worked on older Eggdrop versions should still work with Eggdrop |majversion|, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<ftp://eggheads.org/pub/eggdrop/modules/1.10/>`_
+While most 3rd party modules that worked on older Eggdrop versions should still work with Eggdrop |majversion|, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<https://ftp.eggheads.org/pub/eggdrop/modules/1.10/>`_
 
 Scripts
 ^^^^^^^

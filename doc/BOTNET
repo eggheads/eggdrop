@@ -90,15 +90,18 @@ Port
     and/or users. Note that you can define separate ports for user and
     bot connections.
 
-EXAMPLE BOTTREE
+EXAMPLE BOTTREES
 
     BotA
       |-+BotB
-      `-+BotC
+      |==BotC
+      |=+BotD
+      `--BotC
 
-BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC.
-BotB shares passively with [receives from] BotA and shares aggressively
-with [sends to] BotC.
+Legend: * -- means the bots are linked, but not sharing userfiles * -+
+means the bots are sharing userfiles * == means the bots have an
+encrypted link between them, and are not sharing userfiles * =+ means
+the bots have an encrypted link between them, and are sharing userfiles
 
 BOT FLAGS
 
