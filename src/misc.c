@@ -517,20 +517,20 @@ void putlog (int type, char *chname, const char *format, ...)
   va_list va;
   time_t now2 = time(NULL);
   static time_t now2_last = 0; /* cache expensive localtime() */
-  static struct tm *t;
+  static struct tm t;
 
   if (now2 != now2_last) {
     now2_last = now2;
-    t = localtime(&now2);
+    localtime_r(&now2, &t);
   }
 
   va_start(va, format);
 
   /* Create the timestamp */
   if (shtime) {
-    strftime(stamp, sizeof(stamp) - 2, log_ts, t);
-    strcat(stamp, " ");
-    tsl = strlen(stamp);
+    tsl = strftime(stamp, sizeof(stamp) - 2, log_ts, &t);
+    stamp[tsl++] = ' ';
+    stamp[tsl] = 0;
   }
   else
     *stamp = '\0';
@@ -544,9 +544,9 @@ void putlog (int type, char *chname, const char *format, ...)
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
-      strftime(ct, 12, ".%d%b%Y", t);
+      strftime(ct, 12, ".%d%b%Y", &t);
     else {
-      strftime(ct, 80, logfile_suffix, t);
+      strftime(ct, 80, logfile_suffix, &t);
       ct[80] = 0;
       s2 = ct;
       /* replace spaces by underscores */
