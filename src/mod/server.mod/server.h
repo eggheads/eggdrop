@@ -130,7 +130,7 @@ typedef struct capability {
   char name[CAPMAX+1];  /* Name of capability, +1 bc CAPMAX is for REQ not LS */
   struct cap_values *value; /* List of values associated with the capability  */
   int enabled;      /* Is the capability currently negotiated with the server */
-  int requested;    /* Does Eggdrop  want this capability, if available?      */
+  int requested;    /* Does Eggdrop want this capability, if available?       */
 } capability_t;
 
 typedef struct monitor_list {
@@ -138,6 +138,24 @@ typedef struct monitor_list {
   int online;                 /* Flag if nickname is currently online     */
   struct monitor_list *next;  /* Linked list y'all                        */
 } monitor_list_t;
+
+typedef struct batch_list {         /* Outer list                           */
+  struct batch_line *lines;         /* Head of child linked list            */
+  char type[128];                   /* Type of batch message                */
+  char ref[64];                     /* batch reference id                   */
+  char args[512];
+  struct batch_list *next;          /* next linked list                     */
+} batch_list_t;
+
+typedef struct batch_line { /* Inner list                                   */
+  char ref[64];             /* Reference tag for identifying a batch session*/
+  char from[UHOSTMAX];      /* Source of message                            */
+  char code[64];            /* IRC code                                     */
+  char data[MSGMAX];        /* Contents of the line being batched           */
+  Tcl_Obj *tagdict;         /* A Tcl dict of all tags on the message        */
+                            /* reference tag included                       */
+  struct batch_line *next;  /* Next linked list                             */
+} batch_line_t;
 
 /* Available net types. */
 enum {
