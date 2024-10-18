@@ -68,7 +68,7 @@ canonical name.])
 PYTHON_VERSION=`echo $PYTHON_LDFLAGS | sed 's/.*-lpython\(.*[[0-9]]\).*/\1/'`
 
 # Check for python version
-AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.8.0], [ax_check_ver="yes"], [ax_check_ver="no"])
+AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.8], [ax_check_ver="yes"], [ax_check_ver="no"])
 AC_MSG_CHECKING([python version is >= 3.8.0])
 if test "x$ax_check_ver" = x"no"; then
   python_avail="false"

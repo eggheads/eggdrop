@@ -156,7 +156,7 @@ static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *co
 }
 
 static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
-  int max;
+  Tcl_Size max;
   const char *str;
   Tcl_Obj *strobj;
   PyObject *result;
@@ -175,7 +175,7 @@ static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
   for (int i = 0; i < max; i++) {
     Tcl_Obj *tclobj;
     const char *tclstr;
-    int tclstrlen;
+    Tcl_Size tclstrlen;
 
     Tcl_ListObjIndex(tclinterp, strobj, i, &tclobj);
     tclstr = Tcl_GetStringFromObj(tclobj, &tclstrlen);
@@ -203,7 +203,7 @@ static PyObject *py_parse_tcl_dict(PyObject *self, PyObject *args) {
   }
   result = PyDict_New();
   while (!done) {
-    int len;
+    Tcl_Size len;
     const char *valstr = Tcl_GetStringFromObj(value, &len);
     PyObject *pyval = PyUnicode_DecodeUTF8(valstr, len, NULL);
     PyDict_SetItemString(result, Tcl_GetString(key), pyval);
@@ -371,6 +371,39 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
   return PyUnicode_DecodeUTF8(result, strlen(result), NULL);
 }
 
+
+static PyObject *py_dir(PyObject *self, PyObject *args) {
+  PyObject *py_list, *py_s;
+  size_t i;
+  int j;
+  const char *info[] = {"info commands", "info procs"}, *s, *value;
+  Tcl_Obj *tcl_list, **objv;
+  Tcl_Size objc;
+
+  py_list = PyList_New(0);
+  for (i = 0; i < sizeof info / sizeof info[0]; i++) {
+    s = info[i];
+    if (Tcl_VarEval(tclinterp, s, NULL, NULL) == TCL_ERROR)
+      putlog(LOG_MISC, "*", "python error: Tcl_VarEval(%s)", s);
+    else {
+      tcl_list = Tcl_GetObjResult(tclinterp);
+      if (Tcl_ListObjGetElements(tclinterp, tcl_list, &objc, &objv) == TCL_ERROR)
+        putlog(LOG_MISC, "*", "python error: Tcl_VarEval(%s)", s);
+      else {
+        for (j = 0; j < objc; j++) {
+          value = Tcl_GetString(objv[j]);
+          if (*value != '*') {
+            py_s = PyUnicode_FromString(value);
+            PyList_Append(py_list, py_s);
+            Py_DECREF(py_s);
+          }
+        }
+      }
+    }
+  }
+  return py_list;
+}
+
 static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
   char *cmdname;
   TclFunc *result;
@@ -399,7 +432,7 @@ static PyMethodDef MyPyMethods[] = {
 };
 
 static PyMethodDef EggTclMethods[] = {
-    // TODO: __dict__ with all valid Tcl commands?
+    {"__dir__", py_dir, METH_VARARGS, ""},
     {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
     {NULL, NULL, 0, NULL}
 };  
