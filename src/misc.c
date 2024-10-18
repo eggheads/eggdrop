@@ -528,9 +528,9 @@ void putlog (int type, char *chname, const char *format, ...)
 
   /* Create the timestamp */
   if (shtime) {
-    strftime(stamp, sizeof(stamp) - 2, log_ts, &t);
-    strcat(stamp, " ");
-    tsl = strlen(stamp);
+    tsl = strftime(stamp, sizeof(stamp) - 2, log_ts, &t);
+    stamp[tsl++] = ' ';
+    stamp[tsl] = 0;
   }
   else
     *stamp = '\0';
