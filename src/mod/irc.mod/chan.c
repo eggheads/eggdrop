@@ -2280,7 +2280,8 @@ static int gotpart(char *from, char *msg)
     if (!chan)
       return 0;
 
-    killmember(chan, nick);
+    if (m)
+      killmember(chan, nick);
     if (msg[0])
       putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from,
              chan->dname, msg);
