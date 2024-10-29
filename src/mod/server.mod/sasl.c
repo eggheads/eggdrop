@@ -282,7 +282,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
   char server_first_message[1024];
   char *word, *brkb, *server_nonce = 0, *salt_b64 = 0, *i = 0;
   char error_msg[128]; /* snprintf() truncation should be tolerable */
-  int salt_plain_len, iter, j;
+  int salt_plain_len, iter, j, ret;
   char salt_plain[64]; /* atheme: Valid values are 8 to 64 (inclusive) */
   char client_key[EVP_MAX_MD_SIZE];
   unsigned int client_key_len, stored_key_len;
@@ -291,6 +291,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
   unsigned char client_signature[EVP_MAX_MD_SIZE];
   unsigned char client_proof[EVP_MAX_MD_SIZE];
   char client_proof_b64[1024];
+  struct rusage ru1, ru2;
 
   strlcpy(server_first_message, server_msg_plain, sizeof server_first_message);
   for (word = strtok_r(server_msg_plain,  ",", &brkb);
@@ -364,7 +365,8 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
   else
     digest = EVP_sha512();
   digest_len = EVP_MD_size(digest);
-  /* TODO: print time spent for pbkdf2 func */
+
+  ret = getrusage(RUSAGE_SELF, &ru1);
   if (!PKCS5_PBKDF2_HMAC(sasl_password, strlen(sasl_password),
                          (const unsigned char *) salt_plain, salt_plain_len,
                          iter, digest, digest_len,
@@ -374,6 +376,17 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
 	     NULL));
     sasl_error(error_msg);
     return -1;
+  }
+  if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
+    debug4("SASL: pbkdf2 digest %s iter %i, user %.3fms sys %.3fms", EVP_MD_name(digest),
+           iter,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+  }
+  else {
+    debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
   }
 
   printf("DEBUG: salted_password ready\n");
@@ -533,8 +546,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
  *   we could also enable/disable all sasl raw bindings to minimize attack
  *   surface
  *   in the end, fuzzing would be nice, coze we do a lot of parsing here
- *   server_iter and rusage should be displayed for the function calling
- *   pbkdf2(server_iter)
  *   cache the client_key (assuming the Salt and hash iteration-count is stable)
  *   support authenticate split by 400 byte, like:
  *     https://github.com/ircv3/ircv3-specifications/commit/838ef397385065bbc5c29d934bbb407e5b5a5ce5
