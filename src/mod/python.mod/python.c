@@ -33,7 +33,6 @@
 #undef days
 #include <Python.h>
 #include <datetime.h>
-#include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
 #include "python.h"
 
