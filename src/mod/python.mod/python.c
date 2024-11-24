@@ -154,7 +154,7 @@ char *python_start(Function *global_funcs)
       return "This module requires Eggdrop 1.9.0 or later.";
     }
     if ((s = init_python()))
-    return s;
+      return s;
   }
 
   /* Add command table to bind list */
