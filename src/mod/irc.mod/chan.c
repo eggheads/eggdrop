@@ -2258,6 +2258,7 @@ static int gotpart(char *from, char *msg)
     strlcpy(uhost, from, sizeof uhost);
     nick = splitnick(&from);
     m = ismember(chan, nick);
+    // TODO: check account from rawt account-tags
     if (m)
       u = get_user_from_member(m);
     else
