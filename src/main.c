@@ -63,10 +63,6 @@
 #include "modules.h"
 #include "bg.h"
 
-#ifdef DEBUG                            /* For debug compile */
-#  include <sys/resource.h>             /* setrlimit() */
-#endif
-
 #ifdef HAVE_GETRANDOM
 #  include <sys/random.h>
 #endif
@@ -101,7 +97,7 @@ int egg_numver = EGG_NUMVER;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
-int default_uflags = 0;         /* Default user-definied flags            */
+int default_uflags = 0;         /* Default user-defined flags             */
 
 int backgrd = 1;    /* Run in the background?                        */
 int con_chan = 0;   /* Foreground: constantly display channel stats? */
@@ -123,7 +119,7 @@ int make_userfile = 0; /* Using bot in userfile-creation mode? */
 int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
 int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 
-char version[81];    /* Version info (long form)  */
+char version[128];   /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
 volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
@@ -880,7 +876,7 @@ static void mainloop(int toplevel)
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
             strcmp(p->name, "encryption2") && strcmp(p->name, "uptime")) {
           f++;
-          debug1("stagnant module %s", p->name);
+          putlog(LOG_MISC, "*", "stagnant module %s", p->name);
         }
       }
       if (f != 0) {
@@ -923,7 +919,7 @@ static void mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+  if (getrandom(&seed, sizeof seed, 0) != (sizeof seed)) {
     if (errno != ENOSYS) {
       fatal("ERROR: getrandom()\n", 0);
     } else {
@@ -931,9 +927,15 @@ static void init_random(void) {
        * This can happen with glibc>=2.25 and linux<3.17
        */
 #endif
+#ifdef HAVE_CLOCK_GETTIME
+      struct timespec tp;
+      clock_gettime(CLOCK_REALTIME, &tp);
+      seed = ((uint64_t) tp.tv_sec * tp.tv_nsec) ^ getpid();
+#else
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
+      seed = ((uint64_t) tp.tv_sec * tp.tv_usec) ^ getpid();
+#endif
 #ifdef HAVE_GETRANDOM
     }
   }
@@ -976,15 +978,15 @@ int main(int arg_c, char **arg_v)
 #ifdef EGG_PATCH
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s+%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER, EGG_PATCH);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
-  egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2024 Eggheads",
-                EGG_STRINGVER);
+  strlcpy(version,
+          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          sizeof version);
 #endif
 
 /* For OSF/1 */
@@ -1023,6 +1025,10 @@ int main(int arg_c, char **arg_v)
   sigaction(SIGILL, &sv, NULL);
   sv.sa_handler = got_alarm;
   sigaction(SIGALRM, &sv, NULL);
+  // Added for python.mod because the _signal handler otherwise overwrites it
+  // see https://discuss.python.org/t/asyncio-skipping-signal-handling-setup-during-import-for-python-embedded-context/37054/6
+  sv.sa_handler = got_term;
+  sigaction(SIGINT, &sv, NULL);
 
   /* Initialize variables and stuff */
   now = time(NULL);

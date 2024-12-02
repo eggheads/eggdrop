@@ -523,8 +523,6 @@ void tell_user_ident(int idx, char *id)
   struct userrec *u;
 
   u = get_user_by_handle(userlist, id);
-  if (u == NULL)
-    u = get_user_by_host(id);
   if (u == NULL) {
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;

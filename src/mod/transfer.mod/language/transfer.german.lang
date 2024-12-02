@@ -34,7 +34,7 @@
 # 0xf1e, < dieses ist jetzt leer
 0xf1f,Getrennt von %s (Userfile Transfer abgebrochen)
 0xf20,Verlor DCC send %s von %s!%s (%lu/%lu)
-0xf21,(!) Erneutes laden von Packet von %s fuer %s ist ungueltig!
+0xf21,(!) Erneutes Laden von Paket von %s fuer %s ist ungueltig!
 0xf22,!! Fortsetzung von Datei-Transfer hinter dem Dateiende fuer %s zu %s
 0xf23,!!! Versuche Teile des Userfile Transfers auszulassen
 0xf24,Fortsetzung von Dateitransfer bei %dk fuer %s zu %s

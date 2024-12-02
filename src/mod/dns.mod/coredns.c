@@ -443,12 +443,12 @@ static void linkresolveip(struct resolve *addrp)
 }
 
 #ifdef IPV6
-static void linkresolveip6(struct resolve *addrp){
+static void linkresolveip6(struct resolve *addrp) {
   struct resolve *rp;
   unsigned long bashnum;
   bashnum = getip6bash(&addrp->sockname.addr.s6.sin6_addr);
   rp = ip6bash[bashnum];
-  if (rp){
+  if (rp) {
     while ((rp->nextip) &&
            (addrp->sockname.addr.s6.sin6_addr.s6_addr[15] >
             rp->nextip->sockname.addr.s6.sin6_addr.s6_addr[15]))
@@ -634,7 +634,7 @@ static struct resolve *findip6(struct in6_addr *ip6)
   unsigned long bashnum;
   bashnum = getip6bash(ip6);
   rp = ip6bash[bashnum];
-  if (rp){
+  if (rp) {
     while ((rp->nextip) && (ip6->s6_addr[15] >=
            (rp->nextip->sockname.addr.s6.sin6_addr.s6_addr[15])))
       rp = rp->nextip;
