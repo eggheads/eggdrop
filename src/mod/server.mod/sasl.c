@@ -267,7 +267,7 @@ static int sasl_ecdsa_nist256p_challange_step_1(
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
 static int sasl_scram_step_0(char *client_msg_plain, int client_msg_plain_len)
 {
-  /* TODO: after sasl scram merged make_rand_str_from_chars() should be made
+  /* TODO: after merge of #1706 make_rand_str_from_chars() should be made
    * return unbiased uniformed randoms
    */
   make_rand_str_from_chars(nonce, (sizeof nonce) - 1, CHARSET_SCRAM);
@@ -340,7 +340,8 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
   /* TODO: normalize(password)
    * Eggdrop doesnt have support for utf8 normalization yet
    * tcl also doesnt have it in core yet, only in tcllib
-   * We could use glib or something
+   * We could use glib or something, but we dont want dependency bloat just
+   * for one function
    */
 
   if ((salt_plain_len = b64_pton(salt_b64, (unsigned char*) salt_plain, sizeof salt_plain)) == -1) {
@@ -354,11 +355,6 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     sasl_error(error_msg);
     return -1;
   }
-
-  printf("DEBUG: server_nonce: >>>%s<<<\n", server_nonce);
-  printf("DEBUG: salt_b64: >>>%s<<<\n", salt_b64);
-  printf("DEBUG: iter: %i\n", iter);
-  printf("DEBUG: salt_plain_len: %i\n", salt_plain_len);
 
   if (sasl_mechanism == SASL_MECHANISM_SCRAM_SHA_256)
     digest = EVP_sha256();
@@ -389,8 +385,6 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
   }
 
-  printf("DEBUG: salted_password ready\n");
-
   /* ClientKey       := HMAC(SaltedPassword, "Client Key") */
 
   if (!HMAC(digest, salted_password, digest_len, (unsigned char *) CLIENT_KEY,
@@ -402,8 +396,6 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     return -1;
   }
 
-  printf("DEBUG: client_key ready\n");
-
   /* StoredKey       := H(ClientKey) */
 
   if (!EVP_Digest(client_key, client_key_len, stored_key, &stored_key_len, digest, NULL)) {
@@ -414,8 +406,6 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     return -1;
   }
 
-  printf("DEBUG: stored_key ready\n");
-
   /* AuthMessage     := client-first-message-bare + "," +
    *                    server-first-message + "," +
    *                    client-final-message-without-proof
@@ -425,17 +415,11 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
            sizeof client_final_message_without_proof, "c=biws,r=%s",
            server_nonce);
 
-  printf("DEBUG: client_final_message_without_proof = >>>%s<<<\n", client_final_message_without_proof);
-
   auth_message_len = snprintf(auth_message, sizeof auth_message, "%s,%s,%s",
                               client_first_message + 3, server_first_message,
                               client_final_message_without_proof);
 
-  printf("DEBUG: auth_message ready: >>>%s<<<\n", auth_message);
-
   /* ClientSignature := HMAC(StoredKey, AuthMessage) */
-
-  printf("DEBUG: digestlen: %i auth_message_len: %i\n", digest_len, auth_message_len);
 
   if (!HMAC(digest, stored_key, digest_len, (unsigned char *) auth_message,
             auth_message_len, client_signature, NULL)) {
@@ -445,25 +429,15 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     return -1;
   }
 
-  printf("DEBUG: client_signature ready\n");
-
   /* ClientProof     := ClientKey XOR ClientSignature */
-
-  printf("DEBUG: client_key_len: %i\n", client_key_len);
 
   for (j = 0; j < client_key_len; j++)
     client_proof[j] = client_key[j] ^ client_signature[j];
-
-  printf("DEBUG: client_proof ready\n");
 
   if (b64_ntop(client_proof, client_key_len, client_proof_b64, sizeof client_proof_b64) == -1) {
     sasl_error("AUTHENTICATE error: could not base64 encode");
     return -1;
   }
-
-  printf("DEBUG: base64-encoded client_proof ready\n");
-
-  printf("DEBUG: client_final_message_without_proof = >>>%s<<<\n", client_final_message_without_proof);
 
   return snprintf(client_msg_plain, client_msg_plain_len, "%s,p=%s",
                   client_final_message_without_proof, client_proof_b64);
@@ -491,11 +465,7 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
     return;
   }
 
-  printf("DEBUG: server_key ready\n");
-
   /* ServerSignature := HMAC(ServerKey, AuthMessage) */
-
-  printf("DEBUG: digestlen: %i auth_message_len: %i\n", digest_len, auth_message_len);
 
   if (!HMAC(digest, server_key, digest_len, (unsigned char *) auth_message,
             auth_message_len, server_signature, NULL)) {
@@ -505,18 +475,10 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
     return;
   }
 
-  printf("DEBUG: server_signature ready\n");
-
   if ((server_signature_b64_len = b64_ntop(server_signature, digest_len, server_signature_b64, sizeof server_signature_b64)) == -1) {
     sasl_error("AUTHENTICATE error: could not base64 encode");
     return;
   }
-
-  printf("DEBUG: base64-encoded server_signature ready\n");
-
-  printf("DEBUG: server_signature_b64 = >>>%s<<<\n", server_signature_b64);
-
-  printf("DEBUG: server_signature_b64_len = %i\n", server_signature_b64_len);
 
   if (
 #if OPENSSL_VERSION_NUMBER >= 0x1010008fL /* 1.1.0h */
