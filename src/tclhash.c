@@ -1240,13 +1240,19 @@ void check_tcl_die(char *reason)
 void check_tcl_log(int lv, char *chan, char *msg)
 {
   char mask[512];
+  Tcl_Obj* prev_result;
 
+  /* We have to store the old result, as check_tcl_bind may override it */
+  prev_result = Tcl_GetObjResult(interp);
+  Tcl_IncrRefCount(prev_result);
   egg_snprintf(mask, sizeof mask, "%s %s", chan, msg);
   Tcl_SetVar(interp, "_log1", masktype(lv), TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log2", chan, TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log3", msg, TCL_GLOBAL_ONLY);
   check_tcl_bind(H_log, mask, 0, " $::_log1 $::_log2 $::_log3",
                  MATCH_MASK | BIND_STACKABLE);
+  Tcl_SetObjResult(interp, prev_result);
+  Tcl_DecrRefCount(prev_result);
 }
 
 #ifdef TLS
