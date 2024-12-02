@@ -2035,11 +2035,10 @@ static int gotjoin(char *from, char *channame)
       reset_chan_info(chan, CHAN_RESETALL, 1);
     } else {
       m = ismember(chan, nick);
+      u = lookup_user_record(m, account ? account : NULL, from);
+      get_user_flagrec(u, &fr, chan->dname);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
-        u = get_user_from_member(m);
-        get_user_flagrec(u, &fr, chan->dname);
         check_tcl_rejn(nick, uhost, u, chan->dname);
-
         chan = findchan(chname);
         if (!chan) {
           if (ch_dname)
@@ -2057,6 +2056,7 @@ static int gotjoin(char *from, char *channame)
         m->last = now;
         m->delay = 0L;
         m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
+        m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
         putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
@@ -2072,6 +2072,7 @@ static int gotjoin(char *from, char *channame)
         m->delay = 0L;
         strlcpy(m->nick, nick, sizeof m->nick);
         strlcpy(m->userhost, uhost, sizeof m->userhost);
+        m->user = u;
         m->flags |= STOPWHO;
 
         if (extjoin) {
@@ -2092,9 +2093,6 @@ static int gotjoin(char *from, char *channame)
           /* The channel doesn't exist anymore, so get out of here. */
           goto exit;
         }
-
-        /* The record saved in the channel record always gets updated,
-         * so we can use that. */
 
         if (match_my_nick(nick)) {
           /* It was me joining! Need to update the channel record with the
@@ -2242,7 +2240,7 @@ exit:
  */
 static int gotpart(char *from, char *msg)
 {
-  char *nick, *chname, *key;
+  char *nick, *chname, uhost[UHOSTLEN], *key;
   struct chanset_t *chan;
   struct userrec *u;
   memberlist *m;
@@ -2257,9 +2255,14 @@ static int gotpart(char *from, char *msg)
     return 0;
   }
   if (chan && !channel_pending(chan)) {
+    strlcpy(uhost, from, sizeof uhost);
     nick = splitnick(&from);
     m = ismember(chan, nick);
-    u = get_user_from_member(m);
+    // TODO: check account from rawt account-tags
+    if (m)
+      u = get_user_from_member(m);
+    else
+      u = get_user_by_host(uhost);
     if (!channel_active(chan)) {
       /* whoa! */
       putlog(LOG_MISC, chan->dname,
@@ -2278,7 +2281,8 @@ static int gotpart(char *from, char *msg)
     if (!chan)
       return 0;
 
-    killmember(chan, nick);
+    if (m)
+      killmember(chan, nick);
     if (msg[0])
       putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from,
              chan->dname, msg);

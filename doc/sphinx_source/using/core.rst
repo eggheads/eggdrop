@@ -589,7 +589,7 @@ Modules
 
 After the core settings, you should start loading modules. Modules are
 loaded by the command "loadmodule <module>". Eggdrop looks for modules
-in the directory you specified by the module-path setting in the files
+in the directory you specified by the mod-path setting in the files
 and directories section.
 
 Please note that for different configurations, different modules are needed.

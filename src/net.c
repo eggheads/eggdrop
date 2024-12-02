@@ -130,7 +130,7 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
-  char *endptr, *src2 = src;;
+  char *endptr, *src2 = src;
   long val;
   IP ip;
   volatile int af = AF_UNSPEC;

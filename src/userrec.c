@@ -269,7 +269,7 @@ struct userrec *get_user_from_member(memberlist *m)
 getuser_done:
   m->user = ret;
   m->tried_getuser = 1;
-  return NULL;
+  return ret;
 }
 
 /* Wrapper function to find an Eggdrop user record based on either a provided
