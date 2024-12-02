@@ -2240,7 +2240,7 @@ exit:
  */
 static int gotpart(char *from, char *msg)
 {
-  char *nick, *chname, *key;
+  char *nick, *chname, uhost[UHOSTLEN], *key;
   struct chanset_t *chan;
   struct userrec *u;
   memberlist *m;
@@ -2255,9 +2255,14 @@ static int gotpart(char *from, char *msg)
     return 0;
   }
   if (chan && !channel_pending(chan)) {
+    strlcpy(uhost, from, sizeof uhost);
     nick = splitnick(&from);
     m = ismember(chan, nick);
-    u = get_user_from_member(m);
+    // TODO: check account from rawt account-tags
+    if (m)
+      u = get_user_from_member(m);
+    else
+      u = get_user_by_host(uhost);
     if (!channel_active(chan)) {
       /* whoa! */
       putlog(LOG_MISC, chan->dname,
@@ -2276,7 +2281,8 @@ static int gotpart(char *from, char *msg)
     if (!chan)
       return 0;
 
-    killmember(chan, nick);
+    if (m)
+      killmember(chan, nick);
     if (msg[0])
       putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from,
              chan->dname, msg);
