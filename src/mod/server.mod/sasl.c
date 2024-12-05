@@ -501,7 +501,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 /* TODO:
  *   modularize
  *     aim is final version <= 70 lines
- *   state machine, at least for scram
  *   guard sasl auth with timeout
  *   sasl-password should be sasl-password-file so we read the pass from file
  *     and keep it only in memory while we need it,
