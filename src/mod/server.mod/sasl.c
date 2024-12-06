@@ -144,24 +144,39 @@ static int got908(char *from, char *msg)
   return 0;
 }
 
-static int sasl_plain(char *client_msg_plain)
+static int sasl_plain(char *dst, size_t dstsize)
 {
-  /* Don't use snprintf() due to \0 inside */
-  char *s = client_msg_plain;
-  s = stpcpy(s, sasl_username) + 1;
-  s = stpcpy(s, sasl_username) + 1;
-  s = stpcpy(s, sasl_password);
-  return s - client_msg_plain;
+  /* Don't use snprintf() due to \0 inside
+   * and don't use stpcpy() for it is POSIX 2008
+   */
+  size_t n, y = 0;
+
+  n = strlcpy(dst, sasl_username, dstsize);
+  dst = dst + n + 1;
+  dstsize = dstsize - n - 1;
+  y = n + 1;
+  n = strlcpy(dst, sasl_username, dstsize);
+  dst = dst + n + 1;
+  dstsize = dstsize - n - 1;
+  y = y + n + 1;
+  n = strlcpy(dst, sasl_password, dstsize);
+  return y + n;
 }
 
 #ifdef TLS
-static int sasl_ecdsa_nist256p_challange_step_0(char *client_msg_plain)
+static int sasl_ecdsa_nist256p_challange_step_0(char *dst, size_t dstsize)
 {
-  /* Don't use snprintf() due to \0 inside */
-  char *s = client_msg_plain;
-  s = stpcpy(s, sasl_username) + 1;
-  s = stpcpy(s, sasl_username);
-  return s - client_msg_plain;
+  /* Don't use snprintf() due to \0 inside
+   * and don't use stpcpy() for it is POSIX 2008
+   */
+  size_t n, y = 0;
+
+  n = strlcpy(dst, sasl_username, dstsize);
+  dst = dst + n + 1;
+  dstsize = dstsize - n - 1;
+  y = n + 1;
+  n = strlcpy(dst, sasl_username, dstsize);
+  return y + n;
 }
 
 static int sasl_ecdsa_nist256p_challange_step_1(
@@ -545,11 +560,11 @@ static int gotauthenticate(char *from, char *msg)
     switch (sasl_mechanism) {
       case SASL_MECHANISM_PLAIN:
 #endif
-        client_msg_plain_len = sasl_plain(client_msg_plain);
+        client_msg_plain_len = sasl_plain(client_msg_plain, sizeof client_msg_plain);
 #ifdef TLS
         break;
       case SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE:
-        client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_0(client_msg_plain);
+        client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_0(client_msg_plain, sizeof client_msg_plain);
         break;
       case SASL_MECHANISM_EXTERNAL:
         putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE Response +");
