@@ -286,8 +286,10 @@ static int sasl_scram_step_0(char *client_msg_plain, int client_msg_plain_len)
    * return unbiased uniformed randoms
    */
   make_rand_str_from_chars(nonce, (sizeof nonce) - 1, CHARSET_SCRAM);
-  return snprintf(client_msg_plain, client_msg_plain_len, "n,,n=%s,r=%s",
-                  sasl_username, nonce);
+  snprintf(client_msg_plain, client_msg_plain_len, "n,,n=%s,r=%s",
+           sasl_username, nonce);
+  return strlcpy(client_first_message, client_msg_plain,
+                 sizeof client_first_message);
 }
 
 static int sasl_scram_step_1(char *restrict client_msg_plain,
@@ -514,8 +516,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 #endif /* TLS */
 
 /* TODO:
- *   modularize
- *     aim is final version <= 70 lines
  *   guard sasl auth with timeout
  *   sasl-password should be sasl-password-file so we read the pass from file
  *     and keep it only in memory while we need it,
@@ -545,8 +545,6 @@ static int gotauthenticate(char *from, char *msg)
   #endif
   char client_msg_b64[((MAX((sizeof client_msg_plain), 400) + 2) / 3) << 2] = "";
 
-
-  putlog(LOG_DEBUG, "*", "SASL: got AUTHENTICATE %s", msg);
   fixcolon(msg); /* Because Inspircd does its own thing */
 #ifdef TLS
   if (*msg == '+') {
@@ -567,15 +565,12 @@ static int gotauthenticate(char *from, char *msg)
         client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_0(client_msg_plain, sizeof client_msg_plain);
         break;
       case SASL_MECHANISM_EXTERNAL:
-        putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE Response +");
         dprintf(DP_MODE, "AUTHENTICATE +\n");
         return 0;
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
       case SASL_MECHANISM_SCRAM_SHA_256:
       case SASL_MECHANISM_SCRAM_SHA_512:
         client_msg_plain_len = sasl_scram_step_0(client_msg_plain, sizeof client_msg_plain);
-        strlcpy(client_first_message, client_msg_plain,
-                sizeof client_first_message); /* TODO: do this here or in sasl_scram_step_0() ? */
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
     }
   } else {
@@ -613,7 +608,6 @@ static int gotauthenticate(char *from, char *msg)
     sasl_error("AUTHENTICATE: could not base64 encode");
     return 0;
   }
-  putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE Response %s", client_msg_b64);
   dprintf(DP_MODE, "AUTHENTICATE %s\n", client_msg_b64);
   return 0;
 }
