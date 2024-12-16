@@ -516,7 +516,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 #endif /* TLS */
 
 /* TODO:
- *   guard sasl auth with timeout
  *   sasl-password should be sasl-password-file so we read the pass from file
  *     and keep it only in memory while we need it,
  *   we could also enable/disable all sasl raw bindings to minimize attack
