@@ -598,6 +598,7 @@ static int gotauthenticate(char *from, char *msg)
         step++;
       } else {
         sasl_scram_step_2(client_msg_plain, sizeof client_msg_plain, server_msg_plain);
+        step = 0;
         return 0;
       }
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
