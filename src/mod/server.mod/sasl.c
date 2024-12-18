@@ -66,6 +66,15 @@ char nonce[21]; /* atheme defines acceptable client nonce len min 8 max 512 char
 char client_first_message[1024];
 int digest_len, auth_message_len;
 char auth_message[3069];
+/* a client implementation MAY cache ClientKey&ServerKey */
+char last_sasl_password[sizeof sasl_password];
+char last_salt_b64[96] = "";
+char last_i[32] = "";
+char client_key[EVP_MAX_MD_SIZE];
+unsigned int client_key_len;
+int use_cache;
+char server_key[EVP_MAX_MD_SIZE];
+unsigned int server_key_len;
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
 #endif /* TLS */
 
@@ -301,8 +310,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
   char error_msg[128]; /* snprintf() truncation should be tolerable */
   int salt_plain_len, iter, j, ret;
   char salt_plain[64]; /* atheme: Valid values are 8 to 64 (inclusive) */
-  char client_key[EVP_MAX_MD_SIZE];
-  unsigned int client_key_len, stored_key_len;
+  unsigned int stored_key_len;
   unsigned char stored_key[EVP_MAX_MD_SIZE];
   char client_final_message_without_proof[1024];
   unsigned char client_signature[EVP_MAX_MD_SIZE];
@@ -361,57 +369,66 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
    * for one function
    */
 
-  if ((salt_plain_len = b64_pton(salt_b64, (unsigned char*) salt_plain, sizeof salt_plain)) == -1) {
-    sasl_error("AUTHENTICATE error: could not base64 decode salt");
-    return -1;
-  }
-  errno = 0;
-  iter = strtol(i, NULL, 10);
-  if (errno) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: strtol(%s): %s", i, strerror(errno));
-    sasl_error(error_msg);
-    return -1;
-  }
-
-  if (sasl_mechanism == SASL_MECHANISM_SCRAM_SHA_256)
-    digest = EVP_sha256();
-  else
-    digest = EVP_sha512();
-  digest_len = EVP_MD_size(digest);
-
-  ret = getrusage(RUSAGE_SELF, &ru1);
-  if (!PKCS5_PBKDF2_HMAC(sasl_password, strlen(sasl_password),
-                         (const unsigned char *) salt_plain, salt_plain_len,
-                         iter, digest, digest_len,
-                         (unsigned char *) salted_password)) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: "
-             "PKCS5_PBKDF2_HMAC(): %s", ERR_error_string(ERR_get_error(),
-	     NULL));
-    sasl_error(error_msg);
-    return -1;
-  }
-  if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
-    debug4("SASL: pbkdf2 digest %s iter %i, user %.3fms sys %.3fms", EVP_MD_name(digest),
-           iter,
-           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-  }
-  else {
-    debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
-  }
-
   /* ClientKey       := HMAC(SaltedPassword, "Client Key") */
 
-  if (!HMAC(digest, salted_password, digest_len, (unsigned char *) CLIENT_KEY,
-            strlen(CLIENT_KEY), (unsigned char *) client_key,
-	    &client_key_len)) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
-             ERR_error_string(ERR_get_error(), NULL));
-    sasl_error(error_msg);
-    return -1;
+  use_cache = (!strcmp(sasl_password, last_sasl_password)) && (!strcmp(salt_b64, last_salt_b64)) && (!strcmp(i, last_i));
+
+  if (!use_cache) {
+    if ((salt_plain_len = b64_pton(salt_b64, (unsigned char*) salt_plain, sizeof salt_plain)) == -1) {
+      sasl_error("AUTHENTICATE error: could not base64 decode salt");
+      return -1;
+    }
+    errno = 0;
+    iter = strtol(i, NULL, 10);
+    if (errno) {
+      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: strtol(%s): %s", i, strerror(errno));
+      sasl_error(error_msg);
+      return -1;
+    }
+
+    if (sasl_mechanism == SASL_MECHANISM_SCRAM_SHA_256)
+      digest = EVP_sha256();
+    else
+      digest = EVP_sha512();
+    digest_len = EVP_MD_size(digest);
+
+    ret = getrusage(RUSAGE_SELF, &ru1);
+    if (!PKCS5_PBKDF2_HMAC(sasl_password, strlen(sasl_password),
+                           (const unsigned char *) salt_plain, salt_plain_len,
+                           iter, digest, digest_len,
+                           (unsigned char *) salted_password)) {
+      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: "
+               "PKCS5_PBKDF2_HMAC(): %s", ERR_error_string(ERR_get_error(),
+               NULL));
+      sasl_error(error_msg);
+      return -1;
+    }
+    if (!ret && !getrusage(RUSAGE_SELF, &ru2)) {
+      debug4("SASL: pbkdf2 digest %s iter %i, user %.3fms sys %.3fms", EVP_MD_name(digest),
+             iter,
+             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
+    }
+    else {
+      debug1("PBKDF2 error: getrusage(): %s", strerror(errno));
+    }
+
+    if (!HMAC(digest, salted_password, digest_len, (unsigned char *) CLIENT_KEY,
+              strlen(CLIENT_KEY), (unsigned char *) client_key,
+              &client_key_len)) {
+      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
+               ERR_error_string(ERR_get_error(), NULL));
+      sasl_error(error_msg);
+      return -1;
+    }
+    strlcpy(last_sasl_password, sasl_password, sizeof last_sasl_password);
+    strlcpy(last_salt_b64, salt_b64, sizeof last_salt_b64);
+    strlcpy(last_i, i, sizeof last_i);
   }
+  else
+    debug0("SASL: using cached client and server key");
 
   /* StoredKey       := H(ClientKey) */
 
@@ -464,8 +481,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
                              int client_msg_plain_len,
                              char *restrict server_msg_plain)
 {
-  char server_key[EVP_MAX_MD_SIZE];
-  unsigned int server_key_len;
   char error_msg[128]; /* snprintf() truncation should be tolerable */
   unsigned char server_signature[EVP_MAX_MD_SIZE];
   char server_signature_b64[128];
@@ -473,9 +488,10 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 
   /* ServerKey       := HMAC(SaltedPassword, "Server Key") */
 
-  if (!HMAC(digest, salted_password, digest_len, (unsigned char *) SERVER_KEY,
-            strlen(SERVER_KEY), (unsigned char *) server_key,
-            &server_key_len)) {
+  if ((!use_cache) &&
+      (!HMAC(digest, salted_password, digest_len, (unsigned char *) SERVER_KEY,
+             strlen(SERVER_KEY), (unsigned char *) server_key,
+             &server_key_len))) {
     snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
              ERR_error_string(ERR_get_error(), NULL));
     sasl_error(error_msg);
@@ -521,7 +537,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
  *   we could also enable/disable all sasl raw bindings to minimize attack
  *   surface
  *   in the end, fuzzing would be nice, coze we do a lot of parsing here
- *   cache the client_key (assuming the Salt and hash iteration-count is stable)
  *   support authenticate split by 400 byte, like:
  *     https://github.com/ircv3/ircv3-specifications/commit/838ef397385065bbc5c29d934bbb407e5b5a5ce5
  *     400-byte chunk, see: https://ircv3.net/specs/extensions/sasl-3.1.html
@@ -598,7 +613,7 @@ static int gotauthenticate(char *from, char *msg)
         step++;
       } else {
         sasl_scram_step_2(client_msg_plain, sizeof client_msg_plain, server_msg_plain);
-        step = 0;
+	step = 0;
         return 0;
       }
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
