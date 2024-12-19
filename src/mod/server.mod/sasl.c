@@ -531,21 +531,6 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
 #endif /* TLS */
 
-/* TODO:
- *
- *   sasl-password should be sasl-password-file so we read the pass from file
- *     and keep it only in memory while we need it,
- *   we could also enable/disable all sasl raw bindings to minimize attack
- *   surface
- *   in the end, fuzzing would be nice, coze we do a lot of parsing here
- *   support authenticate split by 400 byte, like:
- *     https://github.com/ircv3/ircv3-specifications/commit/838ef397385065bbc5c29d934bbb407e5b5a5ce5
- *     400-byte chunk, see: https://ircv3.net/specs/extensions/sasl-3.1.html
- *     base64 padding
- *     The response is encoded in Base64 (RFC 4648), then split to
- *       400-byte chunks, and each chunk is sent as a separate AUTHENTICATE
- *       command.
- */
 static int gotauthenticate(char *from, char *msg)
 {
   char client_msg_plain[1024];
