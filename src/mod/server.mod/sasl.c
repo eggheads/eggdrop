@@ -695,11 +695,13 @@ int sasl_authenticate_initial(const struct cap_values *cap_value_list)
 {
   char error_msg[128];
   putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
+#ifdef TLS
   int servidx = findanyidx(serv);
   if ((sasl_mechanism == SASL_MECHANISM_EXTERNAL) && !dcc[servidx].ssl) {
     sasl_error("authentication mechanism EXTERNAL not possible via non-ssl connection");
     return 1;
   }
+#endif
   if (!is_cap_value(cap_value_list, SASL_MECHANISMS[sasl_mechanism])) {
     snprintf(error_msg, sizeof error_msg,
              "authentication mechanism %s not supported by server",
