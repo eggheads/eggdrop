@@ -80,7 +80,7 @@ unsigned int server_key_len;
 
 static void sasl_error(const char *msg)
 {
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
+  putlog(LOG_SERV, "*", "SASL: error: %s", msg);
   dprintf(DP_MODE, "CAP END\n");
   sasl_timeout_time = 0;
   if (!sasl_continue) {
@@ -197,7 +197,7 @@ static int sasl_ecdsa_nist256p_challange_step_1(
   EVP_PKEY *pkey;
 
   if (!(fp = fopen(sasl_ecdsa_key, "r"))) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: could not open "
+    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: could not open "
              "file sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
     sasl_error(error_msg);
     return -1;
@@ -331,7 +331,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
             memcmp
 #endif
             (word + 2, nonce, (sizeof nonce) - 1)) {
-          sasl_error("AUTHENTICATE error: server nonce != client nonce");
+          sasl_error("AUTHENTICATE: server nonce != client nonce");
           return -1;
         }
         server_nonce = word + 2;
@@ -343,7 +343,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
         i = word + 2;
         break;
       case 'e':
-        snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: server error: %s", word + 2);
+        snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: server error: %s", word + 2);
 	sasl_error(error_msg);
         return -1;
       default:
@@ -351,15 +351,15 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     }
   }
   if (!server_nonce) {
-    sasl_error("AUTHENTICATE error: server nonce missing from SCRAM challenge");
+    sasl_error("AUTHENTICATE: server nonce missing from SCRAM challenge");
     return -1;
   }
   if (!salt_b64) {
-    sasl_error("AUTHENTICATE error: salt missing from SCRAM challenge");
+    sasl_error("AUTHENTICATE: salt missing from SCRAM challenge");
     return -1;
   }
   if (!i) {
-    sasl_error("AUTHENTICATE error: iteration count missing from SCRAM challenge");
+    sasl_error("AUTHENTICATE: iteration count missing from SCRAM challenge");
     return -1;
   }
   /* TODO: normalize(password)
@@ -375,13 +375,13 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
 
   if (!use_cache) {
     if ((salt_plain_len = b64_pton(salt_b64, (unsigned char*) salt_plain, sizeof salt_plain)) == -1) {
-      sasl_error("AUTHENTICATE error: could not base64 decode salt");
+      sasl_error("AUTHENTICATE: could not base64 decode salt");
       return -1;
     }
     errno = 0;
     iter = strtol(i, NULL, 10);
     if (errno) {
-      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: strtol(%s): %s", i, strerror(errno));
+      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: strtol(%s): %s", i, strerror(errno));
       sasl_error(error_msg);
       return -1;
     }
@@ -397,7 +397,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
                            (const unsigned char *) salt_plain, salt_plain_len,
                            iter, digest, digest_len,
                            (unsigned char *) salted_password)) {
-      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: "
+      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: "
                "PKCS5_PBKDF2_HMAC(): %s", ERR_error_string(ERR_get_error(),
                NULL));
       sasl_error(error_msg);
@@ -418,7 +418,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     if (!HMAC(digest, salted_password, digest_len, (unsigned char *) CLIENT_KEY,
               strlen(CLIENT_KEY), (unsigned char *) client_key,
               &client_key_len)) {
-      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
+      snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: HMAC(): %s",
                ERR_error_string(ERR_get_error(), NULL));
       sasl_error(error_msg);
       return -1;
@@ -434,7 +434,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
 
   if (!EVP_Digest(client_key, client_key_len, stored_key, &stored_key_len, digest, NULL)) {
     snprintf(error_msg, sizeof error_msg,
-             "AUTHENTICATE error: EVP_Digest(): %s",
+             "AUTHENTICATE: EVP_Digest(): %s",
              ERR_error_string(ERR_get_error(), NULL));
     sasl_error(error_msg);
     return -1;
@@ -457,7 +457,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
 
   if (!HMAC(digest, stored_key, digest_len, (unsigned char *) auth_message,
             auth_message_len, client_signature, NULL)) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
+    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: HMAC(): %s",
              ERR_error_string(ERR_get_error(), NULL));
     sasl_error(error_msg);
     return -1;
@@ -469,7 +469,7 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
     client_proof[j] = client_key[j] ^ client_signature[j];
 
   if (b64_ntop(client_proof, client_key_len, client_proof_b64, sizeof client_proof_b64) == -1) {
-    sasl_error("AUTHENTICATE error: could not base64 encode");
+    sasl_error("AUTHENTICATE: could not base64 encode");
     return -1;
   }
 
@@ -492,7 +492,7 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
       (!HMAC(digest, salted_password, digest_len, (unsigned char *) SERVER_KEY,
              strlen(SERVER_KEY), (unsigned char *) server_key,
              &server_key_len))) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
+    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: HMAC(): %s",
              ERR_error_string(ERR_get_error(), NULL));
     sasl_error(error_msg);
     return;
@@ -502,14 +502,14 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 
   if (!HMAC(digest, server_key, digest_len, (unsigned char *) auth_message,
             auth_message_len, server_signature, NULL)) {
-    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE error: HMAC(): %s",
+    snprintf(error_msg, sizeof error_msg, "AUTHENTICATE: HMAC(): %s",
              ERR_error_string(ERR_get_error(), NULL));
     sasl_error(error_msg);
     return;
   }
 
   if ((server_signature_b64_len = b64_ntop(server_signature, digest_len, server_signature_b64, sizeof server_signature_b64)) == -1) {
-    sasl_error("AUTHENTICATE error: could not base64 encode");
+    sasl_error("AUTHENTICATE: could not base64 encode");
     return;
   }
 
@@ -532,6 +532,7 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 #endif /* TLS */
 
 /* TODO:
+ *
  *   sasl-password should be sasl-password-file so we read the pass from file
  *     and keep it only in memory while we need it,
  *   we could also enable/disable all sasl raw bindings to minimize attack
@@ -563,7 +564,7 @@ static int gotauthenticate(char *from, char *msg)
 #ifdef TLS
   if (*msg == '+') {
 #endif
-    if (!*sasl_username) { /* TODO: mind. fuer EXTERNAL muessen wir das nicht machen */
+    if ((sasl_mechanism != SASL_MECHANISM_EXTERNAL) && (!*sasl_username))  {
       putlog(LOG_SERV, "*", "SASL: sasl-username not set, setting it to "
              "username %s", botname);
       strlcpy(sasl_username, botuser, sizeof sasl_username);
@@ -705,14 +706,15 @@ static void sasl_start()
  * later messages. The initial client message specifies the SASL mechanism to
  * be used.
 */
-/* TODO: aktuell versucht eggdrop EXTERNAL ueber non-ssl verbindung, das kann
- * doch nicht funktionieren, oder? also sollte eggdrop da eine warnung loggen
- * und es gar nicht erst versuchen.
- */
 int sasl_authenticate_initial(const struct cap_values *cap_value_list)
 {
   char error_msg[128];
   putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
+  int servidx = findanyidx(serv);
+  if ((sasl_mechanism == SASL_MECHANISM_EXTERNAL) && !dcc[servidx].ssl) {
+    sasl_error("authentication mechanism EXTERNAL not possible via non-ssl connection");
+    return 1;
+  }
   if (!is_cap_value(cap_value_list, SASL_MECHANISMS[sasl_mechanism])) {
     snprintf(error_msg, sizeof error_msg,
              "authentication mechanism %s not supported by server",
