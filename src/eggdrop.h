@@ -56,13 +56,11 @@
 
 
 /* Handy string lengths */
-#define HOSTMAX          63            /* DNS RFC 1035, IRC RFC 2812          */
-#define UHOSTMAX         291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
-#define DIRMAX           512           /* paranoia                            */
-#define LOGLINEMAX       9000          /* for misc.c/putlog() <cybah>         */
-#define READMAX          16384         /* for read() and SSL_read()           */
-#define NEWSERVERMAX     256
-#define NEWSERVERPASSMAX 128
+#define HOSTMAX     63            /* DNS RFC 1035, IRC RFC 2812          */
+#define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
+#define DIRMAX      512           /* paranoia                            */
+#define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
+#define READMAX     16384         /* for read() and SSL_read()           */
 
 /* Invalid characters */
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
