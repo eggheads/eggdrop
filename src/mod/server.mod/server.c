@@ -32,9 +32,9 @@ static Function *global = NULL;
 
 static int ctcp_mode;
 static int serv;                /* sock # of server currently */
-static char newserver[121];     /* new server? */
+static char newserver[NEWSERVERMAX]; /* new server? */
 static int newserverport;       /* new server port? */
-static char newserverpass[121]; /* new server password? */
+static char newserverpass[NEWSERVERPASSMAX]; /* new server password? */
 static time_t trying_server;    /* trying to connect to a server right now? */
 static int server_lag;          /* how lagged (in seconds) is the server? */
 static char altnick[NICKLEN];   /* possible alternate nickname to use */

@@ -2205,7 +2205,7 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN], s[1024];
+  char pass[sizeof newserverpass], botserver[sizeof newserver], s[1024];
 #ifdef IPV6
   char buf[sizeof(struct in6_addr)];
 #endif
@@ -2217,9 +2217,9 @@ static void connect_server(void)
   empty_msgq();
   if (newserverport) {          /* Jump to specified server */
     curserv = -1;             /* Reset server list */
-    strcpy(botserver, newserver);
+    strlcpy(botserver, newserver, sizeof botserver);
     botserverport = newserverport;
-    strcpy(pass, newserverpass);
+    strlcpy(pass, newserverpass, sizeof pass);
     newserver[0] = 0;
     newserverport = 0;
     newserverpass[0] = 0;
