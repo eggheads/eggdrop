@@ -19,7 +19,7 @@ Copyright (C) 2023 Eggheads Development Team
     <script>
       WS_ECHO_ON  = '\x01'
       WS_ECHO_OFF = '\x02'
-      ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws:") + location.host + "/w");
+      ws = new WebSocket((location.protocol === "https:" ? "wss:" : "ws:") + location.host + "/w");
       out = document.getElementById("out");
       echo = 1
       ws.addEventListener("message", (event) => {
