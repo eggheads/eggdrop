@@ -604,7 +604,7 @@ static int tcl_server STDVAR {
     }
   } else if (!strcmp(argv[1], "remove")) {
     if (argc < 3) {
-      Tcl_SetResult(irp, "wrong # args: should be \"server remove host ?port? ?password?\"", TCL_STATIC);
+      Tcl_SetResult(irp, "wrong # args: should be \"server remove host ?port?\"", TCL_STATIC);
       return TCL_ERROR;
     }
     ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
