@@ -28,4 +28,6 @@
 
 #define EGG_STRINGVER "1.10.0"
 #define EGG_NUMVER 1100005
-#define EGG_PATCH "pythonfixes"
+#ifndef EGG_PATCH
+  #define EGG_PATCH "pythonfixes"
+#endif

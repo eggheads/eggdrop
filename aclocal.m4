@@ -1115,6 +1115,12 @@ AC_DEFUN([EGG_SUBST_EGGVERSION],
   egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
   AC_SUBST(EGGVERSION)
   AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])
+
+  AC_CHECK_PROG(GIT, git, git)
+  if test "x$GIT" = xgit; then
+    egg_patch=$(git rev-parse --short --verify HEAD)
+    AC_DEFINE_UNQUOTED(EGG_PATCH, "$egg_patch", [Defines the current Eggdrop git commit.])
+  fi
 ])
 
 
