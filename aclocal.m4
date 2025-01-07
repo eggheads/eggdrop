@@ -1118,9 +1118,9 @@ AC_DEFUN([EGG_SUBST_EGGVERSION],
 
   AC_CHECK_PROG(GIT, git, git)
   if test "x$GIT" = xgit; then
-    egg_patch=$(git rev-parse --short --verify HEAD 2>/dev/null)
-    if test "$egg_patch" != ""; then
-      AC_DEFINE_UNQUOTED(EGG_PATCH, "$egg_patch", [Defines the current Eggdrop git commit.])
+    egg_git=$(git rev-parse --verify HEAD 2>/dev/null)
+    if test "$egg_git" != ""; then
+      AC_DEFINE_UNQUOTED(EGG_GIT, "$egg_git", [Defines the current Eggdrop git commit.])
     fi
   fi
 ])

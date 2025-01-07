@@ -322,6 +322,9 @@ void tell_settings(int idx)
   int i;
   struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 
+#ifdef EGG_GIT
+  dprintf(idx, "Git commit: " EGG_GIT "\n");
+#endif
   dprintf(idx, "Botnet nickname: %s\n", botnetnick);
   if (firewall[0])
     dprintf(idx, "Firewall: %s:%d\n", firewall, firewallport);
