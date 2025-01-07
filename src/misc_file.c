@@ -21,6 +21,7 @@
  */
 
 #include "main.h"
+#include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -70,7 +71,8 @@ int copyfile(char *oldpath, char *newpath)
       }
     }
   }
-  fsync(fo);
+  if (fsync(fo) < 0)
+    putlog(LOG_MISC, "*", "copyfile(): Error synchronising changes to file %s: %s", newpath, strerror(errno));
   close(fo);
   close(fi);
   return 0;
@@ -119,7 +121,8 @@ int copyfilef(char *oldpath, FILE *newfile)
     }
   }
 
-  fsync(fileno(newfile));
+  if (fsync(fileno(newfile)) < 0)
+    putlog(LOG_MISC, "*", "copyfilef(): Error synchronising changes to fd %i: %s", fileno(newfile), strerror(errno));
   close(fi);
 
   fseeko(newfile, oripos, SEEK_SET);
@@ -167,7 +170,8 @@ int fcopyfile(FILE *oldfile, char *newpath)
     }
   }
 
-  fsync(fo);
+  if (fsync(fo) < 0);
+    putlog(LOG_MISC, "*", "fcopyfile(): Error synchronising changes to file %s: %s", newpath, strerror(errno));
   close(fo);
 
   fseeko(oldfile, oripos, SEEK_SET);
