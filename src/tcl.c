@@ -283,20 +283,24 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
-      if (strlen(s) > abs(st->max))
-        s[abs(st->max)] = 0;
-      if (st->str == botnetnick)
+      if (st->str == botnetnick) {
+        if (strlen(s) > abs(st->max))
+          s[abs(st->max)] = 0;
         botnet_change(s);
-      else if (st->str == logfile_suffix)
+      } else if (st->str == logfile_suffix) {
+        if (strlen(s) > abs(st->max))
+          s[abs(st->max)] = 0;
         logsuffix_change(s);
-      else if (st->str == firewall) {
+      } else if (st->str == firewall) {
+        if (strlen(s) > abs(st->max))
+          s[abs(st->max)] = 0;
         splitc(firewall, s, ':');
         if (!firewall[0])
           strcpy(firewall, s);
         else
           firewallport = atoi(s);
       } else
-        strcpy(st->str, s);
+        strlcpy(st->str, s, abs(st->max) + 1);
       if ((st->flags) && (s[0])) {
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
