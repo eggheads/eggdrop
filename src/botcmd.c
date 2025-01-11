@@ -475,6 +475,13 @@ static void bot_endlink(int idx, char *par)
   dcc[idx].status &= ~STAT_LINKING;
 }
 
+static void bot_encryption2(int idx, char *par)
+{
+  module_entry *me = module_find("encryption2", 0, 0);
+  if (me && me->funcs[ENCRYTION2_RECV_SETTINGS])
+    ((me->funcs)[ENCRYTION2_RECV_SETTINGS]) (par);
+}
+
 /* info? <from@bot>   -> send priv
  */
 static void bot_infoq(int idx, char *par)
@@ -1554,6 +1561,7 @@ botcmd_t C_bot[] =
   {"ct",         (IntFunc) bot_chat},
   {"e",          (IntFunc) bot_error},
   {"el",         (IntFunc) bot_endlink},
+  {"en",         (IntFunc) bot_encryption2},
 #ifndef NO_OLD_BOTNET
   {"error",      (IntFunc) bot_error},
 #endif

@@ -224,6 +224,29 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
   return (char *) encrypted;
 }
 
+static void pbkdf2_send_settings(int idx) {
+  dprintf(idx, "en %s %i\n", pbkdf2_method, pbkdf2_rounds);
+}
+
+static void pbkdf2_recv_settings(char *settings) {
+  char *c, *endptr;
+  unsigned long val;
+
+  if ((c = strchr(settings, ' '))) {
+    *c = 0;
+    if (strcmp(settings, pbkdf2_method)) {
+      putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: pbkdf2-method %s -> %s", pbkdf2_method, settings);
+      strlcpy(pbkdf2_method, settings, sizeof pbkdf2_method);
+    }
+    val = strtoul(c + 1, &endptr, 10);
+    if (val && !*endptr)
+      if (val != pbkdf2_rounds) {
+        putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: pbkdf2-rounds %i -> %lu", pbkdf2_rounds, val);
+        pbkdf2_rounds = val;
+      }
+  }
+}
+
 static tcl_ints my_tcl_ints[] = {
   {"pbkdf2-re-encode", &pbkdf2_re_encode, 0},
   {"pbkdf2-rounds",    &pbkdf2_rounds,    0},
@@ -238,12 +261,16 @@ static tcl_strings my_tcl_strings[] = {
 EXPORT_SCOPE char *pbkdf2_start();
 
 static Function pbkdf2_table[] = {
+  /* 0 - 3 */
   (Function) pbkdf2_start,
   (Function) pbkdf2_close,
   NULL, /* expmem */
   NULL, /* report */
+  /* 4 - 7 */
   (Function) pbkdf2_encrypt,
-  (Function) pbkdf2_verify
+  (Function) pbkdf2_verify,
+  (Function) pbkdf2_send_settings,
+  (Function) pbkdf2_recv_settings
 };
 
 /* Initializes API with hash algorithm */
@@ -285,7 +312,7 @@ char *pbkdf2_start(Function *global_funcs)
     global = global_funcs;
     if (!module_rename("pbkdf2", MODULE_NAME))
       return "Already loaded.";
-    module_register(MODULE_NAME, pbkdf2_table, 1, 0);
+    module_register(MODULE_NAME, pbkdf2_table, 1, 1);
     if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
       module_undepend(MODULE_NAME);
       return "This module requires Eggdrop 1.9.0 or later.";
