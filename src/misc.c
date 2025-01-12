@@ -179,7 +179,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
   return tmpmax - max;
 }
 
-int my_strcpy(char *a, char *b)
+int my_strcpy(char *a, const char *b)
 {
   char *c = b;
 

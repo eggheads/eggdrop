@@ -226,7 +226,7 @@ void debug_mem_to_dcc(int);
 
 /* misc.c */
 int egg_strcatn(char *, const char *, size_t);
-int my_strcpy(char *, char *);
+int my_strcpy(char *, const char *);
 void putlog(int type, char *chname, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 void check_logsize(void);
 void splitc(char *, char *, char);
