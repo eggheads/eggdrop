@@ -103,7 +103,7 @@ void tell_verbose_status(int);
 void tell_settings(int);
 int logmodes(char *);
 int isowner(char *);
-char *masktype(int);
+const char *masktype(int);
 char *maskname(int);
 void reaffirm_owners(void);
 void add_hq_user(void);
@@ -124,7 +124,7 @@ int check_dcc_attrs(struct userrec *, int);
 int check_dcc_chanattrs(struct userrec *, char *, int, int);
 int check_int_range(char *value, int min, int max);
 int stripmodes(char *);
-char *stripmasktype(int);
+const char *stripmasktype(int);
 char *check_validpass(struct userrec *, char *);
 void cmd_die(struct userrec *, int, char *);
 
