@@ -1264,7 +1264,7 @@ static int got353(char *from, char *msg)
   struct chanset_t *chan = NULL;
   int i;
 
-  if ((current = find_capability("userhost-in-names")) && (current->enabled)) {
+  if ((current = find_capability("userhost-in-names")) && current->enabled) {
     strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
     newsplit(&msg);
     newsplit(&msg); /* Get rid of =, @, or * symbol */
