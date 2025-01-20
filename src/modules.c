@@ -695,7 +695,6 @@ int module_register(char *name, Function *funcs, int major, int minor)
 
 const char *module_load(char *name)
 {
-  size_t len;
   module_entry *p;
   char *e;
   Function f;
@@ -704,6 +703,7 @@ const char *module_load(char *name)
 #endif
 
 #ifndef STATIC
+  size_t len;
   char workbuf[PATH_MAX];
 #  ifdef MOD_USE_SHL
   shl_t hand;

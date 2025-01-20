@@ -155,6 +155,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Library/Frameworks/Tcl.framework 2>/dev/null` \
 			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Network/Library/Frameworks/Tcl.framework 2>/dev/null` \
 			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tcl.framework 2>/dev/null` \
+			`ls -d /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks 2>/dev/null` \
 			; do
 		    if test -f "$i/Tcl.framework/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i/Tcl.framework; pwd)`"

@@ -2577,7 +2577,7 @@ int stripmodes(char *s)
   return res;
 }
 
-char *stripmasktype(int x)
+const char *stripmasktype(int x)
 {
   static char s[20];
   char *p = s;

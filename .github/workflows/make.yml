@@ -17,6 +17,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: install dependencies
       run: sudo apt-get update && sudo apt-get install clang tcl tcl-dev openssl libssl-dev
+    - uses: ammaraskar/gcc-problem-matcher@master
+      if: ${{ matrix.cc == 'gcc' }}
     - name: Build
       env:
         CC: ${{ matrix.cc }}
@@ -35,5 +37,6 @@ jobs:
     - uses: actions/checkout@v4
     - name: install dependencies
       run: sudo apt-get update && sudo apt-get install tcl tcl-dev openssl libssl-dev
+    - uses: ammaraskar/gcc-problem-matcher@master
     - name: Build
       run: ./configure ${{ matrix.conf_tls }} ${{ matrix.conf_ipv6 }} ${{ matrix.conf_tdns }} && make config && make -j4

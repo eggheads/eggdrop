@@ -94,7 +94,7 @@ System Pre-Requisites
 
   Before you can compile Eggdrop, Tcl must be installed on your system. Many systems have Tcl installed on them by default (you can check by trying the command "tclsh"; if you are given a '%' for a prompt, it is, and you can type 'exit' to exit the Tcl shell. However, Eggdrop also requires the Tcl development header files to be installed. They can often be installed via an OS package manager, usually called something similar to 'tcl-dev' for the package name. You can also download Tcl source from `<https://www.tcl.tk/software/tcltk/download.html>`_. 
 
-  Eggdrop also requires openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to 'libssl-dev'. While not advised, this requirement can be removed by compilling using ``./configure --disable-tls``, but you will not be able to connect to TLS-protected IRC servers nor utilize secure botnet communication.
+  Eggdrop also requires openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to 'libssl-dev'. While not advised, this requirement can be removed by compiling using ``./configure --disable-tls``, but you will not be able to connect to TLS-protected IRC servers nor utilize secure botnet communication.
 
 Minimum Requirements
 --------------------
@@ -117,12 +117,12 @@ Some components of Eggdrop relies on a variety of third-party libraries, documen
 Quick Startup
 -------------
 
-    Please see the `Install <install/install.html>`_ file after you finish reading this file.
+    Please see the `Install <install.html>`_ file after you finish reading this file.
 
 Upgrading
 ---------
 
-    The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see `Upgrading <install/upgrading.html>`_ for full details.
+    The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see `Upgrading <upgrading.html>`_ for full details.
 
 Command Line
 ------------

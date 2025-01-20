@@ -219,9 +219,11 @@ Last revised: May 14, 2023
         brew update
         brew install openssl
 
-      Tell configure where to find tcl and openssl:
+      Tell configure where to find tcl and / or openssl in case it could not
+      autodetect:
 
         ./configure --with-tcl=/System/Volumes/Data/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Tcl.framework/tclConfig.sh -with-sslinc=/usr/local/Cellar/openssl@3/3.0.7/include --with-ssllib=/usr/local/Cellar/openssl@3/3.0.7/lib
+
 
     E. AIX
       Follow the standard compile process in Section A. To compile dynamically

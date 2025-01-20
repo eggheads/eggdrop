@@ -109,7 +109,7 @@ SYSTEM PRE-REQUISITES
   Eggdrop also requires openssl (and its development headers) in order
   to enable SSL/TLS protection of network data. The header files are
   often called something similar to 'libssl-dev'. While not advised,
-  this requirement can be removed by compilling using
+  this requirement can be removed by compiling using
   ./configure --disable-tls, but you will not be able to connect to
   TLS-protected IRC servers nor utilize secure botnet communication.
 
