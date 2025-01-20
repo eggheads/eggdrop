@@ -161,10 +161,8 @@ static void ident_oidentd()
       }
     }
     fclose(fd);
-  } else {
-    putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
-            "for reading");
-  }
+  } else if (errno != ENOENT)
+    putlog(LOG_MISC, "*", "IDENT error: fopen(%s): %s", path, strerror(errno));
   /* To minimize a known race condition, this code is called now */
   servidx = -1;
   for (i = 0; i < dcc_total; i++)
