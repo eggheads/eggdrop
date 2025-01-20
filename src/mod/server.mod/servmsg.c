@@ -2205,7 +2205,7 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[sizeof newserverpass], botserver[sizeof newserver], s[1024];
+  char pass[NEWSERVERPASSMAX], botserver[NEWSERVERMAX], s[1024];
 #ifdef IPV6
   char buf[sizeof(struct in6_addr)];
 #endif
