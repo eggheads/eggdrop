@@ -1346,6 +1346,7 @@ static char *irc_close()
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
+  rem_builtins(H_rawt, irc_rawt);
   rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");

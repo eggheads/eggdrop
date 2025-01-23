@@ -22,7 +22,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/resource.h>
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
@@ -2578,7 +2577,7 @@ int stripmodes(char *s)
   return res;
 }
 
-char *stripmasktype(int x)
+const char *stripmasktype(int x)
 {
   static char s[20];
   char *p = s;

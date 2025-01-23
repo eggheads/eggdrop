@@ -25,22 +25,22 @@
 #include <tcl.h>
 #include "src/mod/module.h"
 
-struct py_bind {
-  tcl_bind_list_t *bindtable;
-  char tclcmdname[512];
-  PyObject *callback;
-  struct py_bind *next;
-};
+typedef struct {
+  PyObject_HEAD
+  char tclcmdname[128];
+} TclFunc;
 
 typedef struct {
   PyObject_HEAD
-  char tclcmdname[512];
-} TclFunc;
+  char tclcmdname[128];
+  char *flags;
+  char *mask;
+  tcl_bind_list_t *bindtable;
+  PyObject *callback;
+} PythonBind;
   
-static PyTypeObject TclFuncType;
+static PyTypeObject TclFuncType, PythonBindType;
 static int eval_idx = -1;
-
-static struct py_bind *py_bindlist;
 
 static PyObject *EggdropError;      //create static Python Exception object
 
@@ -141,13 +141,13 @@ static PyObject *py_findircuser(PyObject *self, PyObject *args) {
 static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *const objv[])
 {
   PyObject *args = PyTuple_New(objc > 1 ? objc - 1: 0);
-  struct py_bind *bindinfo = cd;
+  PythonBind *bind = cd;
 
   // objc[0] is procname
   for (int i = 1; i < objc; i++) {
     PyTuple_SET_ITEM(args, i - 1, Py_BuildValue("s", Tcl_GetStringFromObj(objv[i], NULL)));
   }
-  if (!PyObject_Call(bindinfo->callback, args, NULL)) {
+  if (!PyObject_Call(bind->callback, args, NULL)) {
     PyErr_Print();
     Tcl_SetResult(irp, "Error calling python code", TCL_STATIC);
     return TCL_ERROR;
@@ -156,7 +156,7 @@ static int tcl_call_python(ClientData cd, Tcl_Interp *irp, int objc, Tcl_Obj *co
 }
 
 static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
-  int max;
+  Tcl_Size max;
   const char *str;
   Tcl_Obj *strobj;
   PyObject *result;
@@ -175,7 +175,7 @@ static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
   for (int i = 0; i < max; i++) {
     Tcl_Obj *tclobj;
     const char *tclstr;
-    int tclstrlen;
+    Tcl_Size tclstrlen;
 
     Tcl_ListObjIndex(tclinterp, strobj, i, &tclobj);
     tclstr = Tcl_GetStringFromObj(tclobj, &tclstrlen);
@@ -199,10 +199,11 @@ static PyObject *py_parse_tcl_dict(PyObject *self, PyObject *args) {
   strobj = Tcl_NewStringObj(str, -1);
   if (Tcl_DictObjFirst(tclinterp, strobj, &search, &key, &value, &done) != TCL_OK) {
     PyErr_SetString(EggdropError, "Supplied string is not a Tcl dictionary");
+    return NULL;
   }
   result = PyDict_New();
   while (!done) {
-    int len;
+    Tcl_Size len;
     const char *valstr = Tcl_GetStringFromObj(value, &len);
     PyObject *pyval = PyUnicode_DecodeUTF8(valstr, len, NULL);
     PyDict_SetItemString(result, Tcl_GetString(key), pyval);
@@ -212,10 +213,34 @@ static PyObject *py_parse_tcl_dict(PyObject *self, PyObject *args) {
   return result;
 }
 
+static PyObject *py_unbind(PyObject *self, PyObject *args) {
+  PythonBind *bind;
+
+  if (!PyObject_TypeCheck(self, &PythonBindType)) {
+    PyErr_SetString(EggdropError, "Invalid argument for unbind method");
+    return NULL;
+  }
+ 
+  bind = (PythonBind *)self;
+  unbind_bind_entry(bind->bindtable, bind->flags, bind->mask, bind->tclcmdname);
+  // cleanup in python_bind_destroyed callback when Tcl command is destroyed
+  Py_RETURN_NONE;
+}
+
+void python_bind_destroyed(ClientData cd) {
+  PythonBind *bind = cd;
+
+  Py_DECREF(bind->callback);
+  nfree(bind->mask);
+  nfree(bind->flags);
+  Py_DECREF((PyObject *)bind);
+}
+
 static PyObject *py_bind(PyObject *self, PyObject *args) {
   PyObject *callback;
+  PythonBind *bind;
+  Py_hash_t hash;
   char *bindtype, *mask, *flags;
-  struct py_bind *bindinfo;
   tcl_bind_list_t *tl;
  
   // type flags mask callback
@@ -235,19 +260,21 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
     PyErr_SetString(EggdropError, "callback is not callable");
     return NULL;
   }
-  Py_IncRef(callback);
+  Py_INCREF(callback);
 
-  bindinfo = nmalloc(sizeof *bindinfo);
-  bindinfo->bindtable = tl;
-  bindinfo->callback = callback;
-  bindinfo->next = py_bindlist;
-  snprintf(bindinfo->tclcmdname, sizeof bindinfo->tclcmdname, "*python:%s:%s:%" PRIxPTR, bindtype, mask, (uintptr_t)callback);
-  py_bindlist = bindinfo;
-  // TODO: deleteproc
-  Tcl_CreateObjCommand(tclinterp, bindinfo->tclcmdname, tcl_call_python, bindinfo, NULL);
-  // TODO: flags?
-  bind_bind_entry(tl, flags, mask, bindinfo->tclcmdname);
-  Py_RETURN_NONE;
+  bind = PyObject_New(PythonBind, &PythonBindType);
+  bind->mask = strdup(mask);
+  bind->flags = strdup(flags);
+  bind->bindtable = tl;
+  bind->callback = callback;
+  hash = PyObject_Hash((PyObject *)bind);
+  snprintf(bind->tclcmdname, sizeof bind->tclcmdname, "*python:%s:%" PRIx64, bindtype, (int64_t)hash);
+
+  Tcl_CreateObjCommand(tclinterp, bind->tclcmdname, tcl_call_python, bind, python_bind_destroyed);
+  bind_bind_entry(tl, flags, mask, bind->tclcmdname);
+
+  Py_INCREF((PyObject *)bind);
+  return (PyObject *)bind;  
 }
 
 static Tcl_Obj *py_list_to_tcl_obj(PyObject *o) {
@@ -344,6 +371,39 @@ static PyObject *python_call_tcl(PyObject *self, PyObject *args, PyObject *kwarg
   return PyUnicode_DecodeUTF8(result, strlen(result), NULL);
 }
 
+
+static PyObject *py_dir(PyObject *self, PyObject *args) {
+  PyObject *py_list, *py_s;
+  size_t i;
+  int j;
+  const char *info[] = {"info commands", "info procs"}, *s, *value;
+  Tcl_Obj *tcl_list, **objv;
+  Tcl_Size objc;
+
+  py_list = PyList_New(0);
+  for (i = 0; i < sizeof info / sizeof info[0]; i++) {
+    s = info[i];
+    if (Tcl_VarEval(tclinterp, s, NULL, NULL) == TCL_ERROR)
+      putlog(LOG_MISC, "*", "python error: Tcl_VarEval(%s)", s);
+    else {
+      tcl_list = Tcl_GetObjResult(tclinterp);
+      if (Tcl_ListObjGetElements(tclinterp, tcl_list, &objc, &objv) == TCL_ERROR)
+        putlog(LOG_MISC, "*", "python error: Tcl_VarEval(%s)", s);
+      else {
+        for (j = 0; j < objc; j++) {
+          value = Tcl_GetString(objv[j]);
+          if (*value != '*') {
+            py_s = PyUnicode_FromString(value);
+            PyList_Append(py_list, py_s);
+            Py_DECREF(py_s);
+          }
+        }
+      }
+    }
+  }
+  return py_list;
+}
+
 static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
   char *cmdname;
   TclFunc *result;
@@ -358,7 +418,7 @@ static PyObject *py_findtclfunc(PyObject *self, PyObject *args) {
     return NULL;
   }
   result = PyObject_New(TclFunc, &TclFuncType);
-  strcpy(result->tclcmdname, cmdname);
+  strlcpy(result->tclcmdname, cmdname, sizeof result->tclcmdname);
   return (PyObject *)result;
 }
 
@@ -372,7 +432,7 @@ static PyMethodDef MyPyMethods[] = {
 };
 
 static PyMethodDef EggTclMethods[] = {
-    // TODO: __dict__ with all valid Tcl commands?
+    {"__dir__", py_dir, METH_VARARGS, ""},
     {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
     {NULL, NULL, 0, NULL}
 };  
@@ -405,6 +465,22 @@ static PyTypeObject TclFuncType = {
     .tp_call = python_call_tcl,
 };
 
+static PyMethodDef PythonBindMethods[] = {
+    {"unbind", py_unbind, METH_VARARGS, "deregister an eggdrop python bind"},
+    {NULL, NULL, 0, NULL}        /* Sentinel */
+};
+
+static PyTypeObject PythonBindType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "eggdrop.PythonBind",
+    .tp_doc = "Eggdrop bind to a python callback",
+    .tp_basicsize = sizeof(PythonBind),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+    .tp_methods = PythonBindMethods
+};
+
 PyMODINIT_FUNC PyInit_eggdrop(void) {
   PyObject *pymodobj, *eggtclmodobj, *pymoddict;
 
@@ -430,6 +506,7 @@ PyMODINIT_FUNC PyInit_eggdrop(void) {
   PyDict_SetItemString(pymoddict, "eggdrop.tcl", eggtclmodobj);
 
   PyType_Ready(&TclFuncType);
+  PyType_Ready(&PythonBindType);
 
   return pymodobj;
 }

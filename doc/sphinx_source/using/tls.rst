@@ -6,14 +6,14 @@ TLS support
 ===========
 
 This document provides information about TLS support which is a new
-eggdrop feature since version 1.8.0.
+Eggdrop feature since version 1.8.0.
 
 -----
 About
 -----
 
 Eggdrop can be optionally compiled with TLS support. This requires OpenSSL
-0.9.8 or more recent installed on your system.
+0.9.8 or later installed on your system.
 TLS support includes encryption for IRC, DCC, botnet, telnet and scripted
 connections as well as certificate authentication for users and bots.
 
@@ -82,7 +82,7 @@ Eggdrop can use TLS connections to protect botnet links if it is compiled with T
 | +port                        | listen port                | fail as leaf only wants TLS   |
 +------------------------------+----------------------------+-------------------------------+
 
-In short, a bot added to your Eggdrop with a +port in the address can only connect to a bot listening with a +port in the config. Conversely, a bot added to your eggdrop without a + prefix can only connect to a bot listening without a + prefix in the config.
+In short, a bot added to your Eggdrop with a +port in the address can only connect to a bot listening with a +port in the config. Conversely, a bot added to your Eggdrop without a + prefix can only connect to a bot listening without a + prefix in the config.
 
 If TLS negotiation fails, the connection is deliberately aborted and no clear text is ever sent by the TLS-requiring party.
 
@@ -106,7 +106,7 @@ Scripts can open or connect to TLS ports the usual way specifying the
 port with a plus sign. Alternatively, the connection could be
 established as plaintext and later switched on with the starttls Tcl
 command. (Note that the other side should also switch to TLS at the same
-time - the synchronization is the script's job, not eggdrop's.)
+time - the synchronization is the script's job, not Eggdrop's.)
 
 -------------------------------------
 Keys, certificates and authentication
@@ -118,7 +118,7 @@ bots and TLS listening ports. General information about certificates and
 public key infrastructure can be obtained from Internet. This document
 only contains eggdrop-specific information on the subject.
 The easy way to create a key and a certificate is to type 'make sslcert'
-after compiling your bot (If you installed eggdrop to a non-standard
+after compiling your bot (If you installed Eggdrop to a non-standard
 location, use make sslcert DEST=/path/to/eggdrop). This will generate a
 4096-bit private key (eggdrop.key) and a certificate (eggdrop.crt) after
 you fill in the required fields. Alternatively, you can use 'make sslsilent'
@@ -130,12 +130,12 @@ make a ssl certificate for yourself and enable ssl-cert-auth in the config
 file. Then either connect to the bot using TLS and type ".fprint +" or
 enter your certificate fingerprint with .fprint SHA1-FINGERPRINT.
 To generate a ssl certificate for yourself, you can run the following
-command from the eggdrop source directory::
+command from the Eggdrop source directory::
 
   openssl req -new -x509 -nodes -keyout my.key -out my.crt -config ssl.conf
 
 When asked about bot's handle, put your handle instead. How to use your
-new certificate to connect to eggdrop, depends on your irc client.
+new certificate to connect to Eggdrop, depends on your irc client.
 To connect to your bot from the command line, you can use the OpenSSL
 ssl client::
 
