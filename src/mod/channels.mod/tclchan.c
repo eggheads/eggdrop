@@ -2169,12 +2169,15 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     ret = TCL_ERROR;
   }
   Tcl_Free((char *) item);
-  if (join && !channel_inactive(chan) && module_find("irc", 0, 0)) {
-    if (chan->key_prot[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
-  }
+  if (ret == TCL_OK) {
+    if (join && !channel_inactive(chan) && module_find("irc", 0, 0)) {
+      if (chan->key_prot[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
+    }
+  } else
+    remove_channel(chan);
   return ret;
 }
 
