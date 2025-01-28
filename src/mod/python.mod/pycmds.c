@@ -20,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>
-#include <datetime.h>
-#include <tcl.h>
-#include "src/mod/module.h"
 
 typedef struct {
   PyObject_HEAD
