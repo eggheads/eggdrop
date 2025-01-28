@@ -36,7 +36,6 @@
 #include "src/mod/server.mod/server.h"
 #include "python.h"
 
-//static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
 
 #undef global
