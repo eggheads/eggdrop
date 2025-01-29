@@ -622,14 +622,17 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     Darwin)
-      # We should support Mac OS X (at least 10.1 and later) now.
-      # Use rld on < 10.1.
-      if test "$ac_cv_func_NSLinkModule" = no; then
-        LOAD_METHOD="rld"
+      # In Mac OS X 10.4, dlopen was rewritten to be a native part of dyld.
+      AC_MSG_CHECKING([darwin version >= 9 with native dlopen])
+      darwin_major_version=`echo $egg_cv_var_system_release | cut -d. -f1`
+      if test $darwin_major_version -ge 9; then
+        AC_MSG_RESULT([yes])
+      else
+        AC_MSG_RESULT([no])
+        LOAD_METHOD="dyld"
+        EGG_DARWIN_BUNDLE
+        EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
       fi
-      LOAD_METHOD="dyld"
-      EGG_DARWIN_BUNDLE
-      EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
     ;;
     Haiku)
       WEIRD_OS="no"
