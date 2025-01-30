@@ -1057,7 +1057,7 @@ static int got324(char *from, char *msg)
     if (msg[i] == 'f') { /* eat payload of UnrealIRCd +f so it does not clobber
 			    payloads of +k and / or +l */
       p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null limit assignment */
+      if (p != NULL) {          /* test for null payload assignment */
         p++;
         q = strchr(p, ' ');
         if (q != NULL) {
