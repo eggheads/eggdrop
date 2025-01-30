@@ -33,7 +33,6 @@
 #undef days
 #include <Python.h>
 #include <datetime.h>
-#include "src/mod/irc.mod/irc.h"
 #include "src/mod/server.mod/server.h"
 #include "python.h"
 
@@ -41,7 +40,7 @@
 static PyObject *pirp, *pglobals;
 
 #undef global
-static Function *global = NULL, *irc_funcs = NULL;
+static Function *global = NULL;
 static PyThreadState *_pythreadsave;
 #include "pycmds.c"
 #include "tclpython.c"
@@ -141,33 +140,27 @@ static Function python_table[] = {
 char *python_start(Function *global_funcs)
 {
   char *s;
+
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
-  global = global_funcs;
+  if (global_funcs) {
+    global = global_funcs;
 
-  /* Register the module. */
-  module_register(MODULE_NAME, python_table, 0, 1);
-
-  if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
-    module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.9.0 or later.";
+    /* Register the module. */
+    module_register(MODULE_NAME, python_table, 0, 1);
+    if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
+      module_undepend(MODULE_NAME);
+      return "This module requires Eggdrop 1.9.0 or later.";
+    }
+    if ((s = init_python()))
+      return s;
   }
-  // TODO: Is this dependency necessary? It auto-loads irc.mod, that might be undesired
-  if (!(irc_funcs = module_depend(MODULE_NAME, "irc", 1, 5))) {
-    module_undepend(MODULE_NAME);
-    return "This module requires irc module 1.5 or later.";
-  }
-  // irc.mod depends on server.mod and channels.mod, so those were implicitly loaded
-
-  if ((s = init_python()))
-    return s;
 
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_tcl_commands(my_tcl_cmds);
   add_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
   add_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
-
   return NULL;
 }
