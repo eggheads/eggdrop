@@ -627,6 +627,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       darwin_major_version=`echo $egg_cv_var_system_release | cut -d. -f1`
       if test $darwin_major_version -ge 9; then
         AC_MSG_RESULT([yes])
+        WEIRD_OS="no"
       else
         AC_MSG_RESULT([no])
         LOAD_METHOD="dyld"
