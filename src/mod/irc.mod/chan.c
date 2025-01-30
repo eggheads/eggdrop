@@ -1428,8 +1428,7 @@ static int got367(char *from, char *origmsg)
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strlcpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1477,8 +1476,7 @@ static int got348(char *from, char *origmsg)
   if (use_exempts == 0)
     return 0;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1521,8 +1519,7 @@ static int got346(char *from, char *origmsg)
   char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   if (use_invites == 0)
     return 0;
