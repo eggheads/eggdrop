@@ -618,7 +618,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
     SunOS)
         WEIRD_OS="no"
     ;;
-    FreeBSD|OpenBSD|NetBSD|DragonFly)
+    FreeBSD|OpenBSD|NetBSD|DragonFly|SecBSD)
       WEIRD_OS="no"
     ;;
     Darwin)
@@ -797,7 +797,7 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_LD="$CC -G -z text"
       fi
     ;;
-    FreeBSD|DragonFly|OpenBSD|NetBSD)
+    FreeBSD|OpenBSD|NetBSD|DragonFly|SecBSD)
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared"
     ;;
