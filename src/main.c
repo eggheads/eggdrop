@@ -63,9 +63,11 @@
 #include "modules.h"
 #include "bg.h"
 
+#ifndef HAVE_ARC4RANDOM_UNIFORM
 #ifdef HAVE_GETRANDOM
 #  include <sys/random.h>
 #endif
+#endif /* HAVE_ARC4RANDOM_UNIFORM */
 
 #ifndef _POSIX_SOURCE
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
@@ -916,8 +918,13 @@ static void mainloop(int toplevel)
   }
 }
 
+/* We keep srandom(seed) also if we use arc4random*() because 3rd party modules
+ * could use random() and rely on eggdrop core seeding it */
 static void init_random(void) {
   unsigned int seed;
+#ifdef HAVE_ARC4RANDOM_UNIFORM
+  seed = arc4random();
+#else
 #ifdef HAVE_GETRANDOM
   if (getrandom(&seed, sizeof seed, 0) != (sizeof seed)) {
     if (errno != ENOSYS) {
@@ -940,8 +947,10 @@ static void init_random(void) {
     }
   }
 #endif
+#endif /* HAVE_ARC4RANDOM_UNIFORM */
   srandom(seed);
 }
+
 
 int main(int arg_c, char **arg_v)
 {

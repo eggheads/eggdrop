@@ -455,8 +455,6 @@ static int tcl_myip STDVAR
 static int tcl_rand STDVAR
 {
   long i;
-  unsigned long x;
-  char s[11];
 
   BADARGS(2, 2, " limit");
 
@@ -471,11 +469,7 @@ static int tcl_rand STDVAR
     return TCL_ERROR;
   }
 
-  x = randint(i);
-
-  egg_snprintf(s, sizeof s, "%lu", x);
-
-  Tcl_AppendResult(irp, s, NULL);
+  Tcl_SetObjResult(interp, Tcl_NewIntObj(randint(i)));
   return TCL_OK;
 }
 

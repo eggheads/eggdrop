@@ -1,5 +1,5 @@
 Eggdrop Compile Guide and FAQ
-Last revised: May 14, 2023
+Last revised: Jan 31, 2025
     _____________________________________________________________________
 
                         Eggdrop Compile Guide and FAQ
@@ -48,6 +48,9 @@ Last revised: May 14, 2023
      13. I get '/usr/bin/ld: cannot find -lpthread' (OpenWrt)
      14. I get 'configure: error: C compiler cannot create executables
          (Alpine Linux)
+     15. I get 'checking build system type... Invalid configuration
+         'x86_64-pc-linux-dietlibc': OS 'dietlibc' not recognized (dietlibc)
+     16. I get 'error: implicit declaration of function ‘srandom’' (dietlibc)
 
 
   Compile Guide
@@ -580,6 +583,15 @@ Last revised: May 14, 2023
 
       Install the musl c library implementation used by Alpine:
         apk add musl-dev
+
+    15. I get 'checking build system type... Invalid configuration
+        'x86_64-pc-linux-dietlibc': OS 'dietlibc' not recognized (dietlibc)
+
+      ./configure --build=x86_64-pc-linux-gnu
+
+    16 I get 'error: implicit declaration of function ‘srandom’' (dietlibc)
+
+      Add -D_BSD_SOURCE
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
