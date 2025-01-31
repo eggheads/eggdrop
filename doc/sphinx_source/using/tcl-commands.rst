@@ -2801,7 +2801,7 @@ botnick
 botname
 ^^^^^^^
 
-  Value: the current nick!user\@host that the server sees (for example: "Valis!valis\@crappy.com")
+  Value: the current nick!user\@host that the server sees (for example: "Valis!valis\@example.net")
 
   Module: server
 
