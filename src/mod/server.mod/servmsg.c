@@ -2337,6 +2337,8 @@ static void server_resolve_success(int servidx)
     }
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
            errstr);
+    if (errno == ENETUNREACH)
+      debug1("may be related to prefer-ipv6 set to %i", pref_af);
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
