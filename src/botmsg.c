@@ -755,7 +755,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   #define FROMLEN 40
   int status, i, iaway, sock;
-  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[81], ssf[20 + 1 + sizeof botf];
+  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[21], ssf[20 + 1 + sizeof botf], *endptr;
   struct userrec *u;
 
   /* Notes have a length limit. Note + PRIVMSG header + nick + date must
@@ -812,14 +812,19 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
 
   /* Might be form "sock:nick" */
-  splitc(ssf, from, ':');
+  splitcn(ssf, from, ':', sizeof ssf);
   rmspace(ssf);
-  splitc(ss, to, ':');
+  splitcn(ss, to, ':', sizeof ss);
   rmspace(ss);
   if (!ss[0])
     sock = -1;
-  else
-    sock = atoi(ss);
+  else {
+    sock = strtoul(ss, &endptr, 10);
+    if (*endptr) {
+      putlog(LOG_MISC, "*", "add_note(): bogus socket");
+      return NOTE_ERROR;
+    }
+  }
 
   /* Don't process if there's a note binding for it */
   if (idx != -2) {            /* Notes from bots don't trigger it */
