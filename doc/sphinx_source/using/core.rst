@@ -30,7 +30,7 @@ You can change the basic Eggdrop appearance and behavior in this section.
     This setting defines the username the bot uses on IRC. This setting has
     no effect if an ident daemon is running on your bot's machine.
 
-  set admin "Lamer <email: lamer@lamest.lame.org>"
+  set admin "Lamer <email: lamer@lame.example.org>"
     This setting defines which contact person should be shown in .status,
     /msg help, and other places. You really should include this information.
 

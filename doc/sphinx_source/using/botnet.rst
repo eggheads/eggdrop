@@ -52,7 +52,7 @@ The following are some common terms used in this document:
   Passive share is a term used to describe the direction of sharing user-files. Passive share bots will accept userfiles from an aggressive share bot.
 
 **Address**
-  The physical address, containing the address and port of the bot. For example: lame.org:3333. You can change a bot's address with::
+  The physical address, containing the address and port of the bot. For example: lame.example.org:3333. You can change a bot's address with::
 
         .chaddr <botname> <address> <port#>[/<relay-port#>]
 
@@ -145,12 +145,12 @@ With the common terms out of the way, we can start with the process of linking t
 
 Here is an example scenario:
 
-      BotA is on lame.org listening on port 3333, and BotB is on irc.org
+      BotA is on lame.example.org listening on port 3333, and BotB is on irc.example.org
       listening on port 4444. First, you have to add each Bot to the other's
-      userfile. On BotA, you would type '.+bot BotB irc.org 4444'. If BotB is
+      userfile. On BotA, you would type '.+bot BotB irc.example.org 4444'. If BotB is
       on a common channel with BotA, BotB's hostmask is automatically added.
       Otherwise, you have to add the hostmask manually with the '.+host'
-      command. On BotB, you would type '.+bot BotA lame.org 3333'.
+      command. On BotB, you would type '.+bot BotA lame.example.org 3333'.
 
 At this point, you can link the two bots by typing '.link BotA' on BotB (or '.link BotB' on BotA). The bots will now give themselves random passwords which are *not* stored encrypted in the userfile. Note that you can link as many bots as you wish to your botnet.
 
