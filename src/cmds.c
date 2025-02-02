@@ -2693,6 +2693,8 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
   /* Set highlight flag here so user is able to control stripping of
    * bold also as intended -- dw 27/12/1999
    */
+  if (!u) /* dunno why, but this really happens -- mortmann */
+    return; /* make eggdrop crash-proof again */
   if (dcc[dest].u.chat->strip_flags & STRIP_BOLD && u->flags & USER_HIGHLITE) {
     u->flags &= ~USER_HIGHLITE;
   } else if (!(dcc[dest].u.chat->strip_flags & STRIP_BOLD) &&
