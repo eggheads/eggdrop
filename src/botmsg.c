@@ -812,8 +812,6 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
 
   /* Might be form "sock:nick" */
-  splitc(ssf, from, ':');
-  rmspace(ssf);
   splitc(ss, to, ':');
   rmspace(ss);
   if (!ss[0])
