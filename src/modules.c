@@ -626,6 +626,7 @@ Function global_table[] = {
 /* 324 - 327 */
   (Function) find_member_from_nick,
   (Function) get_user_from_member,
+  (Function) splitcn,
 };
 
 void init_modules(void)
