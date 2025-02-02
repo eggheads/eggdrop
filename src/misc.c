@@ -213,7 +213,7 @@ void splitc(char *first, char *rest, char divider)
  *
  * Example of use:
  *
- * splitcn(buf, input, "@", sizeof buf);
+ * splitcn(buf, input, '@', sizeof buf);
  *
  * <Cybah>
  */
