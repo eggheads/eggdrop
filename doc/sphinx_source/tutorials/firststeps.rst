@@ -166,7 +166,7 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
 
-You will need to determine yoru public key fingerprint by using::
+You will need to determine your public key fingerprint by using::
 
     openssl x509 -in eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
 

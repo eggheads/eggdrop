@@ -179,7 +179,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
   return tmpmax - max;
 }
 
-int my_strcpy(char *a, char *b)
+int my_strcpy(char *a, const char *b)
 {
   char *c = b;
 
@@ -317,7 +317,7 @@ void maskaddr(const char *s, char *nw, int type)
   u = strchr(s, '!');
   if (u)
     h = strchr(u, '@');
-  if (!h){
+  if (!h) {
     h = strchr(s, '@');
     u = 0;
   }
