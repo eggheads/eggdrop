@@ -269,7 +269,7 @@ struct userrec *get_user_from_member(memberlist *m)
 getuser_done:
   m->user = ret;
   m->tried_getuser = 1;
-  return NULL;
+  return ret;
 }
 
 /* Wrapper function to find an Eggdrop user record based on either a provided
@@ -332,6 +332,8 @@ void clear_masks(maskrec *m)
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
+    if (m->user)
+      nfree(m->user);
     if (m->desc)
       nfree(m->desc);
     nfree(m);
