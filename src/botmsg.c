@@ -25,6 +25,7 @@
  */
 
 #include "main.h"
+#include <errno.h>
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
@@ -755,6 +756,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   #define FROMLEN 40
   int status, i, iaway, sock;
+  long lval;
   char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[21], ssf[20 + 1 + sizeof botf], *endptr;
   struct userrec *u;
 
@@ -816,14 +818,21 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   rmspace(ssf);
   splitcn(ss, to, ':', sizeof ss);
   rmspace(ss);
-  if (!ss[0])
+  if (!ss[0]) {
     sock = -1;
-  else {
-    sock = strtoul(ss, &endptr, 10);
+  } else {
+    errno = 0;
+    lval = strtol(ss, &endptr, 10);
     if (*endptr) {
-      putlog(LOG_MISC, "*", "add_note(): bogus socket");
+      putlog(LOG_MISC, "*", "add_note(): sock not a number");
       return NOTE_ERROR;
     }
+    if ((errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) ||
+        (lval > INT_MAX || lval < INT_MIN)) {
+      putlog(LOG_MISC, "*", "add_note(): sock out of range");
+      return NOTE_ERROR;
+    }
+    sock = lval;
   }
 
   /* Don't process if there's a note binding for it */
