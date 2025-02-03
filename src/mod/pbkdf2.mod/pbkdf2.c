@@ -234,13 +234,17 @@ static void pbkdf2_recv_settings(char *settings) {
   if ((c = strchr(settings, ' '))) {
     *c = 0;
     if (strcmp(settings, pbkdf2_method)) {
-      putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: pbkdf2-method %s -> %s", pbkdf2_method, settings);
+      putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: "
+             "pbkdf2-method %s -> %s. Consider setting it in your eggdrop "
+             "config file.", pbkdf2_method, settings);
       strlcpy(pbkdf2_method, settings, sizeof pbkdf2_method);
     }
     val = strtoul(c + 1, &endptr, 10);
     if (val && !*endptr)
       if (val != pbkdf2_rounds) {
-        putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: pbkdf2-rounds %i -> %lu", pbkdf2_rounds, val);
+        putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: "
+               "pbkdf2-rounds %i -> %lu. Consider setting it in your eggdrop "
+               "config file.", pbkdf2_rounds, val);
         pbkdf2_rounds = val;
       }
   }
