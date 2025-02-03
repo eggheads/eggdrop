@@ -13,12 +13,9 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.5. Scripts written for v1.3, v1.4,
-1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
-depending on the script. Scripts which were written for v0.9, v1.0, v1.1
-or v1.2 will probably not work without modification. Commands which have
-been changed in this version of Eggdrop (or are just new commands) are
-marked with vertical bars (|) on the left.
+This list is accurate for Eggdrop v1.10.0. Most scripts written for the v1.3, v1.4,
+1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
+Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
 Output Commands
 ---------------
@@ -909,7 +906,7 @@ channel add <name> [option-list]
 channel set <name> <options...>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.
+  Description: sets options for the channel specified. `options` is a flat list of either +/-settings or key/value pairs. The full list of possible options are given in doc/settings/mod.channels. Note: Tcl code settings such as the need-* settings must be valid Tcl code as a single word, for example ``channel set #lamest need-op { putmsg ChanServ "op #lamest" }``
 
   Returns: nothing
 
@@ -1135,9 +1132,9 @@ nick2hand <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 account2nicks <account> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
