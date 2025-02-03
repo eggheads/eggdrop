@@ -138,7 +138,7 @@ int logmodes(char *s)
   return res;
 }
 
-char *masktype(int x)
+const char *masktype(int x)
 {
   static char s[27];            /* Change this if you change the levels */
   char *p = s;

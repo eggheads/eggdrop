@@ -265,7 +265,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define interp (*(Tcl_Interp **)(global[128]))
 #define now (*(time_t*)global[129])
 #define findanyidx ((int (*)(int))global[130])
-#define findchan ((struct chanset_t *(*)(char *))global[131])
+#define findchan ((struct chanset_t *(*)(const char *))global[131])
 /* 132 - 135 */
 #define cmd_die (global[132])
 #define days ((void (*)(time_t,time_t,char *))global[133])
@@ -374,8 +374,8 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 216 - 219 */
 #define fcopyfile ((int (*) (FILE *, char *))global[216])
 #define copyfilef ((int (*) (char *, FILE *))global[217])
-#define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
-#define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
+#define rfc_casecmp ((int(*)(const char *, const char *))(*(Function**)(global[218])))
+#define rfc_ncasecmp ((int(*)(const char *, const char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(global[220]))
 #define global_invites (*(maskrec **)(global[221]))
