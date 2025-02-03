@@ -2105,7 +2105,7 @@ static void start_sending_users(int idx)
     return;
   }
 
-  if (dcc[idx].u.bot->numver >= 1100006) {
+  if (dcc[idx].u.bot->numver >= 1100007) {
     debug0("share: start_sending_users(): multiplex: start");
     FILE * f = tmpfile();
     if (!f) {

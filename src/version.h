@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.10.0"
-#define EGG_NUMVER 1100006
+#define EGG_NUMVER 1100007
 #define EGG_PATCH "sharemultiplex"

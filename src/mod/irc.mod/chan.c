@@ -1258,12 +1258,13 @@ static int gotchghost(char *from, char *msg) {
  */
 static int got353(char *from, char *msg)
 {
+  struct capability *current;
   char prefixchars[64];
   char *nameptr, *chname, *uhost, *nick, *p, *host = NULL;
   struct chanset_t *chan = NULL;
   int i;
 
-  if (find_capability("userhost-in-names")) {
+  if ((current = find_capability("userhost-in-names")) && current->enabled) {
     strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
     newsplit(&msg);
     newsplit(&msg); /* Get rid of =, @, or * symbol */
