@@ -1402,7 +1402,11 @@ void dequeue_sockets()
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        (socklist[i].handler.sock.outbuf != NULL)) {
+        (socklist[i].handler.sock.outbuf != NULL)
+#ifdef TLS
+	&& !(socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
+#endif
+                                                 ) {
       if (socklist[i].sock > maxfd)
         maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
