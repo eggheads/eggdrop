@@ -360,8 +360,14 @@ static char *get_bot_pass(struct userrec *u) {
     if (pass2) {
       if (!pass) {
         pass = pass2;
-        if (encrypt_pass)
+        if (encrypt_pass) {
+	  /* get_user() returns a pointer of struct user_entry
+           * and set_user()->pass2_set() could free() and realloc it
+	   * so fetch it again with get_user()
+	   */
           set_user(&USERENTRY_PASS, u, pass);
+          pass = get_user(&USERENTRY_PASS2, u);
+	}
       } else if (strcmp(pass2, pass) && encrypt_pass2)
         pass = pass2;
     } else if (pass && encrypt_pass2)
@@ -1826,8 +1832,8 @@ static void dcc_telnet_pass(int idx, int atr)
 
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
-      char buf[1030];
-      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      char buf[512];
+      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else

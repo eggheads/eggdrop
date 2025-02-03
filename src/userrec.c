@@ -332,6 +332,8 @@ void clear_masks(maskrec *m)
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
+    if (m->user)
+      nfree(m->user);
     if (m->desc)
       nfree(m->desc);
     nfree(m);
