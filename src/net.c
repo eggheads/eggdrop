@@ -586,7 +586,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
       FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
+      select(sock + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
