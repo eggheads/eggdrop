@@ -553,11 +553,11 @@ int open_telnet_raw(int sock, sockname_t *addr)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
 #ifdef TLS
-      debug5("net: open_telnet_raw(): idx %i host %s ip %s port %i ssl %i",
-             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
+      debug6("net: open_telnet_raw(): sock %d idx %i host %s ip %s port %i ssl %i",
+             sock, i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
 #else
-      debug4("net: open_telnet_raw(): idx %i host %s ip %s port %i",
-             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
+      debug5("net: open_telnet_raw(): sock %d idx %i host %s ip %s port %i",
+             sock, i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
 #endif
       break;
     }
