@@ -105,7 +105,7 @@ html_theme = 'eggdrop'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {'headerfont':'"Open Sans", sans serif', 'headerlinkcolor':'87bdd8', 'headerbg':'#86AAD3', 'linkcolor':'#336699'}
+html_theme_options = {'headerfont':'"Roboto", sans serif', 'headerlinkcolor':'87bdd8', 'headerbg':'#86AAD3', 'linkcolor':'#336699'}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = ['_themes']
