@@ -477,9 +477,13 @@ static void bot_endlink(int idx, char *par)
 
 static void bot_encryption2(int idx, char *par)
 {
-  module_entry *me = module_find("encryption2", 0, 0);
-  if (me && me->funcs[ENCRYTION2_RECV_SETTINGS])
-    ((me->funcs)[ENCRYTION2_RECV_SETTINGS]) (par);
+  if (dcc[idx].status & STAT_AGGRESSIVE) {
+    module_entry *me = module_find("encryption2", 0, 0);
+    if (me && me->funcs[ENCRYTION2_RECV_SETTINGS])
+      ((me->funcs)[ENCRYTION2_RECV_SETTINGS]) (par);
+  } else
+    putlog(LOG_BOTS, "*", "Received new encryption2 settings from %s, but she "
+           "is not agressive sharing with me, ignored.", dcc[idx].nick);
 }
 
 /* info? <from@bot>   -> send priv
