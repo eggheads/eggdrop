@@ -592,8 +592,8 @@ int open_telnet_raw(int sock, sockname_t *addr)
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug2("net: attempted socket connection refused: %s:%i",
-               iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        debug3("net: open_telnet_raw(): sock %d attempted socket connection refused: %s:%i",
+               sock, iptostr(&addr->addr.sa), get_port_from_addr(addr));
         errno = res;
         return -4;
       }
@@ -958,7 +958,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #else
         else if (!(slist[i].flags & SOCK_STRONGCONN)) {
 #endif
-          debug1("net: connect! sock %d", slist[i].sock);
+          debug1("net: sockread(): sock %d connect!", slist[i].sock);
           s[0] = 0;
           *len = 0;
           return i;
@@ -979,19 +979,20 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           if (!x && (SSL_get_shutdown(slist[i].ssl) == SSL_RECEIVED_SHUTDOWN)) {
             *len = slist[i].sock;
             slist[i].flags &= ~SOCK_CONNECT;
-            debug1("net: SSL_read(): received shutdown sock %i", slist[i].sock);
+            debug1("net: SSL_read(): sock %d received shutdown", slist[i].sock);
             return -1;
           } else if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
             else if (err == SSL_ERROR_SYSCALL) {
-              debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
+              debug1("net: sockread(): SSL_read(): sock %d SSL_ERROR_SYSCALL",
+                     slist[i].sock);
               putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
             }
             else
-              debug2("net: sockread(): SSL_read() error = %s (%i)",
-                     ERR_error_string(ERR_get_error(), 0), err);
+              debug3("net: sockread(): SSL_read(): sock %d error = %s (%i)",
+                     slist[i].sock, ERR_error_string(ERR_get_error(), 0), err);
             x = -1;
           }
         } else
@@ -1007,11 +1008,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                 * otherwise it will connect. */
           *len = slist[i].sock;
           slist[i].flags &= ~SOCK_CONNECT;
-          debug1("net: eof!(read) socket %d", slist[i].sock);
+          debug1("net: sockread(): sock %d eof!(read)", slist[i].sock);
           return -1;
         } else {
-          debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
-                 strerror(errno));
+          debug3("net: sockread(): sock %d EAGAIN: %d (%s)", slist[i].sock,
+                 errno, strerror(errno));
           continue;           /* EAGAIN */
         }
       }
@@ -1465,8 +1466,8 @@ void dequeue_sockets()
 #endif
         ) {
         /* This detects an EOF during writing */
-        debug3("net: eof!(write) socket %d (%s,%d)", socklist[i].sock,
-               strerror(errno), errno);
+        debug3("net: dequeue_sockets(): sock %d eof!(write) (%s,%d)",
+               socklist[i].sock, strerror(errno), errno);
         socklist[i].flags |= SOCK_EOFD;
       } else if (x == socklist[i].handler.sock.outbuflen) {
         /* If the whole buffer was sent, nuke it */
@@ -1484,8 +1485,8 @@ void dequeue_sockets()
         socklist[i].handler.sock.outbuflen -= x;
         nfree(p);
       } else {
-        debug3("dequeue_sockets(): errno = %d (%s) on %d", errno,
-               strerror(errno), socklist[i].sock);
+        debug3("net: dequeue_sockets(): sock %d errno = %d (%s)",
+               socklist[i].sock, errno, strerror(errno));
       }
       /* All queued data was sent. Call handler if one exists and the
        * dcc entry wants it.
