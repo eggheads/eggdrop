@@ -233,7 +233,7 @@ static void pbkdf2_recv_settings(char *settings) {
 
   if ((c = strchr(settings, ' '))) {
     *c = 0;
-    if (strcmp(settings, pbkdf2_method)) {
+    if (strcasecmp(settings, pbkdf2_method)) {
       putlog(LOG_MISC, "*", "PBKDF2: received new setting from share master: "
              "pbkdf2-method %s -> %s. Consider setting it in your eggdrop "
              "config file.", pbkdf2_method, settings);
