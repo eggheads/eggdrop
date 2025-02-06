@@ -53,9 +53,9 @@ Note: This is for a simple module of 1 source file.
 Module requirements
 -------------------
 
-In most modules, all functions/variables (except global and MODULE_start)
-should be static. This will drastically reduce the size of modules on
-decent systems.
+In most modules, all functions and variables outside functions (except global
+and MODULE_start) should be static. This will drastically reduce the size of
+modules on decent systems.
 
 Throughout this step, MODULE refers to the module name. Note that
   "MODULE_NAME" should literally be "MODULE_NAME".
