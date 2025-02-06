@@ -36,6 +36,13 @@ static char *pbkdf2_close(void)
   return "You cannot unload the " MODULE_NAME " module.";
 }
 
+static void pbkdf2_report(int idx, int details)
+{
+  if (details)
+    dprintf(idx, "    kdf: pbkdf2 method %s rounds %i re-encode %i\n",
+            pbkdf2_method, pbkdf2_rounds, pbkdf2_re_encode);
+}
+
 static void bufcount(char **buf, int *buflen, int bytes)
 {
   *buf += bytes;
@@ -268,7 +275,7 @@ static Function pbkdf2_table[] = {
   (Function) pbkdf2_start,
   (Function) pbkdf2_close,
   NULL, /* expmem */
-  NULL, /* report */
+  (Function) pbkdf2_report,
   /* 4 - 7 */
   (Function) pbkdf2_encrypt,
   (Function) pbkdf2_verify,
