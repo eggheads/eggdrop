@@ -594,10 +594,9 @@ static void core_secondly()
     if (i)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
+    if (nowtm.tm_min % 5 == 0) { /* Every 5 minutes */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-
       if (!miltime) {           /* At midnight */
         char s[25];
         int j;
