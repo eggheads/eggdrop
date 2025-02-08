@@ -267,6 +267,15 @@ static void pbkdf2_recv_settings(char *settings) {
   }
 }
 
+char *traced_pbkdf2(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags) {
+  int idx;
+
+  for (idx = 0; idx < dcc_total; idx++)
+    if ((dcc[idx].status & STAT_SHARE) && (dcc[idx].status & ~STAT_AGGRESSIVE))
+      dprintf(idx, "en %s %i\n", pbkdf2_method, pbkdf2_rounds);
+  return NULL;
+}
+
 static tcl_ints my_tcl_ints[] = {
   {"pbkdf2-re-encode", &pbkdf2_re_encode, 0},
   {"pbkdf2-rounds",    &pbkdf2_rounds,    0},
@@ -341,6 +350,8 @@ char *pbkdf2_start(Function *global_funcs)
       module_undepend(MODULE_NAME);
       return "Initialization failure";
     }
+    Tcl_TraceVar(interp, "pbkdf2-method", TCL_GLOBAL_ONLY | TCL_TRACE_WRITES, traced_pbkdf2, NULL);
+    Tcl_TraceVar(interp, "pbkdf2-rounds", TCL_GLOBAL_ONLY | TCL_TRACE_WRITES, traced_pbkdf2, NULL);
     add_hook(HOOK_ENCRYPT_PASS2, (Function) pbkdf2_encrypt);
     add_hook(HOOK_VERIFY_PASS2, (Function) pbkdf2_verify);
     add_tcl_commands(my_tcl_cmds);
