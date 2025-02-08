@@ -231,40 +231,43 @@ static char *pbkdf2_verify(const char *pass, const char *encrypted)
 }
 
 static void pbkdf2_send_settings(int idx) {
-  dprintf(idx, "en %s %i\n", pbkdf2_method, pbkdf2_rounds);
+  dprintf(idx, "en pbkdf2 %s %i\n", pbkdf2_method, pbkdf2_rounds);
 }
 
-static void pbkdf2_recv_settings(char *settings) {
-  char *c, *endptr;
+static void pbkdf2_recv_settings(char *msg) {
+  char *s, *endptr;
   const EVP_MD *digest;
   unsigned long val;
 
-  if ((c = strchr(settings, ' '))) {
-    *c = 0;
-    if (strcasecmp(settings, pbkdf2_method)) {
-      digest = EVP_get_digestbyname(settings);
-      if (digest) {
-        putlog(LOG_MISC, "*", "PBKDF2: received new pbkdf2-method from share "
-               "master: %s -> %s. Consider setting it in your eggdrop config "
-               "file.", pbkdf2_method, settings);
-        strlcpy(pbkdf2_method, settings, sizeof pbkdf2_method);
-      } else
-        putlog(LOG_MISC, "*", "PBKDF2 error: received unknown pbkdf2-method "
-               "from share master. Keeping %s.", pbkdf2_method);
-    }
-    errno = 0;
-    val = strtoul(c + 1, &endptr, 10);
-    if ((c + 1)[0] != '\0' && *endptr == '\0' && errno != ERANGE && val > 0 && val <= INT_MAX) {
-      if (val != pbkdf2_rounds) {
-        putlog(LOG_MISC, "*", "PBKDF2: received new pbkdf2-rounds from share "
-               "master: %i -> %lu. Consider setting it in your eggdrop config "
-               "file.", pbkdf2_rounds, val);
-        pbkdf2_rounds = val;
-      }
+  s = newsplit(&msg);
+  if (strcmp(s, "pbkdf2"))
+    return;
+  s = newsplit(&msg);
+  if (strcasecmp(s, pbkdf2_method)) {
+    digest = EVP_get_digestbyname(s);
+    if (digest) {
+      putlog(LOG_MISC, "*", "PBKDF2: received new pbkdf2-method from share "
+             "master: %s -> %s. Consider setting it in your eggdrop config "
+             "file.", pbkdf2_method, s);
+      strlcpy(pbkdf2_method, s, sizeof pbkdf2_method);
     } else
-      putlog(LOG_MISC, "*", "PBKDF2 error: received bugus pbkdf2-rounds from "
-             "share master. Keeping %i.", pbkdf2_rounds);
+      putlog(LOG_MISC, "*", "PBKDF2 error: received unknown pbkdf2-method from "
+             "share master. Keeping %s.", pbkdf2_method);
   }
+  s = newsplit(&msg);
+  errno = 0;
+  val = strtoul(s, &endptr, 10);
+  if (s[0] != '\0' && *endptr == '\0' && errno != ERANGE && val > 0 &&
+      val <= INT_MAX) {
+    if (val != pbkdf2_rounds) {
+      putlog(LOG_MISC, "*", "PBKDF2: received new pbkdf2-rounds from share "
+             "master: %i -> %lu. Consider setting it in your eggdrop config "
+             "file.", pbkdf2_rounds, val);
+      pbkdf2_rounds = val;
+    }
+  } else
+    putlog(LOG_MISC, "*", "PBKDF2 error: received bugus pbkdf2-rounds from "
+           "share master. Keeping %i.", pbkdf2_rounds);
 }
 
 char *traced_pbkdf2(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_CONST char *name2, int flags) {
@@ -272,7 +275,7 @@ char *traced_pbkdf2(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1, EGG_C
 
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].status & STAT_SHARE) && (dcc[idx].status & ~STAT_AGGRESSIVE))
-      dprintf(idx, "en %s %i\n", pbkdf2_method, pbkdf2_rounds);
+      pbkdf2_send_settings(idx);
   return NULL;
 }
 
