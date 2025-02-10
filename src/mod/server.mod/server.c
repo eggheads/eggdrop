@@ -59,8 +59,8 @@ static int serverror_quit;      /* Disconnect from server if ERROR
 static time_t lastpingcheck;    /* set when i unidle myself, cleared when
                                  * i get the response */
 static time_t server_online;    /* server connection time */
-static time_t server_cycle_wait;        /* seconds to wait before
-                                         * re-beginning the server list */
+static int server_cycle_wait;   /* seconds to wait before
+                                 * re-beginning the server list */
 static char botrealname[81];    /* realname of bot */
 static int server_timeout;      /* server timeout for connecting */
 static struct server_list *serverlist;  /* old-style queue, still used by
