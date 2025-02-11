@@ -23,7 +23,6 @@
 #undef answer /* before resolv.h because it could collide with src/mod/module.h
                * (dietlibc) */
 #include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
-#include <string.h>
 #ifdef TLS
   #include <openssl/err.h>
 #endif

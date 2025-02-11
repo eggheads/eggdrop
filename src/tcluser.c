@@ -23,7 +23,6 @@
 
 #include "main.h"
 #include "modules.h"
-#include "string.h"
 
 extern Tcl_Interp *interp;
 extern struct userrec *userlist;

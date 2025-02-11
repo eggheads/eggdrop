@@ -8,7 +8,6 @@
  */
 
 #include <openssl/err.h>
-#include <string.h>
 
 static char *pbkdf2_encrypt(const char *);
 
