@@ -603,14 +603,14 @@ struct dcc_table DCC_FORK_BOT = {
  */
 static int dcc_bot_check_digest(int idx, char *remote_digest)
 {
-  char digest_string[33];       /* 32 for digest in hex + null */
+  char digest_string[35]; /* 32 for digest in hex + null, but also used for (1) */
   unsigned char digest[16];
   int i, ret;
   char *password = get_bot_pass(dcc[idx].user);
 
   if (!password)
     return 1;
-  snprintf(digest_string, 33, "<%lx%lx@", (long) getpid(),
+  snprintf(digest_string, sizeof digest_string, "<%lx%lx@", (long) getpid(), /* (1) */
            (unsigned long) dcc[idx].timeval);
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
