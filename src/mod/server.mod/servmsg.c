@@ -1223,6 +1223,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   int ret;
   Tcl_Obj *tagdict = Tcl_NewDictObj();
 
+  Tcl_IncrRefCount(tagdict);
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
     putlog(LOG_SERV, "*", "Connected to %s", dcc[idx].host);
@@ -1268,6 +1269,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
+  Tcl_DecrRefCount(tagdict);
 }
 
 static int gotping(char *from, char *msg)
