@@ -45,7 +45,6 @@ static int monitor_del (char *nick);
 static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
 static void monitor_clear();
 int account_notify = 1, extended_join = 1, account_tag = 0;
-Tcl_Obj *ncapeslist;
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -2361,7 +2360,6 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
-  ncapeslist = Tcl_NewListObj(0, NULL);
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS 302\n");
   if (pass[0])
