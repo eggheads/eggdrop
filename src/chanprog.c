@@ -678,7 +678,7 @@ void add_hq_user()
     dcc[term_z].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
                               USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
                               USER_PARTY | USER_BOTMAST | USER_UNSHARED |
-                              USER_VOICE | USER_XFER;
+                              USER_VOICE | USER_XFER | USER_HIGHLITE;
     /* Add to permowner list if there's place */
     if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
       strcat(owner, " " EGG_BG_HANDLE);
