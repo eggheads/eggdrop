@@ -824,12 +824,12 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     errno = 0;
     lval = strtol(ss, &endptr, 10);
     if (*endptr) {
-      putlog(LOG_MISC, "*", "add_note(): sock not a number");
+      dprintf(idx, "add_note(): sock not a number");
       return NOTE_ERROR;
     }
     if ((errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) ||
         (lval > INT_MAX || lval < INT_MIN)) {
-      putlog(LOG_MISC, "*", "add_note(): sock out of range");
+      dprintf(idx, "add_note(): sock out of range");
       return NOTE_ERROR;
     }
     sock = lval;
