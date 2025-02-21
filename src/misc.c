@@ -86,6 +86,8 @@ int expmem_misc()
     for (item = current->first; item; item = item->next)
       tot += sizeof(struct help_list_t) + strlen(item->name) + 1;
   }
+  for (int i = 0; i < max_logs; i++)
+    tot += logs[i].szlast_len;
   return tot + (max_logs * sizeof(log_t));
 }
 
