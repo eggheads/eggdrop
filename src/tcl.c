@@ -358,6 +358,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   while (table->name) {
     if (table->cdata) {
       info = nmalloc(sizeof *info);
+      strtot += sizeof(struct tcl_call_stringinfo);
       info->proc = table->callback;
       info->cd = table->cdata;
       Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc_cd, info, tcl_cleanup_stringinfo);
