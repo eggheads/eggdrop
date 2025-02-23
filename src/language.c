@@ -250,7 +250,7 @@ static void read_lang(char *langfile)
         continue;
       }
       if ((ctmp = strchr(lbuf, ',')))
-        strcpy(ltext, strchr(lbuf, ',') + 1);
+        strcpy(ltext, ctmp + 1);
       else 
         putlog(LOG_MISC, "*", "LANG: Malformed text line (missing ,) in %s at %d.",
                langfile, lline);
