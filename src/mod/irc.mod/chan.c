@@ -1205,6 +1205,7 @@ static int got354(char *from, char *msg)
         }
         flags = newsplit(&msg);     /* Grab the flags */
         account = newsplit(&msg);   /* Grab the account name */
+        fixcolon(account);
         got352or4(chan, user, host, nick, flags, account);
       }
     }
