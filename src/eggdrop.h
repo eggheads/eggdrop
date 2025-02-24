@@ -53,7 +53,7 @@
 #define HANDLEN     32  /* valid values 9->NICKMAX                             */
 #define NICKMAX     32  /* valid values HANDLEN->32                            */
 #define USERLEN     10
-#define REALNAMELEN 120
+#define REALNAMELEN 130 /* InspIRCd 4.0.0a3 default value maxreal 130          */
 
 
 /* Handy string lengths */
