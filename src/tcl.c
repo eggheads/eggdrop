@@ -224,7 +224,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
 
         default_uflags = fr.udef_global;
       } else if ((int *) ii->var == &userfile_perm) {
-	p = strtol(s, &endptr, 8);
+        p = strtol(s, &endptr, 8);
         if ((p < 01) || (p > 0777) || (*endptr))
           return "Invalid userfile permissions, must be octal between 01 and 0777";
         userfile_perm = p;
@@ -615,10 +615,14 @@ int tclthreadmainloop(int zero)
   return (i == -5);
 }
 
+struct threaddata *td_main = 0;
+
 struct threaddata *threaddata()
 {
   static Tcl_ThreadDataKey tdkey;
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
+  if (!(td->mainloopfunc) && td_main) /* python thread */
+    return td_main;
   return td;
 }
 
@@ -638,6 +642,8 @@ void init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
+  if (mainthread)
+    td_main = td;
 }
 
 /* workaround for Tcl that does not support unicode outside BMP (3 byte utf-8 characters) */

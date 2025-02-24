@@ -269,7 +269,7 @@ struct userrec *get_user_from_member(memberlist *m)
 getuser_done:
   m->user = ret;
   m->tried_getuser = 1;
-  return NULL;
+  return ret;
 }
 
 /* Wrapper function to find an Eggdrop user record based on either a provided
@@ -283,7 +283,7 @@ getuser_done:
  * 'm->account' for the account, use the independent source variable 'account'
  * if available. This allows redundant checking in case of unexpected NULLs
  */
-struct userrec *lookup_user_record(memberlist *m, char *host, char *account)
+struct userrec *lookup_user_record(memberlist *m, char *account, char *host)
 {
   struct userrec *u = NULL;
 
@@ -332,6 +332,8 @@ void clear_masks(maskrec *m)
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
+    if (m->user)
+      nfree(m->user);
     if (m->desc)
       nfree(m->desc);
     nfree(m);
@@ -483,7 +485,6 @@ int u_pass_match(struct userrec *u, char *pass)
 int write_user(struct userrec *u, FILE *f, int idx)
 {
   char s[181];
-  long tv;
   struct chanuserrec *ch;
   struct chanset_t *cst;
   struct user_entry *ue;
@@ -508,8 +509,7 @@ int write_user(struct userrec *u, FILE *f, int idx)
         fr.chan = ch->flags;
         fr.udef_chan = ch->flags_udef;
         build_flags(s, &fr, NULL);
-        tv = ch->laston;
-        if (fprintf(f, "! %-20s %lu %-10s %s\n", ch->channel, tv, s,
+        if (fprintf(f, "! %-20s %" PRId64 " %-10s %s\n", ch->channel, (int64_t) ch->laston, s,
             (((idx < 0) || share_greet) && ch->info) ? ch->info : "") == EOF)
           return 0;
       }
@@ -726,7 +726,6 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   struct userrec *u, *x;
   struct xtra_key *xk;
   int oldshare = noshare;
-  time_t tv;
 
   noshare = 1;
   u = nmalloc(sizeof *u);
@@ -749,10 +748,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk = nmalloc(sizeof *xk);
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
-    tv = now;
-    l = snprintf(NULL, 0, "%" PRId64, (int64_t) tv);
+    l = snprintf(NULL, 0, "%" PRId64, (int64_t) now);
     xk->data = nmalloc(l + 1);
-    sprintf(xk->data, "%" PRId64, (int64_t) tv);
+    sprintf(xk->data, "%" PRId64, (int64_t) now);
     set_user(&USERENTRY_XTRA, u, xk);
   }
   /* Strip out commas -- they're illegal */

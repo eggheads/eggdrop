@@ -27,10 +27,7 @@
  */
 
 #include "main.h"
-
-#include <sys/resource.h>
 #include <sys/utsname.h>
-
 #include "modules.h"
 
 extern struct dcc_t *dcc;
