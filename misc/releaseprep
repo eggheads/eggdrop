@@ -34,7 +34,7 @@ show_usage() {
 
 regenerate_changelog() {
 
-  EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\])//g')
+  EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT([^,]*,\[//' -e 's/\].*$//')
   EGG_RC=$(grep '^#define EGG_PATCH.*' src/version.h |cut -d " " -f 3|awk '{print tolower($0)}'|sed -e 's/^"//' -e 's/"$//')
   if ! [ $(echo $EGG_RC|grep ^rc) ]; then
     EGG_RC=""
