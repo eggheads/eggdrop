@@ -1095,9 +1095,9 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP %s %d %s", nick, host,
              u->handle, s, port, par);
 #endif
-      strcpy(newserver, s);
+      strlcpy(newserver, s, NEWSERVERMAX);
       newserverport = port;
-      strcpy(newserverpass, par);
+      strlcpy(newserverpass, par, NEWSERVERPASSMAX);
     } else
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP", nick, host, u->handle);
     dprintf(-serv, "NOTICE %s :%s\n", nick, IRC_JUMP);

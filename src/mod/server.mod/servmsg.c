@@ -20,15 +20,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#undef answer /* before resolv.h because it could collide with src/mod/module.h
-		 (dietlibc) */
-#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
-#include <string.h>
 #ifdef TLS
   #include <openssl/err.h>
 #endif
 #include "../irc.mod/irc.h"
 #include "../channels.mod/channels.h"
+#include <errno.h>
 #include "server.h"
 
 char *encode_msgtags(Tcl_Obj *msgtagdict);
@@ -45,7 +42,9 @@ static int monitor_del (char *nick);
 static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
 static void monitor_clear();
 int account_notify = 1, extended_join = 1, account_tag = 0;
-Tcl_Obj *ncapeslist;
+
+extern int sasl;
+extern int sasl_authenticate_initial(const struct cap_values *);
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that fails, we repeatedly modify the nick
@@ -1223,6 +1222,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   int ret;
   Tcl_Obj *tagdict = Tcl_NewDictObj();
 
+  Tcl_IncrRefCount(tagdict);
   if (trying_server) {
     strcpy(dcc[idx].nick, "(server)");
     putlog(LOG_SERV, "*", "Connected to %s", dcc[idx].host);
@@ -1268,6 +1268,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
+  Tcl_DecrRefCount(tagdict);
 }
 
 static int gotping(char *from, char *msg)
@@ -1334,195 +1335,6 @@ static int gotsetname(char *from, char *msg)
   return 0;
 }
 
-static int tryauthenticate(char *from, char *msg) 
-{
-  char src[(sizeof sasl_username) + (sizeof sasl_username) +
-           (sizeof sasl_password)] = "";
-  char *s;
-  /* 400-byte chunk, see: https://ircv3.net/specs/extensions/sasl-3.1.html
-   * base64 padding */
-  #ifndef MAX
-    #define MAX(a,b) (((a)>(b))?(a):(b))
-  #endif
-  unsigned char dst[((MAX((sizeof src), 400) + 2) / 3) << 2] = "";
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-  int olen;
-  FILE *fp;
-  EVP_PKEY *pkey;
-  unsigned char *sig;
-#if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
-  EVP_PKEY_CTX *ctx;
-  size_t siglen;
-#else
-  EC_KEY *eckey;
-  int ret;
-  unsigned int siglen;
-#endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
-#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
-  putlog(LOG_DEBUG, "*", "SASL: got AUTHENTICATE %s", msg);
-  if (msg[0] == '+') {
-    s = src;
-    /* Don't use snprintf due to \0 inside */
-    if (sasl_mechanism == SASL_MECHANISM_PLAIN) {
-      strcpy(s, sasl_username);
-      s += strlen(sasl_username) + 1;
-      strcpy(s, sasl_username);
-      s += strlen(sasl_username) + 1;
-      strcpy(s, sasl_password);
-      s += strlen(sasl_password);
-      dst[0] = 0;
-      if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
-                    "encode");
-        /* TODO: send cap end for all error cases in this function ? */
-        return 1;
-      }
-      /* TODO: what about olen we used for mbedtls_base64_encode() ? */
-    }
-    else if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-      strcpy(s, sasl_username);
-      s += strlen(sasl_username) + 1;
-      strcpy(s, sasl_username);
-      s += strlen(sasl_username);
-      if (b64_ntop((unsigned char *) src, s - src, (char *) dst, sizeof dst) == -1) {
-        putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 "
-                "encode");
-        return 1;
-      }
-    }
-#else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs not present or missing EC support."
-                " Try the PLAIN or EXTERNAL method instead");
-      return 1;
-    }
-#endif
-    else {          /* sasl_mechanism == SASL_MECHANISM_EXTERNAL */
-#ifdef TLS          /* TLS required for EXTERNAL sasl */
-      dst[0] = '+';
-      dst[1] = 0;
-    }
-#else
-      putlog(LOG_DEBUG, "*", "SASL: TLS libs required for EXTERNAL but are not "
-            "installed, try PLAIN method");
-      return 1;
-    }
-#endif /* TLS */
-    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE %s", dst);
-    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-  } else {      /* Only EC-challenges get extra auth messages w/o a + */
-#ifdef TLS
-#ifdef HAVE_EVP_PKEY_GET1_EC_KEY
-    putlog(LOG_DEBUG, "*", "SASL: got AUTHENTICATE Challenge");
-    olen = b64_pton(msg, dst, sizeof dst);
-    if (olen == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 decode "
-                "line from server");
-      return 1;
-    }
-    fp = fopen(sasl_ecdsa_key, "r");
-    if (!fp) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not open file "
-                "sasl_ecdsa_key %s: %s\n", sasl_ecdsa_key, strerror(errno));
-      return 1;
-    }
-    pkey = PEM_read_PrivateKey(fp, NULL, 0, NULL);
-    if (!pkey) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: PEM_read_PrivateKey(): SSL "
-                "error = %s\n", ERR_error_string(ERR_get_error(), 0));
-      fclose(fp);
-      return 1;
-    }
-    fclose(fp);
-#if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
-    /* The EVP interface to digital signatures should almost always be used in
-     * preference to the low level interfaces. */
-    if (!(ctx = EVP_PKEY_CTX_new(pkey, NULL))) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_CTX_new(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      return 1;
-    }
-    EVP_PKEY_free(pkey);
-    if (EVP_PKEY_sign_init(ctx) <= 0) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_sign_init(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      EVP_PKEY_CTX_free(ctx);
-      return 1;
-    
-    }
-    if (EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) <= 0) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_CTX_set_signature_md(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      EVP_PKEY_CTX_free(ctx);
-      return 1;
-    }
-    /* EVP_PKEY_sign() must be used instead of EVP_DigestSign*() and EVP_Sign*(),
-     * because EVP_PKEY_sign() does not hash the data to be signed.
-     * EVP_PKEY_sign() is for signing digests, EVP_DigestSign*() and EVP_Sign*()
-     * are for signing messages.
-     */
-    if (EVP_PKEY_sign(ctx, NULL, &siglen, dst, olen) <= 0) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_sign(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      EVP_PKEY_CTX_free(ctx);
-      return 1;
-    }
-    sig = nmalloc(siglen);
-    if (EVP_PKEY_sign(ctx, sig, &siglen, dst, olen) <= 0) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_sign(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      nfree(sig);
-      EVP_PKEY_CTX_free(ctx); 
-      return 1;
-    }
-    EVP_PKEY_CTX_free(ctx);
-#else
-    eckey = EVP_PKEY_get1_EC_KEY(pkey);
-    EVP_PKEY_free(pkey);
-    if (!eckey) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: EVP_PKEY_get1_EC_KEY(): SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      return 1;
-    }
-    sig = nmalloc(ECDSA_size(eckey));
-    ret = ECDSA_sign(0, dst, olen, sig, &siglen, eckey);
-    EC_KEY_free(eckey);
-    if (!ret) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE: ECDSA_sign() SSL error = %s\n",
-             ERR_error_string(ERR_get_error(), 0));
-      nfree(sig);
-      return 1;
-    } 
-#endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
-    if (b64_ntop(sig, siglen, (char *) dst, sizeof dst) == -1) {
-      putlog(LOG_SERV, "*", "SASL: AUTHENTICATE error: could not base64 encode");
-      nfree(sig);
-      return 1;
-    }
-    nfree(sig);
-    putlog(LOG_DEBUG, "*", "SASL: put AUTHENTICATE Response %s", dst);
-    dprintf(DP_MODE, "AUTHENTICATE %s\n", dst);
-#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
-#else /* TLS */
-    putlog(LOG_SERV, "*", "SASL: Received EC message, but no TLS EC libs "
-           "present. Try PLAIN method");
-    return 1;
-#endif /* TLS */
-  }
-  return 0;
-}
-
-static int gotauthenticate(char *from, char *msg)
-{
-  fixcolon(msg); /* Because Inspircd does its own thing */
-  if (tryauthenticate(from, msg) && !sasl_continue) {
-    putlog(LOG_SERV, "*", "SASL: Aborting connection and retrying");
-    nuke_server("Quitting...");
-    return 1;
-  }
-  return 0;
-}
-
 /* Got 900: RPL_LOGGEDIN, users account name is set (whether by SASL or otherwise) */
 static int got900(char *from, char *msg)
 {
@@ -1534,75 +1346,8 @@ static int got900(char *from, char *msg)
   return 0;
 }
 
-/* Got 901: RPL_LOGGEDOUT, users account name is unset (whether by SASL or otherwise) */
-static int got901(char *from, char *msg)
-{
-  newsplit(&msg); /* nick */
-  newsplit(&msg); /* nick!ident@host */
-  fixcolon(msg);
-  putlog(LOG_SERV, "*", "%s: %s", from, msg);
-  return 0;
-}
-
-static int sasl_error(char *msg)
-{
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
-  dprintf(DP_MODE, "CAP END\n");
-  sasl_timeout_time = 0;
-  if (!sasl_continue) {
-    putlog(LOG_DEBUG, "*", "SASL: Aborting connection and retrying");
-    nuke_server("Quitting...");
-  }
-  return 1;
-}
-
-/* Got 902: ERR_NICKLOCKED, authentication fails b/c nick is unavailable
- * Got 904: ERR_SASLFAIL, invalid credentials (or something not covered)
- * Got 905: ERR_SASLTOOLONG, AUTHENTICATE command was too long (>400 bytes)
- * Got 906: ERR_SASL_ABORTED, sent AUTHENTICATE command with * as parameter
- * For easy grepping, this covers got902 got904 got905 got906
- */
-static int gotsasl90X(char *from, char *msg)
-{
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
-  return sasl_error(msg);
-}
-
-/* Got 903: RPL_SASLSUCCESS, authentication successful */
-static int got903(char *from, char *msg)
-{
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
-  dprintf(DP_MODE, "CAP END\n");
-  sasl_timeout_time = 0;
-  return 0;
-}
-
-/* Got 907: ERR_SASLALREADY, already authenticated */
-static int got907(char *from, char *msg)
-{
-  putlog(LOG_SERV, "*", "SASL: Already authenticated");
-  return 0;
-}
-
-/* Got 908: RPL_SASLMECHS, mechanisms supported by network */
-static int got908(char *from, char *msg)
-{
-  newsplit(&msg); /* nick */
-  fixcolon(msg);
-  putlog(LOG_SERV, "*", "SASL: %s", msg);
-  return 0;
-}
-
-static int handle_sasl_timeout()
-{
-  return sasl_error("timeout");
-}
-
 /*
- * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
+ * 465 ERR_YOUREBANNEDCREEP :You are banned from this server
  */
 static int got465(char *from, char *msg)
 {
@@ -1768,9 +1513,11 @@ static int add_capabilities(char *msg) {
 }
 
 /* Helper function to see if given value exists for a capability */
-static int checkvalue(struct cap_values *caplist, const char *name) {
-  struct cap_values *current = caplist;
+static int is_cap_value(const struct cap_values *cap_value_list, const char *name) {
+  const struct cap_values *current = cap_value_list;
 
+  if (!cap_value_list)
+    return 1;
   while (current != NULL) {
     if (!strcmp(name, current->name)) {
       return 1;
@@ -1807,25 +1554,26 @@ static int gotcap(char *from, char *msg) {
       return 0;
     }
     current = cap; 
-/* CAP is supported, yay! If it is supported, lets load what we want to request */
+    /* CAP is supported, yay! If it is supported, lets load what we want to request */
     while (current != NULL) {
-      if (!strcmp(current->name, "sasl") && (sasl) && !(current->enabled)) {
-        add_req(current->name);
-      } else if (!strcmp(current->name, "account-notify") && (account_notify)
-                && (!current->enabled)) {
-        add_req(current->name);
-      } else if (!strcmp(current->name, "account-tag") && (account_tag)
-                && (!current->enabled)) {
-        add_req(current->name);
-      } else if (!strcmp(current->name, "extended-join") && (extended_join) 
-                && (!current->enabled)) {
-        add_req(current->name);
-      } else if (!strcmp(current->name, "invite-notify") && (invite_notify)
-                && (!current->enabled)) {
-        add_req(current->name);
-      } else if (!strcmp(current->name, "message-tags") && (message_tags)
-                && (!current->enabled)) {
-        add_req(current->name);
+      if (!strcmp(current->name, "sasl")) {
+        if (sasl && !(current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "account-notify")) {
+        if ((account_notify) && (!current->enabled))
+           add_req(current->name);
+      } else if (!strcmp(current->name, "account-tag")) {
+        if ((account_tag) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "extended-join")) {
+        if ((extended_join) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "invite-notify")) {
+        if ((invite_notify) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "message-tags")) {
+        if ((message_tags) && (!current->enabled))
+          add_req(current->name);
       }
       /* Add any custom capes the user listed */
       strlcpy(cape, cap_request, sizeof cape);
@@ -1888,7 +1636,6 @@ static int gotcap(char *from, char *msg) {
       splitstr = strtok(NULL, " ");
     }
   } else if (!strcmp(cmd, "ACK")) {
-    buf[0] = 0;
     splitstr = strtok(msg, " ");
     while (splitstr != NULL) {
       current = cap;
@@ -1903,35 +1650,9 @@ static int gotcap(char *from, char *msg) {
             current->enabled = 0;
           } else {
             current->enabled = 1;
-          }
-
-          if ((sasl) && (!strcasecmp(current->name, "sasl")) && (current->enabled)) {
-            putlog(LOG_DEBUG, "*", "SASL: Starting authentication process");
-            if (current->value && !checkvalue(current->value, SASL_MECHANISMS[sasl_mechanism])) {
-              snprintf(buf, sizeof buf,
-                  "%s authentication method not supported",
-                  SASL_MECHANISMS[sasl_mechanism]);
-              return sasl_error(buf);
-            }
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-            if (sasl_mechanism != SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-#endif
-              putlog(LOG_DEBUG, "*", "SASL: AUTHENTICATE %s",
-                  SASL_MECHANISMS[sasl_mechanism]);
-              dprintf(DP_MODE, "AUTHENTICATE %s\n", SASL_MECHANISMS[sasl_mechanism]);
-              sasl_timeout_time = sasl_timeout;
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-            } else {
-#ifdef TLS
-              return sasl_error("TLS libs missing EC support, try PLAIN or EXTERNAL method, aborting authentication");
-            }
-#else /* TLS */
-              if (sasl_mechanism != SASL_MECHANISM_PLAIN) {
-                return sasl_error("TLS libs not present, try PLAIN method, aborting authentication");
-              }
-            }
-#endif /* TLS */
-#endif /* HAVE_EVP_PKEY */
+            if (sasl && !strcasecmp(current->name, "sasl") &&
+                sasl_authenticate_initial(current->value))
+              return 1;
           }
         }
         current = current->next;
@@ -1945,6 +1666,7 @@ static int gotcap(char *from, char *msg) {
       dprintf(DP_MODE, "CAP END\n");
     }
     current = cap;
+    buf[0] = 0;
     while (current != NULL) {
       if (current->enabled) {
         written += snprintf(buf + written, sizeof buf - written, " %s", current->name);
@@ -2169,21 +1891,12 @@ static cmd_t my_raw_binds[] = {
   {"733",          "",   (IntFunc) got733,          NULL},
   {"734",          "",   (IntFunc) got734,          NULL},
   {"900",          "",   (IntFunc) got900,          NULL},
-  {"901",          "",   (IntFunc) got901,          NULL},
-  {"902",          "",   (IntFunc) gotsasl90X,      NULL},
-  {"903",          "",   (IntFunc) got903,          NULL},
-  {"904",          "",   (IntFunc) gotsasl90X,      NULL},
-  {"905",          "",   (IntFunc) gotsasl90X,      NULL},
-  {"906",          "",   (IntFunc) gotsasl90X,      NULL},
-  {"907",          "",   (IntFunc) got907,          NULL},
-  {"908",          "",   (IntFunc) got908,          NULL},
   {"NICK",         "",   (IntFunc) gotnick,         NULL},
   {"ERROR",        "",   (IntFunc) goterror,        NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
   {"ERROR:",       "",   (IntFunc) goterror,        NULL},
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
-  {"AUTHENTICATE", "",   (IntFunc) gotauthenticate, NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
@@ -2205,7 +1918,7 @@ static void server_resolve_failure(int);
  */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN], s[1024];
+  char pass[NEWSERVERPASSMAX], botserver[NEWSERVERMAX], s[1024];
 #ifdef IPV6
   char buf[sizeof(struct in6_addr)];
 #endif
@@ -2217,9 +1930,9 @@ static void connect_server(void)
   empty_msgq();
   if (newserverport) {          /* Jump to specified server */
     curserv = -1;             /* Reset server list */
-    strcpy(botserver, newserver);
+    strlcpy(botserver, newserver, sizeof botserver);
     botserverport = newserverport;
-    strcpy(pass, newserverpass);
+    strlcpy(pass, newserverpass, sizeof pass);
     newserver[0] = 0;
     newserverport = 0;
     newserverpass[0] = 0;
@@ -2359,7 +2072,6 @@ static void server_resolve_success(int servidx)
   /* Start alternate nicks from the beginning */
   altnick_char = 0;
   check_tcl_event("preinit-server");
-  ncapeslist = Tcl_NewListObj(0, NULL);
   /* See if server supports CAP command */
   dprintf(DP_MODE, "CAP LS 302\n");
   if (pass[0])

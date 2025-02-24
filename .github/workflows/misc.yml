@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
-      run: sudo apt-get install build-essential autoconf
+      run: sudo apt-get update && sudo apt-get install build-essential autoconf
     - name: Stage configure with revision removed
       run: |
         for i in `find . -name configure`; do sed -i 's/From configure.ac .*//' $i; git add $i; done
@@ -34,7 +34,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
-      run: sudo apt-get install build-essential autoconf tcl-dev tcl openssl libssl-dev
+      run: sudo apt-get update && sudo apt-get install build-essential autoconf tcl-dev tcl openssl libssl-dev
     - name: Run makedepend
       run: misc/makedepend
     - name: Check diff

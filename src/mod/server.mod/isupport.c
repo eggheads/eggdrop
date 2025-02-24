@@ -103,7 +103,7 @@ static int keycmp(const char *key1, const char *key2, size_t key2len) {
     - truncate into allowed range if outside allowed range?
     - default value to use if outside allowed range
  */
-int isupport_parseint(char *key, char *value, int min, int max, int truncate, int defaultvalue, int *dst)
+int isupport_parseint(const char *key, const char *value, int min, int max, int truncate, int defaultvalue, int *dst)
 {
   long result;
   char *tmp;

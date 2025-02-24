@@ -24,7 +24,6 @@
 #define MODULE_NAME "server"
 #define MAKING_SERVER
 
-#include <errno.h>
 #include "src/mod/module.h"
 #include "server.h"
 
@@ -32,9 +31,9 @@ static Function *global = NULL;
 
 static int ctcp_mode;
 static int serv;                /* sock # of server currently */
-static char newserver[121];     /* new server? */
+static char newserver[NEWSERVERMAX]; /* new server? */
 static int newserverport;       /* new server port? */
-static char newserverpass[121]; /* new server password? */
+static char newserverpass[NEWSERVERPASSMAX]; /* new server password? */
 static time_t trying_server;    /* trying to connect to a server right now? */
 static int server_lag;          /* how lagged (in seconds) is the server? */
 static char altnick[NICKLEN];   /* possible alternate nickname to use */
@@ -129,23 +128,16 @@ static int add_server(const char *, const char *, const char *);
 static int del_server(const char *, const char *);
 static void free_server(struct server_list *);
 
-static int sasl = 0;
 static int away_notify = 0;
 static int invite_notify = 0;
 static int message_tags = 0;
 
 static char cap_request[CAPMAX - 9];
-static int sasl_mechanism = 0;
-static char sasl_username[NICKMAX + 1];
-static char sasl_password[81];
-static int sasl_continue = 1;
-static char sasl_ecdsa_key[121];
-static int sasl_timeout = 15;
-static int sasl_timeout_time = 0;
 
 #include "isupport.c"
 #include "tclisupport.c"
 #include "servmsg.c"
+#include "sasl.c"
 
 #define MAXPENALTY 10
 
@@ -156,13 +148,6 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
-
-/* Available sasl mechanisms. */
-char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
 
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
@@ -1671,19 +1656,16 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
 }
 
 static tcl_strings my_tcl_strings[] = {
-  {"botnick",             NULL,           0,       STR_PROTECT},
-  {"altnick",             altnick,        NICKMAX,           0},
-  {"realname",            botrealname,    80,                0},
-  {"init-server",         initserver,     120,               0},
-  {"connect-server",      connectserver,  120,               0},
-  {"stackable-commands",  stackablecmds,  510,               0},
-  {"stackable2-commands", stackable2cmds, 510,               0},
-  {"cap-request",         cap_request,    CAPMAX - 9,        0},
-  {"sasl-username",       sasl_username,  NICKMAX,           0},
-  {"sasl-password",       sasl_password,  80,                0},
-  {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
-  {"net-type",            net_type,       8,                 0},
-  {NULL,                  NULL,           0,                 0}
+  {"botnick",             NULL,           0,          STR_PROTECT},
+  {"altnick",             altnick,        NICKMAX,              0},
+  {"realname",            botrealname,    80,                   0},
+  {"init-server",         initserver,     120,                  0},
+  {"connect-server",      connectserver,  120,                  0},
+  {"stackable-commands",  stackablecmds,  510,                  0},
+  {"stackable2-commands", stackable2cmds, 510,                  0},
+  {"cap-request",         cap_request,    CAPMAX - 9,           0},
+  {"net-type",            net_type,       8,                    0},
+  {NULL,                  NULL,           0,                    0}
 };
 
 static tcl_coups my_tcl_coups[] = {
@@ -1721,10 +1703,6 @@ static tcl_ints my_tcl_ints[] = {
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
-  {"sasl",              &sasl,                      0},
-  {"sasl-mechanism",    &sasl_mechanism,            0},
-  {"sasl-continue",     &sasl_continue,             0},
-  {"sasl-timeout",      &sasl_timeout,              0},
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
@@ -1971,8 +1949,8 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
-  if (!--sasl_timeout_time)
-    handle_sasl_timeout();
+  else
+    sasl_secondly();
 }
 
 static void server_5minutely()
@@ -2244,6 +2222,7 @@ static char *server_close()
   del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   del_hook(HOOK_REHASH, (Function) server_postrehash);
   del_hook(HOOK_DIE, (Function) server_die);
+  sasl_close();
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -2439,27 +2418,6 @@ char *server_start(Function *global_funcs)
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
-  if (sasl) {
-    if ((sasl_mechanism < 0) || (sasl_mechanism >= SASL_MECHANISM_NUM)) {
-      fatal("ERROR: sasl-mechanism is not set to an allowed value, please check"
-            " it and try again", 0);
-    }
-#ifdef TLS
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-    if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-      fatal("ERROR: NIST256 functionality missing from your TLS libs, please "
-            "choose a different SASL method", 0);
-    }
-#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
-#else  /* TLS */
-    if ((sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
-            (sasl_mechanism == SASL_MECHANISM_EXTERNAL)) {
-      fatal("ERROR: The selected SASL authentication method requires TLS "
-            "libraries which are not installed on this machine. Please "
-            "choose the PLAIN method in your config.", 0);
-    }
-#endif /* TLS */
-  }
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
@@ -2478,5 +2436,6 @@ char *server_start(Function *global_funcs)
   newserverport = 0;
   curserv = 999;
   do_nettype_server();
+  sasl_start();
   return NULL;
 }

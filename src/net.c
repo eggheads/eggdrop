@@ -130,7 +130,7 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
-  char *endptr, *src2 = src;;
+  char *endptr, *src2 = src;
   long val;
   IP ip;
   volatile int af = AF_UNSPEC;
@@ -586,7 +586,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
       FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
+      select(sock + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
@@ -1061,27 +1061,24 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    pthread_mutex_lock(&dtn->mutex);
     if (*dtn->strerror)
       debug2("%s: hostname %s", dtn->strerror, dtn->host);
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
-      if (dtn->type == DTN_TYPE_HOSTBYIP) {
-        pthread_mutex_lock(&dtn->mutex);
+      if (dtn->type == DTN_TYPE_HOSTBYIP)
         call_hostbyip(&dtn->addr, dtn->host, !*dtn->strerror);
-        pthread_mutex_unlock(&dtn->mutex);
-      }
-      else {
-        pthread_mutex_lock(&dtn->mutex);
+      else
         call_ipbyhost(dtn->host, &dtn->addr, !*dtn->strerror);
-        pthread_mutex_unlock(&dtn->mutex);
-      }
-      close(dtn->fildes[0]);
+      pthread_mutex_unlock(&dtn->mutex);
+      close(fd);
       if (pthread_join(dtn->thread_id, &res))
         putlog(LOG_MISC, "*", "sockread(): pthread_join(): error = %s", strerror(errno));
       dtn_prev->next = dtn->next;
       nfree(dtn);
       dtn = dtn_prev;
-    }
+    } else
+      pthread_mutex_unlock(&dtn->mutex);
     dtn_prev = dtn;
   }
 #endif
@@ -1405,7 +1402,11 @@ void dequeue_sockets()
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        (socklist[i].handler.sock.outbuf != NULL)) {
+        (socklist[i].handler.sock.outbuf != NULL)
+#ifdef TLS
+	&& !(socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
+#endif
+                                                 ) {
       if (socklist[i].sock > maxfd)
         maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
