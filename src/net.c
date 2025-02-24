@@ -593,7 +593,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
 {
   int i, j;
   sockname_t name;
-  struct threaddata *td = threaddata(); 
+  struct threaddata *td = threaddata();
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
