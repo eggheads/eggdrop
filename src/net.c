@@ -558,7 +558,7 @@ int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
       FD_SET(s, &sockset);
-      select(s + 1, &sockset, NULL, NULL, &tv);
+      select(s + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(s, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
