@@ -131,8 +131,8 @@ void verify_cert_expiry(int idx) {
       }
     }
 #if OPENSSL_VERSION_NUMBER < 0x10002000L /* 1.0.2 */
-  X509_free(x509);
-  BIO_free(bio);
+    X509_free(x509);
+    BIO_free(bio);
 #endif
   }
 }
