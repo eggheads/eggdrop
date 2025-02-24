@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Python Module &#8212; Eggdrop 1.10.0rc2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../../_static/documentation_options.js?v=3bcbdadc"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Seen Module" href="seen.html" />
+    <link rel="prev" title="PBKDF2 Module" href="pbkdf2.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="pbkdf2.html" title="PBKDF2 Module"
+             accesskey="P">previous</a> |
+          <a href="seen.html" title="Seen Module"
+             accesskey="N">next</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="sidebar">
+          
+          <h3>Table of Contents</h3>
+          <p class="caption" role="heading"><span class="caption-text">Installing Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install/readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installing Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install/upgrading.html">Upgrading Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Using Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using/features.html">Eggdrop Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/core.html">Eggdrop Core Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/autoscripts.html">Eggdrop Autoscripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/users.html">Users and Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/bans.html">Bans, Invites, and Exempts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/botnet.html">Botnet Sharing and Linking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/ipv6.html">IPv6 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/tls.html">TLS support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/ircv3.html">IRCv3 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/accounts.html">Account tracking in Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/python.html">Using the Python Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/twitchinfo.html">Twitch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/tricks.html">Advanced Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/text-sub.html">Textfile Substitutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/tcl-commands.html">Eggdrop Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/twitch-tcl-commands.html">Eggdrop Twitch Tcl Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using/patch.html">Patching Eggdrop</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Setting Up Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/firststeps.html">Common First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Eggdrop Module Information</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../included.html">Modules included with Eggdrop</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assoc.html">Assoc Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blowfish.html">Blowfish Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html">Channels Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compress.html">Compress Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="console.html">Console Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ctcp.html">CTCP Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dns.html">DNS Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesys.html">Filesys Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ident.html">Ident Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="irc.html">IRC Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notes.html">Notes Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pbkdf2.html">PBKDF2 Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Python Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="seen.html">Seen Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">Server Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="share.html">Share Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transfer.html">Transfer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitch.html">Twitch Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="woobie.html">Woobie Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uptime.html">Uptime Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../writing.html">How to Write an Eggdrop Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals.html">Eggdrop Bind Internals</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About Eggdrop</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about/about.html">About Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about/legal.html">Boring legal stuff</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+            </form>
+          </div>
+
+        </div>
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Last revised: November 03, 2023</p>
+<section id="python-module">
+<span id="python"></span><h1>Python Module<a class="headerlink" href="#python-module" title="Link to this heading">¶</a></h1>
+<p>This module adds a Python interpreter to Eggdrop, allowing you to run Python scripts.</p>
+<section id="system-requirements">
+<h2>System Requirements<a class="headerlink" href="#system-requirements" title="Link to this heading">¶</a></h2>
+<p>This module requires Python version 3.8 or higher in order to run. Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this means the packages <code class="docutils literal notranslate"><span class="pre">python</span></code>, <code class="docutils literal notranslate"><span class="pre">python-dev</span></code> AND <code class="docutils literal notranslate"><span class="pre">python-is-python3</span></code> to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.</p>
+</section>
+<section id="loading-python">
+<h2>Loading Python<a class="headerlink" href="#loading-python" title="Link to this heading">¶</a></h2>
+<p>Put this line into your Eggdrop configuration file to load the python module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loadmodule</span> <span class="n">python</span>
+</pre></div>
+</div>
+<p>To load a python script from your config file, place the .py file in the scripts/ folder and add the following line to your config:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pysource</span> <span class="n">scripts</span><span class="o">/</span><span class="n">myscript</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="partyline-commands">
+<h2>Partyline Commands<a class="headerlink" href="#partyline-commands" title="Link to this heading">¶</a></h2>
+<section id="python-expression">
+<h3>python &lt;expression&gt;<a class="headerlink" href="#python-expression" title="Link to this heading">¶</a></h3>
+<p>You can run a python command from the partyline with the .python command, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">python</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">Python</span><span class="p">:</span> <span class="mi">2</span>
+<span class="o">.</span><span class="n">python</span> <span class="kn">from</span> <span class="nn">eggdrop.tcl</span> <span class="kn">import</span> <span class="n">putmsg</span><span class="p">;</span> <span class="n">putmsg</span><span class="p">(</span><span class="s1">&#39;#chan&#39;</span><span class="p">,</span> <span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+<span class="n">Python</span><span class="p">:</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+<section id="binds-python">
+<h3>.binds python<a class="headerlink" href="#binds-python" title="Link to this heading">¶</a></h3>
+<p>The python module extends the core <code class="docutils literal notranslate"><span class="pre">.binds</span></code> partyline command by adding a <code class="docutils literal notranslate"><span class="pre">python</span></code> mask. This command will list all binds for python scripts.</p>
+</section>
+</section>
+<section id="tcl-commands">
+<h2>Tcl Commands<a class="headerlink" href="#tcl-commands" title="Link to this heading">¶</a></h2>
+<section id="pysource-path-to-file">
+<h3>pysource &lt;path/to/file&gt;<a class="headerlink" href="#pysource-path-to-file" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">pysource</span></code> command is analogous to the Tcl <code class="docutils literal notranslate"><span class="pre">source</span></code> command, except that it loads a Python script into Eggdrop instead of a Tcl script.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="pbkdf2.html" title="PBKDF2 Module"
+              >previous</a> |
+            <a href="seen.html" title="Seen Module"
+              >next</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Oct 13, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

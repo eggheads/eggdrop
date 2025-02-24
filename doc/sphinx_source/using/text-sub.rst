@@ -22,28 +22,28 @@ text:
 These variables will be interpreted by Eggdrop and replaced by their
 respective values:
 
-+------+---------------------------------------------------------+
-| %B   | bot's nickname (i.e. "LamestBot")                       |
-+------+---------------------------------------------------------+
-| %V   | current Eggdrop version (i.e. "eggdrop v1.9.5")         |
-+------+---------------------------------------------------------+
-| %E   | long form of %V (i.e. "Eggdrop v1.9.5 (C) 1997 Robey    |
-|      | Pointer (C) 2010 Eggheads Development Team")            |
-+------+---------------------------------------------------------+
-| %C   | channels the bot is on (i.e. "#lamest, #botnetcentral") |
-+------+---------------------------------------------------------+
-| %A   | whatever is set in the config file by 'set admin'       |
-+------+---------------------------------------------------------+
-| %n   | whatever is set in the config file by 'set network'     |
-+------+---------------------------------------------------------+
-| %T   | the current time (i.e. "15:00")                         |
-+------+---------------------------------------------------------+
-| %N   | the current user's nickname (i.e. "Robey")              |
-+------+---------------------------------------------------------+
-| %U   | the current operating system the bot is running on      |
-+------+---------------------------------------------------------+
-| %%   | a percent sign ("%")                                    |
-+------+---------------------------------------------------------+
++------+----------------------------------------------------------+
+| %B   | bot's nickname (i.e. "LamestBot")                        |
++------+----------------------------------------------------------+
+| %V   | current Eggdrop version (i.e. "eggdrop v\ |version|")    |
++------+----------------------------------------------------------+
+| %E   | long form of %V (i.e. "Eggdrop v\ |version| (C) 1997     |
+|      | Robey Pointer (C) 2010 Eggheads Development Team")       |
++------+----------------------------------------------------------+
+| %C   | channels the bot is on (i.e. "#lamest, #botnetcentral")  |
++------+----------------------------------------------------------+
+| %A   | whatever is set in the config file by 'set admin'        |
++------+----------------------------------------------------------+
+| %n   | whatever is set in the config file by 'set network'      |
++------+----------------------------------------------------------+
+| %T   | the current time (i.e. "15:00")                          |
++------+----------------------------------------------------------+
+| %N   | the current user's nickname (i.e. "Robey")               |
++------+----------------------------------------------------------+
+| %U   | the current operating system the bot is running on       |
++------+----------------------------------------------------------+
+| %%   | a percent sign ("%")                                     |
++------+----------------------------------------------------------+
 
 You can also encode messages which can only be read by people
 with certain flags:
@@ -76,4 +76,4 @@ Other variables:
 | %{center}   |  center the following text (70 columns)                 |
 +-------------+---------------------------------------------------------+
 
-  Copyright (C) 1999 - 2023 Eggheads Development Team
+  Copyright (C) 1999 - 2024 Eggheads Development Team

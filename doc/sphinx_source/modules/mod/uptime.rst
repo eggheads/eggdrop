@@ -1,4 +1,4 @@
-Last revised: January 1, 2002
+Last revised: Mar 14, 2023
 
 .. _uptime:
 
@@ -6,7 +6,8 @@ Last revised: January 1, 2002
 Uptime Module
 -------------
 
-This module reports uptime statistics to http://uptime.eggheads.org. Go look
+This module reports uptime statistics to the uptime contest web
+site at `<https://www.eggheads.org/uptime>`_. Go look
 and see what your uptime is! It takes about 9 hours to show up, so if your
 bot isn't listed, try again later.
 
@@ -24,4 +25,4 @@ module::
 
   loadmodule uptime
 
-Copyright (C) 2001 - 2023 Eggheads Development Team
+Copyright (C) 2001 - 2024 Eggheads Development Team

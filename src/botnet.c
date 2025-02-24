@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -174,10 +174,8 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
     party = nrealloc(party, party_size * sizeof(party_t));
     debug1("botnet: party size doubled to %i.", party_size);
   }
-  strncpy(party[parties].nick, nick, HANDLEN);
-  party[parties].nick[HANDLEN] = 0;
-  strncpy(party[parties].bot, bot, HANDLEN);
-  party[parties].bot[HANDLEN] = 0;
+  strlcpy(party[parties].nick, nick, HANDLEN + 1);
+  strlcpy(party[parties].bot, bot, HANDLEN + 1);
   party[parties].chan = chan;
   party[parties].sock = sock;
   party[parties].status = 0;
@@ -1420,6 +1418,8 @@ static void cont_tandem_relay(int idx, char *buf, int i)
   check_tcl_chof(dcc[uidx].nick, dcc[uidx].sock);
   dcc[uidx].type = &DCC_RELAYING;
   dcc[uidx].u.relay = ri;
+  if (dcc[uidx].status & STAT_TELNET)
+    tputs(dcc[idx].sock, TLN_IAC_C TLN_DO_C TLN_STATUS_C, 3);
 }
 
 static void eof_dcc_relay(int idx)
@@ -1438,7 +1438,7 @@ static void eof_dcc_relay(int idx)
   dcc[j].status = dcc[j].u.relay->old_status;
   /* In case echo was off, turn it back on (send IAC WON'T ECHO): */
   if (dcc[j].status & STAT_TELNET)
-    dprintf(j, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n");
+    tputs(dcc[j].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C, 3);
   putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_ENDRELAY1, dcc[j].nick,
          dcc[idx].nick);
   dprintf(j, "\n\n*** %s %s\n", BOT_ENDRELAY2, botnetnick);

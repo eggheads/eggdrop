@@ -1,4 +1,4 @@
-Last revised: October 25, 2010
+Last revised: August 29, 2023
 
 Eggdrop Core Settings
 
@@ -117,14 +117,6 @@ overwritten by the logfile of the next day.
       This value is in kilobytes, so '550' would mean cycle logs when it
       reaches the size of 550 kilobytes. Note that this only works if
       you have keep-all-logs set to 0 (OFF).
-
-  set quick-logs 0
-
-      This could be good if you have had a problem with logfiles filling
-      your quota/hard disk or if you log +p and publish it to the web,
-      and you need more up-to-date info. Note that this setting might
-      increase the CPU usage of your bot (on the other hand it will
-      decrease your RAM usage).
 
   set raw-log 0
 
@@ -339,8 +331,8 @@ efficiency). You should read doc/BOTNET before modifying these settings.
           listen +5555 all
 
       You need to un-comment this line and change the port number in
-      order to open the listen port. You should not keep this set
-      to 3333.
+      order to open the listen port. You should not keep this set to
+      3333.
 
   set remote-boots 2
 
@@ -688,7 +680,7 @@ needed. Four examples:
 
       A limbo bot (serves as a botnet hub outside IRC) just needs the
       channels, console, dns, and maybe notes or share modules loaded.
-      Of course, blowfish needs to be loaded here, too.
+      Of course, an encryption module needs to be loaded here, too.
 
 SCRIPTS
 
@@ -710,4 +702,4 @@ point.
           source scripts/alltools.tcl
           source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2023 Eggheads Development Team
+Copyright (C) 2000 - 2024 Eggheads Development Team

@@ -1,7 +1,7 @@
 Upgrading Eggdrop
 =================
 
-  It is easy to upgrade Eggdrop to a new version! To have a full picture of the changes made since your last upgrade, we recommend reading the NEWS file. Upgrades from the 1.6 and 1.8 lines of Eggdrop should take place with little to no issues. The config file, user files, and channel files can all be reused.
+  It is easy to upgrade Eggdrop to a new version! To have a full picture of the changes made since your last upgrade, we recommend reading the NEWS file. Upgrades from the 1.8 and 1.9 lines of Eggdrop should take place with little to no issues. While the config file, user files, and channel files can all be reused, it is recommended to review the NEWS files for each release to identify new configuration settings that have been added.
 
   For support, feel free to visit us on Libera #eggdrop.
 
@@ -14,15 +14,15 @@ How to Upgrade
 
   Then, simply follow the same steps you followed to install Eggdrop previously. Download the source, unzip/untar it, and run the './configure', 'make config', 'make', and 'make install' commands. Restart your Eggdrop and you will be up and running with the latest version of Eggdrop.
 
-Must-read changes for Eggdrop v1.9
-----------------------------------
+Must-read changes for Eggdrop v1.10
+-----------------------------------
 
 These are NOT all the changes or new settings; rather just the "killer" changes that may directly affect Eggdrop's previous performance without modification.
 
 Config file changes
 ^^^^^^^^^^^^^^^^^^^
 
-To migrate from a 1.8 to a 1.9 Eggdrop, some changes are suggested to be made in your configuration file:
+To migrate from a 1.8 to a |majversion| Eggdrop, some changes are suggested to be made in your configuration file:
 
 * Eggdrop has deprecated the blowfish module for password hashing in favor of the PBKDF2 module. This is a BIG change which, if done carelessly, has the potential to render stored passwords useless. Please see doc/PBKDF2 for information on how to properly migrate your userfiles and passwords to the new module.
 
@@ -44,17 +44,17 @@ To migrate from a 1.8 to a 1.9 Eggdrop, some changes are suggested to be made in
 Modules
 ^^^^^^^
 
-While most 3rd party modules that worked on Eggdrop v1.6/v1.8 should still work with Eggdrop v1.9, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<ftp://eggheads.org/pub/eggdrop/modules/1.9/>`_
+While most 3rd party modules that worked on older Eggdrop versions should still work with Eggdrop |majversion|, many of them contain a version check that only allows them to run on 1.6.x bots. We have removed the version check from some of the more popular modules provide them at `<https://ftp.eggheads.org/pub/eggdrop/modules/1.10/>`_
 
 Scripts
 ^^^^^^^
 
-All 3rd party Tcl scripts that work with Eggdrop v1.6/v1.8 should fully work with Eggdrop v1.9.
+All 3rd party Tcl scripts that worked with Eggdrop versions as early as v1.6 should still fully work with Eggdrop |majversion|.
 
 Botnet
 ^^^^^^
 
-In Eggdrop v1.8, Eggdrop bots would automatically attempt to upgrade any botnet link to an SSL/TLS connection. In v1.9, the user is required to explicitly request an SSL/TLS connection by prefixing the port with a '+'. If you wish your botnet to take advantage of encryption, use the .chaddr command to update your ports to start with a '+'.
+In Eggdrop v1.8, Eggdrop bots would automatically attempt to upgrade any botnet link to an SSL/TLS connection. Since v1.9, the user is required to explicitly request an SSL/TLS connection by prefixing the port with a '+'. If you wish your botnet to take advantage of encryption, use the .chaddr command to update your ports to start with a '+'.
 
 Tcl Commands
 ^^^^^^^^^^^^

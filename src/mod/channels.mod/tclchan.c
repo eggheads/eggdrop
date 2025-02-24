@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1013,7 +1013,7 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
 {
   char s[121], *str;
   EGG_CONST char **argv = NULL;
-  int argc = 0;
+  Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   /* String values first */
@@ -1133,7 +1133,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
 {
   char s[121], *str = NULL;
   EGG_CONST char **argv = NULL;
-  int argc = 0;
+  Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   if (!strcmp(setting, "chanmode"))
@@ -1998,17 +1998,17 @@ static void init_masklist(masklist *m)
 static void init_channel(struct chanset_t *chan, int reset)
 {
   int flags = reset ? reset : CHAN_RESETALL;
+  memberlist *m, *m1;
 
   if (flags & CHAN_RESETWHO) {
-    if (chan->channel.member) {
-      nfree(chan->channel.member); 
+    for (m = chan->channel.member; m; m = m1) {
+      m1 = m->next;
+      nfree(m);
     }
     chan->channel.members = 0;
     chan->channel.member = nmalloc(sizeof *chan->channel.member);
     /* Since we don't have channel_malloc, manually bzero */
     egg_bzero(chan->channel.member, sizeof *chan->channel.member);
-    chan->channel.member->nick[0] = 0;
-    chan->channel.member->next = NULL;
   }
 
   if (flags & CHAN_RESETMODES) {
@@ -2089,7 +2089,7 @@ static void clear_channel(struct chanset_t *chan, int reset)
  */
 static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 {
-  int items;
+  Tcl_Size items;
   int ret = TCL_OK;
   int join = 0;
   char buf[2048], buf2[256];

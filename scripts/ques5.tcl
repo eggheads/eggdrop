@@ -2,7 +2,7 @@
 # ques5.tcl
 #
 # Copyright (C) 1995 - 1997 Robey Pointer
-# Copyright (C) 1999 - 2023 Eggheads Development Team
+# Copyright (C) 1999 - 2024 Eggheads Development Team
 #
 # v1 -- 20aug95
 # v2 -- 2oct95   [improved it]
@@ -319,13 +319,13 @@ proc do_ques {} {
     }
     puts $fd1 "    <HR>"
     puts $fd1 "    This page is automatically refreshed every [webify $web_update] minute(s).<BR>"
-    puts $fd1 "    <ADDRESS>Created by quesedilla v5 via <A HREF=\"http://www.eggheads.org/\">eggdrop</A>.</ADDRESS>"
+    puts $fd1 "    <ADDRESS>Created by quesedilla v5 via <A HREF=\"https://www.eggheads.org/\">eggdrop</A>.</ADDRESS>"
     puts $fd1 "  </BODY>"
     puts $fd1 "</HTML>"
     puts $fd1 ""
     puts $fd2 "    <HR>"
     puts $fd2 "    This page is automatically refreshed every [webify $web_update] minute(s).<BR>"
-    puts $fd2 "    <ADDRESS>Created by quesedilla v5 via <A HREF=\"http://www.eggheads.org/\">eggdrop</A>.</ADDRESS>"
+    puts $fd2 "    <ADDRESS>Created by quesedilla v5 via <A HREF=\"https://www.eggheads.org/\">eggdrop</A>.</ADDRESS>"
     puts $fd2 "  </BODY>"
     puts $fd2 "</HTML>"
     puts $fd2 ""
