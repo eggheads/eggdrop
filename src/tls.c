@@ -113,7 +113,7 @@ void verify_cert_expiry(int idx) {
   X509 *x509;
 
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
-  x509 = SSL_CTX_get0_certificate(ssl_ctx);
+  x509 = SSL_CTX_get0_certificate(ssl_ctx); /* The returned pointer must not be freed by the caller. */
 #else
   BIO *bio = BIO_new_file(tls_certfile, "r");
   if (!bio)
