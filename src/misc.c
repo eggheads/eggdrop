@@ -546,9 +546,8 @@ void putlog (int type, char *chname, const char *format, ...)
     tsl = strftime(stamp2, sizeof(stamp2) - 2, stamp, &t);
     stamp2[tsl++] = ' ';
     stamp2[tsl] = 0;
-  }
-  else
-    *stamp2 = '\0';
+  } else
+    *stamp2 = 0;
 
   /* Format log entry at offset 'tsl,' then i can prepend the timestamp */
   out = s + tsl;
