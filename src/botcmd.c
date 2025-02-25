@@ -65,7 +65,7 @@ int base64_to_int(char *buf)
   int i = 0, j;
 
   while (*buf) {
-    j = base64to[(int) *buf];
+    j = base64to[(uint8_t) *buf];
     if (i > ((INT_MAX >> 6) - j)) /* if overflow return -1 */
       return -1;
     i = (i << 6) + j;
