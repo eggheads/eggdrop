@@ -144,7 +144,8 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
 {
   char buf[sizeof dns_servers], *p;
   unsigned short port;
-  int i, lc, code;
+  Tcl_Size i, lc;
+  int code;
   EGG_CONST char **list, *slist;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
@@ -168,7 +169,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
       if (myres.nscount >= MAXNS) {
-        putlog(LOG_MISC, "*", "DNS: WARNING: %i dns-servers configured but "
+        putlog(LOG_MISC, "*", "DNS: WARNING: %" TCL_SIZE_MODIFIER "i dns-servers configured but "
                "kernel-defined limit is %i, ignoring extra servers\n", lc,
                MAXNS);
         break;
