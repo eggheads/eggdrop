@@ -59,7 +59,7 @@ a plus sign. Example: .jump irc.server.com +6697. The same goes for
 the server list in the config file.
 
 Some NickServ services allow you to authenticate with a certificate.
-Eggdrop will use the certificte pair specified in ssl-privatekey/
+Eggdrop will use the certificate pair specified in ssl-privatekey/
 ssl-certificate for authentication.
 
 ^^^^^^
