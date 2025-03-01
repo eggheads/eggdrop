@@ -162,6 +162,8 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
 
+  Beware: NIST curve could be backdoored, so please use EXTERNAL or SCRAM instead.
+
 * **EXTERNAL**: To use this method, set sasl-mechanism to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
@@ -173,3 +175,7 @@ You will need to determine your public key fingerprint by using::
 Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
+
+* **SCRAM-SHA-256**: To use this method, set sasl-mechanism to 3.
+
+* **SCRAM-SHA-512**: To use this method, set sasl-mechanism to 4.
