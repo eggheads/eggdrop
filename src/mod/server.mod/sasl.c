@@ -173,7 +173,7 @@ static int sasl_plain(char *dst, size_t dstsize)
 }
 
 #ifdef TLS
-static int sasl_ecdsa_nist256p_challange_step_0(char *dst, size_t dstsize)
+static int sasl_ecdsa_nist256p_challenge_step_0(char *dst, size_t dstsize)
 {
   /* Don't use snprintf() due to \0 inside
    * and don't use stpcpy() for it is POSIX 2008
@@ -188,7 +188,7 @@ static int sasl_ecdsa_nist256p_challange_step_0(char *dst, size_t dstsize)
   return y + n;
 }
 
-static int sasl_ecdsa_nist256p_challange_step_1(
+static int sasl_ecdsa_nist256p_challenge_step_1(
   char *restrict client_msg_plain, char *restrict server_msg_plain,
   int server_msg_plain_len)
 {
@@ -562,7 +562,7 @@ static int gotauthenticate(char *from, char *msg)
 #ifdef TLS
         break;
       case SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE:
-        client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_0(client_msg_plain, sizeof client_msg_plain);
+        client_msg_plain_len = sasl_ecdsa_nist256p_challenge_step_0(client_msg_plain, sizeof client_msg_plain);
         break;
       case SASL_MECHANISM_EXTERNAL:
         dprintf(DP_MODE, "AUTHENTICATE +\n");
@@ -588,7 +588,7 @@ static int gotauthenticate(char *from, char *msg)
       return 0;
     }
     if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-      if ((client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_1(client_msg_plain, server_msg_plain, server_msg_plain_len)) < 0)
+      if ((client_msg_plain_len = sasl_ecdsa_nist256p_challenge_step_1(client_msg_plain, server_msg_plain, server_msg_plain_len)) < 0)
         return 0;
     }
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
