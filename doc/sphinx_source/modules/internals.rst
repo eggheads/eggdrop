@@ -169,7 +169,7 @@ The last argument to :code:`check_tcl_bind` in `check_tcl_dcc` sets additional c
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | BIND_USE_ATTR     | Check the flags of the user match the flags required to trigger the bind                                                      |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
-| BIND_STACKABLE    | Allow one mask to be re-used to call multiple Tcl proc. Must be used with HT_STACKABLE_                                       |
+| BIND_STACKABLE    | Allow one mask to be reused to call multiple Tcl proc. Must be used with HT_STACKABLE_                                       |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
 | BIND_WANTRET      | With stacked binds, if the called Tcl proc called returns a '1', halt processing any further binds triggered by the action    |
 +-------------------+-------------------------------------------------------------------------------------------------------------------------------+
