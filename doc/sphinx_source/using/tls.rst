@@ -139,8 +139,12 @@ new certificate to connect to Eggdrop, depends on your irc client.
 To connect to your bot from the command line, you can use the OpenSSL
 ssl client::
 
-  openssl s_client -cert my.crt -key my.key -connect host:sslport 
-    
+  openssl s_client -cert my.crt -key my.key -connect host:sslport
+
+To also verify the bots certificate use::
+
+  openssl s_client -cert my.crt -key my.key -connect host:sslport -verify_return_error -CAfile bot.crt
+
 ----------------
 SSL/TLS Settings
 ----------------
