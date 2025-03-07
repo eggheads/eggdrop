@@ -63,7 +63,7 @@ void tandout_but(int x, const char *format, ...)
 #endif
 
 /* Thank you ircu :) */
-static char tobase64array[64] = {
+static const char tobase64array[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
   'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',

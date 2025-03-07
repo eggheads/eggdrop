@@ -43,7 +43,7 @@ extern module_entry *module_list;
 
 static char TBUF[1024]; /* Static buffer for goofy bot stuff */
 
-static char base64to[256] = {
+static const char base64to[256] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 0, 0,
