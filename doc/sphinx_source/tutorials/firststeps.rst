@@ -80,7 +80,7 @@ which will enforce the s, n, and t flags on a channel.
 Automatically restarting an Eggdrop
 -----------------------------------
 
-A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer linux systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer Linux systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.
 
 Crontab Method
 ^^^^^^^^^^^^^^
