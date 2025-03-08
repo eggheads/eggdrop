@@ -129,7 +129,9 @@ int ssl_init()
 #endif
   if (ssl_seed()) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     return -2;
   }
   /* A TLS/SSL connection established with this method will understand all
@@ -137,7 +139,9 @@ int ssl_init()
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
     putlog(LOG_MISC, "*", "%s", ERR_error_string(ERR_get_error(), NULL));
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     return -1;
   }
   ssl_files_loaded = 0;
@@ -169,7 +173,9 @@ int ssl_init()
       tls_capath[0] ? tls_capath : NULL)) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
   }
   /* Let advanced users specify the list of allowed ssl protocols */
   #define EGG_SSLv2   (1 << 0)
@@ -276,7 +282,9 @@ int ssl_init()
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
     /* this replaces any preset ciphers so an invalid list is fatal */
     putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     SSL_CTX_free(ssl_ctx);
     ssl_ctx = NULL;
     return -3;
@@ -293,7 +301,9 @@ void ssl_cleanup()
   }
   if (tls_randfile)
     RAND_write_file(tls_randfile);
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   ERR_free_strings();
+#endif
 }
 
 char *ssl_fpconv(char *in, char *out)

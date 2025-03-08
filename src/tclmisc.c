@@ -786,7 +786,7 @@ static int tcl_status STDVAR
   if ((argc < 2) || !strcmp(argv[1], "tls")) {
     Tcl_AppendElement(irp, "tls");
 #ifdef TLS
-  #if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+  #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) /* 1.1.0 */
     Tcl_AppendElement(irp, OpenSSL_version(OPENSSL_VERSION));
   #else
     Tcl_AppendElement(irp, SSLeay_version(SSLEAY_VERSION));
