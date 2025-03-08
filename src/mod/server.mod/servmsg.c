@@ -1975,8 +1975,8 @@ static void connect_server(void)
 #endif
 
 #ifdef TLS
-    len += snprintf(s + len, sizeof s - len, ":%s%u",
-            use_ssl ? "+" : "", botserverport);
+    len += snprintf(s + len, sizeof s - len, ":%s%u", use_ssl ? "+" : "",
+                    botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
     len += snprintf(s + len, sizeof s - len, ":%u", botserverport);
