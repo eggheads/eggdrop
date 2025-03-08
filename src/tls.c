@@ -790,6 +790,11 @@ static void ssl_info(const SSL *ssl, int where, int ret)
         OPENSSL_free(fingerprint2);
       }
       printf("DEBUG: Verifying public key fingerprint not implemented yet: %s\n", dcc[idx].u.fingerprint);
+      // if (crypto_verify(fingerprint, fingerprint2)); /* verify not successful */
+      //   MAYBE THIS IS NOT THE RIGHT PLACE AT ALL TO VERIFY AND/OR SHUTDOWN THEN connection
+      //   MAYBE WE NEED TO DO IT AT A LATER POINT? BUT WE WANT MOST LOGIC / PROCEEDIGN TO STOP HERE ALREADY
+      //   SSL_shutdown(ssl);
+      //   close(sock);
     }
 
     if (data->cb)
