@@ -1966,20 +1966,20 @@ static void connect_server(void)
 
 #ifdef IPV6
     if (inet_pton(AF_INET6, botserver, buf)) {
-      len += egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
+      len += snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
     } else {
 #endif
-     len += egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
+     len += snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
 #ifdef IPV6
     }
 #endif
 
 #ifdef TLS
-    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
+    len += snprintf(s + len, sizeof s - len, ":%s%d",
             use_ssl ? "+" : "", botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
+    len += snprintf(s + len, sizeof s - len, ":%d", botserverport);
 #endif
     putlog(LOG_SERV, "*", "%s", s);
     dcc[servidx].port = botserverport;
@@ -2003,6 +2003,11 @@ static void connect_server(void)
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
     dcc[servidx].u.dns->type = &SERVER_SOCKET;
     dcc[servidx].status |= STAT_SERV;
+#ifdef TLS
+    printf("DEBUG: here fingerprint needs to be set to dcc_t entry, so, that tls.c:ssl_info()->sock->dcc->fingerprint can be used, not implemented yet\n");
+    // if (fingerprint)
+    //   dcc[servidx].u.fingerprint = fingerprint;
+#endif
 
     if (server_cycle_wait)
       /* Back to 1st server & set wait time.
