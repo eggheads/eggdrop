@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # generateDocs - creates HTML and plaintext documentation from
 # reStructuredText format files. -Geo
@@ -45,35 +45,6 @@ fi
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-echo "*** Searching for pandoc..."
-PANDOC="$(which pandoc)"
-if [ $? -eq 0 ]; then 
-  echo "Found."
-else
-  echo "Not found. Pandoc can be found at pandoc.org or via apt-get install pandoc. Exiting..."
-  exit 1
-fi
-
-echo "*** Searching for panflute..."
-PANDOC="$(pip3 show panflute)"
-if [ $? -eq 0 ]; then
-  echo "Found."
-else
-  echo "Not found. Panflute can be installed via pip3 install panflute. Exiting..."
-  exit 1
-fi
-
-
-echo "*** Searching for sphinx-build..."
-SPHINX="$(which sphinx-build)"
-if [ $? -eq 0 ]; then
-  echo "Found."
-else
-  echo "Not found. Sphinx can be found at https://www.sphinx-doc.org or via apt-get install python-sphinx. Exiting..."
-  exit 1
-fi
-
-
 if [ $do_ver -eq 1 ]; then
   echo "*** Updating docs to version ${ver}..."
   sed -e "s:version = '.*':version = '${ver}':" \
@@ -87,6 +58,10 @@ if [ $do_ver -eq 1 ]; then
   fi
 fi
 
+if ! command -v uv 2>&1 >/dev/null; then
+  echo "Please install uv"
+  exit 1
+fi
 
 mkdir -p tmpdocs
 echo "*** Generating plaintext docs..."
@@ -94,7 +69,7 @@ for i in $( find $BASEDIR/../doc/sphinx_source/ -type f -name "*.rst" ); do
   FILENAME=$(basename "$i")
   FILENAME="${FILENAME%.*}"
   echo $FILENAME
-  pandoc -f rst -t plain --filter ./misc/docsfilter.py -o tmpdocs/$FILENAME.txt $i
+  uvx --with=panflute pandoc -f rst -t plain --filter ./misc/docsfilter.py -o tmpdocs/$FILENAME.txt $i
 done
 
 echo "*** Generating HTML files..."
