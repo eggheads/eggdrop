@@ -648,7 +648,7 @@ static void ssl_showcert(X509 *cert, const int loglev)
   } else
     putlog(loglev, "*", "TLS: cannot get issuer name from certificate!");
 
-  /* Fingerprints */
+  /* Certificate fingerprints */
   if (X509_digest(cert, EVP_sha1(), md, &len)) {
     buf = OPENSSL_buf2hexstr(md, len);
     putlog(loglev, "*", "TLS: certificate SHA1 Fingerprint: %s", buf);
@@ -656,10 +656,9 @@ static void ssl_showcert(X509 *cert, const int loglev)
   }
   if (X509_digest(cert, EVP_sha256(), md, &len)) {
     buf = OPENSSL_buf2hexstr(md, len);
-    putlog(loglev, "*", "TLS: certificate SHA-256 Fingerprint: %s", buf);
+    putlog(loglev, "*", "TLS: certificate SHA256 Fingerprint: %s", buf);
     OPENSSL_free(buf);
   }
-
 
   /* Validity time */
   from = ssl_printtime(X509_get_notBefore(cert));
@@ -667,6 +666,13 @@ static void ssl_showcert(X509 *cert, const int loglev)
   putlog(loglev, "*", "TLS: certificate valid from %s to %s", from, to);
   nfree(from);
   nfree(to);
+
+  /* Public key fingerprint */
+  if (X509_pubkey_digest(cert, EVP_sha256(), md, &len)) {
+    buf = OPENSSL_buf2hexstr(md, len);
+    putlog(loglev, "*", "TLS: public key SHA256 Fingerprint: %s", buf);
+    OPENSSL_free(buf);
+  }
 }
 
 /* Certificate validation callback
@@ -768,6 +774,29 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     /* Callback for completed handshake. Cheaper and more convenient than
        using H_tls */
     sock = SSL_get_fd(ssl);
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    cert = SSL_get0_peer_certificate(ssl);
+#else
+    cert = SSL_get_peer_certificate(ssl);
+#endif
+
+    /* Verify public key fingerprint */
+    int idx = findanyidx(sock);
+    if (dcc[idx].u.fingerprint) {
+      unsigned char md[EVP_MAX_MD_SIZE];
+      unsigned int len;
+      if (X509_pubkey_digest(cert, EVP_sha256(), md, &len)) {
+        char *fingerprint2 = OPENSSL_buf2hexstr(md, len);
+        OPENSSL_free(fingerprint2);
+      }
+      printf("DEBUG: Verifying public key fingerprint not implemented yet: %s\n", dcc[idx].u.fingerprint);
+      // if (crypto_verify(fingerprint, fingerprint2)); /* verify not successful */
+      //   MAYBE THIS IS NOT THE RIGHT PLACE AT ALL TO VERIFY AND/OR SHUTDOWN THEN connection
+      //   MAYBE WE NEED TO DO IT AT A LATER POINT? BUT WE WANT MOST LOGIC / PROCEEDIGN TO STOP HERE ALREADY
+      //   SSL_shutdown(ssl);
+      //   close(sock);
+    }
+
     if (data->cb)
       data->cb(sock);
     /* Call TLS binds. We allow scripts to take over or disable displaying of
@@ -778,9 +807,11 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
-    if ((cert = SSL_get_peer_certificate(ssl))) {
+    if (cert) {
       ssl_showcert(cert, LOG_DEBUG);
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
       X509_free(cert);
+#endif
     }
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");

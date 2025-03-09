@@ -352,6 +352,9 @@ struct dcc_t {
     struct dupwait_info *dupwait;
     int ident_sock;
     void *other;
+#ifdef TLS
+    char *fingerprint;
+#endif
   } u;                          /* Special use depending on type        */
 };
 

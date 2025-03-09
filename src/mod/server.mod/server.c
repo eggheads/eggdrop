@@ -1040,6 +1040,12 @@ static int add_server(const char *name, const char *port, const char *pass)
     x->port = atoi(port);
 #ifdef TLS
   x->ssl = (port[0] == '+') ? 1 : 0;
+  char *fingerprint;
+  if (x->ssl && (fingerprint = strchr(port + 1, ',')) && fingerprint[1]) {
+    x->fingerprint = nmalloc(strlen(fingerprint) + 1);
+    strcpy(x->fingerprint, fingerprint + 1);
+  } else
+    x->fingerprint = NULL;
 #endif
   return 0;
 }

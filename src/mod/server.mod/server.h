@@ -109,11 +109,11 @@
 
 struct server_list {
   struct server_list *next;
-
   char *name;
   int port;
 #ifdef TLS
   int ssl;
+  char *fingerprint;
 #endif
   char *pass;
   char *realname;
