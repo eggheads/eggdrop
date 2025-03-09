@@ -10,6 +10,7 @@
 #include "src/mod/module.h"
 
 #if OPENSSL_VERSION_NUMBER >= 0x1000000fL /* 1.0.0 */
+static Function *global = NULL; /* before tclpbkdf2.c */
 #include "tclpbkdf2.c"
 
 #define MODULE_NAME "encryption2"
@@ -20,8 +21,6 @@
 
 /* Salt string length */
 #define PBKDF2_SALT_LEN 16 /* DO NOT TOUCH! */
-
-static Function *global = NULL;
 
 /* Cryptographic hash function used. openssl list -digest-algorithms */
 static char pbkdf2_method[28] = "SHA256";
