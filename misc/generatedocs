@@ -44,6 +44,7 @@ fi
 
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source .venv/bin/activate
 
 echo "*** Searching for pandoc..."
 PANDOC="$(which pandoc)"
