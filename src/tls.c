@@ -593,7 +593,7 @@ static char *ssl_printname(X509_NAME *name)
  *
  * You need to nfree() the returned pointer.
  */
-static char *ssl_printtime(ASN1_UTCTIME *t)
+static char *ssl_printtime(const ASN1_UTCTIME *t)
 {
   long len;
   char *data, *buf;
@@ -691,8 +691,13 @@ static void ssl_showcert(X509 *cert, const int loglev)
 
 
   /* Validity time */
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+  from = ssl_printtime(X509_get0_notBefore(cert));
+  to = ssl_printtime(X509_get0_notAfter(cert));
+#else
   from = ssl_printtime(X509_get_notBefore(cert));
   to = ssl_printtime(X509_get_notAfter(cert));
+#endif
   putlog(loglev, "*", "TLS: certificate valid from %s to %s", from, to);
   nfree(from);
   nfree(to);
@@ -1113,11 +1118,19 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "issuer");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    p = ssl_printtime(X509_get0_notBefore(cert));
+#else
     p = ssl_printtime(X509_get_notBefore(cert));
+#endif
     Tcl_DStringAppendElement(&ds, "notBefore");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    p = ssl_printtime(X509_get0_notAfter(cert));
+#else
     p = ssl_printtime(X509_get_notAfter(cert));
+#endif
     Tcl_DStringAppendElement(&ds, "notAfter");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
