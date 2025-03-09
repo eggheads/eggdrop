@@ -2866,7 +2866,7 @@ static int irc_isupport(char *key, char *isset_str, char *value)
 
 static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
   Tcl_Obj *valueobj;
-  if (TCL_OK != Tcl_DictObjGet(interp, tags, Tcl_NewStringObj("account", -1), &valueobj)) {
+  if (TCL_OK != Tcl_DictObjGet(interp, tags, tcl_account, &valueobj)) {
     putlog(LOG_MISC, "*", "ERROR: irc:rawt called with invalid dictionary");
     return 0;
   }
