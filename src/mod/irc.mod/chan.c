@@ -1010,7 +1010,7 @@ static int got324(char *from, char *msg)
   *s2 = 0; /* terminate chanmodes_with_args */
   printf("DEBUG: chanmodes_with_args = %s\n", chanmodes_with_args);
 
-  while (msg[i] != 0) {
+  while (msg[i] > ' ') { /* msg[i] != 0 && msg[i] != ' ' */
     switch (msg[i]) {
       case('i'):
         chan->channel.mode |= CHANINV;
