@@ -113,7 +113,7 @@ static int ssl_seed(void)
  *
  * Creates a context object, supporting SSLv2/v3 & TLSv1 protocols;
  * Seeds the Pseudo Random Number Generator;
- * Optionally loads a SSL certifate and a private key.
+ * Optionally loads a SSL certificate and a private key.
  * Tell OpenSSL the location of certificate authority certs
  *
  * Return value: 0 on successful initialization, !=0 on failure
