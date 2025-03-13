@@ -989,7 +989,6 @@ static int got324(char *from, char *msg)
   char *s2 = chanmodes_with_args;
   int s2_len = 0;
   if (chanmodes) {
-    printf("DEBUG: chanmodes = %s\n", chanmodes);
     const char *s;
     if ((s = strchr(chanmodes, ','))) { /* skip Type A */
       int count_comma = 0; /* for stopping after Type C */
@@ -1008,7 +1007,6 @@ static int got324(char *from, char *msg)
     }
   }
   *s2 = 0; /* terminate chanmodes_with_args */
-  printf("DEBUG: chanmodes_with_args = %s\n", chanmodes_with_args);
 
   while (msg[i] > ' ') { /* msg[i] != 0 && msg[i] != ' ' */
     switch (msg[i]) {
