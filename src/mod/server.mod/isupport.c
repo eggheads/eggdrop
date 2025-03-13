@@ -103,7 +103,7 @@ static int keycmp(const char *key1, const char *key2, size_t key2len) {
     - truncate into allowed range if outside allowed range?
     - default value to use if outside allowed range
  */
-int isupport_parseint(const char *key, const char *value, int min, int max, int truncate, int defaultvalue, int *dst)
+static int isupport_parseint(const char *key, const char *value, int min, int max, int truncate, int defaultvalue, int *dst)
 {
   long result;
   char *tmp;
@@ -193,12 +193,12 @@ static struct isupport *get_record(const char *key, size_t keylen) {
   return data;
 }
 
-const char *isupport_get_from_record(struct isupport *data)
+static const char *isupport_get_from_record(struct isupport *data)
 {
   return data->value ? data->value : data->defaultvalue;
 }
 
-const char *isupport_get(const char *key, size_t keylen)
+static const char *isupport_get(const char *key, size_t keylen)
 {
   struct isupport *data = find_record(key, keylen);
 
@@ -373,7 +373,7 @@ static void isupport_parse(const char *str,
 /*** Module utility functions ***/
 
 
-void isupport_clear(void) {
+static void isupport_clear(void) {
   struct isupport *data = isupport_list, *next;
 
   isupport_list = NULL;
@@ -385,7 +385,7 @@ void isupport_clear(void) {
   }
 }
 
-void isupport_clear_values(int cleardefaultvalues) {
+static void isupport_clear_values(int cleardefaultvalues) {
   struct isupport *next;
 
   for (struct isupport *data = isupport_list; (next = data ? data->next : NULL, data); data = next) {
@@ -418,7 +418,7 @@ void isupport_clear_values(int cleardefaultvalues) {
  * then irc.mod adds isupport binds, but those will not be called for the default values unless they change
  * this is not necessary before each connect, just before the very first one to trigger default binds
  */
-void isupport_preconnect(void) {
+static void isupport_preconnect(void) {
   const char *def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
 
   if (!def)
@@ -426,7 +426,7 @@ void isupport_preconnect(void) {
   isupport_parse(def, isupport_setdefault);
 }
 
-void isupport_init(void) {
+static void isupport_init(void) {
   H_isupport = add_bind_table("isupport", HT_STACKABLE, isupport_bind);
   /* Must be added after reading, if the variable was set before loading mod. */
   Tcl_TraceVar(interp, "isupport-default",
@@ -435,7 +435,7 @@ void isupport_init(void) {
   add_tcl_objcommands(my_tcl_objcmds);
 }
 
-void isupport_fini(void) {
+static void isupport_fini(void) {
   del_bind_table(H_isupport);
   Tcl_UntraceVar(interp, "isupport-default",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
@@ -444,7 +444,7 @@ void isupport_fini(void) {
   isupport_clear();
 }
 
-size_t isupport_expmem(void) {
+static size_t isupport_expmem(void) {
   size_t bytes = 0;
 
   for (struct isupport *data = isupport_list; data; data = data->next) {
@@ -482,7 +482,7 @@ static void isupport_stringify(int idx, char *buf, size_t bufsize, size_t *len,
     *len += sprintf(buf + *len, " %s=%s", key, value);
 }
 
-void isupport_report(int idx, const char *prefix, int details)
+static void isupport_report(int idx, const char *prefix, int details)
 {
   char buf[450];
   size_t prefixlen, len;

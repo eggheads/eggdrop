@@ -2379,7 +2379,7 @@ static Function server_table[] = {
   (Function) & extended_join,   /* int                                  */
   (Function) & account_notify,  /* int                                  */
   (Function) & H_isupport,      /* p_tcl_bind_list                      */
-  (Function) & isupport_get,    /*                                      */
+  (Function) isupport_get,      /*                                      */
   /* 48 - 51 */
   (Function) & isupport_parseint,/*                                     */
   (Function) NULL,               /* was check_tcl_account, now irc.mod  */
