@@ -979,9 +979,27 @@ static int got324(char *from, char *msg)
   chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
 
-  const char *chanmodes = isupport_get("CHANMODES", strlen("CHANMODES"));
-  if (chanmodes)
+  /* https://modern.ircdocs.horse/#chanmodes-parameter
+   * https://modern.ircdocs.horse/#mode-message
+   */
+  const char *chanmodes = isupport_get("CHANMODES", strlen("CHANMODES")); /* get 005 CHANMODES */
+  char chanmodes_with_args[26 * 2];
+  char *s2 = chanmodes_with_args;
+  if (chanmodes) {
     printf("DEBUG: chanmodes = %s\n", chanmodes);
+    const char *s;
+    if ((s = strchr(chanmodes, ','))) { /* skip Type A */
+      int count_comma = 0; /* for stopping after Type C */
+      while (*++s && count_comma < 2) {
+        if (*s == ',')
+          count_comma++;
+        else if (*s != 'k' && *s != 'l') /* skip +k and +l */
+          *s2++ = *s;
+      } 
+    }
+  }
+  *s2 = 0; /* terminate chanmodes_with_args */
+  printf("DEBUG: chanmodes_with_args = %s\n", chanmodes_with_args);
 
   while (msg[i] != 0) {
     switch (msg[i]) {
@@ -1078,18 +1096,9 @@ static int got324(char *from, char *msg)
           }
         }
         break;
-      case 'f': /* eat payload of UnrealIRCd +f so it does not clobber
-            payloads of +k and / or +l */
-        p = strchr(msg, ' ');
-        if (p != NULL) {          /* test for null payload assignment */
-          p++;
-          q = strchr(p, ' ');
-          if (q != NULL) {
-            *q = 0;
-            strcpy(p, q + 1);
-          }
-        }
-        break;
+      default:
+        if (strchr(chanmodes_with_args, msg[i]))
+          printf("DEBUG: here we will skip payload for mode %c\n", msg[i]);
       }
     i++;
   }
