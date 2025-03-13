@@ -963,7 +963,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 static int got324(char *from, char *msg)
 {
   int i = 1, ok = 0;
-  char *p, *q, *chname;
+  char *p = NULL, *q, *chname;
   struct chanset_t *chan;
 
   newsplit(&msg);
@@ -979,7 +979,8 @@ static int got324(char *from, char *msg)
   chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
 
-  /* https://modern.ircdocs.horse/#chanmodes-parameter
+  /* parse 005 CHANMODES into chanmodes_with_args
+   * https://modern.ircdocs.horse/#chanmodes-parameter
    * https://modern.ircdocs.horse/#mode-message
    */
   const char *chanmodes = isupport_get("CHANMODES", strlen("CHANMODES")); /* get 005 CHANMODES */
@@ -1066,18 +1067,23 @@ static int got324(char *from, char *msg)
         break;
       case 'k':
         chan->channel.mode |= CHANKEY;
-        p = strchr(msg, ' ');
-        if (p != NULL) {          /* Test for null key assignment */
-          p++;
-          q = strchr(p, ' ');
-          if (q != NULL) {
-            *q = 0;
-            set_key(chan, p);
-            strcpy(p, q + 1);
-          } else {
-            set_key(chan, p);
-            *p = 0;
-          }
+        if (!p)
+          p = strchr(msg + 1, ' ');
+        if (!p) {
+          putlog(LOG_MISC, "*", "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
+                 chname, msg[i]);
+          break;
+        }
+        p++;
+        q = strchr(p, ' ');
+        if (q)
+          *q = 0;
+        set_key(chan, p);
+        if (q)
+          p = q;
+        else {
+          *p = 0;
+          p = 0;
         }
         if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
             !strcmp("*", chan->channel.key)))
@@ -1089,23 +1095,36 @@ static int got324(char *from, char *msg)
           chan->status |= CHAN_ASKEDMODES;
         break;
       case 'l':
-        p = strchr(msg, ' ');
-        if (p != NULL) {          /* test for null limit assignment */
-          p++;
-          q = strchr(p, ' ');
-          if (q != NULL) {
-            *q = 0;
-            chan->channel.maxmembers = atoi(p);
-            strcpy(p, q + 1);
-          } else {
-            chan->channel.maxmembers = atoi(p);
-            *p = 0;
-          }
+        if (!p)
+          p = strchr(msg + 1, ' ');
+        if (!p) {
+          putlog(LOG_MISC, "*", "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
+                 chname, msg[i]);
+          break;
+        }
+        p++;
+        q = strchr(p, ' ');
+        if (q)
+          *q = 0;
+        chan->channel.maxmembers = atoi(p);
+        if(q)
+          p = q;
+        else {
+          *p = 0;
+          p = 0;
         }
         break;
       default:
-        if (strchr(chanmodes_with_args, msg[i]))
-          printf("DEBUG: here we will skip payload for mode %c\n", msg[i]);
+        if (strchr(chanmodes_with_args, msg[i])) { /* skip payload for unhandled chanmodes with args */
+          if (!p)
+            p = strchr(msg + 1, ' ');
+          if (!p) {
+            putlog(LOG_MISC, "*", "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
+                   chname, msg[i]);
+            break;
+          }
+          p = strchr(p + 1, ' ');
+        }
       }
     i++;
   }
