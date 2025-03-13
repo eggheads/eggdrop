@@ -986,8 +986,7 @@ static int got324(char *from, char *msg)
    */
   const char *chanmodes = isupport_get("CHANMODES", strlen("CHANMODES")); /* get 005 CHANMODES */
   char chanmodes_with_args[26 + 26 - 1 - 1 + 1]; /* UPPERCHARS + lowerchars -k -l + \0 */
-  char *s2 = chanmodes_with_args;
-  int s2_len = 0;
+  int len = 0;
   if (chanmodes) {
     const char *s;
     if ((s = strchr(chanmodes, ','))) { /* skip Type A */
@@ -996,17 +995,16 @@ static int got324(char *from, char *msg)
         if (*s == ',')
           count_comma++;
         else if (*s != 'k' && *s != 'l') { /* add channel mode char to chanmodes_with_args but skip +k and +l */
-          if (s2_len > sizeof chanmodes_with_args - 2) { /* bounds checking */
+          if (len > sizeof chanmodes_with_args - 2) { /* bounds checking */
             putlog(LOG_MISC, "*", "Error parsing 005 CHANMODES: too many channel modes");
             break;
           }
-          *s2++ = *s;
-          s2_len++;
+          chanmodes_with_args[len++] = *s;
         }
       } 
     }
   }
-  *s2 = 0; /* terminate chanmodes_with_args */
+  chanmodes_with_args[len] = 0;
 
   while (msg[i] > ' ') { /* msg[i] != 0 && msg[i] != ' ' */
     switch (msg[i]) {
