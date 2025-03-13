@@ -25,6 +25,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include "irc.h"
 
 
@@ -1070,11 +1071,14 @@ static int got324(char *from, char *msg)
         if (!p)
           p = strchr(msg + 1, ' ');
         if (!p) {
-          putlog(LOG_MISC, "*", "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
-                 chname, msg[i]);
+          putlog(LOG_MISC, "*",
+                 "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode k not found",
+                 chname);
           break;
         }
         p++;
+        if (*p == ':')
+          p++;
         q = strchr(p, ' ');
         if (q)
           *q = 0;
@@ -1098,15 +1102,35 @@ static int got324(char *from, char *msg)
         if (!p)
           p = strchr(msg + 1, ' ');
         if (!p) {
-          putlog(LOG_MISC, "*", "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
-                 chname, msg[i]);
+          putlog(LOG_MISC, "*",
+                 "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode l not found",
+                 chname);
           break;
         }
         p++;
+        if (*p == ':')
+          p++;
         q = strchr(p, ' ');
         if (q)
           *q = 0;
-        chan->channel.maxmembers = atoi(p);
+
+        errno = 0;
+        char *endptr;
+        unsigned long ulval = strtoul(p, &endptr, 10);
+        if (*endptr) {
+          putlog(LOG_MISC, "*",
+                 "Error parsing RPL_CHANNELMODEIS (324) for %s: payload %s for channel mode l not a number",
+                 chname, p);
+          break;
+        }
+        if ((errno == ERANGE && ulval > UINT_MAX) || (ulval > INT_MAX)) {
+          putlog(LOG_MISC, "*",
+                 "Error parsing RPL_CHANNELMODEIS (324) for %s: payload %s for channel mode l out of range",
+                 chname, p);
+          break;
+        }
+        chan->channel.maxmembers = ulval;
+
         if(q)
           p = q;
         else {
@@ -1119,7 +1143,8 @@ static int got324(char *from, char *msg)
           if (!p)
             p = strchr(msg + 1, ' ');
           if (!p) {
-            putlog(LOG_MISC, "*", "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
+            putlog(LOG_MISC, "*",
+                   "Error parsing RPL_CHANNELMODEIS (324) for %s: payload for channel mode %c not found",
                    chname, msg[i]);
             break;
           }
