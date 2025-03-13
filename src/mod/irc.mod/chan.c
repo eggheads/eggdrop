@@ -978,94 +978,119 @@ static int got324(char *from, char *msg)
     ok = 1;
   chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
+
+  const char *chanmodes = isupport_get("CHANMODES", strlen("CHANMODES"));
+  if (chanmodes)
+    printf("DEBUG: chanmodes = %s\n", chanmodes);
+
   while (msg[i] != 0) {
-    if (msg[i] == 'i')
-      chan->channel.mode |= CHANINV;
-    if (msg[i] == 'p')
-      chan->channel.mode |= CHANPRIV;
-    if (msg[i] == 's')
-      chan->channel.mode |= CHANSEC;
-    if (msg[i] == 'm')
-      chan->channel.mode |= CHANMODER;
-    if (msg[i] == 'c')
-      chan->channel.mode |= CHANNOCLR;
-    if (msg[i] == 'C')
-      chan->channel.mode |= CHANNOCTCP;
-    if (msg[i] == 'R')
-      chan->channel.mode |= CHANREGON;
-    if (msg[i] == 'M')
-      chan->channel.mode |= CHANMODREG;
-    if (msg[i] == 'r')
-      chan->channel.mode |= CHANLONLY;
-    if (msg[i] == 'D')
-      chan->channel.mode |= CHANDELJN;
-    if (msg[i] == 'u')
-      chan->channel.mode |= CHANSTRIP;
-    if (msg[i] == 'N')
-      chan->channel.mode |= CHANNONOTC;
-    if (msg[i] == 'T')
-      chan->channel.mode |= CHANNOAMSG;
-    if (msg[i] == 'd')
-      chan->channel.mode |= CHANINVIS;
-    if (msg[i] == 't')
-      chan->channel.mode |= CHANTOPIC;
-    if (msg[i] == 'n')
-      chan->channel.mode |= CHANNOMSG;
-    if (msg[i] == 'a')
-      chan->channel.mode |= CHANANON;
-    if (msg[i] == 'q')
-      chan->channel.mode |= CHANQUIET;
-    if (msg[i] == 'k') {
-      chan->channel.mode |= CHANKEY;
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* Test for null key assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          set_key(chan, p);
-          strcpy(p, q + 1);
-        } else {
-          set_key(chan, p);
-          *p = 0;
+    switch (msg[i]) {
+      case('i'):
+        chan->channel.mode |= CHANINV;
+        break;
+      case 'p':
+        chan->channel.mode |= CHANPRIV;
+        break;
+      case 's':
+        chan->channel.mode |= CHANSEC;
+        break;
+      case 'm':
+        chan->channel.mode |= CHANMODER;
+        break;
+      case 'c':
+        chan->channel.mode |= CHANNOCLR;
+        break;
+      case 'C':
+        chan->channel.mode |= CHANNOCTCP;
+        break;
+      case 'R':
+        chan->channel.mode |= CHANREGON;
+        break;
+      case 'M':
+        chan->channel.mode |= CHANMODREG;
+        break;
+      case 'r':
+        chan->channel.mode |= CHANLONLY;
+        break;
+      case 'D':
+        chan->channel.mode |= CHANDELJN;
+        break;
+      case 'u':
+        chan->channel.mode |= CHANSTRIP;
+        break;
+      case 'N':
+        chan->channel.mode |= CHANNONOTC;
+        break;
+      case 'T':
+        chan->channel.mode |= CHANNOAMSG;
+        break;
+      case 'd':
+        chan->channel.mode |= CHANINVIS;
+        break;
+      case 't':
+        chan->channel.mode |= CHANTOPIC;
+        break;
+      case 'n':
+        chan->channel.mode |= CHANNOMSG;
+        break;
+      case 'a':
+        chan->channel.mode |= CHANANON;
+        break;
+      case 'q':
+        chan->channel.mode |= CHANQUIET;
+        break;
+      case 'k':
+        chan->channel.mode |= CHANKEY;
+        p = strchr(msg, ' ');
+        if (p != NULL) {          /* Test for null key assignment */
+          p++;
+          q = strchr(p, ' ');
+          if (q != NULL) {
+            *q = 0;
+            set_key(chan, p);
+            strcpy(p, q + 1);
+          } else {
+            set_key(chan, p);
+            *p = 0;
+          }
         }
-      }
-      if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
-          !strcmp("*", chan->channel.key)))
-        /* Undernet use to show a blank channel key if one was set when
-         * you first joined a channel; however, this has been replaced by
-         * an asterisk and this has been agreed upon by other major IRC
-         * networks so we'll check for an asterisk here as well
-         * (guppy 22Dec2001) */
-        chan->status |= CHAN_ASKEDMODES;
-    }
-    if (msg[i] == 'l') {
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null limit assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          chan->channel.maxmembers = atoi(p);
-          strcpy(p, q + 1);
-        } else {
-          chan->channel.maxmembers = atoi(p);
-          *p = 0;
+        if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
+            !strcmp("*", chan->channel.key)))
+          /* Undernet use to show a blank channel key if one was set when
+           * you first joined a channel; however, this has been replaced by
+           * an asterisk and this has been agreed upon by other major IRC
+           * networks so we'll check for an asterisk here as well
+           * (guppy 22Dec2001) */
+          chan->status |= CHAN_ASKEDMODES;
+        break;
+      case 'l':
+        p = strchr(msg, ' ');
+        if (p != NULL) {          /* test for null limit assignment */
+          p++;
+          q = strchr(p, ' ');
+          if (q != NULL) {
+            *q = 0;
+            chan->channel.maxmembers = atoi(p);
+            strcpy(p, q + 1);
+          } else {
+            chan->channel.maxmembers = atoi(p);
+            *p = 0;
+          }
         }
-      }
-    }
-    if (msg[i] == 'f') { /* eat payload of UnrealIRCd +f so it does not clobber
-			    payloads of +k and / or +l */
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null payload assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          strcpy(p, q + 1);
+        break;
+      case 'f': /* eat payload of UnrealIRCd +f so it does not clobber
+            payloads of +k and / or +l */
+        p = strchr(msg, ' ');
+        if (p != NULL) {          /* test for null payload assignment */
+          p++;
+          q = strchr(p, ' ');
+          if (q != NULL) {
+            *q = 0;
+            strcpy(p, q + 1);
+          }
         }
+        break;
       }
-    }
     i++;
   }
   if (ok)
