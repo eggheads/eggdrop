@@ -271,6 +271,7 @@ Connetti in telnet il bot e  scrivi 'NEW' come tuo soprannome.
 0x90b,Abuso di desincronizzazione
 0x90c,flood
 0x911,Scrivo il file dei canali...
+# Unused ?
 0x915,Faccio una copia del file dei canali...
 
 0xa00,Nessuno è ignorato

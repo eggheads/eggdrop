@@ -385,7 +385,7 @@ static char *convert_element(char *src, char *dst)
 static void write_channels()
 {
   FILE *f;
-  char s[sizeof chanfile + 4], s1[26], w[1024], w2[1024], name[163];
+  char s[sizeof chanfile + 4], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
@@ -400,10 +400,9 @@ static void write_channels()
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file...");
-  ctime_r(&now, s1);
-  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s",
-          botnetnick, ver, s1);
+    putlog(LOG_MISC, "*", "%s", CHAN_FILE_WRITING);
+  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
+          botnetnick, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);

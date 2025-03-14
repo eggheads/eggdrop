@@ -270,6 +270,9 @@ Entre em ligação telnet com o bot e digite 'NEW' como o seu nick.
 0x90a,Alteração de modo no %s por um não op! Revertendo...
 0x90b,Abuso de dessincronização
 0x90c,flood
+0x911,Escrita do arquivo de canais...
+# Unused ?
+0x915,Cópia do arquivo de canais...
 
 0xa00,Sem ignores
 0xa01,Atualmente ignorando
