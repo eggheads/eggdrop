@@ -213,7 +213,7 @@ static void read_lang(char *langfile)
   char lbuf[512];
   char *ltext = NULL;
   char *ctmp, *ctmp1;
-  int lidx;
+  unsigned int lidx;
   int lnew = 1;
   int lline = 1;
   int lskip = 0;
@@ -526,7 +526,8 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
 {
   lang_tab *l;
   char ltext2[512];
-  int idx2, i;
+  unsigned int idx2;
+  int i;
 
   putlog(LOG_CMDS, "*", "#%s# ldump %s", dcc[idx].nick, par);
   if (par[0]) {
