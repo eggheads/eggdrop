@@ -502,6 +502,7 @@ static tcl_ints def_tcl_ints[] = {
   {"prefer-ipv6",           &pref_af,              0},
 #endif
   {"show-uname",            &show_uname,           0},
+  {"share-greet",           &share_greet,          0},
   {NULL,                    NULL,                  0}
 };
 
