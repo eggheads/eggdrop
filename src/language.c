@@ -735,12 +735,9 @@ static tcl_cmds langtcls[] = {
 
 void init_language(int flag)
 {
-  int i;
   char *deflang;
 
   if (flag) {
-    for (i = 0; i < 32; i++)
-      langtab[i] = 0;
     /* The default language is always BASELANG as language files are
      * guaranteed to exist in that language.
      */
