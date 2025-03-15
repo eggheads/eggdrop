@@ -1143,7 +1143,7 @@ void debug_help(int idx)
   }
 }
 
-FILE *resolve_help(int dcc, char *file)
+static FILE *resolve_help(int dcc, char *file)
 {
 
   char s[1024];
