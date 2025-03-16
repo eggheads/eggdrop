@@ -2154,10 +2154,20 @@ static void start_sending_users(int idx)
     memcpy(buf + len, "s ur ", 5);
     strcpy(buf + len + 5 + len2, "\n");
     updatebot(-1, dcc[idx].nick, '+', 0);
-    dcc[idx].status |= STAT_SENDING;
+    // dcc[idx].status |= STAT_SENDING;
     tputs(dcc[idx].sock, buf + len, 5 + len2 + 2);
     nfree(buf);
     new_tbuf(dcc[idx].nick);
+
+    // copied from transfer.c:dcc_get():
+    dcc[idx].status &= ~STAT_SENDING; /* was set in share_ufyes(), TODO: i guess we can skip setting it in the first place for the new share method */
+    putlog(LOG_BOTS, "*", TRANSFER_COMPLETED_USERFILE, dcc[idx].nick);
+    unlink(dcc[idx].u.xfer->filename);
+    /* Any sharebot things that were queued: */
+    // if (me && me->funcs[SHARE_DUMP_RESYNC])
+    //   ((me->funcs)[SHARE_DUMP_RESYNC]) (y);
+    dump_resync(idx);
+
     debug2("share: start_sending_users(): multiplex: end %lu %i", len, len2);
     return;
   }
