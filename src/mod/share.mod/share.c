@@ -1259,7 +1259,7 @@ static void share_ufsend2(int idx, char *par)
   close(fd);
   dcc[idx].u.xfer->filename = template;
   /* The new method has got no extra dcc[] for the file transfer,
-   * so temporarely alter the dcc[] we habe to make share_finish() happy
+   * so temporarely alter the dcc[] we have to make share_finish() happy
    */
   char host[UHOSTLEN];
   strcpy(host, dcc[idx].host);
