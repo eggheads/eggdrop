@@ -1957,13 +1957,12 @@ static int gotjoin(char *from, char *channame)
 
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
+  // :nick!user@host JOIN :#chan
   chname = newsplit(&channame);
+  fixcolon(chname);
   if (extjoin) {
     // :nick!user@host JOIN #chan account :realname
     account = newsplit(&channame);
-  } else {
-    // :nick!user@host JOIN :#chan
-    fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
   if (!chan && chname[0] == '!') {
