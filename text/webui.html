@@ -5,7 +5,9 @@ webui.html
 
 Written by Michael Ortmann
 
-Copyright (C) 2023 Eggheads Development Team
+1337ly crafted without AI and with Vanilla JS
+
+Copyright (C) 2023 - 2025 Eggheads Development Team
 -->
 <!DOCTYPE html>
 <html style="height:100%;">
@@ -29,12 +31,10 @@ Copyright (C) 2023 Eggheads Development Team
         if (event.data.indexOf(WS_ECHO_ON) > -1) {
           d.type = "text";
           echo = 1;
-          console.log("echo on");
         }
         else if (event.data.indexOf(WS_ECHO_OFF) > -1) {
           d.type = "password"
           echo = 0;
-          console.log("echo off");
         }
       });
       function b(c) {
