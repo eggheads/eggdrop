@@ -586,7 +586,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
       FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
+      select(sock + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
@@ -1408,7 +1408,11 @@ void dequeue_sockets()
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        (socklist[i].handler.sock.outbuf != NULL)) {
+        (socklist[i].handler.sock.outbuf != NULL)
+#ifdef TLS
+	&& !(socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
+#endif
+                                                 ) {
       if (socklist[i].sock > maxfd)
         maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);

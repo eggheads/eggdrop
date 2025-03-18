@@ -128,12 +128,13 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
 static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
                      char *keyword, char *text)
 {
-  char tms[25];
+  char s[26];
 
   if (ctcp_mode == 1)
     return 1;
-  strlcpy(tms, ctime(&now), sizeof tms);
-  simple_sprintf(ctcp_reply, "%s\001TIME %s\001", ctcp_reply, tms);
+  ctime_r(&now, s);
+  s[24] = 0;
+  simple_sprintf(ctcp_reply, "%s\001TIME %s\001", ctcp_reply, s);
   return 1;
 }
 
