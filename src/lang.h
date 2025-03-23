@@ -288,7 +288,8 @@
 #define CHAN_DESYNCMODE         get_language(0x90a)
 #define CHAN_DESYNCMODE_KICK    get_language(0x90b)
 #define CHAN_FLOOD              get_language(0x90c)
-#define CHAN_FILE_WRITING       get_language(0x90d)
+// 0x90d CHAN_BOGUSBAN removed
+#define CHAN_FILE_WRITING       get_language(0x90e)
 
 /* Messages referring to ignores */
 #define IGN_NONE                get_language(0xa00)
