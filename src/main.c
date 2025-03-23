@@ -1175,10 +1175,10 @@ int main(int arg_c, char **arg_v)
     dcc[term_z].u.chat->con_flags = conmask | EGG_BG_CONMASK;
     dcc[term_z].status = STAT_ECHO;
     if (isatty(dcc[term_z].sock)) {
-      putlog(LOG_DEBUG, "*", "stdout is a tty");
+      debug0("stdout is a tty");
       dcc[term_z].status |= STAT_TELNET;
     } else {
-      putlog(LOG_DEBUG, "*", "stdout is no tty");
+      debug0("stdout is no tty");
       dcc[term_z].u.chat->strip_flags = STRIP_ALL;
     }
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);
