@@ -255,11 +255,12 @@ static void read_lang(char *langfile)
         putlog(LOG_MISC, "*", "LANG: Malformed text line (missing ,) in %s at %d.",
                langfile, lline);
     } else {
-      if ((strlen(ltext) + strlen(lbuf) + 1) > ltextsize) {
+      int len = strlen(ltext);
+      if ((len + strlen(lbuf) + 1) > ltextsize) {
         ltextsize += sizeof lbuf;
         ltext = nrealloc(ltext, ltextsize);
       }
-      strcat(ltext, lbuf);
+      strcpy(ltext + len, lbuf);
     }
     if ((ctmp = strchr(ltext, '\n'))) {
       lline++;
