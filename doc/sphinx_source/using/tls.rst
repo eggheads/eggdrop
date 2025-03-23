@@ -1,5 +1,5 @@
 TLS support
-Last revised: Jan 26, 2020
+Last revised: Mar 1, 2025
 
 ===========
 TLS support
@@ -59,7 +59,7 @@ a plus sign. Example: .jump irc.server.com +6697. The same goes for
 the server list in the config file.
 
 Some NickServ services allow you to authenticate with a certificate.
-Eggdrop will use the certificte pair specified in ssl-privatekey/
+Eggdrop will use the certificate pair specified in ssl-privatekey/
 ssl-certificate for authentication.
 
 ^^^^^^
@@ -136,11 +136,11 @@ command from the Eggdrop source directory::
 
 When asked about bot's handle, put your handle instead. How to use your
 new certificate to connect to Eggdrop, depends on your irc client.
-To connect to your bot from the command line, you can use the OpenSSL
-ssl client::
+To connect to your bot from the command line using the key/cert files
+generated in the previous step, you can use the OpenSSL ssl client ::
 
-  openssl s_client -cert my.crt -key my.key -connect host:sslport 
-    
+  openssl s_client -cert my.crt -key my.key -connect host:sslport
+
 ----------------
 SSL/TLS Settings
 ----------------
