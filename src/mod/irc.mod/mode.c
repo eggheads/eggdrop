@@ -1014,6 +1014,7 @@ static int gotmode(char *from, char *origmsg)
       z = strlen(msg);
       if (msg[--z] == ' ')      /* I hate cosmetic bugs :P -poptix */
         msg[z] = 0;
+      fixcolon(msg);
       putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s", ch, chg,
              msg, from);
       nick = splitnick(&from);
