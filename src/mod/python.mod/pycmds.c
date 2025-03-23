@@ -65,7 +65,7 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
   Py_ssize_t n;
   int i;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
