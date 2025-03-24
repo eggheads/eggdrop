@@ -278,7 +278,6 @@ void dcc_dnshostbyip(sockname_t *ip)
 static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
-
   int objc = 0;
   Tcl_Obj *objv[5];
 
@@ -286,7 +285,7 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
   objv[objc++] = Tcl_NewStringObj(iptostr(&ip->addr.sa), -1);
   objv[objc++] = Tcl_NewStringObj(hostn, -1);
   objv[objc++] = Tcl_NewStringObj(ok ? "1" : "0", -1);
-  if (*(tclinfo->paras))
+  if ((tclinfo->paras) && (*(tclinfo->paras)))
     objv[objc++] = Tcl_NewStringObj(tclinfo->paras, -1);
   for (int i = 0; i < objc; i++) {
     Tcl_IncrRefCount(objv[i]);
@@ -299,7 +298,8 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
     Tcl_DecrRefCount(objv[i]);
   }
   nfree(tclinfo->proc);
-  nfree(tclinfo->paras);
+  if (tclinfo->paras)
+    nfree(tclinfo->paras);
   nfree(tclinfo);
 }
 
