@@ -297,7 +297,11 @@ void tell_verbose_status(int idx)
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
                "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
+  #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+          OpenSSL_version(OPENSSL_VERSION), MISC_HEADERVERSION);
+  #else
           SSLeay_version(SSLEAY_VERSION), MISC_HEADERVERSION);
+  #endif
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
