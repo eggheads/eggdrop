@@ -400,7 +400,7 @@ static void write_channels()
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file...");
+    putlog(LOG_MISC, "*", "%s", CHAN_FILE_WRITING);
   ctime_r(&now, s1);
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s",
           botnetnick, ver, s1);

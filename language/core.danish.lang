@@ -270,6 +270,8 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x90a,Mode skifte af ikke-chanop på %s!  Modsætter...
 0x90b,Misbruger desync
 0x90c,flood
+//0x90d - removed
+0x90e,Skrivning af kanalfil...
 
 0xa00,Ingen ignoreringer
 0xa01,Ignorerer lige nu

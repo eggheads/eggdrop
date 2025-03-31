@@ -270,6 +270,8 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x90a,Changement de mode par un non-op sur %s ! Annulation...
 0x90b,Abus d'une désynchronisation.
 0x90c,Flood.
+//0x90d - removed
+0x90e,Écriture de la liste des canaux...
 
 0xa00,Aucun ignoré.
 0xa01,Actuellement, j'ignore.

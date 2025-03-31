@@ -270,6 +270,8 @@ Telnet to the bot and enter 'NEW' as your handle.
 0x90a,Mode change by non-chanop on %s!  Reversing...
 0x90b,Abusing desync
 0x90c,flood
+//0x90d - removed
+0x90e,Writing channel file...
 
 0xa00,No ignores
 0xa01,Currently ignoring

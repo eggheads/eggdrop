@@ -277,6 +277,8 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x90a,Modewechsel von nicht-op auf %s!  Mache das wieder rueckgaengig...
 0x90b,Missbrauch eines Desync
 0x90c,Flood
+//0x90d - removed
+0x90e,Schreiben der Channeldatei...
 
 0xa00,keine ignorierten Benutzer 
 0xa01,Im Moment werden ignoriert

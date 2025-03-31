@@ -270,6 +270,8 @@ Telnettaa botille ja syötä 'UUSI' kuin sinun nickkisi.
 0x90a,Moodi vaihdettu väärän kanavaopin %s takia! Käännetään...
 0x90b,Haukutaan epäsynkkaaja
 0x90c,floodaaminen
+//0x90d - removed
+0x90e,Kanavatiedoston kirjoittaminen...
 
 0xa00,Ei ignooreja
 0xa01,Nykyisiä  ignooreja
