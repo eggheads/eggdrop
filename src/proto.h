@@ -309,6 +309,7 @@ int readtclprog(char *fname);
 
 /* tls.c */
 #ifdef TLS
+void ssl_cleanup();
 int ssl_handshake(int, int, int, int, char *, IntFunc);
 char *ssl_fpconv(char *in, char *out);
 const char *ssl_getuid(int sock);
