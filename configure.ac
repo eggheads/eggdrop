@@ -68,7 +68,7 @@ AC_PROG_MAKE_SET
 
 AC_PROG_MKDIR_P
 # Replace relative path with absolute path
-MKDIR_P=$(echo "$MKDIR_P" | sed "s|^./misc|${abs_top_srcdir}/misc|")
+MKDIR_P=$(echo "$MKDIR_P" | sed "s|^./misc|${ac_pwd}/misc|")
 
 AC_PROG_RANLIB
 AC_PROG_LN_S
