@@ -74,7 +74,7 @@ static int tcl_isupport_get STDOBJVAR
   BADOBJARGS(2, 3, 2, "?setting?");
   if (objc == 2) {
     tclres = Tcl_NewListObj(0, NULL);
- 
+
    for (struct isupport *data = isupport_list; data; data = data->next) {
       Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(data->key, -1));
       Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(isupport_get_from_record(data), -1));

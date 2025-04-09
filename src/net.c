@@ -1255,7 +1255,7 @@ int sockgets(char *s, int *len)
   }
 /* NO! */
 /* if (!s[0]) strcpy(s," ");  */
-  if (!data) { 
+  if (!data) {
     s[0] = 0;
     if (strlen(xx) >= READMAX) {
       /* String is too long, so just insert fake \n */

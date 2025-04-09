@@ -1375,7 +1375,7 @@ static int got410(char *from, char *msg) {
   char *cmd;
 
   newsplit(&msg);
- 
+
   putlog(LOG_SERV, "*", "%s", msg);
   cmd = newsplit(&msg);
   putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
@@ -1457,7 +1457,7 @@ static int del_capability(char *name) {
   putlog(LOG_SERV, "*", "CAP: %s not found, can't remove", name);
   return -1;
 }
-  
+
 
 /* Remove multiple capabilities from the linked list
  * msg is in format "multi-prefix sasl server-time"
@@ -1560,7 +1560,7 @@ static int gotcap(char *from, char *msg) {
     if (multiline) {
       return 0;
     }
-    current = cap; 
+    current = cap;
     /* CAP is supported, yay! If it is supported, lets load what we want to request */
     while (current != NULL) {
       if (!strcmp(current->name, "sasl")) {

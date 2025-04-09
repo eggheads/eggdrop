@@ -749,13 +749,13 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 int decode_surrogates(const char *str, uint32_t *high, uint32_t *low)
 {
   *high  = (*str++ & 0xf) << 12;
-  *high |= (*str++ & 0x3f) << 6; 
+  *high |= (*str++ & 0x3f) << 6;
   *high |= (*str++ & 0x3f) << 0;
   if (*high < 0xD800 || *high > 0xDBFF) {
     return 0;
   }
   *low  = (*str++ & 0xf) << 12;
-  *low |= (*str++ & 0x3f) << 6; 
+  *low |= (*str++ & 0x3f) << 6;
   *low |= (*str++ & 0x3f) << 0;
   if (*low < 0xDC00 || *low > 0xDFFF) {
     return 0;
@@ -914,7 +914,7 @@ void init_unicodesup(void)
 void init_tcl0(int argc, char **argv)
 {
   Tcl_NotifierProcs notifierprocs;
- 
+
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -926,7 +926,7 @@ void init_tcl0(int argc, char **argv)
   notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-  
+
   /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */

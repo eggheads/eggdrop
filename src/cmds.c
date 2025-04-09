@@ -3007,7 +3007,7 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
      * haven't because we are lazy. Sorry.
      */
     if (expire_time > (60 * 60 * 24 * 365 * 5)) {
-      dprintf(idx, "expire time must be equal to or less than 5 years" 
+      dprintf(idx, "expire time must be equal to or less than 5 years"
           "(1825 days)\n");
       return;
     }

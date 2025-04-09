@@ -608,7 +608,7 @@ Function global_table[] = {
 #else
   (Function) 0,
 #endif
-/* 312 - 315 */    
+/* 312 - 315 */
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) crypto_verify,
   (Function) egg_uname,

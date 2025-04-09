@@ -787,7 +787,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
         bi->ssl |= TLS_BOT;
         if (argc == 5) {
           bi->ssl |= TLS_RELAY;
-        } 
+        }
       } else {
         bi->ssl &= ~TLS_BOT;
         if (argc == 5) {

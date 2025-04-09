@@ -301,7 +301,7 @@ static int tcl_do_console(Tcl_Interp *irp, ClientData cd, int argc,
   pls = 1;
 
   for (arg = 2; arg < argc; arg++) {
-    if (argv[arg][0] && !reset && ((strchr(CHANMETA, argv[arg][0]) 
+    if (argv[arg][0] && !reset && ((strchr(CHANMETA, argv[arg][0])
         != NULL) || (argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
         /* If we don't find the channel, and it starts with a +, assume it
@@ -710,7 +710,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
   struct sockaddr_storage ss;
   Tcl_Obj *masterlist = NULL; /* initialize to NULL to make old gcc versions
                                * happy */
- 
+
   if (src) {
     masterlist = Tcl_NewListObj(0, NULL);
   }
@@ -1268,7 +1268,7 @@ static int tcl_listen STDVAR
  * error for this case to get around BADARGS, and handle other cases further
  * down in the code
  *
- * Check if extra args are config comments 
+ * Check if extra args are config comments
  */
   if (argc > 6) {
     if (argv[6][0] == '#') {

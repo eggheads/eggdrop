@@ -2,7 +2,7 @@
  * twitch.c -- part of twitch.mod
  *   A module that allows Eggdrop to connect to the Twitch game streaming
  *   service. Mostly.
- *   
+ *
  *   Twitch has an IRC interface, but it is only provided as a gateway and does
  *   not follow RFC in 97% of what it does. This module is intended to add some
  *   basic logging features, add some binds for twitch events, and track
@@ -360,13 +360,13 @@ static int gotwhisper(char *from, char *msg, Tcl_Obj *tags) {
     check_tcl_whisper(from, code, msg);
   }
   putlog(LOG_MSGS, "*", "[%s] %s %s", from, code, msg);
-  return 0; 
+  return 0;
 }
 
 static int gotclearmsg(char *from, char *msg, Tcl_Obj *tags) {
   char nick[NICKLEN], *chan, msgid[TOTALTAGMAX];
   char *value;
-  
+
   chan = newsplit(&msg);
   fixcolon(msg);
 
@@ -409,7 +409,7 @@ static int gothosttarget(char *from, char *msg) {
   check_tcl_hosttarget(chan, nick, viewers);
   if (nick[0] == '-') {             /* Check if it is an unhost */
     putlog(LOG_SERV, "*", "* TWITCH: %s has stopped host mode.", chan);
-  } else {   
+  } else {
     putlog(LOG_SERV, "*", "* TWITCH: %s has started hosting %s%s",
             chan, nick, (viewers) ? s : "");
   }
@@ -421,7 +421,7 @@ static int gotuserstate(char *from, char *chan, Tcl_Obj *tags) {
   int done = 0, trigger_bind = 0;
   Tcl_DictSearch s;
   Tcl_Obj *value, *key;
-  
+
   if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
     tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
     explicit_bzero(tchan, sizeof(twitchchan_t));
@@ -589,7 +589,7 @@ static int tcl_userstate STDVAR {
   Tcl_DStringAppendElement(&usdict, "mod");
   snprintf(s, sizeof s, "%d", tchan->userstate.mod);
   Tcl_DStringAppendElement(&usdict, s);
-  
+
   Tcl_AppendResult(irp, Tcl_DStringValue(&usdict), NULL);
   Tcl_DStringFree(&usdict);
   return TCL_OK;

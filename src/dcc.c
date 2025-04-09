@@ -328,7 +328,7 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   unsigned char digest[16];
   int i;
 
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5) 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
   const EVP_MD *md = EVP_md5();
   unsigned int md_len;
