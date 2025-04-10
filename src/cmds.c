@@ -3001,14 +3001,14 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
         p_expire = p + 1;
       }
     }
-    /* For whomever is stuck with maintaining this in 2033- this will
+    /* For whomever is stuck with maintaining this in 2033 - this will
      * break. Hopefully we've dealt with the max unixtime issue by now
      * (Year 2038 problem), but if you're reading this, clearly we
      * haven't because we are lazy. Sorry.
      */
     if (expire_time > (60 * 60 * 24 * 365 * 5)) {
-      dprintf(idx, "expire time must be equal to or less than 5 years"
-          "(1825 days)\n");
+      dprintf(idx, "expire time must be equal to or less than 5 years "
+              "(1825 days)\n");
       return;
     }
   }
