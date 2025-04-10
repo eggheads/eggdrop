@@ -1270,6 +1270,7 @@ static void share_ufsend(int idx, char *par)
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
+      fclose(f);
     } else {
       strcpy(dcc[i].nick, "*users");
       dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
