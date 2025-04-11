@@ -308,9 +308,9 @@ static int tcl_timerexists STDVAR
   BADARGS(2, 2, " timerName");
 
   if (find_timer(timer, argv[1])) {
-    Tcl_AppendResult(irp, "1", NULL);
+    Tcl_SetResult(irp, "1", TCL_STATIC);
   } else {
-    Tcl_AppendResult(irp, "0", NULL);
+    Tcl_SetResult(irp, "0", TCL_STATIC);
   }
   return TCL_OK;
 }
@@ -320,9 +320,9 @@ static int tcl_utimerexists STDVAR
   BADARGS(2, 2, " utimerName");
 
   if (find_timer(utimer, argv[1])) {
-    Tcl_AppendResult(irp, "1", NULL);
+    Tcl_SetResult(irp, "1", TCL_STATIC);
   } else {
-    Tcl_AppendResult(irp, "0", NULL);
+    Tcl_SetResult(irp, "0", TCL_STATIC);
   }
   return TCL_OK;
 }
