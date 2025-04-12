@@ -67,6 +67,8 @@ static char opchars[8];         /* the chars in a /who reply meaning op */
 
 static Tcl_Obj *tcl_account;
 
+static mode_info_t modecharinfo[256];
+
 #include "chan.c"
 #include "mode.c"
 #include "cmdsirc.c"
@@ -1118,6 +1120,29 @@ static void tell_account_tracking_status(int idx, int details)
   }
 }
 
+static void tell_modeparsing_type(int idx, mode_type_t type)
+{
+  dprintf(idx, "    %s modes: %s", MODE_TYPE_STR(type), type == MODETYPE_PREFIX ? "" : "+");
+  for (int i = 0; i < 256; i++) {
+    if (modecharinfo[i].type == type) {
+      dprintf(idx, "%c", i);
+      if (type == MODETYPE_PREFIX) {
+        dprintf(idx, "(%c) ", modecharinfo[i].prefix);
+      }
+    }
+  }
+  dprintf(idx, "\n");
+}
+
+static void tell_modeparsing(int idx)
+{
+  tell_modeparsing_type(idx, MODETYPE_FLAG);
+  tell_modeparsing_type(idx, MODETYPE_LIMIT);
+  tell_modeparsing_type(idx, MODETYPE_KEY);
+  tell_modeparsing_type(idx, MODETYPE_LIST);
+  tell_modeparsing_type(idx, MODETYPE_PREFIX);
+}
+
 static void irc_report(int idx, int details)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -1157,6 +1182,9 @@ static void irc_report(int idx, int details)
     dprintf(idx, "    %s\n", q);
   }
   tell_account_tracking_status(idx, details);
+  if (details) {
+    tell_modeparsing(idx);
+  }
 }
 
 /* Many networks either support max_bans/invite/exempts/ *or*

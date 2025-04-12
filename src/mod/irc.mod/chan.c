@@ -2843,6 +2843,103 @@ static int parse_maxlist(const char *value)
   return 0;
 }
 
+// selectively update global information table,
+// either chanmodes only or prefix modes only,
+// then delete all non-existing modes of that type only
+static void update_chanmodes(mode_info_t *modes, int is_prefix)
+{
+  for (int i = 0; i < 256; i++) {
+    if (modes[i].type) {
+      // is in the new mode info, must overwrite even if type changed
+      modecharinfo[i] = modes[i]; // struct copy
+    } else if (modecharinfo[i].type) {
+      // was in the old mode info but not in the new mode info -> delete
+      // but respect if its type has already changed
+      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) || (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
+        memset(&modecharinfo[i], 0, sizeof modecharinfo[i]);
+      }
+    }
+  }
+}
+
+// CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz
+// listmodes, keymodes, limitmodes, flagmodes
+static int process_chanmodes(char *value)
+{
+  mode_type_t modetype = MODETYPE_LIST;
+  mode_info_t modes[256];
+
+  memset(&modes, 0, sizeof modes);
+
+  while (*value) {
+    // parse all modes until ','
+    while (*value && isalnum((unsigned char)*value)) {
+      modes[(unsigned char)*value].type = modetype;
+      modes[(unsigned char)*value].prefix = '\0';
+      debug2("Learned mode type: +%c type %s", *value, MODE_TYPE_STR(modetype));
+      value++;
+    }
+    // sanity check
+    if ((modetype != MODETYPE_FLAG && *value != ',') || (modetype == MODETYPE_FLAG && *value)) {
+      return -1;
+    }
+    // next section in order
+    if (modetype == MODETYPE_LIST) {
+      modetype = MODETYPE_KEY;
+    } else if (modetype == MODETYPE_KEY) {
+      modetype = MODETYPE_LIMIT;
+    } else if (modetype == MODETYPE_LIMIT) {
+      modetype = MODETYPE_FLAG;
+    } else {
+      break;
+    }
+    value++;
+  }
+  if (modetype != MODETYPE_FLAG) {
+    return -1;
+  }
+  // update global info table, but only for chanmodes (not prefix modes)
+  update_chanmodes(modes, 0);
+  return 0;
+}
+
+// PREFIX=(ov)@+
+static int process_prefix(const char *value)
+{
+  const char *prefix = value;
+  mode_info_t modes[256];
+
+  memset(&modes, 0, sizeof modes);
+
+  if (*value++ != '(') {
+    return -1;
+  }
+  while (*prefix && *prefix != ')') {
+    prefix++;
+  }
+  if (*prefix++ != ')') {
+    return -1;
+  }
+  // PREFIX=(ov)@+
+  // *value--^  ^--*prefix
+  while (*value && *value != ')') {
+    if (!*prefix || !isalnum((unsigned char)*value)) {
+      return -1;
+    }
+    modes[(unsigned char)*value].type = MODETYPE_PREFIX;
+    modes[(unsigned char)*value].prefix = *prefix;
+    debug3("Learned mode type: +%c type %s, prefixchar %c", *value, MODE_TYPE_STR(MODETYPE_PREFIX), *prefix);
+    value++;
+    prefix++;
+  }
+  if (*value != ')' || *prefix) {
+    return -1;
+  }
+  // update global info table, but only for prefixes
+  update_chanmodes(modes, 1);
+  return 0;
+}
+
 static int irc_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
@@ -2865,6 +2962,20 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
+  } else if (!strcmp(key, "CHANMODES")) {
+    if (!isset) {
+      value = "";
+    }
+    if (process_chanmodes(value)) {
+      putlog(LOG_MISC, "*", "Error: isupport unable to parse CHANMODES=%s, ignoring", isset ? value : "(unset)");
+    }
+  } else if (!strcmp(key, "PREFIX")) {
+    if (!isset) {
+      value = "";
+    }
+    if (process_prefix(value)) {
+      putlog(LOG_MISC, "*", "Error: isupport unable to parse PREFIX=%s, ignoring", isset ? value : "(unset)");
+    }
   }
   return 0;
 }
