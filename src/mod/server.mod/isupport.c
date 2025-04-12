@@ -418,7 +418,7 @@ void isupport_clear_values(int cleardefaultvalues) {
 void isupport_preconnect(void) {
   const char *def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
 
-  if (!def)
+  if (!def || !*def)
     def = isupport_default;
   isupport_parse(def, isupport_setdefault);
 }
