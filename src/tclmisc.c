@@ -303,7 +303,7 @@ static int tcl_utimer STDVAR
   Tcl_AppendResult(irp, x, NULL);
   return TCL_OK;
 }
-static int tcl_timerexists STDVAR
+static int tcl_timerexistsname STDVAR
 {
   BADARGS(2, 2, " timerName");
 
@@ -315,7 +315,7 @@ static int tcl_timerexists STDVAR
   return TCL_OK;
 }
 
-static int tcl_utimerexists STDVAR
+static int tcl_utimerexistsname STDVAR
 {
   BADARGS(2, 2, " utimerName");
 
@@ -845,8 +845,8 @@ tcl_cmds tclmisc_cmds[] = {
   {"putloglev",       tcl_putloglev},
   {"timer",               tcl_timer},
   {"utimer",             tcl_utimer},
-  {"timerexists",   tcl_timerexists},
-  {"utimerexists", tcl_utimerexists},
+  {"timerexistsname",   tcl_timerexistsname},
+  {"utimerexistsname", tcl_utimerexistsname},
   {"killtimer",       tcl_killtimer},
   {"killutimer",     tcl_killutimer},
   {"timers",             tcl_timers},
