@@ -83,7 +83,7 @@ extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
 static char **argv;
-char *argv0;
+const char *argv0;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -471,7 +471,7 @@ static void show_help() {
          "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
-         "-v  Show version info and exit.\n\n", argv[0]);
+         "-v  Show version info and exit.\n\n", argv0);
   bg_send_quit(BG_ABORT);
 }
 
