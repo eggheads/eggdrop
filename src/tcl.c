@@ -319,17 +319,17 @@ static void tcl_cleanup_stringinfo(ClientData cd)
 /* Compatibility wrapper that calls Tcl functions with String API */
 static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-  static int max;
-  static const char **argv;
+  const char **argv;
   int i;
   struct tcl_call_stringinfo *info = cd;
   /* The string API guarantees argv[argc] == NULL, unlike the obj API */
-  if (objc + 1 > max)
-    argv = nrealloc(argv, (objc + 1) * sizeof *argv);
+  argv = nmalloc((objc + 1) * sizeof *argv); /* be reentrant, do not nrealloc */
   for (i = 0; i < objc; i++)
     argv[i] = Tcl_GetString(objv[i]);
   argv[objc] = NULL;
-  return (info->proc)(info->cd, interp, objc, argv);
+  i = (info->proc)(info->cd, interp, objc, argv);
+  nfree(argv);
+  return i;
 }
 
 /* The standard case of no actual cd */
