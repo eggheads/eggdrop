@@ -715,7 +715,7 @@ static int gotnotice(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      if ((p - p1) < sizeof ctcpbuf) {
+      if ((p - p1) >= sizeof ctcpbuf) {
         putlog(LOG_SERV, "*", "Warning: Got NOTICE CTCP reply longer than "
                STRINGIFY(CTCP_MAX) " bytes: Bogus server?");
         return 0;
