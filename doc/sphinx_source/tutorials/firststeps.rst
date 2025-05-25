@@ -80,10 +80,10 @@ which will enforce the s, n, and t flags on a channel.
 Automatically restarting an Eggdrop
 -----------------------------------
 
-A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it. 
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer Linux systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.
 
-Crontab Method (Old)
-^^^^^^^^^^^^^^^^^^^^
+Crontab Method
+^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
@@ -103,8 +103,8 @@ By default, it should create an entry that looks similar to::
 
 This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
 
-Systemd Method (Newer Systems)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Systemd Method (Newer Linux Systems)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
@@ -173,3 +173,7 @@ You will need to determine your public key fingerprint by using::
 Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
+
+* **SCRAM-SHA-256**: To use this method, set sasl-mechanism to 3.
+
+* **SCRAM-SHA-512**: To use this method, set sasl-mechanism to 4.

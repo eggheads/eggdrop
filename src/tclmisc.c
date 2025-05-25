@@ -405,12 +405,13 @@ static int tcl_unixtime STDVAR
 static int tcl_ctime STDVAR
 {
   time_t tt;
-  char s[25];
+  char s[26];
 
   BADARGS(2, 2, " unixtime");
 
   tt = (time_t) atol(argv[1]);
-  strlcpy(s, ctime(&tt), sizeof s);
+  ctime_r(&tt, s);
+  s[24] = 0;
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -785,7 +786,11 @@ static int tcl_status STDVAR
   if ((argc < 2) || !strcmp(argv[1], "tls")) {
     Tcl_AppendElement(irp, "tls");
 #ifdef TLS
+  #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    Tcl_AppendElement(irp, OpenSSL_version(OPENSSL_VERSION));
+  #else
     Tcl_AppendElement(irp, SSLeay_version(SSLEAY_VERSION));
+  #endif
 #else
     Tcl_AppendElement(irp, "disabled");
 #endif
