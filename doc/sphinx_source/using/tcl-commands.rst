@@ -2375,7 +2375,7 @@ utimers
 
   Description: lists all active secondly timers.
 
-  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of seconds left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 

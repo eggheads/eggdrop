@@ -691,7 +691,8 @@ static int gotmsg(char *from, char *msg)
  */
 static int gotnotice(char *from, char *msg)
 {
-  char *to, *nick, ctcpbuf[512], *p, *p1, buf[512], *uhost = buf, *ctcp;
+  #define CTCP_MAX 512
+  char *to, *nick, ctcpbuf[CTCP_MAX], *p, *p1, buf[512], *uhost = buf, *ctcp;
   struct userrec *u;
   int ignoring;
 
@@ -714,7 +715,13 @@ static int gotnotice(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      ctcp = strcpy(ctcpbuf, p1);
+      if ((p - p1) < sizeof ctcpbuf) {
+        putlog(LOG_SERV, "*", "Warning: Got NOTICE CTCP reply longer than "
+               STRINGIFY(CTCP_MAX) " bytes: Bogus server?");
+        return 0;
+      }
+      strlcpy(ctcpbuf, p1, sizeof ctcpbuf);
+      ctcp = ctcpbuf;
       memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       if (!ignoring)
         detect_flood(nick, uhost, from, FLOOD_CTCP);
