@@ -143,4 +143,4 @@ If you want to try these out, join #eggdrop on Libera and check your answers (an
 
     <br>
 
-Copyright (C) 2003 - 2023 Eggheads Development Team
+Copyright (C) 2003 - 2024 Eggheads Development Team

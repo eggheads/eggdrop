@@ -1,7 +1,7 @@
 .. highlight:: text
 
 Eggdrop Tcl Commands
-Last revised: January 24, 2021
+Last revised: January 6, 2024
 
 ====================
 Eggdrop Tcl Commands
@@ -13,12 +13,9 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.5. Scripts written for v1.3, v1.4,
-1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
-depending on the script. Scripts which were written for v0.9, v1.0, v1.1
-or v1.2 will probably not work without modification. Commands which have
-been changed in this version of Eggdrop (or are just new commands) are
-marked with vertical bars (|) on the left.
+This list is accurate for Eggdrop v1.10.0. Most scripts written for the v1.3, v1.4,
+1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
+Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
 Output Commands
 ---------------
@@ -264,7 +261,7 @@ getuser <handle> [entry-type] [extra info]
   Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
   +----------+-------------------------------------------------------------------------------------+
-  | ACCOUNT  | returns thee a list of servivce accounts associated with the user                   |
+  | ACCOUNT  | returns the list of service accounts associated with the user                       |
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
@@ -909,7 +906,7 @@ channel add <name> [option-list]
 channel set <name> <options...>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.
+  Description: sets options for the channel specified. `options` is a flat list of either +/-settings or key/value pairs. The full list of possible options are given in doc/settings/mod.channels. Note: Tcl code settings such as the need-* settings must be valid Tcl code as a single word, for example ``channel set #lamest need-op { putmsg ChanServ "op #lamest" }``
 
   Returns: nothing
 
@@ -1135,9 +1132,9 @@ nick2hand <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-account2nicks <handle> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+account2nicks <account> [channel]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
@@ -2011,8 +2008,7 @@ dccsend <filename> <ircnick>
   | 4     | the file was queued for later transfer, which means that person has |
   |       | too many file transfers going right now                             |
   +-------+---------------------------------------------------------------------+
-  | 5     | copy-to-tmp is enabled and the file already exists in the temp      |
-  |       | directory                                                           |
+  | 5     | the file could not be opened or temporary file could not be created |
   +-------+---------------------------------------------------------------------+
 
   Module: transfer
@@ -2201,6 +2197,26 @@ setflags <dir> [<flags> [channel]]
 
   Module: filesys
 
+PBKDF2 Module
+-------------
+
+^^^^^^^^^^^^^^^
+encpass2 <pass>
+^^^^^^^^^^^^^^^
+
+
+  Returns: a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
+
+  Module: pbkdf2
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Returns: a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
+
+  Module: pbkdf2
+
 Miscellaneous Commands
 ----------------------
 
@@ -2227,6 +2243,8 @@ unbind <type> <flags> <keyword/mask> <proc-name>
 ^^^^^^^^^^^^^^^^^
 binds [type/mask]
 ^^^^^^^^^^^^^^^^^
+
+  Description: By default, lists Tcl binds registered with the Eggdrop. You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and 'python' to view Python binds. Alternately, you can specify a bind type (pub, msg, etc) to view all binds that match that type of bind, or a mask that is matched against the command associated with the bind.
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
         {<type> <flags> <name> <hits> <proc>}
@@ -2357,7 +2375,7 @@ utimers
 
   Description: lists all active secondly timers.
 
-  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of seconds left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
@@ -2898,6 +2916,7 @@ Removing a bind
 To remove a bind, use the 'unbind' command. For example, to remove the
 bind for the "stop" msg command, use 'unbind msg - stop msg:stop'.
 
+.. _tcl_binds:
 
 ^^^^^^^^^^
 Flag Masks
@@ -2947,6 +2966,8 @@ Some additional examples:
 +------------+-----------------------------------------------------------------+
 
 As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
+
+.. _bind_types:
 
 ^^^^^^^^^^
 Bind Types
@@ -3278,7 +3299,7 @@ The following is a list of bind types and how they work. Below each bind type is
 
   procname <idx> <text>
 
-  Description: party line and file system users have their text sent through filt before being processed. If the proc returns a blank string, the text is considered parsed. Otherwise, the bot will use the text returned from the proc and continue parsing that
+  Description: party line and file system users have their text sent through filt before being processed. 'mask' is a text mask that can contain wildcards and is used for matching text sent on the partyline. If the proc returns a blank string, the partyline texr is continued to be parsed as-is. Otherwise, the bot will instead use the text returned from the proc for continued parsing.
 
   Module: core
 
@@ -3767,4 +3788,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2023 Eggheads Development Team
+  Copyright (C) 1999 - 2024 Eggheads Development Team

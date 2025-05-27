@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -755,7 +755,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   #define FROMLEN 40
   int status, i, iaway, sock;
-  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[81], ssf[81];
+  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[81], ssf[20 + 1 + sizeof botf];
   struct userrec *u;
 
   /* Notes have a length limit. Note + PRIVMSG header + nick + date must
@@ -786,7 +786,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
       if (strchr(from, '@')) {
         strcpy(botf, from);
       } else
-        sprintf(botf, "%s@%s", from, botnetnick);
+        snprintf(botf, sizeof botf, "%s@%s", from, botnetnick);
 
     } else
       strcpy(botf, botnetnick);
@@ -803,7 +803,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
       dprintf(idx, "-> %s@%s: %s\n", x, p, msg);
 
     if (idx >= 0) {
-      sprintf(ssf, "%lu:%s", dcc[idx].sock, botf);
+      snprintf(ssf, sizeof ssf, "%lu:%s", dcc[idx].sock, botf);
       botnet_send_priv(i, ssf, x, p, "%s", msg);
     } else
       botnet_send_priv(i, botf, x, p, "%s", msg);

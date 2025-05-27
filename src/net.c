@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 
 #include <fcntl.h>
 #include "main.h"
+#include "modules.h"
 #include <limits.h>
 #include <string.h>
 #include <netdb.h>
@@ -42,7 +43,6 @@
 #  include <unistd.h>
 #endif
 #include <setjmp.h>
-#include "mod/server.mod/server.h"
 
 #ifdef TLS
 #  include <openssl/err.h>
@@ -130,7 +130,7 @@ char *iptostr(struct sockaddr *sa)
  */
 int setsockname(sockname_t *addr, char *src, int port, int allowres)
 {
-  char *endptr, *src2 = src;;
+  char *endptr, *src2 = src;
   long val;
   IP ip;
   volatile int af = AF_UNSPEC;
@@ -586,7 +586,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
       FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
+      select(sock + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
@@ -894,12 +894,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct timeval t;
   fd_set fdr, fdw, fde;
   int i, x, maxfd_r, maxfd_w, maxfd_e;
-  int grab = 511, tclsock = -1, events = 0;
+  int grab = READMAX, tclsock = -1, events = 0;
   struct threaddata *td = threaddata();
   int maxfd;
 #ifdef EGG_TDNS
   int fd;
   struct dns_thread_node *dtn, *dtn_prev;
+  void *res;
 #endif
 
   maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
@@ -924,11 +925,13 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   t.tv_sec = td->blocktime.tv_sec;
   t.tv_usec = td->blocktime.tv_usec;
 
+  call_hook(HOOK_PRE_SELECT);
   x = select((SELECT_TYPE_ARG1) maxfd + 1,
              SELECT_TYPE_ARG234 (maxfd_r >= 0 ? &fdr : NULL),
              SELECT_TYPE_ARG234 (maxfd_w >= 0 ? &fdw : NULL),
              SELECT_TYPE_ARG234 (maxfd_e >= 0 ? &fde : NULL),
              SELECT_TYPE_ARG5 &t);
+  call_hook(HOOK_POST_SELECT);
   if (x == -1)
     return -2;                  /* socket error */
   if (x == 0)
@@ -938,8 +941,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
     if (!tclonly && ((!(slist[i].flags & (SOCK_UNUSED | SOCK_TCL))) &&
         ((FD_ISSET(slist[i].sock, &fdr)) ||
 #ifdef TLS
-        (slist[i].ssl && (SSL_pending(slist[i].ssl) ||
-         !SSL_is_init_finished(slist[i].ssl))) ||
+        (slist[i].ssl && !SSL_is_init_finished(slist[i].ssl)) ||
 #endif
         ((slist[i].sock == STDOUT) && (!backgrd) &&
          (FD_ISSET(STDIN, &fdr)))))) {
@@ -974,7 +976,12 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       {
         if (slist[i].ssl) {
           x = SSL_read(slist[i].ssl, s, grab);
-          if (x < 0) {
+          if (!x && (SSL_get_shutdown(slist[i].ssl) == SSL_RECEIVED_SHUTDOWN)) {
+            *len = slist[i].sock;
+            slist[i].flags &= ~SOCK_CONNECT;
+            debug1("net: SSL_read(): received shutdown sock %i", slist[i].sock);
+            return -1;
+          } else if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
@@ -1054,23 +1061,24 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
+    pthread_mutex_lock(&dtn->mutex);
+    if (*dtn->strerror)
+      debug2("%s: hostname %s", dtn->strerror, dtn->host);
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
-      if (dtn->type == DTN_TYPE_HOSTBYIP) {
-        pthread_mutex_lock(&dtn->mutex);
-        call_hostbyip(&dtn->addr, dtn->host, dtn->ok);
-        pthread_mutex_unlock(&dtn->mutex);
-      }
-      else {
-        pthread_mutex_lock(&dtn->mutex);
-        call_ipbyhost(dtn->host, &dtn->addr, dtn->ok);
-        pthread_mutex_unlock(&dtn->mutex);
-      }
-      close(dtn->fildes[0]);
+      if (dtn->type == DTN_TYPE_HOSTBYIP)
+        call_hostbyip(&dtn->addr, dtn->host, !*dtn->strerror);
+      else
+        call_ipbyhost(dtn->host, &dtn->addr, !*dtn->strerror);
+      pthread_mutex_unlock(&dtn->mutex);
+      close(fd);
+      if (pthread_join(dtn->thread_id, &res))
+        putlog(LOG_MISC, "*", "sockread(): pthread_join(): error = %s", strerror(errno));
       dtn_prev->next = dtn->next;
       nfree(dtn);
       dtn = dtn_prev;
-    }
+    } else
+      pthread_mutex_unlock(&dtn->mutex);
     dtn_prev = dtn;
   }
 #endif
@@ -1099,10 +1107,9 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
  * dcc functions. Simply ignore it.
  * Returns -5 if tcl sockets are busy but not eggdrop sockets.
  */
-
 int sockgets(char *s, int *len)
 {
-  char xx[RECVLINEMAX], *p, *px, *p2;
+  char xx[READMAX + 2], *p, *px, *p2;
   int ret, i, data = 0;
   size_t len2;
   struct threaddata *td = threaddata();
@@ -1129,7 +1136,7 @@ int sockgets(char *s, int *len)
             p++;
           *p2 = 0;
 
-          strlcpy(s, socklist[i].handler.sock.inbuf, RECVLINEMAX-1);
+          strlcpy(s, socklist[i].handler.sock.inbuf, READMAX + 1);
           if (*p) {
             len2 = strlen(p) + 1;
             px = nmalloc(len2);
@@ -1145,15 +1152,15 @@ int sockgets(char *s, int *len)
         }
       } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
-        if (socklist[i].handler.sock.inbuflen <= RECVLINEMAX-2) {
+        if (socklist[i].handler.sock.inbuflen <= READMAX) {
           *len = socklist[i].handler.sock.inbuflen;
           memcpy(s, socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuflen);
           nfree(socklist[i].handler.sock.inbuf);
           socklist[i].handler.sock.inbuf = NULL;
           socklist[i].handler.sock.inbuflen = 0;
         } else {
-          /* Split up into chunks of RECVLINEMAX-2 bytes. */
-          *len = RECVLINEMAX-2;
+          /* Split up into chunks of READMAX bytes. */
+          *len = READMAX;
           memcpy(s, socklist[i].handler.sock.inbuf, *len);
           memcpy(socklist[i].handler.sock.inbuf, socklist[i].handler.sock.inbuf + *len, *len);
           socklist[i].handler.sock.inbuflen -= *len;
@@ -1214,21 +1221,22 @@ int sockgets(char *s, int *len)
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
-    socklist[ret].handler.sock.inbuf = nmalloc(strlen(p) + strlen(xx) + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, p);
-    strcat(socklist[ret].handler.sock.inbuf, xx);
+    len2 = strlen(p);
+    socklist[ret].handler.sock.inbuf = nmalloc(len2 + strlen(xx) + 1);
+    memcpy(socklist[ret].handler.sock.inbuf, p, len2);
+    strcpy(socklist[ret].handler.sock.inbuf + len2, xx);
     nfree(p);
-    if (strlen(socklist[ret].handler.sock.inbuf) < RECVLINEMAX) {
+    if (strlen(socklist[ret].handler.sock.inbuf) < READMAX + 2) {
       strcpy(xx, socklist[ret].handler.sock.inbuf);
       nfree(socklist[ret].handler.sock.inbuf);
       socklist[ret].handler.sock.inbuf = NULL;
       socklist[ret].handler.sock.inbuflen = 0;
     } else {
       p = socklist[ret].handler.sock.inbuf;
-      socklist[ret].handler.sock.inbuflen = strlen(p) - RECVLINEMAX-2;
+      socklist[ret].handler.sock.inbuflen = strlen(p) - READMAX;
       socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-      strcpy(socklist[ret].handler.sock.inbuf, p + RECVLINEMAX-2);
-      *(p + RECVLINEMAX-2) = 0;
+      strcpy(socklist[ret].handler.sock.inbuf, p + READMAX);
+      *(p + READMAX) = 0;
       strcpy(xx, p);
       nfree(p);
       /* (leave the rest to be post-pended later) */
@@ -1249,7 +1257,7 @@ int sockgets(char *s, int *len)
 /* if (!s[0]) strcpy(s," ");  */
   if (!data) { 
     s[0] = 0;
-    if (strlen(xx) >= RECVLINEMAX-2) {
+    if (strlen(xx) >= READMAX) {
       /* String is too long, so just insert fake \n */
       strcpy(s, xx);
       xx[0] = 0;
@@ -1267,10 +1275,11 @@ int sockgets(char *s, int *len)
   /* Prepend old data back */
   if (socklist[ret].handler.sock.inbuf != NULL) {
     p = socklist[ret].handler.sock.inbuf;
-    socklist[ret].handler.sock.inbuflen = strlen(p) + strlen(xx);
+    len2 = strlen(xx);
+    socklist[ret].handler.sock.inbuflen = len2 + strlen(p);
     socklist[ret].handler.sock.inbuf = nmalloc(socklist[ret].handler.sock.inbuflen + 1);
-    strcpy(socklist[ret].handler.sock.inbuf, xx);
-    strcat(socklist[ret].handler.sock.inbuf, p);
+    memcpy(socklist[ret].handler.sock.inbuf, xx, len2);
+    strcpy(socklist[ret].handler.sock.inbuf + len2, p);
     nfree(p);
   } else {
     socklist[ret].handler.sock.inbuflen = strlen(xx);
@@ -1285,8 +1294,6 @@ int sockgets(char *s, int *len)
 }
 
 /* Dump something to a socket
- *
- * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
 void tputs(int z, char *s, unsigned int len)
 {
@@ -1370,7 +1377,7 @@ void tputs(int z, char *s, unsigned int len)
     inhere = 1;
 
     putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
-    s[strlen(s) - 1] = 0;
+    s[len - 1] = 0;
     putlog(LOG_MISC, "*", "!-> '%s'", s);
 
     inhere = 0;
@@ -1395,7 +1402,11 @@ void dequeue_sockets()
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        (socklist[i].handler.sock.outbuf != NULL)) {
+        (socklist[i].handler.sock.outbuf != NULL)
+#ifdef TLS
+	&& !(socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
+#endif
+                                                 ) {
       if (socklist[i].sock > maxfd)
         maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
@@ -1710,8 +1721,9 @@ char *traced_myiphostname(ClientData cd, Tcl_Interp *irp, EGG_CONST char *name1,
 {
   const char *value;
 
-  if (flags & TCL_INTERP_DESTROYED)
+  if (Tcl_InterpDeleted(irp))
     return NULL;
+
   /* Recover trace in case of unset. */
   if (flags & TCL_TRACE_DESTROYED) {
     Tcl_TraceVar2(irp, name1, name2, TCL_GLOBAL_ONLY|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, traced_myiphostname, cd);

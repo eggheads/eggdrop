@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2023 Eggheads Development Team
+ * Copyright (C) 2010 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -113,7 +113,7 @@ static int ssl_seed(void)
  *
  * Creates a context object, supporting SSLv2/v3 & TLSv1 protocols;
  * Seeds the Pseudo Random Number Generator;
- * Optionally loads a SSL certifate and a private key.
+ * Optionally loads a SSL certificate and a private key.
  * Tell OpenSSL the location of certificate authority certs
  *
  * Return value: 0 on successful initialization, !=0 on failure
@@ -129,7 +129,9 @@ int ssl_init()
 #endif
   if (ssl_seed()) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     return -2;
   }
   /* A TLS/SSL connection established with this method will understand all
@@ -137,7 +139,9 @@ int ssl_init()
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
     putlog(LOG_MISC, "*", "%s", ERR_error_string(ERR_get_error(), NULL));
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     return -1;
   }
   ssl_files_loaded = 0;
@@ -169,7 +173,9 @@ int ssl_init()
       tls_capath[0] ? tls_capath : NULL)) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
   }
   /* Let advanced users specify the list of allowed ssl protocols */
   #define EGG_SSLv2   (1 << 0)
@@ -276,7 +282,9 @@ int ssl_init()
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
     /* this replaces any preset ciphers so an invalid list is fatal */
     putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     SSL_CTX_free(ssl_ctx);
     ssl_ctx = NULL;
     return -3;
@@ -293,7 +301,9 @@ void ssl_cleanup()
   }
   if (tls_randfile)
     RAND_write_file(tls_randfile);
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   ERR_free_strings();
+#endif
 }
 
 char *ssl_fpconv(char *in, char *out)
@@ -333,7 +343,11 @@ static X509 *ssl_getcert(int sock)
   i = findsock(sock);
   if (i == -1 || !td->socklist[i].ssl)
     return NULL;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+  return SSL_get0_peer_certificate(td->socklist[i].ssl);
+#else
   return SSL_get_peer_certificate(td->socklist[i].ssl);
+#endif
 }
 
 /* Get the certificate fingerprint of the connection corresponding
@@ -353,16 +367,19 @@ char *ssl_getfp(int sock)
   if (!(cert = ssl_getcert(sock)))
     return NULL;
   if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
     X509_free(cert);
+#endif
     return NULL;
   }
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
+  X509_free(cert);
+#endif
   if (!(p = OPENSSL_buf2hexstr(md, i))) {
-    X509_free(cert);
     return NULL;
   }
   strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
-  X509_free(cert);
   return fp;
 }
 
@@ -381,15 +398,27 @@ const char *ssl_getuid(int sock)
   if (!(cert = ssl_getcert(sock)))
     return NULL;
   /* Get the subject name */
-  if (!(subj = X509_get_subject_name(cert)))
+  if (!(subj = X509_get_subject_name(cert))) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
+    X509_free(cert);
+#endif
     return NULL;
+  }
 
   /* Get the first UID */
   idx = X509_NAME_get_index_by_NID(subj, NID_userId, -1);
-  if (idx == -1)
+  if (idx == -1) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
+    X509_free(cert);
+#endif
     return NULL;
+  }
   name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, idx));
   /* Extract the contents, assuming null-terminated ASCII string */
+  /* For openssl < 3.0.0 we leak cert here, but we cant free cert here
+   * because we return an internal pointer of certificate
+   * also this function is only triggered in dcc_telnet_id()
+   * and only for ssl-cert-auth set to 2 */
   return (const char *) egg_ASN1_string_data(name);
 }
 
@@ -531,6 +560,12 @@ static char *ssl_printname(X509_NAME *name)
 
   /* X509_NAME_oneline() is easier and shorter, but is deprecated and
      the manual discourages it's usage, so let's not be lazy ;) */
+  if (!bio) {
+    debug0("TLS: ssl_printname(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   if (X509_NAME_print_ex(bio, name, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ)) {
     len = BIO_get_mem_data(bio, &data);
     if (len > 0) {
@@ -558,12 +593,18 @@ static char *ssl_printname(X509_NAME *name)
  *
  * You need to nfree() the returned pointer.
  */
-static char *ssl_printtime(ASN1_UTCTIME *t)
+static char *ssl_printtime(const ASN1_UTCTIME *t)
 {
   long len;
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
+  if (!bio) {
+    debug0("TLS: ssl_printtime(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   ASN1_UTCTIME_print(bio, t);
   len = BIO_get_mem_data(bio, &data);
   if (len > 0) {
@@ -591,6 +632,12 @@ static char *ssl_printnum(ASN1_INTEGER *i)
   char *data, *buf;
   BIO *bio = BIO_new(BIO_s_mem());
 
+  if (!bio) {
+    debug0("TLS: ssl_printnum(): BIO_new(): error");
+    buf = nmalloc(1);
+    *buf = 0;
+    return buf;
+  }
   i2a_ASN1_INTEGER(bio, i);
   len = BIO_get_mem_data(bio, &data);
   if (len > 0) {
@@ -644,8 +691,13 @@ static void ssl_showcert(X509 *cert, const int loglev)
 
 
   /* Validity time */
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+  from = ssl_printtime(X509_get0_notBefore(cert));
+  to = ssl_printtime(X509_get0_notAfter(cert));
+#else
   from = ssl_printtime(X509_get_notBefore(cert));
   to = ssl_printtime(X509_get_notAfter(cert));
+#endif
   putlog(loglev, "*", "TLS: certificate valid from %s to %s", from, to);
   nfree(from);
   nfree(to);
@@ -712,7 +764,7 @@ int ssl_verify(int ok, X509_STORE_CTX *ctx)
           !(data->verify & TLS_VERIFYFROM)) ||
           ((err == X509_V_ERR_CERT_HAS_EXPIRED) &&
           !(data->verify & TLS_VERIFYTO))) {
-        debug1("TLS: peer certificate warning: %s",
+        putlog(data->loglevel, "*", "TLS: peer certificate warning: %s",
                X509_verify_cert_error_string(err));
         ok = 1;
       }
@@ -740,7 +792,6 @@ static void ssl_info(const SSL *ssl, int where, int ret)
 #endif
   SSL_CIPHER *cipher;
   int secret, processed, i;
-  EVP_PKEY *key;
 
   if (!(data = (ssl_appdata *) SSL_get_app_data(ssl)))
     return;
@@ -761,9 +812,14 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+    if ((cert = SSL_get0_peer_certificate(ssl))) {
+      ssl_showcert(cert, LOG_DEBUG);
+#else
     if ((cert = SSL_get_peer_certificate(ssl))) {
       ssl_showcert(cert, LOG_DEBUG);
       X509_free(cert);
+#endif
     }
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
@@ -783,11 +839,14 @@ static void ssl_info(const SSL *ssl, int where, int ret)
       buf[i - 1] = 0;
     debug1("TLS: cipher details: %s", buf);
 
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+    EVP_PKEY *key;
     if (SSL_get_server_tmp_key((SSL *) ssl, &key)) {
       putlog(LOG_DEBUG, "*", "TLS: diffie–hellman ephemeral key used: %s, bits %d",
              OBJ_nid2sn(EVP_PKEY_id(key)), EVP_PKEY_bits(key));
       EVP_PKEY_free(key);
     }
+#endif
   } else if (where & SSL_CB_ALERT) {
     if (strcmp(SSL_alert_type_string(ret), "W") ||
         strcmp(SSL_alert_desc_string(ret), "CN")) {
@@ -797,7 +856,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              SSL_alert_desc_string_long(ret));
     } else {
       /* Ignore close notify warnings */
-      debug1("Received close notify warning during %s",
+      debug1("TLS: Received close notify during %s",
              (where & SSL_CB_READ) ? "read" : "write");
     }
   } else if (where & SSL_CB_EXIT) {
@@ -817,10 +876,16 @@ static void ssl_info(const SSL *ssl, int where, int ret)
                SSL_state_string_long(ssl));
       }
     }
-  } else {
-    /* Display the state of the engine for debugging purposes */
-    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
   }
+  /* Display the state of the engine for debugging purposes */
+  else if (where == SSL_CB_HANDSHAKE_START)
+    debug1("TLS: handshake start: %s", SSL_state_string_long(ssl));
+  else if (where == SSL_CB_CONNECT_LOOP)
+    debug1("TLS: connect loop: %s", SSL_state_string_long(ssl));
+  else if (where == SSL_CB_ACCEPT_LOOP)
+    debug1("TLS: accept loop: %s", SSL_state_string_long(ssl));
+  else
+    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
 }
 
 /* Switch a socket to SSL communication
@@ -900,9 +965,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   SSL_set_mode(td->socklist[i].ssl, SSL_MODE_ENABLE_PARTIAL_WRITE |
                SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   if (data->flags & TLS_CONNECT) {
-    struct timespec req = { 0, 1000000L };
     SSL_set_verify(td->socklist[i].ssl, SSL_VERIFY_PEER, ssl_verify);
     /* Introduce 1ms lag so an unpatched hub has time to setup the ssl handshake */
+    const struct timespec req = { 0, 1000000L };
     nanosleep(&req, NULL);
 #ifdef SSL_set_tlsext_host_name
     if (*data->host)
@@ -1038,7 +1103,11 @@ static int tcl_tlsstatus STDVAR
   /* Try to get a cert, clients aren't required to send a
    * certificate, so this is optional
    */
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+  cert = SSL_get0_peer_certificate(td->socklist[j].ssl);
+#else
   cert = SSL_get_peer_certificate(td->socklist[j].ssl);
+#endif
   /* The following information is certificate dependent */
   if (cert) {
     p = ssl_printname(X509_get_subject_name(cert));
@@ -1049,11 +1118,19 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "issuer");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    p = ssl_printtime(X509_get0_notBefore(cert));
+#else
     p = ssl_printtime(X509_get_notBefore(cert));
+#endif
     Tcl_DStringAppendElement(&ds, "notBefore");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    p = ssl_printtime(X509_get0_notAfter(cert));
+#else
     p = ssl_printtime(X509_get_notAfter(cert));
+#endif
     Tcl_DStringAppendElement(&ds, "notAfter");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
@@ -1061,7 +1138,9 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "serial");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
     X509_free(cert);
+#endif
   }
   /* We should always have a cipher, but who knows? */
   cipher = SSL_get_current_cipher(td->socklist[j].ssl);

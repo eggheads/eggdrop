@@ -158,7 +158,7 @@ Now that your Eggdrop is on IRC and you've introduced yourself as owner, it's ti
 No show?
 ~~~~~~~~
 
-If your bot didn't appear on IRC, you should log in to the shell and view the bot's logfile (the default in the config file is "logs/eggdrop.log"). Note that logfile entries are not written to disk immediately unless quick-logs is enabled, so you may have to wait a few minutes before the logfile appears, or contains messages that indicate why your bot isn't showing up.
+If your bot didn't appear on IRC, you should log in to the shell and view the bot's logfile (the default in the config file is "logs/eggdrop.log").
 
 Additionally, you can kill the bot via the command line (``kill pid``, the pid is shown to you when you started the bot or can be viewed by running ``ps x``) and then restart it with the -mnt flag, which will launch you directly into the partyline, to assist with troubleshooting. Note that if you use the -t flag, the bot will not persist and you will kill it once you quit the partyline.
 

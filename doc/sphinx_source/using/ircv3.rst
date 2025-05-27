@@ -41,6 +41,14 @@ The following capabilities are supported by Eggdrop:
  * Monitor
  * server-time
  * setname
+ * userhost-in-names
  * +typing
 
-Copyright (C) 2010 - 2023 Eggheads Development Team
+------
+Errata
+------
+
+* Enabling echo-message will cause Eggdrop to trigger PUB/PUBM binds on its own messages (because now it can actually see them). This may cause unintentional functionality with some scripts
+* Enabling userhost-in-names will cause Eggdrop's internal mechanisms to mark a channel's userlist as synch'd upon receiving the NAMES list after a join, instead of waiting for a full WHO listing. This is done because the assumption is that userhost-in-names was enabled as a response to WHO queries being disabled on a server, which prevents Eggdrop from populating its userlist. To avoid unintended functionality, it is suggested that this capability only be enabled on servers that disable WHO queries.
+
+Copyright (C) 2010 - 2024 Eggheads Development Team

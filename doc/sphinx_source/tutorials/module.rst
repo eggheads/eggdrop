@@ -138,7 +138,7 @@ Eggdrop uses the Tcl C API library to interact with the Tcl interpreter. Learnin
     }
   }
 
-  A few notes on this example. BADARGS is a macro that checks the input provided to the Tcl command. The first argument BADARGS accepts is the minimum number of parameters the Tcl command must accept (including the command itself). The second argument is the maximum number of parameters that BADARGS will accept. The third argument is the help text that will be displayed if these boundaries are exceeded. For example, BADARGS(2, 4, " name ?date? ?place?") requires at least one argument to be passed, and a maximum of three arguments. Eggdrop code style is to enclose optional arguments between qusetion marks in the help text.
+A few notes on this example. BADARGS is a macro that checks the input provided to the Tcl command. The first argument BADARGS accepts is the minimum number of parameters the Tcl command must accept (including the command itself). The second argument is the maximum number of parameters that BADARGS will accept. The third argument is the help text that will be displayed if these boundaries are exceeded. For example, BADARGS(2, 4, " name ?date? ?place?") requires at least one argument to be passed, and a maximum of three arguments. Eggdrop code style is to enclose optional arguments between qusetion marks in the help text.
 
 Similar to adding a partyline command, you also have to create a function table for a new Tcl command::
 
@@ -208,7 +208,7 @@ Like before, BADARGS still checks that the number of arguments passed is correct
 Calling the Bind
 ^^^^^^^^^^^^^^^^
 
-To call the bind, Eggdrop coding style it to name that function "check_tcl_bindname". So here, whenever we reach a point in code that should trigger the bind, we'll call check_tcl_woobie() and pass the arguments we defined- in this case, two arguments that woobie_2char was created to handle. Here is some sample code::
+To call the bind, Eggdrop coding style is to name that function "check_tcl_bindname". So here, whenever we reach a point in code that should trigger the bind, we'll call check_tcl_woobie() and pass the arguments we defined- in this case, two arguments that woobie_2char was created to handle. Here is some sample code::
 
   check_tcl_woobie(chan, nick);
 
@@ -227,9 +227,4 @@ To call the bind, Eggdrop coding style it to name that function "check_tcl_bindn
     return (x == BIND_EXEC_LOG);
   }
 
-Now that we have encountered a condition that triggers the bind, we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with check_tcl_bind(), called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options.
-
-Exporting the Bind
-------------------
-
-Do we need to do this?
+Now that we have encountered a condition that triggers the bind type (in code by calling ``check_tcl_woobie()`` ), we need to check it against the binds the user has loaded in scripts and see if it matches those conditions. This is done with ``check_tcl_bind()``, called with the bind type, the userhost of the user, the flag record of the user if it exists, the bind arguments, and bind options. We can configure how we want to check the triggering action against the bind, and we can further use the return value from ``check_tcl_bind()`` to take additional action by Eggdrop. You can read more about the specific values used in ``check_tcl_bind`` in :ref:`triggering_any_bind`
