@@ -309,6 +309,7 @@ int readtclprog(char *fname);
 
 /* tls.c */
 #ifdef TLS
+void verify_cert_expiry(int);
 void ssl_cleanup();
 int ssl_handshake(int, int, int, int, char *, IntFunc);
 char *ssl_fpconv(char *in, char *out);

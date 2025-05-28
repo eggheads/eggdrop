@@ -88,8 +88,7 @@ void addbot(char *who, char *from, char *next, char flag, int vernum, int ssl)
     ptr = &((*ptr)->next);
   }
   ptr2 = nmalloc(sizeof(tand_t));
-  strncpy(ptr2->bot, who, HANDLEN);
-  ptr2->bot[HANDLEN] = 0;
+  strlcpy(ptr2->bot, who, sizeof ptr2->bot);
   ptr2->share = flag;
   ptr2->ver = vernum;
   ptr2->next = *ptr;

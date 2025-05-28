@@ -2845,7 +2845,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   char *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2880,7 +2880,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   char s[512], *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2920,7 +2920,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
 {
   const char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2942,7 +2942,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 {
   char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
