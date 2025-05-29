@@ -1,29 +1,24 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>README &#8212; Eggdrop 1.9.5 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <title>README &#8212; Eggdrop 1.10.0rc2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
+    <script src="../_static/documentation_options.js?v=3bcbdadc"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installing Eggdrop" href="install.html" />
     <link rel="prev" title="Eggdrop, an open source IRC bot" href="../index.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
-          <p class="logo"><a href="../index.html">
-            <img class="logo" src="../_static/eggman.png.gif" alt="Logo"/>
-          </a></p>
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.9.5 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="../index.html" title="Eggdrop, an open source IRC bot"
              accesskey="P">previous</a> |
@@ -45,6 +40,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#what-is-eggdrop">What is Eggdrop?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-get-eggdrop">How to Get Eggdrop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#system-pre-requisites">System Pre-Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#minimum-requirements">Minimum Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#quick-startup">Quick Startup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#upgrading">Upgrading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line">Command Line</a></li>
@@ -61,6 +57,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/features.html">Eggdrop Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/core.html">Eggdrop Core Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/partyline.html">The Party Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/autoscripts.html">Eggdrop Autoscripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/users.html">Users and Flags</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/bans.html">Bans, Invites, and Exempts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/botnet.html">Botnet Sharing and Linking</a></li>
@@ -69,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../using/ircv3.html">IRCv3 support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/accounts.html">Account tracking in Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/pbkdf2info.html">Encryption/Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using/python.html">Using the Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/twitchinfo.html">Twitch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/tricks.html">Advanced Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using/text-sub.html">Textfile Substitutions</a></li>
@@ -81,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/setup.html">Setting Up Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
@@ -113,13 +112,13 @@
           <div class="body" role="main">
             
   <section id="readme">
-<h1>README<a class="headerlink" href="#readme" title="Permalink to this headline">¶</a></h1>
+<h1>README<a class="headerlink" href="#readme" title="Link to this heading">¶</a></h1>
 <blockquote>
 <div><p>Please, at least SKIM this document before asking questions. In fact,
 READ IT if you’ve never successfully set up an Eggdrop bot before.</p>
 </div></blockquote>
 <section id="notice">
-<h2>Notice<a class="headerlink" href="#notice" title="Permalink to this headline">¶</a></h2>
+<h2>Notice<a class="headerlink" href="#notice" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Make SURE that you select your +n (owner) users wisely. They have 100%
 access to your bot and account. ONLY GIVE THIS POWER TO SOMEONE YOU
@@ -127,7 +126,7 @@ TRUST COMPLETELY!</p>
 </div></blockquote>
 </section>
 <section id="what-is-eggdrop">
-<h2>What is Eggdrop?<a class="headerlink" href="#what-is-eggdrop" title="Permalink to this headline">¶</a></h2>
+<h2>What is Eggdrop?<a class="headerlink" href="#what-is-eggdrop" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Eggdrop is the world’s most popular Internet Relay Chat (IRC) bot; it is
 freely distributable under the GNU General Public License (GPL). Eggdrop
@@ -140,9 +139,9 @@ functions include protecting the channel from abuse, allowing privileged
 users to gain op or voice status, logging channel events, providing
 information, hosting games, etc.</p>
 <p>One of the features that makes Eggdrop stand out from other bots is module
-and Tcl scripting support. With scripts and modules you can make the bot
-perform almost any task you want. They can do anything: from preventing
-floods to greeting users and banning advertisers from channels.</p>
+and Tcl and Python scripting support. With scripts and modules you can
+make the bot perform almost any task you want. They can do anything: from
+preventing floods to greeting users and banning advertisers from channels.</p>
 <p>You can also link multiple Eggdrop bots together to form a botnet. This
 can allow bots to op each other securely, control floods efficiently and
 even link channels across multiple IRC networks. It also allows the
@@ -164,22 +163,18 @@ about git usage and some channels where you might get help with Eggdrop.</p>
 </div></blockquote>
 </section>
 <section id="how-to-get-eggdrop">
-<h2>How to Get Eggdrop<a class="headerlink" href="#how-to-get-eggdrop" title="Permalink to this headline">¶</a></h2>
+<h2>How to Get Eggdrop<a class="headerlink" href="#how-to-get-eggdrop" title="Link to this heading">¶</a></h2>
 <p>There are two official methods to download Eggdrop source code. Alternately, Eggdrop also comes as a docker image.</p>
 <section id="ftp">
-<h3>FTP<a class="headerlink" href="#ftp" title="Permalink to this headline">¶</a></h3>
+<h3>FTP<a class="headerlink" href="#ftp" title="Link to this heading">¶</a></h3>
 <blockquote>
-<div><p>The latest Eggdrop stable source code is always located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. You can also download the current stable, previous stable, and development snapshot via FTP at <a class="reference external" href="ftp://ftp.eggheads.org/pub/eggdrop/source">ftp://ftp.eggheads.org/pub/eggdrop/source</a></p>
+<div><p>The latest Eggdrop stable source code is always located at <a class="reference external" href="https://geteggdrop.com">https://geteggdrop.com</a>. You can also download the current stable, previous stable, and development snapshot at <a class="reference external" href="https://ftp.eggheads.org/pub/eggdrop/source">https://ftp.eggheads.org/pub/eggdrop/source</a></p>
 </div></blockquote>
 </section>
 <section id="git-development-snapshot">
-<h3>Git Development Snapshot<a class="headerlink" href="#git-development-snapshot" title="Permalink to this headline">¶</a></h3>
+<h3>Git Development Snapshot<a class="headerlink" href="#git-development-snapshot" title="Link to this heading">¶</a></h3>
 <blockquote>
-<div><p>Eggdrop development has moved from a CVS-based version control system to
-git. If you are interested in trying out the VERY LATEST updates to
-Eggdrop, you may be interested in pulling the most recent code from
-there. BE WARNED, the development branch of Eggdrop is not to be
-considered stable and may (haha) have some significant bugs in it.</p>
+<div><p>Eggdrop developers use git to manage the Eggdrop codebase for development. If you are interested in trying out the VERY LATEST updates to Eggdrop, you can use git to obtain most recent code from the Eggheads repository. BE WARNED, the development branch of Eggdrop is not to be considered stable and may (haha) contain significant bugs still being worked on.</p>
 <p>To obtain Eggdrop via the git repository (hosted by GitHub), you can
 either clone the repository via git or download a development snapshot.</p>
 <p>To clone the repository, simply type:</p>
@@ -194,7 +189,7 @@ from:</p>
 </div></blockquote>
 </section>
 <section id="docker">
-<h3>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
+<h3>Docker<a class="headerlink" href="#docker" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>You can pull the official Eggdrop Docker image via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">pull</span> <span class="n">eggdrop</span><span class="p">:</span><span class="n">latest</span>
@@ -205,26 +200,56 @@ from:</p>
 </section>
 </section>
 <section id="system-pre-requisites">
-<h2>System Pre-Requisites<a class="headerlink" href="#system-pre-requisites" title="Permalink to this headline">¶</a></h2>
+<h2>System Pre-Requisites<a class="headerlink" href="#system-pre-requisites" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Before you can compile Eggdrop, Tcl must be installed on your system. Many systems have Tcl installed on them by default (you can check by trying the command “tclsh”; if you are given a ‘%’ for a prompt, it is, and you can type ‘exit’ to exit the Tcl shell. However, Eggdrop also requires the Tcl development header files to be installed. They can often be installed via an OS package manager, usually called something similar to ‘tcl-dev’ for the package name. You can also download Tcl source from <a class="reference external" href="https://www.tcl.tk/software/tcltk/download.html">https://www.tcl.tk/software/tcltk/download.html</a>.</p>
-<p>It is also strongly recommended to install openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to ‘libssl-dev’.</p>
+<p>Eggdrop also requires openssl (and its development headers) in order to enable SSL/TLS protection of network data. The header files are often called something similar to ‘libssl-dev’. While not advised, this requirement can be removed by compiling using <code class="docutils literal notranslate"><span class="pre">./configure</span> <span class="pre">--disable-tls</span></code>, but you will not be able to connect to TLS-protected IRC servers nor utilize secure botnet communication.</p>
 </div></blockquote>
 </section>
+<section id="minimum-requirements">
+<h2>Minimum Requirements<a class="headerlink" href="#minimum-requirements" title="Link to this heading">¶</a></h2>
+<p>Some components of Eggdrop relies on a variety of third-party libraries, documented here.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Functionality</p></th>
+<th class="head"><p>Package</p></th>
+<th class="head"><p>Minimum Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Tcl interpreter (required)</p></td>
+<td><p>Tcl Dev Library</p></td>
+<td><p>8.5.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Secure communication</p></td>
+<td><p>OpenSSL</p></td>
+<td><p>0.9.8</p></td>
+</tr>
+<tr class="row-even"><td><p>Python module</p></td>
+<td><p>Python</p></td>
+<td><p>3.8.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Compression module</p></td>
+<td><p>zlib</p></td>
+<td><p>Any</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="quick-startup">
-<h2>Quick Startup<a class="headerlink" href="#quick-startup" title="Permalink to this headline">¶</a></h2>
+<h2>Quick Startup<a class="headerlink" href="#quick-startup" title="Link to this heading">¶</a></h2>
 <blockquote>
-<div><p>Please see the <a class="reference external" href="install/install.html">Install</a> file after you finish reading this file.</p>
+<div><p>Please see the <a class="reference external" href="install.html">Install</a> file after you finish reading this file.</p>
 </div></blockquote>
 </section>
 <section id="upgrading">
-<h2>Upgrading<a class="headerlink" href="#upgrading" title="Permalink to this headline">¶</a></h2>
+<h2>Upgrading<a class="headerlink" href="#upgrading" title="Link to this heading">¶</a></h2>
 <blockquote>
-<div><p>The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see <a class="reference external" href="install/upgrading.html">Upgrading</a> for full details.</p>
+<div><p>The upgrade process for Eggdrop is very simple, simply download the new source code and repeat the compile process. You will want to read the NEWS for any new configuration file settings you want to add. Please see <a class="reference external" href="upgrading.html">Upgrading</a> for full details.</p>
 </div></blockquote>
 </section>
 <section id="command-line">
-<h2>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h2>
+<h2>Command Line<a class="headerlink" href="#command-line" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Eggdrop has some command line options - not many, because most things
 should be defined through the config file. However, sometimes you may
@@ -255,7 +280,7 @@ need to use that once.</p>
 </div></blockquote>
 </section>
 <section id="auto-starting-eggdrop">
-<h2>Auto-starting Eggdrop<a class="headerlink" href="#auto-starting-eggdrop" title="Permalink to this headline">¶</a></h2>
+<h2>Auto-starting Eggdrop<a class="headerlink" href="#auto-starting-eggdrop" title="Link to this heading">¶</a></h2>
 <p>Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use features of the operating system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script that can create either a systemd or crontab entry. The systemd option will monitor your Eggdrop and a) start it when the machine boots and b) restart the Eggdrop if it crashes for any reason. The (older) crontab option will check (by default) every 10 minutes to see if your Eggdrop is still running, and attempt to restart it if it is not.</p>
 <blockquote>
 <div><p>To auto-generate a systemd job, from the Eggdrop install directory, simply run:</p>
@@ -274,7 +299,7 @@ need to use that once.</p>
 </div></blockquote>
 </section>
 <section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>We’re trying to keep the documentation up to date. If you feel that
 anything is missing here or that anything should be added, etc, please
@@ -283,7 +308,7 @@ create an issue, or better yet a pull request, at
 </div></blockquote>
 </section>
 <section id="obtaining-help">
-<h2>Obtaining Help<a class="headerlink" href="#obtaining-help" title="Permalink to this headline">¶</a></h2>
+<h2>Obtaining Help<a class="headerlink" href="#obtaining-help" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>You can obtain help with Eggdrop in the following IRC channels:</p>
 <blockquote>
@@ -309,7 +334,7 @@ familiar with and follow IRC etiquette:</p>
 </div></blockquote>
 </div></blockquote>
 <p>Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999 - 2023 Eggheads Development Team</p>
+Copyright (C) 1999 - 2024 Eggheads Development Team</p>
 </section>
 </section>
 
@@ -339,9 +364,9 @@ Copyright (C) 1999 - 2023 Eggheads Development Team</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Eggheads.
-      Last updated on Jul 08, 2023.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
+    &#169; Copyright 2024, Eggheads.
+      Last updated on Oct 13, 2024.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
         </div>
         <div class="clearer"></div>

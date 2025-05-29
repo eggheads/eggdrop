@@ -1,4 +1,4 @@
-# Makefile.in for src/mod/compress.mod/
+# Makefile for src/mod/compress.mod/
 
 ZLIB = @ZLIB@
 srcdir = .

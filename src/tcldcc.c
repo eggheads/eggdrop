@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1177,15 +1177,22 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     if (strlen(newip)) {
       setsockname(&name, newip, port, 1);
       i = open_address_listen(&name);
+      if (i < 0) {
+        snprintf(msg, sizeof msg, "Couldn't listen on port %d on %s: %s. "
+                 "Please check that the port is not already in use",
+                  realport, newip, strerror(errno));
+        Tcl_AppendResult(irp, msg, NULL);
+        return TCL_ERROR;
+      }
     } else {
       i = open_listen(&port);
-    }
-    if (i < 0) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+      if (i < 0) {
+        snprintf(msg, sizeof msg, "Couldn't listen on port %d on the given "
                  "address: %s. Please check that the port is not already in use",
                   realport, strerror(errno));
-      Tcl_AppendResult(irp, msg, NULL);
-      return TCL_ERROR;
+        Tcl_AppendResult(irp, msg, NULL);
+        return TCL_ERROR;
+      }
     }
     idx = new_dcc(&DCC_TELNET, 0);
     dcc[idx].sockname.addrlen = sizeof(dcc[idx].sockname.addr);

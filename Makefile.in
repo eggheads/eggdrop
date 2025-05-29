@@ -490,6 +490,7 @@ install-doc: install-start
 	cd doc/ && $(MAKE_INSTALL) install
 
 install-scripts: install-start
-	+@cd scripts/ && $(MAKE_INSTALL) install
+	+@cd scripts/ && $(MAKE_INSTALL) install; \
+	cd ../src/mod && $(MAKE_INSTALL) install-scripts
 
 #safety hash

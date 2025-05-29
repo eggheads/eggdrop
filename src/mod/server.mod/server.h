@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,14 @@
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 
-#define CAPMAX       499    /*  (512 - "CAP REQ :XXX\r\n")     */
-#define CLITAGMAX    4096   /* Max size for IRCv3 message-tags sent by client*/
-#define TOTALTAGMAX  8191   /* @ + Server tag len + ; + Client tag len + ' ' */
-#define MSGMAX       511    /* Max size of IRC message line    */
-#define SENDLINEMAX  CLITAGMAX + MSGMAX
-#define RECVLINEMAX  TOTALTAGMAX + MSGMAX
+#define CAPMAX           499    /*  (512 - "CAP REQ :XXX\r\n")     */
+#define CLITAGMAX        4096   /* Max size for IRCv3 message-tags sent by client*/
+#define TOTALTAGMAX      8191   /* @ + Server tag len + ; + Client tag len + ' ' */
+#define MSGMAX           511    /* Max size of IRC message line    */
+#define SENDLINEMAX      CLITAGMAX + MSGMAX
+#define RECVLINEMAX      TOTALTAGMAX + MSGMAX
+#define NEWSERVERMAX     256
+#define NEWSERVERPASSMAX 128
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
@@ -98,6 +100,11 @@
 /* #define check_tcl_account NULL */
 #define find_capability ((struct capability *(*)(char *))(server_funcs[50]))
 #define encode_msgtags ((char *(*)(Tcl_Obj *))(server_funcs[51]))
+/* 52 - 55 */
+#define H_monitor (*(p_tcl_bind_list *)(server_funcs[52]))
+#define isupport_get_prefixchars ((const char *(*)(void))server_funcs[53])
+
+
 #endif /* MAKING_SERVER */
 
 struct server_list {
@@ -148,16 +155,5 @@ enum {
   NETT_TWITCH,       /* Twitch! *shudder*                 */
   NETT_OTHER         /* Others                            */
 };
-
-/* Available sasl mechanisms. */
-enum {
-  SASL_MECHANISM_PLAIN,
-  SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE,
-  SASL_MECHANISM_EXTERNAL,
-  SASL_MECHANISM_NUM
-};
-
-/* Must be extern to avoid odr-violation and allow make static */
-extern char const *SASL_MECHANISMS[];
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */

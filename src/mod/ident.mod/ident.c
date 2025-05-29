@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2023 Eggheads Development Team
+ * Copyright (C) 2019 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,11 +64,11 @@ static void ident_activity(int idx, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
-  buf2[i - 1] = 0;
+  buf2[i] = 0;
   if (!(pos = strpbrk(buf2, "\r\n"))) {
     putlog(LOG_MISC, "*", "Ident error: could not read request.");
     return;
-  } 
+  }
   snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\r\n", botname);
   count = strlen(buf2) + 1;
   if ((i = write(s, buf2, count)) != count) {
@@ -292,7 +292,7 @@ char *ident_start(Function *global_funcs)
 {
   global = global_funcs;
 
-  module_register(MODULE_NAME, ident_table, 0, 9);
+  module_register(MODULE_NAME, ident_table, 1, 0);
 
   if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);

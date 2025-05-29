@@ -18,11 +18,11 @@ all of them. Some flags are good, some are bad. Each flag is identified
 by a letter. A channel flag applies only to a specific channel, and a
 global flag applies to all channels. The standard global flags are:
 
-    -------------------------------------------------------------------------
+    ------------------------------------------------------------------------
     Flag   Attribute        Description
-    ------ ---------------- -------------------------------------------------
-    n      owner            user has absolute control. Only give this flag to
-                            people you trust completely.
+    ------ ---------------- ------------------------------------------------
+    n      owner            user has absolute control. Only give this flag
+                            to people you trust completely.
 
     m      master           user has access to almost every feature of the
                             bot.
@@ -69,13 +69,15 @@ global flag applies to all channels. The standard global flags are:
                             file area. Janitors have complete access to the
                             filesystem.
 
-    c      common           this marks a user who is connecting from a public
-                            site from which any number of people can use IRC.
-                            The user will now be recognized by NICKNAME.
+    c      common           this marks a user who is connecting from a
+                            public site from which any number of people can
+                            use IRC. The user will now be recognized by
+                            NICKNAME.
 
     b      bot              user is a bot.
 
-    w      wasop-test       user needs wasop test for +stopnethack procedure.
+    w      wasop-test       user needs wasop test for +stopnethack
+                            procedure.
 
     z      washalfop-test   user needs washalfop test for +stopnethack
                             procedure.
@@ -85,7 +87,7 @@ global flag applies to all channels. The standard global flags are:
     u      unshared         user record is not sent to other bots.
 
     h      highlight        use bold text in help/text files.
-    -------------------------------------------------------------------------
+    ------------------------------------------------------------------------
 
   All global flags other then u, h, b, c, x, j, and p are also
   channel-specific flags. Flags are set with the chattr command. The
@@ -97,4 +99,4 @@ global flag applies to all channels. The standard global flags are:
   user-defined flags (Capital letters A through Z). These are used by
   scripts, and their uses vary depending on the script that uses them.
 
-Copyright (C) 2002 - 2023 Eggheads Development Team
+Copyright (C) 2002 - 2024 Eggheads Development Team

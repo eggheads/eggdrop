@@ -80,10 +80,10 @@ which will enforce the s, n, and t flags on a channel.
 Automatically restarting an Eggdrop
 -----------------------------------
 
-A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it. 
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer Linux systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.
 
-Crontab Method (Old)
-^^^^^^^^^^^^^^^^^^^^
+Crontab Method
+^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
@@ -103,8 +103,8 @@ By default, it should create an entry that looks similar to::
 
 This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
 
-Systemd Method (Newer Systems)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Systemd Method (Newer Linux Systems)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
@@ -150,7 +150,7 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
 * **PLAIN**: To use this method, set sasl-mechanism to 0. This method passes the username and password (set in the sasl-username and sasl-password config file settings) to the IRC server in plaintext. If you only connect to the IRC server using a connection protected by SSL/TLS this is a generally safe method of authentication; however you probably want to avoid this method if you connect to a server on a non-protected port as the exchange itself is not encrypted.
 
-* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-method to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
+* **ECDSA-NIST256P-CHALLENGE**: To use this method, set sasl-mechanism to 1. This method uses a public/private keypair to authenticate, so no username/password is required. Not all servers support this method. If your server does support this, you you must generate a certificate pair using::
 
     openssl ecparam -genkey -name prime256v1 -out eggdrop-ecdsa.pem
 
@@ -162,14 +162,18 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
 
-* **EXTERNAL**: To use this method, set sasl-method to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
+* **EXTERNAL**: To use this method, set sasl-mechanism to 2. This method allows you to use other TLS certificates to connect to the IRC server, if the IRC server supports it. An EXTERNAL authentication method usually requires you to connect to the IRC server using SSL/TLS. There are many ways to generate certificates; one such way is generating your own certificate using::
 
     openssl req -new -x509 -nodes -keyout eggdrop.key -out eggdrop.crt
 
-You will need to determine yoru public key fingerprint by using::
+You will need to determine your public key fingerprint by using::
 
     openssl x509 -in eggdrop.crt -outform der | sha1sum -b | cut -d' ' -f1
 
 Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
+
+* **SCRAM-SHA-256**: To use this method, set sasl-mechanism to 3.
+
+* **SCRAM-SHA-512**: To use this method, set sasl-mechanism to 4.

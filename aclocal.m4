@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999 - 2023 Eggheads Development Team
+dnl Copyright (C) 1999 - 2024 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -20,7 +20,11 @@ dnl
 dnl Load tcl macros
 builtin(include,m4/tcl.m4)
 
+dnl Load python macros
+builtin(include,m4/python.m4)
+
 dnl Load gnu autoconf archive macros
+builtin(include,m4/ax_check_compile_flag.m4)
 builtin(include,m4/ax_create_stdint_h.m4)
 builtin(include,m4/ax_lib_socket_nsl.m4)
 builtin(include,m4/ax_pthread.m4)
@@ -192,12 +196,12 @@ dnl Check for a working C99 C compiler.
 dnl
 AC_DEFUN([EGG_CHECK_CC_C99],
 [
-  if test "$ac_cv_prog_cc_c99" = no; then
+  if test "$ac_cv_prog_cc_c11" = no && test "$ac_cv_prog_cc_c99" = no; then
     cat << 'EOF' >&2
 configure: error:
 
-  This C compiler does not appear to have a working C99 mode.
-  A working C99 C compiler is required to compile Eggdrop.
+  This C compiler does not appear to have a working C99/C11 mode.
+  A working C99/C11 C compiler is required to compile Eggdrop.
 
 EOF
     exit 1
@@ -313,32 +317,24 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_MSG_CHECKING(for b64_ntop)
-  AC_TRY_LINK(
-    [
+  AC_RUN_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <resolv.h>
-    ],
-    [b64_ntop(NULL, 0, NULL, 0);],
-    found_b64_ntop=yes,
-    found_b64_ntop=no
-  )
+    ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+  ])
   if test "x$found_b64_ntop" = xno; then
     AC_MSG_RESULT(no)
 
     AC_MSG_CHECKING(for b64_ntop with -lresolv)
     OLD_LIBS="$LIBS"
     LIBS="$LIBS -lresolv"
-    AC_TRY_LINK(
-      [
+    AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
-      ],
-      [b64_ntop(NULL, 0, NULL, 0);],
-      found_b64_ntop=yes,
-      found_b64_ntop=no
-    )
+      ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+    ])
     if test "x$found_b64_ntop" = xno; then
       LIBS="$OLD_LIBS"
       AC_MSG_RESULT(no)
@@ -346,16 +342,12 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
       AC_MSG_CHECKING(for b64_ntop with -lnetwork)
       OLD_LIBS="$LIBS"
       LIBS="-lnetwork"
-      AC_TRY_LINK(
-      [
+      AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
         #include <resolv.h>
-        ],
-        [b64_ntop(NULL, 0, NULL, 0);],
-        found_b64_ntop=yes,
-        found_b64_ntop=no
-      )
+        ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+      ])
       if test "x$found_b64_ntop" = xno; then
         LIBS="$OLD_LIBS"
         AC_MSG_RESULT(no)
@@ -573,7 +565,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
 [
   MODULES_OK="yes"
   MOD_EXT="so"
-  DEFAULT_MAKE="debug"
+  DEFAULT_MAKE="eggdrop"
   LOAD_METHOD="dl"
   WEIRD_OS="yes"
   UNKNOWN_OS="no"
@@ -1256,6 +1248,7 @@ AC_DEFUN([EGG_DEBUG_DEFAULTS],
   debug_options="debug debug_assert debug_mem debug_dns"
 
   debug_cflags_debug="-g3 -DDEBUG"
+  AX_CHECK_COMPILE_FLAG([-Og], [debug_cflags_debug="-Og $debug_cflags_debug"])
   debug_cflags_debug_assert="-DDEBUG_ASSERT"
   debug_cflags_debug_mem="-DDEBUG_MEM"
   debug_cflags_debug_dns="-DDEBUG_DNS"
@@ -1429,22 +1422,20 @@ if test "$enable_ipv6" = "yes"; then
   if test "$egg_cv_var_have_in6_addr" = "yes"; then
     # Check for in6addr_any
     AC_CACHE_CHECK([for the in6addr_any constant], [egg_cv_var_have_in6addr_any], [
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
-      ], [struct in6_addr i6 = in6addr_any;],
-      [egg_cv_var_have_in6addr_any="yes"], [egg_cv_var_have_in6addr_any="no"])
+      ]], [[struct in6_addr i6 = in6addr_any;]])],[egg_cv_var_have_in6addr_any="yes"],[egg_cv_var_have_in6addr_any="no"])
     ])
     if test "$egg_cv_var_have_in6addr_any" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_ANY, 1, [Define to 1 if you have the in6addr_any constant.])
     fi
     # Check for in6addr_loopback
     AC_CACHE_CHECK([for the in6addr_loopback constant], [egg_cv_var_have_in6addr_loopback], [
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
-      ], [struct in6_addr i6 = in6addr_loopback;],
-      [egg_cv_var_have_in6addr_loopback="yes"], [egg_cv_var_have_in6addr_loopback="no"])
+      ]], [[struct in6_addr i6 = in6addr_loopback;]])],[egg_cv_var_have_in6addr_loopback="yes"],[egg_cv_var_have_in6addr_loopback="no"])
     ])
     if test "$egg_cv_var_have_in6addr_loopback" = "yes"; then
       AC_DEFINE(HAVE_IN6ADDR_LOOPBACK, 1, [Define to 1 if you have the in6addr_loopback constant.])
@@ -1531,7 +1522,7 @@ AC_DEFUN([EGG_TLS_ENABLE],
   AC_MSG_CHECKING([whether to enable TLS support])
   AC_ARG_ENABLE(tls,
     [  --disable-tls           disable TLS support ], [tls_enabled="$enableval"],
-    [tls_enabled="$enableval"])
+    [tls_enabled="yes"])
 
   AC_MSG_RESULT([$tls_enabled])
 ])
@@ -1606,11 +1597,11 @@ AC_DEFUN([EGG_TLS_DETECT],
     if test -z "$SSL_LIBS"; then
       AC_CHECK_LIB(crypto, X509_digest, , [havessllib="no"], [-lssl])
       AC_CHECK_LIB(ssl, SSL_accept, , [havessllib="no"], [-lcrypto])
-      AC_CHECK_FUNCS([EVP_sha1 a2i_IPADDRESS], , [[
-        havessllib="no"
-        break
-      ]])
     fi
+    AC_CHECK_FUNCS([EVP_sha1 a2i_IPADDRESS], , [[
+      havessllib="no"
+      break
+    ]])
     AC_CHECK_FUNCS([EVP_md5])
     AC_CHECK_FUNC(OPENSSL_buf2hexstr, ,
       AC_CHECK_FUNC(hex_to_string,
@@ -1633,7 +1624,7 @@ AC_DEFUN([EGG_TLS_DETECT],
       AC_MSG_WARN([Please specify the path to the openssl include dir using --with-sslinc=path])
     fi
     if test "$havessllib" = "no"; then
-      AC_MSG_WARN([Cannot find OpenSSL libraries.])
+      AC_MSG_WARN([Cannot find OpenSSL library 0.9.8 or newer.])
       AC_MSG_WARN([Please specify the path to libssl and libcrypto using --with-ssllib=path])
     fi
     AC_MSG_CHECKING([for OpenSSL])

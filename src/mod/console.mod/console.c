@@ -4,7 +4,7 @@
  *   by cmwagner/billyjoe/D. Senso
  */
 /*
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 #define MAKING_CONSOLE
 
 #include "src/mod/module.h"
-#include <stdlib.h>
 #include "console.h"
 
 static Function *global = NULL;
@@ -134,13 +133,12 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int console_tcl_format(char *work, struct console_info *i)
+static void console_tcl_format(char *work, struct console_info *i)
 {
   simple_sprintf(work, "%s %s %s %d %d %d",
                  i->channel, masktype(i->conflags),
                  stripmasktype(i->stripflags), i->echoflags,
                  i->page, i->conchan);
-  return 0;
 }
 
 static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
@@ -149,7 +147,7 @@ static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
   char work[1024];
 
   console_tcl_format(work, e->u.extra);
-  Tcl_AppendResult(irp, work, NULL);
+  Tcl_SetResult(irp, work, TCL_STATIC);
   return TCL_OK;
 }
 
