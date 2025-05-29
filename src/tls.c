@@ -622,7 +622,11 @@ static char *ssl_printname(X509_NAME *name)
  *
  * You need to nfree() the returned pointer.
  */
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
 static char *ssl_printtime(const ASN1_UTCTIME *t)
+#else
+static char *ssl_printtime(ASN1_UTCTIME *t)
+#endif
 {
   long len;
   char *data, *buf;
