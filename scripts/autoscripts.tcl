@@ -1,18 +1,22 @@
-package require json
-package require json::write
-package require http
-package require tls
-
+set pkgs {"json" "json::write" "http" "tls"}
+foreach pkg $pkgs {
+  if {[catch {package require $pkg}]} {
+    putlog "$pkg is not installed. Autoscripts cannot load"
+    putlog "$pkg can be installed via your host's command line package manager"
+    return 1
+  }
+}
+       
 set asidx 0
 set eggdir "autoscripts"
-set cmdtxt "\nEnter your command (done to exit):"
+set cmdtxt "\nEnter your command ('done' to return to partyline):"
 set jsondict [dict create]
 set asmajor 1
 set asminor 0
 
-bind DCC n autoscript console
+bind DCC n autoscript asconsole
 
-proc console {hand idx arg} {
+proc asconsole {hand idx arg} {
   global echostatus
   global oldchan
   global asidx
@@ -78,7 +82,7 @@ proc send_http {url type} {
     catch {set req [http::geturl $url -binary 1 -channel $fs]} error
     close $fs
   } else {
-    catch {set req [http::geturl $url -timeout 10000]} error
+    catch {set req [http::geturl $url -headers [dict create "User-Agent" "Mozilla/5.0"] -timeout 10000]} error
   }
   set status [http::status $req]
   if {$status != "ok"} {
@@ -124,7 +128,7 @@ proc parse_egg {idx text} {
 
     # Check if this is the user who triggered the console
     if {$idx != $asidx} {
-      return
+      return $text
     }
 	set args [split $text]
 	set args [lassign $args subcmd arg1 arg2]
@@ -169,13 +173,16 @@ proc egg_list {idx} {
   readjsonfile
   putdcc $idx "\nThe following scripts are available for configuration:"
   putdcc $idx "-------------------------------------------------------"
+  if {[llength $jsondict] == 0} {
+    putdcc $idx "* No scripts have been downloaded"
+  }
   foreach script $jsondict {
     set loaded [expr {[dict get $script config loaded] == 1 ? "\[X\]" : "\[ \]"}]
     putdcc $idx "* $loaded [dict get $script name] (v[dict get $script version_major].[dict get $script version_minor]) - [dict get $script description]"
     if {[dict exists $script config requires] && [string length [dict get $script config requires]]} {
       foreach pkg [dict get $script config requires] {
         if {![string equal $pkg "null"]} {
-          if {![lsearch -exact [package names] $pkg]} {
+          if {[lsearch -exact [package names] $pkg] == -1} {
             putdcc $idx "      ( ^ Must install Tcl $pkg package on host before loading)"
           }
         }
@@ -334,14 +341,20 @@ proc egg_set {idx script setting value} {
 # For future eggheads- 100 is the maximum WP supports without doing pagination
 proc egg_remote {idx} {
   global cmdtxt
+  global eggdir
   putdcc $idx "* Retrieving script list, please wait..."
-  set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip&orderby=slug&per_page=100&order=asc" 0]
+  send_http "https://raw.githubusercontent.com/eggheads/autoscripts/master/manifest" 1
+  set fp [open $eggdir/manifest r]
+  set jsondata [read $fp]
+  close $fp
   set datadict [json::json2dict $jsondata]
   putdcc $idx "Scripts available for download:"
   putdcc $idx "-------------------------------"
   foreach scriptentry $datadict {
-    regsub -all {<[^>]+>} [dict get $scriptentry caption rendered] "" scriptcap
-    putdcc $idx "* [format "%-16s %s" [dict get $scriptentry slug] [string trim $scriptcap "\n"]]"
+#    regsub -all {<[^>]+>} [dict get $scriptentry caption rendered] "" scriptcap
+    if {![string equal -nocase [dict get $scriptentry name] "autoscripts"]} {
+      putdcc $idx "* [format "%-16s %s" [dict get $scriptentry name] [dict get $scriptentry description]]"
+    }
   }
   putdcc $idx "\n"
   putdcc $idx "* Type 'fetch <scriptname>' to download a script"
@@ -369,15 +382,14 @@ proc egg_update {idx tgtscript} {
   set found 0
 
   readjsonfile
-  set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip&orderby=slug&per_page=100&order=asc" 0]
-  set jsondata [send_http "https://www.eggheads.org/wp-content/uploads/2023/05/asman.json" 0]
+  set jsondata [send_http "https://raw.githubusercontent.com/eggheads/autoscripts/master/manifest" 0]
   set datadict [json::json2dict $jsondata]
   foreach localscript $jsondict {
     foreach remotescript $datadict {
       if {[string equal -nocase [dict get $remotescript name] [dict get $localscript name]]} {
-        if { ([dict get $remotescript minor] > [dict get $localscript version_minor] &&
-              [dict get $remotescript major] >= [dict get $localscript version_major]) ||
-             ([dict get $remotescript major] > [dict get $localscript version_major]) } {
+        if { ([dict get $remotescript version_minor] > [dict get $localscript version_minor] &&
+              [dict get $remotescript version_major] >= [dict get $localscript version_major]) ||
+             ([dict get $remotescript version_major] > [dict get $localscript version_major]) } {
           ## If we're looking for a specific script, suppress other found messages
           if {[string equal -nocase $tgtscript ""]} {
               putdcc $idx "* [dict get $localscript name] has an update available."
@@ -452,23 +464,27 @@ proc egg_fetch {idx script} {
     putidx $idx "$cmdtxt"
     return
   }
-### CHECK IF IT IS ON SITE FIRST
   putdcc $idx "* Downloading, please wait..."
-  set jsondata [send_http "https://www.eggheads.org/wp-json/wp/v2/media?mime_type=application\/x-gzip" 0]
+  set jsondata [send_http "https://api.github.com/repos/eggheads/autoscripts/contents/packages" 0]
   set datadict [json::json2dict $jsondata]
   foreach scriptentry $datadict {
-    if {[string match $script [dict get $scriptentry slug]]} {
-      send_http [dict get $scriptentry source_url] 1
-      file mkdir $eggdir/[dict get $scriptentry slug]
-      exec tar -zxf $eggdir/[dict get $scriptentry slug].tgz -C $eggdir/[dict get $scriptentry slug]
-      file delete $eggdir/[dict get $scriptentry slug].tgz
-      putdcc $idx "* [dict get $scriptentry slug] downloaded."
-      putdcc $idx "* Use 'config [dict get $scriptentry slug]' to configure and then 'load [dict get $scriptentry slug]' to load."
-      putidx $idx "$cmdtxt"
-      readjsonfile
+    if {[string match ${script}.tgz [dict get $scriptentry name]]} {
+      send_http "[dict get $scriptentry download_url]" 1
+      putdcc $idx "* [dict get $scriptentry name] downloaded."
+      exec tar -zxf $eggdir/[dict get $scriptentry name] -C $eggdir
+      if {[file exists $eggdir/$script]} {
+        file delete $eggdir/[dict get $scriptentry name]
+        putdcc $idx "* [dict get $scriptentry name] extracted."
+        putdcc $idx "* Use 'config $script' to configure and then 'load $script' to load."
+        putidx $idx "$cmdtxt"
+        readjsonfile
+      } else {
+        putdcc $idx "* ERROR: [dict get $scriptentry name] not found. Cannot continue."
+      }
     }
   }
 }
+
 
 proc egg_clean {idx script} {
   global cmdtxt

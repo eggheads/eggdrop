@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,11 +90,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 0 - 3 */
 #define nmalloc(x) (((void *(*)())global[0])((x),MODULE_NAME,__FILE__,__LINE__))
 #define nfree(x) (global[1]((x),MODULE_NAME,__FILE__,__LINE__))
-#ifdef DEBUG_CONTEXT
-#  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
-#else
-#  define Context do {} while (0)
-#endif
+#define Context do {} while (0) /* For backward compatibility only */
 #define module_rename ((int (*)(char *, char *))global[3])
 /* 4 - 7 */
 #define module_register ((int (*)(char *, Function *, int, int))global[4])
@@ -140,7 +136,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define zapfbot ((void (*)(int))global[36])
 #define n_free ((void (*)(void *,char *, int))global[37])
 #define u_pass_match ((int (*)(struct userrec *,char *))global[38])
-#define user_malloc(x) ((void *(*)(int,char *,int))global[39])(x,__FILE__,__LINE__)
+#define user_malloc(x) ((void *(*)(int, const char *, int))global[39])(x,__FILE__,__LINE__)
 /* 40 - 43 */
 #define get_user ((void *(*)(struct user_entry_type *,struct userrec *))global[40])
 #define set_user ((int(*)(struct user_entry_type *,struct userrec *,void *))global[41])
@@ -206,7 +202,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define open_telnet ((int (*) (int, char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void (*) (const char *))global[88])
-/* was my_memcpy -- use memcpy() instead */
+/* was my_memcpy() -- use memcpy() instead */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -269,7 +265,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define interp (*(Tcl_Interp **)(global[128]))
 #define now (*(time_t*)global[129])
 #define findanyidx ((int (*)(int))global[130])
-#define findchan ((struct chanset_t *(*)(char *))global[131])
+#define findchan ((struct chanset_t *(*)(const char *))global[131])
 /* 132 - 135 */
 #define cmd_die (global[132])
 #define days ((void (*)(time_t,time_t,char *))global[133])
@@ -378,8 +374,8 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 216 - 219 */
 #define fcopyfile ((int (*) (FILE *, char *))global[216])
 #define copyfilef ((int (*) (char *, FILE *))global[217])
-#define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
-#define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
+#define rfc_casecmp ((int(*)(const char *, const char *))(*(Function**)(global[218])))
+#define rfc_ncasecmp ((int(*)(const char *, const char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(global[220]))
 #define global_invites (*(maskrec **)(global[221]))
@@ -396,11 +392,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define nrealloc(x,y) (((void *(*)())global[230])((x),(y),MODULE_NAME,__FILE__,__LINE__))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-#  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
-#else
-#  define ContextNote(note) do {} while (0)
-#endif
+#define ContextNote(note) do {} while (0) /* For backward compatibility only */
 #ifdef DEBUG_ASSERT
 #  define Assert(expr) do {                                             \
           if (!(expr))                                                  \
@@ -423,7 +415,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
 #define protect_readonly (*(int *)(global[244]))
-#define findchan_by_dname ((struct chanset_t *(*)(char *))global[245])
+#define findchan_by_dname ((struct chanset_t *(*)(const char *))global[245])
 #define removedcc ((void (*) (int))global[246])
 #define userfile_perm (*(int *)global[247])
 /* 248 - 251 */
@@ -434,10 +426,10 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-/* was egg_memset -- use memset() instead */
-/* was egg_strcasecmp -- use strcasecmp instead */
+/* was egg_memset() -- use memset() instead */
+/* was egg_strcasecmp() -- use strcasecmp() instead */
 /* 256 - 259 */
-/* was egg_strncasecmp -- use strncasecmp instead */
+/* was egg_strncasecmp() -- use strncasecmp() instead */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))
@@ -505,7 +497,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 # define strlcpy ((size_t (*) (char *, const char *, size_t))global[303])
 #endif
 /* 304 - 307 */
-#define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
+#define strncpyz strlcpy /* strncpyz() is deprecated, use strlcpy() instead */
 #ifndef HAVE_BASE64
 # define b64_ntop ((int (*) (uint8_t const *, size_t, char *, size_t))global[305])
 # define b64_pton ((int (*) (const char *, uint8_t *, size_t))global[306])
@@ -527,7 +519,15 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define USERENTRY_ACCOUNT (*(struct user_entry_type *)(global[316]))
 #define get_user_by_account ((struct userrec * (*)(char *))global[317])
 #define delaccount_by_handle ((int(*)(char *,char *))global[318])
-
+#define check_tcl_event_arg ((void (*) (const char *,const char *))global[319])
+/* 320 - 323 */
+#define bind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[320])
+#define unbind_bind_entry ((int(*)(tcl_bind_list_t *, const char *, const char *, const char *))global[321])
+#define argv0 ((char *)global[322])
+#define lookup_user_record ((struct userrec * (*)(memberlist *, char *, char *))global[323])
+/* 324 - 327 */
+#define find_member_from_nick ((memberlist * (*) (char *))global[324])
+#define get_user_from_member ((struct userrec * (*) (memberlist *))global[325])
 
 
 /* hostmasking */

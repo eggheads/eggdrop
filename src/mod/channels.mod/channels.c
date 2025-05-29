@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@ static Function *global = NULL;
 
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
+
+static p_tcl_bind_list H_chanset;
 
 static struct udef_struct *udef;
 
@@ -241,6 +243,27 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
   }
 }
 
+static int builtin_chanset STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, " chan setting value");
+
+  CHECKVALIDITY(builtin_chanset);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+int check_tcl_chanset(const char *chan, const char *setting, const char *value)
+{
+  Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
+  Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
+  Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
+
+  return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
+}
+
 /* Returns true if this is one of the channel masks
  */
 static int ismodeline(masklist *m, char *user)
@@ -385,7 +408,7 @@ static char *convert_element(char *src, char *dst)
 static void write_channels()
 {
   FILE *f;
-  char s[sizeof chanfile + 4], w[1024], w2[1024], name[163];
+  char s[sizeof chanfile + 4], s1[26], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
@@ -400,9 +423,10 @@ static void write_channels()
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file...");
-  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
-          botnetnick, ver, ctime(&now));
+    putlog(LOG_MISC, "*", "%s", CHAN_FILE_WRITING);
+  ctime_r(&now, s1);
+  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s",
+          botnetnick, ver, s1);
   for (chan = chanset; chan; chan = chan->next) {
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);
@@ -737,7 +761,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
                                 EGG_CONST char *name1,
                                 EGG_CONST char *name2, int flags)
 {
-  int i, items;
+  Tcl_Size i, items;
   char *t, *s;
   EGG_CONST char **item, *s2;
 
@@ -1007,6 +1031,7 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);

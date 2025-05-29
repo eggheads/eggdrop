@@ -1,8 +1,8 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
 AC_PREREQ([2.71])
-AC_INIT([Eggdrop],[1.9.5],[bugs@eggheads.org])
-AC_COPYRIGHT([Copyright (C) 1999 - 2023 Eggheads Development Team])
+AC_INIT([Eggdrop],[1.10.0],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
+AC_COPYRIGHT([Copyright (C) 1999 - 2024 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
 AC_CONFIG_SRCDIR(src/eggdrop.h)
@@ -14,7 +14,7 @@ AC_PRESERVE_HELP_ORDER
 dnl config.h stuff
 AH_TOP([/*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2024 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,7 @@ AC_USE_SYSTEM_EXTENSIONS
 EGG_CHECK_ICC
 EGG_CHECK_CCPIPE
 EGG_CHECK_CCWALL
+AX_CHECK_COMPILE_FLAG([-std=gnu99], [CFLAGS="-std=gnu99 $CFLAGS"])
 
 
 # Check for executable extension.
@@ -91,9 +92,8 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS_ONCE([sys/time.h])
 
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -113,7 +113,7 @@ AX_TYPE_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton isascii memset_s snprintf strlcpy vsnprintf])
+AC_CHECK_FUNCS([clock_gettime dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton memset_s snprintf strlcpy vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP
@@ -163,6 +163,9 @@ EGG_TLS_DETECT
 
 # Threaded DNS core
 EGG_TDNS_ENABLE
+
+# Check for Python
+EGG_PYTHON_WITHCONFIG
 
 
 # Substitute Makefile variables.
