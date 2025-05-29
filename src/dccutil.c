@@ -273,6 +273,10 @@ void dcc_chatter(int idx)
   dcc[idx].u.chat->channel = 234567;
   j = dcc[idx].sock;
   strcpy(dcc[idx].u.chat->con_chan, "***");
+#ifdef TLS
+  if (is_owner(dcc[idx].user))
+    verify_cert_expiry(idx);
+#endif
   check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
   /* Still there? */
   if ((idx >= dcc_total) || (dcc[idx].sock != j))
