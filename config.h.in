@@ -28,9 +28,6 @@
 /* Define if running on Mac OS X with dns.mod. */
 #undef BIND_8_COMPAT
 
-/* Define if running on NeXT Step. */
-#undef BORGCUBES
-
 /* Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF. */
 #undef BROKEN_SNPRINTF
 
