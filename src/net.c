@@ -1377,7 +1377,7 @@ void tputs(int z, char *s, unsigned int len)
     inhere = 1;
 
     putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
-    s[strlen(s) - 1] = 0;
+    s[len - 1] = 0;
     putlog(LOG_MISC, "*", "!-> '%s'", s);
 
     inhere = 0;
