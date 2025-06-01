@@ -41,6 +41,5 @@ distclean: clean
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../../../src/mod/irc.mod/irc.h ../../../src/mod/server.mod/server.h \
- .././python.mod/python.h .././python.mod/pycmds.c \
- .././python.mod/tclpython.c
+ ../../../src/mod/server.mod/server.h .././python.mod/python.h \
+ .././python.mod/pycmds.c .././python.mod/tclpython.c

@@ -12,7 +12,7 @@ Note: All code snippets are altered for brevity and simplicity, see original sou
 General Workflow To Create a New Bind
 -------------------------------------
 
-To create a new type of bind, there are generally three steps. First, you must add the new bind type to the `Bind Table`_. Once you have registered the bind type with the bind table, you must create a `C Function`_ that will be called to perform the functionality you wish to occur when the bind is triggered. Finally, once the C code supporting the new bind has been finished, the new `Tcl Binding`_ is ready to be used in a Tcl script.
+To create a new type of bind, there are generally three steps. First, you must add the new bind type to the `Bind Table`_. Once you have registered the bind type with the bind table, you must create a `C Function`_ that will be called to perform the functionality you wish to occur when the bind is triggered. Finally, once the C code supporting the new bind has been finished, the new Tcl binding is ready to be used in a Tcl script.
 
 .. _Bind Table:
 
@@ -234,7 +234,7 @@ To create a C function that is called by the bind, Eggdrop provides the :code:`a
     }
   }
 
-It automatically creates Tcl commands (e.g. :code:`*dcc:cmd_boot`) that will call the `C handler` from `add_bind_table` in the first section `Bind Table Creation`_ and it gets a context (void \*) argument with the C function it is supposed to call (e.g. `cmd_boot()`).
+It automatically creates Tcl commands (e.g. :code:`*dcc:cmd_boot`) that will call the `C handler` from `add_bind_table` in the first section `Bind Table`_ and it gets a context (void \*) argument with the C function it is supposed to call (e.g. `cmd_boot()`).
 
 Now we can actually look at the C function handler for dcc as an example and what it has to implement.
 
