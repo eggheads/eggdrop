@@ -270,7 +270,7 @@ Connetti in telnet il bot e  scrivi 'NEW' come tuo soprannome.
 0x90a,Modo cambiato da un non op di canale su %s!  Rimetto come era...
 0x90b,Abuso di desincronizzazione
 0x90c,flood
-//0x90d - removed
+#0x90d - removed
 0x90e,Scrivo il file dei canali...
 
 0xa00,Nessuno è ignorato

@@ -994,7 +994,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
             filelist_addout(flist, sd);
             my_free(sd);
           }
-          strcpy(fdbe->desc, p + 1);
+          memmove(fdbe->desc, p + 1, strlen(p + 1) + 1);
           p = strchr(fdbe->desc, '\n');
         }
         if ((fdbe->desc)[0]) {
@@ -1036,7 +1036,7 @@ static void remote_filereq(int idx, char *from, char *file)
   if (p) {
     *p = 0;
     malloc_strcpy(dir, what);
-    strcpy(what, p + 1);
+    memmove(what, p + 1, strlen(p + 1) + 1);
   } else {
     malloc_strcpy(dir, "");
   }

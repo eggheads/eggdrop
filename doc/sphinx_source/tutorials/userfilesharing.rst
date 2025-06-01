@@ -15,24 +15,24 @@ How to share userfiles- the super-short version
 On the Hub Bot
 ^^^^^^^^^^^^^^
 
-#. Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like::
+1. Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like::
 
     listen +3333/+4444 all
 
-#. On the hub (for this example, the Hub is called Hubalicious), add the leaf bot (for this example, the Leaf is called LeifErikson) with ``.+bot LeifErikson <IP_address_of_LiefErikson> +4444/+3333 <LiefErikson_hostmask>``. 
+2. On the hub (for this example, the Hub is called Hubalicious), add the leaf bot (for this example, the Leaf is called LeifErikson) with ``.+bot LeifErikson <IP_address_of_LiefErikson> +4444/+3333 <LiefErikson_hostmask>``.
 
-#. On the hub, give the leaf bot the appropriate leaf sharing flags with ``.botattr LiefErikson +gs``.
+3. On the hub, give the leaf bot the appropriate leaf sharing flags with ``.botattr LiefErikson +gs``.
 
 On the Leaf Bot
 ^^^^^^^^^^^^^^^
 
-#. Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like::
+1. Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like::
 
     listen +5555/+6666 all
 
-#. Now on the leaf, add the hub bot with ``.+bot Hubalicious <IP_address_of_Hubalicious> +6666/+5555 <Hubalicious hostmask>``.
+2. Now on the leaf, add the hub bot with ``.+bot Hubalicious <IP_address_of_Hubalicious> +6666/+5555 <Hubalicious hostmask>``.
 
-#. On the leaf, give the hub bot the appropriate hub and sharing flags with ``.botattr Hubalicious +ghp``.
+3. On the leaf, give the hub bot the appropriate hub and sharing flags with ``.botattr Hubalicious +ghp``.
 
 At this point, the leaf bot should attempt to connect to the hub bot within the next minute, or you can force the link connection with ``.link Hubalicious``. You can also use .bottree to see your botnet structure.
 
