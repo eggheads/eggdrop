@@ -360,8 +360,14 @@ static char *get_bot_pass(struct userrec *u) {
     if (pass2) {
       if (!pass) {
         pass = pass2;
-        if (encrypt_pass)
+        if (encrypt_pass) {
+	  /* get_user() returns a pointer of struct user_entry
+           * and set_user()->pass2_set() could free() and realloc it
+	   * so fetch it again with get_user()
+	   */
           set_user(&USERENTRY_PASS, u, pass);
+          pass = get_user(&USERENTRY_PASS2, u);
+	}
       } else if (strcmp(pass2, pass) && encrypt_pass2)
         pass = pass2;
     } else if (pass && encrypt_pass2)
@@ -425,10 +431,7 @@ static void timeout_dcc_bot_new(int idx)
 
 static void display_dcc_bot_new(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "bot*  waited %lis", tv);
+  sprintf(buf, "bot*  waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_bot_(void *x)
@@ -788,10 +791,7 @@ static void tout_dcc_chat_pass(int idx)
 
 static void display_dcc_chat_pass(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "pass  waited %lis", tv);
+  sprintf(buf, "pass  waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 static int expmem_dcc_general(void *x)
@@ -1826,8 +1826,8 @@ static void dcc_telnet_pass(int idx, int atr)
 
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & STAT_TELNET) {
-      char buf[1030];
-      egg_snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      char buf[512];
+      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
@@ -1852,10 +1852,7 @@ static void timeout_dcc_telnet_id(int idx)
 
 static void display_dcc_telnet_id(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "t-in  waited %lis", tv);
+  sprintf(buf, "t-in  waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 struct dcc_table DCC_TELNET_ID = {
@@ -2006,18 +2003,12 @@ static void tout_dcc_telnet_pw(int idx)
 
 static void display_dcc_telnet_new(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "new   waited %lis", tv);
+  sprintf(buf, "new   waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 static void display_dcc_telnet_pw(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "newp  waited %lis", tv);
+  sprintf(buf, "newp  waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 struct dcc_table DCC_TELNET_NEW = {
@@ -2253,10 +2244,7 @@ void eof_dcc_identwait(int idx)
 
 static void display_dcc_identwait(int idx, char *buf)
 {
-  long tv;
-
-  tv = now - dcc[idx].timeval;
-  sprintf(buf, "idtw  waited %lis", tv);
+  sprintf(buf, "idtw  waited %" PRId64 "s", (int64_t) (now - dcc[idx].timeval));
 }
 
 struct dcc_table DCC_IDENTWAIT = {
