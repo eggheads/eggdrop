@@ -65,6 +65,8 @@ static int include_lk = 1;      /* For correct calculation in real_add_mode. */
 
 static char opchars[8];         /* the chars in a /who reply meaning op */
 
+static Tcl_Obj *tcl_account;
+
 #include "chan.c"
 #include "mode.c"
 #include "cmdsirc.c"
@@ -1347,6 +1349,7 @@ static char *irc_close()
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
   rem_builtins(H_rawt, irc_rawt);
+  Tcl_DecrRefCount(tcl_account);
   rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
@@ -1455,6 +1458,8 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+  tcl_account = Tcl_NewStringObj("account", -1);
+  Tcl_IncrRefCount(tcl_account);
   add_builtins(H_rawt, irc_rawt);
   add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);
