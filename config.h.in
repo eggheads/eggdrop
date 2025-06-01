@@ -126,9 +126,6 @@
 /* Define to 1 if you have the in6addr_loopback constant. */
 #undef HAVE_IN6ADDR_LOOPBACK
 
-/* Define to 1 if you have the `inet_aton' function. */
-#undef HAVE_INET_ATON
-
 /* Define to 1 if the system has the type `intptr_t'. */
 #undef HAVE_INTPTR_T
 
