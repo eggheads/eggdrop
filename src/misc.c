@@ -181,7 +181,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
 
 int my_strcpy(char *a, const char *b)
 {
-  char *c = b;
+  const char *c = b;
 
   while (*b)
     *a++ = *b++;
