@@ -158,10 +158,6 @@ Simple Authentication and Security Layer (SASL) is becoming a prevalant method o
 
     openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem 2>/dev/null | grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | xxd -r -p | base64
 
-  If error "xxd: command not found" you could install vim, because xxd is a part of vim, or you could try python::
-
-    openssl ec -noout -text -conv_form compressed -in eggdrop-ecdsa.pem 2>/dev/null| grep '^pub:' -A 3 | tail -n 3 | tr -d ' \n:' | python -c "import base64,sys;print(base64.b64encode(bytearray.fromhex(sys.stdin.readline())).decode())"
-
   Then, authenticate with your NickServ service and register your public certificate with NickServ. On Libera for example, it is done by::
 
     /msg NickServ set pubkey <fingerprint string from above goes here>
