@@ -583,7 +583,7 @@ static int tcl_server STDVAR {
   BADARGS(2, 5, " subcommand ?host ?port? ?password?");
   if (!strcmp(argv[1], "add")) {
     if (argc < 3) {
-      Tcl_SetResult(irp, "wrong # args: should be \"server add host ?port? ?password?\"", TCL_STATIC);
+      Tcl_SetResult(irp, "wrong # args: should be \"server add host ?port ?password??\"", TCL_STATIC);
       return TCL_ERROR;
     }
     ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
