@@ -102,7 +102,7 @@ Below are some of the common settings used for Eggdrop:
 
 :set username: if your shell runs identd (most do), then you should set this to your account login name.
 
-:set vhost4: you'll need to set this if you want your bot to use a vhost. This setting lets you choose which IP to use if your shell has multiple. Use vhost4 for an IPv4 address (ie, 192.0.2.1) See also: vhost6
+:set vhost4: you'll need to set this if you want your bot to use a vhost. This setting lets you choose which IP to use if your shell has multiple. Use vhost4 for an IPv4 address (ie, 1.2.3.4) See also: vhost6
 
 :set vhost6: the same as vhost4, only for IPv6 addresses (ie, 2001:db8:dead:b33f::1337:f270).
 
