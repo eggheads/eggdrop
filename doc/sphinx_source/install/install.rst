@@ -115,9 +115,9 @@ installation tool prior to compiling:
 ::
 
   Interpreters: tcl, tcl-devel
-  Net:          openssl-devel
+  Net:          openssl, libssl-devel
   Devel:        autoconf, gcc-core, git, make
-  Utils:        diffutils
+  Libs:         zlib-devel
 
 Modules
 -------
@@ -143,4 +143,4 @@ the README file. If not, then READ IT!&@#%@!
 Have fun with Eggdrop!
 
   Copyright (C) 1997 Robey Pointer
-  Copyright (C) 1999 - 2024 Eggheads Development Team
+  Copyright (C) 1999 - 2025 Eggheads Development Team

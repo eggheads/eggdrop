@@ -2,7 +2,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * Portions Copyright (C) 2000 - 2024 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2025 Eggheads Development Team
  */
 
 #include "main.h"

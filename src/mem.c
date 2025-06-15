@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,7 +83,7 @@ void init_mem()
     putlog(LOG_MISC, "*", "*** FAILED MALLOC mem.c (memtbl) (%ld): %s", (long)size,
            strerror(errno));
     fatal("Memory allocation failed", 0);
-  } 
+  }
   for (i = 0; i < memtbl_size; i++)
     memtbl[i].ptr = NULL;
 #endif
@@ -357,7 +357,7 @@ void *n_malloc(int size, const char *file, int line)
       putlog(LOG_MISC, "*", "*** FAILED REALLOC mem.c (memtbl) (%lu): %s", (unsigned long)size2,
              strerror(errno));
       fatal("Memory allocation failed", 0);
-    } 
+    }
     for (i = lastused; i < memtbl_size; i++)
       memtbl[i].ptr = NULL;
     debug1("mem: memtbl size doubled to %i.", memtbl_size);
