@@ -80,8 +80,6 @@
  *
  **************************************************************/
 
-#include <string.h>
-#include <ctype.h>
 #include <sys/types.h>
 
 #ifndef HAVE_VSNPRINTF

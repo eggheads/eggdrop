@@ -33,7 +33,6 @@
 #if HAVE_SYS_SELECT_H
 #  include <sys/select.h>
 #endif
-#include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>

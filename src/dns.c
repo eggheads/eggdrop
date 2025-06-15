@@ -26,7 +26,6 @@
 
 #include "main.h"
 #include <netdb.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include "dns.h"
 #ifdef EGG_TDNS

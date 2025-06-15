@@ -89,11 +89,7 @@ static const char rcsid[] = "$Id: inet_addr.c,v 1.5 2005/04/27 04:56:19 sra Exp 
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/param.h>
-
-#include <netinet/in.h>
 #include <arpa/inet.h>
-
-#include <ctype.h>
 
 /*
  * Check whether "cp" is a valid ascii representation
