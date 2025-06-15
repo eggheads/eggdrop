@@ -33,7 +33,8 @@
 #define MAKING_UPTIME
 
 #include "uptime.h"
-#include "../module.h"
+#include "src/mod/module.h"
+
 #include "../server.mod/server.h"
 #include <netdb.h>
 #include <netinet/in.h>
@@ -41,7 +42,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
