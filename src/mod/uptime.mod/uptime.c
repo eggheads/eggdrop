@@ -34,7 +34,6 @@
 
 #include "uptime.h"
 #include "src/mod/module.h"
-
 #include "../server.mod/server.h"
 #include <netdb.h>
 #include <arpa/inet.h>
