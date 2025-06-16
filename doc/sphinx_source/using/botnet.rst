@@ -52,7 +52,7 @@ The following are some common terms used in this document:
   Passive share is a term used to describe the direction of sharing user-files. Passive share bots will accept userfiles from an aggressive share bot.
 
 **Address**
-  The physical address, containing the address and port of the bot. For example: lame.example.org:3333. You can change a bot's address with::
+  The physical address, containing the address and port of the bot. For example: lame.org:3333. You can change a bot's address with::
 
         .chaddr <botname> <address> <port#>[/<relay-port#>]
 
@@ -145,18 +145,18 @@ With the common terms out of the way, we can start with the process of linking t
 
 Here is an example scenario:
 
-      BotA is on lame.example.org listening on port 3333, and BotB is on irc.example.org
+      BotA is on lame.org listening on port 3333, and BotB is on irc.org
       listening on port 4444. First, you have to add each Bot to the other's
-      userfile. On BotA, you would type '.+bot BotB irc.example.org 4444'. If BotB is
+      userfile. On BotA, you would type '.+bot BotB irc.org 4444'. If BotB is
       on a common channel with BotA, BotB's hostmask is automatically added.
       Otherwise, you have to add the hostmask manually with the '.+host'
-      command. On BotB, you would type '.+bot BotA lame.example.org 3333'.
+      command. On BotB, you would type '.+bot BotA lame.org 3333'.
 
 At this point, you can link the two bots by typing '.link BotA' on BotB (or '.link BotB' on BotA). The bots will now give themselves random passwords which are *not* stored encrypted in the userfile. Note that you can link as many bots as you wish to your botnet.
 
 Secure (TLS) Links
 ^^^^^^^^^^^^^^^^^^
-Since Eggdrop 1.8.0, the ability to encrypt bot links using TLS is possible. On the hub bot you would prefix the port given in the `listen` command with a +, and when you add the hub bot to the leaf, you would prefix the port used in the `.+bot` command with a +. In other words, you would set `listen +5555` in the hub config and use `.+bot hubbot 192.0.2.1 +5555` on the leaf bot. These settings are explained more thoroughly in the `TLS botnet documentation. <https://docs.eggheads.org/using/tls.html#botnet>`_
+Since Eggdrop 1.8.0, the ability to encrypt bot links using TLS is possible. On the hub bot you would prefix the port given in the `listen` command with a +, and when you add the hub bot to the leaf, you would prefix the port used in the `.+bot` command with a +. In other words, you would set `listen +5555` in the hub config and use `.+bot hubbot 1.2.3.4 +5555` on the leaf bot. These settings are explained more thoroughly in the `TLS botnet documentation. <https://docs.eggheads.org/using/tls.html#botnet>`_
 
 
 Using botflags
@@ -327,4 +327,4 @@ Using certificates to authenticate Eggdrops
 -------------------------------------------
 Eggdrops can use certificates to authenticate when linking to each other instead of a password. First, you must ensure you have set the appropriate certificates in the `ssl-privatekey` and `ssl-certificate` settings in the config file, and then enable the `ssl-cert-auth` setting. Next, add the certificate on the partyline by using `.fprint +` to add the fingerprint for the certificate currently in use, or `.fprint <SHA1 fingerprint>` to manually add a fingerprint. Once the config file settings are set 0and fingerprints are added on the partyline, Eggdrops will attempt to use their certificates instead of passwords for authentication.
 
-Copyright (C) 1999 - 2024 Eggheads Development Team
+Copyright (C) 1999 - 2025 Eggheads Development Team
