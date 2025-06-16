@@ -11,7 +11,7 @@ AC_INIT([Eggdrop Python Module],[1.10.0],[bugs@eggheads.org])
 AC_CONFIG_SRCDIR(python.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2024 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2025 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 AC_PROG_FGREP

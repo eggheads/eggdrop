@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1108,7 +1108,7 @@ static int del_server(const char *name, const char *port)
       curr = curr->next;
     }
   }
-  return found ? 0 : 3; 
+  return found ? 0 : 3;
 }
 
 /* Free a single removed server from server link list */
@@ -1677,7 +1677,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     warn = 1;
   }
   else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
-    net_type_int = NETT_OTHER; 
+    net_type_int = NETT_OTHER;
     warn = 1;
   } else {
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
