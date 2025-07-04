@@ -24,6 +24,9 @@
  */
 
 #include <errno.h>
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+               * (dietlibc) */
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #include <signal.h>
 #include "main.h"
 #include "modules.h"
@@ -592,8 +595,8 @@ Function global_table[] = {
   /* 304 - 307 */
   (Function) strlcpy,             /* was strncpyz() -- use strlcpy() instead */
 #ifndef HAVE_BASE64
-  (Function) egg_b64_ntop,
-  (Function) egg_b64_pton,
+  (Function) b64_ntop,
+  (Function) b64_pton,
 #else
   (Function) 0,
   (Function) 0,
