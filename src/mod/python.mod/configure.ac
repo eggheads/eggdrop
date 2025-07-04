@@ -49,6 +49,12 @@ if test "x$python_config_bin" != "x"; then
 
   AC_MSG_CHECKING([for python C flags])
   PYTHON_CFLAGS=`$python_config_bin $PYTHON_CONFIG_ARGS --cflags`
+  # remove preprocessor args
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-Wp,.*//'`
+  # remove march
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-march=@<:@^ @:>@*//g'`
+  # remove mtune
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-mtune=@<:@^ @:>@*//g'`
   AC_MSG_RESULT([$PYTHON_CFLAGS])
   AC_SUBST(PYTHON_CFLAGS)
 
