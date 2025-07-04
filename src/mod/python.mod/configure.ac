@@ -73,7 +73,7 @@ AC_MSG_CHECKING([python version is >= 3.8.0])
 if test "x$ax_check_ver" = x"no"; then
   python_avail="false"
   AC_MSG_RESULT([no ($PYTHON_VERSION)])
-  AC_MSG_WARN([Eggdrop requires python version 3.8.0 or higher])
+  AC_MSG_WARN([Compiling Eggdrop with python requires python version 3.8.0 or higher])
 else
   AC_MSG_RESULT([yes ($PYTHON_VERSION)])
 fi
