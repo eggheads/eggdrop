@@ -27,8 +27,8 @@
 #define B64_PTON_CALCULATE_SIZE(x) (x * 3 / 4)
 
 #ifndef HAVE_BASE64
-int b64_ntop(uint8_t const *, size_t, char *, size_t);
-int b64_pton(const char *, uint8_t *, size_t);
+int egg_b64_ntop(uint8_t const *, size_t, char *, size_t);
+int egg_b64_pton(const char *, uint8_t *, size_t);
 #endif /* HAVE_BASE64 */
 
 #endif /* _EGG_COMPAT_BASE64_H_ */

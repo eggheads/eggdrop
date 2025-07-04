@@ -592,8 +592,8 @@ Function global_table[] = {
   /* 304 - 307 */
   (Function) strlcpy,             /* was strncpyz() -- use strlcpy() instead */
 #ifndef HAVE_BASE64
-  (Function) b64_ntop,
-  (Function) b64_pton,
+  (Function) egg_b64_ntop,
+  (Function) egg_b64_pton,
 #else
   (Function) 0,
   (Function) 0,
