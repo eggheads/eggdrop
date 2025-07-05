@@ -49,7 +49,6 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <resolv.h>
 #include <setjmp.h>
 #include <signal.h>
 

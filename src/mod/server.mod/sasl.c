@@ -7,9 +7,7 @@
  * Copyright (C) 2019 - 2025 Eggheads Development Team
  */
 
-#undef answer /* before resolv.h because it could collide with src/mod/module.h
-               * (dietlibc) */
-#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include "src/mod/module.h"
 
 /* RFC 5802 - printable ASCII characters excluding ','
  * printable = %x21-2B / %x2D-7E
