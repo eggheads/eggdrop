@@ -1,13 +1,20 @@
 
-Eggdrop Changes (Last Updated 2025-06-28):
+Eggdrop Changes (Last Updated 2025-08-15):
 __________________________________________
 
-Eggdrop v1.10.1rc1:
+Eggdrop v1.10.1:
+
+  2025-08-15 * Fix python compile error message
+             * Fix docs install path
+             * Update Versions
+
+Eggdrop v1.10.1rc1 (2025-06-28):
 
   2025-06-28 * Fix python.mod make error
                  [Found by: ek / Patch by: michaelortmann]
              * Update version strings to 1.10.1
              * Generate docs with 1.10.1 version
+             * Eggdrop v1.10.1 Release Candidate 1
   2025-06-16 * Delete orphaned html files
   2025-06-15 * Do not add channels with invalid options
                  [Found by: fred0r / Patch by: michaelortmann]
