@@ -471,7 +471,8 @@ static void show_help() {
          "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
-         "-v  Show version info and exit.\n\n", argv[0]);
+         "-v  Show version info and exit.\n"
+         "-d  Show debug info.\n\n", argv[0]);
   bg_send_quit(BG_ABORT);
 }
 
@@ -487,9 +488,10 @@ static void do_arg()
   #define CLI_C        1 << 3
   #define CLI_N        1 << 4
   #define CLI_H        1 << 5
-  #define CLI_BAD_FLAG 1 << 6
+  #define CLI_D        1 << 6
+  #define CLI_BAD_FLAG 1 << 7
 
-  while ((option = getopt(argc, argv, "hnctmv")) != -1) {
+  while ((option = getopt(argc, argv, "hnctmvd")) != -1) {
     switch (option) {
       case 'n':
         cliflags |= CLI_N;
@@ -517,11 +519,16 @@ static void do_arg()
       case 'h':
         cliflags |= CLI_H;
         break;
+      case 'd':
+        cliflags |= CLI_D;
+        break;
       default:
         cliflags |= CLI_BAD_FLAG;
         break;
     }
   }
+  if (cliflags & CLI_D)
+    conmask |= LOG_DEBUG;
   if (cliflags & CLI_H) {
     show_help();
     exit(0);
