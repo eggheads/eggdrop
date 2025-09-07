@@ -155,11 +155,11 @@
 <section id="assign-permission-flags">
 <h3>Assign Permission Flags<a class="headerlink" href="#assign-permission-flags" title="Link to this heading">¶</a></h3>
 <p>To assign an access level to a user, first read <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span> 
 </pre></div>
 </div>
 <p>So to grant a user the voice flag, you would do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">+</span><span class="n">v</span> <span class="n">handle</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="n">handle</span> <span class="o">+</span><span class="n">v</span>
 </pre></div>
 </div>
 <p>It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.</p>
