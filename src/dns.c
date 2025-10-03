@@ -49,12 +49,14 @@ extern Tcl_Interp *interp;
 
 devent_t *dns_events = NULL;
 
+#ifdef EGG_TDNS
 void init_tdns() {
   if (pthread_attr_init(&attr))
     fatal("ERROR: init_tnds(): pthread_attr_init()", 0);
   dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
   dns_thread_head->next = NULL;
 }
+#endif
 
 static int ipaddr_equal(const sockname_t *ip, const sockname_t *ip2)
 {
