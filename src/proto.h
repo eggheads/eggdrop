@@ -169,6 +169,7 @@ void del_dcc(int);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
+void init_tdns();
 extern void (*dns_hostbyip) (sockname_t *);
 void core_dns_hostbyip(sockname_t *);
 void call_hostbyip(sockname_t *, char *, int);
