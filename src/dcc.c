@@ -928,8 +928,9 @@ static void append_line(int idx, char *line)
   struct chat_info *c = (dcc[idx].type == &DCC_CHAT) ? dcc[idx].u.chat :
                         dcc[idx].u.file->chat;
   module_entry *me;
+  char line_r[LOGLINELEN];
 
-  if (c->current_lines > 1000) {
+  if (c->current_lines > 2000) {
     /* They're probably trying to fill up the bot nuke the sods :) */
     for (p = c->buffer; p; p = q) {
       q = p->next;
@@ -958,13 +959,16 @@ static void append_line(int idx, char *line)
       q = NULL;
     else
       for (q = c->buffer; q->next; q = q->next);
+    /* get_data_ptr() -> n_malloc() could destroy line, so copy line to line_r
+     * to make append_line() reentrant
+     */
+    strlcpy(line_r, line, sizeof line_r);
 
     p = get_data_ptr(sizeof(struct msgq));
-
     p->len = l;
     p->msg = get_data_ptr(l + 1);
     p->next = NULL;
-    strcpy(p->msg, line);
+    strlcpy(p->msg, line_r, l + 1);
     if (q == NULL)
       c->buffer = p;
     else
