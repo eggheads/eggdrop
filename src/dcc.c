@@ -25,6 +25,7 @@
 
 #include "main.h"
 #include <errno.h>
+#include "modules.h"
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
@@ -926,6 +927,7 @@ static void append_line(int idx, char *line)
   struct msgq *p, *q;
   struct chat_info *c = (dcc[idx].type == &DCC_CHAT) ? dcc[idx].u.chat :
                         dcc[idx].u.file->chat;
+  module_entry *me;
 
   if (c->current_lines > 1000) {
     /* They're probably trying to fill up the bot nuke the sods :) */
@@ -935,8 +937,16 @@ static void append_line(int idx, char *line)
       nfree(p);
     }
     c->buffer = 0;
+
+    /* Turn paging off to avoid infinite loop */
     dcc[idx].status &= ~STAT_PAGE;
-    do_boot(idx, botnetnick, "too many pages - sendq full");
+    if ((me = module_find("console", 1, 1))) {
+      Function *func = me->funcs;
+      (func[CONSOLE_DOSTORE]) (idx);
+    }
+    debug0("dcc.c: append_line(): Paging turned off.");
+
+    do_boot(idx, botnetnick, "more than 1000 page lines - sendq full");
     return;
   }
   if ((c->line_count < c->max_line) && (c->buffer == NULL)) {
