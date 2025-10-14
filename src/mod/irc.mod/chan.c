@@ -2328,18 +2328,21 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan) &&
-      !channel_inactive(chan)) {
-    chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
+  if (match_my_nick(nick) && !channel_inactive(chan)) {
+    if (channel_pending(chan)) {
+      chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-    clear_channel(chan, CHAN_RESETALL);
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+      clear_channel(chan, CHAN_RESETALL);
+    } else
+      // make sure the bot knows it is no longer on that channel
+      chan->status &= ~CHAN_ACTIVE;
     return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
   }
   if (channel_active(chan)) {
