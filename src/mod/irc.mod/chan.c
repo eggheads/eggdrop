@@ -2363,6 +2363,8 @@ static int gotkick(char *from, char *origmsg)
     /* This _needs_ to use chan->dname <cybah> */
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
+    if (kicked_me)
+      chan->status &= ~CHAN_ACTIVE;
     check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
 
     chan = findchan(chname);
@@ -2397,8 +2399,6 @@ static int gotkick(char *from, char *origmsg)
       check_lonely_channel(chan);
     }
   }
-  if (kicked_me)
-    chan->status &= ~CHAN_ACTIVE;
   return 0;
 }
 
