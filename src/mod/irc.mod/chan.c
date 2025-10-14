@@ -2320,6 +2320,7 @@ static int gotkick(char *from, char *origmsg)
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  int kicked_me = 0;
 
   strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
@@ -2340,10 +2341,9 @@ static int gotkick(char *from, char *origmsg)
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
       clear_channel(chan, CHAN_RESETALL);
+      return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
     } else
-      // make sure the bot knows it is no longer on that channel
-      chan->status &= ~CHAN_ACTIVE;
-    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+      kicked_me = 1; // unset CHAN_ACTIVE aftter check_tcl_kick()
   }
   if (channel_active(chan)) {
     fixcolon(msg);
@@ -2397,6 +2397,8 @@ static int gotkick(char *from, char *origmsg)
       check_lonely_channel(chan);
     }
   }
+  if (kicked_me)
+    chan->status &= ~CHAN_ACTIVE;
   return 0;
 }
 
