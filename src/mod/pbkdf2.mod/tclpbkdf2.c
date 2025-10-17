@@ -4,11 +4,10 @@
  *
  * Written by thommey and Michael Ortmann
  *
- * Copyright (C) 2017 - 2024 Eggheads Development Team
+ * Copyright (C) 2017 - 2025 Eggheads Development Team
  */
 
 #include <openssl/err.h>
-#include <string.h>
 
 static char *pbkdf2_encrypt(const char *);
 

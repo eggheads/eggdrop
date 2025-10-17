@@ -3,7 +3,7 @@
  *
  */
 /*
- * Copyright (C) 2000 - 2024 Eggheads Development Team
+ * Copyright (C) 2000 - 2025 Eggheads Development Team
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
@@ -254,7 +254,7 @@ static void uf_features_parse(int idx, char *par)
     if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
       dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag */
       /* Add feature to list */
-      if (dcc[idx].u.bot->numver >= 1100007) {
+      if (dcc[idx].u.bot->numver >= 1100101) {
         if (len)
           uff_sbuf[len++] = ' ';
         len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);
@@ -284,7 +284,7 @@ static char *uf_features_dump(int idx)
        ul = ul->next)
     if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
       /* Add feature to list */
-      if (dcc[idx].u.bot->numver >= 1100007) {
+      if (dcc[idx].u.bot->numver >= 1100101) {
         if (len)
           uff_sbuf[len++] = ' ';
         len += strlcpy(uff_sbuf + len, ul->entry->feature, (sizeof uff_sbuf) - len);

@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ extern module_entry *module_list;
 
 static char TBUF[1024]; /* Static buffer for goofy bot stuff */
 
-static char base64to[256] = {
+static const char base64to[256] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 0, 0,
@@ -62,11 +62,13 @@ static char base64to[256] = {
 
 int base64_to_int(char *buf)
 {
-  int i = 0;
+  int i = 0, j;
 
   while (*buf) {
-    i = i << 6;
-    i += base64to[(int) *buf];
+    j = base64to[(uint8_t) *buf];
+    if (i > ((INT_MAX >> 6) - j)) /* if overflow return -1 */
+      return -1;
+    i = (i << 6) + j;
     buf++;
   }
   return i;
@@ -1401,21 +1403,26 @@ static void bot_away(int idx, char *par)
     sock = base64_to_int(etc);
   if (sock == 0)
     sock = partysock(bot, etc);
+  else if (sock < 0) {
+    putlog(LOG_BOTS, "*", "botcmd: bot_away() Bogus sock from %s", dcc[idx].nick);
+    return;
+  }
   check_tcl_away(bot, sock, par);
   if (par[0]) {
     partystat(bot, sock, PLSTAT_AWAY, 0);
     partyaway(bot, sock, par);
   } else
     partystat(bot, sock, 0, PLSTAT_AWAY);
-  partyidx = getparty(bot, sock);
-  if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
-    if (par[0])
-      chanout_but(-1, party[partyidx].chan,
-                  "*** (%s) %s %s: %s.\n", bot,
-                  party[partyidx].nick, NET_AWAY, par);
-    else
-      chanout_but(-1, party[partyidx].chan,
-                  "*** (%s) %s %s.\n", bot, party[partyidx].nick, NET_UNAWAY);
+  if ((partyidx = getparty(bot, sock)) > -1) {
+    if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
+      if (par[0])
+        chanout_but(-1, party[partyidx].chan,
+                    "*** (%s) %s %s: %s.\n", bot,
+                    party[partyidx].nick, NET_AWAY, par);
+      else
+        chanout_but(-1, party[partyidx].chan,
+                    "*** (%s) %s %s.\n", bot, party[partyidx].nick, NET_UNAWAY);
+    }
   }
   botnet_send_away(idx, bot, sock, par, linking);
 }
