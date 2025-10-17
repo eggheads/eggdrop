@@ -1,8 +1,8 @@
-=========================
-Writing an Eggdrop Script
-=========================
+=============================
+Writing an Eggdrop Tcl Script
+=============================
 
-So you want to write an Eggdrop script, but you don't really know where
+So you want to write an Eggdrop Tcl script, but you don't really know where
 to begin. This file will give you a very basic idea about what Eggdrop
 scripting is like, using a *very* simple script that may help you get
 started with your own scripts.
@@ -143,4 +143,4 @@ If you want to try these out, join #eggdrop on Libera and check your answers (an
 
     <br>
 
-Copyright (C) 2003 - 2024 Eggheads Development Team
+Copyright (C) 2003 - 2025 Eggheads Development Team
