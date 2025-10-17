@@ -489,7 +489,7 @@ char *webui_start(Function *global_funcs)
 {
 #ifdef TLS
   global = global_funcs;
-  module_register(MODULE_NAME, webui_table, 0, 9);
+  module_register(MODULE_NAME, webui_table, 0, 10);
   if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.9.0 or later.";
