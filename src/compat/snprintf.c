@@ -2,7 +2,7 @@
  * snprintf.c - a portable implementation of snprintf
  */
 /*
- * Portions Copyright (C) 2000 - 2024 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,8 +80,6 @@
  *
  **************************************************************/
 
-#include <string.h>
-#include <ctype.h>
 #include <sys/types.h>
 
 #ifndef HAVE_SNPRINTF
