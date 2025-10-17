@@ -386,28 +386,81 @@ static void webui_dcc_telnet_hostresolved(int i)
     dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
 }
 
+/* TODO: add bounds checking or use existing function under MIT/GPL license
+ *       instead of our own code
+ */
+static size_t escape_html(char *dst, char *src, size_t size) {
+  int i;
+  char *d = dst;
+
+  for (i = 0; i < size; i++) {
+    switch (src[i]) {
+      case '"':
+        *d++ = '&';
+        *d++ = 'q';
+        *d++ = 'u';
+        *d++ = 'o';
+        *d++ = 't';
+        *d++ = ';';
+        break;
+      case '&':
+        *d++ = '&';
+        *d++ = 'a';
+        *d++ = 'm';
+        *d++ = 'p';
+        *d++ = ';';
+        break;
+      case '\'':
+        *d++ = '&';
+        *d++ = 'a';
+        *d++ = 'p';
+        *d++ = 'o';
+        *d++ = 's';
+        *d++ = ';';
+        break;
+      case '<':
+        *d++ = '&';
+        *d++ = 'l';
+        *d++ = 't';
+        *d++ = ';';
+        break;
+      case '>':
+        *d++ = '&';
+        *d++ = 'g';
+        *d++ = 't';
+        *d++ = ';';
+        break;
+      default:
+        *d++ = src[i];
+    }
+  }
+  return d - dst;
+}
+
 static void webui_frame(char **buf, unsigned int *len) {
   static uint8_t out[2048];
+  size_t len2;
 
-  /* no debug() or putlog() here or recursion */
-  printf("webui: webui_frame() len %u\n", *len);
-  //printf(">>>%s<<<", *buf);
-  out[0] = 0x81; /* FIN + text frame */
+  /* escape/replace html code chars
+   * write to out + offset 4 to leave room for webui frame header
+   */
+  len2 = escape_html((char *) out + 4, *buf, *len); 
+  /* we must not use putlog() or debug() here or we get recursion */
+  printf("webui: webui_frame() len %u len after escape_html() %zu\n", *len, len2);
+  // printf(">>>%s<<<", *buf);
   /* A server MUST NOT mask any frames that it sends to the client */
-  if (*len < 0x7e) {
-    out[1] = *len;
-    /* TODO: we could offset buf and get rid of this memcpy() */
-    memcpy(out + 2, *buf, *len);
-    *buf = (char *) out;
-    *len = *len + 2;
+  if (len2 < 0x7e) {
+    out[2] =0x81; /* FIN + text frame */
+    out[3] = len2;
+    *buf = (char *) out + 2;
+    *len = len2 + 2;
   } else {
+    out[0] =0x81; /* FIN + text frame */
     out[1] = 0x7e;
-    uint16_t len2 = htons(*len);
-    memcpy(out + 2, &len2, 2);
-    /* TODO: we could offset buf and get rid of this memcpy() */
-    memcpy(out + 4, *buf, *len);
+    uint16_t len3 = htons(len2);
+    memcpy(out + 2, &len3, 2);
     *buf = (char *) out;
-    *len = *len + 4;
+    *len = len2 + 4;
   }
   /* FIXME:len > 0xffff */
 }
