@@ -7,7 +7,7 @@
 /*
  * Written by Rumen Stoyanov <pseudo@egg6.net>
  *
- * Copyright (C) 2010 - 2024 Eggheads Development Team
+ * Copyright (C) 2010 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -109,6 +109,34 @@ static int ssl_seed(void)
   return 0;
 }
 
+void verify_cert_expiry(int idx) {
+  X509 *x509;
+
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
+  x509 = SSL_CTX_get0_certificate(ssl_ctx); /* The returned pointer must not be freed by the caller. */
+#else
+  BIO *bio = BIO_new_file(tls_certfile, "r");
+  if (!bio)
+    return;
+  x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
+#endif
+  if (x509) {
+    if (X509_cmp_current_time(X509_get_notAfter(x509)) < 0) {
+      if (idx) {
+        dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
+        dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n\n");
+      } else {
+        putlog(LOG_MISC, "*", "\nWARNING: SSL/TLS certificate %s expired", tls_certfile);
+        putlog(LOG_MISC, "*", "You can generate new certificates by running 'make sslcert' from the source directory\n");
+      }
+    }
+#if OPENSSL_VERSION_NUMBER < 0x10002000L /* 1.0.2 */
+    X509_free(x509);
+    BIO_free(bio);
+#endif
+  }
+}
+
 /* Prepares and initializes SSL stuff
  *
  * Creates a context object, supporting SSLv2/v3 & TLSv1 protocols;
@@ -129,7 +157,9 @@ int ssl_init()
 #endif
   if (ssl_seed()) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to seed PRNG. Disabling SSL");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     return -2;
   }
   /* A TLS/SSL connection established with this method will understand all
@@ -137,7 +167,9 @@ int ssl_init()
   if (!(ssl_ctx = SSL_CTX_new(SSLv23_method()))) {
     putlog(LOG_MISC, "*", "%s", ERR_error_string(ERR_get_error(), NULL));
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to create context. Disabling SSL.");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     return -1;
   }
   ssl_files_loaded = 0;
@@ -157,6 +189,7 @@ int ssl_init()
           tls_certfile, ERR_error_string(ERR_get_error(), NULL));
       fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
+    verify_cert_expiry(0);
     if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
           tls_keyfile, ERR_error_string(ERR_get_error(), NULL));
@@ -169,7 +202,9 @@ int ssl_init()
       tls_capath[0] ? tls_capath : NULL)) {
     putlog(LOG_MISC, "*", "ERROR: TLS: unable to set CA certificates location: %s",
            ERR_error_string(ERR_get_error(), NULL));
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
   }
   /* Let advanced users specify the list of allowed ssl protocols */
   #define EGG_SSLv2   (1 << 0)
@@ -276,7 +311,9 @@ int ssl_init()
   if (tls_ciphers[0] && !SSL_CTX_set_cipher_list(ssl_ctx, tls_ciphers)) {
     /* this replaces any preset ciphers so an invalid list is fatal */
     putlog(LOG_MISC, "*", "ERROR: TLS: no valid ciphers found. Disabling SSL.");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
+#endif
     SSL_CTX_free(ssl_ctx);
     ssl_ctx = NULL;
     return -3;
@@ -293,7 +330,9 @@ void ssl_cleanup()
   }
   if (tls_randfile)
     RAND_write_file(tls_randfile);
+#if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
   ERR_free_strings();
+#endif
 }
 
 char *ssl_fpconv(char *in, char *out)
@@ -333,7 +372,11 @@ static X509 *ssl_getcert(int sock)
   i = findsock(sock);
   if (i == -1 || !td->socklist[i].ssl)
     return NULL;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+  return SSL_get0_peer_certificate(td->socklist[i].ssl);
+#else
   return SSL_get_peer_certificate(td->socklist[i].ssl);
+#endif
 }
 
 /* Get the certificate fingerprint of the connection corresponding
@@ -353,16 +396,19 @@ char *ssl_getfp(int sock)
   if (!(cert = ssl_getcert(sock)))
     return NULL;
   if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
     X509_free(cert);
+#endif
     return NULL;
   }
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
+  X509_free(cert);
+#endif
   if (!(p = OPENSSL_buf2hexstr(md, i))) {
-    X509_free(cert);
     return NULL;
   }
   strlcpy(fp, p, sizeof fp);
   OPENSSL_free(p);
-  X509_free(cert);
   return fp;
 }
 
@@ -381,15 +427,27 @@ const char *ssl_getuid(int sock)
   if (!(cert = ssl_getcert(sock)))
     return NULL;
   /* Get the subject name */
-  if (!(subj = X509_get_subject_name(cert)))
+  if (!(subj = X509_get_subject_name(cert))) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
+    X509_free(cert);
+#endif
     return NULL;
+  }
 
   /* Get the first UID */
   idx = X509_NAME_get_index_by_NID(subj, NID_userId, -1);
-  if (idx == -1)
+  if (idx == -1) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
+    X509_free(cert);
+#endif
     return NULL;
+  }
   name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, idx));
   /* Extract the contents, assuming null-terminated ASCII string */
+  /* For openssl < 3.0.0 we leak cert here, but we cant free cert here
+   * because we return an internal pointer of certificate
+   * also this function is only triggered in dcc_telnet_id()
+   * and only for ssl-cert-auth set to 2 */
   return (const char *) egg_ASN1_string_data(name);
 }
 
@@ -564,7 +622,7 @@ static char *ssl_printname(X509_NAME *name)
  *
  * You need to nfree() the returned pointer.
  */
-static char *ssl_printtime(ASN1_UTCTIME *t)
+static char *ssl_printtime(const ASN1_UTCTIME *t)
 {
   long len;
   char *data, *buf;
@@ -662,8 +720,13 @@ static void ssl_showcert(X509 *cert, const int loglev)
 
 
   /* Validity time */
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+  from = ssl_printtime(X509_get0_notBefore(cert));
+  to = ssl_printtime(X509_get0_notAfter(cert));
+#else
   from = ssl_printtime(X509_get_notBefore(cert));
   to = ssl_printtime(X509_get_notAfter(cert));
+#endif
   putlog(loglev, "*", "TLS: certificate valid from %s to %s", from, to);
   nfree(from);
   nfree(to);
@@ -778,9 +841,14 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
            "established.");
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+    if ((cert = SSL_get0_peer_certificate(ssl))) {
+      ssl_showcert(cert, LOG_DEBUG);
+#else
     if ((cert = SSL_get_peer_certificate(ssl))) {
       ssl_showcert(cert, LOG_DEBUG);
       X509_free(cert);
+#endif
     }
     else
       putlog(data->loglevel, "*", "TLS: peer did not present a certificate");
@@ -1064,7 +1132,11 @@ static int tcl_tlsstatus STDVAR
   /* Try to get a cert, clients aren't required to send a
    * certificate, so this is optional
    */
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
+  cert = SSL_get0_peer_certificate(td->socklist[j].ssl);
+#else
   cert = SSL_get_peer_certificate(td->socklist[j].ssl);
+#endif
   /* The following information is certificate dependent */
   if (cert) {
     p = ssl_printname(X509_get_subject_name(cert));
@@ -1075,11 +1147,19 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "issuer");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    p = ssl_printtime(X509_get0_notBefore(cert));
+#else
     p = ssl_printtime(X509_get_notBefore(cert));
+#endif
     Tcl_DStringAppendElement(&ds, "notBefore");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    p = ssl_printtime(X509_get0_notAfter(cert));
+#else
     p = ssl_printtime(X509_get_notAfter(cert));
+#endif
     Tcl_DStringAppendElement(&ds, "notAfter");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
@@ -1087,7 +1167,9 @@ static int tcl_tlsstatus STDVAR
     Tcl_DStringAppendElement(&ds, "serial");
     Tcl_DStringAppendElement(&ds, p);
     nfree(p);
+#if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
     X509_free(cert);
+#endif
   }
   /* We should always have a cipher, but who knows? */
   cipher = SSL_get_current_cipher(td->socklist[j].ssl);

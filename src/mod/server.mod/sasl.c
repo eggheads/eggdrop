@@ -4,7 +4,7 @@
  *
  * Written by Michael Ortmann
  *
- * Copyright (C) 2019 - 2024 Eggheads Development Team
+ * Copyright (C) 2019 - 2025 Eggheads Development Team
  */
 
 #undef answer /* before resolv.h because it could collide with src/mod/module.h
@@ -283,7 +283,7 @@ static int sasl_ecdsa_nist256p_challenge_step_1(
              "error = %s\n", ERR_error_string(ERR_get_error(), 0));
     sasl_error(error_msg);
     return -1;
-  } 
+  }
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
   return siglen;
 }
