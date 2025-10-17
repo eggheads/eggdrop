@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -409,7 +409,7 @@ int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   for (tc = tm->first; tc; tc = tc->next) {
     if (tc->attributes & TC_DELETED)
       continue;
-    if (!strcasecmp(tc->func_name, proc)) {
+    if (!strcmp(tc->func_name, proc)) {
       tc->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tc->flags), NULL);
       return 1;

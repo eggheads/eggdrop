@@ -631,4 +631,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2024 Eggheads Development Team
+Copyright (C) 2000 - 2025 Eggheads Development Team

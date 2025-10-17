@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,13 +29,10 @@
 #include "main.h"
 #include "modules.h"
 #include <limits.h>
-#include <string.h>
 #include <netdb.h>
-#include <sys/socket.h>
 #if HAVE_SYS_SELECT_H
 #  include <sys/select.h>
 #endif
-#include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
@@ -1264,7 +1261,7 @@ int sockgets(char *s, int *len)
   }
 /* NO! */
 /* if (!s[0]) strcpy(s," ");  */
-  if (!data) { 
+  if (!data) {
     s[0] = 0;
     if (strlen(xx) >= READMAX) {
       /* String is too long, so just insert fake \n */

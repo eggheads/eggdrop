@@ -5,24 +5,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sharing Userfiles &#8212; Eggdrop 1.10.0rc2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <title>Sharing Userfiles &#8212; Eggdrop 1.10.1rc2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=3bcbdadc"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=290de6c6"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Writing an Eggdrop Script" href="firstscript.html" />
+    <link rel="next" title="Writing an Eggdrop Tcl Script" href="firstscript.html" />
     <link rel="prev" title="Enabling TLS Security on Eggdrop" href="tlssetup.html" /> 
   </head><body>
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.1rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="tlssetup.html" title="Enabling TLS Security on Eggdrop"
              accesskey="P">previous</a> |
-          <a href="firstscript.html" title="Writing an Eggdrop Script"
+          <a href="firstscript.html" title="Writing an Eggdrop Tcl Script"
              accesskey="N">next</a>
         </div>
        </div>
@@ -71,7 +71,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#explaining-the-linking-sharing-process">Explaining the Linking/Sharing Process</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Tcl Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
@@ -112,30 +112,36 @@
 <p>(This example steps assume Eggdrop has been compiled with TLS support, and you are sharing all channels)</p>
 <section id="on-the-hub-bot">
 <h3>On the Hub Bot<a class="headerlink" href="#on-the-hub-bot" title="Link to this heading">¶</a></h3>
-<p># Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like:</p>
+<ol class="arabic">
+<li><p>Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">3333</span><span class="o">/+</span><span class="mi">4444</span> <span class="nb">all</span>
 </pre></div>
 </div>
-<p># On the hub (for this example, the Hub is called Hubalicious), add the leaf bot (for this example, the Leaf is called LeifErikson) with <cite>.+bot LeifErikson &lt;IP_address_of_LiefErikson&gt; +4444/+3333 &lt;LiefErikson_hostmask&gt;</cite>.</p>
-<p># On the hub, give the leaf bot the appropriate leaf sharing flags with <cite>.botattr LiefErikson +gs</cite>.</p>
+</li>
+<li><p>On the hub (for this example, the Hub is called Hubalicious), add the leaf bot (for this example, the Leaf is called LeifErikson) with <code class="docutils literal notranslate"><span class="pre">.+bot</span> <span class="pre">LeifErikson</span> <span class="pre">&lt;IP_address_of_LiefErikson&gt;</span> <span class="pre">+4444/+3333</span> <span class="pre">&lt;LiefErikson_hostmask&gt;</span></code>.</p></li>
+<li><p>On the hub, give the leaf bot the appropriate leaf sharing flags with <code class="docutils literal notranslate"><span class="pre">.botattr</span> <span class="pre">LiefErikson</span> <span class="pre">+gs</span></code>.</p></li>
+</ol>
 </section>
 <section id="on-the-leaf-bot">
 <h3>On the Leaf Bot<a class="headerlink" href="#on-the-leaf-bot" title="Link to this heading">¶</a></h3>
-<p># Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like:</p>
+<ol class="arabic">
+<li><p>Ensure you know what ports your bot is listening on, this is set in the config and those ports will be used in the example below. For this example, our config looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">listen</span> <span class="o">+</span><span class="mi">5555</span><span class="o">/+</span><span class="mi">6666</span> <span class="nb">all</span>
 </pre></div>
 </div>
-<p># Now on the leaf, add the hub bot with <cite>.+bot Hubalicious &lt;IP_address_of_Hubalicious&gt; +6666/+5555 &lt;Hubalicious hostmask&gt;</cite>.</p>
-<p># On the leaf, give the hub bot the appropriate hub and sharing flags with <cite>.botattr Hubalicious +ghp</cite>.</p>
-<p>At this point, the leaf bot should attempt to connect to the hub bot within the next minute, or you can force the link connection with <cite>.link Hubalicious</cite>. You can also use .bottree to see your botnet structure.</p>
+</li>
+<li><p>Now on the leaf, add the hub bot with <code class="docutils literal notranslate"><span class="pre">.+bot</span> <span class="pre">Hubalicious</span> <span class="pre">&lt;IP_address_of_Hubalicious&gt;</span> <span class="pre">+6666/+5555</span> <span class="pre">&lt;Hubalicious</span> <span class="pre">hostmask&gt;</span></code>.</p></li>
+<li><p>On the leaf, give the hub bot the appropriate hub and sharing flags with <code class="docutils literal notranslate"><span class="pre">.botattr</span> <span class="pre">Hubalicious</span> <span class="pre">+ghp</span></code>.</p></li>
+</ol>
+<p>At this point, the leaf bot should attempt to connect to the hub bot within the next minute, or you can force the link connection with <code class="docutils literal notranslate"><span class="pre">.link</span> <span class="pre">Hubalicious</span></code>. You can also use .bottree to see your botnet structure.</p>
 </section>
 </section>
 <section id="explaining-the-linking-sharing-process">
 <h2>Explaining the Linking/Sharing Process<a class="headerlink" href="#explaining-the-linking-sharing-process" title="Link to this heading">¶</a></h2>
-<p>Eggdrop bots can talk to each other for a variety of reasons. In order for an Eggdrop to talk to another Eggdrop for anything, they must link. This is done by adding a bot record the remote bot on the hub bot (In our example above, using <cite>.+bot LeifErikson</cite> on Hubalicious, and using <cite>.+bot Hubalicious</cite> on LiefErikson). Once the bot records are added, bots can be manually connected using the <cite>.link</cite> command.</p>
+<p>Eggdrop bots can talk to each other for a variety of reasons. In order for an Eggdrop to talk to another Eggdrop for anything, they must link. This is done by adding a bot record the remote bot on the hub bot (In our example above, using <code class="docutils literal notranslate"><span class="pre">.+bot</span> <span class="pre">LeifErikson</span></code> on Hubalicious, and using <code class="docutils literal notranslate"><span class="pre">.+bot</span> <span class="pre">Hubalicious</span></code> on LiefErikson). Once the bot records are added, bots can be manually connected using the <code class="docutils literal notranslate"><span class="pre">.link</span></code> command.</p>
 <p>In the example above, we add the +s bot flag to LiefErikson’s bot record on Hubalicious to tell Hubalicious that LiefErikson is not only allowed to connect, but is authorized to download the userfiles from Hubalicious. Similarly, we add the +p bot flag to Hubalicious’s bot record on LiefErikson to tell LiefErikson that Hubalicous is authorized to send userfiles to LiefErikson. The +h bot flag is added to Hubalicious’s bot record on LiefErikson so tell LiefErikson that Hubalicious is the hub, and it should always try to automatically connect to Hubalicious.</p>
-<p>Lastly, the +g flag is used on both bot records to indicate that Hubalicious is authorized to send userfiles for all channels. This is a shortcut method to sharing all channels instead of setting the <cite>+shared</cite> channel setting on the hub for each channel userfile you wish the hub to share (set via .chanset), and using the <cite>|+s #channel</cite> bot flag for each channel userfile that the leaf is authorized to receive userfiles from the hub. As an example of channel-specific userfile sharing, you would use <cite>.botattr LiefErikson |+s #theforest</cite> on Hubalicious to set #theforest as a channel authorized to be shared to LiefErikson, and <cite>chanset #theforest +shared</cite> to tell LiefErikson to accept the channel userfile for #theforest.</p>
-<p>One more commonly used flag is the <cite>+a</cite> flag. This flag specifies an alternate hub to connect to in case the primary hub goes down. The alternate hub should be linked to hub and maintain all channel userfiles the hub maintains to ensure there is no desynchronization while the hub bot is down. Should the hub bot go down, and assuming the <cite>+h</cite> flag is set for the hub on a leaf, the leafbost will automatically try to reconnect to the hub every minute, even if it makes a connection with the alternate hub in the meantime. An alternate hub is added the same as a hub, except swapping out the <cite>h</cite> for the <cite>a</cite>: <cite>.botattr AltRock +agp</cite>.</p>
+<p>Lastly, the +g flag is used on both bot records to indicate that Hubalicious is authorized to send userfiles for all channels. This is a shortcut method to sharing all channels instead of setting the <code class="docutils literal notranslate"><span class="pre">+shared</span></code> channel setting on the hub for each channel userfile you wish the hub to share (set via .chanset), and using the <code class="docutils literal notranslate"><span class="pre">|+s</span> <span class="pre">#channel</span></code> bot flag for each channel userfile that the leaf is authorized to receive userfiles from the hub. As an example of channel-specific userfile sharing, you would use <code class="docutils literal notranslate"><span class="pre">.botattr</span> <span class="pre">LiefErikson</span> <span class="pre">|+s</span> <span class="pre">#theforest</span></code> on Hubalicious to set #theforest as a channel authorized to be shared to LiefErikson, and <code class="docutils literal notranslate"><span class="pre">.chanset</span> <span class="pre">#theforest</span> <span class="pre">+shared</span></code> to tell LiefErikson to accept the channel userfile for #theforest.</p>
+<p>One more commonly used flag is the <code class="docutils literal notranslate"><span class="pre">+a</span></code> flag. This flag specifies an alternate hub to connect to in case the primary hub goes down. The alternate hub should be linked to hub and maintain all channel userfiles the hub maintains to ensure there is no desynchronization while the hub bot is down. Should the hub bot go down, and assuming the <code class="docutils literal notranslate"><span class="pre">+h</span></code> flag is set for the hub on a leaf, the leafbost will automatically try to reconnect to the hub every minute, even if it makes a connection with the alternate hub in the meantime. An alternate hub is added the same as a hub, except swapping out the <code class="docutils literal notranslate"><span class="pre">h</span></code> for the <code class="docutils literal notranslate"><span class="pre">a</span></code>: <code class="docutils literal notranslate"><span class="pre">.botattr</span> <span class="pre">AltRock</span> <span class="pre">+agp</span></code>.</p>
 <p>Now that you have a hub and leaf bot successfully connected and sharing userfiles, you can repeat the <a class="reference internal" href="#on-the-leaf-bot">On the Leaf Bot</a> section to add additional leafs to your hub.</p>
 </section>
 </section>
@@ -156,7 +162,7 @@
           <div role="navigation" aria-label="related navigaton">
             <a href="tlssetup.html" title="Enabling TLS Security on Eggdrop"
               >previous</a> |
-            <a href="firstscript.html" title="Writing an Eggdrop Script"
+            <a href="firstscript.html" title="Writing an Eggdrop Tcl Script"
               >next</a>
           </div>
           <div role="note" aria-label="source link">
@@ -166,9 +172,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, Eggheads.
-      Last updated on Oct 13, 2024.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    &#169; Copyright 2025, Eggheads.
+      Last updated on Jun 28, 2025.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
         </div>
         <div class="clearer"></div>
