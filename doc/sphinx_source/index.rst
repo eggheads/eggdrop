@@ -14,7 +14,7 @@ Eggdrop has a large number of features, such as:
 * `The ability to link multiple Eggdrops together and share userfiles <using/botnet.html>`_
 * `TLS Support <using/tls.html>`_
 * `IPv6 Support <using/ipv6.html>`_
-* `Twitch Support <using/twitch.html>`_
+* `Twitch Support <using/twitchinfo.html>`_
 * ... and much much more!
 
 How to get Eggdrop
@@ -64,6 +64,7 @@ The Eggheads development team can be found lurking on #eggdrop on the Libera net
     using/ircv3
     using/accounts
     using/pbkdf2info
+    using/python
     using/twitchinfo
     using/tricks
     using/text-sub

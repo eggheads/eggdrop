@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,8 +26,6 @@
 
 #include "main.h"
 #include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include "dns.h"
 #ifdef EGG_TDNS
@@ -565,10 +563,8 @@ void *thread_dns_ipbyhost(void *arg)
   else if (error == EAI_NONAME)
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
   else if (error == EAI_SYSTEM) {
-    char ebuf[2048];
-    if (strerror_r(errno, ebuf, sizeof ebuf))
-      strcpy(ebuf, "strerror_r()");
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: %s", gai_strerror(error), ebuf);
+    /* print raw errno, dont use strerror() in thread and dont use strerror_r() due to GNU / POSIX portability complexity */
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: errno %i", gai_strerror(error), errno);
   } else
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s", gai_strerror(error));
   close(dtn->fildes[1]);

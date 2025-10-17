@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -316,20 +316,31 @@ static void tcl_cleanup_stringinfo(ClientData cd)
   nfree(cd);
 }
 
-/* Compatibility wrapper that calls Tcl functions with String API */
+/* Compatibility wrapper that calls Tcl functions with String API
+ *
+ * Is reentrant, can call itself recursively, so argv is dynamically allocated
+ * Tcl_IncrRefCount() is needed to preserve the strings we get Tcl_GetString()
+ * from being cleaned up if Tcl is invoked from this
+ */
 static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-  static int max;
-  static const char **argv;
-  int i;
+  const char **argv;
+  int i, ret;
   struct tcl_call_stringinfo *info = cd;
+
   /* The string API guarantees argv[argc] == NULL, unlike the obj API */
-  if (objc + 1 > max)
-    argv = nrealloc(argv, (objc + 1) * sizeof *argv);
-  for (i = 0; i < objc; i++)
+  argv = nmalloc((objc + 1) * sizeof *argv);
+  for (i = 0; i < objc; i++) {
+    Tcl_IncrRefCount(objv[i]);
     argv[i] = Tcl_GetString(objv[i]);
+  }
   argv[objc] = NULL;
-  return (info->proc)(info->cd, interp, objc, argv);
+  ret = (info->proc)(info->cd, interp, objc, argv);
+  for (i = 0; i < objc; i++) {
+    Tcl_DecrRefCount(objv[i]);
+  }
+  nfree(argv);
+  return ret;
 }
 
 /* The standard case of no actual cd */
@@ -615,10 +626,14 @@ int tclthreadmainloop(int zero)
   return (i == -5);
 }
 
+struct threaddata *td_main = 0;
+
 struct threaddata *threaddata()
 {
   static Tcl_ThreadDataKey tdkey;
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
+  if (!(td->mainloopfunc) && td_main) /* python thread */
+    return td_main;
   return td;
 }
 
@@ -638,6 +653,8 @@ void init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
+  if (mainthread)
+    td_main = td;
 }
 
 /* workaround for Tcl that does not support unicode outside BMP (3 byte utf-8 characters) */
@@ -743,13 +760,13 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 int decode_surrogates(const char *str, uint32_t *high, uint32_t *low)
 {
   *high  = (*str++ & 0xf) << 12;
-  *high |= (*str++ & 0x3f) << 6; 
+  *high |= (*str++ & 0x3f) << 6;
   *high |= (*str++ & 0x3f) << 0;
   if (*high < 0xD800 || *high > 0xDBFF) {
     return 0;
   }
   *low  = (*str++ & 0xf) << 12;
-  *low |= (*str++ & 0x3f) << 6; 
+  *low |= (*str++ & 0x3f) << 6;
   *low |= (*str++ & 0x3f) << 0;
   if (*low < 0xDC00 || *low > 0xDFFF) {
     return 0;
@@ -908,7 +925,7 @@ void init_unicodesup(void)
 void init_tcl0(int argc, char **argv)
 {
   Tcl_NotifierProcs notifierprocs;
- 
+
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -920,7 +937,7 @@ void init_tcl0(int argc, char **argv)
   notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-  
+
   /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */

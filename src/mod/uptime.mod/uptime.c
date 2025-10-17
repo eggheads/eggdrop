@@ -38,7 +38,7 @@
 #include <stddef.h>
 #include <sys/stat.h>
 #include "uptime.h"
-#include "../module.h"
+#include "src/mod/module.h"
 #include "../server.mod/server.h"
 
 #define UPDATE_INTERVAL (12 * 60) /* random(0..12) hours: ~6 hour average. */

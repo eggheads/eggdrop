@@ -1,6 +1,6 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.69)
+AC_PREREQ(2.71)
 
 sinclude(../eggmod.m4)
 builtin(include,../../../m4/python.m4)
@@ -11,7 +11,7 @@ AC_INIT([Eggdrop Python Module],[1.10.0],[bugs@eggheads.org])
 AC_CONFIG_SRCDIR(python.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2024 Eggheads Development Team])
+AC_COPYRIGHT([Copyright (C) 1999 - 2025 Eggheads Development Team])
 AC_REVISION([m4_esyscmd([../../../misc/getcommit])])
 
 AC_PROG_FGREP
@@ -68,12 +68,12 @@ canonical name.])
 PYTHON_VERSION=`echo $PYTHON_LDFLAGS | sed 's/.*-lpython\(.*[[0-9]]\).*/\1/'`
 
 # Check for python version
-AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.8.0], [ax_check_ver="yes"], [ax_check_ver="no"])
+AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.8], [ax_check_ver="yes"], [ax_check_ver="no"])
 AC_MSG_CHECKING([python version is >= 3.8.0])
 if test "x$ax_check_ver" = x"no"; then
   python_avail="false"
   AC_MSG_RESULT([no ($PYTHON_VERSION)])
-  AC_MSG_WARN([Eggdrop requires python version 3.8.0 or higher])
+  AC_MSG_WARN([Compiling Eggdrop with python requires python version 3.8.0 or higher])
 else
   AC_MSG_RESULT([yes ($PYTHON_VERSION)])
 fi

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -608,7 +608,7 @@ Function global_table[] = {
 #else
   (Function) 0,
 #endif
-/* 312 - 315 */    
+/* 312 - 315 */
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) crypto_verify,
   (Function) egg_uname,
@@ -695,7 +695,6 @@ int module_register(char *name, Function *funcs, int major, int minor)
 
 const char *module_load(char *name)
 {
-  size_t len;
   module_entry *p;
   char *e;
   Function f;
@@ -704,6 +703,7 @@ const char *module_load(char *name)
 #endif
 
 #ifndef STATIC
+  size_t len;
   char workbuf[PATH_MAX];
 #  ifdef MOD_USE_SHL
   shl_t hand;

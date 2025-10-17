@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -750,7 +750,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
         strlcpy(s, " --- ", sizeof s);
-      egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
       u = get_user_from_member(m);
       if (u == NULL)
         strlcpy(handle, "*", sizeof handle);

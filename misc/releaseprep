@@ -2,7 +2,7 @@
 #
 # releaseprep - prepares the tree for release
 #
-# Copyright (C) 2004 - 2024 Eggheads Development Team
+# Copyright (C) 2004 - 2025 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ show_usage() {
 
 regenerate_changelog() {
 
-  EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\])//g')
+  EGGVERSION=$(grep AC_INIT configure.ac | sed -e 's/AC_INIT([^,]*,\[//' -e 's/\].*$//')
   EGG_RC=$(grep '^#define EGG_PATCH.*' src/version.h |cut -d " " -f 3|awk '{print tolower($0)}'|sed -e 's/^"//' -e 's/"$//')
   if ! [ $(echo $EGG_RC|grep ^rc) ]; then
     EGG_RC=""

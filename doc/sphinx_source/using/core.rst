@@ -589,7 +589,7 @@ Modules
 
 After the core settings, you should start loading modules. Modules are
 loaded by the command "loadmodule <module>". Eggdrop looks for modules
-in the directory you specified by the module-path setting in the files
+in the directory you specified by the mod-path setting in the files
 and directories section.
 
 Please note that for different configurations, different modules are needed.
@@ -631,4 +631,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2024 Eggheads Development Team
+Copyright (C) 2000 - 2025 Eggheads Development Team
