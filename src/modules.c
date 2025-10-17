@@ -77,7 +77,7 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
            require_p, share_greet, use_invites, use_exempts, password_timeout,
            force_expire, protect_readonly, reserved_port_min, reserved_port_max,
-           quiet_reject;
+           quiet_reject, stealth_telnets;
 extern volatile sig_atomic_t do_restart;
 
 int copy_to_tmp = 1; /* TODO: remove from module API for eggdrop 2.0 */
@@ -630,7 +630,9 @@ Function global_table[] = {
   (Function) find_member_from_nick,
   (Function) get_user_from_member,
   (Function) dcc_telnet_hostresolved2,
-  (Function) findsock
+  (Function) findsock,
+/* 328 - 331 */
+  (Function) & stealth_telnets    /* int                                 */
 };
 
 void init_modules(void)

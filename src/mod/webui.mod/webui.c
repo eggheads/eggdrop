@@ -236,9 +236,11 @@ static void webui_http_activity(int idx, char *buf, int len)
     i = snprintf(response, sizeof response,
       "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
       "Content-Length: %li\r\n"
-      "Content-Type: text/html; charset=utf-8\r\n"
-      "Server: Eggdrop/" EGG_STRINGVER "+" EGG_PATCH "\r\n"
-      "\r\n%.*s", sb.st_size, (int) sb.st_size, body);
+      "Content-Type: text/html; charset=utf-8\r\n" /* at least firefox 144 needs this */
+      "Server: %s\r\n"
+      "\r\n%.*s", sb.st_size,
+        stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+        (int) sb.st_size, body);
     tputs(dcc[idx].sock, response, i);
     debug2("webui: tputs(): >>>%s<<< %i", response, i);
     if (munmap(body, sb.st_size) < 0) {
@@ -251,8 +253,9 @@ static void webui_http_activity(int idx, char *buf, int len)
       "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
       "Content-Length: %zu\r\n"
       "Content-Type: image/x-icon\r\n"
-      "Server: Eggdrop/" EGG_STRINGVER "+" EGG_PATCH "\r\n" /* TODO: stealth_telnets */
-      "\r\n", sizeof favicon_ico);
+      "Server: %s\r\n"
+      "\r\n", sizeof favicon_ico,
+        stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
     memcpy(response + i, favicon_ico, sizeof favicon_ico);
     i += sizeof favicon_ico;
 
