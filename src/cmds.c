@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2845,7 +2845,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   char *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2880,7 +2880,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   char s[512], *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2920,7 +2920,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
 {
   const char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2942,7 +2942,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 {
   char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -3001,14 +3001,14 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
         p_expire = p + 1;
       }
     }
-    /* For whomever is stuck with maintaining this in 2033- this will
+    /* For whomever is stuck with maintaining this in 2033 - this will
      * break. Hopefully we've dealt with the max unixtime issue by now
      * (Year 2038 problem), but if you're reading this, clearly we
      * haven't because we are lazy. Sorry.
      */
     if (expire_time > (60 * 60 * 24 * 365 * 5)) {
-      dprintf(idx, "expire time must be equal to or less than 5 years" 
-          "(1825 days)\n");
+      dprintf(idx, "expire time must be equal to or less than 5 years "
+              "(1825 days)\n");
       return;
     }
   }

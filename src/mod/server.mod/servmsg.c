@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -588,7 +588,7 @@ static int gotmsg(char *from, char *msg)
       ctcp = ctcpbuf;
 
       /* remove the ctcp in msg */
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
 
       if (!ignoring)
         detect_flood(nick, uhost, from,
@@ -691,7 +691,8 @@ static int gotmsg(char *from, char *msg)
  */
 static int gotnotice(char *from, char *msg)
 {
-  char *to, *nick, ctcpbuf[512], *p, *p1, buf[512], *uhost = buf, *ctcp;
+  #define CTCP_MAX 512
+  char *to, *nick, ctcpbuf[CTCP_MAX], *p, *p1, buf[512], *uhost = buf, *ctcp;
   struct userrec *u;
   int ignoring;
 
@@ -714,7 +715,13 @@ static int gotnotice(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      ctcp = strcpy(ctcpbuf, p1);
+      if ((p - p1) >= sizeof ctcpbuf) {
+        putlog(LOG_SERV, "*", "Warning: Got NOTICE CTCP reply longer than "
+               STRINGIFY(CTCP_MAX) " bytes: Bogus server?");
+        return 0;
+      }
+      strlcpy(ctcpbuf, p1, sizeof ctcpbuf);
+      ctcp = ctcpbuf;
       memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       if (!ignoring)
         detect_flood(nick, uhost, from, FLOOD_CTCP);
@@ -1368,7 +1375,7 @@ static int got410(char *from, char *msg) {
   char *cmd;
 
   newsplit(&msg);
- 
+
   putlog(LOG_SERV, "*", "%s", msg);
   cmd = newsplit(&msg);
   putlog(LOG_MISC, "*", "CAP sub-command %s not supported", cmd);
@@ -1450,7 +1457,7 @@ static int del_capability(char *name) {
   putlog(LOG_SERV, "*", "CAP: %s not found, can't remove", name);
   return -1;
 }
-  
+
 
 /* Remove multiple capabilities from the linked list
  * msg is in format "multi-prefix sasl server-time"
@@ -1553,7 +1560,7 @@ static int gotcap(char *from, char *msg) {
     if (multiline) {
       return 0;
     }
-    current = cap; 
+    current = cap;
     /* CAP is supported, yay! If it is supported, lets load what we want to request */
     while (current != NULL) {
       if (!strcmp(current->name, "sasl")) {
