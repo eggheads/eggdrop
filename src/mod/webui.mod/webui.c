@@ -236,6 +236,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     i = snprintf(response, sizeof response,
       "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
       "Content-Length: %li\r\n"
+      "Content-Type: text/html; charset=utf-8\r\n"
       "Server: Eggdrop/" EGG_STRINGVER "+" EGG_PATCH "\r\n"
       "\r\n%.*s", sb.st_size, (int) sb.st_size, body);
     tputs(dcc[idx].sock, response, i);
