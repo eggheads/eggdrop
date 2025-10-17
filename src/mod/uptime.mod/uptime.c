@@ -53,7 +53,7 @@
  * packets the client thinks it has sent over the life of the module. Only the
  * name has changed - the type is still the same.
  */
-typedef struct PackUp {
+typedef struct __attribute__((packed)) PackUp {
   uint32_t regnr;
   uint32_t pid;
   uint32_t type;
