@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -181,7 +181,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
 
 int my_strcpy(char *a, const char *b)
 {
-  char *c = b;
+  const char *c = b;
 
   while (*b)
     *a++ = *b++;
