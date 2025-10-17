@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -485,7 +485,6 @@ int u_pass_match(struct userrec *u, char *pass)
 int write_user(struct userrec *u, FILE *f, int idx)
 {
   char s[181];
-  long tv;
   struct chanuserrec *ch;
   struct chanset_t *cst;
   struct user_entry *ue;
@@ -510,8 +509,7 @@ int write_user(struct userrec *u, FILE *f, int idx)
         fr.chan = ch->flags;
         fr.udef_chan = ch->flags_udef;
         build_flags(s, &fr, NULL);
-        tv = ch->laston;
-        if (fprintf(f, "! %-20s %lu %-10s %s\n", ch->channel, tv, s,
+        if (fprintf(f, "! %-20s %" PRId64 " %-10s %s\n", ch->channel, (int64_t) ch->laston, s,
             (((idx < 0) || share_greet) && ch->info) ? ch->info : "") == EOF)
           return 0;
       }
@@ -639,8 +637,7 @@ void write_userfile(int idx)
 {
   FILE *f;
   char new_userfile[(sizeof userfile) + 4]; /* 4 = strlen("~new") */
-  char s1[81];
-  time_t tt;
+  char s[26];
   struct userrec *u;
   int ok;
 
@@ -659,9 +656,8 @@ void write_userfile(int idx)
     putlog(LOG_MISC, "*", "%s", USERF_WRITING);
 
   sort_userlist();
-  tt = now;
-  strlcpy(s1, ctime(&tt), sizeof s1);
-  fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
+  ctime_r(&now, s);
+  fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s);
   ok = 1;
   /* Add all users except the -t user */
   for (u = userlist; u && ok; u = u->next)
@@ -728,7 +724,6 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   struct userrec *u, *x;
   struct xtra_key *xk;
   int oldshare = noshare;
-  time_t tv;
 
   noshare = 1;
   u = nmalloc(sizeof *u);
@@ -751,10 +746,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk = nmalloc(sizeof *xk);
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
-    tv = now;
-    l = snprintf(NULL, 0, "%" PRId64, (int64_t) tv);
+    l = snprintf(NULL, 0, "%" PRId64, (int64_t) now);
     xk->data = nmalloc(l + 1);
-    sprintf(xk->data, "%" PRId64, (int64_t) tv);
+    sprintf(xk->data, "%" PRId64, (int64_t) now);
     set_user(&USERENTRY_XTRA, u, xk);
   }
   /* Strip out commas -- they're illegal */

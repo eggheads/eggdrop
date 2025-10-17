@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2024 Eggheads Development Team
+ * Copyright (C) 2001 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,15 +33,13 @@
 #define MAKING_UPTIME
 
 #include "uptime.h"
-#include "../module.h"
+#include "src/mod/module.h"
 #include "../server.mod/server.h"
 #include <netdb.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -97,16 +95,15 @@ static int uptime_expmem()
 static void uptime_report(int idx, int details)
 {
   int delta_seconds;
-  char *next_update_at;
+  char next_update_at[26];
 
   if (details) {
     delta_seconds = (int) (next_update - time(NULL));
-    next_update_at = ctime(&next_update);
-    next_update_at[strlen(next_update_at) - 1] = 0;
-
-    dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
+    ctime_r(&next_update, next_update_at);
+    next_update_at[24] = 0;
+    dprintf(idx, "    %d uptime packet%s sent\n", uptimecount,
             (uptimecount != 1) ? "s" : "");
-    dprintf(idx, "      Approximately %-.2f hours until next update "
+    dprintf(idx, "    Approximately %-.2f hours until next update "
             "(at %s)\n", delta_seconds / 3600.0, next_update_at);
   }
 }

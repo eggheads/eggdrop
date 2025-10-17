@@ -44,16 +44,16 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Eggdrop'
-copyright = u'2024, Eggheads'
+copyright = u'2025, Eggheads'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '1.10.0'
+version = '1.10.1'
 # The full version, including alpha/beta/rc tags.
-release = '1.10.0rc2'
+release = '1.10.1rc2'
 # Just X.Y, for use in doc links (Geo)
 maj_version = ".".join(version.split(".")[:2])
 
