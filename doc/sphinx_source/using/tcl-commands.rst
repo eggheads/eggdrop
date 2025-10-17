@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.10.0. Most scripts written for the v1.3, v1.4,
+This list is accurate for Eggdrop v1.10.1. Most scripts written for the v1.3, v1.4,
 1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
 Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
@@ -2823,14 +2823,14 @@ serveraddress
 ^^^^^^^
 version
 ^^^^^^^
-  Value: current bot version "1.1.2+pl1 1010201"; first item is the text version, to include a patch string if present, and second item is a numerical version
+  Value: current bot version "1.1.2+pl1.10.1201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module: core
 
 ^^^^^^^^^^^
 numversion*
 ^^^^^^^^^^^
-  Value: the current numeric bot version (for example: "1010201"). Numerical version is in the format of "MNNRRPP", where:
+  Value: the current numeric bot version (for example: "1.10.11"). Numerical version is in the format of "MNNRRPP", where:
 
   +------+---------------------------------------+
   | M    | major release number                  |
@@ -3788,4 +3788,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2024 Eggheads Development Team
+  Copyright (C) 1999 - 2025 Eggheads Development Team

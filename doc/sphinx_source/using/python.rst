@@ -153,5 +153,5 @@ and then call it using::
 An important difference to note is that Eggdrop Python has its own ``bind`` command implemented. You will generally want to create binds using the Python ``bind`` command and not import bind from eggdrop.tcl because a Python bind will call a Python function, whereas using the Tcl bind will call a Tcl function (not one from the script you are writing).
 
 
-Copyright (C) 2000 - 2024 Eggheads Development Team
+Copyright (C) 2000 - 2025 Eggheads Development Team
 

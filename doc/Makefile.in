@@ -21,6 +21,7 @@ WEB_ROOT = $(srcdir)/html/*.html
 WEB_ABOUT = $(srcdir)/html/about/*.html
 WEB_INSTALL = $(srcdir)/html/install/*.html
 WEB_MOD = $(srcdir)/html/modules/*.html
+WEB_MOD2 = $(srcdir)/html/modules/mod/*.html
 WEB_TUT = $(srcdir)/html/tutorials/*.html
 WEB_USE = $(srcdir)/html/using/*.html
 WEB_STAT = $(srcdir)/html/_static/*
@@ -63,6 +64,10 @@ install:
 	@if test ! -d $(DEST)/doc/html/modules; then \
                 echo "Creating 'doc/html/modules' subdirectory."; \
                 $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/modules >/dev/null; \
+        fi
+	@if test ! -d $(DEST)/doc/html/modules/mod; then \
+                echo "Creating 'doc/html/modules/mod' subdirectory."; \
+                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/modules/mod >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/tutorials; then \
                 echo "Creating 'doc/html/tutorials' subdirectory."; \
@@ -113,6 +118,11 @@ install:
 	@if test "x`echo $(WEB_MOD)`" != "x$(WEB_MOD)"; then \
                 for i in `echo $(WEB_MOD)`; do \
                         $(INSTALL_DATA) $$i $(DEST)/doc/html/modules; \
+                done; \
+        fi
+	@if test "x`echo $(WEB_MOD2)`" != "x$(WEB_MOD2)"; then \
+                for i in `echo $(WEB_MOD2)`; do \
+                        $(INSTALL_DATA) $$i $(DEST)/doc/html/modules/mod; \
                 done; \
         fi
 	@if test "x`echo $(WEB_TUT)`" != "x$(WEB_TUT)"; then \
