@@ -530,7 +530,9 @@ static int get_port_from_addr(const sockname_t *addr)
 #endif
 }
 
-/* Check for O_NONBLOCK connect() EINPROGRESS could be ECONNREFUSED */
+/* Check for O_NONBLOCK connect() EINPROGRESS could be ECONNREFUSED
+ * eggdrop sockets are always O_NONBLOCK, see setsock()
+ */
 int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
   int rc, res, e;
   struct timeval tv;
