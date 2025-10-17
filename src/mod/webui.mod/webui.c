@@ -458,7 +458,7 @@ static void webui_unframe(char *buf, int *len)
   payload = key + 4;
   for (i = 0; i < *len; i++)
     payload[i] = payload[i] ^ key[i % 4];
-  debug2("webui: webui_unframe(): payload >>>%.*s<<<", (int) *len, payload);
+  // debug2("webui: webui_unframe(): payload >>>%.*s<<<", (int) *len, payload);
 
   memmove(buf, payload, *len);
   /* we switched back from binary sock to text sock for sockgets() needs this for dcc_telnet_id() */
