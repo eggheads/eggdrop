@@ -438,7 +438,7 @@ static size_t escape_html(char *dst, char *src, size_t size) {
 }
 
 static void webui_frame(char **buf, unsigned int *len) {
-  static uint8_t out[2048];
+  static uint8_t out[4096];
   size_t len2;
 
   /* escape/replace html code chars
@@ -446,8 +446,6 @@ static void webui_frame(char **buf, unsigned int *len) {
    */
   len2 = escape_html((char *) out + 4, *buf, *len); 
   /* we must not use putlog() or debug() here or we get recursion */
-  printf("webui: webui_frame() len %u len after escape_html() %zu\n", *len, len2);
-  // printf(">>>%s<<<", *buf);
   /* A server MUST NOT mask any frames that it sends to the client */
   if (len2 < 0x7e) {
     out[2] =0x81; /* FIN + text frame */
@@ -462,7 +460,9 @@ static void webui_frame(char **buf, unsigned int *len) {
     *buf = (char *) out;
     *len = len2 + 4;
   }
-  /* FIXME:len > 0xffff */
+  /* we dont need to implement len > 0xffff,
+   * because eggdrop wont send that much data at once,
+   * we also limit by sizeof out = 4096 */
 }
 
 /* TODO: return error code ? */
