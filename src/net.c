@@ -1299,7 +1299,7 @@ int sockgets(char *s, int *len)
 void tputs(int z, char *s, unsigned int len)
 {
   int i, x, idx;
-  char *p;
+  char *p, *s2;
   static int inhere = 0;
   struct threaddata *td = threaddata();
 
@@ -1344,10 +1344,15 @@ void tputs(int z, char *s, unsigned int len)
         return;
       }
 #ifdef TLS
-      if (socklist[i].flags & SOCK_WS) /* TODO: early enough for un-tls ws? */
-        webui_frame(&s, &len);
+      if (!(socklist[i].flags & SOCK_WS))
+        s2 = s;
+      else {
+        printf("D1 %i %s\n", len, s);
+        len = webui_frame(&s2, s, len);
+        printf("D2 %i %s\n", len, s2);
+      }
       if (socklist[i].ssl) {
-        x = SSL_write(socklist[i].ssl, s, len);
+        x = SSL_write(socklist[i].ssl, s2, len);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
@@ -1363,13 +1368,13 @@ void tputs(int z, char *s, unsigned int len)
       } else /* not ssl, use regular write() */
 #endif
       /* Try. */
-      x = write(z, s, len);
+      x = write(z, s2, len);
       if (x == -1)
         x = 0;
       if (x < len) {
         /* Socket is full, queue it */
         socklist[i].handler.sock.outbuf = nmalloc(len - x);
-        memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
+        memcpy(socklist[i].handler.sock.outbuf, &s2[x], len - x);
         socklist[i].handler.sock.outbuflen = len - x;
       }
       return;
@@ -1380,8 +1385,8 @@ void tputs(int z, char *s, unsigned int len)
     inhere = 1;
 
     putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
-    s[len - 1] = 0;
-    putlog(LOG_MISC, "*", "!-> '%s'", s);
+    s2[len - 1] = 0;
+    putlog(LOG_MISC, "*", "!-> '%s'", s2);
 
     inhere = 0;
   }

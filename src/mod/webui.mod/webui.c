@@ -437,32 +437,33 @@ static size_t escape_html(char *dst, char *src, size_t size) {
   return d - dst;
 }
 
-static void webui_frame(char **buf, unsigned int *len) {
-  static uint8_t out[4096];
-  size_t len2;
+static size_t webui_frame(char **dst, char *src, size_t len) {
+  static char buf[4096];
+  uint16_t len2;
 
   /* escape/replace html code chars
-   * write to out + offset 4 to leave room for webui frame header
+   * write to buf + offset 4 to leave room for webui frame header
    */
-  len2 = escape_html((char *) out + 4, *buf, *len); 
+  len = escape_html(buf + 4, src, len);
   /* we must not use putlog() or debug() here or we get recursion */
   /* A server MUST NOT mask any frames that it sends to the client */
-  if (len2 < 0x7e) {
-    out[2] =0x81; /* FIN + text frame */
-    out[3] = len2;
-    *buf = (char *) out + 2;
-    *len = len2 + 2;
+  if (len < 0x7e) {
+    buf[2] =0x81; /* FIN + text frame */
+    buf[3] = len;
+    *dst = buf + 2;
+    len += 2;
   } else {
-    out[0] =0x81; /* FIN + text frame */
-    out[1] = 0x7e;
-    uint16_t len3 = htons(len2);
-    memcpy(out + 2, &len3, 2);
-    *buf = (char *) out;
-    *len = len2 + 4;
+    buf[0] =0x81; /* FIN + text frame */
+    buf[1] = 0x7e;
+    len2 = htons(len);
+    memcpy(buf + 2, &len2, 2);
+    *dst = buf;
+    len += 4;
   }
   /* we dont need to implement len > 0xffff,
    * because eggdrop wont send that much data at once,
-   * we also limit by sizeof out = 4096 */
+   * we also limit by sizeof buf = 4096 */
+  return len;
 }
 
 /* TODO: return error code ? */

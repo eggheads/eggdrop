@@ -172,7 +172,7 @@ int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
 void (*webui_dcc_telnet_hostresolved) (int) = 0;
-void (*webui_frame) (char **, unsigned int *) = 0;
+size_t (*webui_frame) (char **, char *, size_t) = 0;
 void (*webui_unframe) (char *, int *) = 0;
 
 module_entry *module_list;
@@ -1118,7 +1118,7 @@ void add_hook(int hook_num, Function func)
       webui_dcc_telnet_hostresolved = (void (*)(int)) func;
       break;
     case HOOK_WEBUI_FRAME:
-      webui_frame = (void (*)(char **, unsigned int *)) func;
+      webui_frame = (size_t (*)(char **, char *, size_t)) func;
       break;
     case HOOK_WEBUI_UNFRAME:
       webui_unframe = (void (*)(char *, int *)) func;
@@ -1198,8 +1198,8 @@ void del_hook(int hook_num, Function func)
         webui_dcc_telnet_hostresolved = (void (*)(int)) null_func;
       break;
     case HOOK_WEBUI_FRAME:
-      if (webui_frame == (void (*)(char **, unsigned int *)) func)
-        webui_frame = (void (*)(char **, unsigned int *)) null_func;
+      if (webui_frame == (size_t (*)(char **, char *, size_t)) func)
+        webui_frame = (size_t (*)(char**, char *, size_t)) null_func;
       break;
     case HOOK_WEBUI_UNFRAME:
       if (webui_unframe == (void (*)(char *, int *)) func)
