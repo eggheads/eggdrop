@@ -1346,11 +1346,8 @@ void tputs(int z, char *s, unsigned int len)
 #ifdef TLS
       if (!(socklist[i].flags & SOCK_WS))
         s2 = s;
-      else {
-        printf("D1 %i %s\n", len, s);
+      else
         len = webui_frame(&s2, s, len);
-        printf("D2 %i %s\n", len, s2);
-      }
       if (socklist[i].ssl) {
         x = SSL_write(socklist[i].ssl, s2, len);
         if (x < 0) {

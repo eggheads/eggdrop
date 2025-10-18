@@ -2,8 +2,8 @@
  * webui.c -- part of webui.mod
  */
 /*
- * Copyright (C) 2023 - 2024 Michael Ortmann MIT License
- * Copyright (C) 2024 Eggheads Development Team
+ * Copyright (C) 2023 - 2025 Michael Ortmann MIT License
+ * Copyright (C) 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -242,7 +242,7 @@ static void webui_http_activity(int idx, char *buf, int len)
         stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
         (int) sb.st_size, body);
     tputs(dcc[idx].sock, response, i);
-    debug2("webui: tputs(): >>>%s<<< %i", response, i);
+    // debug2("webui: tputs(): >>>%s<<< %i", response, i);
     if (munmap(body, sb.st_size) < 0) {
       putlog(LOG_MISC, "*", "WEBUI error: munmap(): %s", strerror(errno));
       return;
@@ -315,15 +315,15 @@ static void webui_http_activity(int idx, char *buf, int len)
 
 
     socklist_i->flags &= ~ SOCK_BINARY; /* we need it for net.c sockgets(), is there better place to do this? */
-    debug1("webui: unset flag SOCK_BINARY sock %li\n", dcc[idx].sock);
+    debug1("webui: unset flag SOCK_BINARY sock %li", dcc[idx].sock);
     strcpy(dcc[idx].host, "*"); /* important for later dcc_telnet_id wild_match, is there better place to do this? */
     /* .host becomes .nick in change_to_dcc_telnet_id() */
-    debug4("webui: set flag SOCK_WS socklist %i idx %i sock %li status %lu\n", findsock(dcc[idx].sock), idx, dcc[idx].sock, dcc[idx].status);
+    debug4("webui: set flag SOCK_WS socklist %i idx %i sock %li status %lu", findsock(dcc[idx].sock), idx, dcc[idx].sock, dcc[idx].status);
 
     dcc[idx].status |= STAT_USRONLY; /* magick */
     for (i = 0; i < dcc_total; i++) /* quick hack, we need to link from idx, dont we? */
       if (!strcmp(dcc[i].nick, "(webui)")) {
-        debug1("webui: found (webui) dcc %i\n", i);
+        debug1("webui: found (webui) dcc %i", i);
         break;
       }
 
@@ -337,7 +337,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     dcc[idx].u.other = NULL; /* fix ATTEMPTING TO FREE NON-MALLOC'D PTR: dccutil.c (561) */
     dcc_telnet_hostresolved2(idx, i);
 
-    debug2("webui: CHANGEOVER -> idx %i sock %li\n", idx, dcc[idx].sock);
+    debug2("webui: CHANGEOVER -> idx %i sock %li", idx, dcc[idx].sock);
   } else /* TODO: send 404 or something ? */
     debug0("webui: 404");
   if ((dcc[idx].sock != -1) && (len == 511)) { /* sock == -1 if lostdcc() in dcc_telnet_hostresolved2() */
