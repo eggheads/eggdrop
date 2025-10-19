@@ -46,11 +46,9 @@ We use Prettier as a code formatter to keep the code style consistent (and to av
         if (event.data.indexOf(WS_ECHO_ON) > -1) {
           d.type = "text";
           echo = 1;
-          console.log("echo on");
         } else if (event.data.indexOf(WS_ECHO_OFF) > -1) {
           d.type = "password";
           echo = 0;
-          console.log("echo off");
         }
       });
       function b(c) {
