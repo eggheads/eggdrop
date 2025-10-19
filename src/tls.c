@@ -32,8 +32,9 @@
 #include <openssl/rand.h>
 #include <openssl/x509v3.h>
 #include <openssl/ssl.h>
+#include "version.h"
 
-extern int tls_vfydcc;
+extern int dcc_total, stealth_telnets, tls_vfydcc;
 extern struct dcc_t *dcc;
 
 int tls_maxdepth = 9;         /* Max certificate chain verification depth     */
@@ -109,11 +110,10 @@ static int ssl_seed(void)
   return 0;
 }
 
-/* Get the certificate, corresponding to the connection
- * identified by sock.
+/* Get the certificate, corresponding to the connection identified by sock.
  *
- * Return value: pointer to a X509 certificate or NULL if we couldn't
- * look up the certificate.
+ * Return value: pointer to a X509 certificate or NULL if we couldn't look up
+ * the certificate.
  */
 static X509 *ssl_getcert(int sock)
 {
@@ -130,11 +130,11 @@ static X509 *ssl_getcert(int sock)
 #endif
 }
 
-/* Get the certificate fingerprint of the connection corresponding
- * to the socket.
+/* Get the certificate fingerprint of the connection corresponding to the
+ * socket.
  *
- * Return value: ptr to the hexadecimal representation of the fingerprint
- * or NULL in case of error.
+ * Return value: ptr to the hexadecimal representation of the fingerprint or
+ * NULL in case of error.
  */
 static char *ssl_getfp_from_cert(X509 *cert)
 {
@@ -1066,31 +1066,21 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   if ((err = ERR_peek_error())) {
     if (ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
         ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST) {
-
-
-
-      /* TODO: check if this is really a webui port, report source host (info in dcc[i]?) and give hint to use https:// */
-      putlog(LOG_MISC, "*", "TLS: error: plain HTTP request received on an SSL port, sock %i", sock);
-      #include "version.h"
-      int i;
-      char response[4096];
-      char *body = "(WIP) webui: plain HTTP request received on an SSL port";
-      i = snprintf(response, sizeof response,
+      /* We dont have access to real port, host or dcc information here */
+      putlog(LOG_MISC, "*", "TLS: error: HTTP request received on an SSL port");
+      int j;
+      char response[256];
+      char *body = "Error: HTTP request received on an SSL port, please try HTTPS";
+      j = snprintf(response, sizeof response,
         "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
         "Content-Length: %zu\r\n"
-        "Server: Eggdrop/" EGG_STRINGVER "+" EGG_PATCH "\r\n"
-        "\r\n%.*s", strlen(body), (int) strlen(body), body);
-      write(sock, response, i); // TODO: tputs(sock, response, i); after reading of remaining bytes / ssl shutdown ?
-      /*
-      do/for/while read(sock, ...);
-      SSL_set_shutdown(td->socklist[i].ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
-      */
-      debug2("webui: tputs(): >>>%s<<< %i", response, i);
-
-
-
-    }
-    else {
+        "Content-Type: text/plain; charset=utf-8\r\n"
+        "Server: %s\r\n"
+        "\r\n%.*s", strlen(body),
+          stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+          (int) strlen(body), body);
+      write(sock, response, j); // TODO: after reading of remaining bytes / ssl shutdown ?
+    } else {
       putlog(data->loglevel, "*",
              "TLS: handshake failed due to the following error: %s",
              ERR_reason_error_string(err));
