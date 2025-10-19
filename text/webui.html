@@ -34,7 +34,7 @@ We use Prettier as a code formatter to keep the code style consistent (and to av
       WS_ECHO_ON = "\x01";
       WS_ECHO_OFF = "\x02";
       ws = new WebSocket(
-        (location.protocol === "https:" ? "wss://" : "ws:") +
+        (location.protocol === "https:" ? "wss:" : "ws:") +
           location.host +
           "/w",
       );
