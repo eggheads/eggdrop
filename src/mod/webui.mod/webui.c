@@ -308,7 +308,7 @@ static void webui_http_activity(int idx, char *buf, int len)
       "Sec-WebSocket-Accept: %s\r\n"
       "\r\n", out);
     tputs(dcc[idx].sock, response, i);
-    debug2("webui: tputs(): >>>%s<<< %i", response, i);
+    // debug2("webui: tputs(): >>>%s<<< %i", response, i);
 
     sock_list* socklist_i = &socklist[findsock(dcc[idx].sock)];
     socklist_i->flags |= SOCK_WS;
