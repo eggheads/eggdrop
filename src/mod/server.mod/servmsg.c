@@ -2030,8 +2030,8 @@ static void server_resolve_failure(int servidx)
 {
   serv = -1;
   resolvserv = 0;
-  putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-         IRC_DNSFAILED);
+  putlog(LOG_SERV, "*", "%s %s port %i (%s)", IRC_FAILEDCONNECT,
+         dcc[servidx].host, dcc[servidx].port, IRC_DNSFAILED);
   check_tcl_event("fail-server");
   lostdcc(servidx);
 }
@@ -2055,8 +2055,8 @@ static void server_resolve_success(int servidx)
     } else {
       errstr = strerror(errno);
     }
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           errstr);
+    putlog(LOG_SERV, "*", "%s %s port %i (%s)", IRC_FAILEDCONNECT,
+           dcc[servidx].host, dcc[servidx].port, errstr);
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
@@ -2064,8 +2064,8 @@ static void server_resolve_success(int servidx)
 #ifdef TLS
   if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           "TLS negotiation failure");
+    putlog(LOG_SERV, "*", "%s %s port %i (%s)", IRC_FAILEDCONNECT,
+           dcc[servidx].host, dcc[servidx].port, "TLS negotiation failure");
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
