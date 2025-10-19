@@ -40,6 +40,11 @@ We use Prettier as a code formatter to keep the code style consistent (and to av
       );
       out = document.getElementById("out");
       echo = 1;
+      ws.addEventListener("close", (event) => {
+        d.remove();
+        out.innerHTML = out.innerHTML + "Connection closed by foreign host.";
+        out.scrollTop = out.scrollHeight;
+      });
       ws.addEventListener("message", (event) => {
         out.innerHTML = out.innerHTML + event.data.replace(/[\x01-\x02]/g, "");
         out.scrollTop = out.scrollHeight;
