@@ -1921,15 +1921,39 @@ static cmd_t my_isupport_binds[] = {
 static void server_resolve_success(int);
 static void server_resolve_failure(int);
 
+#ifdef TLS
+static size_t print_ip_ssl_port(char *str, size_t size, char *ip, int ssl,
+                                int port) {
+#else
+static size_t print_ip_ssl_port(char *str, size_t size, char *ip, int port) {
+#endif
+  char buf[sizeof(struct in6_addr)];
+
+#ifdef IPV6
+  if (inet_pton(AF_INET6, ip, buf)) {
+#ifdef TLS
+    return snprintf(str, size, "[%s]:%s%d", ip, use_ssl ? "+" : "", port);
+#else
+    return snprintf(str, size, "[%s]:%d", ip, port);
+#endif /* TLS */
+  } else {
+#endif /* IPV6 */
+#ifdef TLS
+    return snprintf(str, size, "%s:%s%d", ip, use_ssl ? "+" : "", port);
+#else
+    return snprintf(str, size, "%s:%d", ip, port);
+#endif
+#ifdef IPV6
+  }
+#endif
+}
+
 /* Hook up to a server
  */
 static void connect_server(void)
 {
-  char pass[NEWSERVERPASSMAX], botserver[NEWSERVERMAX], s[1024];
-#ifdef IPV6
-  char buf[sizeof(struct in6_addr)];
-#endif
-  int servidx, len = 0;
+  char pass[NEWSERVERPASSMAX], botserver[NEWSERVERMAX], s[128];
+  int servidx;
   unsigned int botserverport = 0;
 
   lastpingcheck = 0;
@@ -1971,24 +1995,14 @@ static void connect_server(void)
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
 
-#ifdef IPV6
-    if (inet_pton(AF_INET6, botserver, buf)) {
-      len += egg_snprintf(s, sizeof s, "%s [%s]", IRC_SERVERTRY, botserver);
-    } else {
-#endif
-     len += egg_snprintf(s, sizeof s, "%s %s", IRC_SERVERTRY, botserver);
-#ifdef IPV6
-    }
-#endif
-
 #ifdef TLS
-    len += egg_snprintf(s + len, sizeof s - len, ":%s%d",
-            use_ssl ? "+" : "", botserverport);
+    print_ip_ssl_port(s, sizeof s, botserver, use_ssl, botserverport);
     dcc[servidx].ssl = use_ssl;
 #else
-    len += egg_snprintf(s + len, sizeof s - len, ":%d", botserverport);
+    print_ip_ssl_port(s, sizeof s, botserver, botserverport);
 #endif
-    putlog(LOG_SERV, "*", "%s", s);
+
+    putlog(LOG_SERV, "*", "%s %s", IRC_SERVERTRY, s);
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strlcpy(dcc[servidx].host, botserver, UHOSTLEN);
@@ -2028,17 +2042,24 @@ static void connect_server(void)
 
 static void server_resolve_failure(int servidx)
 {
+  char s[128];
   serv = -1;
   resolvserv = 0;
-  putlog(LOG_SERV, "*", "%s %s port %i (%s)", IRC_FAILEDCONNECT,
-         dcc[servidx].host, dcc[servidx].port, IRC_DNSFAILED);
+#ifdef TLS
+    print_ip_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].ssl,
+                      dcc[servidx].port);
+#else
+    print_ip_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
+#endif
+
+  putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, s, IRC_DNSFAILED);
   check_tcl_event("fail-server");
   lostdcc(servidx);
 }
 
 static void server_resolve_success(int servidx)
 {
-  char pass[121];
+  char pass[121], s[128];
 
   resolvserv = 0;
   strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
@@ -2055,8 +2076,13 @@ static void server_resolve_success(int servidx)
     } else {
       errstr = strerror(errno);
     }
-    putlog(LOG_SERV, "*", "%s %s port %i (%s)", IRC_FAILEDCONNECT,
-           dcc[servidx].host, dcc[servidx].port, errstr);
+#ifdef TLS
+    print_ip_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].ssl,
+                      dcc[servidx].port);
+#else
+    print_ip_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
+#endif
+    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, s, errstr);
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
@@ -2064,8 +2090,14 @@ static void server_resolve_success(int servidx)
 #ifdef TLS
   if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {
-    putlog(LOG_SERV, "*", "%s %s port %i (%s)", IRC_FAILEDCONNECT,
-           dcc[servidx].host, dcc[servidx].port, "TLS negotiation failure");
+#ifdef TLS
+    print_ip_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].ssl,
+                      dcc[servidx].port);
+#else
+    print_ip_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
+#endif
+    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, s,
+           "TLS negotiation failure");
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
