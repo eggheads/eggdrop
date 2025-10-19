@@ -1299,7 +1299,7 @@ int sockgets(char *s, int *len)
 void tputs(int z, char *s, unsigned int len)
 {
   int i, x, idx;
-  char *p, *s2;
+  char *p, *s2 = 0;
   static int inhere = 0;
   struct threaddata *td = threaddata();
 
@@ -1363,7 +1363,9 @@ void tputs(int z, char *s, unsigned int len)
           x = -1;
         }
       } else /* not ssl, use regular write() */
-#endif
+#else
+      s2 = s;
+#endif /* TLS */
       /* Try. */
       x = write(z, s2, len);
       if (x == -1)
