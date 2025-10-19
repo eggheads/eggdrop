@@ -383,6 +383,7 @@ static void webui_dcc_telnet_hostresolved(int i)
     debug1("webui_dcc_telnet_hostresolved(%i)", i);
     changeover_dcc(i, &DCC_WEBUI_HTTP, 0);
     sockoptions(dcc[i].sock, EGG_OPTION_SET, SOCK_BINARY);
+    sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
     dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
 }
 
