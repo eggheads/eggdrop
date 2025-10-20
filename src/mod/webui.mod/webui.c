@@ -182,10 +182,7 @@ static void webui_http_activity(int idx, char *buf, int len)
 {
   struct rusage ru1, ru2;
   int r, i;
-  char response[4096]; /* > sizeof webui.html
-                        * TODO: dynamic size? else buffer overflow ;)
-                        * we dont control webui.html size, that is user input!
-                        */
+  char *response;
 
   if (len < 6) { /* TODO: better len check */
     putlog(LOG_MISC, "*",
@@ -232,7 +229,16 @@ static void webui_http_activity(int idx, char *buf, int len)
       putlog(LOG_MISC, "*", "WEBUI error: mmap(" PATH "): %s\n", strerror(errno));
       return;
     }
-    i = snprintf(response, sizeof response,
+    i = snprintf(NULL, 0,
+      "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+      "Content-Length: %li\r\n"
+      "Content-Type: text/html; charset=utf-8\r\n" /* at least firefox 144 needs this */
+      "Server: %s\r\n"
+      "\r\n%.*s", sb.st_size,
+        stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+        (int) sb.st_size, body);
+    response = nmalloc(i + 1);
+    sprintf(response,
       "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
       "Content-Length: %li\r\n"
       "Content-Type: text/html; charset=utf-8\r\n" /* at least firefox 144 needs this */
@@ -242,13 +248,22 @@ static void webui_http_activity(int idx, char *buf, int len)
         (int) sb.st_size, body);
     tputs(dcc[idx].sock, response, i);
     // debug2("webui: tputs(): >>>%s<<< %i", response, i);
+    nfree(response);
     if (munmap(body, sb.st_size) < 0) {
       putlog(LOG_MISC, "*", "WEBUI error: munmap(): %s", strerror(errno));
       return;
     }
   } else if (buf[5] == 'f') {
     debug0("webui: GET /favicon.ico");
-    i = snprintf(response, sizeof response,
+    i = snprintf(NULL, 0,
+      "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+      "Content-Length: %zu\r\n"
+      "Content-Type: image/x-icon\r\n"
+      "Server: %s\r\n"
+      "\r\n", sizeof favicon_ico,
+        stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    response = nmalloc(i + sizeof favicon_ico);
+    sprintf(response,
       "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
       "Content-Length: %zu\r\n"
       "Content-Type: image/x-icon\r\n"
@@ -257,8 +272,8 @@ static void webui_http_activity(int idx, char *buf, int len)
         stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
     memcpy(response + i, favicon_ico, sizeof favicon_ico);
     i += sizeof favicon_ico;
-
     tputs(dcc[idx].sock, response, i);
+    nfree(response);
     debug1("webui: tputs(): %i", i);
   } else if (buf[5] == 'w') {
     debug0("webui: GET /w");
@@ -300,7 +315,14 @@ static void webui_http_activity(int idx, char *buf, int len)
       return;
     }
 
-    i = snprintf(response, sizeof response,
+    i = snprintf(NULL, 0,
+      "HTTP/1.1 101 Switching Protocols\r\n"
+      "Upgrade: websocket\r\n"
+      "Connection: Upgrade\r\n"
+      "Sec-WebSocket-Accept: %s\r\n"
+      "\r\n", out);
+    response = nmalloc(i + 1);
+    sprintf(response,
       "HTTP/1.1 101 Switching Protocols\r\n"
       "Upgrade: websocket\r\n"
       "Connection: Upgrade\r\n"
@@ -308,6 +330,7 @@ static void webui_http_activity(int idx, char *buf, int len)
       "\r\n", out);
     tputs(dcc[idx].sock, response, i);
     // debug2("webui: tputs(): >>>%s<<< %i", response, i);
+    nfree(response);
 
     sock_list* socklist_i = &socklist[findsock(dcc[idx].sock)];
     socklist_i->flags |= SOCK_WS;
