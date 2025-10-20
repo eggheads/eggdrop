@@ -1076,9 +1076,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
         "Content-Length: %zu\r\n"
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
-        "\r\n%.*s", strlen(body),
+        "\r\n%s", strlen(body),
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
-          (int) strlen(body), body);
+          body);
       write(sock, response, j); // TODO: after reading of remaining bytes / ssl shutdown ?
     } else {
       putlog(data->loglevel, "*",
