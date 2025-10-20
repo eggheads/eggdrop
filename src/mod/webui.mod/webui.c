@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
  */
 
 #include "src/mod/module.h"
@@ -50,7 +49,7 @@ static Function *global = NULL;
  */
 static const uint8_t alert[] = {0x15, 0x03, 0x01, 0x00, 0x02, 0x02, 0x0a};
 
-/* wget https://www.eggheads.org/favicon.ico
+/* curl -L -O https://www.eggheads.org/favicon.ico
  * xxd -i favicon.ico
  */
 static const unsigned char favicon_ico[] = {
