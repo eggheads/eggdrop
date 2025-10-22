@@ -780,7 +780,7 @@ static void mainloop(int toplevel)
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
               itraffic_dcc_today += strlen(buf) + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else if (!strcmp(dcc[idx].type->name, "FORK_SEND"))
               itraffic_trans_today += strlen(buf) + 1;
             else if (!strncmp(dcc[idx].type->name, "GET", 3))
