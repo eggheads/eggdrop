@@ -1348,6 +1348,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
     dcc[j].sock = getsock(dcc[j].sockname.family, 0);
     if (dcc[j].sock >= 0) {
       sockname_t name;
+      name.family = dcc[j].sockname.family;
       name.addrlen = sizeof(name.addr);
       if (getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen) < 0)
         debug2("dcc: dcc_telnet_hostresolved(): getsockname() socket %ld error %s", dcc[i].sock, strerror(errno));
