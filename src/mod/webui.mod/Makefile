@@ -27,13 +27,6 @@ clean:
 
 distclean: clean
 
-install: install-text
-
-install-text:
-	if test ! -f $(DEST)/text/webui.html; then \
-		$(INSTALL_DATA) $(srcdir)/text/webui.html $(DEST)/text/; \
-	fi
-
 #safety hash
 ../webui.o: .././webui.mod/webui.c ../../../src/mod/module.h \
  ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \

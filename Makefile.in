@@ -328,7 +328,7 @@ sinstall: static
 	@$(MAKE) ainstall
 
 ainstall: install-bin install-modules install-data install-text \
-install-help install-language install-filesys install-doc install-scripts
+install-help install-language install-filesys install-webui install-doc install-scripts
 	@$(install-end)
 
 install-start:
@@ -482,6 +482,25 @@ install-filesys: install-start
 		echo "Creating skeletal filesystem subdirectories."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys >/dev/null; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming >/dev/null; \
+	fi
+
+# We cannot do this in webui.mod Makefile because there is no make target
+# and we cannot create such make target with breaking every other mod Makefile
+# The only alternative i see would be to hardcode the 3 files into char arrays
+# but this is ugly. File systems were invented for a reason.
+install-webui: install-start
+	@if test ! -d $(DEST)/webui; then \
+		echo "Creating webui subdirectory."; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/webui >/dev/null; \
+	fi && \
+	if test ! -f $(DEST)/webui/apple-touch-icon.png; then \
+		$(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/apple-touch-icon.png $(DEST)/webui/; \
+	fi && \
+	if test ! -f $(DEST)/webui/favicon.ico; then \
+		$(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/favicon.ico $(DEST)/webui/; \
+	fi && \
+	if test ! -f $(DEST)/webui/index.html; then \
+	        $(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/index.html $(DEST)/webui/; \
 	fi
 
 install-doc: install-start

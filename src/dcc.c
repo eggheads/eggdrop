@@ -60,7 +60,7 @@ int bot_timeout = 60;           /* Bot timeout value                          */
 int identtimeout = 5;           /* Timeout value for ident lookups            */
 int dupwait_timeout = 5;        /* Timeout for rejecting duplicate entries    */
 int protect_telnet = 1;         /* Even bother with ident lookups :)          */
-int flood_telnet_thr = 5;       /* Number of telnet connections to be
+int flood_telnet_thr = 16;      /* Number of telnet connections to be
                                  * considered a flood                         */
 int flood_telnet_time = 60;     /* In how many seconds?                       */
 char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
