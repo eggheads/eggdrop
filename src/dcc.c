@@ -1285,7 +1285,6 @@ static void dcc_telnet(int idx, char *buf, int i)
     return;
   }
 
-  dcc[i].u.dns->ip = &dcc[i].sockname;
   dcc[i].sock = sock;
   dcc[i].port = port;
 #ifdef TLS

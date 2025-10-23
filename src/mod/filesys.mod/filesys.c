@@ -674,7 +674,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       }
       dcc[i].port = atoi(prt);
       (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-      dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
 #ifdef TLS
       dcc[i].ssl = ssl;

@@ -445,7 +445,9 @@ struct dns_info {
   char *cbuf;                   /* temporary buffer. Memory will be free'd
                                  * as soon as dns_info is free'd           */
   char *cptr;                   /* temporary pointer                       */
-  sockname_t *ip;               /* pointer to sockname with ipv4/6 address */
+  /* sockname with ipv4/6 address is dcc[i].sockname. we must not link that
+   * pointer here, because dcc array can be realloced
+   */
   int ibuf;                     /* temporary buffer for one integer        */
   char dns_type;                /* lookup type, e.g. RES_HOSTBYIP          */
   struct dcc_table *type;       /* type of the dcc table we are making the
