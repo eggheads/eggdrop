@@ -55,31 +55,27 @@ static void webui_http_eof(int idx)
   lostdcc(idx);
 }
 
-static void put_404(int idx, const char *filename) {
+static void put_404(int idx) {
   int i;
   char *response;
 
   i = snprintf(NULL, 0,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
-    "Content-Length: %zu\r\n"
+    "Content-Length: 13\r\n"
     "Content-Type: text/plain\r\n"
     "Server: %s\r\n"
     "\r\n"
-    "404 %s not found",
-    14 + strlen(filename),
-    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
-    filename);
+    "404 Not Found",
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   response = nmalloc(i);
   sprintf(response,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
-    "Content-Length: %zu\r\n"
+    "Content-Length: 13\r\n"
     "Content-Type: text/plain\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
     "\r\n"
-    "404 %s not found",
-    14 + strlen(filename),
-    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
-    filename);
+    "404 Not Found",
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   tputs(dcc[idx].sock, response, i);
   nfree(response);
   killsock(dcc[idx].sock);
@@ -94,7 +90,7 @@ static void put_file(int idx, const char *filename, const char *content_type) {
 
   if ((fd = open(filename, O_RDONLY)) < 0) {
     putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", filename, strerror(errno));
-    put_404(idx, filename);
+    put_404(idx);
     return;
   }
   if (fstat(fd, &sb) < 0) {
@@ -260,7 +256,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     put_file(idx, "webui/apple-touch-icon.png", "image/png");
   } else { /* TODO: send 404 or something ? */
     debug0("webui: 404");
-    put_404(idx, "");
+    put_404(idx);
   }
   if ((dcc[idx].sock != -1) && (len == 511)) { /* sock == -1 if lostdcc() in dcc_telnet_hostresolved2() */
     /* read probable remaining bytes */
