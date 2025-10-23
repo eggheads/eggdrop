@@ -55,25 +55,31 @@ static void webui_http_eof(int idx)
   lostdcc(idx);
 }
 
-static void put_404(int idx) {
+static void put_404(int idx, const char *filename) {
   int i;
   char *response;
 
   i = snprintf(NULL, 0,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
-    "Content-Length: 13\r\n"
+    "Content-Length: %zu\r\n"
     "Content-Type: text/plain\r\n"
     "Server: %s\r\n"
-    "\r\n404 Not found",
-      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    "\r\n"
+    "404 %s not found",
+    14 + strlen(filename),
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+    filename);
   response = nmalloc(i);
   sprintf(response,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
-    "Content-Length: 13\r\n"
+    "Content-Length: %zu\r\n"
     "Content-Type: text/plain\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
-    "\r\n404 Not found",
-      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    "\r\n"
+    "404 %s not found",
+    14 + strlen(filename),
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+    filename);
   tputs(dcc[idx].sock, response, i);
   nfree(response);
   killsock(dcc[idx].sock);
@@ -88,7 +94,7 @@ static void put_file(int idx, const char *filename, const char *content_type) {
 
   if ((fd = open(filename, O_RDONLY)) < 0) {
     putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", filename, strerror(errno));
-    /* TODO: send 404 and/or lostdcc() killsock() */
+    put_404(idx, filename);
     return;
   }
   if (fstat(fd, &sb) < 0) {
@@ -109,16 +115,18 @@ static void put_file(int idx, const char *filename, const char *content_type) {
     "Content-Length: %li\r\n"
     "Content-Type: %s\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
-    "\r\n", sb.st_size, content_type,
-      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    "\r\n",
+    sb.st_size, content_type,
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   response = nmalloc(i + sb.st_size);
   sprintf(response,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
     "Content-Length: %li\r\n"
     "Content-Type: %s\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
-    "\r\n", sb.st_size, content_type,
-      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    "\r\n",
+    sb.st_size, content_type,
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   memcpy(response + i, body, sb.st_size);
   tputs(dcc[idx].sock, response, i + sb.st_size);
   // debug2("webui: tputs(): >>>%s<<< %i", response, i);
@@ -252,7 +260,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     put_file(idx, "webui/apple-touch-icon.png", "image/png");
   } else { /* TODO: send 404 or something ? */
     debug0("webui: 404");
-    put_404(idx);
+    put_404(idx, "");
   }
   if ((dcc[idx].sock != -1) && (len == 511)) { /* sock == -1 if lostdcc() in dcc_telnet_hostresolved2() */
     /* read probable remaining bytes */
