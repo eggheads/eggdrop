@@ -885,7 +885,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              SSL_alert_desc_string_long(ret));
       if (!strcmp(SSL_alert_type_string(ret), "F") &&
           !strcmp(SSL_alert_desc_string(ret), "RO"))
-        putlog(LOG_MISC, "*", "ERROR: No tls port?");
+        putlog(LOG_MISC, "*", "TLS: Long TLSCiphertext field received, connection failed. Is this really a TLS port?");
     } else {
       /* Ignore close notify warnings */
       debug1("TLS: Received close notify during %s",
