@@ -55,53 +55,78 @@ static void webui_http_eof(int idx)
   lostdcc(idx);
 }
 
+static void put_404(int idx) {
+  int i;
+  char *response;
+
+  i = snprintf(NULL, 0,
+    "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
+    "Content-Length: 13\r\n"
+    "Content-Type: text/plain\r\n"
+    "Server: %s\r\n"
+    "\r\n404 Not found",
+      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+  response = nmalloc(i);
+  sprintf(response,
+    "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
+    "Content-Length: 13\r\n"
+    "Content-Type: text/plain\r\n" /* at least firefox 144 needs this */
+    "Server: %s\r\n"
+    "\r\n404 Not found",
+      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+  tputs(dcc[idx].sock, response, i);
+  nfree(response);
+  killsock(dcc[idx].sock);
+  lostdcc(idx);
+}
+
 static void put_file(int idx, const char *filename, const char *content_type) {
-    int fd, i;
-    struct stat sb;
-    char *body;
-    char *response;
+  int fd, i;
+  struct stat sb;
+  char *body;
+  char *response;
 
-    if ((fd = open(filename, O_RDONLY)) < 0) {
-      putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", filename, strerror(errno));
-      /* TODO: send 404 and/or lostdcc() killsock() */
-      return;
-    }
-    if (fstat(fd, &sb) < 0) {
-      putlog(LOG_MISC, "*", "WEBUI error: fstat(%s): %s", filename, strerror(errno));
-      return;
-    }
+  if ((fd = open(filename, O_RDONLY)) < 0) {
+    putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", filename, strerror(errno));
+    /* TODO: send 404 and/or lostdcc() killsock() */
+    return;
+  }
+  if (fstat(fd, &sb) < 0) {
+    putlog(LOG_MISC, "*", "WEBUI error: fstat(%s): %s", filename, strerror(errno));
+    return;
+  }
 
-    if ((body = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE
+  if ((body = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE
 #ifdef MAP_POPULATE
-                        | MAP_POPULATE
+                   | MAP_POPULATE
 #endif
-                        , fd, 0)) == MAP_FAILED) {
-      putlog(LOG_MISC, "*", "WEBUI error: mmap(%s): %s\n", filename, strerror(errno));
-      return;
-    }
-    i = snprintf(NULL, 0,
-      "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
-      "Content-Length: %li\r\n"
-      "Content-Type: %s\r\n" /* at least firefox 144 needs this */
-      "Server: %s\r\n"
-      "\r\n", sb.st_size, content_type,
-        stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
-    response = nmalloc(i + sb.st_size);
-    sprintf(response,
-      "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
-      "Content-Length: %li\r\n"
-      "Content-Type: %s\r\n" /* at least firefox 144 needs this */
-      "Server: %s\r\n"
-      "\r\n", sb.st_size, content_type,
-        stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
-    memcpy(response + i, body, sb.st_size);
-    tputs(dcc[idx].sock, response, i + sb.st_size);
-    // debug2("webui: tputs(): >>>%s<<< %i", response, i);
-    nfree(response);
-    if (munmap(body, sb.st_size) < 0) {
-      putlog(LOG_MISC, "*", "WEBUI error: munmap(): %s", strerror(errno));
-      return;
-    }
+                   , fd, 0)) == MAP_FAILED) {
+    putlog(LOG_MISC, "*", "WEBUI error: mmap(%s): %s\n", filename, strerror(errno));
+    return;
+  }
+  i = snprintf(NULL, 0,
+    "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+    "Content-Length: %li\r\n"
+    "Content-Type: %s\r\n" /* at least firefox 144 needs this */
+    "Server: %s\r\n"
+    "\r\n", sb.st_size, content_type,
+      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+  response = nmalloc(i + sb.st_size);
+  sprintf(response,
+    "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+    "Content-Length: %li\r\n"
+    "Content-Type: %s\r\n" /* at least firefox 144 needs this */
+    "Server: %s\r\n"
+    "\r\n", sb.st_size, content_type,
+      stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+  memcpy(response + i, body, sb.st_size);
+  tputs(dcc[idx].sock, response, i + sb.st_size);
+  // debug2("webui: tputs(): >>>%s<<< %i", response, i);
+  nfree(response);
+  if (munmap(body, sb.st_size) < 0) {
+    putlog(LOG_MISC, "*", "WEBUI error: munmap(): %s", strerror(errno));
+    return;
+  }
 }
 
 static void webui_http_activity(int idx, char *buf, int len)
@@ -227,7 +252,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     put_file(idx, "webui/apple-touch-icon.png", "image/png");
   } else { /* TODO: send 404 or something ? */
     debug0("webui: 404");
-    debug0(buf);
+    put_404(idx);
   }
   if ((dcc[idx].sock != -1) && (len == 511)) { /* sock == -1 if lostdcc() in dcc_telnet_hostresolved2() */
     /* read probable remaining bytes */
