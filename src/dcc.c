@@ -1326,12 +1326,12 @@ static void dcc_telnet(int idx, char *buf, int i)
  * and for either branch we need to continue here
  */
 void dcc_telnet_hostresolved2(int i, int idx) {
-  int j, sock;
-  char *userhost = dcc[idx].host; /* TODO: writing host back to userhost looks like back and forth copying */
+  int sock, j;
+
   /* Skip ident lookup if disabled */
   if (identtimeout <= 0) {
     dcc[i].u.ident_sock = dcc[idx].sock;
-    dcc_telnet_got_ident(i, userhost);
+    dcc_telnet_got_ident(i, dcc[idx].host);
     return;
   }
 
@@ -1366,7 +1366,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
     }
   }
   if (j < 0) {
-    dcc_telnet_got_ident(i, userhost);
+    dcc_telnet_got_ident(i, dcc[idx].host);
     return;
   }
   dcc[j].sock = sock;
@@ -1382,6 +1382,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
   dprintf(j, "%d, %d\n", dcc[i].port, dcc[idx].port);
 }
 
+/* dcc[i].type == DNSWAIT */
 static void dcc_telnet_hostresolved(int i)
 {
   int idx;
