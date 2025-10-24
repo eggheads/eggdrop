@@ -459,9 +459,26 @@ static void webui_unframe(char *buf, int *len)
 
 static char *webui_close(void)
 {
+  int idx;
+
   del_hook(HOOK_DCC_TELNET_HOSTRESOLVED, (Function) webui_dcc_telnet_hostresolved);
   del_hook(HOOK_WEBUI_FRAME, (Function) webui_frame);
   del_hook(HOOK_WEBUI_UNFRAME, (Function) webui_unframe);
+  /*
+  for (int j = 0; j < dcc_total; j++) {
+      debug4("dcc table %i %li %i %s", j, dcc[j].sock, dcc[j].ssl, dcc[j].host);
+      debug4("             %s %s %i %x", dcc[j].nick, dcc[j].type->name, findsock(dcc[j].sock), socklist[findsock(dcc[j].sock)].flags);
+    }
+  */
+  for (idx = 0; idx < dcc_total; idx++) {
+    if (!strcmp(dcc[idx].nick, "(webui)") ||
+        !strcmp(dcc[idx].type->name, "WEBUI_HTTP") ||
+        (socklist[findsock(dcc[idx].sock)].flags & SOCK_WS)) {
+      debug1("webui: webui_close(): closing idx %i", idx);
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+    }
+  }
   return NULL;
 }
 
