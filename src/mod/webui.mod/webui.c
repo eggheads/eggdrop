@@ -82,29 +82,50 @@ static void put_404(int idx) {
   lostdcc(idx);
 }
 
-static void put_file(int idx, const char *filename, const char *content_type) {
-  int fd, i;
+/* cache file data by modification time */
+struct file_cache_struct {
+  char filename[27];
+  char content_type[25];
+  struct timespec st_mtim;
+  char *data;
+} file_cache[3] = {
+  {"webui/apple-touch-icon.png", "image/png",                { .tv_sec = -1, .tv_nsec = -1 }, NULL},
+  {"webui/favicon.ico",          "image/x-icon",             { .tv_sec = -1, .tv_nsec = -1 }, NULL},
+  {"webui/index.html",           "text/html; charset=utf-8", { .tv_sec = -1, .tv_nsec = -1 }, NULL}
+};
+
+static void put_file(int idx, int file_cache_index) {
   struct stat sb;
-  char *body;
+  struct file_cache_struct *f = &file_cache[file_cache_index];
+  int fd, i;
   char *response;
 
-  if ((fd = open(filename, O_RDONLY)) < 0) {
-    putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", filename, strerror(errno));
-    put_404(idx);
+  if (stat(f->filename, &sb) < 0) {
+    putlog(LOG_MISC, "*", "WEBUI error: fstat(%s): %s", f->filename, strerror(errno));
     return;
   }
-  if (fstat(fd, &sb) < 0) {
-    putlog(LOG_MISC, "*", "WEBUI error: fstat(%s): %s", filename, strerror(errno));
-    return;
-  }
-
-  if ((body = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE
-#ifdef MAP_POPULATE
-                   | MAP_POPULATE
-#endif
-                   , fd, 0)) == MAP_FAILED) {
-    putlog(LOG_MISC, "*", "WEBUI error: mmap(%s): %s\n", filename, strerror(errno));
-    return;
+  if ((f->st_mtim.tv_sec != sb.st_mtim.tv_sec) ||
+      (f->st_mtim.tv_nsec != sb.st_mtim.tv_nsec)) {
+    if ((fd = open(f->filename, O_RDONLY)) < 0) {
+      putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", f->filename, strerror(errno));
+      put_404(idx);
+      return;
+    }
+    f->data = nrealloc(f->data, sb.st_size); /* TODO: nfree() on module unloading */
+    if (read(fd, f->data, sb.st_size) < 0) {
+      putlog(LOG_MISC, "*", "WEBUI error: read(%s): %s", f->filename, strerror(errno));
+      if ((fd = close(fd)) < 0)
+        putlog(LOG_MISC, "*", "WEBUI error: close(%s): %s", f->filename, strerror(errno));
+      put_404(idx);
+      return;
+    }
+    if ((fd = close(fd)) < 0) {
+      putlog(LOG_MISC, "*", "WEBUI error: close(%s): %s", f->filename, strerror(errno));
+      put_404(idx);
+      return;
+    }
+    f->st_mtim.tv_sec = sb.st_mtim.tv_sec;
+    f->st_mtim.tv_nsec = sb.st_mtim.tv_nsec;
   }
   i = snprintf(NULL, 0,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
@@ -112,7 +133,7 @@ static void put_file(int idx, const char *filename, const char *content_type) {
     "Content-Type: %s\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
     "\r\n",
-    sb.st_size, content_type,
+    sb.st_size, f->content_type,
     stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   response = nmalloc(i + sb.st_size);
   sprintf(response,
@@ -121,16 +142,12 @@ static void put_file(int idx, const char *filename, const char *content_type) {
     "Content-Type: %s\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
     "\r\n",
-    sb.st_size, content_type,
+    sb.st_size, f->content_type,
     stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
-  memcpy(response + i, body, sb.st_size);
+  memcpy(response + i, f->data, sb.st_size);
   tputs(dcc[idx].sock, response, i + sb.st_size);
   // debug2("webui: tputs(): >>>%s<<< %i", response, i);
   nfree(response);
-  if (munmap(body, sb.st_size) < 0) {
-    putlog(LOG_MISC, "*", "WEBUI error: munmap(): %s", strerror(errno));
-    return;
-  }
 }
 
 static void webui_http_activity(int idx, char *buf, int len)
@@ -162,10 +179,10 @@ static void webui_http_activity(int idx, char *buf, int len)
   debug0("webui: http()");
   if (buf[5] == ' ') {
     debug0("webui: GET /");
-    put_file(idx, "webui/index.html", "text/html; charset=utf-8");
+    put_file(idx, 2);
   } else if (buf[5] == 'f') {
     debug0("webui: GET /favicon.ico");
-    put_file(idx, "webui/favicon.ico", "image/x-icon");
+    put_file(idx, 1);
   } else if (buf[5] == 'w') {
     debug0("webui: GET /w");
     buf = strstr(buf, WS_KEY);
@@ -253,7 +270,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     debug2("webui: CHANGEOVER -> idx %i sock %li", idx, dcc[idx].sock);
   } else if (buf[5] == 'a') {
     debug0("webui: GET /apple-touch-icon.png");
-    put_file(idx, "webui/apple-touch-icon.png", "image/png");
+    put_file(idx, 0);
   } else { /* TODO: send 404 or something ? */
     debug0("webui: 404");
     put_404(idx);
