@@ -71,7 +71,7 @@ static void put_404(int idx) {
   sprintf(response,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
     "Content-Length: 13\r\n"
-    "Content-Type: text/plain\r\n" /* at least firefox 144 needs this */
+    "Content-Type: text/plain\r\n"
     "Server: %s\r\n"
     "\r\n"
     "404 Not Found",
