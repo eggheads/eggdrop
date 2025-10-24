@@ -1666,7 +1666,7 @@ struct dcc_table DCC_PRE_RELAY = {
   NULL
 };
 
-/* Once a minute, send 'ping' to each bot -- no exceptions
+/* Every 5 minutes, send 'ping' to each bot -- no exceptions
  */
 void check_botnet_pings()
 {

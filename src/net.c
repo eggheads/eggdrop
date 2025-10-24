@@ -544,7 +544,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, j, rc, res;
+  int i, j, rc, errno_tmp, res;
   struct threaddata *td = threaddata();
 
   for (i = 0; i < dcc_total; i++)
@@ -573,7 +573,9 @@ int open_telnet_raw(int sock, sockname_t *addr)
    * rc < 0 and errno == EINPROGRESS)
    */
   if (dcc[i].status & STAT_SERV) {
+    errno_tmp = errno;
     check_tcl_event("ident");
+    errno = errno_tmp;
   }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
