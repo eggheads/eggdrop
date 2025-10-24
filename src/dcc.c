@@ -2432,19 +2432,22 @@ static void dcc_telnet_got_ident(int i, char *host)
    * STATUS option as a hopefully harmless way to detect if the other
    * side is a telnet client or not. */
 #ifdef TLS
-    if (!dcc[i].ssl && strcmp(dcc[idx].nick, "(webui)"))
-      dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
+  if (!dcc[i].ssl && strcmp(dcc[idx].nick, "(webui)"))
+    dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
 #endif
-    /* Copy acceptable-nick/host mask */
-    dcc[i].status = STAT_TELNET | STAT_ECHO;
-    if (!strcmp(dcc[idx].nick, "(users)"))
-      dcc[i].status |= STAT_USRONLY;
-    else if (!strcmp(dcc[idx].nick, "(bots)"))
-      dcc[i].status |= STAT_BOTONLY;
-    else if (!strcmp(dcc[idx].nick, "(webui)"))
-      dcc[i].status |= STAT_WS;
-    /* Copy acceptable-nick/host mask */
-    strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN); /* wo ist hier der sinn? dcc[idx].host ist immer *, oder? */
+  /* Copy acceptable-nick/host mask */
+  dcc[i].status = STAT_TELNET | STAT_ECHO;
+  if (!strcmp(dcc[idx].nick, "(users)"))
+    dcc[i].status |= STAT_USRONLY;
+  else if (!strcmp(dcc[idx].nick, "(bots)"))
+    dcc[i].status |= STAT_BOTONLY;
+  else if (!strcmp(dcc[idx].nick, "(webui)"))
+    dcc[i].status |= STAT_WS;
+  /* Copy acceptable-nick/host mask */
+  debug2("sinnsuche: %s %s", dcc[i].nick, dcc[idx].host);
+  #include <assert.h>
+  assert(!strcmp(dcc[idx].host, "*"));
+  strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN); /* wo ist hier der sinn? dcc[idx].host ist immer *, oder? */
 
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
