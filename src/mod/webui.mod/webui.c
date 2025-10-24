@@ -474,7 +474,7 @@ static char *webui_close(void)
     if (!strcmp(dcc[idx].nick, "(webui)") ||
         !strcmp(dcc[idx].type->name, "WEBUI_HTTP") ||
         (socklist[findsock(dcc[idx].sock)].flags & SOCK_WS)) {
-      debug1("webui: webui_close(): closing idx %i", idx);
+      debug1("webui: webui_close(): closing sock %li", dcc[idx].sock);
       killsock(dcc[idx].sock);
       lostdcc(idx);
     }
