@@ -1080,6 +1080,8 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
           body);
       write(sock, response, j); // TODO: after reading of remaining bytes / ssl shutdown ?
+			// we cannot use tputs() here, so we use write()
+			// we should check the result value for error / short write
     } else {
       putlog(data->loglevel, "*",
              "TLS: handshake failed due to the following error: %s",
