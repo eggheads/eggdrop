@@ -67,7 +67,7 @@ static void put_404(int idx) {
     "\r\n"
     "404 Not Found",
     stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
-  response = nmalloc(i);
+  response = nmalloc(i + 1);
   sprintf(response,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
     "Content-Length: 13\r\n"

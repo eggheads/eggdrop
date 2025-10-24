@@ -1069,9 +1069,9 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
       /* We dont have access to real port, host or dcc information here */
       putlog(LOG_MISC, "*", "TLS: error: HTTP request received on an SSL port");
       int j;
-      char response[256];
+      char *response;
       char *body = "Error: HTTP request received on an SSL port, please try HTTPS";
-      j = snprintf(response, sizeof response,
+      j = snprintf(NULL, 0,
         "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
         "Content-Length: %zu\r\n"
         "Content-Type: text/plain; charset=utf-8\r\n"
@@ -1079,9 +1079,19 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
         "\r\n%s", strlen(body),
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
           body);
-      write(sock, response, j); // TODO: after reading of remaining bytes / ssl shutdown ?
-			// we cannot use tputs() here, so we use write()
-			// we should check the result value for error / short write
+      response = nmalloc(j + 1);
+      sprintf(response,
+        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "Content-Length: %zu\r\n"
+        "Content-Type: text/plain; charset=utf-8\r\n"
+        "Server: %s\r\n"
+        "\r\n%s", strlen(body),
+          stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+          body);
+      if (write(sock, response, j) < 0) /* tputs() cannot be used here */
+        putlog(LOG_MISC, "*", "TLS: error: write(sock %i): %s", sock, strerror(errno));
+      // TODO: after reading of remaining bytes / ssl shutdown ?
+      nfree(response);
     } else {
       putlog(data->loglevel, "*",
              "TLS: handshake failed due to the following error: %s",
