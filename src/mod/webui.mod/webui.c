@@ -131,20 +131,20 @@ static void put_file(int idx, int file_cache_index) {
   }
   i = snprintf(NULL, 0,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
-    "Content-Length: %li\r\n"
+    "Content-Length: %jd\r\n"
     "Content-Type: %s\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
     "\r\n",
-    sb.st_size, f->content_type,
+    (intmax_t) sb.st_size, f->content_type,
     stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   response = nmalloc(i + sb.st_size);
   sprintf(response,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
-    "Content-Length: %li\r\n"
+    "Content-Length: %jd\r\n"
     "Content-Type: %s\r\n" /* at least firefox 144 needs this */
     "Server: %s\r\n"
     "\r\n",
-    sb.st_size, f->content_type,
+    (intmax_t) sb.st_size, f->content_type,
     stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   memcpy(response + i, f->data, sb.st_size);
   tputs(dcc[idx].sock, response, i + sb.st_size);
