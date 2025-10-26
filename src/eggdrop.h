@@ -758,7 +758,4 @@ struct dns_thread_node {
 extern struct dns_thread_node *dns_thread_head;
 #endif
 
-#define WS_ECHO_ON  "\x01" /* webui websocket echo on */
-#define WS_ECHO_OFF "\x02" /* webui websocket echo off */
-
 #endif /* _EGG_EGGDROP_H */

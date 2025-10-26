@@ -40,6 +40,8 @@
 #define WS_LEN    28 /* length of Sec-WebSocket-Accept header field value
                       * base64(len(sha1))
                       * import math; (4 * math.ceil(20 / 3)) */
+#define WS_ECHO_ON  0x01
+#define WS_ECHO_OFF 0x02
 
 static Function *global = NULL;
 
@@ -330,7 +332,7 @@ static size_t escape_html(char *dst, char *src, size_t size) {
   char *d = dst;
 
   for (i = 0; i < size; i++) {
-    switch (src[i]) {
+    switch ((unsigned char) src[i]) {
       case '"':
         *d++ = '&';
         *d++ = 'q';
@@ -366,6 +368,45 @@ static size_t escape_html(char *dst, char *src, size_t size) {
         *d++ = 't';
         *d++ = ';';
         break;
+      case ESC:
+        // debug0("escape_html(): ESC");
+        if ((i + 4) < size) {
+          if (     ((unsigned char) src[i + 1] == '[') &&
+                   ((unsigned char) src[i + 2] == '0') &&
+                   ((unsigned char) src[i + 3] == 'm')) {
+            *d++ = '<';
+            *d++ = 'b';
+            *d++ = '>';
+          } else if (((unsigned char) src[i + 1] == '[') &&
+                   ((unsigned char) src[i + 2] == '1') &&
+                   ((unsigned char) src[i + 3] == 'm')) {
+            *d++ = '<';
+            *d++ = 'b';
+            *d++ = '/';
+            *d++ = '>';
+          } else
+            debug3("webui: escape_html(): unknown escape sequence found, skipping, %x %x %x, PLEASE REPORT THIS BUG",
+                   (unsigned char) src[i + 1], (unsigned char) src[i + 2], (unsigned char) src[i + 3]);
+          i += 3;
+        } else
+          debug0("webui: escape_html(): unknown SHORT escape sequence found, skipping, PLEASE REPORT THIS BUG");
+        break;
+      case TLN_IAC:
+        // debug0("escape_html(): TLN_IAC_C");
+        if ((i + 2) < size) {
+          if (     ((unsigned char) src[i + 1] == TLN_WILL) &&
+                   ((unsigned char) src[i + 2] == TLN_ECHO))
+            *d++ = WS_ECHO_OFF;
+          else if (((unsigned char) src[i + 1] == TLN_WONT) &&
+                   ((unsigned char) src[i + 2] == TLN_ECHO))
+            *d++ = WS_ECHO_ON;
+          else
+            debug2("webui: escape_html(): unknown telnet command found, skipping, %x %x, PLEASE REPORT THIS BUG",
+                   (unsigned char) src[i + 1], (unsigned char) src[i + 2]);
+          i += 2;
+        } else
+          debug0("webui: escape_html(): unknown SHORT telnet command found, skipping, PLEASE REPORT THIS BUG");
+        break;
       default:
         *d++ = src[i];
     }
@@ -383,6 +424,7 @@ static size_t webui_frame(char **dst, char *src, size_t len) {
   len = escape_html(buf + 4, src, len);
   /* we must not use putlog() or debug() here or we get recursion */
   /* A server MUST NOT mask any frames that it sends to the client */
+  /* we use text, not binary, so escape_html() must output valid html */
   if (len < 0x7e) {
     buf[2] =0x81; /* FIN + text frame */
     buf[3] = len;
