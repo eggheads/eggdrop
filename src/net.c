@@ -994,7 +994,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                      ERR_error_string(err2, 0), err, err2);
               if ((err == SSL_ERROR_SSL) &&
                   (ERR_GET_REASON(err2) == SSL_R_PEER_DID_NOT_RETURN_A_CERTIFICATE))
-                putlog(LOG_MISC, "*", "NET: SSL read(): Peer did not return a certificate, which is mandatory due to ssl-verify settings");
+                putlog(LOG_MISC, "*", "NET: SSL read failed. Peer did not return a certificate, which is mandatory due to ssl-verify settings.");
             }
             x = -1;
           }
