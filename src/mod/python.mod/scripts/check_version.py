@@ -24,7 +24,8 @@ def check_version():
             putlog(
                 f"Version check: eggdrop update found: latest {latest_version} current {current_version}"
             )
-            threading.Timer(24 * 60 * 60, check_version).start()  # 24h
+    threading.Timer(24 * 60 * 60, check_version).start()  # 24h
 
 
 check_version()
+print("Loaded check_version.py")
