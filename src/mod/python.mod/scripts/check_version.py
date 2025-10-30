@@ -12,7 +12,9 @@ import urllib.request
 current_version = eggdrop.tcl.set("version")
 index1 = current_version.find(" ")
 index2 = current_version.find("+")
-current_version = "v" + current_version[: min(index1, index2)]
+current_version = (
+    f"v{current_version[: index1 if index2 < 0 or index2 > index1 else index2]}"
+)
 
 
 def check_version():
