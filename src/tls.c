@@ -896,14 +896,15 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              SSL_state_string_long(ssl));
     } else if (ret < 0) {
       int err = SSL_get_error(ssl, ret);
-      /* However we still check <0 as man example does so too */
-      if (err & (SSL_ERROR_WANT_READ | SSL_ERROR_WANT_WRITE)) {
-        /* Errors to be ignored for non-blocking */
-        debug1("TLS: awaiting more %s", (err & SSL_ERROR_WANT_READ) ? "reads" : "writes");
-      } else {
+      /* However we still check <0 as man example does so too
+       * Errors to be ignored for non-blocking
+       * debug print, like "TLS: awaiting more", must not be used for
+       * SSL_ERROR_WANT_READ | SSL_ERROR_WANT_WRITE because tputs() is not
+       * reentrant
+       */
+      if (!(err & (SSL_ERROR_WANT_READ | SSL_ERROR_WANT_WRITE)))
         putlog(data->loglevel, "*", "TLS: error in: %s.",
                SSL_state_string_long(ssl));
-      }
     }
   }
   /* Display the state of the engine for debugging purposes */
