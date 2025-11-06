@@ -11,7 +11,7 @@ This module adds a Python interpreter to Eggdrop, allowing you to run Python scr
 -------------------
 System Requirements
 -------------------
-This module requires Python version 3.8 or higher in order to run. Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this means the packages ``python``, ``python-dev`` AND ``python-is-python3`` to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.
+This module requires Python version 3.7 or higher in order to run. Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this means the packages ``python``, ``python-dev`` AND ``python-is-python3`` to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.
 
 --------------
 Loading Python

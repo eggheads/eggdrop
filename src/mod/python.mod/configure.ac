@@ -22,11 +22,11 @@ python_avail="false"
 if test "x$egg_enable_python" != "xno"; then
   if test "x$egg_with_python_config" = "x"; then
     # based on serial 20 https://www.gnu.org/software/autoconf-archive/ax_python.html
-    AC_PATH_PROGS([python_config_bin], [python3-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python-config])
+    AC_PATH_PROGS([python_config_bin], [python3-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python3.7-config python-config])
   else
     if test -d "$egg_with_python_config"; then
       AC_MSG_NOTICE([Checking for python-config binaries in $egg_with_python_config])
-      AC_PATH_PROGS([python_config_bin], [python3-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python-config], [], [$egg_with_python_config])
+      AC_PATH_PROGS([python_config_bin], [python3-config python3.12-config python3.11-config python3.10-config python3.9-config python3.8-config python3.7-config python-config], [], [$egg_with_python_config])
     else
       if test -x "$egg_with_python_config"; then
         python_config_bin="$egg_with_python_config"
@@ -68,12 +68,12 @@ canonical name.])
 PYTHON_VERSION=`echo $PYTHON_LDFLAGS | sed 's/.*-lpython\(.*[[0-9]]\).*/\1/'`
 
 # Check for python version
-AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.8], [ax_check_ver="yes"], [ax_check_ver="no"])
-AC_MSG_CHECKING([python version is >= 3.8.0])
+AX_COMPARE_VERSION([$PYTHON_VERSION],[ge],[3.7], [ax_check_ver="yes"], [ax_check_ver="no"])
+AC_MSG_CHECKING([python version is >= 3.7.0])
 if test "x$ax_check_ver" = x"no"; then
   python_avail="false"
   AC_MSG_RESULT([no ($PYTHON_VERSION)])
-  AC_MSG_WARN([Compiling Eggdrop with python requires python version 3.8.0 or higher])
+  AC_MSG_WARN([Compiling Eggdrop with python requires python version 3.7.0 or higher])
 else
   AC_MSG_RESULT([yes ($PYTHON_VERSION)])
 fi

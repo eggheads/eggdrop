@@ -108,7 +108,7 @@ Some components of Eggdrop relies on a variety of third-party libraries, documen
 +-------------------------------+-------------------+-------------------+
 | Secure communication          | OpenSSL           | 0.9.8             |
 +-------------------------------+-------------------+-------------------+
-| Python module                 | Python            | 3.8.0             |
+| Python module                 | Python            | 3.7.0             |
 +-------------------------------+-------------------+-------------------+
 | Compression module            | zlib              | Any               |
 +-------------------------------+-------------------+-------------------+

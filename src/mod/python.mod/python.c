@@ -65,6 +65,7 @@ static char *init_python() {
   const char *venv;
   char venvpython[PATH_MAX];
   PyObject *pmodule;
+#if PY_VERSION_HEX >= 0x03080000
   PyStatus status;
   PyConfig config;
 
@@ -86,7 +87,7 @@ static char *init_python() {
   }
   if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1) {
     PyConfig_Clear(&config);
-    return "Python: Error: could not extend in-built modules table";
+    return "Python: Fatal error: could not extend in-built modules table";
   }
   status = Py_InitializeFromConfig(&config);
   if (PyStatus_Exception(status)) {
@@ -94,6 +95,24 @@ static char *init_python() {
     return "Python: Fatal error: Could not initialize config";
   }
   PyConfig_Clear(&config);
+#else
+  wchar_t *venvpythonw;
+
+  if ((venv = getenv("VIRTUAL_ENV"))) {
+    snprintf(venvpython, sizeof venvpython, "%s/bin/python3", venv);
+    if (!(venvpythonw = Py_DecodeLocale(venvpython, NULL)))
+      return "Python: Fatal error: venv decoding error or memory allocation error";
+    Py_SetProgramName(venvpythonw);
+  }
+
+  /* This should be called before Py_Initialize()
+   * https://docs.python.org/3/c-api/import.html#c.PyImport_AppendInittab
+   */
+  if (PyImport_AppendInittab("eggdrop", &PyInit_eggdrop) == -1)
+    return "Python: Fatal error: could not extend in-built modules table";
+
+  Py_Initialize();
+#endif
   PyDateTime_IMPORT;
   pmodule = PyImport_ImportModule("eggdrop");
   if (!pmodule) {
@@ -147,7 +166,7 @@ char *python_start(Function *global_funcs)
     global = global_funcs;
 
     /* Register the module. */
-    module_register(MODULE_NAME, python_table, 0, 1);
+    module_register(MODULE_NAME, python_table, 1, 0);
     if (!module_depend(MODULE_NAME, "eggdrop", 109, 0)) {
       module_undepend(MODULE_NAME);
       return "This module requires Eggdrop 1.9.0 or later.";

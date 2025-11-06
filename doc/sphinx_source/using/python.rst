@@ -9,7 +9,7 @@ System Requirements
 -------------------
 Similar to Tcl requirements, Eggdrop requires both python and python development libraries to be installed on the host machine. On Debian/Ubuntu machines, this requires the packages python-dev AND python-is-python3 to be installed. The python-is-python3 updates symlinks on the host system that allow Eggdrop to find it.
 
-The minimum supported Python version is 3.8 and we do require the Global Interpreter Lock for thread safety, even if you use latest Python.
+The minimum supported Python version is 3.7 and we do require the Global Interpreter Lock for thread safety, even if you use latest Python.
 
 --------------
 Loading Python
