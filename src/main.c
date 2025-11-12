@@ -557,10 +557,10 @@ static void core_secondly()
   uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
+  check_expired_dcc();
   cnt++;
   if (cnt >= 10) {              /* Every 10 seconds */
     cnt = 0;
-    check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
       if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
