@@ -287,15 +287,22 @@ void tell_verbose_status(int idx)
   if (tcl_threaded())
     dprintf(idx, "Tcl is threaded.\n");
 #ifdef TLS
-  dprintf(idx, "TLS support is enabled.\n"
+  dprintf(idx, "TLS support is enabled.\n");
+  #ifdef HAVE_DLADDR
+    #include <dlfcn.h>
+    #include <openssl/ssl.h>
+    Dl_info info;
+    if (dladdr((void *) SSL_CTX_new, &info))
+      dprintf(idx, "TLS library: %s\n", info.dli_fname);
+  #endif
   #if defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n",
+               dprintf(idx, "TLS version: %s (%s " OPENSSL_VERSION_TEXT ")\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && defined HAVE_OPENSSL_MD5
-               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve support)\n",
+               dprintf(idx, "TLS version: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve support)\n",
   #elif defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no MD5 support)\n",
+               dprintf(idx, "TLS version: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no MD5 support)\n",
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
-               "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
+               dprintf(idx, "TLS version: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
   #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
           OpenSSL_version(OPENSSL_VERSION), MISC_HEADERVERSION);
