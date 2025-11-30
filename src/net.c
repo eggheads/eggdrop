@@ -988,9 +988,14 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
               debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
               putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
             }
-            else
-              debug2("net: sockread(): SSL_read() error = %s (%i)",
-                     ERR_error_string(ERR_get_error(), 0), err);
+            else {
+              long err2 = ERR_get_error();
+              debug3("net: sockread(): SSL_read() error = %s (%i) (%li)",
+                     ERR_error_string(err2, 0), err, err2);
+              if ((err == SSL_ERROR_SSL) &&
+                  (ERR_GET_REASON(err2) == SSL_R_PEER_DID_NOT_RETURN_A_CERTIFICATE))
+                putlog(LOG_MISC, "*", "NET: SSL read failed. Peer did not return a certificate, which is mandatory due to ssl-verify settings.");
+            }
             x = -1;
           }
         } else

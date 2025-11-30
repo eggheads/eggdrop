@@ -95,7 +95,7 @@ extern time_t now, online_since;
 extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
-extern char argv0;
+extern const char *argv0;
 
 
 int xtra_kill();

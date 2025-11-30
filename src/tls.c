@@ -655,7 +655,11 @@ static char *ssl_printname(X509_NAME *name)
  *
  * You need to nfree() the returned pointer.
  */
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */
 static char *ssl_printtime(const ASN1_UTCTIME *t)
+#else
+static char *ssl_printtime(ASN1_UTCTIME *t)
+#endif
 {
   long len;
   char *data, *buf;
@@ -916,6 +920,9 @@ static void ssl_info(const SSL *ssl, int where, int ret)
              (where & SSL_CB_READ) ? "read" : "write",
              SSL_alert_type_string_long(ret),
              SSL_alert_desc_string_long(ret));
+      if (!strcmp(SSL_alert_type_string(ret), "F") &&
+          !strcmp(SSL_alert_desc_string(ret), "RO"))
+        putlog(LOG_MISC, "*", "TLS: Long TLSCiphertext field received, connection failed. Is this really a TLS port?");
     } else {
       /* Ignore close notify warnings */
       debug1("TLS: Received close notify during %s",
