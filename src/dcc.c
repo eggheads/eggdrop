@@ -2436,10 +2436,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   else if (!strcmp(dcc[idx].nick, "(webui)"))
     dcc[i].status |= STAT_WS;
   /* Copy acceptable-nick/host mask */
-  debug2("sinnsuche: %s %s", dcc[i].nick, dcc[idx].host);
-  #include <assert.h>
-  assert(!strcmp(dcc[idx].host, "*"));
-  strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN); /* wo ist hier der sinn? dcc[idx].host ist immer *, oder? */
+  strlcpy(dcc[i].nick, dcc[idx].host, sizeof dcc[i].nick);
 
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");

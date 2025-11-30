@@ -240,7 +240,6 @@ int ssl_init()
 #if OPENSSL_VERSION_NUMBER < 0x10100000L /* 1.1.0 */
     ERR_free_strings();
 #endif
-
     return -1;
   }
   ssl_files_loaded = 0;
@@ -406,7 +405,7 @@ int ssl_init()
     ssl_ctx = NULL;
     return -3;
   }
-  const unsigned char sid_ctx[] = "0";
+  const unsigned char sid_ctx[] = "0"; /* anything will do */
   SSL_CTX_set_session_id_context(ssl_ctx, sid_ctx, (sizeof sid_ctx) - 1);
   return 0;
 }
