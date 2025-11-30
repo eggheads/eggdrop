@@ -96,12 +96,10 @@ versions 1.3.24i-1.3.28, 1.4.x, 1.5.x, 1.6.x and 1.8.x.
   Cizzle, Geo, mortmann, pseudo, simple, thommey
 
 1.9:
-  bryand, Cizzle, CrazyCat, dereckson, eryg-kai, Geo, mortmann, PeGaSuS,
-  slyngshede, thommey
+  Cizzle, Geo, mortmann, thommey
 
 1.10
-  CrazyCat, DasBrain, Geo, iamnimnul, Lord255, MeNearly, mortmann, PeGaSuS,
-  simple, thommey, ZarTek
+  Geo, mortmann, thommey
 
 See also: THANKS, doc/Versions, doc/Changes
 
