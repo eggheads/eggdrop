@@ -492,7 +492,7 @@ install-filesys: install-start
 install-webui: install-start
 	@if test ! -d $(DEST)/webui; then \
 		echo "Creating webui subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/webui >/dev/null; \
+		$(MKDIR_P) $(DEST)/webui >/dev/null; \
 	fi && \
 	if test ! -f $(DEST)/webui/apple-touch-icon.png; then \
 		$(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/apple-touch-icon.png $(DEST)/webui/; \
