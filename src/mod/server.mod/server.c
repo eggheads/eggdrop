@@ -2102,7 +2102,7 @@ static void server_die()
     dprintf(-serv, "%s\n", msg);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[->] %s", msg);
-    sleep(2); /* Give the server 2s time to understand */
+    sleep(1); /* Give the server time to understand. 1s should be enough. */
   }
   nuke_server(NULL);
 }

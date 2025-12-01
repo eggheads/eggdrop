@@ -915,9 +915,7 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
   else
     nuke_server(par);
   write_userfile(-1);
-  /* Give the server 0.5s time to understand */
-  const struct timespec req = { 0, 500000000L };
-  nanosleep(&req, NULL);
+  sleep(1); /* Give the server time to understand. 1s has proven more than enough. */
   egg_snprintf(s, sizeof s, "DEAD BY REQUEST OF %s!%s", nick, host);
   fatal(s, 0);
   return 1;
