@@ -451,30 +451,24 @@ static void free_dcc_bot_(int n, void *x)
 static void out_dcc_bot(int idx, char *buf, void *x)
 {
   size_t len = strlen(buf);
-  /* We don't really use x here, so "use it" for the compiler */
-  (void)x;
 
   if (raw_log) {
     /* strip \n from end as putlog appends this */
     char *p = buf, *fnd = NULL;
-
     if (len && buf[len - 1] == '\n') {
       /* Make a copy as buf could be const */
-      fnd = nmalloc(len + 1);
-      strcpy(fnd, buf);
+      fnd = nmalloc(len);
+      memcpy(fnd, buf, len - 1);
+      fnd[len - 1] = 0;
       p = fnd;
     }
-
     if (!strncmp(p, "s ", 2))
       putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[idx].nick, p + 2);
     else
       putlog(LOG_BOTNETOUT, "*", "[b->%s] %s", dcc[idx].nick, p);
-
     if (fnd)
       nfree(fnd);
-
   }
-
   tputs(dcc[idx].sock, buf, len);
 }
 

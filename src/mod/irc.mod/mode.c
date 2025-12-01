@@ -998,8 +998,7 @@ static int gotmode(char *from, char *origmsg)
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   /* Usermode changes? */
   if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
