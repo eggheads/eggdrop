@@ -43,47 +43,47 @@ clean:
 install:
 	@if test ! -d $(DEST)/doc; then \
 		echo "Creating 'doc' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc >/dev/null; \
+		$(MKDIR_P) $(DEST)/doc >/dev/null; \
 	fi
 	@if test ! -d $(DEST)/doc/man1; then \
 		echo "Creating 'doc/man1' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/man1 >/dev/null; \
+		$(MKDIR_P) $(DEST)/doc/man1 >/dev/null; \
 	fi
 	@if test ! -d $(DEST)/doc/html; then \
 		echo "Creating 'doc/html' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html >/dev/null; \
+		$(MKDIR_P) $(DEST)/doc/html >/dev/null; \
 	fi
 	@if test ! -d $(DEST)/doc/html/about; then \
 		echo "Creating 'doc/html/about' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/about >/dev/null; \
+		$(MKDIR_P) $(DEST)/doc/html/about >/dev/null; \
 	fi
 	@if test ! -d $(DEST)/doc/html/install; then \
                 echo "Creating 'doc/html/install' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/install >/dev/null; \
+                $(MKDIR_P) $(DEST)/doc/html/install >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/modules; then \
                 echo "Creating 'doc/html/modules' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/modules >/dev/null; \
+                $(MKDIR_P) $(DEST)/doc/html/modules >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/modules/mod; then \
                 echo "Creating 'doc/html/modules/mod' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/modules/mod >/dev/null; \
+                $(MKDIR_P) $(DEST)/doc/html/modules/mod >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/tutorials; then \
                 echo "Creating 'doc/html/tutorials' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/tutorials >/dev/null; \
+                $(MKDIR_P) $(DEST)/doc/html/tutorials >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/using; then \
                 echo "Creating 'doc/html/using' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/using >/dev/null; \
+                $(MKDIR_P) $(DEST)/doc/html/using >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/html/_static; then \
                 echo "Creating 'doc/html/_static' subdirectory."; \
-                $(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html/_static >/dev/null; \
+                $(MKDIR_P) $(DEST)/doc/html/_static >/dev/null; \
         fi
 	@if test ! -d $(DEST)/doc/settings; then \
 		echo "Creating 'doc/settings' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/settings >/dev/null; \
+		$(MKDIR_P) $(DEST)/doc/settings >/dev/null; \
 	fi
 	@echo "Copying docs."
 	@for i in $(DOCS); do \

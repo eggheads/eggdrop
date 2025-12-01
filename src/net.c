@@ -544,7 +544,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, j, rc, res;
+  int i, j, rc, errno_tmp, res;
   struct threaddata *td = threaddata();
 
   for (i = 0; i < dcc_total; i++)
@@ -573,7 +573,9 @@ int open_telnet_raw(int sock, sockname_t *addr)
    * rc < 0 and errno == EINPROGRESS)
    */
   if (dcc[i].status & STAT_SERV) {
+    errno_tmp = errno;
     check_tcl_event("ident");
+    errno = errno_tmp;
   }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
@@ -986,9 +988,14 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
               debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
               putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
             }
-            else
-              debug2("net: sockread(): SSL_read() error = %s (%i)",
-                     ERR_error_string(ERR_get_error(), 0), err);
+            else {
+              long err2 = ERR_get_error();
+              debug3("net: sockread(): SSL_read() error = %s (%i) (%li)",
+                     ERR_error_string(err2, 0), err, err2);
+              if ((err == SSL_ERROR_SSL) &&
+                  (ERR_GET_REASON(err2) == SSL_R_PEER_DID_NOT_RETURN_A_CERTIFICATE))
+                putlog(LOG_MISC, "*", "NET: SSL read failed. Peer did not return a certificate, which is mandatory due to ssl-verify settings.");
+            }
             x = -1;
           }
         } else

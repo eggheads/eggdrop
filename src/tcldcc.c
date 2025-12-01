@@ -1100,7 +1100,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       if (((ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET)) ||
          ((!ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET6))) {
         found = 0;
-        break;
+        continue;
       }
 #endif
 

@@ -1314,6 +1314,7 @@ static void share_ufsend(int idx, char *par)
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
+      fclose(f);
     } else {
       strcpy(dcc[i].nick, "*users");
       dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
@@ -2104,7 +2105,7 @@ static void start_sending_users(int idx)
     return;
   }
 
-  if (dcc[idx].u.bot->numver >= 1100101) {
+  if (dcc[idx].u.bot->numver >= 1100102) {
     debug0("share: start_sending_users(): multiplex: start");
     FILE * f = tmpfile();
     if (!f) {
