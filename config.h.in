@@ -43,6 +43,9 @@
 /* Arguments passed to configure */
 #undef EGG_AC_ARGS_RAW
 
+/* Defines the current Eggdrop git commit. */
+#undef EGG_GIT
+
 /* Define the maximum length of handles on the bot. */
 #undef EGG_HANDLEN
 

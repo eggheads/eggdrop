@@ -658,6 +658,7 @@ ac_subst_vars='LTLIBOBJS
 EGG_CROSS_COMPILING
 MOD_UPDIR
 DEST
+GIT
 EGGVERSION
 egg_with_python_config
 SSL_LIBS
@@ -10799,6 +10800,57 @@ fi
 
 printf "%s\n" "#define EGG_VERSION $egg_version_num" >>confdefs.h
 
+
+  # Extract the first word of "git", so it can be a program name with args.
+set dummy git; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_GIT+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  if test -n "$GIT"; then
+  ac_cv_prog_GIT="$GIT" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_GIT="git"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+GIT=$ac_cv_prog_GIT
+if test -n "$GIT"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $GIT" >&5
+printf "%s\n" "$GIT" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+  if test "x$GIT" = xgit; then
+    egg_git=$(git rev-parse --verify HEAD 2>/dev/null)
+    if test "$egg_git" != ""; then
+
+printf "%s\n" "#define EGG_GIT \"$egg_git\"" >>confdefs.h
+
+    fi
+  fi
 
 
   if test "x$DEST" = x; then
