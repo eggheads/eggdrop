@@ -187,6 +187,19 @@
 #include <time.h> /* POSIX 2001 */
 #include <sys/resource.h> /* getrusage() setrlimit() after time.h because of BSD */
 
+/* On systems with random(), RANDOM_MAX may or may not be defined.
+ *
+ * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
+ * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
+ * assumes random() uses a 32 bit long int type per the standards.
+ */
+#ifndef RANDOM_MAX
+#  define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
+#endif
+
+#ifdef HAVE_ARC4RANDOM_UNIFORM
+  #define randint arc4random_uniform
+#else
 /* Yikes...who would have thought finding a usable random() would be so much
  * trouble?
  * Note: random() is *not* thread safe.
@@ -199,24 +212,13 @@
 #  undef HAVE_SRANDOM
 #endif
 
-/* On systems with random(), RANDOM_MAX may or may not be defined.
- *
- * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
- * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
- * assumes random() uses a 32 bit long int type per the standards.
- */
-#ifndef RANDOM_MAX
-#  define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
-#endif
-
-
 /* Use high-order bits for getting the random integer. With a modern
  * random() implementation, modulo would probably be sufficient, but on
  * systems lacking random(), it may just be a macro for an older rand()
  * function.
  */
-#define randint(n) (unsigned long) (random() / (RANDOM_MAX + 1.0) * n)
-
+  #define randint(n) (uint32_t) (random() / (RANDOM_MAX + 1.0) * n)
+#endif /* HAVE_ARC4RANDOM_UNIFORM */
 
 #ifdef TLS
 #  include <openssl/ssl.h>

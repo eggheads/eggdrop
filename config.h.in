@@ -67,6 +67,9 @@
 /* Define to 1 if you have the `a2i_IPADDRESS' function. */
 #undef HAVE_A2I_IPADDRESS
 
+/* Define to 1 if you have the `arc4random_uniform' function. */
+#undef HAVE_ARC4RANDOM_UNIFORM
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 

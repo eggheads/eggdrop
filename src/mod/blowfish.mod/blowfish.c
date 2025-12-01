@@ -378,7 +378,7 @@ static char *encrypt_string_cbc(char *key, char *str)
   slen = strlen(str) + 8;
   s = nmalloc(slen + 9);
   for (i = 0; i < 8; ++i) {
-    s[i] = (char) (random() % 256);
+    s[i] = (char) randint(256);
   }
   strcpy(s + 8, str);
   if ((!key) || (!key[0]))

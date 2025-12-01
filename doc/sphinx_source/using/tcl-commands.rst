@@ -2443,7 +2443,7 @@ myip
 rand <limit>
 ^^^^^^^^^^^^
 
-  Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
+  Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. If arc4random_uniform() is available and is a cryptographically secure pseudorandom number generator (CSPRNG) then this function will also be and return uniformly distributed (avoiding modulo bias) values. Otherwise not. In other words, this function rolls the dice as good as it can and probably better than any AI.
 
   Module: core
 
