@@ -327,4 +327,4 @@ Using certificates to authenticate Eggdrops
 -------------------------------------------
 Eggdrops can use certificates to authenticate when linking to each other instead of a password. First, you must ensure you have set the appropriate certificates in the `ssl-privatekey` and `ssl-certificate` settings in the config file, and then enable the `ssl-cert-auth` setting. Next, add the certificate on the partyline by using `.fprint +` to add the fingerprint for the certificate currently in use, or `.fprint <SHA1 fingerprint>` to manually add a fingerprint. Once the config file settings are set 0and fingerprints are added on the partyline, Eggdrops will attempt to use their certificates instead of passwords for authentication.
 
-Copyright (C) 1999 - 2024 Eggheads Development Team
+Copyright (C) 1999 - 2025 Eggheads Development Team

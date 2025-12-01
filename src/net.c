@@ -8,7 +8,7 @@
  *
  * Changes after Feb 23, 1999 Copyright Eggheads Development Team
  *
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,13 +29,10 @@
 #include "main.h"
 #include "modules.h"
 #include <limits.h>
-#include <string.h>
 #include <netdb.h>
-#include <sys/socket.h>
 #if HAVE_SYS_SELECT_H
 #  include <sys/select.h>
 #endif
-#include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
@@ -547,7 +544,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   socklen_t res_len;
   fd_set sockset;
   struct timeval tv;
-  int i, j, rc, res;
+  int i, j, rc, errno_tmp, res;
   struct threaddata *td = threaddata();
 
   for (i = 0; i < dcc_total; i++)
@@ -576,7 +573,9 @@ int open_telnet_raw(int sock, sockname_t *addr)
    * rc < 0 and errno == EINPROGRESS)
    */
   if (dcc[i].status & STAT_SERV) {
+    errno_tmp = errno;
     check_tcl_event("ident");
+    errno = errno_tmp;
   }
   if (rc < 0) {
     if (errno == EINPROGRESS) {
@@ -586,7 +585,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       tv.tv_usec = 0;
       FD_ZERO(&sockset);
       FD_SET(sock, &sockset);
-      select(sock + 1, &sockset, NULL, NULL, &tv);
+      select(sock + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
       getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
@@ -989,9 +988,14 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
               debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
               putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
             }
-            else
-              debug2("net: sockread(): SSL_read() error = %s (%i)",
-                     ERR_error_string(ERR_get_error(), 0), err);
+            else {
+              long err2 = ERR_get_error();
+              debug3("net: sockread(): SSL_read() error = %s (%i) (%li)",
+                     ERR_error_string(err2, 0), err, err2);
+              if ((err == SSL_ERROR_SSL) &&
+                  (ERR_GET_REASON(err2) == SSL_R_PEER_DID_NOT_RETURN_A_CERTIFICATE))
+                putlog(LOG_MISC, "*", "NET: SSL read failed. Peer did not return a certificate, which is mandatory due to ssl-verify settings.");
+            }
             x = -1;
           }
         } else
@@ -1255,7 +1259,7 @@ int sockgets(char *s, int *len)
   }
 /* NO! */
 /* if (!s[0]) strcpy(s," ");  */
-  if (!data) { 
+  if (!data) {
     s[0] = 0;
     if (strlen(xx) >= READMAX) {
       /* String is too long, so just insert fake \n */
@@ -1377,7 +1381,7 @@ void tputs(int z, char *s, unsigned int len)
     inhere = 1;
 
     putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
-    s[strlen(s) - 1] = 0;
+    s[len - 1] = 0;
     putlog(LOG_MISC, "*", "!-> '%s'", s);
 
     inhere = 0;
@@ -1402,7 +1406,11 @@ void dequeue_sockets()
   tv.tv_usec = 0;               /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < td->MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_TCL)) &&
-        (socklist[i].handler.sock.outbuf != NULL)) {
+        (socklist[i].handler.sock.outbuf != NULL)
+#ifdef TLS
+	&& !(socklist[i].ssl && !SSL_is_init_finished(socklist[i].ssl))
+#endif
+                                                 ) {
       if (socklist[i].sock > maxfd)
         maxfd = socklist[i].sock;
       FD_SET(socklist[i].sock, &wfds);
