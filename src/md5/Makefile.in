@@ -45,5 +45,5 @@ md5c.o: md5c.c md5.h ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
  ../../src/cmdt.h ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
- ../../src/compat/inet_aton.h ../../src/compat/snprintf.h \
- ../../src/compat/explicit_bzero.h ../../src/compat/strlcpy.h
+ ../../src/compat/snprintf.h ../../src/compat/explicit_bzero.h \
+ ../../src/compat/strlcpy.h

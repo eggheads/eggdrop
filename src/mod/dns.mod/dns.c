@@ -181,7 +181,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
       } else
         port = NAMESERVER_PORT; /* port 53 */
       /* Ignore invalid addresses */
-      if (egg_inet_aton(list[i], &myres.nsaddr_list[myres.nscount].sin_addr)) {
+      if (inet_pton(AF_INET, list[i], &myres.nsaddr_list[myres.nscount].sin_addr)) {
         myres.nsaddr_list[myres.nscount].sin_port = htons(port);
         myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
         myres.nscount++;

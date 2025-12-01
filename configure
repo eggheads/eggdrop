@@ -8310,12 +8310,6 @@ then :
   printf "%s\n" "#define HAVE_GETRANDOM 1" >>confdefs.h
 
 fi
-ac_fn_c_check_func "$LINENO" "inet_aton" "ac_cv_func_inet_aton"
-if test "x$ac_cv_func_inet_aton" = xyes
-then :
-  printf "%s\n" "#define HAVE_INET_ATON 1" >>confdefs.h
-
-fi
 ac_fn_c_check_func "$LINENO" "memset_s" "ac_cv_func_memset_s"
 if test "x$ac_cv_func_memset_s" = xyes
 then :
