@@ -1300,7 +1300,7 @@ static int got353(char *from, char *msg)
     }
     /* The assumption here is the user enabled userhost-in-names because WHO
      * is disabled. We remove the pending flag here because we'll never get a
-     * a WHO to do it
+     * WHO to do it.
      */
     if (chan) {
       chan->status |= CHAN_ACTIVE;
