@@ -707,7 +707,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 static char *mktempfile(char *filename)
 {
   char rands[8], *tempname, *fn = filename;
-  int l;
+  size_t l;
 
   make_rand_str(rands, sizeof rands - 1);
   l = strlen(filename);
