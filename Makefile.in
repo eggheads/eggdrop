@@ -10,6 +10,7 @@ VPATH = @srcdir@
 @SET_MAKE@
 prefix = @prefix@
 DEST = @DEST@
+MKDIR_P = @MKDIR_P@
 # GNU Make < 3.82 ignores these != statements, they are for bsd make and gnu make >= 4.0.
 # gnu make 3.82 interprets a!= b as setting the variable a!.
 # it seems to interpret != otherwise and throws an error.
@@ -159,7 +160,7 @@ MAKE_DEBMOD_ARGS = $(SMAKE_GENERAL_ARGS) $(SMAKE_BUILD_MODULES_ARGS) \
 # Special target types
 MAKE_CONFIG = $(MAKE) 'MAKE=$(MAKE)'
 
-MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(ABSDEST)'
+MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(ABSDEST)' 'MKDIR_P=$(MKDIR_P)'
 
 MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 
@@ -367,7 +368,7 @@ install-start:
 	echo "" && \
 	if test ! -d $(DEST); then \
 		echo "Creating directory '$(DEST)'."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST) >/dev/null; \
+		$(MKDIR_P) $(DEST) >/dev/null; \
 	fi
 
 install-bin: install-start
@@ -399,7 +400,7 @@ install-modules: install-start
 	if test ! "x`echo *.$(MOD_EXT)`" = "x*.$(MOD_EXT)"; then \
 		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
 			echo "Creating 'modules-$(EGGVERSION)' subdirectory and symlink."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules-$(EGGVERSION) >/dev/null; \
+			$(MKDIR_P) $(DEST)/modules-$(EGGVERSION) >/dev/null; \
 		fi; \
 		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
 		echo "Copying new modules."; \
@@ -417,14 +418,14 @@ install-data: install-start
 	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs >/dev/null; \
+		$(MKDIR_P) $(DEST)/logs >/dev/null; \
 		$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
 	fi
 
 install-text: install-start
 	@if test ! -d $(DEST)/text; then \
 		echo "Creating 'text' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/text >/dev/null; \
+		$(MKDIR_P) $(DEST)/text >/dev/null; \
 	fi && \
 	if test ! -f $(DEST)/text/motd; then \
 		$(INSTALL_DATA) $(srcdir)/text/motd $(DEST)/text/; \
@@ -438,7 +439,7 @@ install-help: install-start
 	if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
+			$(MKDIR_P) $(DEST)/help >/dev/null; \
 		fi; \
 		for i in $(srcdir)/help/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/; \
@@ -447,7 +448,7 @@ install-help: install-start
 	if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 		if test ! -d $(DEST)/help/msg; then \
 			echo "Creating 'help/msg' subdirectory."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
+			$(MKDIR_P) $(DEST)/help/msg >/dev/null; \
 		fi; \
 		for i in $(srcdir)/help/msg/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
@@ -456,7 +457,7 @@ install-help: install-start
 	if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 		if test ! -d $(DEST)/help/set; then \
 			echo "Creating 'help/set' subdirectory."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
+			$(MKDIR_P) $(DEST)/help/set >/dev/null; \
 		fi; \
 		for i in $(srcdir)/help/set/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
@@ -469,7 +470,7 @@ install-language: install-start
 	if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo "Creating 'language' subdirectory."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/language >/dev/null; \
+			$(MKDIR_P) $(DEST)/language >/dev/null; \
 		fi; \
 		for i in $(srcdir)/language/*.lang; do \
 			$(INSTALL_DATA) $$i $(DEST)/language/; \
@@ -480,8 +481,8 @@ install-language: install-start
 install-filesys: install-start
 	@if test ! -d $(DEST)/filesys; then \
 		echo "Creating skeletal filesystem subdirectories."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys >/dev/null; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming >/dev/null; \
+		$(MKDIR_P) $(DEST)/filesys >/dev/null; \
+		$(MKDIR_P) $(DEST)/filesys/incoming >/dev/null; \
 	fi
 
 install-doc: install-start

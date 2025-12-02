@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Common First Steps &#8212; Eggdrop 1.10.0rc2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <title>Common First Steps &#8212; Eggdrop 1.10.1rc2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=3bcbdadc"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=290de6c6"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Enabling TLS Security on Eggdrop" href="tlssetup.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.1rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="setup.html" title="Setting Up Eggdrop"
              accesskey="P">previous</a> |
@@ -74,7 +74,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userfilesharing.html">Sharing Userfiles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Tcl Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
@@ -179,9 +179,9 @@
 </section>
 <section id="automatically-restarting-an-eggdrop">
 <h2>Automatically restarting an Eggdrop<a class="headerlink" href="#automatically-restarting-an-eggdrop" title="Link to this heading">¶</a></h2>
-<p>A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host’s crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.</p>
-<section id="crontab-method-old">
-<h3>Crontab Method (Old)<a class="headerlink" href="#crontab-method-old" title="Link to this heading">¶</a></h3>
+<p>A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host’s crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer Linux systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.</p>
+<section id="crontab-method">
+<h3>Crontab Method<a class="headerlink" href="#crontab-method" title="Link to this heading">¶</a></h3>
 <ol class="arabic">
 <li><p>Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/&lt;username&gt;/eggdrop).</p></li>
 <li><p>Just humor us- run <code class="docutils literal notranslate"><span class="pre">./scripts/autobotchk</span></code> without any arguments and read the options available to you. They’re listed there for a reason!</p></li>
@@ -202,8 +202,8 @@
 </div>
 <p>This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you’ll have to manually specify your config file location with the -dir option. To remove a crontab entry, use <code class="docutils literal notranslate"><span class="pre">crontab</span> <span class="pre">-e</span></code> to open the crontab file in your system’s default editor and remove the crontab line.</p>
 </section>
-<section id="systemd-method-newer-systems">
-<h3>Systemd Method (Newer Systems)<a class="headerlink" href="#systemd-method-newer-systems" title="Link to this heading">¶</a></h3>
+<section id="systemd-method-newer-linux-systems">
+<h3>Systemd Method (Newer Linux Systems)<a class="headerlink" href="#systemd-method-newer-linux-systems" title="Link to this heading">¶</a></h3>
 <ol class="arabic">
 <li><p>Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/&lt;username&gt;/eggdrop).</p></li>
 <li><p>Install the systemd job for Eggdrop simply by running:</p>
@@ -258,7 +258,7 @@
 </pre></div>
 </div>
 <p>Then, authenticate with your NickServ service and register your public certificate with NickServ. You can view your public key  On Libera for example, it is done by:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">msg</span> <span class="n">NickServ</span> <span class="nb">set</span> <span class="n">pubkey</span> <span class="o">&lt;</span><span class="n">fingerprint</span> <span class="n">string</span> <span class="kn">from</span> <span class="nn">above</span> <span class="n">goes</span> <span class="n">here</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">msg</span> <span class="n">NickServ</span> <span class="nb">set</span> <span class="n">pubkey</span> <span class="o">&lt;</span><span class="n">fingerprint</span> <span class="n">string</span> <span class="kn">from</span><span class="w"> </span><span class="nn">above</span> <span class="n">goes</span> <span class="n">here</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </li>
@@ -273,9 +273,13 @@
 </pre></div>
 </div>
 <p>Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">msg</span> <span class="n">NickServ</span> <span class="n">cert</span> <span class="n">add</span> <span class="o">&lt;</span><span class="n">fingerprint</span> <span class="n">string</span> <span class="kn">from</span> <span class="nn">above</span> <span class="n">goes</span> <span class="n">here</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">msg</span> <span class="n">NickServ</span> <span class="n">cert</span> <span class="n">add</span> <span class="o">&lt;</span><span class="n">fingerprint</span> <span class="n">string</span> <span class="kn">from</span><span class="w"> </span><span class="nn">above</span> <span class="n">goes</span> <span class="n">here</span><span class="o">&gt;</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li><p><strong>SCRAM-SHA-256</strong>: To use this method, set sasl-mechanism to 3.</p></li>
+<li><p><strong>SCRAM-SHA-512</strong>: To use this method, set sasl-mechanism to 4.</p></li>
+</ul>
 </section>
 </section>
 
@@ -305,9 +309,9 @@
         <div class="right">
           
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, Eggheads.
-      Last updated on Oct 13, 2024.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    &#169; Copyright 2025, Eggheads.
+      Last updated on Jun 28, 2025.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
         </div>
         <div class="clearer"></div>
