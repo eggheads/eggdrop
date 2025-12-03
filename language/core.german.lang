@@ -358,7 +358,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb5d,Breche die Verbindung ab zu
 0xb5e,Relais kaputt
 0xb5f,Ping reagiert nicht
-0xb60,Unleidiges Verhalten
+0xb60,Unleafiges Verhalten
 0xb61,Verbindung getrennt zu Bot
 0xb62,Verbindung mit diesem Bot wird bereits hergestellt.
 
