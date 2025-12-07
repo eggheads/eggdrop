@@ -61,6 +61,7 @@ static void put_404(int idx) {
   int i;
   char *response;
 
+  debug1("webui: put_404() idx %i", idx);
   i = snprintf(NULL, 0,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
     "Content-Length: 13\r\n"
@@ -148,7 +149,6 @@ static void put_file(int idx, int file_cache_index) {
     stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
   memcpy(response + i, f->data, sb.st_size);
   tputs(dcc[idx].sock, response, i + sb.st_size);
-  // debug2("webui: tputs(): >>>%s<<< %i", response, i);
   nfree(response);
 }
 
@@ -178,7 +178,6 @@ static void webui_http_activity(int idx, char *buf, int len)
   r = getrusage(RUSAGE_SELF, &ru1);
   debug2("webui: webui_http_activity(): idx %i len %i", idx, len);
   buf[len] = '\0'; /* TODO: is there no better way? we already know len */
-  debug0("webui: http()");
   if (buf[5] == ' ') {
     debug0("webui: GET /");
     put_file(idx, 2);
@@ -199,7 +198,6 @@ static void webui_http_activity(int idx, char *buf, int len)
         return;
       }
     debug0("webui: server requests websocket upgrade");
-
     unsigned char hash[SHA_DIGEST_LENGTH];
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
@@ -239,7 +237,6 @@ static void webui_http_activity(int idx, char *buf, int len)
       "Sec-WebSocket-Accept: %s\r\n"
       "\r\n", out);
     tputs(dcc[idx].sock, response, i);
-    // debug2("webui: tputs(): >>>%s<<< %i", response, i);
     nfree(response);
 
     sock_list* socklist_i = &socklist[findsock(dcc[idx].sock)];
@@ -253,18 +250,11 @@ static void webui_http_activity(int idx, char *buf, int len)
     debug4("webui: set flag SOCK_WS socklist %i idx %i sock %li status %lu", findsock(dcc[idx].sock), idx, dcc[idx].sock, dcc[idx].status);
 
     dcc[idx].status |= STAT_USRONLY; /* magick */
-    for (i = 0; i < dcc_total; i++) /* quick hack, we need to link from idx, dont we? */
+    for (i = 0; i < dcc_total; i++) /* we need to link from idx, dont we? is there a better way to do it? */
       if (!strcmp(dcc[i].nick, "(webui)")) {
         debug1("webui: found (webui) dcc %i", i);
         break;
       }
-
-    /*
-    for (int j = 0; j < dcc_total; j++) {
-      debug4("dcc table %i %i %i %s", j, dcc[j].sock, dcc[j].ssl, dcc[j].host);
-      debug2("             %s %s", dcc[j].nick, dcc[j].type->name);
-    }
-    */
 
     dcc[idx].u.other = NULL; /* fix ATTEMPTING TO FREE NON-MALLOC'D PTR: dccutil.c (561) */
     dcc_telnet_hostresolved2(idx, i);
@@ -273,10 +263,8 @@ static void webui_http_activity(int idx, char *buf, int len)
   } else if (buf[5] == 'a') {
     debug0("webui: GET /apple-touch-icon.png");
     put_file(idx, 0);
-  } else { /* TODO: send 404 or something ? */
-    debug0("webui: 404");
+  } else
     put_404(idx);
-  }
   if ((dcc[idx].sock != -1) && (len == 511)) { /* sock == -1 if lostdcc() in dcc_telnet_hostresolved2() */
     /* read probable remaining bytes */
     SSL *ssl = socklist[findsock(dcc[idx].sock)].ssl;
@@ -369,7 +357,6 @@ static size_t escape_html(char *dst, char *src, size_t size) {
         *d++ = ';';
         break;
       case ESC:
-        // debug0("escape_html(): ESC");
         if ((i + 4) < size) {
           if (     ((unsigned char) src[i + 1] == '[') &&
                    ((unsigned char) src[i + 2] == '0') &&
@@ -392,7 +379,6 @@ static size_t escape_html(char *dst, char *src, size_t size) {
           debug0("webui: escape_html(): unknown SHORT escape sequence found, skipping, PLEASE REPORT THIS BUG");
         break;
       case TLN_IAC:
-        // debug0("escape_html(): TLN_IAC_C");
         if ((i + 2) < size) {
           if (     ((unsigned char) src[i + 1] == TLN_WILL) &&
                    ((unsigned char) src[i + 2] == TLN_ECHO))
@@ -466,12 +452,6 @@ static void webui_unframe(char *buf, int *len)
   }
   if (buf[0] & 0x08) {
     putlog(LOG_MISC, "*", "WEBUI: fixme: sent connection close not handled yet");
-    /*
-    debug1("webui: webui_ws_activity(): %s sent connection close",
-           iptostr(&dcc[idx].sockname.addr.sa));
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-    */
     return;
   }
   /* xor decrypt
@@ -490,7 +470,6 @@ static void webui_unframe(char *buf, int *len)
   payload = key + 4;
   for (i = 0; i < *len; i++)
     payload[i] = payload[i] ^ key[i % 4];
-  // debug2("webui: webui_unframe(): payload >>>%.*s<<<", (int) *len, payload);
 
   memmove(buf, payload, *len);
   /* we switched back from binary sock to text sock for sockgets() needs this for dcc_telnet_id() */
@@ -506,12 +485,6 @@ static char *webui_close(void)
   del_hook(HOOK_DCC_TELNET_HOSTRESOLVED, (Function) webui_dcc_telnet_hostresolved);
   del_hook(HOOK_WEBUI_FRAME, (Function) webui_frame);
   del_hook(HOOK_WEBUI_UNFRAME, (Function) webui_unframe);
-  /*
-  for (int j = 0; j < dcc_total; j++) {
-      debug4("dcc table %i %li %i %s", j, dcc[j].sock, dcc[j].ssl, dcc[j].host);
-      debug4("             %s %s %i %x", dcc[j].nick, dcc[j].type->name, findsock(dcc[j].sock), socklist[findsock(dcc[j].sock)].flags);
-    }
-  */
   for (idx = 0; idx < dcc_total; idx++) {
     if (!strcmp(dcc[idx].nick, "(webui)") ||
         !strcmp(dcc[idx].type->name, "WEBUI_HTTP") ||
