@@ -6,12 +6,12 @@
 # Modified by rtc for 1.4.0
 
 # General stuff
-0x001,Gebrauch
+0x001,Verwendung
 0x002,Fehlgeschlagen.\n
 
 # MODES_
 0x130,Erstellt
-0x131,letzter Gebrauch
+0x131,letzte Verwendung
 0x132,inaktiv
 0x133,gesetzt von
 0x135,nicht aktiv auf
@@ -90,7 +90,7 @@ die mitgelieferte Konfigurationsdatei.\n
 # Sprachspezifischer Muell in []:
 0x508,--- %d Treffer gefunden [%s].\n
 0x509,Mehrdeutiger Befehl.\n
-0x50a,Wie bitte?  Du brauchst Hilfe ('.help')\n
+0x50a,Wie bitte? Du brauchst Hilfe ('.help')\n
 0x50b,Kommandoverknuepfungen:\n
 0x50c,Starte neu...
 0x50d,es
@@ -261,7 +261,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 #0x700 - unused / Unbenutzt
 0x701,%s scheint in diesem Verzeichnis bereits zu laufen.\n
 0x702,Loesche '%s' wenn das nicht stimmt\n
-0x703,* Warnung!  Konnte Datei %s nicht schreiben!
+0x703,* Warnung! Konnte Datei %s nicht schreiben!
 
 0x800,  (ist ein globaler Op)
 0x801,  (ist ein Bot)
@@ -270,8 +270,8 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x900,Kein solcher Channel definiert
 0x902,* Mode Wechsel auf %s fuer nicht existierenden %s!
 0x903,Massen-deop auf %s von %s
-0x904,Massen-deop.  Ab in die Ecke.
-0x907,Oops.   Irgendjemand hat mich dazu veranlasst %s zu betreten... schnell raus da...
+0x904,Massen-deop. Ab in die Ecke.
+0x907,Oops. Irgendjemand hat mich dazu veranlasst %s zu betreten... schnell raus da...
 0x908,Modewechsel von schein-op auf %s!  Mache das wieder rueckgaengig...
 0x909,Missbrauch von faelschlich erhaltenen Server-ops...
 0x90a,Modewechsel von nicht-op auf %s!  Mache das wieder rueckgaengig...
@@ -285,7 +285,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xa02,Ignoriere nicht mehr
 
 0xb00,Dieser Bot ist nicht hier.\n
-0xb01,Das ist ein Bot.  Du kannst einem Bot keine Nachrichten hinterlassen.\n
+0xb01,Das ist ein Bot. Du kannst einem Bot keine Nachrichten hinterlassen.\n
 0xb02,ist weg
 0xb07,Eine Nachricht fuer Dich kam an
 0xb08,Nachricht gespeichert
