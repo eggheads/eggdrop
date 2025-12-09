@@ -194,7 +194,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x635,Wechsele zurueck zu Nickname %s
 0x636,Server sagt mein Nickname sei ungueltig.
 0x637,NICKNAME BELEGT: Probiere '%s'
-0x638,Kann meinen nicknamen nicht auf %s aendern.  Ist mein Nickname gesperrt?
+0x638,Kann meinen Nicknamen nicht auf %s aendern.  Ist mein Nickname gesperrt?
 0x639,Nickname wurde jupiterisiert
 0x63a,Channel %s ist jupiterisiert. :(
 0x63b,%s sagt ich sei nicht registriert, ich probiere den naechsten.
@@ -322,7 +322,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb39,Lokaler Channel
 0xb3a,Benutzer auf Channel
 0xb3b,Keine Bots angebunden.
-0xb3c,Keine Rueckverfungungs-Information fuer:
+0xb3c,Keine Rueckverfolgungs-Information fuer:
 0xb3d,Baum zu komplex!
 0xb3e,Trenne Verbindung zu allen Bots...
 0xb3f,Verbindungsaufbau wurde abgebrochen mit
@@ -365,7 +365,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xc00,Ich nehme keine DCC Chats von Fremden an.
 0xc01,DCC Chat abgewiesen (kein Zugriff)
 0xc02,Kein Zugriff
-0xc03,Du must ein Passwort gesetzt haben.
+0xc03,Du musst ein Passwort gesetzt haben.
 0xc04,DCC Chat abgewiesen (kein Passwort)
 0xc05,DCC Chat abgewiesen (+x aber kein Dateisystem)
 0xc07,Im Moment sind zu viele Benutzer im Dateisystem.
@@ -400,7 +400,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe0b,Falsches Passwort beim Verbindungsaufbau mit %s.
 0xe0c,Zum Verbindungsaufbau mit %s wird ein Passwort benoetigt.
 0xe0d,FEHLER beim Verbindungsaufbau mit %s: %s
-0xe0e,Bot verlohren: %s
+0xe0e,Bot verloren: %s
 0xe0f,Zeitueberschreitung: Verbindungsaufbau mit Bot %s bei %s:%d
 0xe10,Eingeloggt: %s (%s/%d)
 0xe11,Falsches Passwort: [%s]%s/%d
@@ -409,13 +409,13 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe14,DCC connection zu %s (%s/%d) verloren
 0xe15,Zeitueberschreitung bei der Passworteingabe im dcc chat: [%s]%s
 0xe16,DCC-Verbindung geschlossen (%s!%s)
-0xe17,Einkommende TELNET-Verbindung fehlgeschlagen (%s)
+0xe17,Eingehende TELNET-Verbindung fehlgeschlagen (%s)
 0xe18,Verbindung zu %s/%d zurueckgewiesen (falscher Quellport)
 0xe19,*** %s ist zurueckgekehrt.\n 
 0xe1a,Verbindung zu %s zurueckgewiesen (falscher hostname)
 0xe1b,Telnet-Verbindung: %s/%d
 0xe1c,Ident fehlgeschlagen fuer %s: %s
-0xe1d,(!) Port %d fuer einkommende Verbindungen ohne meine Erlaubnis verstorben.
+0xe1d,(!) Port %d fuer eingehende Verbindungen ohne meine Erlaubnis verboten.
 0xe1e,%s zurueckgewiesen (falscher Nick)
 0xe1f,%s zurueckgewiesen (kein Bot)
 0xe20,%s zurueckgewiesen (kein Benutzer)
