@@ -186,9 +186,10 @@ static void webui_http_activity(int idx, char *buf, int len)
     put_file(idx, 1);
   } else if (buf[5] == 'w') {
     debug0("webui: GET /w");
+    debug2("webui: webui_http_activity(): idx %i buf\n%s", idx, buf);
     buf = strstr(buf, WS_KEY);
     if (!buf) {
-      putlog(LOG_MISC, "*", "WEBUI error: Sec-WebSocket-Key not found");
+      putlog(LOG_MISC, "*", "WEBUI error: Sec-WebSocket-Key not found ip %s", iptostr(&dcc[idx].sockname.addr.sa));
       return;
     }
     buf += sizeof WS_KEY;
