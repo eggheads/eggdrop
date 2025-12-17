@@ -257,7 +257,7 @@ static void webui_http_activity(int idx, char *buf, int len)
         break;
       }
 
-    dcc[idx].u.other = NULL; /* fix ATTEMPTING TO FREE NON-MALLOC'D PTR: dccutil.c (561) */
+    // dcc[idx].u.other = NULL; /* fix ATTEMPTING TO FREE NON-MALLOC'D PTR: dccutil.c (561) */
     dcc_telnet_hostresolved2(idx, i);
 
     debug2("webui: CHANGEOVER -> idx %i sock %li", idx, dcc[idx].sock);
@@ -310,7 +310,7 @@ static void webui_dcc_telnet_hostresolved(int i)
     changeover_dcc(i, &DCC_WEBUI_HTTP, 0);
     sockoptions(dcc[i].sock, EGG_OPTION_SET, SOCK_BINARY);
     sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-    dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
+    // dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
 }
 
 /* TODO: add bounds checking or use existing function under MIT/GPL license
