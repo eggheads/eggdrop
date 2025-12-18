@@ -179,14 +179,12 @@ static void webui_http_activity(int idx, char *buf, int len)
   debug2("webui: webui_http_activity(): idx %i len %i", idx, len);
   buf[len] = '\0'; /* TODO: is there no better way? we already know len */
   if (buf[5] == ' ') {
-    debug0("webui: GET /");
+    debug1("webui: GET / idx %i", idx);
     put_file(idx, 2);
   } else if (buf[5] == 'f') {
-    debug0("webui: GET /favicon.ico");
     put_file(idx, 1);
   } else if (buf[5] == 'w') {
-    debug0("webui: GET /w");
-    debug2("webui: webui_http_activity(): idx %i buf\n%s", idx, buf);
+    debug1("webui: GET /w idx %i", idx);
     buf = strstr(buf, WS_KEY);
     if (!buf) {
       putlog(LOG_MISC, "*", "WEBUI error: Sec-WebSocket-Key not found ip %s", iptostr(&dcc[idx].sockname.addr.sa));
@@ -195,10 +193,9 @@ static void webui_http_activity(int idx, char *buf, int len)
     buf += sizeof WS_KEY;
     for(i = 0; i < WS_KEYLEN; i++)
       if (!buf[i]) {
-        putlog(LOG_MISC, "*", "WEBUI error: Sec-WebSocket-Key too short");
+        putlog(LOG_MISC, "*", "WEBUI error: Sec-WebSocket-Key too short ip %s", iptostr(&dcc[idx].sockname.addr.sa));
         return;
       }
-    debug0("webui: server requests websocket upgrade");
     unsigned char hash[SHA_DIGEST_LENGTH];
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
@@ -245,7 +242,7 @@ static void webui_http_activity(int idx, char *buf, int len)
 
 
     socklist_i->flags &= ~ SOCK_BINARY; /* we need it for net.c sockgets(), is there better place to do this? */
-    debug1("webui: unset flag SOCK_BINARY sock %li", dcc[idx].sock);
+    debug2("webui: unset flag SOCK_BINARY idx %i sock %li", idx, dcc[idx].sock);
     strcpy(dcc[idx].host, "*"); /* important for later dcc_telnet_id wild_match, is there better place to do this? */
     /* .host becomes .nick in change_to_dcc_telnet_id() */
     debug4("webui: set flag SOCK_WS socklist %i idx %i sock %li status %lu", findsock(dcc[idx].sock), idx, dcc[idx].sock, dcc[idx].status);
@@ -253,7 +250,7 @@ static void webui_http_activity(int idx, char *buf, int len)
     dcc[idx].status |= STAT_USRONLY; /* magick */
     for (i = 0; i < dcc_total; i++) /* we need to link from idx, dont we? is there a better way to do it? */
       if (!strcmp(dcc[i].nick, "(webui)")) {
-        debug1("webui: found (webui) dcc %i", i);
+        debug2("webui: found (webui) idx %i dcc %i", idx, i);
         break;
       }
 
@@ -262,7 +259,6 @@ static void webui_http_activity(int idx, char *buf, int len)
 
     debug2("webui: CHANGEOVER -> idx %i sock %li", idx, dcc[idx].sock);
   } else if (buf[5] == 'a') {
-    debug0("webui: GET /apple-touch-icon.png");
     put_file(idx, 0);
   } else
     put_404(idx);
@@ -270,9 +266,9 @@ static void webui_http_activity(int idx, char *buf, int len)
     /* read probable remaining bytes */
     SSL *ssl = socklist[findsock(dcc[idx].sock)].ssl;
     if (ssl)
-      debug1("webui: SSL_read(): len %i", SSL_read(ssl, buf, 511));
+      debug2("webui: SSL_read(): idx %i len %i", idx, SSL_read(ssl, buf, 511));
     else
-      debug1("webui: read(): len %li", read(dcc[idx].sock, buf, 511));
+      debug2("webui: read(): idx %i len %li", idx, read(dcc[idx].sock, buf, 511));
   }
   if (!r && !getrusage(RUSAGE_SELF, &ru2))
     debug2("webui: webui_http_activity(): user %.3fms sys %.3fms",
@@ -306,7 +302,7 @@ static struct dcc_table DCC_WEBUI_HTTP = {
 
 static void webui_dcc_telnet_hostresolved(int i)
 {
-    debug1("webui_dcc_telnet_hostresolved(%i)", i);
+    debug1("webui_dcc_telnet_hostresolved() idx %i", i);
     changeover_dcc(i, &DCC_WEBUI_HTTP, 0);
     sockoptions(dcc[i].sock, EGG_OPTION_SET, SOCK_BINARY);
     sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
@@ -432,16 +428,15 @@ static size_t webui_frame(char **dst, char *src, size_t len) {
 }
 
 /* TODO: return error code ? */
-static void webui_unframe(char *buf, int *len)
+static void webui_unframe(int sock, char *buf, int *len)
 {
   int i;
   uint8_t *key, *payload;
 
-  debug1("webui: webui_unframe(): len %i", *len);
   if (*len < 6) { /* TODO: better len check */
 
     /* TODO: return error code ? */
-    putlog(LOG_MISC, "*", "WEBUI error: someone sent something other than WebSocket protocol");
+    putlog(LOG_MISC, "*", "WEBUI error: bogus WebSocket frame from sock %i", sock);
     /*
     putlog(LOG_MISC, "*",
            "WEBUI error: %s sent something other than WebSocket protocol",
@@ -452,7 +447,8 @@ static void webui_unframe(char *buf, int *len)
     return;
   }
   if (buf[0] & 0x08) {
-    putlog(LOG_MISC, "*", "WEBUI: fixme: sent connection close not handled yet");
+    // TODO:
+    putlog(LOG_MISC, "*", "WEBUI: fixme: sent connection close not handled yet sock %i", sock);
     return;
   }
   /* xor decrypt
@@ -490,7 +486,7 @@ static char *webui_close(void)
     if (!strcmp(dcc[idx].nick, "(webui)") ||
         !strcmp(dcc[idx].type->name, "WEBUI_HTTP") ||
         (socklist[findsock(dcc[idx].sock)].flags & SOCK_WS)) {
-      debug1("webui: webui_close(): closing sock %li", dcc[idx].sock);
+      debug2("webui: webui_close(): closing sock idx %i, %li", idx, dcc[idx].sock);
       killsock(dcc[idx].sock);
       lostdcc(idx);
     }
