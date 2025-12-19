@@ -1440,7 +1440,7 @@ static void dcc_telnet_hostresolved(int i)
   }
 
 #ifdef TLS
-  /* Skip ident lookup for webui http */
+  /* Delay ident lookup for webui http until websocket */
   if (!strcmp(dcc[idx].nick, "(webui)")) {
     webui_dcc_telnet_hostresolved(i);
     return;
