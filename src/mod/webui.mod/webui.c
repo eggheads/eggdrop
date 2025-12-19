@@ -177,7 +177,7 @@ static void webui_http_activity(int idx, char *buf, int len)
   }
   r = getrusage(RUSAGE_SELF, &ru1);
   debug2("webui: webui_http_activity(): idx %i len %i", idx, len);
-  buf[len] = '\0'; /* TODO: is there no better way? we already know len */
+  buf[len] = '\0';
   if (buf[5] == ' ') {
     debug1("webui: GET / idx %i", idx);
     put_file(idx, 2);
