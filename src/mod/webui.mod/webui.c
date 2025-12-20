@@ -53,6 +53,7 @@ static const uint8_t alert[] = {0x15, 0x03, 0x01, 0x00, 0x02, 0x02, 0x0a};
 static void webui_http_eof(int idx)
 {
   debug2("webui: webui_http_eof() idx %i sock %li", idx, dcc[idx].sock);
+  dcc[idx].u.webui_listen_idx = 0;
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
