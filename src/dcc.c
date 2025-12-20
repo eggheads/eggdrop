@@ -1378,7 +1378,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
 static void dcc_telnet_hostresolved(int i)
 {
   int idx;
-  char s[sizeof lasttelnethost], *userhost;
+  char s[sizeof lasttelnethost];
 
   debug0("dcc_telnet_hostresolved()");
   strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
@@ -1405,7 +1405,6 @@ static void dcc_telnet_hostresolved(int i)
     }
   }
   snprintf(s, sizeof s, "-telnet!telnet@%s", dcc[i].host);
-  userhost = s + strlen("-telnet!");
   if (match_ignore(s) || detect_telnet_flood(s)) {
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1434,7 +1433,6 @@ static void dcc_telnet_hostresolved(int i)
     changeover_dcc(i, &DCC_SOCKET, 0);
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    strlcpy(dcc[i].host, userhost, UHOSTLEN);
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
@@ -1447,7 +1445,6 @@ static void dcc_telnet_hostresolved(int i)
   }
 #endif /* TLS */
 
-  strlcpy(dcc[i].host, userhost, UHOSTLEN);
   dcc_telnet_hostresolved2(i, idx);
 }
 
