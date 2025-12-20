@@ -243,7 +243,7 @@ static void webui_http_activity(int idx, char *buf, int len)
 
     socklist_i->flags &= ~ SOCK_BINARY; /* we need it for net.c sockgets(), is there better place to do this? */
     debug2("webui: unset flag SOCK_BINARY idx %i sock %li", idx, dcc[idx].sock);
-    strcpy(dcc[idx].host, "*"); /* important for later dcc_telnet_id wild_match, is there better place to do this? */
+    //strcpy(dcc[idx].host, "*"); /* important for later dcc_telnet_id wild_match, is there better place to do this? */
     /* .host becomes .nick in change_to_dcc_telnet_id() */
     debug4("webui: set flag SOCK_WS socklist %i idx %i sock %li status %lu", findsock(dcc[idx].sock), idx, dcc[idx].sock, dcc[idx].status);
 
