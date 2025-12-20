@@ -155,7 +155,7 @@ static void put_file(int idx, int file_cache_index) {
 static void webui_http_activity(int idx, char *buf, int len)
 {
   struct rusage ru1, ru2;
-  int r, i;
+  int r, i, listen_idx;
   char *response;
 
   if (len < 6) { /* TODO: better len check */
@@ -248,16 +248,10 @@ static void webui_http_activity(int idx, char *buf, int len)
     debug4("webui: set flag SOCK_WS socklist %i idx %i sock %li status %lu", findsock(dcc[idx].sock), idx, dcc[idx].sock, dcc[idx].status);
 
     dcc[idx].status |= STAT_USRONLY; /* magick */
-    for (i = 0; i < dcc_total; i++) /* we need to link from idx, dont we? is there a better way to do it? */
-      if (!strcmp(dcc[i].nick, "(webui)")) {
-        debug2("webui: found (webui) idx %i dcc %i", idx, i);
-        break;
-      }
 
-    // dcc[idx].u.other = NULL; /* fix ATTEMPTING TO FREE NON-MALLOC'D PTR: dccutil.c (561) */
-    dcc_telnet_hostresolved2(idx, i);
-
-    debug2("webui: CHANGEOVER -> idx %i sock %li", idx, dcc[idx].sock);
+    listen_idx = dcc[idx].u.webui_listen_idx;
+    dcc[idx].u.webui_listen_idx = 0;
+    dcc_telnet_hostresolved2(idx, listen_idx);
   } else if (buf[5] == 'a') {
     put_file(idx, 0);
   } else
@@ -300,12 +294,13 @@ static struct dcc_table DCC_WEBUI_HTTP = {
   NULL
 };
 
-static void webui_dcc_telnet_hostresolved(int i)
+static void webui_dcc_telnet_hostresolved(int idx, int listen_idx)
 {
-    debug1("webui_dcc_telnet_hostresolved() idx %i", i);
-    changeover_dcc(i, &DCC_WEBUI_HTTP, 0);
-    sockoptions(dcc[i].sock, EGG_OPTION_SET, SOCK_BINARY);
-    sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
+    debug2("webui_dcc_telnet_hostresolved() idx %i listen_idx %i", idx, listen_idx);
+    changeover_dcc(idx, &DCC_WEBUI_HTTP, 0);
+    dcc[idx].u.webui_listen_idx = listen_idx;
+    sockoptions(dcc[idx].sock, EGG_OPTION_SET, SOCK_BINARY);
+    sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
     // dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
 }
 

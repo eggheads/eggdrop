@@ -351,6 +351,7 @@ struct dcc_t {
     struct dns_info *dns;
     struct dupwait_info *dupwait;
     int ident_sock;
+    int webui_listen_idx;
     void *other;
   } u;                          /* Special use depending on type        */
 };
