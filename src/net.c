@@ -1021,7 +1021,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       }
 #ifdef TLS
       if (socklist[i].flags & SOCK_WS)
-        webui_unframe(i, s, &x);
+        webui_unframe(slist[i].sock, s, &x);
 #endif /* TLS */
       s[x] = 0;
       *len = x;

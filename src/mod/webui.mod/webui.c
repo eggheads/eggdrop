@@ -432,18 +432,8 @@ static void webui_unframe(int sock, char *buf, int *len)
 
     /* TODO: return error code ? */
     putlog(LOG_MISC, "*", "WEBUI error: bogus WebSocket frame from sock %i", sock);
-    /*
-    putlog(LOG_MISC, "*",
-           "WEBUI error: %s sent something other than WebSocket protocol",
-           iptostr(&dcc[idx].sockname.addr.sa));
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-    */
-    return;
-  }
-  if (buf[0] & 0x08) {
-    // TODO:
-    putlog(LOG_MISC, "*", "WEBUI: fixme: sent connection close not handled yet sock %i", sock);
+    killsock(sock);
+    lostdcc(findanyidx(sock));
     return;
   }
   /* xor decrypt
@@ -462,6 +452,14 @@ static void webui_unframe(int sock, char *buf, int *len)
   payload = key + 4;
   for (i = 0; i < *len; i++)
     payload[i] = payload[i] ^ key[i % 4];
+
+  if (buf[0] & 0x08) {
+    putlog(LOG_MISC, "*", "WEBUI: connection closed by peer with status code %i sock %i",
+           ntohs(*((uint16_t *) payload)), sock);
+    killsock(sock);
+    lostdcc(findanyidx(sock));
+    return;
+  }
 
   memmove(buf, payload, *len);
   /* we switched back from binary sock to text sock for sockgets() needs this for dcc_telnet_id() */
