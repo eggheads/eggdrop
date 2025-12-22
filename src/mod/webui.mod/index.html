@@ -42,7 +42,8 @@ avoid off-topic discussions)
           "/w",
       );
       out = document.getElementById("out");
-      let echo = 1;
+      let echo = true;
+      let sendCount = 0;
       ws.addEventListener("close", (event) => {
         d.remove();
         out.innerHTML = out.innerHTML + "Connection closed by foreign host.";
@@ -53,12 +54,10 @@ avoid off-topic discussions)
         out.scrollTop = out.scrollHeight;
         if (event.data.includes(WS_ECHO_ON)) {
           d.type = "text";
-          echo = 1;
-          console.log("echo on");
+          echo = true;
         } else if (event.data.includes(WS_ECHO_OFF)) {
           d.type = "password";
-          echo = 0;
-          console.log("echo off");
+          echo = false;
         }
       });
       function b(c) {
@@ -69,6 +68,10 @@ avoid off-topic discussions)
             out.scrollTop = out.scrollHeight;
           }
           c.value = "";
+          if (sendCount++ == 0) {
+            d.type = "password";
+            echo = false;
+          }
         }
       }
     </script>
