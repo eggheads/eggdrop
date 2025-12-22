@@ -51,11 +51,11 @@ avoid off-topic discussions)
       ws.addEventListener("message", (event) => {
         out.innerHTML = out.innerHTML + event.data.replace(/[\x01-\x02]/g, "");
         out.scrollTop = out.scrollHeight;
-        if (event.data.indexOf(WS_ECHO_ON) > -1) {
+        if (event.data.includes(WS_ECHO_ON)) {
           d.type = "text";
           echo = 1;
           console.log("echo on");
-        } else if (event.data.indexOf(WS_ECHO_OFF) > -1) {
+        } else if (event.data.includes(WS_ECHO_OFF)) {
           d.type = "password";
           echo = 0;
           console.log("echo off");
