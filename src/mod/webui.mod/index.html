@@ -33,15 +33,16 @@ avoid off-topic discussions)
       style="width: 100%"
     />
     <script>
-      WS_ECHO_ON = "\x01";
-      WS_ECHO_OFF = "\x02";
-      ws = new WebSocket(
+      "use strict";
+      const WS_ECHO_ON = "\x01";
+      const WS_ECHO_OFF = "\x02";
+      const ws = new WebSocket(
         (location.protocol === "https:" ? "wss:" : "ws:") +
           location.host +
           "/w",
       );
       out = document.getElementById("out");
-      echo = 1;
+      let echo = 1;
       ws.addEventListener("close", (event) => {
         d.remove();
         out.innerHTML = out.innerHTML + "Connection closed by foreign host.";
