@@ -693,18 +693,19 @@ int needs_unicodesup(const char *str)
  * - encode high/low as 3-byte utf-8 strings
  * the length of the result could be len/4*6 bytes long, so
  * to avoid frequent reallocation/string appending, a temporary buffer is used
- * for long strings (>512 characters, which does not apply to IRC lines) and assembled to a Tcl_DString
- * for short strings the 512 character buffer is enough
+ * for long strings (>512 characters, which does not apply to IRC lines) chunks are assembled to a Tcl_DString
+ * for short strings the 512/4*6 character buffer is enough
  */
 Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 {
-  int stridx = 0, bufidx = 0;
-  char buf[512];
+  int stridx = 0, bufidx = 0, use_dstring = 0;
+  char buf[768];
   Tcl_DString ds;
   Tcl_Obj *result;
 
   /* chunked */
-  if (len > sizeof buf) {
+  if (len > 512) {
+    use_dstring = 1;
     Tcl_DStringInit(&ds);
   }
 
@@ -741,12 +742,12 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
         buf[bufidx++] = oldstr[stridx++];
       }
     }
-    if (len > sizeof buf && bufidx > sizeof buf - 6) {
+    if (use_dstring && bufidx > sizeof buf - 6) {
       Tcl_DStringAppend(&ds, buf, bufidx);
       bufidx = 0;
     }
   }
-  if (len > sizeof buf && bufidx) {
+  if (use_dstring && bufidx) {
     Tcl_DStringAppend(&ds, buf, bufidx);
     result = Tcl_NewStringObj(Tcl_DStringValue(&ds), Tcl_DStringLength(&ds));
     Tcl_DStringFree(&ds);
