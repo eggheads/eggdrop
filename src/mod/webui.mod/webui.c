@@ -305,102 +305,145 @@ static void webui_dcc_telnet_hostresolved(int idx, int listen_idx)
     // dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
 }
 
-/* TODO: add bounds checking or use existing function under MIT/GPL license
- *       instead of our own code
- */
-static size_t escape_html(char *dst, char *src, size_t size) {
+static size_t escape_html(char *dst, size_t dst_size, char *src, size_t src_size) {
   int i;
   char *d = dst;
 
-  for (i = 0; i < size; i++) {
+  for (i = 0; i < src_size; i++) {
     switch ((unsigned char) src[i]) {
       case '"':
+        if (dst_size < 6) {
+          debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+          return d - dst;
+        }
         *d++ = '&';
         *d++ = 'q';
         *d++ = 'u';
         *d++ = 'o';
         *d++ = 't';
         *d++ = ';';
+        dst_size -= 6;
         break;
       case '&':
+        if (dst_size < 5) {
+          debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+          return d - dst;
+        }
         *d++ = '&';
         *d++ = 'a';
         *d++ = 'm';
         *d++ = 'p';
         *d++ = ';';
+        dst_size -= 5;
         break;
       case '\'':
+        if (dst_size < 6) {
+          debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+          return d - dst;
+        }
         *d++ = '&';
         *d++ = 'a';
         *d++ = 'p';
         *d++ = 'o';
         *d++ = 's';
         *d++ = ';';
+        dst_size -= 6;
         break;
       case '<':
+        if (dst_size < 4) {
+          debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+          return d - dst;
+        }
         *d++ = '&';
         *d++ = 'l';
         *d++ = 't';
         *d++ = ';';
+        dst_size -= 4;
         break;
       case '>':
+        if (dst_size < 4) {
+          debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+          return d - dst;
+        }
         *d++ = '&';
         *d++ = 'g';
         *d++ = 't';
         *d++ = ';';
+        dst_size -= 4;
         break;
       case ESC:
-        if ((i + 4) < size) {
+        if ((i + 3) < src_size) {
           if (     ((unsigned char) src[i + 1] == '[') &&
                    ((unsigned char) src[i + 2] == '0') &&
                    ((unsigned char) src[i + 3] == 'm')) {
+            if (dst_size < 4) {
+              debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+              return d - dst;
+            }
             *d++ = '<';
             *d++ = '/';
             *d++ = 'b';
             *d++ = '>';
+            dst_size -= 4;
           } else if (((unsigned char) src[i + 1] == '[') &&
                    ((unsigned char) src[i + 2] == '1') &&
                    ((unsigned char) src[i + 3] == 'm')) {
+            if (dst_size < 3) {
+              debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+              return d - dst;
+            }
             *d++ = '<';
             *d++ = 'b';
             *d++ = '>';
+            dst_size -= 3;
           } else
-            debug3("webui: escape_html(): unknown escape sequence found, skipping, %x %x %x, PLEASE REPORT THIS BUG",
+            debug3("webui: escape_html(): unknown escape sequence found, skipping, %02x %02x %02x, PLEASE REPORT THIS BUG",
                    (unsigned char) src[i + 1], (unsigned char) src[i + 2], (unsigned char) src[i + 3]);
           i += 3;
         } else
           debug0("webui: escape_html(): unknown SHORT escape sequence found, skipping, PLEASE REPORT THIS BUG");
         break;
       case TLN_IAC:
-        if ((i + 2) < size) {
-          if (     ((unsigned char) src[i + 1] == TLN_WILL) &&
-                   ((unsigned char) src[i + 2] == TLN_ECHO))
+        if ((i + 2) < src_size) {
+          if (dst_size < 1) {
+            debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+            return d - dst;
+          }
+          if (       ((unsigned char) src[i + 1] == TLN_WILL) &&
+                     ((unsigned char) src[i + 2] == TLN_ECHO)) {
             *d++ = WS_ECHO_OFF;
-          else if (((unsigned char) src[i + 1] == TLN_WONT) &&
-                   ((unsigned char) src[i + 2] == TLN_ECHO))
+            dst_size--;
+          } else if (((unsigned char) src[i + 1] == TLN_WONT) &&
+                     ((unsigned char) src[i + 2] == TLN_ECHO)) {
             *d++ = WS_ECHO_ON;
-          else
-            debug2("webui: escape_html(): unknown telnet command found, skipping, %x %x, PLEASE REPORT THIS BUG",
+            dst_size--;
+          } else
+            debug2("webui: escape_html(): unknown telnet command found, skipping, %02x %02x, PLEASE REPORT THIS BUG",
                    (unsigned char) src[i + 1], (unsigned char) src[i + 2]);
           i += 2;
         } else
           debug0("webui: escape_html(): unknown SHORT telnet command found, skipping, PLEASE REPORT THIS BUG");
         break;
       default:
+        if (dst_size < 1) {
+          debug0("webui: escape_html(): destination string too long, PLEASE REPORT THIS BUG");
+          return d - dst;
+        }
         *d++ = src[i];
+        dst_size--;
     }
   }
   return d - dst;
 }
 
 static size_t webui_frame(char **dst, char *src, size_t len) {
-  static char buf[4096];
+  static char buf[LOGLINELEN];
   uint16_t len2;
 
   /* escape/replace html code chars
    * write to buf + offset 4 to leave room for webui frame header
    */
-  len = escape_html(buf + 4, src, len);
+  len = escape_html(buf + 4, (sizeof buf) - 4, src, len);
   /* we must not use putlog() or debug() here or we get recursion */
   /* A server MUST NOT mask any frames that it sends to the client */
   /* we use text, not binary, so escape_html() must output valid html */
@@ -419,7 +462,7 @@ static size_t webui_frame(char **dst, char *src, size_t len) {
   }
   /* we dont need to implement len > 0xffff,
    * because eggdrop wont send that much data at once,
-   * we also limit by sizeof buf = 4096 */
+   * we also limit by sizeof buf */
   return len;
 }
 
