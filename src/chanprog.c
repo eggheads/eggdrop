@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +27,7 @@
  */
 
 #include "main.h"
-
-#include <sys/resource.h>
 #include <sys/utsname.h>
-
 #include "modules.h"
 
 extern struct dcc_t *dcc;
@@ -300,7 +297,11 @@ void tell_verbose_status(int idx)
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
                "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
+  #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+          OpenSSL_version(OPENSSL_VERSION), MISC_HEADERVERSION);
+  #else
           SSLeay_version(SSLEAY_VERSION), MISC_HEADERVERSION);
+  #endif
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
@@ -681,7 +682,7 @@ void add_hq_user()
     dcc[term_z].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
                               USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
                               USER_PARTY | USER_BOTMAST | USER_UNSHARED |
-                              USER_VOICE | USER_XFER;
+                              USER_VOICE | USER_XFER | USER_HIGHLITE;
     /* Add to permowner list if there's place */
     if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
       strcat(owner, " " EGG_BG_HANDLE);

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,10 +63,6 @@
 #include "modules.h"
 #include "bg.h"
 
-#ifdef DEBUG                            /* For debug compile */
-#  include <sys/resource.h>             /* setrlimit() */
-#endif
-
 #ifdef HAVE_GETRANDOM
 #  include <sys/random.h>
 #endif
@@ -75,7 +71,7 @@
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
 
-extern char origbotname[], botnetnick[]; 
+extern char origbotname[], botnetnick[];
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
@@ -87,7 +83,7 @@ extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
 static char **argv;
-char *argv0;
+const char *argv0;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -101,7 +97,7 @@ int egg_numver = EGG_NUMVER;
 
 char notify_new[121] = "";      /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
-int default_uflags = 0;         /* Default user-definied flags            */
+int default_uflags = 0;         /* Default user-defined flags             */
 
 int backgrd = 1;    /* Run in the background?                        */
 int con_chan = 0;   /* Foreground: constantly display channel stats? */
@@ -160,10 +156,6 @@ unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 extern char last_bind_called[];
-#endif
-
-#ifdef TLS
-int ssl_cleanup();
 #endif
 
 void fatal(const char *s, int recoverable)
@@ -242,7 +234,7 @@ static int nested_debug = 0;
 static void write_debug()
 {
   int x;
-  char s[25];
+  char s[26];
 
   if (nested_debug) {
     /* Yoicks, if we have this there's serious trouble!
@@ -251,7 +243,7 @@ static void write_debug()
     x = creat("DEBUG.DEBUG", 0644);
     if (x >= 0) {
       setsock(x, SOCK_NONSOCK);
-      strlcpy(s, ctime(&now), sizeof s);
+      ctime_r(&now, s);
       dprintf(-x, "Debug (%s) written %s\n"
                   "Please report problem to https://github.com/eggheads/eggdrop/issues\n"
                   "Check doc/BUG-REPORT on how to do so.", ver, s);
@@ -279,8 +271,8 @@ static void write_debug()
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
-    strlcpy(s, ctime(&now), sizeof s);
-    dprintf(-x, "Debug (%s) written %s\n", ver, s);
+    ctime_r(&now, s);
+    dprintf(-x, "Debug (%s) written %s", ver, s);
 #ifdef EGG_PATCH
     dprintf(-x, "Patch level: %s\n", EGG_PATCH);
 #else
@@ -475,7 +467,7 @@ static void show_help() {
          "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
-         "-v  Show version info and exit.\n\n", argv[0]);
+         "-v  Show version info and exit.\n\n", argv0);
   bg_send_quit(BG_ABORT);
 }
 
@@ -579,7 +571,7 @@ static void core_secondly()
   }
   nowmins = now / 60;
   if (nowmins > lastmin) {
-    memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+    localtime_r(&now, &nowtm);
     i = 0;
     /* Once a minute */
     ++lastmin;
@@ -598,15 +590,15 @@ static void core_secondly()
     if (i)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
+    if (nowtm.tm_min % 5 == 0) { /* Every 5 minutes */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-
       if (!miltime) {           /* At midnight */
-        char s[25];
+        char s[26];
         int j;
 
-        strlcpy(s, ctime(&now), sizeof s);
+        ctime_r(&now, s);
+        s[24] = 0;
         if (quiet_save < 3)
           putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
         call_hook(HOOK_BACKUP);
@@ -641,6 +633,9 @@ static void core_secondly()
             movefile(logs[i].filename, s);
           }
       }
+#ifdef TLS
+      verify_cert_expiry(0);
+#endif
     }
   }
 }
@@ -777,6 +772,8 @@ static void mainloop(int toplevel)
               itraffic_irc_today += strlen(buf) + 1;
             else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
               itraffic_dcc_today += strlen(buf) + 1;
+            else if (!strncmp(dcc[idx].type->name, "WEBUI", 5))
+              itraffic_dcc_today += i;
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
               itraffic_dcc_today += strlen(buf) + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
@@ -880,7 +877,7 @@ static void mainloop(int toplevel)
         if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
             strcmp(p->name, "encryption2") && strcmp(p->name, "uptime")) {
           f++;
-          debug1("stagnant module %s", p->name);
+          putlog(LOG_MISC, "*", "stagnant module %s", p->name);
         }
       }
       if (f != 0) {
@@ -923,7 +920,7 @@ static void mainloop(int toplevel)
 static void init_random(void) {
   unsigned int seed;
 #ifdef HAVE_GETRANDOM
-  if (getrandom(&seed, sizeof(seed), 0) != sizeof(seed)) {
+  if (getrandom(&seed, sizeof seed, 0) != (sizeof seed)) {
     if (errno != ENOSYS) {
       fatal("ERROR: getrandom()\n", 0);
     } else {
@@ -931,9 +928,15 @@ static void init_random(void) {
        * This can happen with glibc>=2.25 and linux<3.17
        */
 #endif
+#ifdef HAVE_CLOCK_GETTIME
+      struct timespec tp;
+      clock_gettime(CLOCK_REALTIME, &tp);
+      seed = ((uint64_t) tp.tv_sec * tp.tv_nsec) ^ getpid();
+#else
       struct timeval tp;
       gettimeofday(&tp, NULL);
-      seed = (((int64_t) tp.tv_sec * tp.tv_usec)) ^ getpid();
+      seed = ((uint64_t) tp.tv_sec * tp.tv_usec) ^ getpid();
+#endif
 #ifdef HAVE_GETRANDOM
     }
   }
@@ -944,7 +947,7 @@ static void init_random(void) {
 int main(int arg_c, char **arg_v)
 {
   int i, j, xx;
-  char s[25];
+  char s[26];
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -977,13 +980,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   strlcpy(version,
-          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   strlcpy(version,
-          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
 #endif
 
@@ -1066,8 +1069,8 @@ int main(int arg_c, char **arg_v)
   dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
   dns_thread_head->next = NULL;
 #endif
-  strlcpy(s, ctime(&now), sizeof s);
-  memmove(&s[11], &s[20], strlen(&s[20]) + 1);
+  ctime_r(&now, s);
+  s[24] = 0;
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass2 && !encrypt_pass) {
@@ -1170,8 +1173,14 @@ int main(int arg_c, char **arg_v)
     dcc[term_z].sock = STDOUT;
     dcc[term_z].timeval = now;
     dcc[term_z].u.chat->con_flags = conmask | EGG_BG_CONMASK;
-    dcc[term_z].u.chat->strip_flags = STRIP_ALL;
     dcc[term_z].status = STAT_ECHO;
+    if (isatty(dcc[term_z].sock)) {
+      debug0("stdout is a tty");
+      dcc[term_z].status |= STAT_TELNET;
+    } else {
+      debug0("stdout is no tty");
+      dcc[term_z].u.chat->strip_flags = STRIP_ALL;
+    }
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);
     strcpy(dcc[term_z].host, "llama@console");
     add_hq_user();

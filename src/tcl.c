@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -224,7 +224,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
 
         default_uflags = fr.udef_global;
       } else if ((int *) ii->var == &userfile_perm) {
-	p = strtol(s, &endptr, 8);
+        p = strtol(s, &endptr, 8);
         if ((p < 01) || (p > 0777) || (*endptr))
           return "Invalid userfile permissions, must be octal between 01 and 0777";
         userfile_perm = p;
@@ -316,20 +316,31 @@ static void tcl_cleanup_stringinfo(ClientData cd)
   nfree(cd);
 }
 
-/* Compatibility wrapper that calls Tcl functions with String API */
+/* Compatibility wrapper that calls Tcl functions with String API
+ *
+ * Is reentrant, can call itself recursively, so argv is dynamically allocated
+ * Tcl_IncrRefCount() is needed to preserve the strings we get Tcl_GetString()
+ * from being cleaned up if Tcl is invoked from this
+ */
 static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-  static int max;
-  static const char **argv;
-  int i;
+  const char **argv;
+  int i, ret;
   struct tcl_call_stringinfo *info = cd;
+
   /* The string API guarantees argv[argc] == NULL, unlike the obj API */
-  if (objc + 1 > max)
-    argv = nrealloc(argv, (objc + 1) * sizeof *argv);
-  for (i = 0; i < objc; i++)
+  argv = nmalloc((objc + 1) * sizeof *argv);
+  for (i = 0; i < objc; i++) {
+    Tcl_IncrRefCount(objv[i]);
     argv[i] = Tcl_GetString(objv[i]);
+  }
   argv[objc] = NULL;
-  return (info->proc)(info->cd, interp, objc, argv);
+  ret = (info->proc)(info->cd, interp, objc, argv);
+  for (i = 0; i < objc; i++) {
+    Tcl_DecrRefCount(objv[i]);
+  }
+  nfree(argv);
+  return ret;
 }
 
 /* The standard case of no actual cd */
@@ -358,6 +369,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   while (table->name) {
     if (table->cdata) {
       info = nmalloc(sizeof *info);
+      strtot += sizeof(struct tcl_call_stringinfo);
       info->proc = table->callback;
       info->cd = table->cdata;
       Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc_cd, info, tcl_cleanup_stringinfo);
@@ -502,6 +514,7 @@ static tcl_ints def_tcl_ints[] = {
   {"prefer-ipv6",           &pref_af,              0},
 #endif
   {"show-uname",            &show_uname,           0},
+  {"share-greet",           &share_greet,          0},
   {NULL,                    NULL,                  0}
 };
 
@@ -615,10 +628,14 @@ int tclthreadmainloop(int zero)
   return (i == -5);
 }
 
+struct threaddata *td_main = 0;
+
 struct threaddata *threaddata()
 {
   static Tcl_ThreadDataKey tdkey;
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
+  if (!(td->mainloopfunc) && td_main) /* python thread */
+    return td_main;
   return td;
 }
 
@@ -638,6 +655,8 @@ void init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
+  if (mainthread)
+    td_main = td;
 }
 
 /* workaround for Tcl that does not support unicode outside BMP (3 byte utf-8 characters) */
@@ -676,18 +695,19 @@ int needs_unicodesup(const char *str)
  * - encode high/low as 3-byte utf-8 strings
  * the length of the result could be len/4*6 bytes long, so
  * to avoid frequent reallocation/string appending, a temporary buffer is used
- * for long strings (>512 characters, which does not apply to IRC lines) and assembled to a Tcl_DString
- * for short strings the 512 character buffer is enough
+ * for long strings (>512 characters, which does not apply to IRC lines) chunks are assembled to a Tcl_DString
+ * for short strings the 512/4*6 character buffer is enough
  */
 Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 {
-  int stridx = 0, bufidx = 0;
-  char buf[512];
+  int stridx = 0, bufidx = 0, use_dstring = 0;
+  char buf[768];
   Tcl_DString ds;
   Tcl_Obj *result;
 
   /* chunked */
-  if (len > sizeof buf) {
+  if (len > 512) {
+    use_dstring = 1;
     Tcl_DStringInit(&ds);
   }
 
@@ -724,12 +744,12 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
         buf[bufidx++] = oldstr[stridx++];
       }
     }
-    if (len > sizeof buf && bufidx > sizeof buf - 6) {
+    if (use_dstring && bufidx > sizeof buf - 6) {
       Tcl_DStringAppend(&ds, buf, bufidx);
       bufidx = 0;
     }
   }
-  if (len > sizeof buf && bufidx) {
+  if (use_dstring && bufidx) {
     Tcl_DStringAppend(&ds, buf, bufidx);
     result = Tcl_NewStringObj(Tcl_DStringValue(&ds), Tcl_DStringLength(&ds));
     Tcl_DStringFree(&ds);
@@ -743,13 +763,13 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 int decode_surrogates(const char *str, uint32_t *high, uint32_t *low)
 {
   *high  = (*str++ & 0xf) << 12;
-  *high |= (*str++ & 0x3f) << 6; 
+  *high |= (*str++ & 0x3f) << 6;
   *high |= (*str++ & 0x3f) << 0;
   if (*high < 0xD800 || *high > 0xDBFF) {
     return 0;
   }
   *low  = (*str++ & 0xf) << 12;
-  *low |= (*str++ & 0x3f) << 6; 
+  *low |= (*str++ & 0x3f) << 6;
   *low |= (*str++ & 0x3f) << 0;
   if (*low < 0xDC00 || *low > 0xDFFF) {
     return 0;
@@ -908,7 +928,7 @@ void init_unicodesup(void)
 void init_tcl0(int argc, char **argv)
 {
   Tcl_NotifierProcs notifierprocs;
- 
+
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
   notifierprocs.createFileHandlerProc = tickle_CreateFileHandler;
@@ -920,7 +940,7 @@ void init_tcl0(int argc, char **argv)
   notifierprocs.serviceModeHookProc = tickle_ServiceModeHook;
 
   Tcl_SetNotifier(&notifierprocs);
-  
+
   /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */

@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/resource.h>
 #include "main.h"
 
 extern Tcl_Interp *interp;
@@ -410,7 +409,7 @@ int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   for (tc = tm->first; tc; tc = tc->next) {
     if (tc->attributes & TC_DELETED)
       continue;
-    if (!strcasecmp(tc->func_name, proc)) {
+    if (!strcmp(tc->func_name, proc)) {
       tc->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tc->flags), NULL);
       return 1;
@@ -1241,13 +1240,19 @@ void check_tcl_die(char *reason)
 void check_tcl_log(int lv, char *chan, char *msg)
 {
   char mask[512];
+  Tcl_Obj* prev_result;
 
+  /* We have to store the old result, as check_tcl_bind may override it */
+  prev_result = Tcl_GetObjResult(interp);
+  Tcl_IncrRefCount(prev_result);
   egg_snprintf(mask, sizeof mask, "%s %s", chan, msg);
   Tcl_SetVar(interp, "_log1", masktype(lv), TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log2", chan, TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log3", msg, TCL_GLOBAL_ONLY);
   check_tcl_bind(H_log, mask, 0, " $::_log1 $::_log2 $::_log3",
                  MATCH_MASK | BIND_STACKABLE);
+  Tcl_SetObjResult(interp, prev_result);
+  Tcl_DecrRefCount(prev_result);
 }
 
 #ifdef TLS

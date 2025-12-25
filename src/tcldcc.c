@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -301,7 +301,7 @@ static int tcl_do_console(Tcl_Interp *irp, ClientData cd, int argc,
   pls = 1;
 
   for (arg = 2; arg < argc; arg++) {
-    if (argv[arg][0] && !reset && ((strchr(CHANMETA, argv[arg][0]) 
+    if (argv[arg][0] && !reset && ((strchr(CHANMETA, argv[arg][0])
         != NULL) || (argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
         /* If we don't find the channel, and it starts with a +, assume it
@@ -710,7 +710,7 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
   struct sockaddr_storage ss;
   Tcl_Obj *masterlist = NULL; /* initialize to NULL to make old gcc versions
                                * happy */
- 
+
   if (src) {
     masterlist = Tcl_NewListObj(0, NULL);
   }
@@ -1100,7 +1100,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       if (((ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET)) ||
          ((!ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET6))) {
         found = 0;
-        break;
+        continue;
       }
 #endif
 
@@ -1176,15 +1176,22 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     if (strlen(newip)) {
       setsockname(&name, newip, port, 1);
       i = open_address_listen(&name);
+      if (i < 0) {
+        snprintf(msg, sizeof msg, "Couldn't listen on port %d on %s: %s. "
+                 "Please check that the port is not already in use",
+                  realport, newip, strerror(errno));
+        Tcl_AppendResult(irp, msg, NULL);
+        return TCL_ERROR;
+      }
     } else {
       i = open_listen(&port);
-    }
-    if (i < 0) {
-      egg_snprintf(msg, sizeof msg, "Couldn't listen on port '%d' on the given "
+      if (i < 0) {
+        snprintf(msg, sizeof msg, "Couldn't listen on port %d on the given "
                  "address: %s. Please check that the port is not already in use",
                   realport, strerror(errno));
-      Tcl_AppendResult(irp, msg, NULL);
-      return TCL_ERROR;
+        Tcl_AppendResult(irp, msg, NULL);
+        return TCL_ERROR;
+      }
     }
     idx = new_dcc(&DCC_TELNET, 0);
     dcc[idx].sockname.addrlen = sizeof(dcc[idx].sockname.addr);
@@ -1218,6 +1225,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strcpy(dcc[idx].nick, "(users)");
   else if (!strcmp(type, "all"))
     strcpy(dcc[idx].nick, "(telnet)");
+  else if (!strcmp(type, "webui"))
+    strcpy(dcc[idx].nick, "(webui)");
   if (maskproc[0])
     strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
@@ -1261,7 +1270,7 @@ static int tcl_listen STDVAR
  * error for this case to get around BADARGS, and handle other cases further
  * down in the code
  *
- * Check if extra args are config comments 
+ * Check if extra args are config comments
  */
   if (argc > 6) {
     if (argv[6][0] == '#') {
@@ -1303,9 +1312,9 @@ static int tcl_listen STDVAR
   }
   if ((strcmp(argv[i], "bots")) && (strcmp(argv[i], "users"))
         && (strcmp(argv[i], "all")) && (strcmp(argv[i], "off"))
-        && (strcmp(argv[i], "script"))) {
+        && (strcmp(argv[i], "script")) && (strcmp(argv[i], "webui"))) {
     Tcl_AppendResult(irp, "invalid listen type: must be one of ",
-          "bots, users, all, off, script", NULL);
+          "bots, users, all, off, script, webui", NULL);
     return TCL_ERROR;
   }
   strlcpy(type, argv[i], sizeof(type));

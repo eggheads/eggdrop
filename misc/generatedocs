@@ -4,7 +4,7 @@
 # reStructuredText format files. -Geo
 #
 #
-# Copyright (C) 2004 - 2024 Eggheads Development Team
+# Copyright (C) 2004 - 2025 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ fi
 
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source .venv/bin/activate
 
 echo "*** Searching for pandoc..."
 PANDOC="$(which pandoc)"
@@ -69,7 +70,7 @@ SPHINX="$(which sphinx-build)"
 if [ $? -eq 0 ]; then
   echo "Found."
 else
-  echo "Not found. Sphinx can be found at http://www.sphinx-doc.org or via apt-get install python-sphinx. Exiting..."
+  echo "Not found. Sphinx can be found at https://www.sphinx-doc.org or via apt-get install python-sphinx. Exiting..."
   exit 1
 fi
 

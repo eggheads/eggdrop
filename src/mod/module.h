@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -136,7 +136,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define zapfbot ((void (*)(int))global[36])
 #define n_free ((void (*)(void *,char *, int))global[37])
 #define u_pass_match ((int (*)(struct userrec *,char *))global[38])
-#define user_malloc(x) ((void *(*)(int,char *,int))global[39])(x,__FILE__,__LINE__)
+#define user_malloc(x) ((void *(*)(int, const char *, int))global[39])(x,__FILE__,__LINE__)
 /* 40 - 43 */
 #define get_user ((void *(*)(struct user_entry_type *,struct userrec *))global[40])
 #define set_user ((int(*)(struct user_entry_type *,struct userrec *,void *))global[41])
@@ -265,7 +265,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define interp (*(Tcl_Interp **)(global[128]))
 #define now (*(time_t*)global[129])
 #define findanyidx ((int (*)(int))global[130])
-#define findchan ((struct chanset_t *(*)(char *))global[131])
+#define findchan ((struct chanset_t *(*)(const char *))global[131])
 /* 132 - 135 */
 #define cmd_die (global[132])
 #define days ((void (*)(time_t,time_t,char *))global[133])
@@ -374,8 +374,8 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 216 - 219 */
 #define fcopyfile ((int (*) (FILE *, char *))global[216])
 #define copyfilef ((int (*) (char *, FILE *))global[217])
-#define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
-#define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
+#define rfc_casecmp ((int(*)(const char *, const char *))(*(Function**)(global[218])))
+#define rfc_ncasecmp ((int(*)(const char *, const char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(global[220]))
 #define global_invites (*(maskrec **)(global[221]))
@@ -415,7 +415,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
 #define protect_readonly (*(int *)(global[244]))
-#define findchan_by_dname ((struct chanset_t *(*)(char *))global[245])
+#define findchan_by_dname ((struct chanset_t *(*)(const char *))global[245])
 #define removedcc ((void (*) (int))global[246])
 #define userfile_perm (*(int *)global[247])
 /* 248 - 251 */
@@ -528,7 +528,11 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 324 - 327 */
 #define find_member_from_nick ((memberlist * (*) (char *))global[324])
 #define get_user_from_member ((struct userrec * (*) (memberlist *))global[325])
-#define do_hook_reset_member ((void (*) ())global[326])
+#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[326])
+#define findsock ((int(*)(int))global[327])
+/* 328 - 331 */
+#define stealth_telnets (*(int *)(global[328]))
+#define do_hook_reset_member ((void (*) ())global[329])
 
 
 /* hostmasking */

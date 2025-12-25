@@ -1,5 +1,6 @@
 /*
- * This module reports uptime information about your bot to http://uptime.eggheads.org. The
+ * This module reports uptime statistics to the uptime contest web
+ * site at https://www.eggheads.org/uptime/. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
  * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
  *
@@ -11,7 +12,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2024 Eggheads Development Team
+ * Copyright (C) 2001 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,15 +33,13 @@
 #define MAKING_UPTIME
 
 #include "uptime.h"
-#include "../module.h"
+#include "src/mod/module.h"
 #include "../server.mod/server.h"
 #include <netdb.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -85,8 +84,8 @@ static int uptimecount;
 static unsigned long uptimeip;
 static char uptime_version[48] = "";
 
-void check_secondly(void);
-void check_minutely(void);
+static void check_secondly(void);
+static void check_minutely(void);
 
 static int uptime_expmem()
 {
@@ -96,16 +95,15 @@ static int uptime_expmem()
 static void uptime_report(int idx, int details)
 {
   int delta_seconds;
-  char *next_update_at;
+  char next_update_at[26];
 
   if (details) {
     delta_seconds = (int) (next_update - time(NULL));
-    next_update_at = ctime(&next_update);
-    next_update_at[strlen(next_update_at) - 1] = 0;
-
-    dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
+    ctime_r(&next_update, next_update_at);
+    next_update_at[24] = 0;
+    dprintf(idx, "    %d uptime packet%s sent\n", uptimecount,
             (uptimecount != 1) ? "s" : "");
-    dprintf(idx, "      Approximately %-.2f hours until next update "
+    dprintf(idx, "    Approximately %-.2f hours until next update "
             "(at %s)\n", delta_seconds / 3600.0, next_update_at);
   }
 }
@@ -186,7 +184,7 @@ static int send_uptime(void)
 
   uptimecount++;
   upPack.packets_sent = htonl(uptimecount); /* Tell the server how many
-					       uptime packets we've sent. */
+                                             * uptime packets we've sent. */
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
 
@@ -230,7 +228,7 @@ static int send_uptime(void)
   return len;
 }
 
-void check_minutely()
+static void check_minutely()
 {
   minutes++;
   if (minutes >= next_minutes) {
@@ -240,7 +238,7 @@ void check_minutely()
   }
 }
 
-void check_secondly()
+static void check_secondly()
 {
   seconds++;
   if (seconds >= next_seconds) {  /* DING! */

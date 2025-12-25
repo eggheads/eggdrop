@@ -13,12 +13,9 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.9.5. Scripts written for v1.3, v1.4,
-1.6 and 1.8 series of Eggdrop should probably work with a few minor modifications
-depending on the script. Scripts which were written for v0.9, v1.0, v1.1
-or v1.2 will probably not work without modification. Commands which have
-been changed in this version of Eggdrop (or are just new commands) are
-marked with vertical bars (|) on the left.
+This list is accurate for Eggdrop v1.10.1. Most scripts written for the v1.3, v1.4,
+1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
+Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
 Output Commands
 ---------------
@@ -264,7 +261,7 @@ getuser <handle> [entry-type] [extra info]
   Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
   +----------+-------------------------------------------------------------------------------------+
-  | ACCOUNT  | returns thee a list of servivce accounts associated with the user                   |
+  | ACCOUNT  | returns the list of service accounts associated with the user                       |
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
@@ -909,7 +906,7 @@ channel add <name> [option-list]
 channel set <name> <options...>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  Description: sets options for the channel specified. The full list of possible options are given in doc/settings/mod.channels.
+  Description: sets options for the channel specified. `options` is a flat list of either +/-settings or key/value pairs. The full list of possible options are given in doc/settings/mod.channels. Note: Tcl code settings such as the need-* settings must be valid Tcl code as a single word, for example ``channel set #lamest need-op { putmsg ChanServ "op #lamest" }``
 
   Returns: nothing
 
@@ -1135,9 +1132,9 @@ nick2hand <nickname> [channel]
 
   Module: irc
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 account2nicks <account> [channel]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
@@ -2378,7 +2375,7 @@ utimers
 
   Description: lists all active secondly timers.
 
-  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of seconds left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
@@ -2826,14 +2823,14 @@ serveraddress
 ^^^^^^^
 version
 ^^^^^^^
-  Value: current bot version "1.1.2+pl1 1010201"; first item is the text version, to include a patch string if present, and second item is a numerical version
+  Value: current bot version "1.1.2+pl1.10.1201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module: core
 
 ^^^^^^^^^^^
 numversion*
 ^^^^^^^^^^^
-  Value: the current numeric bot version (for example: "1010201"). Numerical version is in the format of "MNNRRPP", where:
+  Value: the current numeric bot version (for example: "1.10.11"). Numerical version is in the format of "MNNRRPP", where:
 
   +------+---------------------------------------+
   | M    | major release number                  |
@@ -3609,6 +3606,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: triggered when a server sends an IRCv3 spec CHGHOST message to change a user's hostmask. The new host is matched against mask in the form of "#channel nick!user\@host" and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
+(57) CHANSET
+
+  bind chanset <flags> <mask> <proc>
+
+  procname <chan> <setting> <value>
+
+  Description: triggered when a channel setting is set via the partyline. flags is ignored, mask is the name of channel setting (not including any +/- prefix) and can contain wildcards. The proc will be called with the channel that the setting was set on, the text name of the setting that was changed, and the value it was set to (0/1 for -/+, string, or X:Y formatted value).
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
@@ -3662,6 +3667,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
 
 (19) RAWT  Return 1 to ask the bot not to process the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
+
+(20) CHANSET Return 1 to prevent the channel setting from being changed.
 
 Control Procedures
 ------------------
@@ -3781,4 +3788,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2024 Eggheads Development Team
+  Copyright (C) 1999 - 2025 Eggheads Development Team

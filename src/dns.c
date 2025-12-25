@@ -7,7 +7,7 @@
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,8 +26,6 @@
 
 #include "main.h"
 #include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include "dns.h"
 #ifdef EGG_TDNS
@@ -148,11 +146,11 @@ static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other)
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) && (
 #ifdef IPV6
         (ip->family == AF_INET6 &&
-          IN6_ARE_ADDR_EQUAL(&dcc[idx].u.dns->ip->addr.s6.sin6_addr,
+          IN6_ARE_ADDR_EQUAL(&dcc[idx].sockname.addr.s6.sin6_addr,
                              &ip->addr.s6.sin6_addr)) ||
         (ip->family == AF_INET &&
 #endif
-          (dcc[idx].u.dns->ip->addr.s4.sin_addr.s_addr ==
+          (dcc[idx].sockname.addr.s4.sin_addr.s_addr ==
                               ip->addr.s4.sin_addr.s_addr)))
 #ifdef IPV6
        )
@@ -182,10 +180,7 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
         !strcasecmp(dcc[idx].u.dns->host, hostn)) {
       if (ok) {
-        if (dcc[idx].u.dns->ip)
-          memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
-        else
-          memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
+        memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
         dcc[idx].u.dns->dns_success(idx);
       } else
         dcc[idx].u.dns->dns_failure(idx);
@@ -504,6 +499,7 @@ void *thread_dns_hostbyip(void *arg)
 
   i = getnameinfo((const struct sockaddr *) &addr->addr.sa, addr->addrlen,
                   dtn->host, sizeof dtn->host, NULL, 0, 0);
+  pthread_mutex_lock(&dtn->mutex);
   if (!i)
     *dtn->strerror = 0;
   else {
@@ -515,7 +511,6 @@ void *thread_dns_hostbyip(void *arg)
 #endif
       inet_ntop(AF_INET, &addr->addr.s4.sin_addr.s_addr, dtn->host, sizeof dtn->host);
   }
-  pthread_mutex_lock(&dtn->mutex);
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
@@ -530,6 +525,7 @@ void *thread_dns_ipbyhost(void *arg)
 
   error = getaddrinfo(dtn->host, NULL, NULL, &res0);
   memset(addr, 0, sizeof *addr);
+  pthread_mutex_lock(&dtn->mutex);
   if (!error) {
     *dtn->strerror = 0;
 #ifdef IPV6
@@ -549,7 +545,7 @@ void *thread_dns_ipbyhost(void *arg)
         addr->family = res->ai_family;
         addr->addrlen = res->ai_addrlen;
         memcpy(&addr->addr.sa, res->ai_addr, res->ai_addrlen);
-	error = 0;
+        error = 0;
         *dtn->strerror = 0;
         break;
       }
@@ -563,11 +559,11 @@ void *thread_dns_ipbyhost(void *arg)
   }
   else if (error == EAI_NONAME)
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): not known");
-  else if (error == EAI_SYSTEM)
-    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: %s", gai_strerror(error), strerror(errno));
-  else
+  else if (error == EAI_SYSTEM) {
+    /* print raw errno, dont use strerror() in thread and dont use strerror_r() due to GNU / POSIX portability complexity */
+    snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s: errno %i", gai_strerror(error), errno);
+  } else
     snprintf(dtn->strerror, sizeof dtn->strerror, "dns: thread_dns_ipbyhost(): getaddrinfo(): %s", gai_strerror(error));
-  pthread_mutex_lock(&dtn->mutex);
   close(dtn->fildes[1]);
   pthread_mutex_unlock(&dtn->mutex);
   return NULL;
