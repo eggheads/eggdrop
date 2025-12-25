@@ -54,6 +54,9 @@ extern int (*rfc_ncasecmp) (const char *, const char *, int);
 extern int (*rfc_toupper) (int);
 extern int (*rfc_tolower) (int);
 extern int (*match_noterej) (struct userrec *, char *);
+extern void (*webui_dcc_telnet_hostresolved) (int, int);
+extern size_t (*webui_frame) (char **, char *, size_t);
+extern void (*webui_unframe) (int, char *, int *);
 #endif
 
 /* botcmd.c */
@@ -136,6 +139,7 @@ void dupwait_notify(char *);
 #ifdef TLS
 int dcc_fingerprint(int);
 #endif
+void dcc_telnet_hostresolved2(int, int);
 
 /* dccutil.c */
 int increase_socks_max(void);

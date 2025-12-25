@@ -772,6 +772,8 @@ static void mainloop(int toplevel)
               itraffic_irc_today += strlen(buf) + 1;
             else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
               itraffic_dcc_today += strlen(buf) + 1;
+            else if (!strncmp(dcc[idx].type->name, "WEBUI", 5))
+              itraffic_dcc_today += i;
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
               itraffic_dcc_today += strlen(buf) + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
