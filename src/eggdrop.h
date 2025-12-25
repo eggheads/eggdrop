@@ -352,6 +352,7 @@ struct dcc_t {
     struct dns_info *dns;
     struct dupwait_info *dupwait;
     int ident_sock;
+    int webui_listen_idx;
     void *other;
   } u;                          /* Special use depending on type        */
 };
@@ -446,7 +447,9 @@ struct dns_info {
   char *cbuf;                   /* temporary buffer. Memory will be free'd
                                  * as soon as dns_info is free'd           */
   char *cptr;                   /* temporary pointer                       */
-  sockname_t *ip;               /* pointer to sockname with ipv4/6 address */
+  /* sockname with ipv4/6 address is dcc[i].sockname. we must not link that
+   * pointer here, because dcc array can be realloced
+   */
   int ibuf;                     /* temporary buffer for one integer        */
   char dns_type;                /* lookup type, e.g. RES_HOSTBYIP          */
   struct dcc_table *type;       /* type of the dcc table we are making the
@@ -492,6 +495,7 @@ struct dupwait_info {
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
 #define STAT_SERV    0x00100    /* this is a server connection          */
+#define STAT_WS      0x00200    /* webui websocket                      */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -603,6 +607,7 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#define SOCK_WS         0x1000  /* webui websocket                      */
 
 /* Flags to sock_has_data
  */

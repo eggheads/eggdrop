@@ -212,7 +212,8 @@ tcluser.o: tcluser.c main.h ../config.h ../eggint.h ../lush.h lang.h \
 tls.o: tls.c main.h ../config.h ../eggint.h ../lush.h lang.h eggdrop.h \
  compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h tclhash.h \
  chan.h users.h compat/compat.h compat/base64.h compat/inet_aton.h \
- ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h
+ ../src/main.h compat/snprintf.h compat/explicit_bzero.h compat/strlcpy.h \
+ version.h
 userent.o: userent.c main.h ../config.h ../eggint.h ../lush.h lang.h \
  eggdrop.h compat/in6.h flags.h proto.h misc_file.h cmdt.h tclegg.h \
  tclhash.h chan.h users.h compat/compat.h compat/base64.h \

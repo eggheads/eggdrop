@@ -27,5 +27,5 @@
  */
 
 #define EGG_STRINGVER "1.10.1"
-#define EGG_NUMVER 1100101
-#define EGG_PATCH "iprehash"
+#define EGG_NUMVER 1100102
+#define EGG_PATCH "webui"

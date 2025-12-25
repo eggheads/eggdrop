@@ -1647,8 +1647,7 @@ struct user_entry *find_user_entry(struct user_entry_type *et,
   struct user_entry **e, *t;
 
   for (e = &(u->entries); *e; e = &((*e)->next)) {
-    if (((*e)->type == et) ||
-        ((*e)->name && !strcasecmp((*e)->name, et->name))) {
+    if (((*e)->type == et) || !strcasecmp((*e)->type->name, et->name)) {
       t = *e;
       *e = t->next;
       t->next = u->entries;

@@ -1923,7 +1923,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
     dcc[i].port = atoi(prt);
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-    dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
@@ -2080,7 +2079,7 @@ static void server_die()
     dprintf(-serv, "%s\n", msg);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[->] %s", msg);
-    sleep(3);                   /* Give the server time to understand */
+    sleep(1); /* Give the server time to understand. 1s should be enough. */
   }
   nuke_server(NULL);
 }
