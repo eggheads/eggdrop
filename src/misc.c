@@ -1407,9 +1407,10 @@ void show_banner(int idx)
 void make_rand_str_from_chars(char *s, const int len, char *chars)
 {
   int i;
+  size_t chars_len = strlen(chars);
 
   for (i = 0; i < len; i++)
-    s[i] = chars[randint(strlen(chars))];
+    s[i] = chars[randint(chars_len)];
   s[len] = 0;
 }
 
