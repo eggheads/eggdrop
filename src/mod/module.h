@@ -532,7 +532,8 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define findsock ((int(*)(int))global[327])
 /* 328 - 331 */
 #define stealth_telnets (*(int *)(global[328]))
-
+#define parse_irc ((parsed_irc_t (*)(char *))global[329])
+#define join_str_array ((char *(*)(char **, int, char *, char *, size_t))global[330])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

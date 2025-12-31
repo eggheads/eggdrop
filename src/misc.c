@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
+#include "src/eggdrop.h"
 #include "tandem.h"
 #include "modules.h"
 
@@ -267,6 +268,60 @@ char *newsplit(char **rest)
     *o++ = 0;
   *rest = o;
   return r;
+}
+
+// WARNING: modifies original text
+// Split IRC text into words (without the "from" component, which could also start with ':')
+// - replace all ' ' with \0, splitting into words
+// - if a word starts with ':' it is the last word, it can contain spaces
+// - return argc/argv structure (pointers into original text)
+struct parsed_irc parse_irc(char *text)
+{
+  struct parsed_irc result = {.argc = 0};
+
+  while (*text) {
+    while (*text == ' ') {
+      *text++ = '\0';
+    }
+    if (!*text) {
+      break;
+    }
+    if (result.argc == MAX_IRC_TOKENS - 1) {
+      putlog(LOG_MISC, "*", "parse_irc() error: too many tokens, PLEASE REPORT THIS BUG");
+      result.argv[result.argc++] = text;
+      break;
+    } else if (*text == ':') {
+      *text++ = '\0';
+      result.argv[result.argc++] = text;
+      break;
+    } else {
+      result.argv[result.argc++] = text;
+      while (*text && *text != ' ') {
+        text++;
+      }
+    }
+  }
+
+  return result;
+}
+
+char *join_str_array(char **argv, int argc, char *delim, char *outbuf, size_t outbufsiz)
+{
+  size_t written = 0;
+
+  if (!argc) {
+    outbuf[0] = '\0';
+    return outbuf;
+  }
+
+  for (int i = 0; i < argc; i++) {
+    written += snprintf(outbuf + written, outbufsiz - written, "%s%s", argv[i], i == argc - 1 ? "" : delim);
+    if (written >= outbufsiz) {
+      written = outbufsiz - 1;
+      break;
+    }
+  }
+  return outbuf;
 }
 
 /* maskhost(), modified to support custom mask types, as defined

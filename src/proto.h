@@ -236,6 +236,8 @@ void check_logsize(void);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);
 void remove_crlf(char **);
+parsed_irc_t parse_irc(char *);
+char *join_str_array(char **, int, char *, char *, size_t);
 char *newsplit(char **);
 char *splitnick(char **);
 void stridx(char *, char *, int);

@@ -747,6 +747,12 @@ enum {
   #define MAX(a,b) (((a)>(b))?(a):(b))
 #endif
 
+#define MAX_IRC_TOKENS 64 // TODO: does this make sense?
+typedef struct parsed_irc {
+  size_t argc;
+  char *argv[MAX_IRC_TOKENS];
+} parsed_irc_t;
+
 #ifdef EGG_TDNS
 #include <pthread.h>
 #define DTN_TYPE_HOSTBYIP 0

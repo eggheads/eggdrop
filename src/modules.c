@@ -632,7 +632,9 @@ Function global_table[] = {
   (Function) dcc_telnet_hostresolved2,
   (Function) findsock,
 /* 328 - 331 */
-  (Function) & stealth_telnets    /* int                                 */
+  (Function) & stealth_telnets,   /* int                                 */
+  (Function) parse_irc,
+  (Function) join_str_array,
 };
 
 void init_modules(void)
