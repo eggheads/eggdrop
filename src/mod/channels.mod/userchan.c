@@ -413,7 +413,8 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
   }
 }
 
-/* Note: If first char of note is '*' it's a sticky ban.
+/* Note: If first char of note is '*' it's a sticky ban, if first char is $
+ * it's an extended ban
  */
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
                     time_t expire_time, int flags)
@@ -422,9 +423,14 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  /* Choke check: fix broken bans (must have '!' and '@') */
-  fix_broken_mask(host, ban, sizeof host);
-
+  /* Choke check: fix broken bans (must have '!' and '@') 
+   * unless it is an extended ban. It's a brave new world.
+   */
+  if (note[0] != '$') {
+    fix_broken_mask(host, ban, sizeof host);
+  } else {
+    strlcpy(host, ban, sizeof host);
+  }
   if ((me = module_find("server", 0, 0)) && me->funcs) {
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);

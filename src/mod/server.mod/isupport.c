@@ -132,6 +132,23 @@ int isupport_parseint(const char *key, const char *value, int min, int max, int 
   return 0;
 }
 
+/* Parse a 005 value that is expected to be a str.
+   Args are:
+    - key
+    - value (a string) 
+    - default value to use if not present 
+ */
+int isupport_parsestr(const char *key, const char *value, char *defaultvalue, int *dst)
+{
+// ????
+  if (!value) {
+    *dst = defaultvalue;
+    return 0;
+  }
+
+
+}
+
 /*** isupport key record managing functions ***/
 
 static void isupport_free(struct isupport *data) {
@@ -336,6 +353,7 @@ rollback:
   return (size_t)(bufptr - buf);
 }
 
+/* Takes RPL_ISUPPORT and breaks it into key/value pairs */
 static void isupport_parse(const char *str,
     void (*set_cb)(const char *key, size_t keylen, const char *v, size_t vlen))
 {
@@ -506,6 +524,7 @@ void isupport_report(int idx, const char *prefix, int details)
   }
 }
 
+/* PREFIX=(qaohv)~&@%+ */
 static const char *isupport_get_prefixchars(void)
 {
   const char *str = isupport_get("PREFIX", strlen("PREFIX"));

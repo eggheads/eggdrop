@@ -2860,6 +2860,12 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
+  } else if (!strcmp(key, "PREFIX")) {
+    const char *str = isupport_get("PREFIX", strlen("PREFIX")); 
+    putlog(LOG_MISC, "*", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXPREFIX IS %s", str);
+  } else if (!strcmp(key, "EXTBAN")) {
+    const char *str = isupport_get("EXTBAN", strlen("EXTBAN"));
+    putlog(LOG_MISC, "*", "!!!!!!!!!!!!!!!!!!!!!!!ZOMG EXTBANS is %s", str); 
   }
   return 0;
 }

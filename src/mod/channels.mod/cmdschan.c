@@ -38,14 +38,45 @@ static void truncate_mask_hostname(char *s) {
   }
 }
 
+static int match_extended(const char *token, const char *value, const char *fullmask)
+{
+    /* channel match */
+    if (!strcmp(token, "channel") || !strcmp(token, "j"))
+//      return match_channel(value, fullmask);
+      return 1;
+
+    /* realname match */
+    if (!strcmp(token, "realname") || !strcmp(token, "r"))
+//      return regex_match(value, fullmask);
+      return 1;
+
+    /* Account name */
+    if (!strcmp(token, "account") || !strcmp(token, "R"))
+//      return match_account(value, fullmask);
+      return 1;
+
+    /* TLS / secure-connection flag */
+    if (!strcmp(token, "tls") || !strcmp(token, "z"))
+//      return match_tls_flag(value, fullmask);
+      return 1;
+
+    /* Unknown token/no match */
+    return 0;
+}
+
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
+  char token[64]; // fix length
+  char value[512]; // fix length
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
   struct chanset_t *chan = NULL;
   module_entry *me;
+  int is_extended = 0;                        //Move up top
+  const char *colon = NULL;                   // Move up top
+  int token_len;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XyXdXhXm>] [reason]\n");
@@ -115,22 +146,48 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         return;
       }
     }
-    if (!par[0])
-      par = "requested";
-    else if (strlen(par) > MASKREASON_MAX)
-      par[MASKREASON_MAX] = 0;
-    if (strlen(who) > UHOSTMAX - 4)
+    if (strlen(who) > UHOSTMAX - 4) {
       who[UHOSTMAX - 4] = 0;
-    /* Fix missing ! or @ BEFORE checking against myself */
-    if (!strchr(who, '!')) {
-      if (!strchr(who, '@'))
-        egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick ban */
-      else
-        egg_snprintf(s, sizeof s, "*!%s", who);
-    } else if (!strchr(who, '@'))
-      egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
-    else
+    }
+    /* Check for extended ban */
+    if (who[0] == '$') {
+      is_extended = 1;
       strlcpy(s, who, sizeof s);
+    }
+    if (is_extended) {
+      if (!par[0]) {
+        par = "$requested";
+      } else par = "requested";
+      if (strlen(par) > MASKREASON_MAX) {
+        par[MASKREASON_MAX] = 0;
+      }
+// Token_len is how many tokens are before the :
+// value is what comes after the :
+      colon = strchr(who + 1, ':');
+      // add validation stuff
+      token_len = colon - (who + 1);
+      if (token_len < sizeof(token)) {
+        strlcpy(token, who + 1, token_len);
+/* Check myself as part of these checks
+        if (match_extended(token, value, who)) {
+          dprintf(idx, "I'm not going to ban myself.\n");
+          putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, who);
+          return;
+        }
+*/
+      }
+    /* Fix missing ! or @ BEFORE checking against myself */
+    } else if (!strchr(who, '!')) {
+      if (!strchr(who, '@')) {
+        egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick ban */
+      } else {
+        egg_snprintf(s, sizeof s, "*!%s", who);
+      }
+    } else if (!strchr(who, '@')) {
+        egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
+    } else {
+      strlcpy(s, who, sizeof s);
+    }
     if ((me = module_find("server", 0, 0)) && me->funcs) {
       egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
@@ -174,9 +231,11 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
                s, par);
         dprintf(idx, "New ban: %s (%s)\n", s, par);
       }
-      if ((me = module_find("irc", 0, 0)))
-        for (chan = chanset; chan != NULL; chan = chan->next)
+      if ((me = module_find("irc", 0, 0))) {
+        for (chan = chanset; chan != NULL; chan = chan->next) {
           (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+        }
+      }
     }
   }
 }
