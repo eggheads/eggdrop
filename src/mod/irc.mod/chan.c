@@ -2860,6 +2860,11 @@ static void update_chanmodes(mode_info_t *modes, int is_prefix)
       }
     }
   }
+  if (!is_prefix) {
+    // assume that if +e/+I are list-type modes that they are exempts and invites
+    use_exempts = (MODE_TYPE('e') == MODETYPE_LIST);
+    use_invites = (MODE_TYPE('I') == MODETYPE_LIST);
+  }
 }
 
 // CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz

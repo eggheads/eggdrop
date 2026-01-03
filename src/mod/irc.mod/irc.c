@@ -1198,9 +1198,6 @@ static void do_nettype()
   case NETT_HYBRID_EFNET:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 100;
     max_exempts = 100;
     max_invites = 100;
@@ -1211,9 +1208,6 @@ static void do_nettype()
   case NETT_LIBERA:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 1;
-    use_exempts = 1;
-    use_invites = 1;
     max_exempts = 100;
     max_invites = 100;
     max_bans = 100;
@@ -1224,9 +1218,6 @@ static void do_nettype()
   case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 1;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 100;
     max_exempts = 100;
     max_invites = 100;
@@ -1237,9 +1228,6 @@ static void do_nettype()
   case NETT_IRCNET:
     kick_method = 4;
     modesperline = 3;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 64;
     max_exempts = 64;
     max_invites = 64;
@@ -1250,9 +1238,6 @@ static void do_nettype()
   case NETT_UNDERNET:
     kick_method = 1;
     modesperline = 6;
-    use_354 = 1;
-    use_exempts = 0;
-    use_invites = 0;
     max_bans = 100;
     max_exempts = 0;
     max_invites = 0;
@@ -1263,9 +1248,6 @@ static void do_nettype()
   case NETT_DALNET:
     kick_method = 4;
     modesperline = 6;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 200;
     max_exempts = 100;
     max_invites = 100;
@@ -1276,9 +1258,6 @@ static void do_nettype()
   case NETT_QUAKENET:
     kick_method = 1;
     modesperline = 6;
-    use_354 = 1;
-    use_exempts = 0;
-    use_invites = 0;
     max_bans = 45;
     max_exempts = 0;
     max_invites = 0;
@@ -1289,9 +1268,6 @@ static void do_nettype()
   case NETT_RIZON:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 250;
     max_exempts = 250;
     max_invites = 250;
@@ -1304,9 +1280,6 @@ static void do_nettype()
     twitch = 1;
     kick_method = 1;
     modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 100;
     max_exempts = 100;
     max_invites = 100;
