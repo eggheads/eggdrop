@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2024 Eggheads Development Team
+ * Copyright (C) 2020 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,6 @@
 #include "src/mod/server.mod/server.h"
 #include "python.h"
 
-//static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
 
 #undef global

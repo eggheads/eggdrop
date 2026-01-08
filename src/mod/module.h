@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -528,6 +528,10 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 324 - 327 */
 #define find_member_from_nick ((memberlist * (*) (char *))global[324])
 #define get_user_from_member ((struct userrec * (*) (memberlist *))global[325])
+#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[326])
+#define findsock ((int(*)(int))global[327])
+/* 328 - 331 */
+#define stealth_telnets (*(int *)(global[328]))
 
 
 /* hostmasking */

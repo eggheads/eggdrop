@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1024,7 +1024,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           set_key(chan, p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           set_key(chan, p);
           *p = 0;
@@ -1047,7 +1047,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           chan->channel.maxmembers = atoi(p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           chan->channel.maxmembers = atoi(p);
           *p = 0;
@@ -1300,7 +1300,7 @@ static int got353(char *from, char *msg)
     }
     /* The assumption here is the user enabled userhost-in-names because WHO
      * is disabled. We remove the pending flag here because we'll never get a
-     * a WHO to do it
+     * WHO to do it.
      */
     if (chan) {
       chan->status |= CHAN_ACTIVE;
@@ -1429,8 +1429,7 @@ static int got367(char *from, char *origmsg)
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strlcpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1478,8 +1477,7 @@ static int got348(char *from, char *origmsg)
   if (use_exempts == 0)
     return 0;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1522,8 +1520,7 @@ static int got346(char *from, char *origmsg)
   char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   if (use_invites == 0)
     return 0;
@@ -2112,7 +2109,10 @@ static int gotjoin(char *from, char *channame)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC &
+            (chan->channel.members == 1 ? ~CHAN_RESETWHO : CHAN_RESETALL)), /* do not remove myself again */
+            1);
+
         } else {
           struct chanuserrec *cr;
 
@@ -2599,7 +2599,7 @@ static int gotmsg(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strlcpy(buf2, p1, sizeof buf2);
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
@@ -2717,7 +2717,7 @@ static int gotnotice(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strcpy(ctcp, p1);
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?

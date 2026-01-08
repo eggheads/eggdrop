@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -674,7 +674,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       }
       dcc[i].port = atoi(prt);
       (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-      dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
 #ifdef TLS
       dcc[i].ssl = ssl;
@@ -707,7 +706,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 static char *mktempfile(char *filename)
 {
   char rands[8], *tempname, *fn = filename;
-  int l;
+  size_t l;
 
   make_rand_str(rands, sizeof rands - 1);
   l = strlen(filename);

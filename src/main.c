@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,7 +71,7 @@
 #  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
 
-extern char origbotname[], botnetnick[]; 
+extern char origbotname[], botnetnick[];
 extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quiet_save;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
@@ -83,7 +83,7 @@ extern sigjmp_buf alarmret;
 time_t now;
 static int argc;
 static char **argv;
-char *argv0;
+const char *argv0;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -156,10 +156,6 @@ unsigned long itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 extern char last_bind_called[];
-#endif
-
-#ifdef TLS
-int ssl_cleanup();
 #endif
 
 void fatal(const char *s, int recoverable)
@@ -471,7 +467,7 @@ static void show_help() {
          "-t  Don't background; use terminal to simulate DCC chat.\n"
          "-m  Create userfile.\n"
          "-h  Show this help and exit.\n"
-         "-v  Show version info and exit.\n\n", argv[0]);
+         "-v  Show version info and exit.\n\n", argv0);
   bg_send_quit(BG_ABORT);
 }
 
@@ -594,10 +590,9 @@ static void core_secondly()
     if (i)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %i minute%s", i, i == 1 ? "" : "s");
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
+    if (nowtm.tm_min % 5 == 0) { /* Every 5 minutes */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-
       if (!miltime) {           /* At midnight */
         char s[26];
         int j;
@@ -638,6 +633,9 @@ static void core_secondly()
             movefile(logs[i].filename, s);
           }
       }
+#ifdef TLS
+      verify_cert_expiry(0);
+#endif
     }
   }
 }
@@ -774,6 +772,8 @@ static void mainloop(int toplevel)
               itraffic_irc_today += strlen(buf) + 1;
             else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
               itraffic_dcc_today += strlen(buf) + 1;
+            else if (!strncmp(dcc[idx].type->name, "WEBUI", 5))
+              itraffic_dcc_today += i;
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
               itraffic_dcc_today += strlen(buf) + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
@@ -980,13 +980,13 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   strlcpy(version,
-          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
 #else
   egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   strlcpy(version,
-          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2024 Eggheads Development Team",
+          "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
 #endif
 
@@ -1173,8 +1173,14 @@ int main(int arg_c, char **arg_v)
     dcc[term_z].sock = STDOUT;
     dcc[term_z].timeval = now;
     dcc[term_z].u.chat->con_flags = conmask | EGG_BG_CONMASK;
-    dcc[term_z].u.chat->strip_flags = STRIP_ALL;
     dcc[term_z].status = STAT_ECHO;
+    if (isatty(dcc[term_z].sock)) {
+      debug0("stdout is a tty");
+      dcc[term_z].status |= STAT_TELNET;
+    } else {
+      debug0("stdout is no tty");
+      dcc[term_z].u.chat->strip_flags = STRIP_ALL;
+    }
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);
     strcpy(dcc[term_z].host, "llama@console");
     add_hq_user();

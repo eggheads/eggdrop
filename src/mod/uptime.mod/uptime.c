@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 - 2024 Eggheads Development Team
+ * Copyright (C) 2001 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,15 +33,13 @@
 #define MAKING_UPTIME
 
 #include "uptime.h"
-#include "../module.h"
+#include "src/mod/module.h"
 #include "../server.mod/server.h"
 #include <netdb.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -86,8 +84,8 @@ static int uptimecount;
 static unsigned long uptimeip;
 static char uptime_version[48] = "";
 
-void check_secondly(void);
-void check_minutely(void);
+static void check_secondly(void);
+static void check_minutely(void);
 
 static int uptime_expmem()
 {
@@ -103,9 +101,9 @@ static void uptime_report(int idx, int details)
     delta_seconds = (int) (next_update - time(NULL));
     ctime_r(&next_update, next_update_at);
     next_update_at[24] = 0;
-    dprintf(idx, "      %d uptime packet%s sent\n", uptimecount,
+    dprintf(idx, "    %d uptime packet%s sent\n", uptimecount,
             (uptimecount != 1) ? "s" : "");
-    dprintf(idx, "      Approximately %-.2f hours until next update "
+    dprintf(idx, "    Approximately %-.2f hours until next update "
             "(at %s)\n", delta_seconds / 3600.0, next_update_at);
   }
 }
@@ -230,7 +228,7 @@ static int send_uptime(void)
   return len;
 }
 
-void check_minutely()
+static void check_minutely()
 {
   minutes++;
   if (minutes >= next_minutes) {
@@ -240,7 +238,7 @@ void check_minutely()
   }
 }
 
-void check_secondly()
+static void check_secondly()
 {
   seconds++;
   if (seconds >= next_seconds) {  /* DING! */

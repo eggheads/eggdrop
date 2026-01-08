@@ -56,11 +56,11 @@ Assign Permission Flags
 
 To assign an access level to a user, first read ``.help whois`` for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with::
 
-  .chattr <+flag> <handle>
+  .chattr <handle> <+flag>
 
 So to grant a user the voice flag, you would do::
 
-  .chattr +v handle
+  .chattr handle +v
 
 It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.
 

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1108,7 +1108,7 @@ static int del_server(const char *name, const char *port)
       curr = curr->next;
     }
   }
-  return found ? 0 : 3; 
+  return found ? 0 : 3;
 }
 
 /* Free a single removed server from server link list */
@@ -1677,7 +1677,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     warn = 1;
   }
   else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
-    net_type_int = NETT_OTHER; 
+    net_type_int = NETT_OTHER;
     warn = 1;
   } else {
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
@@ -1923,7 +1923,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
     dcc[i].port = atoi(prt);
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-    dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
@@ -2080,7 +2079,7 @@ static void server_die()
     dprintf(-serv, "%s\n", msg);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[->] %s", msg);
-    sleep(3);                   /* Give the server time to understand */
+    sleep(1); /* Give the server time to understand. 1s should be enough. */
   }
   nuke_server(NULL);
 }

@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -181,7 +181,7 @@ int egg_strcatn(char *dst, const char *src, size_t max)
 
 int my_strcpy(char *a, const char *b)
 {
-  char *c = b;
+  const char *c = b;
 
   while (*b)
     *a++ = *b++;
@@ -1143,7 +1143,7 @@ void debug_help(int idx)
   }
 }
 
-FILE *resolve_help(int dcc, char *file)
+static FILE *resolve_help(int dcc, char *file)
 {
 
   char s[1024];
@@ -1218,7 +1218,7 @@ static int display_tellhelp(int idx, char *file, FILE *f,
 
   if (f) {
     help_subst(NULL, NULL, 0,
-               (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+               (dcc[idx].status & (STAT_TELNET | STAT_WS)) ? 0 : HELP_IRC, NULL);
     /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
     while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
       if (s[strlen(s) - 1] == '\n')
@@ -1309,7 +1309,7 @@ void sub_lang(int idx, char *text)
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
-             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+             (dcc[idx].status & (STAT_TELNET | STAT_WS)) ? 0 : HELP_IRC, NULL);
   strlcpy(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
@@ -1350,7 +1350,7 @@ void show_motd(int idx)
   dprintf(idx, "\n");
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0,
-             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+             (dcc[idx].status & (STAT_TELNET | STAT_WS)) ? 0 : HELP_IRC, NULL);
   /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
   while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
     if (s[strlen(s) - 1] == '\n')

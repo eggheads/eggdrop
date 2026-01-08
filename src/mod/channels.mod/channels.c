@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@ static Function *global = NULL;
 
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
+
+static p_tcl_bind_list H_chanset;
 
 static struct udef_struct *udef;
 
@@ -239,6 +241,27 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
     strcat(s, " ");
     strcat(s, s1);
   }
+}
+
+static int builtin_chanset STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, " chan setting value");
+
+  CHECKVALIDITY(builtin_chanset);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+int check_tcl_chanset(const char *chan, const char *setting, const char *value)
+{
+  Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
+  Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
+  Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
+
+  return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
 }
 
 /* Returns true if this is one of the channel masks
@@ -779,7 +802,6 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
 }
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-greet",              NULL,                     0},
   {"use-info",                 &use_info,                0},
   {"quiet-save",               &quiet_save,              0},
   {"allow-ps",                 &allow_ps,                0},
@@ -1008,13 +1030,13 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");
   add_help_reference("chaninfo.help");
-  my_tcl_ints[0].val = &share_greet;
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
   read_channels(0, 0);

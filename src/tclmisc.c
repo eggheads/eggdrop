@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -294,7 +294,7 @@ static int tcl_utimer STDVAR
   if (check_timer_syntax(irp, argc, argv, utimer)) {
     return TCL_ERROR;
   }
-  x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+  x = add_timer(&utimer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
                   argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
   if (!x) {
     Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
