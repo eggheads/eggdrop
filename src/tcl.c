@@ -284,7 +284,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
       if (strlen(s) > abs(st->max)) {
-        putlog(LOG_MISC, "*", "warning: value for %s truncated to %i chars", name1, abs(st->max));
+        putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
         s[abs(st->max)] = 0;
       }
       if (st->str == botnetnick)
