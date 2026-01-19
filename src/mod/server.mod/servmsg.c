@@ -2038,7 +2038,7 @@ static void server_resolve_failure(int servidx)
 
 static void server_resolve_success(int servidx)
 {
-  char pass[121];
+  char pass[121], errstr2[128];
 
   resolvserv = 0;
   strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
@@ -2052,11 +2052,18 @@ static void server_resolve_success(int servidx)
       errstr = IRC_VHOSTWRONGNET;
     } else if (errno == EADDRNOTAVAIL) {
       errstr = IRC_VHOSTBADADDR;
+#ifdef IPV6
+    } else if (errno == ENETUNREACH) {
+      errstr = strerror(errno);
+      snprintf(errstr2, sizeof errstr2, " prefer-ipv6 %i", pref_af);
+#endif
     } else {
       errstr = strerror(errno);
     }
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-           errstr);
+    putlog(LOG_SERV, "*", "%s %s (%s ip %s port %i %s)", IRC_FAILEDCONNECT,
+           dcc[servidx].host, errstr, iptostr(&dcc[servidx].sockname.addr.sa),
+           dcc[servidx].port, errno == ENETUNREACH ? errstr2 : "");
+
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;

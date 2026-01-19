@@ -534,7 +534,7 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 static int gotauthenticate(char *from, char *msg)
 {
   char client_msg_plain[1024];
-  int client_msg_plain_len;
+  int client_msg_plain_len = 0;
 #ifdef TLS
   char server_msg_plain[1024];
   char error_msg[1050]; /* snprintf() truncation should be tolerable */

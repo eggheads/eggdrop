@@ -439,7 +439,7 @@ void answer_local_whom(int idx, int chan)
     dprintf(idx, "%s (+: %s, *: %s)\n", BOT_BOTNETUSERS, BOT_PARTYLINE,
             BOT_LOCALCHAN);
   else if (chan > 0) {
-    simple_sprintf(idle, "assoc %d", chan);
+    snprintf(idle, sizeof idle, "assoc %d", chan);
     if ((Tcl_Eval(interp, idle) != TCL_OK) || tcl_resultempty())
       dprintf(idx, "%s %s%d:\n", BOT_USERSONCHAN,
               (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
@@ -774,8 +774,8 @@ void dump_links(int z)
       p = bot->uplink->bot;
 #ifndef NO_OLD_BOTNET
     if (b_numver(z) < NEAT_BOTNET)
-      l = simple_sprintf(x, "nlinked %s %s %c%d\n", bot->bot,
-                         p, bot->share, bot->ver);
+      l = snprintf(x, sizeof x, "nlinked %s %s %c%d\n", bot->bot,
+                   p, bot->share, bot->ver);
     else
 #endif
       l = simple_sprintf(x, "n %s %s %c%D\n", bot->bot, p,
@@ -790,10 +790,10 @@ void dump_links(int z)
             (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET)
-            l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
-                               botnetnick, dcc[i].nick,
-                               dcc[i].u.chat->channel, geticon(i),
-                               dcc[i].sock, dcc[i].host);
+            l = snprintf(x, sizeof x, "join %s %s %d %c%ld %s\n",
+                         botnetnick, dcc[i].nick,
+                         dcc[i].u.chat->channel, geticon(i),
+                         dcc[i].sock, dcc[i].host);
           else
 #endif
             l = simple_sprintf(x, "j !%s %s %D %c%D %s\n",
@@ -804,12 +804,12 @@ void dump_links(int z)
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET) {
             if (dcc[i].u.chat->away) {
-              l = simple_sprintf(x, "away %s %d %s\n", botnetnick,
-                                 dcc[i].sock, dcc[i].u.chat->away);
+              l = snprintf(x, sizeof x, "away %s %ld %s\n", botnetnick,
+                           dcc[i].sock, dcc[i].u.chat->away);
               dprint(z, x, l);
             }
-            l = simple_sprintf(x, "idle %s %d %d\n", botnetnick,
-                               dcc[i].sock, now - dcc[i].timeval);
+            l = snprintf(x, sizeof x, "idle %s %ld %" PRId64 "\n", botnetnick,
+                         dcc[i].sock,  (int64_t) (now - dcc[i].timeval));
           } else
 #endif
             l = simple_sprintf(x, "i %s %D %D %s\n", botnetnick,
@@ -822,10 +822,10 @@ void dump_links(int z)
     for (i = 0; i < parties; i++) {
 #ifndef NO_OLD_BOTNET
       if (b_numver(z) < NEAT_BOTNET)
-        l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
-                           party[i].bot, party[i].nick,
-                           party[i].chan, party[i].flag,
-                           party[i].sock, party[i].from);
+        l = snprintf(x, sizeof x, "join %s %s %d %c%d %s\n",
+                     party[i].bot, party[i].nick,
+                     party[i].chan, party[i].flag,
+                     party[i].sock, party[i].from);
       else
 #endif
         l = simple_sprintf(x, "j %s %s %D %c%D %s\n",
@@ -837,12 +837,12 @@ void dump_links(int z)
 #ifndef NO_OLD_BOTNET
         if (b_numver(z) < NEAT_BOTNET) {
           if (party[i].status & PLSTAT_AWAY) {
-            l = simple_sprintf(x, "away %s %d %s\n", party[i].bot,
-                               party[i].sock, party[i].away);
+            l = snprintf(x, sizeof x, "away %s %d %s\n", party[i].bot,
+                         party[i].sock, party[i].away);
             dprint(z, x, l);
           }
-          l = simple_sprintf(x, "idle %s %d %d\n", party[i].bot,
-                             party[i].sock, now - party[i].timer);
+          l = snprintf(x, sizeof x, "idle %s %d %" PRId64 "\n", party[i].bot,
+                       party[i].sock, (int64_t) (now - party[i].timer));
         } else
 #endif
           l = simple_sprintf(x, "i %s %D %D %s\n", party[i].bot,
@@ -1682,9 +1682,9 @@ void check_botnet_pings()
         bot = findbot(dcc[i].nick);
         bots = bots_in_subtree(bot);
         users = users_in_subtree(bot);
-        simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)",
-                       BOT_PINGTIMEOUT, dcc[i].nick, bots,
-                       (bots != 1) ? "s" : "", users, (users != 1) ? "s" : "");
+        snprintf(s, sizeof s, "%s: %s (lost %d bot%s and %d user%s)",
+                 BOT_PINGTIMEOUT, dcc[i].nick, bots,
+                 (bots != 1) ? "s" : "", users, (users != 1) ? "s" : "");
         putlog(LOG_BOTS, "*", "%s.", s);
         botnet_send_unlinked(i, dcc[i].nick, s);
         killsock(dcc[i].sock);
@@ -1709,10 +1709,10 @@ void check_botnet_pings()
             bot = findbot(dcc[i].nick);
             bots = bots_in_subtree(bot);
             users = users_in_subtree(bot);
-            simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-                           BOT_DISCONNECTED, dcc[i].nick, BOT_BOTNOTLEAFLIKE,
-                           bots, (bots != 1) ? "s" : "", users, (users != 1) ?
-                           "s" : "");
+            snprintf(s, sizeof s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+                     BOT_DISCONNECTED, dcc[i].nick, BOT_BOTNOTLEAFLIKE,
+                     bots, (bots != 1) ? "s" : "", users, (users != 1) ?
+                     "s" : "");
             putlog(LOG_BOTS, "*", "%s.", s);
             botnet_send_unlinked(i, dcc[i].nick, s);
             killsock(dcc[i].sock);
@@ -1736,9 +1736,9 @@ void zapfbot(int idx)
   bot = findbot(dcc[idx].nick);
   bots = bots_in_subtree(bot);
   users = users_in_subtree(bot);
-  simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)", BOT_BOTDROPPED,
-                 dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
-                 (users != 1) ? "s" : "");
+  snprintf(s, sizeof s, "%s: %s (lost %d bot%s and %d user%s)", BOT_BOTDROPPED,
+           dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
+           (users != 1) ? "s" : "");
   putlog(LOG_BOTS, "*", "%s.", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);

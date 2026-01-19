@@ -23,40 +23,43 @@
 #ifndef _EGG_MOD_MODVALS_H
 #define _EGG_MOD_MODVALS_H
 
-/* #define HOOK_GET_FLAGREC       0     */
-/* #define HOOK_BUILD_FLAGREC     1     */
-/* #define HOOK_SET_FLAGREC       2     */
-#define HOOK_READ_USERFILE        3
-#define HOOK_REHASH               4
-#define HOOK_MINUTELY             5
-#define HOOK_DAILY                6
-#define HOOK_HOURLY               7
-#define HOOK_USERFILE             8
-#define HOOK_SECONDLY             9
-#define HOOK_PRE_REHASH          10
-#define HOOK_IDLE                11
-#define HOOK_5MINUTELY           12
-#define HOOK_LOADED              13
-#define HOOK_BACKUP              14
-#define HOOK_DIE                 15
-#define HOOK_PRE_SELECT          16
-#define HOOK_POST_SELECT         17
+/* #define HOOK_GET_FLAGREC            0 */
+/* #define HOOK_BUILD_FLAGREC          1 */
+/* #define HOOK_SET_FLAGREC            2 */
+#define HOOK_READ_USERFILE             3
+#define HOOK_REHASH                    4
+#define HOOK_MINUTELY                  5
+#define HOOK_DAILY                     6
+#define HOOK_HOURLY                    7
+#define HOOK_USERFILE                  8
+#define HOOK_SECONDLY                  9
+#define HOOK_PRE_REHASH               10
+#define HOOK_IDLE                     11
+#define HOOK_5MINUTELY                12
+#define HOOK_LOADED                   13
+#define HOOK_BACKUP                   14
+#define HOOK_DIE                      15
+#define HOOK_PRE_SELECT               16
+#define HOOK_POST_SELECT              17
 
-#define REAL_HOOKS               18
+#define REAL_HOOKS                    18
 
-#define HOOK_SHAREOUT           105
-#define HOOK_SHAREIN            106
-#define HOOK_ENCRYPT_PASS       107
-#define HOOK_QSERV              108
-#define HOOK_ADD_MODE           109
-#define HOOK_MATCH_NOTEREJ      110
-#define HOOK_RFC_CASECMP        111
-#define HOOK_DNS_HOSTBYIP       112
-#define HOOK_DNS_IPBYHOST       113
-#define HOOK_ENCRYPT_STRING     114
-#define HOOK_DECRYPT_STRING     115
-#define HOOK_ENCRYPT_PASS2      116
-#define HOOK_VERIFY_PASS2       117
+#define HOOK_SHAREOUT                105
+#define HOOK_SHAREIN                 106
+#define HOOK_ENCRYPT_PASS            107
+#define HOOK_QSERV                   108
+#define HOOK_ADD_MODE                109
+#define HOOK_MATCH_NOTEREJ           110
+#define HOOK_RFC_CASECMP             111
+#define HOOK_DNS_HOSTBYIP            112
+#define HOOK_DNS_IPBYHOST            113
+#define HOOK_ENCRYPT_STRING          114
+#define HOOK_DECRYPT_STRING          115
+#define HOOK_ENCRYPT_PASS2           116
+#define HOOK_VERIFY_PASS2            117
+#define HOOK_DCC_TELNET_HOSTRESOLVED 118
+#define HOOK_WEBUI_FRAME             119
+#define HOOK_WEBUI_UNFRAME           120
 
 /* These are FIXED once they are in a release they STAY */
 #define MODCALL_START             0

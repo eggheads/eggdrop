@@ -1300,7 +1300,7 @@ static int got353(char *from, char *msg)
     }
     /* The assumption here is the user enabled userhost-in-names because WHO
      * is disabled. We remove the pending flag here because we'll never get a
-     * a WHO to do it
+     * WHO to do it.
      */
     if (chan) {
       chan->status |= CHAN_ACTIVE;
@@ -2109,7 +2109,10 @@ static int gotjoin(char *from, char *channame)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC &
+            (chan->channel.members == 1 ? ~CHAN_RESETWHO : CHAN_RESETALL)), /* do not remove myself again */
+            1);
+
         } else {
           struct chanuserrec *cr;
 
