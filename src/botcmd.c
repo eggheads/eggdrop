@@ -123,7 +123,7 @@ static void bot_chan2(int idx, char *msg)
     *p = 0;
   p = strchr(from, '@');
   if (p) {
-    egg_snprintf(TBUF, sizeof(TBUF), "<%s> %s", from, msg);
+    snprintf(TBUF, sizeof TBUF, "<%s> %s", from, msg);
     *p = 0;
     if (!partyidle(p + 1, from)) {
       *p = '@';
@@ -133,7 +133,7 @@ static void bot_chan2(int idx, char *msg)
     *p = '@';
     p++;
   } else {
-    sprintf(TBUF, "*** (%s) %s", from, msg);
+    snprintf(TBUF, sizeof TBUF, "*** (%s) %s", from, msg);
     p = from;
   }
   i = nextbot(p);
@@ -452,7 +452,7 @@ static void bot_who(int idx, char *par)
   from = newsplit(&par);
   p = strchr(from, '@');
   if (!p) {
-    sprintf(TBUF, "%s@%s", from, dcc[idx].nick);
+    snprintf(TBUF, sizeof TBUF, "%s@%s", from, dcc[idx].nick);
     from = TBUF;
   }
   to = newsplit(&par);
@@ -805,7 +805,7 @@ static void bot_trace(int idx, char *par)
 
   from = newsplit(&par);
   dest = newsplit(&par);
-  simple_sprintf(TBUF, "%s:%s", par, botnetnick);
+  snprintf(TBUF, sizeof TBUF, "%s:%s", par, botnetnick);
   botnet_send_traced(idx, from, TBUF);
   if (strcasecmp(dest, botnetnick) && ((i = nextbot(dest)) > 0))
     botnet_send_trace(i, from, dest, par);
@@ -1303,7 +1303,7 @@ static void bot_join(int idx, char *par)
   }
   u = get_user_by_handle(userlist, nick);
   if (u) {
-    sprintf(TBUF, "@%s", bot);
+    snprintf(TBUF, sizeof TBUF, "@%s", bot);
     touch_laston(u, TBUF, now);
   }
   i = addparty(bot, nick, chan, y[0], sock, par, &i2);
@@ -1352,7 +1352,7 @@ static void bot_part(int idx, char *par)
     sock = partysock(bot, nick);
   u = get_user_by_handle(userlist, nick);
   if (u) {
-    sprintf(TBUF, "@%s", bot);
+    snprintf(TBUF, sizeof TBUF, "@%s", bot);
     touch_laston(u, TBUF, now);
   }
   if ((partyidx = getparty(bot, sock)) != -1) {
