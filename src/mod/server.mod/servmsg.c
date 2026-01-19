@@ -1922,26 +1922,26 @@ static void server_resolve_success(int);
 static void server_resolve_failure(int);
 
 #ifdef TLS
-static size_t print_host_ssl_port(char *str, size_t size, char *host, int ssl,
+static void print_host_ssl_port(char *str, size_t size, char *host, int ssl,
                                 int port) {
 #else
-static size_t print_host_ssl_port(char *str, size_t size, char *host, int port) {
+static void print_host_ssl_port(char *str, size_t size, char *host, int port) {
 #endif
   char buf[sizeof(struct in6_addr)];
 
 #ifdef IPV6
   if (inet_pton(AF_INET6, host, buf)) {
 #ifdef TLS
-    return snprintf(str, size, "[%s]:%s%d", host, use_ssl ? "+" : "", port);
+    snprintf(str, size, "[%s]:%s%d", host, use_ssl ? "+" : "", port);
 #else
-    return snprintf(str, size, "[%s]:%d", host, port);
+    snprintf(str, size, "[%s]:%d", host, port);
 #endif /* TLS */
   } else {
 #endif /* IPV6 */
 #ifdef TLS
-    return snprintf(str, size, "%s:%s%d", host, use_ssl ? "+" : "", port);
+    snprintf(str, size, "%s:%s%d", host, use_ssl ? "+" : "", port);
 #else
-    return snprintf(str, size, "%s:%d", host, port);
+    snprintf(str, size, "%s:%d", host, port);
 #endif
 #ifdef IPV6
   }
