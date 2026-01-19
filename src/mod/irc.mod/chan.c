@@ -2776,6 +2776,73 @@ static int gotaccount(char *from, char *msg) {
   return 0;
 }
 
+/*
+ * Parse EXTBAN=prefix,types
+ * Examples:
+ *  EXTBAN=~,cqnr
+ *  EXTBAN=~,qjncrRa
+ *  EXTBAN=,ABCNOQRSTUcjmprsz
+ */
+void parse_extban(const char *value)
+{
+    const char *comma;
+    size_t len;
+
+    if (!value || !*value) {
+      /* No EXTBAN value at all */
+      putlog(LOG_MISC, "*", "Error while parsing ISUPPORT value for EXTBAN: No values provided");
+      return;
+    }
+
+    comma = strchr(value, ',');
+    if (!comma) {
+      putlog(LOG_MISC, "*", "Error while parsing ISUPPORT value for EXTBAN: No ',' delimiter provided");
+      return;
+    }
+    /* Handle prefix (may be empty) */
+    len = (comma - value);
+    if (len == 0) {
+      /* No prefix */
+      extban_prefix = NULL;
+    } else {
+      extban_prefix = strndup(value, len);
+    }
+    /* Handle types (string after comma) */
+    extban_types = strndup(comma + 1, sizeof extban_types);
+}
+
+/*
+ * Parse ACCOUNTEXTBAN=short,long (and no limit on values, but we're ignoring
+ * that right now)
+ * Examples:
+ *  ACCOUNTEXTBAN=R
+ *  ACCOUNTEXTBAN=a,account
+ */
+void parse_accountextban(const char *value)
+{
+    const char *comma;
+
+    if (!value || !*value) {
+      /* No usable value */
+      putlog(LOG_MISC, "*", "Error while parsing ISUPPORT value for EXTBAN: No values provided");
+      return;
+    }
+
+    comma = strchr(value, ',');
+
+    if (!comma) {
+      /* Only one value */
+      accountextban1 = strdup(value);   /////// Is this wrong?
+      return;
+    }
+
+    /* First value (may be empty) */
+    accountextban1 = strdup(value);     ////////////// Is this wrong
+
+    /* Second value (may be empty) */
+    accountextban2 = strdup(comma + 1); //////////// Is this wrong
+}
+
 static int parse_maxlist(const char *value)
 {
   int tmpsum = 0, addtosum;
@@ -2861,11 +2928,18 @@ static int irc_isupport(char *key, char *isset_str, char *value)
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
   } else if (!strcmp(key, "PREFIX")) {
-    const char *str = isupport_get("PREFIX", strlen("PREFIX")); 
-    putlog(LOG_MISC, "*", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXPREFIX IS %s", str);
+    const struct isupport *str = isupport_get("PREFIX", strlen("PREFIX"));
+    putlog(LOG_MISC, "*", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXPREFIX IS %s", value);
   } else if (!strcmp(key, "EXTBAN")) {
-    const char *str = isupport_get("EXTBAN", strlen("EXTBAN"));
-    putlog(LOG_MISC, "*", "!!!!!!!!!!!!!!!!!!!!!!!ZOMG EXTBANS is %s", str); 
+    const struct isupport *str = isupport_get("EXTBAN", strlen("EXTBAN"));
+    putlog(LOG_MISC, "*", "!!!!!!!!!!!!!!!!!!!!!!!ZOMG EXTBANS is %s", value);
+    parse_extban(isset ? value : NULL);
+    putlog(LOG_MISC, "*", "!!!!!!!!!!!!!!!!!!!! prefix is %s and types are %s", extban_prefix, extban_types);
+  } else if (!strcmp(key, "ACCOUNTEXTBAN")) {
+    const struct isupport *str = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+    putlog(LOG_MISC, "*", "ZZZZZZZZZZZZZZZZZ ACCOUNTEXTBAN is %s", value);
+    parse_accountextban(isset ? value : NULL);
+    putlog(LOG_MISC, "*", "XXXXXXXXXXXXXX accountextban is %s and %s", accountextban1, accountextban2);
   }
   return 0;
 }
