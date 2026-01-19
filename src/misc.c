@@ -46,7 +46,7 @@ extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
-extern Tcl_Interp *interp;
+time_t now2_last = 0; /* cache expensive localtime() */
 
 char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
 char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
@@ -516,7 +516,6 @@ void putlog (int type, char *chname, const char *format, ...)
   char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
-  static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm t;
 
   if (now2 != now2_last) {

@@ -39,7 +39,7 @@ extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
-           noshare, ignore_time, max_socks;
+           noshare, ignore_time, max_socks, now2_last;
 #ifdef TLS
 extern SSL_CTX *ssl_ctx;
 #endif
@@ -399,6 +399,10 @@ void chanprog()
   /* Now read it */
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
+
+  /* call localtime() to update timezone and reset misc.c:putlog() time cache */
+  localtime(&now);
+  now2_last = 0;
 
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
