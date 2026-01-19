@@ -1846,7 +1846,7 @@ static void dcc_telnet_pass(int idx, int atr)
 
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & (STAT_TELNET | STAT_WS)) {
-      char dst[512], buf[512];
+      char dst[506], buf[512];
       snprintf(buf, sizeof buf, "\n%s%s\r\n",
                escape_telnet(dst, DCC_ENTERPASS, sizeof dst),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
