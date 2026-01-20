@@ -146,7 +146,7 @@ static void cmd_optimize(int idx, char *par)
  */
 static int resolve_dir(char *current, char *change, char **real, int idx)
 {
-  char *elem = NULL, *s = NULL, *new = NULL, *work = NULL, *p = NULL;
+  char *elem = NULL, *s = NULL, *new = NULL, work[PATH_MAX], *p = NULL;
   FILE *fdb = NULL;
   DIR *dir = NULL;
   filedb_entry *fdbe = NULL;
@@ -183,6 +183,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           my_free(elem);
           my_free(new);
           malloc_strcpy(*real, current);
+          if (s)
+            my_free(s);
           return 0;
         }
         (*real)[0] = 0;
@@ -196,6 +198,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(elem);
         my_free(new);
         malloc_strcpy(*real, current);
+        if (s)
+          my_free(s);
         return 0;
       }
       filedb_readtop(fdb, NULL);
@@ -207,6 +211,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(new);
         my_free(s);
         malloc_strcpy(*real, current);
+        if (s)
+          my_free(s);
         return 0;
       }
       if (!(fdbe->stat & FILE_DIR) || fdbe->sharelink) {
@@ -216,6 +222,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(new);
         my_free(s);
         malloc_strcpy(*real, current);
+        if (s)
+          my_free(s);
         return 0;
       }
       if (idx >= 0)
@@ -232,6 +240,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           my_free(new);
           my_free(s);
           malloc_strcpy(*real, current);
+          if (s)
+            my_free(s);
           return 0;
         }
       }
@@ -241,9 +251,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           s = nrealloc(s, strlen(s) + 2);
           strcat(s, "/");
       }
-      work = nmalloc(strlen(s) + strlen(elem) + 1);
-      sprintf(work, "%s%s", s, elem);
-      malloc_strcpy(*real, work);
+      snprintf(work, PATH_MAX, "%s%s", s, elem);
+      malloc_strcpy_nocheck(*real, work);
       s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
       sprintf(s, "%s%s", dccdir, *real);
     }
@@ -252,8 +261,6 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   my_free(new);
   if (elem)
     my_free(elem);
-  if (work)
-    my_free(work);
   /* Sanity check: does this dir exist? */
   s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
   sprintf(s, "%s%s", dccdir, *real);
