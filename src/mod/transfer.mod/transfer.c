@@ -35,7 +35,6 @@
 #include "src/users.h"
 #include "transfer.h"
 
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
 

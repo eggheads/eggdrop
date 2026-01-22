@@ -32,7 +32,6 @@
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
-
 #include <errno.h>
 #include <arpa/inet.h>
 
