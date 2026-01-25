@@ -2078,7 +2078,7 @@ static void server_resolve_success(int servidx)
       errstr = strerror(errno);
       snprintf(errstr2, sizeof errstr2, " prefer-ipv6 %i", pref_af);
 #endif
-    } else {
+    } else if (errno != EINPROGRESS) {
       errstr = strerror(errno);
     }
 #ifdef TLS

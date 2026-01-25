@@ -598,6 +598,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
       }
       if (res != 0) {
         debug1("net: getsockopt error %d", res);
+        errno = res;
         return -1;
       }
       return sock; /* async success! */
