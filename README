@@ -78,7 +78,7 @@ Git Development Snapshot
 
   To clone the repository, simply type:
 
-      git clone https://github.com/eggheads/eggdrop.git 
+      git clone https://github.com/eggheads/eggdrop.git
 
   Otherwise, you can download the development snapshot as a tar archive
   from:

@@ -2059,7 +2059,7 @@ static void server_resolve_failure(int servidx)
 
 static void server_resolve_success(int servidx)
 {
-  char pass[121], s[512];
+  char pass[121], errstr2[128], s[512];
 
   resolvserv = 0;
   strlcpy(pass, dcc[servidx].u.dns->cbuf, sizeof pass);
@@ -2073,6 +2073,11 @@ static void server_resolve_success(int servidx)
       errstr = IRC_VHOSTWRONGNET;
     } else if (errno == EADDRNOTAVAIL) {
       errstr = IRC_VHOSTBADADDR;
+#ifdef IPV6
+    } else if (errno == ENETUNREACH) {
+      errstr = strerror(errno);
+      snprintf(errstr2, sizeof errstr2, " prefer-ipv6 %i", pref_af);
+#endif
     } else {
       errstr = strerror(errno);
     }
@@ -2082,7 +2087,9 @@ static void server_resolve_success(int servidx)
 #else
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
 #endif
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, s, errstr);
+    putlog(LOG_SERV, "*", "%s %s (%s ip %s%s)", IRC_FAILEDCONNECT,
+           s, errstr, iptostr(&dcc[servidx].sockname.addr.sa),
+           errno == ENETUNREACH ? errstr2 : "");
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
@@ -2092,7 +2099,7 @@ static void server_resolve_success(int servidx)
                                         LOG_SERV, dcc[servidx].host, NULL)) {
 #ifdef TLS
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].ssl,
-                      dcc[servidx].port);
+                        dcc[servidx].port);
 #else
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
 #endif
