@@ -21,6 +21,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define MODULE_NAME "irc"
+#define MAKING_IRC
+
+#include "src/mod/module.h"
+#include "irc.h"
+#include "irc_proto.h"
+#include "server.mod/server.h"
+#include "channels.mod/channels.h"
+
+static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+
 static struct chanset_t *get_channel(int idx, char *chname)
 {
   struct chanset_t *chan;
@@ -1128,7 +1140,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
   }
 }
 
-static cmd_t irc_dcc[] = {
+cmd_t irc_dcc[] = {
   {"adduser",      "m|m",   (IntFunc) cmd_adduser,      NULL},
   {"deluser",      "m|m",   (IntFunc) cmd_deluser,      NULL},
   {"reset",        "m|m",   (IntFunc) cmd_reset,        NULL},

@@ -33,36 +33,19 @@
 #include <sys/utsname.h>
 
 /* Forward declarations for functions local to the irc.c translation unit */
-static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);
-static void check_tcl_invite(char *, char *, char *, char *);
-static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
-                                   p_tcl_bind_list);
-static void check_tcl_part(char *, char *, struct userrec *, char *, char *);
-static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
-                                   char *, p_tcl_bind_list);
-static int check_tcl_pubm(char *, char *, char *, char *);
-static int check_tcl_pub(char *, char *, char *, char *);
-static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
-                                    char*);
-static void check_tcl_account(char *nick, char *uhost, struct userrec *u, char *chan, char *account);
-static int check_tcl_chghost(char *, char *, char *, struct userrec *, char *, char *, char *);
-static int me_voice(struct chanset_t *);
-static int any_ops(struct chanset_t *);
-static int hand_on_chan(struct chanset_t *, struct userrec *);
-static char *getchanmode(struct chanset_t *);
-static void set_delay(struct chanset_t *, char *);
-static char *quickban(struct chanset_t *, char *);
-static int killmember(struct chanset_t *chan, char *nick);
-static void check_lonely_channel(struct chanset_t *chan);
+static int want_to_revenge(struct chanset_t *, struct userrec *,
+                           struct userrec *, char *, char *, int);
+static void punish_badguy(struct chanset_t *, char *, struct userrec *,
+                          char *, char *, int, int);
 
-static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
-static p_tcl_bind_list H_account, H_chghost;
+p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
+p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
+p_tcl_bind_list H_account, H_chghost;
 
 Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
-static int ctcp_mode;
-static int wait_split = 300;    /* Time to wait for user to return from net-split. */
+int ctcp_mode;
+int wait_split = 300;           /* Time to wait for user to return from net-split. */
 int max_bans = 30;              /* Modified by net-type 1-4 */
 int max_exempts = 20;           /* Modified by net-type 1-4 */
 int max_invites = 20;           /* Modified by net-type 1-4 */
@@ -71,33 +54,27 @@ int bounce_bans = 0;
 int bounce_exempts = 0;
 int bounce_invites = 0;
 int bounce_modes = 0;
-static int learn_users = 0;
-static int wait_info = 15;
-static int invite_key = 1;
-static int no_chanrec_info = 0;
+int learn_users = 0;
+int wait_info = 15;
+int invite_key = 1;
+int no_chanrec_info = 0;
 int modesperline = 3;           /* Number of modes per line to send. */
 int mode_buf_len = 200;         /* Maximum bytes to send in 1 mode. */
-static int use_354 = 0;         /* Use ircu's short 354 /who responses. */
-static int kick_method = 1;     /* How many kicks does the IRC network support
+int use_354 = 0;                /* Use ircu's short 354 /who responses. */
+int kick_method = 1;            /* How many kicks does the IRC network support
                                  * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
-static int keepnick = 1;        /* Keep nick */
-static int twitch = 0;          /* Is this a Twitch server? */
+int keepnick = 1;               /* Keep nick */
+int twitch = 0;                 /* Is this a Twitch server? */
 int prevent_mixing = 1;         /* Prevent mixing old/new modes */
-static int rfc_compliant = 1;   /* Value depends on net-type. */
+int rfc_compliant = 1;          /* Value depends on net-type. */
 int include_lk = 1;             /* For correct calculation in real_add_mode. */
 
-static char opchars[8];         /* the chars in a /who reply meaning op */
+char opchars[8];                /* the chars in a /who reply meaning op */
 
-static Tcl_Obj *tcl_account;
+Tcl_Obj *tcl_account;
 
-static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-#include "chan.c"
-#include "cmdsirc.c"
-#include "msgcmds.c"
-#include "tclirc.c"
 
 /* Contains the logic to decide whether we want to punish someone. Returns
  * true (1) if we want to, false (0) if not.
@@ -292,7 +269,7 @@ void set_key(struct chanset_t *chan, char *k)
   strcpy(chan->channel.key, k);
 }
 
-static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
+int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
   memberlist *m;
 
@@ -337,7 +314,7 @@ void newmask(masklist *m, char *s, char *who)
 
 /* Removes a nick from the channel member list (returns 1 if successful)
  */
-static int killmember(struct chanset_t *chan, char *nick)
+int killmember(struct chanset_t *chan, char *nick)
 {
   memberlist *x, *old;
 
@@ -407,7 +384,7 @@ int me_halfop(struct chanset_t *chan)
 
 /* Check whether I'm voice. Returns boolean 1 or 0.
  */
-static int me_voice(struct chanset_t *chan)
+int me_voice(struct chanset_t *chan)
 {
   memberlist *mx;
 
@@ -422,7 +399,7 @@ static int me_voice(struct chanset_t *chan)
 
 /* Check if there are any ops on the channel. Returns boolean 1 or 0.
  */
-static int any_ops(struct chanset_t *chan)
+int any_ops(struct chanset_t *chan)
 {
   memberlist *x;
 
@@ -490,7 +467,7 @@ void reset_chan_info(struct chanset_t *chan, int reset, int do_reset)
 /* Leave the specified channel and notify registered Tcl procs. This
  * should not be called by itself.
  */
-static void do_channel_part(struct chanset_t *chan)
+void do_channel_part(struct chanset_t *chan)
 {
   if (!channel_inactive(chan) && chan->name[0]) {
     /* Using chan->name is important here, especially for !chans <cybah> */
@@ -556,7 +533,7 @@ static void status_log()
  * might as well leave and rejoin. If i'm NOT the only person
  * on the channel, but i'm still not op'd, demand ops.
  */
-static void check_lonely_channel(struct chanset_t *chan)
+void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
   int i = 0;
@@ -787,8 +764,8 @@ static int invite_4char STDVAR
   return TCL_OK;
 }
 
-static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec *u,
-                             char *chan, char *ident, char * host)
+int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec *u,
+                      char *chan, char *ident, char * host)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   char usermask[UHOSTMAX];
@@ -808,8 +785,8 @@ static int check_tcl_chghost(char *nick, char *from, char *mask, struct userrec 
   return (x == BIND_EXEC_LOG);
 }
 
-static int check_tcl_ircaway(char *nick, char *from, char *mask,
-            struct userrec *u, char *chan, char *msg)
+int check_tcl_ircaway(char *nick, char *from, char *mask,
+                      struct userrec *u, char *chan, char *msg)
 {
   int x;
   char *hand = u ? u->handle : "*";
@@ -825,8 +802,8 @@ static int check_tcl_ircaway(char *nick, char *from, char *mask,
   return (x == BIND_EXEC_LOG);
 }
 
-static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
-                                   char *chname, p_tcl_bind_list table)
+void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
+                            char *chname, p_tcl_bind_list table)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char args[1024];
@@ -843,8 +820,8 @@ static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
 
 /* we handle part messages now *sigh* (guppy 27Jan2000) */
 
-static void check_tcl_part(char *nick, char *uhost, struct userrec *u,
-                           char *chname, char *text)
+void check_tcl_part(char *nick, char *uhost, struct userrec *u,
+                    char *chname, char *text)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char args[1024];
@@ -860,9 +837,9 @@ static void check_tcl_part(char *nick, char *uhost, struct userrec *u,
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
-                                   char *chname, char *reason,
-                                   p_tcl_bind_list table)
+void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
+                            char *chname, char *reason,
+                            p_tcl_bind_list table)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char args[1024];
@@ -900,8 +877,8 @@ void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
                  MATCH_MODE | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
-                           char *chname, char *dest, char *reason)
+void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
+                    char *chname, char *dest, char *reason)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char args[512];
@@ -919,7 +896,7 @@ static void check_tcl_kick(char *nick, char *uhost, struct userrec *u,
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
+void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
 {
   char args[1024];
 
@@ -932,7 +909,7 @@ static void check_tcl_invite(char *nick, char *from, char *chan, char *invitee)
                     MATCH_MASK | BIND_STACKABLE);
 }
 
-static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
+int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   int x;
@@ -963,7 +940,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   return 1;
 }
 
-static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
+int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   int x;
@@ -1010,7 +987,7 @@ void check_tcl_need(char *chname, char *type)
                  MATCH_MASK | BIND_STACKABLE);
 }
 
-static void check_tcl_account(char *nick, char *uhost, struct userrec *u, char *chan, char *account)
+void check_tcl_account(char *nick, char *uhost, struct userrec *u, char *chan, char *account)
 {
   char mask[1024];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };

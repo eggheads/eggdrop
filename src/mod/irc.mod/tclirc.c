@@ -20,6 +20,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define MODULE_NAME "irc"
+#define MAKING_IRC
+
+#include "src/mod/module.h"
+#include "irc.h"
+#include "irc_proto.h"
+#include "server.mod/server.h"
+#include "channels.mod/channels.h"
+
 /* Streamlined by answer.
  */
 static int tcl_chanlist STDVAR
@@ -1189,7 +1198,7 @@ static int tcl_putkick STDVAR
   return TCL_OK;
 }
 
-static tcl_cmds tclchan_cmds[] = {
+tcl_cmds tclchan_cmds[] = {
   {"chanlist",       tcl_chanlist},
   {"botisop",        tcl_botisop},
   {"botishalfop",    tcl_botishalfop},
