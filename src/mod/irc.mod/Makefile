@@ -16,7 +16,7 @@ static: ../irc.o
 modules: ../../../irc.$(MOD_EXT)
 
 ../irc.o: $(OBJS) irc.h irc_proto.h
-	ld -r -o ../irc.o $(OBJS)
+	$(CC) -r -nostdlib -o ../irc.o $(OBJS)
 
 %.o: $(srcdir)/%.c irc.h irc_proto.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $<
