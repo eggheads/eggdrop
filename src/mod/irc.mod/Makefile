@@ -13,14 +13,21 @@ static: ../irc.o
 
 modules: ../../../irc.$(MOD_EXT)
 
-../irc.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c && mv -f irc.o ../
+../irc.o: irc.o mode.o
+	ld -r -o ../irc.o irc.o mode.o
+
+irc.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c
+
+mode.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/mode.c
 
 ../../../irc.$(MOD_EXT): ../irc.o
 	$(LD) $(CFLAGS) -o ../../../irc.$(MOD_EXT) ../irc.o $(XLIBS) $(MODULE_XLIBS) && $(STRIP) ../../../irc.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/irc.c -MT ../irc.o > .depend
+	$(CC) $(CFLAGS) -MM $(srcdir)/mode.c -MT mode.o >> .depend
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
@@ -28,7 +35,7 @@ clean:
 distclean: clean
 
 #safety hash
-../irc.o: .././irc.mod/irc.c ../../../src/mod/module.h \
+irc.o: .././irc.mod/irc.c ../../../src/mod/module.h \
  ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \
  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
@@ -37,7 +44,20 @@ distclean: clean
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h .././irc.mod/irc.h \
+ .././irc.mod/irc_proto.h \
  ../../../src/mod/server.mod/server.h \
  ../../../src/mod/channels.mod/channels.h .././irc.mod/chan.c \
- .././irc.mod/mode.c .././irc.mod/cmdsirc.c .././irc.mod/msgcmds.c \
+ .././irc.mod/cmdsirc.c .././irc.mod/msgcmds.c \
  .././irc.mod/tclirc.c
+mode.o: .././irc.mod/mode.c ../../../src/mod/module.h \
+ ../../../src/main.h ../../../config.h ../../../eggint.h ../../../lush.h \
+ ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
+ ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
+ ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
+ ../../../src/compat/compat.h ../../../src/compat/base64.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h .././irc.mod/irc.h \
+ .././irc.mod/irc_proto.h \
+ ../../../src/mod/server.mod/server.h \
+ ../../../src/mod/channels.mod/channels.h

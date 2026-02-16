@@ -212,8 +212,8 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
  *
  * victim for flood-deop, account for flood-join
  */
-static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-                             struct chanset_t *chan, int which, char *victim_or_account)
+int detect_chan_flood(char *floodnick, char *floodhost, char *from,
+                     struct chanset_t *chan, int which, char *victim_or_account)
 {
   char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
   struct userrec *u;
@@ -414,8 +414,8 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 /* Kick any user (except friends/masters) with certain mask from channel
  * with a specified comment.  Ernst 18/3/1998
  */
-static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
-                     int bantype)
+void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
+              int bantype)
 {
   memberlist *m;
   char kicknick[512], s[NICKMAX+UHOSTLEN+1];
@@ -500,7 +500,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 /* This is a bit cumbersome at the moment, but it works... Any improvements
  * then feel free to have a go.. Jason
  */
-static void refresh_exempt(struct chanset_t *chan, char *user)
+void refresh_exempt(struct chanset_t *chan, char *user)
 {
   maskrec *e;
   masklist *b;
@@ -901,7 +901,7 @@ static void check_this_user(char *hand, int delete, char *host)
 
 /* Things to do when i just became a chanop:
  */
-static void recheck_channel(struct chanset_t *chan, int dobans)
+void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };

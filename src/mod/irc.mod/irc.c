@@ -26,49 +26,75 @@
 
 #include "src/mod/module.h"
 #include "irc.h"
+#include "irc_proto.h"
 #include "server.mod/server.h"
 #include "channels.mod/channels.h"
 
 #include <sys/utsname.h>
 
+/* Forward declarations for functions local to the irc.c translation unit */
+static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);
+static void check_tcl_invite(char *, char *, char *, char *);
+static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
+                                   p_tcl_bind_list);
+static void check_tcl_part(char *, char *, struct userrec *, char *, char *);
+static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
+                                   char *, p_tcl_bind_list);
+static int check_tcl_pubm(char *, char *, char *, char *);
+static int check_tcl_pub(char *, char *, char *, char *);
+static int check_tcl_ircaway(char *, char *, char *, struct userrec *, char *,
+                                    char*);
+static void check_tcl_account(char *nick, char *uhost, struct userrec *u, char *chan, char *account);
+static int check_tcl_chghost(char *, char *, char *, struct userrec *, char *, char *, char *);
+static int me_voice(struct chanset_t *);
+static int any_ops(struct chanset_t *);
+static int hand_on_chan(struct chanset_t *, struct userrec *);
+static char *getchanmode(struct chanset_t *);
+static void set_delay(struct chanset_t *, char *);
+static char *quickban(struct chanset_t *, char *);
+static int killmember(struct chanset_t *chan, char *nick);
+static void check_lonely_channel(struct chanset_t *chan);
+
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need, H_invt, H_ircaway;
 static p_tcl_bind_list H_account, H_chghost;
 
-static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
+Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
 static int wait_split = 300;    /* Time to wait for user to return from net-split. */
-static int max_bans = 30;       /* Modified by net-type 1-4 */
-static int max_exempts = 20;    /* Modified by net-type 1-4 */
-static int max_invites = 20;    /* Modified by net-type 1-4 */
-static int max_modes = 30;      /* Modified by net-type 1-4 */
-static int bounce_bans = 0;
-static int bounce_exempts = 0;
-static int bounce_invites = 0;
-static int bounce_modes = 0;
+int max_bans = 30;              /* Modified by net-type 1-4 */
+int max_exempts = 20;           /* Modified by net-type 1-4 */
+int max_invites = 20;           /* Modified by net-type 1-4 */
+int max_modes = 30;             /* Modified by net-type 1-4 */
+int bounce_bans = 0;
+int bounce_exempts = 0;
+int bounce_invites = 0;
+int bounce_modes = 0;
 static int learn_users = 0;
 static int wait_info = 15;
 static int invite_key = 1;
 static int no_chanrec_info = 0;
-static int modesperline = 3;    /* Number of modes per line to send. */
-static int mode_buf_len = 200;  /* Maximum bytes to send in 1 mode. */
+int modesperline = 3;           /* Number of modes per line to send. */
+int mode_buf_len = 200;         /* Maximum bytes to send in 1 mode. */
 static int use_354 = 0;         /* Use ircu's short 354 /who responses. */
 static int kick_method = 1;     /* How many kicks does the IRC network support
                                  * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
 static int keepnick = 1;        /* Keep nick */
 static int twitch = 0;          /* Is this a Twitch server? */
-static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
+int prevent_mixing = 1;         /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
-static int include_lk = 1;      /* For correct calculation in real_add_mode. */
+int include_lk = 1;             /* For correct calculation in real_add_mode. */
 
 static char opchars[8];         /* the chars in a /who reply meaning op */
 
 static Tcl_Obj *tcl_account;
 
+static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+
 #include "chan.c"
-#include "mode.c"
 #include "cmdsirc.c"
 #include "msgcmds.c"
 #include "tclirc.c"
@@ -223,8 +249,8 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 /* Punishes bad guys under certain circumstances using methods as defined
  * by the revenge_mode flag.
  */
-static void maybe_revenge(struct chanset_t *chan, char *whobad,
-                          char *whovictim, int type)
+void maybe_revenge(struct chanset_t *chan, char *whobad,
+                   char *whovictim, int type)
 {
   char *badnick, *victim, buf[NICKLEN + UHOSTLEN];
   int mevictim;
@@ -254,7 +280,7 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
 
 /* Set the key.
  */
-static void set_key(struct chanset_t *chan, char *k)
+void set_key(struct chanset_t *chan, char *k)
 {
   nfree(chan->channel.key);
   if (k == NULL) {
@@ -277,7 +303,7 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
   return 0;
 }
 
-static void refresh_who_chan(char *channame)
+void refresh_who_chan(char *channame)
 {
   if (!twitch) {    /* Twitch doesn't support WHOs */
     if (use_354)
@@ -291,7 +317,7 @@ static void refresh_who_chan(char *channame)
 /* Adds a ban, exempt or invite mask to the list
  * m should be chan->channel.(exempt|invite|ban)
  */
-static void newmask(masklist *m, char *s, char *who)
+void newmask(masklist *m, char *s, char *who)
 {
   for (; m && m->mask[0] && rfc_casecmp(m->mask, s); m = m->next);
   if (m->mask[0])
@@ -351,7 +377,7 @@ static int killmember(struct chanset_t *chan, char *nick)
 
 /* Check if I am a chanop. Returns boolean 1 or 0.
  */
-static int me_op(struct chanset_t *chan)
+int me_op(struct chanset_t *chan)
 {
   memberlist *mx = NULL;
 
@@ -366,7 +392,7 @@ static int me_op(struct chanset_t *chan)
 
 /* Check if I am a halfop. Returns boolean 1 or 0.
  */
-static int me_halfop(struct chanset_t *chan)
+int me_halfop(struct chanset_t *chan)
 {
   memberlist *mx = NULL;
 
@@ -855,8 +881,8 @@ static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-static void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
-                           char *chname, char *mode, char *target)
+void check_tcl_mode(char *nick, char *uhost, struct userrec *u,
+                    char *chname, char *mode, char *target)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   char args[512];
@@ -973,7 +999,7 @@ static int check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   return 1;
 }
 
-static void check_tcl_need(char *chname, char *type)
+void check_tcl_need(char *chname, char *type)
 {
   char buf[1024];
 
