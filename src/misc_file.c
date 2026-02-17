@@ -192,13 +192,7 @@ int movefile(char *oldpath, char *newpath)
   return ret;
 }
 
-int file_readable(char *file)
+int file_readable(char *path)
 {
-  FILE *fp;
-
-  if (!(fp = fopen(file, "r")))
-    return 0;
-
-  fclose(fp);
-  return 1;
+  return !access(path, R_OK);
 }
