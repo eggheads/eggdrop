@@ -8,6 +8,16 @@
    has to be expressed in years, days, hours and/or minutes.
 
 See also: bans, -ban, stick, unstick
+%{help=+extban}%{+lo|lo}
+###  %b+extban%b <flag> <value> [channel] [%%<XyXdXhXm>] [comment]
+   Adds a channel extban using allowed ISUPPORT EXTBAN values.
+   Extban masks are created as [prefix]<flag>:<value>
+
+   Not all extbans (notice blocking, ctcp blocking, etc) can be enforced by
+   Eggdrop. These non-enforceable extbans are set on-channel and managed as
+   sticky bans.
+
+See also: +ban, -ban, bans
 %{help=+exempt}%{+lo|lo}
 ###  %b+exempt%b <hostmask> [channel] [%%<XyXdXhXm>] [comment]
    Adds an exempt to the list of exempts stored on the bot, with optional
@@ -264,7 +274,7 @@ See also: stick, bans, exempts, invites, -ban, -exempt, -invite
       %binfo%b
 
    For channel ops or halfops:
-      %b+ban         -ban         bans         stick%b
+      %b+ban         +extban      -ban         bans         stick%b
       %b+exempt      -exempt      exempts      unstick%b
       %b+invite      -invite      invites%b
 
@@ -286,7 +296,7 @@ See also: stick, bans, exempts, invites, -ban, -exempt, -invite
       %binfo%b
 %{+ol|ol}
    For channel ops or halfops:
-      %b+ban         -ban         bans         stick%b
+      %b+ban         +extban      -ban         bans         stick%b
       %b+exempt      -exempt      exempts      unstick%b
       %b+invite      -invite      invites%b
 %{+m|m}

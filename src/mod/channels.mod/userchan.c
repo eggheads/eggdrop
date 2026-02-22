@@ -220,9 +220,52 @@ static int u_equals_mask(maskrec *u, char *mask)
 
 static int u_match_mask(maskrec *rec, char *mask)
 {
-  for (; rec; rec = rec->next)
+  char nick[NICKLEN];
+  char *bang;
+  memberlist *m = NULL;
+
+  if (mask && mask[0]) {
+    bang = strchr(mask, '!');
+    if (bang) {
+      size_t nicklen = (size_t)(bang - mask);
+
+      if (nicklen >= sizeof nick) {
+        nicklen = sizeof nick - 1;
+      }
+      memcpy(nick, mask, nicklen);
+      nick[nicklen] = 0;
+      if (nick[0]) {
+        m = find_member_from_nick(nick);
+      }
+    }
+  }
+
+  for (; rec; rec = rec->next) {
+    char type;
+    const char *arg, *accountflag;
+
+    if (extban_parse(rec->mask, &type, &arg)) {
+      accountflag = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+
+      /* unknown account state never matches extbans */
+      if (!m || !m->account[0]) {
+        continue;
+      }
+      if (accountflag && (type == accountflag[0])) {
+        if (!rfc_casecmp(m->account, arg)) {
+          return 1;
+        }
+      } else if (type == 'U') {
+        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask)) {
+          return 1;
+        }
+      }
+      continue;
+    }
+
     if (match_addr(rec->mask, mask))
       return 1;
+  }
   return 0;
 }
 
@@ -418,14 +461,23 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
                     time_t expire_time, int flags)
 {
-  char host[1024], s[1024];
+  char host[1024], s[1024], extbantype;
+  const char *extbanarg;
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  /* Choke check: fix broken bans (must have '!' and '@') */
-  fix_broken_mask(host, ban, sizeof host);
+  if (is_extban_mask(ban))
+    strlcpy(host, ban, sizeof host);
+  else
+    /* Choke check: fix broken bans (must have '!' and '@') */
+    fix_broken_mask(host, ban, sizeof host);
 
-  if ((me = module_find("server", 0, 0)) && me->funcs) {
+  if (is_extban_mask(host)) {
+    if (extban_parse(host, &extbantype, &extbanarg) && extban_sticky_flags(extbantype))
+      flags |= MASKREC_STICKY;
+  }
+
+  if (!is_extban_mask(host) && (me = module_find("server", 0, 0)) && me->funcs) {
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
     if (match_addr(host, s)) {

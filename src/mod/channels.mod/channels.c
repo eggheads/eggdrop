@@ -28,6 +28,10 @@
 #include "src/mod/module.h"
 
 static Function *global = NULL;
+static void get_extban_prefix(char *prefix);
+static int is_extban_mask(const char *mask);
+const char *isupport_get(const char *name, size_t len);
+
 
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
@@ -55,6 +59,96 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 #include "userchan.c"
 #include "udefchan.c"
 
+/* Parse extban mask into type and arg pointers.
+ * Supports both prefixed (<prefix><type>:<arg>) and non-prefixed (<type>:<arg>) forms.
+ */
+int extban_parse(const char *mask, char *type, const char **arg)
+{
+  if (!mask || !mask[0])
+    return 0;
+
+/* Break out no-prefix mask */
+  if (isalnum((unsigned char) mask[0]) && mask[1] == ':') {
+    if (type)
+      *type = mask[0];
+    if (arg)
+      *arg = mask + 2;
+    return 1;
+  }
+
+/* Break out prefix mask */
+  if (mask[0] && isalnum((unsigned char) mask[1]) && mask[2] == ':') {
+    if (type)
+      *type = mask[1];
+    if (arg)
+      *arg = mask + 3;
+    return 1;
+  }
+
+  return 0;
+}
+
+/* Return 1 if mask uses extban syntax. */
+static int is_extban_mask(const char *mask)
+{
+  return extban_parse(mask, NULL, NULL);
+}
+
+/* Extban prefix from ISUPPORT EXTBAN, if present.
+ * EXTBAN grammar is [prefix],<types> 
+ */
+static void get_extban_prefix(char *prefix)
+{
+  const char *value, *comma;
+
+  /* Clear out old value */
+  if (prefix) {
+    *prefix = '\0';
+  }
+  value = isupport_get("EXTBAN", strlen("EXTBAN"));
+  comma = strchr(value, ',');
+  if (comma) {
+    if (comma == value) {
+      // No prefix
+      return;
+    }
+    if ((comma - value) == 1) {
+      if (prefix)
+        *prefix = value[0];
+      // Prefix
+      return;
+    }
+  }
+  // What do we do if no , present?
+  return;
+}
+
+/*
+static int extban_flag_is_supported(char flag)
+{
+  const char *value, *comma, *types;
+
+  value = isupport_get("EXTBAN", strlen("EXTBAN"));
+  if (!value || !value[0]) {
+    return 0;
+  }
+
+  comma = strchr(value, ',');
+  if (comma) {
+    types = comma + 1;
+  }
+  else {
+    types = value;
+  }
+
+  for (; *types; types++) {
+    if (*types == flag) {
+      return 1;
+    }
+  }
+  return 0;
+}
+*/
 
 static void *channel_malloc(int size, char *file, int line)
 {
@@ -950,6 +1044,7 @@ static Function channels_table[] = {
   (Function) & global_exempt_time,
   /* 48 - 51 */
   (Function) & global_invite_time,
+  (Function) extban_parse
 };
 
 char *channels_start(Function *global_funcs)

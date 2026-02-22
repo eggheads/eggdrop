@@ -65,6 +65,28 @@ struct udef_struct {
                                 * structures.                          */
 };
 
+/* List of extban flags that are non-enforceable by Eggdrop-
+ * In other words, extbans that need to be set and forgotten about because
+ * Eggdrop can't do things like block notices or CTCPs, etc
+ */
+static int extban_sticky_flags(char flag)
+{
+  switch (flag) {
+  case 'p':
+  case 'q':
+  case 'Q':
+  case 'A':
+  case 'B':
+  case 'c':
+  case 'N':
+  case 'T':
+    return 1;
+  default:
+    return 0;
+  }
+}
+
+
 static void del_chanrec(struct userrec *u, char *);
 static struct chanuserrec *get_chanrec(struct userrec *u, char *chname);
 static struct chanuserrec *add_chanrec(struct userrec *u, char *chname);
@@ -180,6 +202,7 @@ static int check_tcl_chanset(const char *, const char *, const char *);
 #define global_exempt_time (*(int *)(channels_funcs[47]))
 /* 48 - 51 */
 #define global_invite_time (*(int *)(channels_funcs[48]))
+#define extban_parse ((int (*)(const char *, char *, const char **))channels_funcs[49])
 
 #endif /* MAKING_CHANNELS */
 
