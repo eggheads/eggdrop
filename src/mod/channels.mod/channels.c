@@ -106,6 +106,9 @@ static void get_extban_prefix(char *prefix)
     *prefix = '\0';
   }
   value = isupport_get("EXTBAN", strlen("EXTBAN"));
+  if (!value || !value[0]) {
+    //TO DO: log issue to partyline
+    return;
   comma = strchr(value, ',');
   if (comma) {
     if (comma == value) {

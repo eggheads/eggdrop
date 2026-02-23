@@ -121,7 +121,7 @@ static int extban_parse_local(const char *mask, char *type, const char **arg)
 static int extban_flag_supported_local(char flag)
 {
   module_entry *me;
-  const char *value, *comma, *types;
+  const char *value = NULL, *comma, *types;
  
   me = module_find("server", 0, 0);
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) { 
@@ -143,7 +143,7 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
 {
   module_entry *me;
   char type;
-  const char *v = '\0', *arg = '\0';
+  const char *v = NULL, *arg = NULL;
 
   if (!extban_parse(banmask, &type, &arg)) {
     return match_addr((char *) banmask, (char *) user);
@@ -158,7 +158,7 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
-  if (type == v[0]) {
+  if (type && (type == v[0])) {
     return !rfc_casecmp(m->account, arg);
   }
 

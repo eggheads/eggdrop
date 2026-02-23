@@ -245,8 +245,11 @@ static int u_match_mask(maskrec *rec, char *mask)
     const char *arg, *accountflag;
 
     if (extban_parse(rec->mask, &type, &arg)) {
-      accountflag = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-
+      me = module_find("server", 0, 0);
+      if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) { 
+        accountflag = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+        return 0;
+      }
       /* unknown account state never matches extbans */
       if (!m || !m->account[0]) {
         continue;
