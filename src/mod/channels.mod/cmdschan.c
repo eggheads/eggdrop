@@ -22,9 +22,7 @@
 
 static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-
-static int extban_parse(const char *mask, char *type, const char **arg);
-
+int extban_parse(const char *mask, char *type, const char **arg);
 
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
 static void truncate_mask_hostname(char *s) {
@@ -244,13 +242,6 @@ static void cmd_pls_extban(struct userrec *u, int idx, char *par)
 
   egg_snprintf(forwarded, sizeof forwarded, "%s%s%s", extban,
                par[0] ? " " : "", par);
-
-  if (!extban[0])
-    egg_snprintf(extban, sizeof extban, "%c:%s", flag, arg);
-
-  if (!forwarded[0] && extban[0])
-    strlcpy(forwarded, extban, sizeof forwarded);
-
   cmd_pls_ban(u, idx, forwarded);
 }
 

@@ -220,9 +220,12 @@ static int u_equals_mask(maskrec *u, char *mask)
 
 static int u_match_mask(maskrec *rec, char *mask)
 {
-  char nick[NICKLEN];
+
+  char type, nick[NICKLEN];
   char *bang;
+  const char *arg, *accountflag = NULL;
   memberlist *m = NULL;
+  module_entry *me;
 
   if (mask && mask[0]) {
     bang = strchr(mask, '!');
@@ -241,9 +244,6 @@ static int u_match_mask(maskrec *rec, char *mask)
   }
 
   for (; rec; rec = rec->next) {
-    char type;
-    const char *arg, *accountflag;
-
     if (extban_parse(rec->mask, &type, &arg)) {
       me = module_find("server", 0, 0);
       if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) { 
@@ -464,23 +464,24 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
                     time_t expire_time, int flags)
 {
-  char host[1024], s[1024], extbantype;
+  char host[1024], s[1024], extbantype, isextban;
   const char *extbanarg;
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  if (is_extban_mask(ban))
+  isextban = is_extban_mask(ban);
+  if (isextban) {
     strlcpy(host, ban, sizeof host);
-  else
+  } else {
     /* Choke check: fix broken bans (must have '!' and '@') */
     fix_broken_mask(host, ban, sizeof host);
-
-  if (is_extban_mask(host)) {
+  }
+  if (isextban) {
     if (extban_parse(host, &extbantype, &extbanarg) && extban_sticky_flags(extbantype))
       flags |= MASKREC_STICKY;
   }
 
-  if (!is_extban_mask(host) && (me = module_find("server", 0, 0)) && me->funcs) {
+  if (!isextban && (me = module_find("server", 0, 0)) && me->funcs) {
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
                    me->funcs[SERVER_BOTUSERHOST]);
     if (match_addr(host, s)) {

@@ -93,31 +93,6 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
-/* Parse a banmask and determine if it is an extban. This duplicates channel.mod for the momemnt b/c lazy. */
-static int extban_parse_local(const char *mask, char *type, const char **arg)
-{
-  if (!mask || !mask[0])
-    return 0;
-
-  if (isalnum((unsigned char) mask[0]) && mask[1] == ':') {
-    if (type)
-      *type = mask[0];
-    if (arg)
-      *arg = mask + 2;
-    return 1;
-  }
-
-  if (mask[0] && isalnum((unsigned char) mask[1]) && mask[2] == ':') {
-    if (type)
-      *type = mask[1];
-    if (arg)
-      *arg = mask + 3;
-    return 1;
-  }
-
-  return 0;
-}
-
 static int extban_flag_supported_local(char flag)
 {
   module_entry *me;
@@ -661,7 +636,7 @@ static void recheck_bans(struct chanset_t *chan)
       char extflag;
       const char *extarg;
 
-      if (extban_parse_local(u->mask, &extflag, &extarg) && !extban_flag_supported_local(extflag))
+      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported_local(extflag))
         continue;
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
           (u->flags & MASKREC_STICKY)))
@@ -763,7 +738,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   if (HALFOP_CANTDOMODE('b'))
     return;
 
-  if (extban_parse_local(banmask, &extflag, &extarg) && !extban_flag_supported_local(extflag))
+  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported_local(extflag))
     return;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {

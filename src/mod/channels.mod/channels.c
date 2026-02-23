@@ -30,11 +30,9 @@
 static Function *global = NULL;
 static void get_extban_prefix(char *prefix);
 static int is_extban_mask(const char *mask);
-const char *isupport_get(const char *name, size_t len);
-
-
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
+const char *isupport_get(const char *name, size_t len);
 
 static p_tcl_bind_list H_chanset;
 
@@ -109,6 +107,7 @@ static void get_extban_prefix(char *prefix)
   if (!value || !value[0]) {
     //TO DO: log issue to partyline
     return;
+  }
   comma = strchr(value, ',');
   if (comma) {
     if (comma == value) {
@@ -1047,7 +1046,7 @@ static Function channels_table[] = {
   (Function) & global_exempt_time,
   /* 48 - 51 */
   (Function) & global_invite_time,
-  (Function) extban_parse
+  (Function) extban_parse,
 };
 
 char *channels_start(Function *global_funcs)
