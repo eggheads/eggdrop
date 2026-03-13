@@ -15,6 +15,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 CC = @CC@
 LD = @CC@
 STRIP = @STRIP@
+RANLIB = @RANLIB@
 CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @SSL_INCLUDES@ @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
@@ -53,10 +54,22 @@ linkfinish:
 	echo "Successful compile: $(EGGEXEC)" && \
 	echo ""
 
+archive:
+	objcopy --redefine-sym main=eggdrop_main main.o main.o
+	ar rcs ../libeggdrop.a $(eggdrop_objs) $(MODOBJS) md5/md5c.o compat/*.o
+	$(RANLIB) ../libeggdrop.a
+	objcopy --redefine-sym eggdrop_main=main main.o main.o
+	@echo "" && \
+	echo "Successful archive: libeggdrop.a" && \
+	echo ""
+
 ../$(EGGEXEC): $(eggdrop_objs) compile_md5 compatibility
 	$(MAKE) linkstart && $(MAKE) link && $(MAKE) linkfinish
 
 $(EGGEXEC): ../$(EGGEXEC)
+
+../libeggdrop.a: $(eggdrop_objs) compile_md5 compatibility
+	$(MAKE) archive
 
 depend:
 	$(CC) -I.. -DMAKING_DEPEND -DHAVE_CONFIG_H -MM *.c > .depend
