@@ -20,6 +20,23 @@ const HOOK_DNS_IPBYHOST: c_int = 113;
 unsafe extern "C" {
     fn eggdrop_main(argc: c_int, argv: *mut *mut c_char) -> c_int;
     fn add_hook(hook_num: c_int, func: *const c_void);
+    fn call_ipbyhost(hostn: *mut c_char, ip: *mut SocknameT, ok: c_int);
+    fn call_hostbyip(ip: *mut SocknameT, hostn: *mut c_char, ok: c_int);
+}
+
+/// Build a SocknameT containing an IPv4 address
+fn make_sockname_v4(a: u8, b: u8, c: u8, d: u8) -> SocknameT {
+    let mut sn = SocknameT {
+        family: libc::AF_INET,
+        addrlen: std::mem::size_of::<libc::sockaddr_in>() as u32,
+        addr: SocknameTAddr {
+            _data: [0u8; std::mem::size_of::<libc::sockaddr_in6>()],
+        },
+    };
+    let sa = unsafe { &mut *(&raw mut sn.addr as *mut libc::sockaddr_in) };
+    sa.sin_family = libc::AF_INET as libc::sa_family_t;
+    sa.sin_addr.s_addr = u32::from_ne_bytes([a, b, c, d]);
+    sn
 }
 
 unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
@@ -28,10 +45,17 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
         libc::AF_INET => {
             let sa = unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in) };
             let ip = u32::from_be(sa.sin_addr.s_addr);
-            format!("{}.{}.{}.{}", (ip >> 24) & 0xff, (ip >> 16) & 0xff, (ip >> 8) & 0xff, ip & 0xff)
+            format!(
+                "{}.{}.{}.{}",
+                (ip >> 24) & 0xff,
+                (ip >> 16) & 0xff,
+                (ip >> 8) & 0xff,
+                ip & 0xff
+            )
         }
         libc::AF_INET6 => {
-            let sa = unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
+            let sa =
+                unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
             let bytes = sa.sin6_addr.s6_addr;
             let segments: Vec<String> = (0..8)
                 .map(|i| format!("{:x}", u16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]])))
@@ -46,6 +70,14 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
 unsafe extern "C" fn rust_dns_ipbyhost(hostname: *mut c_char) {
     let name = unsafe { CStr::from_ptr(hostname) }.to_string_lossy();
     println!("[rust_dns_ipbyhost] forward lookup requested for: {}", name);
+
+    if *name == *"fake.test-rs" {
+        println!("[rust_dns_ipbyhost] resolving fake.test-rs to 192.0.2.1");
+        let mut sn = make_sockname_v4(192, 0, 2, 1);
+        unsafe {
+            call_ipbyhost(hostname, &mut sn, 1);
+        }
+    }
 }
 
 fn main() {
