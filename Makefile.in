@@ -167,7 +167,7 @@ MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 all: @DEFAULT_MAKE@
 
 eggclean:
-	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~
+	@rm -f $(EGGEXEC) libeggdrop.a *.$(MOD_EXT) *.stamp core DEBUG *~
 	@cd doc && $(MAKE) clean
 	@cd scripts && $(MAKE) clean
 	@cd src && $(MAKE) clean
@@ -285,6 +285,15 @@ sdebug: eggtest
 	echo "" && \
 	(cd src && $(MAKE) $(MAKE_SDEBUG_ARGS) $(EGGEXEC)) && \
 	$(show_test_run) && $(ls_exe) && $(egg_install_msg)
+
+libeggdrop.a: eggtest
+	@echo "" && echo "Making module objects for static linking..." && \
+	echo "" && rm -f src/mod/mod.xlibs && \
+	(cd src/mod && $(MAKE) $(MAKE_STATIC_ARGS) static) && \
+	echo "" && echo "Making libeggdrop.a static library..." && \
+	echo "" && \
+	(cd src && $(MAKE) $(MAKE_STATIC_ARGS) ../libeggdrop.a) && \
+	echo "" && ls -l libeggdrop.a && echo ""
 
 # Install
 
