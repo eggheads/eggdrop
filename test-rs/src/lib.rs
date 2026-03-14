@@ -1,11 +1,14 @@
-#[allow(
-    non_upper_case_globals,
-    non_camel_case_types,
-    non_snake_case,
-    dead_code
-)]
+#[allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 pub mod eggdrop {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+}
+
+/// Read a `static mut` without creating a reference (Rust 2024 forbids `&static_mut`).
+#[macro_export]
+macro_rules! read_static {
+    ($sym:expr) => {
+        unsafe { std::ptr::addr_of!($sym).read() }
+    };
 }
 
 use std::ffi::{CStr, CString, c_char, c_int};
@@ -16,7 +19,7 @@ use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
 use tempfile::NamedTempFile;
 
-use eggdrop::{add_hook, sockname_t, HOOK_DNS_HOSTBYIP, HOOK_DNS_IPBYHOST};
+use eggdrop::{HOOK_DNS_HOSTBYIP, HOOK_DNS_IPBYHOST, add_hook, sockname_t};
 
 unsafe extern "C" {
     fn eggdrop_main(argc: c_int, argv: *mut *mut c_char) -> c_int;
@@ -81,10 +84,7 @@ static REAL_CONNECT: OnceLock<ConnectFn> = OnceLock::new();
 fn get_real_connect() -> ConnectFn {
     *REAL_CONNECT.get_or_init(|| unsafe {
         let ptr = libc::dlsym(libc::RTLD_NEXT, c"connect".as_ptr());
-        assert!(
-            !ptr.is_null(),
-            "dlsym(RTLD_NEXT, \"connect\") returned NULL"
-        );
+        assert!(!ptr.is_null(), "dlsym(RTLD_NEXT, \"connect\") returned NULL");
         std::mem::transmute(ptr)
     })
 }
@@ -104,15 +104,10 @@ fn is_fake_target(addr: *const libc::sockaddr) -> bool {
 static FAKE_IRCD_FD: Mutex<c_int> = Mutex::new(-1);
 
 #[unsafe(no_mangle)]
-unsafe extern "C" fn connect(
-    fd: c_int,
-    addr: *const libc::sockaddr,
-    len: libc::socklen_t,
-) -> c_int {
+unsafe extern "C" fn connect(fd: c_int, addr: *const libc::sockaddr, len: libc::socklen_t) -> c_int {
     if is_fake_target(addr) {
         let mut pair: [c_int; 2] = [0; 2];
-        if unsafe { libc::socketpair(libc::AF_UNIX, libc::SOCK_STREAM, 0, pair.as_mut_ptr()) } != 0
-        {
+        if unsafe { libc::socketpair(libc::AF_UNIX, libc::SOCK_STREAM, 0, pair.as_mut_ptr()) } != 0 {
             eprintln!("[eggtest connect] socketpair() failed");
             unsafe {
                 *libc::__errno_location() = libc::ECONNREFUSED;
@@ -123,10 +118,7 @@ unsafe extern "C" fn connect(
             libc::dup2(pair[0], fd);
             libc::close(pair[0]);
         }
-        eprintln!(
-            "[eggtest connect] intercepted fd={} <-> rust fd={}",
-            fd, pair[1]
-        );
+        eprintln!("[eggtest connect] intercepted fd={} <-> rust fd={}", fd, pair[1]);
         *FAKE_IRCD_FD.lock().unwrap() = pair[1];
         return 0;
     }
@@ -302,15 +294,9 @@ impl IRCd {
 
     /// Send a standard IRC welcome burst (001-005).
     pub fn send_welcome(&mut self, nick: &str) {
-        self.send(&format!(
-            ":irc.test 001 {} :Welcome to the test network",
-            nick
-        ));
+        self.send(&format!(":irc.test 001 {} :Welcome to the test network", nick));
         self.send(&format!(":irc.test 002 {} :Your host is irc.test", nick));
-        self.send(&format!(
-            ":irc.test 003 {} :This server was created today",
-            nick
-        ));
+        self.send(&format!(":irc.test 003 {} :This server was created today", nick));
         self.send(&format!(
             ":irc.test 004 {} irc.test test-0.1 oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI",
             nick
@@ -394,8 +380,14 @@ impl EggtestBuilder {
 
         // Install DNS hooks
         unsafe {
-            add_hook(HOOK_DNS_HOSTBYIP as c_int, std::mem::transmute(rust_dns_hostbyip as *const ()));
-            add_hook(HOOK_DNS_IPBYHOST as c_int, std::mem::transmute(rust_dns_ipbyhost as *const ()));
+            add_hook(
+                HOOK_DNS_HOSTBYIP as c_int,
+                std::mem::transmute(rust_dns_hostbyip as *const ()),
+            );
+            add_hook(
+                HOOK_DNS_IPBYHOST as c_int,
+                std::mem::transmute(rust_dns_ipbyhost as *const ()),
+            );
         }
 
         let flags = if std::path::Path::new("LamestBot.user").exists() {

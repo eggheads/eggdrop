@@ -3,7 +3,10 @@ use std::path::PathBuf;
 use std::process::Command;
 
 fn main() {
-    let eggdrop_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf();
+    let eggdrop_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .to_path_buf();
     let src_dir = eggdrop_dir.join("src");
     let lib_path = eggdrop_dir.join("libeggdrop.a");
 
@@ -123,7 +126,9 @@ fn main() {
         };
         // rest is "addr TYPE name" (e.g. "0000000000000000 B bg")
         let parts: Vec<&str> = rest.split_whitespace().collect();
-        if parts.len() < 3 { continue; }
+        if parts.len() < 3 {
+            continue;
+        }
         let sym_type = parts[1];
         let sym_name = parts[2];
 
@@ -148,8 +153,12 @@ fn main() {
     let mut decls = Vec::new();
 
     for sym_name in &nm_symbols {
-        if !seen.insert(sym_name.clone()) { continue; }
-        if header_symbols.contains(sym_name) { continue; }
+        if !seen.insert(sym_name.clone()) {
+            continue;
+        }
+        if header_symbols.contains(sym_name) {
+            continue;
+        }
 
         if macro_names.contains(sym_name) {
             undefs.push(format!("#undef {}", sym_name));
@@ -192,7 +201,8 @@ fn main() {
 /// Find .c source files corresponding to .o basenames by searching src/.
 fn find_c_files_for_objects(src_dir: &PathBuf, obj_files: &HashSet<String>) -> Vec<PathBuf> {
     let mut c_files = Vec::new();
-    let mut needed: HashSet<String> = obj_files.iter()
+    let mut needed: HashSet<String> = obj_files
+        .iter()
         .map(|o| o.strip_suffix(".o").unwrap_or(o).to_string())
         .collect();
 
@@ -226,54 +236,58 @@ fn find_c_files_for_objects(src_dir: &PathBuf, obj_files: &HashSet<String>) -> V
 fn extract_static_types(c_files: &[PathBuf], clang_args: &[&str]) -> HashMap<String, String> {
     use std::thread;
 
-    let handles: Vec<_> = c_files.iter().map(|c_file| {
-        let c_file = c_file.clone();
-        let args: Vec<String> = clang_args.iter().map(|s| s.to_string()).collect();
-        thread::spawn(move || {
-            let output = Command::new("clang")
-                .arg("-Xclang")
-                .arg("-ast-dump=json")
-                .arg("-fsyntax-only")
-                .args(&args)
-                .arg(&c_file)
-                .output();
+    let handles: Vec<_> = c_files
+        .iter()
+        .map(|c_file| {
+            let c_file = c_file.clone();
+            let args: Vec<String> = clang_args.iter().map(|s| s.to_string()).collect();
+            thread::spawn(move || {
+                let output = Command::new("clang")
+                    .arg("-Xclang")
+                    .arg("-ast-dump=json")
+                    .arg("-fsyntax-only")
+                    .args(&args)
+                    .arg(&c_file)
+                    .output();
 
-            let output = match output {
-                Ok(o) if o.status.success() => o,
-                _ => return Vec::new(),
-            };
+                let output = match output {
+                    Ok(o) if o.status.success() => o,
+                    _ => return Vec::new(),
+                };
 
-            let ast: serde_json::Value = match serde_json::from_slice(&output.stdout) {
-                Ok(v) => v,
-                Err(_) => return Vec::new(),
-            };
+                let ast: serde_json::Value = match serde_json::from_slice(&output.stdout) {
+                    Ok(v) => v,
+                    Err(_) => return Vec::new(),
+                };
 
-            let mut results = Vec::new();
-            if let Some(inner) = ast.get("inner").and_then(|v| v.as_array()) {
-                for node in inner {
-                    if node.get("kind").and_then(|v| v.as_str()) != Some("VarDecl") {
-                        continue;
+                let mut results = Vec::new();
+                if let Some(inner) = ast.get("inner").and_then(|v| v.as_array()) {
+                    for node in inner {
+                        if node.get("kind").and_then(|v| v.as_str()) != Some("VarDecl") {
+                            continue;
+                        }
+                        if node.get("storageClass").and_then(|v| v.as_str()) != Some("static") {
+                            continue;
+                        }
+                        let name = match node.get("name").and_then(|v| v.as_str()) {
+                            Some(n) => n.to_string(),
+                            None => continue,
+                        };
+                        let qualtype = match node
+                            .get("type")
+                            .and_then(|v| v.get("qualType"))
+                            .and_then(|v| v.as_str())
+                        {
+                            Some(t) => t.to_string(),
+                            None => continue,
+                        };
+                        results.push((name, qualtype));
                     }
-                    if node.get("storageClass").and_then(|v| v.as_str()) != Some("static") {
-                        continue;
-                    }
-                    let name = match node.get("name").and_then(|v| v.as_str()) {
-                        Some(n) => n.to_string(),
-                        None => continue,
-                    };
-                    let qualtype = match node.get("type")
-                        .and_then(|v| v.get("qualType"))
-                        .and_then(|v| v.as_str())
-                    {
-                        Some(t) => t.to_string(),
-                        None => continue,
-                    };
-                    results.push((name, qualtype));
                 }
-            }
-            results
+                results
+            })
         })
-    }).collect();
+        .collect();
 
     let mut types = HashMap::new();
     for handle in handles {
@@ -290,9 +304,24 @@ fn extract_static_types(c_files: &[PathBuf], clang_args: &[&str]) -> HashMap<Str
 
 /// C type keywords and qualifiers that don't need to be in the known_types set.
 const C_TYPE_KEYWORDS: &[&str] = &[
-    "void", "char", "short", "int", "long", "float", "double", "signed", "unsigned",
-    "const", "volatile", "restrict", "struct", "union", "enum",
-    "_Bool", "_Complex", "_Imaginary",
+    "void",
+    "char",
+    "short",
+    "int",
+    "long",
+    "float",
+    "double",
+    "signed",
+    "unsigned",
+    "const",
+    "volatile",
+    "restrict",
+    "struct",
+    "union",
+    "enum",
+    "_Bool",
+    "_Complex",
+    "_Imaginary",
 ];
 
 /// Check if all type identifiers in a qualType string are either C keywords
@@ -300,11 +329,17 @@ const C_TYPE_KEYWORDS: &[&str] = &[
 fn type_is_visible(qualtype: &str, known_types: &HashSet<String>) -> bool {
     // Extract identifier-like tokens from the type string
     for token in qualtype.split(|c: char| !c.is_ascii_alphanumeric() && c != '_') {
-        if token.is_empty() { continue; }
+        if token.is_empty() {
+            continue;
+        }
         // Skip numeric tokens (array sizes like [512])
-        if token.chars().next().map_or(true, |c| c.is_ascii_digit()) { continue; }
+        if token.chars().next().map_or(true, |c| c.is_ascii_digit()) {
+            continue;
+        }
         // Skip C keywords
-        if C_TYPE_KEYWORDS.contains(&token) { continue; }
+        if C_TYPE_KEYWORDS.contains(&token) {
+            continue;
+        }
         // Must be in known types
         if !known_types.contains(token) {
             return false;
