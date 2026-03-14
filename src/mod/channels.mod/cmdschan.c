@@ -41,9 +41,9 @@ static void truncate_mask_hostname(char *s) {
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
-  char extbanflag = 0;
+  char extbanflag = 0, account_extban_flag = 0;
   int extban_enabled = 1;
-  int extban_force_sticky = 0;
+  int extban_default_sticky = 0;
   const char *value, *comma, *types, *extbanargs;
   long expire_foo;
   unsigned long expire_time = 0;
@@ -129,8 +129,13 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       strlcpy(s, who, sizeof s);
       /* If its an extban, check if it needs to be set as a sticky ban */
       if (extban_parse(s, &extbanflag, &extbanargs)) {
-        extban_force_sticky = extban_sticky_flags(extbanflag);
-        if (extban_force_sticky)
+        const char *account_extban;
+
+        account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+        if (account_extban && account_extban[0])
+          account_extban_flag = account_extban[0];
+        extban_default_sticky = !extban_is_enforceable_flag(extbanflag, account_extban_flag);
+        if (extban_default_sticky)
           sticky = 1;
         value = isupport_get("EXTBAN", strlen("EXTBAN"));
         if (value && value[0]) {
@@ -166,7 +171,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     if (chan) {
       u_addban(chan, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
-      if (par[0] == '*' || extban_force_sticky) {
+      if (par[0] == '*' || extban_default_sticky) {
         sticky = 1;
         if (par[0] == '*')
           par++;
@@ -183,14 +188,14 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
        */
       if ((me = module_find("irc", 0, 0))) {
         if (!extbanflag || extban_enabled)
-          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_force_sticky);
+          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_default_sticky);
         else
           dprintf(idx, "The %c extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the %c flag enabled.\n", extbanflag, extbanflag);
       }
     } else {
       u_addban(NULL, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
-      if (par[0] == '*' || extban_force_sticky) {
+      if (par[0] == '*' || extban_default_sticky) {
         sticky = 1;
         if (par[0] == '*')
           par++;
@@ -205,7 +210,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       if ((me = module_find("irc", 0, 0))) {
         if (!extbanflag || extban_enabled) {
           for (chan = chanset; chan != NULL; chan = chan->next)
-            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_force_sticky);
+            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_default_sticky);
         } else
           dprintf(idx, "The %c extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the %c flag enabled.\n", extbanflag, extbanflag);
       }

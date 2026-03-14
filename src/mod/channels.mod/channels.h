@@ -65,25 +65,12 @@ struct udef_struct {
                                 * structures.                          */
 };
 
-/* List of extban flags that are non-enforceable by Eggdrop-
- * In other words, extbans that need to be set and forgotten about because
- * Eggdrop can't do things like block notices or CTCPs, etc
+/* List of extban flags that Eggdrop can actively enforce.
+ * Any extban flag not in this list is treated as sticky by default.
  */
-static int extban_sticky_flags(char flag)
+static int extban_is_enforceable_flag(char flag, char account_extban_flag)
 {
-  switch (flag) {
-  case 'p':
-  case 'q':
-  case 'Q':
-  case 'A':
-  case 'B':
-  case 'c':
-  case 'N':
-  case 'T':
-    return 1;
-  default:
-    return 0;
-  }
+  return (flag == 'U' || (account_extban_flag && flag == account_extban_flag));
 }
 
 

@@ -464,8 +464,8 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
                     time_t expire_time, int flags)
 {
-  char host[1024], s[1024], extbantype, isextban;
-  const char *extbanarg;
+  char host[1024], s[1024], extbantype, account_extban_flag = 0, isextban;
+  const char *extbanarg, *account_extban;
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
@@ -477,7 +477,11 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     fix_broken_mask(host, ban, sizeof host);
   }
   if (isextban) {
-    if (extban_parse(host, &extbantype, &extbanarg) && extban_sticky_flags(extbantype))
+    account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+    if (account_extban && account_extban[0])
+      account_extban_flag = account_extban[0];
+    if (extban_parse(host, &extbantype, &extbanarg) &&
+        !extban_is_enforceable_flag(extbantype, account_extban_flag))
       flags |= MASKREC_STICKY;
   }
 
