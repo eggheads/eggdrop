@@ -46,31 +46,42 @@ through function-table macros like `#define nick_len (*(int *)(server_funcs[37])
 These macro names would be expanded by the preprocessor if used in `extern`
 declarations, breaking compilation.
 
-**Type extraction** — For dereference-style macros (`(*(TYPE *)(table[N]))`),
-the cast type is parsed out so we can emit a properly typed `extern`
-declaration. For example, `nick_len`'s macro tells us the underlying variable
-is `int`, so we emit `extern int nick_len;` rather than a generic
-`extern char nick_len[];`. This gives tests compile-time type safety — if the
-C type changes, the Rust binding updates automatically.
-
-For plain-cast macros (`((char *)(table[N]))`) used for array-typed variables
-like `botuserhost`, the type can't be reliably inferred, so we fall back to
-`extern char name[];`.
-
 **Header symbol collection** — A first-pass bindgen run processes only
 `wrapper.h` (the header chain) to discover which symbols already have typed
 declarations in headers. These are excluded from `globals.h` to avoid
-redeclaration conflicts (e.g. `global_bans` is declared in `chan.h`).
+redeclaration conflicts (e.g. `global_bans` is declared in `chan.h`). This
+pass also collects known type names (type aliases, structs, enums) for use
+in the type visibility check.
 
-**globals.h generation** — `nm` scans `libeggdrop.a` for global data symbols
-(B and D types). For each symbol that is:
+**Type extraction via clang AST** — To get the real C types for globalized
+symbols, `build.rs` maps `.o` files from the archive back to their `.c`
+source files, then runs `clang -Xclang -ast-dump=json -fsyntax-only` on
+each `.c` file in parallel threads. The JSON AST is parsed with `serde_json`
+to find top-level `VarDecl` nodes with `storageClass: "static"`, extracting
+each variable's `qualType` string (e.g. `"int"`, `"char [512]"`,
+`"void (*)(int)"`).
+
+A **type visibility check** (`type_is_visible()`) validates that all type
+identifiers in the `qualType` string are either C keywords or types known
+from the header-only bindgen pass. Module-internal types like `assoc_t` or
+`isupport_t` (defined inside `.c` files, not headers) fail this check, and
+the symbol falls back to `extern char name[];`.
+
+**globals.h generation** — `nm -A` scans `libeggdrop.a` for global data
+symbols (B and D types). For each symbol that is:
 - a valid C identifier,
 - not already declared in headers,
 - not a duplicate,
 
 an `extern` declaration is emitted. Macro-colliding symbols get a `#undef`
-directive first, then a typed declaration (if the type was extracted) or a
-generic `extern char name[];` fallback.
+directive first. If the clang AST provided a type and the type is visible,
+a properly typed declaration is emitted (e.g. `extern int nick_len;`,
+`extern char botuserhost[121];`). Array types are formatted with brackets
+after the identifier, and function pointers use the `(*name)` syntax.
+Otherwise, a generic `extern char name[];` fallback is used.
+
+This gives tests compile-time type safety — if the C type of a variable
+changes, the Rust binding updates automatically on the next build.
 
 **Final bindgen pass** — Processes `wrapper.h` + `globals.h` together, producing
 `bindings.rs` with typed Rust bindings for both header-declared symbols and
@@ -124,14 +135,14 @@ response sent during the welcome burst.
 
 | File | Purpose |
 |------|---------|
-| `Cargo.toml` | Dependencies: libc, minijinja, tempfile; build-dep: bindgen |
-| `build.rs` | Link config, macro/type extraction, nm analysis, bindgen |
+| `Cargo.toml` | Dependencies: libc, minijinja, tempfile; build-dep: bindgen, serde_json |
+| `build.rs` | Link config, clang AST type extraction, nm analysis, bindgen |
 | `wrapper.h` | Header chain for bindgen |
 | `eggdrop.conf.j2` | Minijinja config template |
 | `src/lib.rs` | Test harness: DNS hooks, connect interposition, IRCd, builder |
 | `tests/connect.rs` | Verifies eggdrop registers (NICK/USER) on connect |
 | `tests/ping.rs` | Verifies eggdrop responds to PING |
-| `tests/isupport.rs` | Verifies NICKLEN parsed from 005 ISUPPORT |
+| `tests/isupport.rs` | Verifies ISUPPORT parsing (NICKLEN, WHOX, MODES, MAXLIST) |
 
 ## Alternatives considered
 
@@ -149,12 +160,19 @@ case.
 file-based approach. Fails because it also globalizes section symbols (`.text`,
 `.data`, `.bss`), causing link-time collisions across object files.
 
+**Macro type extraction from `#define` patterns** — Earlier iteration of the
+type extraction approach. Parsed the expansion of function-table macros like
+`#define nick_len (*(int *)(server_funcs[37]))` to extract the cast type.
+Works for dereference-style macros but fails for plain casts like
+`((char *)(funcs[N]))` and cannot extract types for variables not exposed
+through the module macro system. Replaced by the clang AST approach which
+covers all file-scope statics regardless of how they're exposed.
+
 **Tree-sitter C parser** — Could parse `.c` files to extract `static` variable
 declarations with full type information. Handles ~95% of eggdrop's patterns,
 but fails on inline struct definitions (`static struct { ... } name;`), macro
-qualifiers (`static int name STDVAR;`), and function pointers. Complexity not
-justified given the nm + macro type extraction approach covers the important
-cases.
+qualifiers (`static int name STDVAR;`), and function pointers. The clang AST
+approach handles all of these correctly since it uses clang's own parser.
 
 **Regex-based C source parsing** — Simpler than tree-sitter but shares the same
 failure modes with inline structs and macro qualifiers. Would also miss

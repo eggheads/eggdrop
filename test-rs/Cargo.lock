@@ -414,6 +414,7 @@ dependencies = [
  "bindgen",
  "libc",
  "minijinja",
+ "serde_json",
  "tempfile",
 ]
 
