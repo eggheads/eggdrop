@@ -1,5 +1,6 @@
-use std::ffi::{c_char, c_int, c_void, CStr, CString};
+use std::ffi::{CStr, CString, c_char, c_int, c_void};
 use std::path::Path;
+use std::sync::{Mutex, OnceLock};
 
 /// Eggdrop's sockname_t (with IPV6 enabled)
 #[repr(C)]
@@ -54,8 +55,7 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
             )
         }
         libc::AF_INET6 => {
-            let sa =
-                unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
+            let sa = unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
             let bytes = sa.sin6_addr.s6_addr;
             let segments: Vec<String> = (0..8)
                 .map(|i| format!("{:x}", u16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]])))
@@ -64,7 +64,10 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
         }
         _ => format!("unknown family {}", family),
     };
-    println!("[rust_dns_hostbyip] reverse lookup requested for: {}", ip_str);
+    println!(
+        "[rust_dns_hostbyip] reverse lookup requested for: {}",
+        ip_str
+    );
 }
 
 unsafe extern "C" fn rust_dns_ipbyhost(hostname: *mut c_char) {
@@ -78,6 +81,100 @@ unsafe extern "C" fn rust_dns_ipbyhost(hostname: *mut c_char) {
             call_ipbyhost(hostname, &mut sn, 1);
         }
     }
+}
+
+type ConnectFn = unsafe extern "C" fn(c_int, *const libc::sockaddr, libc::socklen_t) -> c_int;
+
+static REAL_CONNECT: OnceLock<ConnectFn> = OnceLock::new();
+
+fn get_real_connect() -> ConnectFn {
+    *REAL_CONNECT.get_or_init(|| unsafe {
+        let ptr = libc::dlsym(libc::RTLD_NEXT, c"connect".as_ptr());
+        assert!(
+            !ptr.is_null(),
+            "dlsym(RTLD_NEXT, \"connect\") returned NULL"
+        );
+        std::mem::transmute(ptr)
+    })
+}
+
+fn format_sockaddr(addr: *const libc::sockaddr) -> String {
+    let family = unsafe { (*addr).sa_family } as c_int;
+    match family {
+        libc::AF_INET => {
+            let sa = unsafe { &*(addr as *const libc::sockaddr_in) };
+            let ip = u32::from_be(sa.sin_addr.s_addr);
+            let port = u16::from_be(sa.sin_port);
+            format!(
+                "{}.{}.{}.{}:{}",
+                (ip >> 24) & 0xff,
+                (ip >> 16) & 0xff,
+                (ip >> 8) & 0xff,
+                ip & 0xff,
+                port
+            )
+        }
+        libc::AF_INET6 => {
+            let sa = unsafe { &*(addr as *const libc::sockaddr_in6) };
+            let bytes = sa.sin6_addr.s6_addr;
+            let port = u16::from_be(sa.sin6_port);
+            let segments: Vec<String> = (0..8)
+                .map(|i| format!("{:x}", u16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]])))
+                .collect();
+            format!("[{}]:{}", segments.join(":"), port)
+        }
+        _ => format!("unknown family {}", family),
+    }
+}
+
+/// Our end of the fake IRC server socketpair (-1 = not connected)
+static FAKE_IRCD: Mutex<c_int> = Mutex::new(-1);
+
+fn is_fake_target(addr: *const libc::sockaddr) -> bool {
+    let family = unsafe { (*addr).sa_family } as c_int;
+    if family != libc::AF_INET {
+        return false;
+    }
+    let sa = unsafe { &*(addr as *const libc::sockaddr_in) };
+    let ip_bytes = sa.sin_addr.s_addr.to_ne_bytes();
+    let port = u16::from_be(sa.sin_port);
+    ip_bytes == [192, 0, 2, 1] && port == 6667
+}
+
+#[unsafe(no_mangle)]
+unsafe extern "C" fn connect(
+    fd: c_int,
+    addr: *const libc::sockaddr,
+    len: libc::socklen_t,
+) -> c_int {
+    let dest = format_sockaddr(addr);
+    println!("[rust_connect] fd={} -> {}", fd, dest);
+
+    if is_fake_target(addr) {
+        let mut pair: [c_int; 2] = [0; 2];
+        if unsafe { libc::socketpair(libc::AF_UNIX, libc::SOCK_STREAM, 0, pair.as_mut_ptr()) } != 0
+        {
+            eprintln!("[rust_connect] socketpair() failed");
+            unsafe {
+                *libc::__errno_location() = libc::ECONNREFUSED;
+            }
+            return -1;
+        }
+        // pair[0] = eggdrop's end (replace fd), pair[1] = our end
+        unsafe {
+            libc::dup2(pair[0], fd);
+            libc::close(pair[0]);
+        }
+        println!(
+            "[rust_connect] intercepted! eggdrop fd={} <-> rust fd={}",
+            fd, pair[1]
+        );
+        *FAKE_IRCD.lock().unwrap() = pair[1];
+        return 0;
+    }
+
+    let real_connect = get_real_connect();
+    unsafe { real_connect(fd, addr, len) }
 }
 
 fn main() {
