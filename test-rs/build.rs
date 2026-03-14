@@ -12,6 +12,7 @@ fn main() {
     println!("cargo:rustc-link-lib=dylib=resolv");
     println!("cargo:rustc-link-lib=dylib=m");
     println!("cargo:rustc-link-lib=dylib=pthread");
+    println!("cargo:rustc-link-lib=dylib=dl");
 
     println!("cargo:rerun-if-changed={}", eggdrop_dir.join("libeggdrop.a").display());
 }
