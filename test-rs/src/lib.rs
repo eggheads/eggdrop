@@ -148,6 +148,7 @@ unsafe extern "C" fn connect(
 pub struct IRCd {
     reader: BufReader<File>,
     writer: LineWriter<File>,
+    isupport: Vec<String>,
 }
 
 /// A parsed IRC line, split into words on whitespace.
@@ -323,13 +324,22 @@ impl IRCd {
             ":irc.test 004 {} irc.test test-0.1 oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI",
             nick
         ));
-        self.send(&format!(":irc.test 005 {} NETWORK=TestNet CASEMAPPING=rfc1459 CHANTYPES=#& :are supported by this server", nick));
+        let isupport = self.isupport.clone();
+        for tokens in &isupport {
+            self.send(&format!(
+                ":irc.test 005 {} {} :are supported by this server",
+                nick, tokens
+            ));
+        }
     }
 }
+
+const DEFAULT_ISUPPORT: &[&str] = &["NETWORK=TestNet CASEMAPPING=rfc1459 CHANTYPES=#&"];
 
 /// Config builder for Eggtest.
 pub struct EggtestBuilder {
     settings: Vec<(String, String)>,
+    isupport: Vec<String>,
 }
 
 /// The main test handle. Created via `Eggtest::builder().spawn()`.
@@ -344,6 +354,7 @@ impl Eggtest {
     pub fn builder() -> EggtestBuilder {
         EggtestBuilder {
             settings: Vec::new(),
+            isupport: DEFAULT_ISUPPORT.iter().map(|s| s.to_string()).collect(),
         }
     }
 
@@ -357,6 +368,13 @@ impl Eggtest {
 const CONFIG_TEMPLATE: &str = include_str!("../eggdrop.conf.j2");
 
 impl EggtestBuilder {
+    /// Set custom raw 005 (ISUPPORT) lines for the fake IRCd welcome burst.
+    /// Each entry becomes a separate 005 numeric line.
+    pub fn with_isupport(mut self, lines: Vec<&str>) -> Self {
+        self.isupport = lines.into_iter().map(|s| s.to_string()).collect();
+        self
+    }
+
     /// Add or override a setting. Will be emitted as `set <setting> "<value>"`.
     pub fn with_set(mut self, setting: &str, value: &str) -> Self {
         self.settings.push((setting.to_string(), value.to_string()));
@@ -425,6 +443,7 @@ impl EggtestBuilder {
             ircd: IRCd {
                 reader: BufReader::new(read_file),
                 writer: LineWriter::new(write_file),
+                isupport: self.isupport,
             },
             _conffile: conffile,
             _pidfile: pidfile,

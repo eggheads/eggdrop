@@ -58,6 +58,14 @@ archive:
 	objcopy --redefine-sym main=eggdrop_main main.o main.o
 	ar rcs ../libeggdrop.a $(eggdrop_objs) $(MODOBJS) md5/md5c.o compat/*.o
 	$(RANLIB) ../libeggdrop.a
+	@# Globalize static symbols for test access, skipping colliders
+	@nm ../libeggdrop.a | grep ' [tbd] ' | awk '{print $$3}' | grep -v '^\.' | sort -u > ../libeggdrop.locals.txt
+	@nm ../libeggdrop.a | grep ' [tbd] ' | awk '{print $$3}' | grep -v '^\.' | sort | uniq -c | awk '$$1 > 1 {print $$2}' > ../libeggdrop.colliders.txt
+	@nm ../libeggdrop.a | grep ' [TBD] ' | awk '{print $$3}' | sort -u | comm -12 ../libeggdrop.locals.txt - >> ../libeggdrop.colliders.txt
+	@sort -u -o ../libeggdrop.colliders.txt ../libeggdrop.colliders.txt
+	@comm -23 ../libeggdrop.locals.txt ../libeggdrop.colliders.txt > ../libeggdrop.globalize.txt
+	objcopy --globalize-symbols=../libeggdrop.globalize.txt ../libeggdrop.a
+	@rm -f ../libeggdrop.locals.txt ../libeggdrop.colliders.txt ../libeggdrop.globalize.txt
 	objcopy --redefine-sym eggdrop_main=main main.o main.o
 	@echo "" && \
 	echo "Successful archive: libeggdrop.a" && \
