@@ -1,11 +1,6 @@
-use std::ffi::c_int;
 use std::time::Duration;
 use test_rs::Eggtest;
-
-unsafe extern "C" {
-    // nick_len is exported via server_funcs[37] but stored as a static int in server.mod
-    static nick_len: c_int;
-}
+use test_rs::eggdrop;
 
 #[test]
 fn eggdrop_parses_nicklen_from_isupport() {
@@ -21,7 +16,7 @@ fn eggdrop_parses_nicklen_from_isupport() {
     egg.ircd.send_welcome(&nick);
     egg.ircd.drain(Duration::from_millis(500));
 
-    let nick_len_val = unsafe { nick_len };
+    let nick_len_val = unsafe { eggdrop::nick_len };
     assert_eq!(
         nick_len_val, 16,
         "expected nick_len=16 from NICKLEN=16 in ISUPPORT, got {}",
