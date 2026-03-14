@@ -93,7 +93,7 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
-static int extban_flag_supported_local(char flag)
+static int extban_flag_supported(char flag)
 {
   module_entry *me;
   const char *value = NULL, *comma, *types;
@@ -113,30 +113,31 @@ static int extban_flag_supported_local(char flag)
   return 0;
 }
 
-/* XXXXXXX Document this little clusterf */
+/* Document whether a ban matches a specific channel member
+ * banmask can be normal or extban, user is the traditional userhost.
+ * Returns 1 if the ban mask matches the member, 0 if not
+ */
 static int banmask_matches_member(const char *banmask, const char *user, memberlist *m)
 {
   module_entry *me;
   char type;
   const char *v = NULL, *arg = NULL;
 
+  /* Am I an extban? */
   if (!extban_parse(banmask, &type, &arg)) {
     return match_addr((char *) banmask, (char *) user);
   }
-
-  if (!m || !m->account[0]) {
-    return 0;
-  }
-
 
   me = module_find("server", 0, 0);
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
+  /* Try account extban matching */
   if (type && v && type == v[0]) {
     return !rfc_casecmp(m->account, arg);
   }
 
+  /* Try U (unregistered) extban matching */
   if (type == 'U') {
     return !strcmp(m->account, "*") && match_addr((char *) arg, (char *) user);
   }
@@ -636,7 +637,7 @@ static void recheck_bans(struct chanset_t *chan)
       char extflag;
       const char *extarg;
 
-      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported_local(extflag))
+      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag))
         continue;
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
           (u->flags & MASKREC_STICKY)))
@@ -738,7 +739,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   if (HALFOP_CANTDOMODE('b'))
     return;
 
-  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported_local(extflag))
+  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported(extflag))
     return;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
