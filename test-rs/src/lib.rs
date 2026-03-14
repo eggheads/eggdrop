@@ -1,6 +1,6 @@
 use std::ffi::{CStr, CString, c_char, c_int, c_void};
 use std::fs::File;
-use std::io::{BufRead, BufReader, Write as IoWrite};
+use std::io::{BufRead, BufReader, LineWriter, Write as IoWrite};
 use std::os::unix::io::FromRawFd;
 use std::path::Path;
 use std::sync::{Mutex, OnceLock};
@@ -58,8 +58,7 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
             )
         }
         libc::AF_INET6 => {
-            let sa =
-                unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
+            let sa = unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
             let bytes = sa.sin6_addr.s6_addr;
             let segments: Vec<String> = (0..8)
                 .map(|i| format!("{:x}", u16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]])))
@@ -148,18 +147,82 @@ unsafe extern "C" fn connect(
 /// Handle to the fake IRC server side of the socketpair.
 pub struct IRCd {
     reader: BufReader<File>,
-    writer: File,
+    writer: LineWriter<File>,
+}
+
+/// A parsed IRC line, split into words on whitespace.
+#[derive(Debug, Clone)]
+pub struct IRCline(pub Vec<String>);
+
+impl IRCline {
+    pub fn new(raw: &str) -> Self {
+        let mut words = Vec::new();
+        let mut rest = raw;
+        while !rest.is_empty() {
+            rest = rest.trim_start();
+            if rest.is_empty() {
+                break;
+            }
+            if rest.starts_with(':') && !words.is_empty() {
+                // Trailing parameter: everything after the ':' is one word
+                words.push(rest[1..].to_string());
+                break;
+            }
+            match rest.find(' ') {
+                Some(i) => {
+                    words.push(rest[..i].to_string());
+                    rest = &rest[i..];
+                }
+                None => {
+                    words.push(rest.to_string());
+                    break;
+                }
+            }
+        }
+        IRCline(words)
+    }
+
+    /// Access a word by index.
+    pub fn get(&self, i: usize) -> Option<&str> {
+        self.0.get(i).map(|s| s.as_str())
+    }
+
+    /// Check if the first N words match another IRCline's words.
+    pub fn starts_with(&self, other: &IRCline) -> bool {
+        if other.0.len() > self.0.len() {
+            return false;
+        }
+        other.0.iter().zip(&self.0).all(|(a, b)| a == b)
+    }
+
+    /// Check if all words match exactly (same length and content).
+    pub fn matches(&self, other: &IRCline) -> bool {
+        self.0.len() == other.0.len() && self.0 == other.0
+    }
+}
+
+impl std::fmt::Display for IRCline {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let quoted: Vec<String> = self.0.iter().map(|w| format!("\"{}\"", w)).collect();
+        write!(f, "{}", quoted.join(" "))
+    }
+}
+
+impl std::ops::Index<usize> for IRCline {
+    type Output = String;
+    fn index(&self, i: usize) -> &String {
+        &self.0[i]
+    }
 }
 
 impl IRCd {
     /// Send a raw IRC line (appends \r\n).
     pub fn send(&mut self, line: &str) {
         write!(self.writer, "{}\r\n", line).expect("write to fake ircd socket");
-        self.writer.flush().expect("flush fake ircd socket");
     }
 
     /// Read one IRC line, stripping \r\n. Returns None on timeout.
-    pub fn recv_line(&mut self, timeout: Duration) -> Option<String> {
+    pub fn recv_line(&mut self, timeout: Duration) -> Option<IRCline> {
         use std::os::unix::io::AsRawFd;
         let fd = self.reader.get_ref().as_raw_fd();
 
@@ -178,27 +241,48 @@ impl IRCd {
         match self.reader.read_line(&mut line) {
             Ok(0) | Err(_) => None,
             Ok(_) => {
-                let trimmed = line.trim_end_matches(&['\r', '\n'][..]).to_string();
-                Some(trimmed)
+                let trimmed = line.trim_end_matches(&['\r', '\n'][..]);
+                Some(IRCline::new(trimmed))
             }
         }
     }
 
-    /// Read lines until one starts with `prefix`, panic on timeout.
-    pub fn expect(&mut self, prefix: &str, timeout: Duration) -> String {
+    /// Read lines until one matches the given string exactly (parsed as IRCline), panic on timeout.
+    pub fn expect(&mut self, expected: &str, timeout: Duration) {
+        let expected = IRCline::new(expected);
         let deadline = std::time::Instant::now() + timeout;
         loop {
             let remaining = deadline.saturating_duration_since(std::time::Instant::now());
             if remaining.is_zero() {
-                panic!("IRCd::expect({:?}) timed out", prefix);
+                panic!("IRCd::expect({}) timed out", expected);
             }
             if let Some(line) = self.recv_line(remaining) {
                 eprintln!("[eggtest ircd] <- {}", line);
-                if line.starts_with(prefix) {
+                if line.matches(&expected) {
+                    return;
+                }
+            } else {
+                panic!("IRCd::expect({}) timed out", expected);
+            }
+        }
+    }
+
+    /// Read lines until one starts with the given prefix (parsed as IRCline), panic on timeout.
+    pub fn expect_prefix(&mut self, prefix: &str, timeout: Duration) -> IRCline {
+        let prefix = IRCline::new(prefix);
+        let deadline = std::time::Instant::now() + timeout;
+        loop {
+            let remaining = deadline.saturating_duration_since(std::time::Instant::now());
+            if remaining.is_zero() {
+                panic!("IRCd::expect_prefix({}) timed out", prefix);
+            }
+            if let Some(line) = self.recv_line(remaining) {
+                eprintln!("[eggtest ircd] <- {}", line);
+                if line.starts_with(&prefix) {
                     return line;
                 }
             } else {
-                panic!("IRCd::expect({:?}) timed out", prefix);
+                panic!("IRCd::expect_prefix({}) timed out", prefix);
             }
         }
     }
@@ -216,20 +300,29 @@ impl IRCd {
     /// Handle CAP LS negotiation (empty cap list), wait for NICK/USER,
     /// return the nick eggdrop registered with.
     pub fn negotiate(&mut self) -> String {
-        self.expect("CAP LS", Duration::from_secs(10));
+        self.expect_prefix("CAP LS", Duration::from_secs(10));
         self.send(":irc.test CAP * LS :");
-        let nick_line = self.expect("NICK ", Duration::from_secs(5));
-        self.expect("USER ", Duration::from_secs(5));
+        let nick_line = self.expect_prefix("NICK", Duration::from_secs(5));
+        self.expect_prefix("USER", Duration::from_secs(5));
         self.expect("CAP END", Duration::from_secs(5));
-        nick_line.strip_prefix("NICK ").unwrap().trim().to_string()
+        nick_line[1].clone()
     }
 
     /// Send a standard IRC welcome burst (001-005).
     pub fn send_welcome(&mut self, nick: &str) {
-        self.send(&format!(":irc.test 001 {} :Welcome to the test network", nick));
+        self.send(&format!(
+            ":irc.test 001 {} :Welcome to the test network",
+            nick
+        ));
         self.send(&format!(":irc.test 002 {} :Your host is irc.test", nick));
-        self.send(&format!(":irc.test 003 {} :This server was created today", nick));
-        self.send(&format!(":irc.test 004 {} irc.test test-0.1 oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI", nick));
+        self.send(&format!(
+            ":irc.test 003 {} :This server was created today",
+            nick
+        ));
+        self.send(&format!(
+            ":irc.test 004 {} irc.test test-0.1 oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI",
+            nick
+        ));
         self.send(&format!(":irc.test 005 {} NETWORK=TestNet CASEMAPPING=rfc1459 CHANTYPES=#& :are supported by this server", nick));
     }
 }
@@ -283,7 +376,7 @@ impl Eggtest {
         Eggtest {
             ircd: IRCd {
                 reader: BufReader::new(read_file),
-                writer: write_file,
+                writer: LineWriter::new(write_file),
             },
         }
     }
