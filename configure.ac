@@ -65,6 +65,11 @@ EGG_EXEEXT
 AC_PROG_INSTALL
 AC_CHECK_PROGS(MAKE, make gmake)
 AC_PROG_MAKE_SET
+
+AC_PROG_MKDIR_P
+# Replace relative path with absolute path
+MKDIR_P=$(echo "$MKDIR_P" | sed "s|^./misc|${ac_pwd}/misc|")
+
 AC_PROG_RANLIB
 AC_PROG_LN_S
 EGG_PROG_HEAD_1

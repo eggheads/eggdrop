@@ -802,7 +802,6 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
 }
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-greet",              NULL,                     0},
   {"use-info",                 &use_info,                0},
   {"quiet-save",               &quiet_save,              0},
   {"allow-ps",                 &allow_ps,                0},
@@ -1038,7 +1037,6 @@ char *channels_start(Function *global_funcs)
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");
   add_help_reference("chaninfo.help");
-  my_tcl_ints[0].val = &share_greet;
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
   read_channels(0, 0);
