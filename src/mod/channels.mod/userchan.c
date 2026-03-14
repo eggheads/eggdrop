@@ -243,12 +243,15 @@ static int u_match_mask(maskrec *rec, char *mask)
     }
   }
 
+/* Loop through all ban records, see if user matches based on mask or
+ * flag (extban).
+ */
   for (; rec; rec = rec->next) {
+    /* Am I an extban? */
     if (extban_parse(rec->mask, &type, &arg)) {
       me = module_find("server", 0, 0);
       if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) { 
         accountflag = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-        return 0;
       }
       /* unknown account state never matches extbans */
       if (!m || !m->account[0]) {

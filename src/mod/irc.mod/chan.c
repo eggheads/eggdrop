@@ -133,7 +133,7 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
-  if (type && (type == v[0])) {
+  if (type && v && type == v[0]) {
     return !rfc_casecmp(m->account, arg);
   }
 

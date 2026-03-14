@@ -125,33 +125,6 @@ static void get_extban_prefix(char *prefix)
   return;
 }
 
-/*
-static int extban_flag_is_supported(char flag)
-{
-  const char *value, *comma, *types;
-
-  value = isupport_get("EXTBAN", strlen("EXTBAN"));
-  if (!value || !value[0]) {
-    return 0;
-  }
-
-  comma = strchr(value, ',');
-  if (comma) {
-    types = comma + 1;
-  }
-  else {
-    types = value;
-  }
-
-  for (; *types; types++) {
-    if (*types == flag) {
-      return 1;
-    }
-  }
-  return 0;
-}
-*/
-
 static void *channel_malloc(int size, char *file, int line)
 {
   char *p;
