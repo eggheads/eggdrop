@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -33,43 +33,33 @@ fn main() {
         "-DMAKING_MODS",
         &format!("-I{}", eggdrop_dir.display()),
         &format!("-I{}", src_dir.display()),
+        &format!("-I{}", src_dir.join("mod").display()),
         "-I/usr/include/tcl8.6",
     ];
 
-    // Collect all macro names from the preprocessed headers so we can skip
-    // nm symbols that collide with #define'd names (e.g. server.h macros).
+    // Collect all macro names from the preprocessed headers so we can
+    // #undef names that collide with nm symbols before declaring them extern.
     let cpp_output = Command::new("clang")
         .arg("-dM")
         .arg("-E")
         .args(clang_args)
         .arg("wrapper.h")
         .output()
-        .expect("failed to run cc -dM -E");
+        .expect("failed to run clang -dM -E");
     let cpp_stdout = String::from_utf8_lossy(&cpp_output.stdout);
 
     let mut macro_names = HashSet::new();
-    // For macros like #define nick_len (*(int *)(server_funcs[37])),
-    // extract the cast type so we can emit a properly typed extern declaration.
-    let mut macro_types = std::collections::HashMap::new();
     for line in cpp_stdout.lines() {
-        // Lines look like: #define NAME ...
         let parts: Vec<&str> = line.splitn(3, ' ').collect();
         if parts.len() >= 2 && parts[0] == "#define" {
-            // Strip function-like macro parens: NAME(x) -> NAME
             let name = parts[1].split('(').next().unwrap_or(parts[1]);
             if is_valid_c_ident(name) {
                 macro_names.insert(name.to_string());
-                // Try to extract type from (*(TYPE *)(funcs[N])) or ((TYPE)(funcs[N]))
-                if parts.len() == 3 {
-                    if let Some(ctype) = extract_macro_deref_type(parts[2]) {
-                        macro_types.insert(name.to_string(), ctype);
-                    }
-                }
             }
         }
     }
 
-    // Also collect symbols already declared in headers via a first-pass bindgen.
+    // Collect symbols already declared in headers via a first-pass bindgen.
     // This avoids redeclaration conflicts (e.g. global_bans already in chan.h).
     let header_bindings = bindgen::Builder::default()
         .header("wrapper.h")
@@ -82,9 +72,9 @@ fn main() {
 
     let header_str = header_bindings.to_string();
     let mut header_symbols = HashSet::new();
+    let mut known_types = HashSet::new();
     for line in header_str.lines() {
         let trimmed = line.trim();
-        // Match "pub static mut NAME:" or "pub static NAME:"
         let rest = if let Some(r) = trimmed.strip_prefix("pub static mut ") {
             Some(r)
         } else {
@@ -95,40 +85,85 @@ fn main() {
                 header_symbols.insert(name.trim().to_string());
             }
         }
+        // Collect type names from bindgen output (type aliases and struct/enum/union names)
+        if let Some(rest) = trimmed.strip_prefix("pub type ") {
+            if let Some(name) = rest.split_whitespace().next() {
+                known_types.insert(name.to_string());
+            }
+        } else if let Some(rest) = trimmed.strip_prefix("pub struct ") {
+            if let Some(name) = rest.split_whitespace().next().map(|n| n.trim_end_matches('{')) {
+                known_types.insert(name.to_string());
+            }
+        } else if let Some(rest) = trimmed.strip_prefix("pub enum ") {
+            if let Some(name) = rest.split_whitespace().next().map(|n| n.trim_end_matches('{')) {
+                known_types.insert(name.to_string());
+            }
+        }
     }
 
-    // Run nm on the archive to find global data symbols (B=BSS, D=initialized data).
+    // Run nm -A on the archive to find global data symbols and their .o files.
     let nm_output = Command::new("nm")
+        .arg("-A")
         .arg(&lib_path)
         .output()
         .expect("failed to run nm");
     let nm_stdout = String::from_utf8_lossy(&nm_output.stdout);
 
-    let mut seen = HashSet::new();
-    let mut undefs = Vec::new();
-    let mut decls = Vec::new();
-
+    let mut nm_symbols = HashSet::new();
+    let mut obj_files = HashSet::new();
     for line in nm_stdout.lines() {
-        let parts: Vec<&str> = line.split_whitespace().collect();
+        // Format: /path/libeggdrop.a:foo.o:0000 B symbol_name
+        let after_archive = match line.split_once(':') {
+            Some((_, rest)) => rest,
+            None => continue,
+        };
+        let (obj_name, rest) = match after_archive.split_once(':') {
+            Some(pair) => pair,
+            None => continue,
+        };
+        // rest is "addr TYPE name" (e.g. "0000000000000000 B bg")
+        let parts: Vec<&str> = rest.split_whitespace().collect();
         if parts.len() < 3 { continue; }
         let sym_type = parts[1];
         let sym_name = parts[2];
 
-        if sym_type != "B" && sym_type != "D" { continue; }
-        if !is_valid_c_ident(sym_name) { continue; }
-        if !seen.insert(sym_name.to_string()) { continue; }
-        // Skip symbols already declared in headers (would conflict with typed decl)
+        if sym_type == "B" || sym_type == "D" {
+            if is_valid_c_ident(sym_name) {
+                nm_symbols.insert(sym_name.to_string());
+                obj_files.insert(obj_name.to_string());
+            }
+        }
+    }
+
+    // Map .o file basenames to .c source files by searching src/.
+    let c_files = find_c_files_for_objects(&src_dir, &obj_files);
+
+    // Run clang AST dump on each .c file (in parallel) to extract types
+    // for file-scope static variables.
+    let static_types = extract_static_types(&c_files, clang_args);
+
+    // Generate globals.h with properly typed extern declarations.
+    let mut seen = HashSet::new();
+    let mut undefs = Vec::new();
+    let mut decls = Vec::new();
+
+    for sym_name in &nm_symbols {
+        if !seen.insert(sym_name.clone()) { continue; }
         if header_symbols.contains(sym_name) { continue; }
 
-        // If the name collides with a macro, #undef it and use the type from
-        // the macro cast (e.g. #define nick_len (*(int *)(server_funcs[37])) -> extern int nick_len;)
         if macro_names.contains(sym_name) {
             undefs.push(format!("#undef {}", sym_name));
         }
 
-        if let Some(ctype) = macro_types.get(sym_name) {
-            decls.push(format!("extern {} {};", ctype, sym_name));
+        if let Some(qualtype) = static_types.get(sym_name) {
+            if type_is_visible(qualtype, &known_types) {
+                decls.push(format_extern_decl(sym_name, qualtype));
+            } else {
+                // Type uses module-internal typedefs not in headers
+                decls.push(format!("extern char {}[];", sym_name));
+            }
         } else {
+            // Fallback for symbols not found in AST (e.g. from compat/ or md5/)
             decls.push(format!("extern char {}[];", sym_name));
         }
     }
@@ -154,32 +189,149 @@ fn main() {
         .expect("Couldn't write bindings");
 }
 
-/// Extract the dereferenced type from a module function table macro.
-/// Patterns:
-///   (*(int *)(server_funcs[37]))       -> "int"
-///   (*(struct chanset_t **)(global[93])) -> "struct chanset_t *"
-///   ((char *)(server_funcs[5]))        -> "char"  (cast, not deref)
-fn extract_macro_deref_type(expansion: &str) -> Option<String> {
-    let s = expansion.trim();
-    // Match (*(TYPE *)(table[N])) — dereference through pointer cast
-    // The outer parens, then *, then (TYPE *), then (table[N])
-    if s.starts_with("(*") {
-        // Find the inner cast: (*(TYPE *)(...)
-        // Strip outer "(*(" and find the matching "*)("
-        let inner = s.strip_prefix("(*(")?;
-        // Find "*)" that closes the type cast — this is TYPE *)
-        let cast_end = inner.find("*)")?;
-        let ctype = inner[..cast_end].trim();
-        // The type in the cast is "TYPE *", so the dereferenced type is "TYPE"
-        // But if it was "TYPE **", the dereferenced type is "TYPE *"
-        // We have the raw type before the "*)" delimiter
-        return Some(ctype.to_string());
+/// Find .c source files corresponding to .o basenames by searching src/.
+fn find_c_files_for_objects(src_dir: &PathBuf, obj_files: &HashSet<String>) -> Vec<PathBuf> {
+    let mut c_files = Vec::new();
+    let mut needed: HashSet<String> = obj_files.iter()
+        .map(|o| o.strip_suffix(".o").unwrap_or(o).to_string())
+        .collect();
+
+    fn walk_dir(dir: &PathBuf, needed: &mut HashSet<String>, c_files: &mut Vec<PathBuf>) {
+        let entries = match std::fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => return,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                walk_dir(&path, needed, c_files);
+            } else if let Some(ext) = path.extension() {
+                if ext == "c" {
+                    if let Some(stem) = path.file_stem().and_then(|s| s.to_str()) {
+                        if needed.remove(stem) {
+                            c_files.push(path);
+                        }
+                    }
+                }
+            }
+        }
     }
-    // ((TYPE *)(table[N])) — plain cast without deref. The table entry
-    // IS a pointer to the data (e.g. char array). We can't reliably
-    // determine the underlying variable's type from this pattern, so
-    // return None to fall back to the generic extern char[] declaration.
-    None
+
+    walk_dir(src_dir, &mut needed, &mut c_files);
+    c_files
+}
+
+/// Run clang -Xclang -ast-dump=json on each .c file in parallel,
+/// extract file-scope static variable declarations with their types.
+fn extract_static_types(c_files: &[PathBuf], clang_args: &[&str]) -> HashMap<String, String> {
+    use std::thread;
+
+    let handles: Vec<_> = c_files.iter().map(|c_file| {
+        let c_file = c_file.clone();
+        let args: Vec<String> = clang_args.iter().map(|s| s.to_string()).collect();
+        thread::spawn(move || {
+            let output = Command::new("clang")
+                .arg("-Xclang")
+                .arg("-ast-dump=json")
+                .arg("-fsyntax-only")
+                .args(&args)
+                .arg(&c_file)
+                .output();
+
+            let output = match output {
+                Ok(o) if o.status.success() => o,
+                _ => return Vec::new(),
+            };
+
+            let ast: serde_json::Value = match serde_json::from_slice(&output.stdout) {
+                Ok(v) => v,
+                Err(_) => return Vec::new(),
+            };
+
+            let mut results = Vec::new();
+            if let Some(inner) = ast.get("inner").and_then(|v| v.as_array()) {
+                for node in inner {
+                    if node.get("kind").and_then(|v| v.as_str()) != Some("VarDecl") {
+                        continue;
+                    }
+                    if node.get("storageClass").and_then(|v| v.as_str()) != Some("static") {
+                        continue;
+                    }
+                    let name = match node.get("name").and_then(|v| v.as_str()) {
+                        Some(n) => n.to_string(),
+                        None => continue,
+                    };
+                    let qualtype = match node.get("type")
+                        .and_then(|v| v.get("qualType"))
+                        .and_then(|v| v.as_str())
+                    {
+                        Some(t) => t.to_string(),
+                        None => continue,
+                    };
+                    results.push((name, qualtype));
+                }
+            }
+            results
+        })
+    }).collect();
+
+    let mut types = HashMap::new();
+    for handle in handles {
+        if let Ok(results) = handle.join() {
+            for (name, qualtype) in results {
+                // Use first occurrence (some names may appear in multiple files
+                // but colliders are excluded from globalization anyway)
+                types.entry(name).or_insert(qualtype);
+            }
+        }
+    }
+    types
+}
+
+/// C type keywords and qualifiers that don't need to be in the known_types set.
+const C_TYPE_KEYWORDS: &[&str] = &[
+    "void", "char", "short", "int", "long", "float", "double", "signed", "unsigned",
+    "const", "volatile", "restrict", "struct", "union", "enum",
+    "_Bool", "_Complex", "_Imaginary",
+];
+
+/// Check if all type identifiers in a qualType string are either C keywords
+/// or present in the known_types set from the header-only bindgen pass.
+fn type_is_visible(qualtype: &str, known_types: &HashSet<String>) -> bool {
+    // Extract identifier-like tokens from the type string
+    for token in qualtype.split(|c: char| !c.is_ascii_alphanumeric() && c != '_') {
+        if token.is_empty() { continue; }
+        // Skip numeric tokens (array sizes like [512])
+        if token.chars().next().map_or(true, |c| c.is_ascii_digit()) { continue; }
+        // Skip C keywords
+        if C_TYPE_KEYWORDS.contains(&token) { continue; }
+        // Must be in known types
+        if !known_types.contains(token) {
+            return false;
+        }
+    }
+    true
+}
+
+/// Format an extern declaration from a clang qualType string.
+/// Handles array types where brackets must follow the identifier:
+///   "int"           -> "extern int name;"
+///   "char [512]"    -> "extern char name[512];"
+///   "int *"         -> "extern int * name;"
+///   "void (*)(int)" -> "extern void (*name)(int);"  (function pointers)
+fn format_extern_decl(name: &str, qualtype: &str) -> String {
+    // Check for array types: "TYPE [N]" or "TYPE [N][M]"
+    if let Some(bracket_pos) = qualtype.find('[') {
+        let base_type = qualtype[..bracket_pos].trim();
+        let array_part = &qualtype[bracket_pos..];
+        format!("extern {} {}{};", base_type, name, array_part)
+    } else if qualtype.contains("(*)") {
+        // Function pointer: "TYPE (*)(ARGS)" -> "extern TYPE (*name)(ARGS);"
+        let replaced = qualtype.replacen("(*)", &format!("(*{})", name), 1);
+        format!("extern {};", replaced)
+    } else {
+        format!("extern {} {};", qualtype, name)
+    }
 }
 
 fn is_valid_c_ident(s: &str) -> bool {

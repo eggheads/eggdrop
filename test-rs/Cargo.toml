@@ -10,3 +10,4 @@ tempfile = "3"
 
 [build-dependencies]
 bindgen = "0.71"
+serde_json = "1"

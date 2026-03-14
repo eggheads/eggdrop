@@ -2,8 +2,15 @@ use std::time::Duration;
 use test_rs::Eggtest;
 use test_rs::eggdrop;
 
+/// Read a `static mut` without creating a reference (Rust 2024 compliance).
+macro_rules! read_static {
+    ($sym:expr) => {
+        unsafe { std::ptr::addr_of!($sym).read() }
+    };
+}
+
 #[test]
-fn eggdrop_parses_nicklen_from_isupport() {
+fn eggdrop_parses_isupport() {
     let mut egg = Eggtest::builder()
         .with_isupport(vec![
             "ACCOUNTEXTBAN=a KNOCK SAFELIST ELIST=CMNTU MONITOR=100 CALLERID=g FNC WHOX ETRACE CHANTYPES=# EXCEPTS INVEX",
@@ -16,10 +23,11 @@ fn eggdrop_parses_nicklen_from_isupport() {
     egg.ircd.send_welcome(&nick);
     egg.ircd.drain(Duration::from_millis(500));
 
-    let nick_len_val = unsafe { eggdrop::nick_len };
-    assert_eq!(
-        nick_len_val, 16,
-        "expected nick_len=16 from NICKLEN=16 in ISUPPORT, got {}",
-        nick_len_val
-    );
+    assert_eq!(read_static!(eggdrop::nick_len), 16, "NICKLEN=16");
+    assert_eq!(read_static!(eggdrop::use_354), 1, "WHOX sets use_354=1");
+    assert_eq!(read_static!(eggdrop::modesperline), 4, "MODES=4");
+    assert_eq!(read_static!(eggdrop::max_bans), 100, "MAXLIST=bqeI:100 -> max_bans=100");
+    assert_eq!(read_static!(eggdrop::max_exempts), 100, "MAXLIST=bqeI:100 -> max_exempts=100");
+    assert_eq!(read_static!(eggdrop::max_invites), 100, "MAXLIST=bqeI:100 -> max_invites=100");
+    assert_eq!(read_static!(eggdrop::max_modes), 100, "MAXLIST=bqeI:100 -> max_modes=100");
 }
