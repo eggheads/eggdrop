@@ -1,6 +1,8 @@
 use std::ffi::{CStr, CString, c_char, c_int, c_void};
 use std::path::Path;
 use std::sync::{Mutex, OnceLock};
+use std::thread::sleep;
+use std::time::Duration;
 
 /// Eggdrop's sockname_t (with IPV6 enabled)
 #[repr(C)]
@@ -192,15 +194,20 @@ fn main() {
         "-mnt"
     };
 
-    let args = [
+    let args: &[CString] = Box::leak(Box::new([
         CString::new("./eggdrop").unwrap(),
         CString::new(flags).unwrap(),
         CString::new("eggdrop-basic.conf").unwrap(),
-    ];
+    ]));
     let mut argv: Vec<*mut c_char> = args.iter().map(|a| a.as_ptr() as *mut _).collect();
     argv.push(std::ptr::null_mut());
+    let argv_ptr = argv.as_mut_ptr() as usize;
 
-    unsafe {
-        eggdrop_main(3, argv.as_mut_ptr());
+    std::thread::spawn(move || unsafe {
+        eggdrop_main(3, argv_ptr as *mut *mut c_char);
+    });
+    loop {
+        sleep(Duration::from_secs(1));
+        println!("ping from rust");
     }
 }
