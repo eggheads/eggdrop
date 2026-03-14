@@ -170,6 +170,7 @@ static void setaccount(char *nick, char *account)
 
         egg_snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
         if (u_match_mask(global_bans, user) || u_match_mask(chan->bans, user)) {
+          check_this_ban(chan, user, m->nick);
           refresh_ban_kick(chan, user, m->nick);
         }
       }
