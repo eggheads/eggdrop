@@ -18,7 +18,7 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 use std::os::unix::io::FromRawFd;
 use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
-use tempfile::NamedTempFile;
+use tempfile::TempDir;
 
 use eggdrop::{HOOK_DNS_HOSTBYIP, HOOK_DNS_IPBYHOST, add_hook, sockname_t};
 
@@ -303,8 +303,7 @@ pub struct EggtestBuilder {
 /// The main test handle. Created via `Eggtest::builder().spawn()`.
 pub struct Eggtest {
     pub ircd: IRCd,
-    _conffile: NamedTempFile,
-    _pidfile: NamedTempFile,
+    _workdir: TempDir,
 }
 
 impl Eggtest {
@@ -348,57 +347,54 @@ impl EggtestBuilder {
 
     /// Build the config, start eggdrop, wait for IRC connection.
     pub fn spawn(self) -> Eggtest {
-        // Render config template
-        let mut conffile = NamedTempFile::new().expect("create temp config file");
-        let pidfile = NamedTempFile::new().expect("create temp pidfile");
-        let pidfile_path = pidfile.path().to_str().expect("pidfile path").to_string();
+        let eggdrop_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
 
+        // Create a temporary working directory with symlinks to eggdrop's runtime dirs
+        let workdir = TempDir::new().expect("create temp workdir");
+        for name in &["help", "language", "modules", "scripts", "text"] {
+            std::os::unix::fs::symlink(eggdrop_dir.join(name), workdir.path().join(name))
+                .unwrap_or_else(|e| panic!("symlink {}: {}", name, e));
+        }
+        std::fs::create_dir(workdir.path().join("logs")).expect("create logs dir");
+
+        // Render config as eggdrop.conf in the workdir (the default config name)
+        let conf_path = workdir.path().join("eggdrop.conf");
         let mut env = minijinja::Environment::new();
-        env.add_template("config", CONFIG_TEMPLATE)
-            .expect("parse config template");
+        env.add_template("config", CONFIG_TEMPLATE).expect("parse config template");
         let tmpl = env.get_template("config").unwrap();
         let config = tmpl
             .render(minijinja::context! {
-                pidfile => pidfile_path,
                 modules => self.modules,
                 settings => self.settings,
             })
             .expect("render config template");
-        write!(conffile, "{}", config).expect("write config");
-        conffile.flush().expect("flush config");
+        std::fs::write(&conf_path, &config).expect("write eggdrop.conf");
 
         // Install DNS hooks
         unsafe {
-            add_hook(
-                HOOK_DNS_HOSTBYIP as c_int,
-                std::mem::transmute(rust_dns_hostbyip as *const ()),
-            );
-            add_hook(
-                HOOK_DNS_IPBYHOST as c_int,
-                std::mem::transmute(rust_dns_ipbyhost as *const ()),
-            );
+            add_hook(HOOK_DNS_HOSTBYIP as c_int, std::mem::transmute(rust_dns_hostbyip as *const ()));
+            add_hook(HOOK_DNS_IPBYHOST as c_int, std::mem::transmute(rust_dns_ipbyhost as *const ()));
         }
 
-        let flags = if std::path::Path::new("LamestBot.user").exists() {
-            "-n"
-        } else {
-            "-mn"
-        };
+        // No userfile yet → -mn (create one), otherwise -n (foreground only)
+        let userfile = workdir.path().join("LamestBot.user");
+        let flags = if userfile.exists() { "-n" } else { "-mn" };
 
-        let conf_path = conffile.path().to_str().expect("tmpfile path").to_string();
         // Leaked intentionally: eggdrop_main holds argv for its lifetime (never returns).
         let args: &[CString] = Box::leak(Box::new([
             CString::new("./eggdrop").unwrap(),
             CString::new(flags).unwrap(),
-            CString::new(conf_path).unwrap(),
         ]));
         let mut argv: Vec<*mut c_char> = args.iter().map(|a| a.as_ptr() as *mut _).collect();
         argv.push(std::ptr::null_mut());
         let argv: &mut [*mut c_char] = Box::leak(argv.into_boxed_slice());
+        let argc = args.len() as c_int;
         let argv_ptr = argv.as_mut_ptr() as usize;
 
+        let workdir_path = workdir.path().to_path_buf();
         std::thread::spawn(move || unsafe {
-            eggdrop_main(3, argv_ptr as *mut *mut c_char);
+            std::env::set_current_dir(&workdir_path).expect("chdir to workdir");
+            eggdrop_main(argc, argv_ptr as *mut *mut c_char);
         });
 
         // Wait for eggdrop to connect to fake.test-rs:6667
@@ -419,8 +415,7 @@ impl EggtestBuilder {
                 writer: LineWriter::new(write_file),
                 isupport: self.isupport,
             },
-            _conffile: conffile,
-            _pidfile: pidfile,
+            _workdir: workdir,
         }
     }
 }

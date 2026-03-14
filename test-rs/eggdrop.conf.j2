@@ -1,11 +1,11 @@
-{% for mod in modules %}
-loadmodule {{ mod }}
-{% endfor %}
 set mod-path "modules/"
 set help-path "help/"
 set userfile "LamestBot.user"
 set chanfile "LamestBot.chan"
 set notefile "LamestBot.notes"
+{% for mod in modules %}
+loadmodule {{ mod }}
+{% endfor %}
 set nick "Lamestbot"
 set altnick "Llamab?t"
 set realname "/msg LamestBot hello"
@@ -17,7 +17,7 @@ set default-port 6667
 set prefer-ipv6 0
 set quiet-save 3
 set ssl-capath "/etc/ssl/"
-set pidfile "{{ pidfile }}"
+set pidfile "LamestBot.pid"
 {% for key, value in settings %}
 set {{ key }} "{{ value }}"
 {% endfor %}
