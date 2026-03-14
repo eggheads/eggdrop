@@ -2,9 +2,9 @@ use std::ffi::{CStr, CString, c_char, c_int, c_void};
 use std::fs::File;
 use std::io::{BufRead, BufReader, LineWriter, Write as IoWrite};
 use std::os::unix::io::FromRawFd;
-use std::path::Path;
 use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
+use tempfile::NamedTempFile;
 
 /// Eggdrop's sockname_t (with IPV6 enabled)
 #[repr(C)]
@@ -327,31 +327,105 @@ impl IRCd {
     }
 }
 
-/// The main test handle. Created by `Eggtest::spawn()`.
+/// Config builder for Eggtest.
+pub struct EggtestBuilder {
+    settings: Vec<(String, String)>,
+}
+
+/// The main test handle. Created via `Eggtest::builder().spawn()`.
 pub struct Eggtest {
     pub ircd: IRCd,
+    _conffile: NamedTempFile,
 }
 
 impl Eggtest {
-    /// Boot eggdrop in a background thread and wait for it to connect
-    /// to the fake IRC server. Returns a handle with the IRCd socket.
+    /// Create a builder with default settings.
+    pub fn builder() -> EggtestBuilder {
+        EggtestBuilder {
+            settings: Vec::new(),
+        }
+    }
+
+    /// Shorthand: spawn with default settings.
     pub fn spawn() -> Eggtest {
+        Eggtest::builder().spawn()
+    }
+}
+
+/// Default config template. Settings from the builder are appended after this.
+const DEFAULT_CONFIG: &str = "\
+loadmodule pbkdf2
+loadmodule blowfish
+loadmodule channels
+loadmodule server
+loadmodule ctcp
+loadmodule irc
+loadmodule notes
+loadmodule console
+set mod-path \"modules/\"
+set help-path \"help/\"
+set userfile \"LamestBot.user\"
+set chanfile \"LamestBot.chan\"
+set notefile \"LamestBot.notes\"
+set nick \"Lamestbot\"
+set altnick \"Llamab?t\"
+set realname \"/msg LamestBot hello\"
+set username \"lamest\"
+set admin \"test <test@test>\"
+set network \"TestNet\"
+set net-type \"EFnet\"
+set default-port 6667
+set prefer-ipv6 0
+set quiet-save 3
+set ssl-capath \"/etc/ssl/\"
+logfile mco * \"logs/eggdrop.log\"
+server add fake.test-rs 6667
+unbind msg - ident *msg:ident
+unbind msg - addhost *msg:addhost
+bind evnt - init-server evnt:init_server
+proc evnt:init_server {type} {
+  global botnick
+  putquick \"MODE $botnick +i-ws\"
+}
+source scripts/alltools.tcl
+source scripts/action.fix.tcl
+source scripts/dccwhois.tcl
+";
+
+impl EggtestBuilder {
+    /// Add or override a setting. Will be emitted as `set <setting> "<value>"`.
+    pub fn with_set(mut self, setting: &str, value: &str) -> Self {
+        self.settings.push((setting.to_string(), value.to_string()));
+        self
+    }
+
+    /// Build the config, start eggdrop, wait for IRC connection.
+    pub fn spawn(self) -> Eggtest {
+        // Write config to a tmpfile
+        let mut conffile = NamedTempFile::new().expect("create temp config file");
+        write!(conffile, "{}", DEFAULT_CONFIG).expect("write default config");
+        for (setting, value) in &self.settings {
+            writeln!(conffile, "set {} \"{}\"", setting, value).expect("write setting");
+        }
+        conffile.flush().expect("flush config");
+
         // Install DNS hooks
         unsafe {
             add_hook(HOOK_DNS_HOSTBYIP, rust_dns_hostbyip as *const c_void);
             add_hook(HOOK_DNS_IPBYHOST, rust_dns_ipbyhost as *const c_void);
         }
 
-        let flags = if Path::new("LamestBot.user").exists() {
+        let flags = if std::path::Path::new("LamestBot.user").exists() {
             "-n"
         } else {
             "-mn"
         };
 
+        let conf_path = conffile.path().to_str().expect("tmpfile path").to_string();
         let args: &[CString] = Box::leak(Box::new([
             CString::new("./eggdrop").unwrap(),
             CString::new(flags).unwrap(),
-            CString::new("eggdrop-basic.conf").unwrap(),
+            CString::new(conf_path).unwrap(),
         ]));
         let mut argv: Vec<*mut c_char> = args.iter().map(|a| a.as_ptr() as *mut _).collect();
         argv.push(std::ptr::null_mut());
@@ -378,6 +452,7 @@ impl Eggtest {
                 reader: BufReader::new(read_file),
                 writer: LineWriter::new(write_file),
             },
+            _conffile: conffile,
         }
     }
 }
