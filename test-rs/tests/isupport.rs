@@ -16,7 +16,7 @@ fn eggdrop_parses_isupport() {
     egg.ircd.send_welcome(&nick);
     egg.ircd.drain(Duration::from_millis(500));
 
-    assert_eq!(eggdrop::nick_len, 16, "NICKLEN=16");
+    assert_eq!(read_static!(eggdrop::nick_len), 16, "NICKLEN=16");
     assert_eq!(read_static!(eggdrop::use_354), 1, "WHOX sets use_354=1");
     assert_eq!(read_static!(eggdrop::modesperline), 4, "MODES=4");
     assert_eq!(read_static!(eggdrop::max_bans), 100, "MAXLIST=bqeI:100 -> max_bans=100");

@@ -14,6 +14,7 @@ macro_rules! read_static {
 use std::ffi::{CStr, CString, c_char, c_int};
 use std::fs::File;
 use std::io::{BufRead, BufReader, LineWriter, Write as IoWrite};
+use std::net::{Ipv4Addr, Ipv6Addr};
 use std::os::unix::io::FromRawFd;
 use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
@@ -42,22 +43,11 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut sockname_t) {
     let ip_str = match family {
         libc::AF_INET => {
             let sa = unsafe { &(*addr).addr.s4 };
-            let ip = u32::from_be(sa.sin_addr.s_addr);
-            format!(
-                "{}.{}.{}.{}",
-                (ip >> 24) & 0xff,
-                (ip >> 16) & 0xff,
-                (ip >> 8) & 0xff,
-                ip & 0xff
-            )
+            Ipv4Addr::from(sa.sin_addr.s_addr.to_ne_bytes()).to_string()
         }
         libc::AF_INET6 => {
-            let sa = unsafe { &(*addr).addr.s6 };
-            let bytes = unsafe { sa.sin6_addr.__in6_u.__u6_addr8 };
-            let segments: Vec<String> = (0..8)
-                .map(|i| format!("{:x}", u16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]])))
-                .collect();
-            segments.join(":")
+            let bytes: [u8; 16] = unsafe { (*addr).addr.s6.sin6_addr.__in6_u.__u6_addr8 };
+            Ipv6Addr::from(bytes).to_string()
         }
         _ => format!("unknown family {}", family),
     };
@@ -135,7 +125,7 @@ pub struct IRCd {
 }
 
 /// A parsed IRC line, split into words on whitespace.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct IRCline(pub Vec<String>);
 
 impl IRCline {
@@ -178,17 +168,17 @@ impl IRCline {
         }
         other.0.iter().zip(&self.0).all(|(a, b)| a == b)
     }
-
-    /// Check if all words match exactly (same length and content).
-    pub fn matches(&self, other: &IRCline) -> bool {
-        self.0.len() == other.0.len() && self.0 == other.0
-    }
 }
 
 impl std::fmt::Display for IRCline {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let quoted: Vec<String> = self.0.iter().map(|w| format!("\"{}\"", w)).collect();
-        write!(f, "{}", quoted.join(" "))
+        for (i, w) in self.0.iter().enumerate() {
+            if i > 0 {
+                f.write_str(" ")?;
+            }
+            write!(f, "\"{}\"", w)?;
+        }
+        Ok(())
     }
 }
 
@@ -231,44 +221,35 @@ impl IRCd {
         }
     }
 
-    /// Read lines until one matches the given string exactly (parsed as IRCline), panic on timeout.
-    pub fn expect(&mut self, expected: &str, timeout: Duration) {
-        let expected = IRCline::new(expected);
+    /// Read lines until `pred` matches, panic on timeout. Returns the matched line.
+    fn recv_until(&mut self, label: &impl std::fmt::Display, timeout: Duration, pred: impl Fn(&IRCline) -> bool) -> IRCline {
         let deadline = std::time::Instant::now() + timeout;
         loop {
             let remaining = deadline.saturating_duration_since(std::time::Instant::now());
             if remaining.is_zero() {
-                panic!("IRCd::expect({}) timed out", expected);
+                panic!("IRCd::{} timed out", label);
             }
             if let Some(line) = self.recv_line(remaining) {
                 eprintln!("[eggtest ircd] <- {}", line);
-                if line.matches(&expected) {
-                    return;
+                if pred(&line) {
+                    return line;
                 }
             } else {
-                panic!("IRCd::expect({}) timed out", expected);
+                panic!("IRCd::{} timed out", label);
             }
         }
+    }
+
+    /// Read lines until one matches the given string exactly (parsed as IRCline), panic on timeout.
+    pub fn expect(&mut self, expected: &str, timeout: Duration) {
+        let expected = IRCline::new(expected);
+        self.recv_until(&format_args!("expect({})", expected), timeout, |line| *line == expected);
     }
 
     /// Read lines until one starts with the given prefix (parsed as IRCline), panic on timeout.
     pub fn expect_prefix(&mut self, prefix: &str, timeout: Duration) -> IRCline {
         let prefix = IRCline::new(prefix);
-        let deadline = std::time::Instant::now() + timeout;
-        loop {
-            let remaining = deadline.saturating_duration_since(std::time::Instant::now());
-            if remaining.is_zero() {
-                panic!("IRCd::expect_prefix({}) timed out", prefix);
-            }
-            if let Some(line) = self.recv_line(remaining) {
-                eprintln!("[eggtest ircd] <- {}", line);
-                if line.starts_with(&prefix) {
-                    return line;
-                }
-            } else {
-                panic!("IRCd::expect_prefix({}) timed out", prefix);
-            }
-        }
+        self.recv_until(&format_args!("expect_prefix({})", prefix), timeout, |line| line.starts_with(&prefix))
     }
 
     /// Drain all pending lines (useful to skip past startup chatter).
@@ -301,12 +282,9 @@ impl IRCd {
             ":irc.test 004 {} irc.test test-0.1 oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI",
             nick
         ));
-        let isupport = self.isupport.clone();
-        for tokens in &isupport {
-            self.send(&format!(
-                ":irc.test 005 {} {} :are supported by this server",
-                nick, tokens
-            ));
+        for i in 0..self.isupport.len() {
+            let line = format!(":irc.test 005 {} {} :are supported by this server", nick, &self.isupport[i]);
+            self.send(&line);
         }
     }
 }
@@ -397,6 +375,7 @@ impl EggtestBuilder {
         };
 
         let conf_path = conffile.path().to_str().expect("tmpfile path").to_string();
+        // Leaked intentionally: eggdrop_main holds argv for its lifetime (never returns).
         let args: &[CString] = Box::leak(Box::new([
             CString::new("./eggdrop").unwrap(),
             CString::new(flags).unwrap(),
@@ -404,6 +383,7 @@ impl EggtestBuilder {
         ]));
         let mut argv: Vec<*mut c_char> = args.iter().map(|a| a.as_ptr() as *mut _).collect();
         argv.push(std::ptr::null_mut());
+        let argv: &mut [*mut c_char] = Box::leak(argv.into_boxed_slice());
         let argv_ptr = argv.as_mut_ptr() as usize;
 
         std::thread::spawn(move || unsafe {

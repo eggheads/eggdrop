@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
@@ -89,17 +89,11 @@ fn main() {
             }
         }
         // Collect type names from bindgen output (type aliases and struct/enum/union names)
-        if let Some(rest) = trimmed.strip_prefix("pub type ") {
-            if let Some(name) = rest.split_whitespace().next() {
-                known_types.insert(name.to_string());
-            }
-        } else if let Some(rest) = trimmed.strip_prefix("pub struct ") {
-            if let Some(name) = rest.split_whitespace().next().map(|n| n.trim_end_matches('{')) {
-                known_types.insert(name.to_string());
-            }
-        } else if let Some(rest) = trimmed.strip_prefix("pub enum ") {
-            if let Some(name) = rest.split_whitespace().next().map(|n| n.trim_end_matches('{')) {
-                known_types.insert(name.to_string());
+        for prefix in &["pub type ", "pub struct ", "pub enum "] {
+            if let Some(rest) = trimmed.strip_prefix(prefix) {
+                if let Some(name) = rest.split_whitespace().next().map(|n| n.trim_end_matches('{')) {
+                    known_types.insert(name.to_string());
+                }
             }
         }
     }
@@ -148,14 +142,10 @@ fn main() {
     let static_types = extract_static_types(&c_files, clang_args);
 
     // Generate globals.h with properly typed extern declarations.
-    let mut seen = HashSet::new();
     let mut undefs = Vec::new();
     let mut decls = Vec::new();
 
     for sym_name in &nm_symbols {
-        if !seen.insert(sym_name.clone()) {
-            continue;
-        }
         if header_symbols.contains(sym_name) {
             continue;
         }
@@ -199,14 +189,14 @@ fn main() {
 }
 
 /// Find .c source files corresponding to .o basenames by searching src/.
-fn find_c_files_for_objects(src_dir: &PathBuf, obj_files: &HashSet<String>) -> Vec<PathBuf> {
+fn find_c_files_for_objects(src_dir: &Path, obj_files: &HashSet<String>) -> Vec<PathBuf> {
     let mut c_files = Vec::new();
     let mut needed: HashSet<String> = obj_files
         .iter()
         .map(|o| o.strip_suffix(".o").unwrap_or(o).to_string())
         .collect();
 
-    fn walk_dir(dir: &PathBuf, needed: &mut HashSet<String>, c_files: &mut Vec<PathBuf>) {
+    fn walk_dir(dir: &Path, needed: &mut HashSet<String>, c_files: &mut Vec<PathBuf>) {
         let entries = match std::fs::read_dir(dir) {
             Ok(e) => e,
             Err(_) => return,
