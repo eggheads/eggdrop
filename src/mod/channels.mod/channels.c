@@ -897,6 +897,23 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
+static char *traced_account_extban(ClientData cdata, Tcl_Interp *irp,
+                                   EGG_CONST char *name1,
+                                   EGG_CONST char *name2, int flags)
+{
+  const char *account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+
+  Tcl_SetVar2(interp, name1, name2,
+              (account_extban && account_extban[0]) ? account_extban : "",
+              TCL_GLOBAL_ONLY);
+  if (flags & TCL_TRACE_UNSETS) {
+    Tcl_TraceVar(interp, "account-extban",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_account_extban, NULL);
+  }
+  return NULL;
+}
+
 static tcl_ints my_tcl_ints[] = {
   {"use-info",                 &use_info,                0},
   {"quiet-save",               &quiet_save,              0},
@@ -975,6 +992,10 @@ static char *channels_close()
   Tcl_UntraceVar(interp, "default-chanset",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_globchanset, NULL);
+  Tcl_UntraceVar(interp, "account-extban",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_account_extban, NULL);
+  traced_account_extban(NULL, interp, "account-extban", NULL, TCL_TRACE_READS);
   rem_help_reference("channels.help");
   rem_help_reference("chaninfo.help");
   module_undepend(MODULE_NAME);
@@ -1127,6 +1148,9 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  Tcl_TraceVar(interp, "account-extban",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_account_extban, NULL);
   H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);
