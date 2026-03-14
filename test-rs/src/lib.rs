@@ -1,4 +1,14 @@
-use std::ffi::{CStr, CString, c_char, c_int, c_void};
+#[allow(
+    non_upper_case_globals,
+    non_camel_case_types,
+    non_snake_case,
+    dead_code
+)]
+pub mod eggdrop {
+    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+}
+
+use std::ffi::{CStr, CString, c_char, c_int};
 use std::fs::File;
 use std::io::{BufRead, BufReader, LineWriter, Write as IoWrite};
 use std::os::unix::io::FromRawFd;
@@ -6,48 +16,29 @@ use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
 use tempfile::NamedTempFile;
 
-/// Eggdrop's sockname_t (with IPV6 enabled)
-#[repr(C)]
-struct SocknameTAddr {
-    _data: [u8; std::mem::size_of::<libc::sockaddr_in6>()],
-}
-
-#[repr(C)]
-struct SocknameT {
-    family: c_int,
-    addrlen: u32,
-    addr: SocknameTAddr,
-}
-
-const HOOK_DNS_HOSTBYIP: c_int = 112;
-const HOOK_DNS_IPBYHOST: c_int = 113;
+use eggdrop::{add_hook, sockname_t, HOOK_DNS_HOSTBYIP, HOOK_DNS_IPBYHOST};
 
 unsafe extern "C" {
     fn eggdrop_main(argc: c_int, argv: *mut *mut c_char) -> c_int;
-    fn add_hook(hook_num: c_int, func: *const c_void);
-    fn call_ipbyhost(hostn: *mut c_char, ip: *mut SocknameT, ok: c_int);
+    fn call_ipbyhost(hostn: *mut c_char, ip: *mut sockname_t, ok: c_int);
 }
 
-/// Build a SocknameT containing an IPv4 address
-fn make_sockname_v4(a: u8, b: u8, c: u8, d: u8) -> SocknameT {
-    let mut sn = SocknameT {
-        family: libc::AF_INET,
-        addrlen: std::mem::size_of::<libc::sockaddr_in>() as u32,
-        addr: SocknameTAddr {
-            _data: [0u8; std::mem::size_of::<libc::sockaddr_in6>()],
-        },
-    };
-    let sa = unsafe { &mut *(&raw mut sn.addr as *mut libc::sockaddr_in) };
+/// Build a sockname_t containing an IPv4 address
+fn make_sockname_v4(a: u8, b: u8, c: u8, d: u8) -> sockname_t {
+    let mut sn = sockname_t::default();
+    sn.family = libc::AF_INET;
+    sn.addrlen = std::mem::size_of::<libc::sockaddr_in>() as u32;
+    let sa = unsafe { &mut sn.addr.s4 };
     sa.sin_family = libc::AF_INET as libc::sa_family_t;
     sa.sin_addr.s_addr = u32::from_ne_bytes([a, b, c, d]);
     sn
 }
 
-unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
+unsafe extern "C" fn rust_dns_hostbyip(addr: *mut sockname_t) {
     let family = unsafe { (*addr).family };
     let ip_str = match family {
         libc::AF_INET => {
-            let sa = unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in) };
+            let sa = unsafe { &(*addr).addr.s4 };
             let ip = u32::from_be(sa.sin_addr.s_addr);
             format!(
                 "{}.{}.{}.{}",
@@ -58,8 +49,8 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut SocknameT) {
             )
         }
         libc::AF_INET6 => {
-            let sa = unsafe { &*(std::ptr::addr_of!((*addr).addr) as *const libc::sockaddr_in6) };
-            let bytes = sa.sin6_addr.s6_addr;
+            let sa = unsafe { &(*addr).addr.s6 };
+            let bytes = unsafe { sa.sin6_addr.__in6_u.__u6_addr8 };
             let segments: Vec<String> = (0..8)
                 .map(|i| format!("{:x}", u16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]])))
                 .collect();
@@ -403,8 +394,8 @@ impl EggtestBuilder {
 
         // Install DNS hooks
         unsafe {
-            add_hook(HOOK_DNS_HOSTBYIP, rust_dns_hostbyip as *const c_void);
-            add_hook(HOOK_DNS_IPBYHOST, rust_dns_ipbyhost as *const c_void);
+            add_hook(HOOK_DNS_HOSTBYIP as c_int, std::mem::transmute(rust_dns_hostbyip as *const ()));
+            add_hook(HOOK_DNS_IPBYHOST as c_int, std::mem::transmute(rust_dns_ipbyhost as *const ()));
         }
 
         let flags = if std::path::Path::new("LamestBot.user").exists() {
