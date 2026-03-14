@@ -7,3 +7,6 @@ edition = "2024"
 libc = "0.2"
 minijinja = "2"
 tempfile = "3"
+
+[build-dependencies]
+bindgen = "0.71"
