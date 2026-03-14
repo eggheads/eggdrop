@@ -336,6 +336,7 @@ pub struct EggtestBuilder {
 pub struct Eggtest {
     pub ircd: IRCd,
     _conffile: NamedTempFile,
+    _pidfile: NamedTempFile,
 }
 
 impl Eggtest {
@@ -352,45 +353,8 @@ impl Eggtest {
     }
 }
 
-/// Default config template. Settings from the builder are appended after this.
-const DEFAULT_CONFIG: &str = "\
-loadmodule pbkdf2
-loadmodule blowfish
-loadmodule channels
-loadmodule server
-loadmodule ctcp
-loadmodule irc
-loadmodule notes
-loadmodule console
-set mod-path \"modules/\"
-set help-path \"help/\"
-set userfile \"LamestBot.user\"
-set chanfile \"LamestBot.chan\"
-set notefile \"LamestBot.notes\"
-set nick \"Lamestbot\"
-set altnick \"Llamab?t\"
-set realname \"/msg LamestBot hello\"
-set username \"lamest\"
-set admin \"test <test@test>\"
-set network \"TestNet\"
-set net-type \"EFnet\"
-set default-port 6667
-set prefer-ipv6 0
-set quiet-save 3
-set ssl-capath \"/etc/ssl/\"
-logfile mco * \"logs/eggdrop.log\"
-server add fake.test-rs 6667
-unbind msg - ident *msg:ident
-unbind msg - addhost *msg:addhost
-bind evnt - init-server evnt:init_server
-proc evnt:init_server {type} {
-  global botnick
-  putquick \"MODE $botnick +i-ws\"
-}
-source scripts/alltools.tcl
-source scripts/action.fix.tcl
-source scripts/dccwhois.tcl
-";
+/// Default config template, loaded from eggdrop.conf.j2 at compile time.
+const CONFIG_TEMPLATE: &str = include_str!("../eggdrop.conf.j2");
 
 impl EggtestBuilder {
     /// Add or override a setting. Will be emitted as `set <setting> "<value>"`.
@@ -401,12 +365,22 @@ impl EggtestBuilder {
 
     /// Build the config, start eggdrop, wait for IRC connection.
     pub fn spawn(self) -> Eggtest {
-        // Write config to a tmpfile
+        // Render config template
         let mut conffile = NamedTempFile::new().expect("create temp config file");
-        write!(conffile, "{}", DEFAULT_CONFIG).expect("write default config");
-        for (setting, value) in &self.settings {
-            writeln!(conffile, "set {} \"{}\"", setting, value).expect("write setting");
-        }
+        let pidfile = NamedTempFile::new().expect("create temp pidfile");
+        let pidfile_path = pidfile.path().to_str().expect("pidfile path").to_string();
+
+        let mut env = minijinja::Environment::new();
+        env.add_template("config", CONFIG_TEMPLATE)
+            .expect("parse config template");
+        let tmpl = env.get_template("config").unwrap();
+        let config = tmpl
+            .render(minijinja::context! {
+                pidfile => pidfile_path,
+                settings => self.settings,
+            })
+            .expect("render config template");
+        write!(conffile, "{}", config).expect("write config");
         conffile.flush().expect("flush config");
 
         // Install DNS hooks
@@ -453,6 +427,7 @@ impl EggtestBuilder {
                 writer: LineWriter::new(write_file),
             },
             _conffile: conffile,
+            _pidfile: pidfile,
         }
     }
 }

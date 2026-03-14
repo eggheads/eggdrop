@@ -1,0 +1,40 @@
+loadmodule pbkdf2
+loadmodule blowfish
+loadmodule channels
+loadmodule server
+loadmodule ctcp
+loadmodule irc
+loadmodule notes
+loadmodule console
+set mod-path "modules/"
+set help-path "help/"
+set userfile "LamestBot.user"
+set chanfile "LamestBot.chan"
+set notefile "LamestBot.notes"
+set nick "Lamestbot"
+set altnick "Llamab?t"
+set realname "/msg LamestBot hello"
+set username "lamest"
+set admin "test <test@test>"
+set network "TestNet"
+set net-type "EFnet"
+set default-port 6667
+set prefer-ipv6 0
+set quiet-save 3
+set ssl-capath "/etc/ssl/"
+set pidfile "{{ pidfile }}"
+{% for key, value in settings %}
+set {{ key }} "{{ value }}"
+{% endfor %}
+logfile mco * "logs/eggdrop.log"
+server add fake.test-rs 6667
+unbind msg - ident *msg:ident
+unbind msg - addhost *msg:addhost
+bind evnt - init-server evnt:init_server
+proc evnt:init_server {type} {
+  global botnick
+  putquick "MODE $botnick +i-ws"
+}
+source scripts/alltools.tcl
+source scripts/action.fix.tcl
+source scripts/dccwhois.tcl
