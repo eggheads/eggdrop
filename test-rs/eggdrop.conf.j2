@@ -1,11 +1,6 @@
-loadmodule pbkdf2
-loadmodule blowfish
-loadmodule channels
-loadmodule server
-loadmodule ctcp
-loadmodule irc
-loadmodule notes
-loadmodule console
+{% for mod in modules %}
+loadmodule {{ mod }}
+{% endfor %}
 set mod-path "modules/"
 set help-path "help/"
 set userfile "LamestBot.user"

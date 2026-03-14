@@ -291,9 +291,12 @@ impl IRCd {
 
 const DEFAULT_ISUPPORT: &[&str] = &["NETWORK=TestNet CASEMAPPING=rfc1459 CHANTYPES=#&"];
 
+const DEFAULT_MODULES: &[&str] = &["pbkdf2", "blowfish", "channels", "server", "ctcp", "irc", "notes", "console"];
+
 /// Config builder for Eggtest.
 pub struct EggtestBuilder {
     settings: Vec<(String, String)>,
+    modules: Vec<String>,
     isupport: Vec<String>,
 }
 
@@ -309,6 +312,7 @@ impl Eggtest {
     pub fn builder() -> EggtestBuilder {
         EggtestBuilder {
             settings: Vec::new(),
+            modules: DEFAULT_MODULES.iter().map(|s| s.to_string()).collect(),
             isupport: DEFAULT_ISUPPORT.iter().map(|s| s.to_string()).collect(),
         }
     }
@@ -323,6 +327,12 @@ impl Eggtest {
 const CONFIG_TEMPLATE: &str = include_str!("../eggdrop.conf.j2");
 
 impl EggtestBuilder {
+    /// Set the list of modules to load. Replaces the default module list.
+    pub fn with_modules(mut self, modules: Vec<&str>) -> Self {
+        self.modules = modules.into_iter().map(|s| s.to_string()).collect();
+        self
+    }
+
     /// Set custom raw 005 (ISUPPORT) lines for the fake IRCd welcome burst.
     /// Each entry becomes a separate 005 numeric line.
     pub fn with_isupport(mut self, lines: Vec<&str>) -> Self {
@@ -350,6 +360,7 @@ impl EggtestBuilder {
         let config = tmpl
             .render(minijinja::context! {
                 pidfile => pidfile_path,
+                modules => self.modules,
                 settings => self.settings,
             })
             .expect("render config template");
