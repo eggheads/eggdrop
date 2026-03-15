@@ -90,19 +90,17 @@ static int detect_telnet(unsigned char *buf)
 }
 
 /* Escape telnet IAC and prepend CR to LF */
-static char *escape_telnet(char *s)
+static char *escape_telnet(char *restrict dst, const char *restrict src, size_t dstsize)
 {
-  static char buf[1024];
   char *p;
 
-  for (p = buf; *s && (p < (buf + sizeof(buf) - 2)); *p++ = *s++)
-    if ((unsigned char) *s == TLN_IAC)
-      *p++ = *s;
-    else if (*s == '\n')
+  for (p = dst; *src && (p < (dst + dstsize - 2)); *p++ = *src++)
+    if ((unsigned char) *src == TLN_IAC)
+      *p++ = *src;
+    else if (*src == '\n')
       *p++ = '\r';
   *p = 0;
-
-  return buf;
+  return dst;
 }
 
 static void strip_telnet(int sock, char *buf, int *len)
@@ -959,11 +957,14 @@ static void append_line(int idx, char *line)
 static void out_dcc_general(int idx, char *buf, void *x)
 {
   struct chat_info *p = (struct chat_info *) x;
-  char *y = buf;
+  char dst[1024];
+  char *y;
 
   strip_mirc_codes(p->strip_flags, buf);
-  if (dcc[idx].status & STAT_TELNET)
-    y = escape_telnet(buf);
+  if (dcc[idx].status & STAT_TELNET) {
+    y = escape_telnet(dst, buf, sizeof dst);
+  } else
+    y = buf;
   if (dcc[idx].status & STAT_PAGE)
     append_line(idx, y);
   else
@@ -1378,7 +1379,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
 static void dcc_telnet_hostresolved(int i)
 {
   int idx;
-  char s[sizeof lasttelnethost], *userhost;
+  char s[sizeof lasttelnethost];
 
   debug0("dcc_telnet_hostresolved()");
   strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
@@ -1405,7 +1406,6 @@ static void dcc_telnet_hostresolved(int i)
     }
   }
   snprintf(s, sizeof s, "-telnet!telnet@%s", dcc[i].host);
-  userhost = s + strlen("-telnet!");
   if (match_ignore(s) || detect_telnet_flood(s)) {
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1434,7 +1434,6 @@ static void dcc_telnet_hostresolved(int i)
     changeover_dcc(i, &DCC_SOCKET, 0);
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    strlcpy(dcc[i].host, userhost, UHOSTLEN);
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
@@ -1447,7 +1446,6 @@ static void dcc_telnet_hostresolved(int i)
   }
 #endif /* TLS */
 
-  strlcpy(dcc[i].host, userhost, UHOSTLEN);
   dcc_telnet_hostresolved2(i, idx);
 }
 
@@ -1845,8 +1843,9 @@ static void dcc_telnet_pass(int idx, int atr)
 
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
     if (dcc[idx].status & (STAT_TELNET | STAT_WS)) {
-      char buf[512];
-      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+      char dst[506], buf[512];
+      snprintf(buf, sizeof buf, "\n%s%s\r\n",
+               escape_telnet(dst, DCC_ENTERPASS, sizeof dst),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
