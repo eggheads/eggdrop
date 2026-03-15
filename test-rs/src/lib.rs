@@ -16,6 +16,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, LineWriter, Write as IoWrite};
 use std::net::{Ipv4Addr, Ipv6Addr};
 use std::os::unix::io::FromRawFd;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
 use tempfile::TempDir;
@@ -90,12 +91,15 @@ fn is_fake_target(addr: *const libc::sockaddr) -> bool {
     ip_bytes == [192, 0, 2, 1] && port == 6667
 }
 
+/// Whether the connect() interposition should intercept connections to the fake server.
+static INTERCEPT_CONNECT: AtomicBool = AtomicBool::new(false);
+
 /// Our end of the fake IRC server socketpair fd (-1 = not connected yet)
 static FAKE_IRCD_FD: Mutex<c_int> = Mutex::new(-1);
 
 #[unsafe(no_mangle)]
 unsafe extern "C" fn connect(fd: c_int, addr: *const libc::sockaddr, len: libc::socklen_t) -> c_int {
-    if is_fake_target(addr) {
+    if INTERCEPT_CONNECT.load(Ordering::Relaxed) && is_fake_target(addr) {
         let mut pair: [c_int; 2] = [0; 2];
         if unsafe { libc::socketpair(libc::AF_UNIX, libc::SOCK_STREAM, 0, pair.as_mut_ptr()) } != 0 {
             eprintln!("[eggtest connect] socketpair() failed");
@@ -241,19 +245,25 @@ impl IRCd {
     }
 
     /// Read lines until one matches the given string exactly (parsed as IRCline), panic on timeout.
-    pub fn expect(&mut self, expected: &str, timeout: Duration) {
+    /// Timeout is a string like "5s", "500ms", "10s".
+    pub fn expect(&mut self, expected: &str, timeout: &str) {
+        let timeout = parse_duration(timeout);
         let expected = IRCline::new(expected);
         self.recv_until(&format_args!("expect({})", expected), timeout, |line| *line == expected);
     }
 
     /// Read lines until one starts with the given prefix (parsed as IRCline), panic on timeout.
-    pub fn expect_prefix(&mut self, prefix: &str, timeout: Duration) -> IRCline {
+    /// Timeout is a string like "5s", "500ms", "10s".
+    pub fn expect_prefix(&mut self, prefix: &str, timeout: &str) -> IRCline {
+        let timeout = parse_duration(timeout);
         let prefix = IRCline::new(prefix);
         self.recv_until(&format_args!("expect_prefix({})", prefix), timeout, |line| line.starts_with(&prefix))
     }
 
     /// Drain all pending lines (useful to skip past startup chatter).
-    pub fn drain(&mut self, quiet_period: Duration) {
+    /// Quiet period is a string like "500ms", "1s".
+    pub fn drain(&mut self, quiet_period: &str) {
+        let quiet_period = parse_duration(quiet_period);
         loop {
             match self.recv_line(quiet_period) {
                 Some(line) => eprintln!("[eggtest ircd] drain: {}", line),
@@ -265,11 +275,11 @@ impl IRCd {
     /// Handle CAP LS negotiation (empty cap list), wait for NICK/USER,
     /// return the nick eggdrop registered with.
     pub fn negotiate(&mut self) -> String {
-        self.expect_prefix("CAP LS", Duration::from_secs(10));
+        self.expect_prefix("CAP LS", "10s");
         self.send(":irc.test CAP * LS :");
-        let nick_line = self.expect_prefix("NICK", Duration::from_secs(5));
-        self.expect_prefix("USER", Duration::from_secs(5));
-        self.expect("CAP END", Duration::from_secs(5));
+        let nick_line = self.expect_prefix("NICK", "5s");
+        self.expect_prefix("USER", "5s");
+        self.expect("CAP END", "5s");
         nick_line[1].clone()
     }
 
@@ -298,6 +308,7 @@ pub struct EggtestBuilder {
     settings: Vec<(String, String)>,
     modules: Vec<String>,
     isupport: Vec<String>,
+    use_ircd: bool,
 }
 
 /// The main test handle. Created via `Eggtest::builder().spawn()`.
@@ -313,6 +324,7 @@ impl Eggtest {
             settings: Vec::new(),
             modules: DEFAULT_MODULES.iter().map(|s| s.to_string()).collect(),
             isupport: DEFAULT_ISUPPORT.iter().map(|s| s.to_string()).collect(),
+            use_ircd: true,
         }
     }
 
@@ -336,6 +348,13 @@ impl EggtestBuilder {
     /// Each entry becomes a separate 005 numeric line.
     pub fn with_isupport(mut self, lines: Vec<&str>) -> Self {
         self.isupport = lines.into_iter().map(|s| s.to_string()).collect();
+        self
+    }
+
+    /// Enable or disable the fake IRC server (DNS hooks, connect interception).
+    /// Default is true.
+    pub fn with_ircd(mut self, enabled: bool) -> Self {
+        self.use_ircd = enabled;
         self
     }
 
@@ -370,10 +389,14 @@ impl EggtestBuilder {
             .expect("render config template");
         std::fs::write(&conf_path, &config).expect("write eggdrop.conf");
 
-        // Install DNS hooks
-        unsafe {
-            add_hook(HOOK_DNS_HOSTBYIP as c_int, std::mem::transmute(rust_dns_hostbyip as *const ()));
-            add_hook(HOOK_DNS_IPBYHOST as c_int, std::mem::transmute(rust_dns_ipbyhost as *const ()));
+        if self.use_ircd {
+            // Install DNS hooks and enable connect interception
+            INTERCEPT_CONNECT.store(true, Ordering::Relaxed);
+            *FAKE_IRCD_FD.lock().unwrap() = -1;
+            unsafe {
+                add_hook(HOOK_DNS_HOSTBYIP as c_int, std::mem::transmute(rust_dns_hostbyip as *const ()));
+                add_hook(HOOK_DNS_IPBYHOST as c_int, std::mem::transmute(rust_dns_ipbyhost as *const ()));
+            }
         }
 
         // No userfile yet → -mn (create one), otherwise -n (foreground only)
@@ -397,25 +420,42 @@ impl EggtestBuilder {
             eggdrop_main(argc, argv_ptr as *mut *mut c_char);
         });
 
-        // Wait for eggdrop to connect to fake.test-rs:6667
-        let fd = loop {
-            std::thread::sleep(Duration::from_millis(50));
-            let fd = *FAKE_IRCD_FD.lock().unwrap();
-            if fd >= 0 {
-                break fd;
-            }
-        };
+        let ircd = if self.use_ircd {
+            // Wait for eggdrop to connect to fake.test-rs:6667
+            let fd = loop {
+                std::thread::sleep(Duration::from_millis(50));
+                let fd = *FAKE_IRCD_FD.lock().unwrap();
+                if fd >= 0 {
+                    break fd;
+                }
+            };
 
-        let read_file = unsafe { File::from_raw_fd(fd) };
-        let write_file = read_file.try_clone().expect("dup ircd fd for writer");
+            let read_file = unsafe { File::from_raw_fd(fd) };
+            let write_file = read_file.try_clone().expect("dup ircd fd for writer");
 
-        Eggtest {
-            ircd: IRCd {
+            IRCd {
                 reader: BufReader::new(read_file),
                 writer: LineWriter::new(write_file),
                 isupport: self.isupport,
-            },
+            }
+        } else {
+            panic!("Eggtest::spawn() without ircd not yet supported — use with_ircd(true)")
+        };
+
+        Eggtest {
+            ircd,
             _workdir: workdir,
         }
+    }
+}
+
+/// Parse a human-readable duration string like "5s", "500ms", "1500ms".
+fn parse_duration(s: &str) -> Duration {
+    if let Some(ms) = s.strip_suffix("ms") {
+        Duration::from_millis(ms.parse().unwrap_or_else(|_| panic!("invalid duration: {:?}", s)))
+    } else if let Some(secs) = s.strip_suffix('s') {
+        Duration::from_secs(secs.parse().unwrap_or_else(|_| panic!("invalid duration: {:?}", s)))
+    } else {
+        panic!("invalid duration {:?}: expected suffix 's' or 'ms'", s)
     }
 }
