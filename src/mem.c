@@ -335,7 +335,7 @@ void *n_malloc(int size, const char *file, int line)
 #ifdef DEBUG_MEM
   size_t size2;
   int i = 0;
-  char *p;
+  const char *p;
 #endif
 
   x = (void *) malloc(size);
@@ -378,7 +378,7 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
   void *x;
 #ifdef DEBUG_MEM
   int i = 0;
-  char *p;
+  const char *p;
 #endif
 
   /* ptr == NULL is valid. Avoiding duplicate code further down */
