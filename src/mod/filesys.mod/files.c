@@ -251,8 +251,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
     p = strchr(new, '/');
   }
   my_free(new);
-  if (elem)
-    my_free(elem);
+  my_free(elem);
   /* Sanity check: does this dir exist? */
   s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
   sprintf(s, "%s%s", dccdir, *real);
