@@ -10,35 +10,51 @@ fn main() {
     let src_dir = eggdrop_dir.join("src");
     let lib_path = eggdrop_dir.join("libeggdrop.a");
 
-    // Link flags
+    // Extract link flags from the Makefile (XLIBS) and per-module flags (src/mod/mod.xlibs)
     println!("cargo:rustc-link-search=native={}", eggdrop_dir.display());
     println!("cargo:rustc-link-lib=static=eggdrop");
 
-    println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
-    println!("cargo:rustc-link-lib=dylib=tcl8.6");
-    println!("cargo:rustc-link-lib=dylib=z");
-    println!("cargo:rustc-link-lib=dylib=ssl");
-    println!("cargo:rustc-link-lib=dylib=crypto");
-    println!("cargo:rustc-link-lib=dylib=resolv");
-    println!("cargo:rustc-link-lib=dylib=m");
-    println!("cargo:rustc-link-lib=dylib=pthread");
-    println!("cargo:rustc-link-lib=dylib=dl");
-
-    println!("cargo:rerun-if-changed={}", lib_path.display());
-    println!("cargo:rerun-if-changed=wrapper.h");
-
     let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
+
+    let makefile = std::fs::read_to_string(eggdrop_dir.join("Makefile"))
+        .expect("Makefile not found — run ./configure && make config first");
+    let xlibs = extract_makefile_var(&makefile, "XLIBS");
+    // mod.xlibs is read from a stable cache maintained by `make test` (only updated
+    // when content changes), so rerun-if-changed won't fire on every archive rebuild.
+    // Falls back to reading from source when cache doesn't exist (e.g. first run).
+    let mod_xlibs_cache = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(".mod-xlibs.cache");
+    let mod_xlibs_source = eggdrop_dir.join("src/mod/mod.xlibs");
+    let mod_xlibs = std::fs::read_to_string(&mod_xlibs_cache)
+        .or_else(|_| std::fs::read_to_string(&mod_xlibs_source))
+        .unwrap_or_default();
+    let all_link_flags = format!("{} {}", xlibs, mod_xlibs);
+    emit_link_flags(&all_link_flags);
+
+    // Extract include paths from CFLGS (contains e.g. -I/usr/include/tcl8.6)
+    let cflgs = extract_makefile_var(&makefile, "CFLGS");
+    let extra_includes: Vec<String> = cflgs
+        .split_whitespace()
+        .filter(|f| f.starts_with("-I"))
+        .map(|s| s.to_string())
+        .collect();
+
+    println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed={}", eggdrop_dir.join("Makefile").display());
+    println!("cargo:rerun-if-changed={}", mod_xlibs_cache.display());
     let globals_h = out_dir.join("globals.h");
 
-    let clang_args = &[
-        "-DHAVE_CONFIG_H",
-        "-DSTATIC",
-        "-DMAKING_MODS",
-        &format!("-I{}", eggdrop_dir.display()),
-        &format!("-I{}", src_dir.display()),
-        &format!("-I{}", src_dir.join("mod").display()),
-        "-I/usr/include/tcl8.6",
+    let mut clang_args_owned = vec![
+        "-DHAVE_CONFIG_H".to_string(),
+        "-DSTATIC".to_string(),
+        "-DMAKING_MODS".to_string(),
+        format!("-I{}", eggdrop_dir.display()),
+        format!("-I{}", src_dir.display()),
+        format!("-I{}", src_dir.join("mod").display()),
     ];
+    clang_args_owned.extend(extra_includes);
+    let clang_args: Vec<&str> = clang_args_owned.iter().map(|s| s.as_str()).collect();
+    let clang_args = clang_args.as_slice();
 
     // Collect all macro names from the preprocessed headers so we can
     // #undef names that collide with nm symbols before declaring them extern.
@@ -169,7 +185,7 @@ fn main() {
 
     let mut globals_content = undefs;
     globals_content.extend(decls);
-    std::fs::write(&globals_h, globals_content.join("\n")).expect("write globals.h");
+    write_if_changed(&globals_h, globals_content.join("\n"));
 
     // Generate final bindings with both headers and globalized symbol declarations
     let bindings = bindgen::Builder::default()
@@ -183,9 +199,7 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
-    bindings
-        .write_to_file(out_dir.join("bindings.rs"))
-        .expect("Couldn't write bindings");
+    write_if_changed(&out_dir.join("bindings.rs"), bindings.to_string());
 }
 
 /// Find .c source files corresponding to .o basenames by searching src/.
@@ -359,6 +373,18 @@ fn format_extern_decl(name: &str, qualtype: &str) -> String {
     }
 }
 
+/// Write content to a file only if it differs from the current contents,
+/// preserving the mtime to avoid unnecessary downstream recompilation.
+fn write_if_changed(path: &Path, content: impl AsRef<[u8]>) {
+    let content = content.as_ref();
+    if let Ok(existing) = std::fs::read(path) {
+        if existing == content {
+            return;
+        }
+    }
+    std::fs::write(path, content).unwrap_or_else(|e| panic!("write {}: {}", path.display(), e));
+}
+
 fn is_valid_c_ident(s: &str) -> bool {
     let mut chars = s.chars();
     match chars.next() {
@@ -366,4 +392,43 @@ fn is_valid_c_ident(s: &str) -> bool {
         _ => return false,
     }
     chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+}
+
+/// Extract a simple variable assignment from a Makefile (e.g. "XLIBS = -lfoo -lbar").
+/// Handles continuation lines (trailing backslash).
+fn extract_makefile_var(makefile: &str, var: &str) -> String {
+    let prefix = format!("{} =", var);
+    let mut result = String::new();
+    let mut capturing = false;
+    for line in makefile.lines() {
+        if capturing {
+            let continued = line.ends_with('\\');
+            let content = line.trim_end_matches('\\').trim();
+            result.push(' ');
+            result.push_str(content);
+            if !continued {
+                break;
+            }
+        } else if let Some(rest) = line.strip_prefix(&prefix) {
+            capturing = true;
+            let continued = rest.ends_with('\\');
+            let content = rest.trim_end_matches('\\').trim();
+            result.push_str(content);
+            if !continued {
+                break;
+            }
+        }
+    }
+    result
+}
+
+/// Parse `-L` and `-l` flags from a linker flags string and emit cargo directives.
+fn emit_link_flags(flags: &str) {
+    for token in flags.split_whitespace() {
+        if let Some(path) = token.strip_prefix("-L") {
+            println!("cargo:rustc-link-search=native={}", path);
+        } else if let Some(lib) = token.strip_prefix("-l") {
+            println!("cargo:rustc-link-lib=dylib={}", lib);
+        }
+    }
 }
