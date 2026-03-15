@@ -182,9 +182,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         if (!(*real)[0]) {
           my_free(elem);
           my_free(new);
+          my_free(s);
           malloc_strcpy(*real, current);
-          if (s)
-            my_free(s);
           return 0;
         }
         (*real)[0] = 0;
@@ -197,9 +196,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         /* Non-existent starting point! */
         my_free(elem);
         my_free(new);
+        my_free(s);
         malloc_strcpy(*real, current);
-        if (s)
-          my_free(s);
         return 0;
       }
       filedb_readtop(fdb, NULL);
@@ -211,8 +209,6 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(new);
         my_free(s);
         malloc_strcpy(*real, current);
-        if (s)
-          my_free(s);
         return 0;
       }
       if (!(fdbe->stat & FILE_DIR) || fdbe->sharelink) {
@@ -222,8 +218,6 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(new);
         my_free(s);
         malloc_strcpy(*real, current);
-        if (s)
-          my_free(s);
         return 0;
       }
       if (idx >= 0)
@@ -240,8 +234,6 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           my_free(new);
           my_free(s);
           malloc_strcpy(*real, current);
-          if (s)
-            my_free(s);
           return 0;
         }
       }
