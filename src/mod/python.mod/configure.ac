@@ -52,9 +52,9 @@ if test "x$python_config_bin" != "x"; then
   # remove preprocessor args
   PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-Wp,[[^ ]]*//g'`
   # remove march
-  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-march=@<:@^ @:>@*//g'`
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-march=[[^ ]]*//g'`
   # remove mtune
-  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-mtune=@<:@^ @:>@*//g'`
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-mtune=[[^ ]]*//g'`
   AC_MSG_RESULT([$PYTHON_CFLAGS])
   AC_SUBST(PYTHON_CFLAGS)
 
