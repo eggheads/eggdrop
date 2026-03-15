@@ -1,4 +1,3 @@
-use std::time::Duration;
 use test_rs::eggdrop;
 use test_rs::{Eggtest, read_static};
 
@@ -14,7 +13,7 @@ fn eggdrop_parses_isupport() {
 
     let nick = egg.ircd.negotiate();
     egg.ircd.send_welcome(&nick);
-    egg.ircd.drain(Duration::from_millis(500));
+    egg.ircd.drain("500ms");
 
     assert_eq!(read_static!(eggdrop::nick_len), 16, "NICKLEN=16");
     assert_eq!(read_static!(eggdrop::use_354), 1, "WHOX sets use_354=1");
