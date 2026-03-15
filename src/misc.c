@@ -310,7 +310,8 @@ char *newsplit(char **rest)
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  char *p, *u = 0, *h = 0, *ss;
+  const char *p, *u = 0, *h = 0;
+  char *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
