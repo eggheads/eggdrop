@@ -41,3 +41,4 @@ EGGMOD.stamp
 mod.xlibs
 __pycache__
 .clangd
+.claude

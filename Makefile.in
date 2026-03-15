@@ -295,6 +295,28 @@ libeggdrop.a: eggtest
 	(cd src && $(MAKE) $(MAKE_STATIC_ARGS) ../libeggdrop.a) && \
 	echo "" && ls -l libeggdrop.a && echo ""
 
+test: libeggdrop.a
+	@if ! command -v cargo >/dev/null 2>&1; then \
+		echo ""; \
+		echo "Error: 'cargo' not found. Install Rust via:"; \
+		echo ""; \
+		echo "  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"; \
+		echo ""; \
+		exit 1; \
+	fi && \
+	if ! cargo nextest --version >/dev/null 2>&1; then \
+		echo ""; \
+		echo "Error: 'cargo-nextest' not found. Install it via:"; \
+		echo ""; \
+		echo "  cargo install nextest --frozen"; \
+		echo ""; \
+		exit 1; \
+	fi && \
+	cmp -s src/mod/mod.xlibs test-rs/.mod-xlibs.cache 2>/dev/null \
+		|| cp src/mod/mod.xlibs test-rs/.mod-xlibs.cache && \
+	echo "" && echo "Running Rust integration tests..." && echo "" && \
+	cd test-rs && cargo nextest run
+
 # Install
 
 install-end =	echo "" && echo "Installation completed." && echo "" && \
