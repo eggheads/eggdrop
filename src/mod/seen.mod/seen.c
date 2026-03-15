@@ -78,7 +78,7 @@
 #include "channels.mod/channels.h"
 
 static Function *global = NULL;
-static void wordshift();
+static void wordshift(char*, char*, size_t);
 static void do_seen();
 static char *match_trigger();
 static char *getxtra();
@@ -153,6 +153,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   long tv;
   time_t laston = 0, work;
 
+  text[511] = 0; // truncate user input to make double sure we dont overflow
   whotarget[0]   = 0;
   whoredirect[0] = 0;
   object[0]      = 0;
@@ -164,7 +165,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     return;
   }
 
-  wordshift(word1, text);
+  wordshift(word1, text, sizeof word1);
   oix = strchr(word1, '\'');
   /* Have we got a NICK's target? */
   if (oix == word1)
@@ -175,7 +176,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       oix[-1] == 'X')))) {
     strlcpy(object, word1, sizeof object);
     object[oix - word1] = 0;
-    wordshift(word1, text);
+    wordshift(word1, text, sizeof word1);
     if (!word1[0]) {
       dprintf(idx, "%s%s's what, %s?\n", prefix, object, nick);
       return;
@@ -237,7 +238,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   }
   /* Keyword "my" */
   if (!strcasecmp(word1, "my")) {
-    wordshift(word1, text);
+    wordshift(word1, text, sizeof word1);
     if (!word1[0]) {
       dprintf(idx, "%sYour what, %s?\n", prefix, nick);
       return;
@@ -279,12 +280,12 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   }
   /* "your" keyword */
   else if (!strcasecmp(word1, "your")) {
-    wordshift(word1, text);
+    wordshift(word1, text, sizeof word1);
     /* "your admin" */
     if (!strcasecmp(word1, "owner") || !strcasecmp(word1, "admin")) {
       if (admin[0]) {
         strlcpy(word2, admin, sizeof word2);
-        wordshift(whotarget, word2);
+        wordshift(whotarget, word2, sizeof whotarget);
         strcat(whoredirect, "My owner is ");
         strcat(whoredirect, whotarget);
         strcat(whoredirect, ", and ");
@@ -430,7 +431,7 @@ targetcont:
     }
   }
   /* Target known, but nowhere to be seen. Give last IRC and botnet time */
-  wordshift(word1, text);
+  wordshift(word1, text, sizeof word1);
   if (!strcasecmp(word1, "anywhere"))
     cr = NULL;
   else
@@ -550,13 +551,13 @@ static char *getxtra(char *hand, char *field)
   return "";
 }
 
-static void wordshift(char *first, char *rest)
+static void wordshift(char *first, char *rest, size_t dstsize)
 {
   char *p, *q = rest;
 
   do {
     p = newsplit(&q);
-    strcpy(first, p);
+    strlcpy(first, p, dstsize);
     memmove(rest, q, strlen(q) + 1);
   } while (!strcasecmp(first, "and") || !strcasecmp(first, "or"));
 }

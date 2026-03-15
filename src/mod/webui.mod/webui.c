@@ -53,8 +53,8 @@ static const uint8_t alert[] = {0x15, 0x03, 0x01, 0x00, 0x02, 0x02, 0x0a};
 static void webui_http_eof(int idx)
 {
   debug2("webui: webui_http_eof() idx %i sock %li", idx, dcc[idx].sock);
-  dcc[idx].u.webui_listen_idx = 0;
   killsock(dcc[idx].sock);
+  dcc[idx].u.webui_listen_idx = 0;
   lostdcc(idx);
 }
 
@@ -83,6 +83,7 @@ static void put_404(int idx) {
   tputs(dcc[idx].sock, response, i);
   nfree(response);
   killsock(dcc[idx].sock);
+  dcc[idx].u.webui_listen_idx = 0;
   lostdcc(idx);
 }
 
@@ -164,6 +165,7 @@ static void webui_http_activity(int idx, char *buf, int len)
            "WEBUI error: %s sent something other than http GET request",
            iptostr(&dcc[idx].sockname.addr.sa));
     killsock(dcc[idx].sock);
+    dcc[idx].u.webui_listen_idx = 0;
     lostdcc(idx);
     return;
   }
@@ -173,6 +175,7 @@ static void webui_http_activity(int idx, char *buf, int len)
              iptostr(&dcc[idx].sockname.addr.sa));
       tputs(dcc[idx].sock, (char *) alert, sizeof alert);
       killsock(dcc[idx].sock);
+      dcc[idx].u.webui_listen_idx = 0;
       lostdcc(idx);
       return;
   }
@@ -302,7 +305,6 @@ static void webui_dcc_telnet_hostresolved(int idx, int listen_idx)
     dcc[idx].u.webui_listen_idx = listen_idx;
     sockoptions(dcc[idx].sock, EGG_OPTION_SET, SOCK_BINARY);
     sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-    // dcc[i].u.other = NULL; /* important, else nfree() error in lostdcc on eof */
 }
 
 static size_t escape_html(char *dst, size_t dst_size, char *src, size_t src_size) {
@@ -527,6 +529,8 @@ static char *webui_close(void)
         (socklist[findsock(dcc[idx].sock)].flags & SOCK_WS)) {
       debug2("webui: webui_close(): closing sock idx %i, %li", idx, dcc[idx].sock);
       killsock(dcc[idx].sock);
+      if (!strcmp(dcc[idx].type->name, "WEBUI_HTTP"))
+        dcc[idx].u.webui_listen_idx = 0;
       lostdcc(idx);
     }
   }
