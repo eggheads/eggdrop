@@ -2097,12 +2097,8 @@ static void server_resolve_success(int servidx)
 #ifdef TLS
   if (dcc[servidx].ssl && ssl_handshake(serv, TLS_CONNECT, tls_vfyserver,
                                         LOG_SERV, dcc[servidx].host, NULL)) {
-#ifdef TLS
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].ssl,
                         dcc[servidx].port);
-#else
-    print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
-#endif
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, s,
            "TLS negotiation failure");
     check_tcl_event("fail-server");
