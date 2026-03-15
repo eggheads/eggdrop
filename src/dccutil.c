@@ -557,16 +557,15 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
   /* Free old structure. */
   if (dcc[i].type && dcc[i].type->kill)
     dcc[i].type->kill(i, dcc[i].u.other);
-  else if (dcc[i].u.other) {
+  else if (dcc[i].u.other)
     nfree(dcc[i].u.other);
-    dcc[i].u.other = NULL;
-  }
 
   dcc[i].type = type;
   if (xtra_size) {
     dcc[i].u.other = nmalloc(xtra_size);
     egg_bzero(dcc[i].u.other, xtra_size);
-  }
+  } else
+    dcc[i].u.other = NULL;
 }
 
 int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
