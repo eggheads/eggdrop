@@ -36,6 +36,7 @@ static char botflag005;
 
 static int got315(char *from, char *msg);
 static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick);
+static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky);
 
 /* ID length for !channels.
  */
@@ -170,7 +171,7 @@ static void setaccount(char *nick, char *account)
 
         egg_snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
         if (u_match_mask(global_bans, user) || u_match_mask(chan->bans, user)) {
-          check_this_ban(chan, user, m->nick);
+          check_this_ban(chan, user, 0);
           refresh_ban_kick(chan, user, m->nick);
         }
       }
