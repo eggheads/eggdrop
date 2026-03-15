@@ -1069,11 +1069,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
-    pthread_mutex_lock(&dtn->mutex);
-    if (*dtn->strerror)
-      debug2("%s: hostname %s", dtn->strerror, dtn->host);
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
+      pthread_mutex_lock(&dtn->mutex);
+      if (*dtn->strerror)
+        debug2("%s: hostname %s", dtn->strerror, dtn->host);
       if (dtn->type == DTN_TYPE_HOSTBYIP)
         call_hostbyip(&dtn->addr, dtn->host, !*dtn->strerror);
       else
@@ -1085,8 +1085,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       dtn_prev->next = dtn->next;
       nfree(dtn);
       dtn = dtn_prev;
-    } else
-      pthread_mutex_unlock(&dtn->mutex);
+    }
     dtn_prev = dtn;
   }
 #endif
