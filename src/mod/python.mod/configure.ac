@@ -67,7 +67,7 @@ fi
 
 # Check python path
 AC_ARG_VAR([PYTHON_VERSION],[The installed Python
-version to use, for example '2.3'. This string
+version to use, for example '3.8'. This string
 will be appended to the Python interpreter
 canonical name.])
 
