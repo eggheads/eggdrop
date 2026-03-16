@@ -287,6 +287,15 @@ sdebug: eggtest
 	$(show_test_run) && $(ls_exe) && $(egg_install_msg)
 
 libeggdrop.a: eggtest
+	@case "$(CFLGS)" in \
+	  *-O0*) ;; \
+	  *) echo ""; \
+	     echo "Error: CFLAGS does not contain -O0. Rerun configure with"; \
+	     echo "  CFLAGS=\"-O0 -g\" ./configure ..."; \
+	     echo "to ensure tests can access all globalized symbols."; \
+	     echo ""; \
+	     exit 1;; \
+	esac
 	@echo "" && echo "Making module objects for static linking..." && \
 	echo "" && rm -f src/mod/mod.xlibs && \
 	(cd src/mod && $(MAKE) $(MAKE_STATIC_ARGS) static) && \
