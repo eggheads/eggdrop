@@ -147,6 +147,46 @@ socketpair:
 - `with_modules(list)` — override the list of modules to load
 - `with_isupport(lines)` — customize the 005 (ISUPPORT) response
 - `with_ircd(bool)` — enable/disable fake IRCd (DNS hooks, connect interception; default true)
+- `with_channels(list)` — add `channel add` directives to the config
+
+### Tcl eval server
+
+Tests that need to execute Tcl commands at runtime (e.g. `channel set`,
+`newchanban`, `isbansticky`) use a socket-based eval server embedded in
+`eggdrop.conf.j2`. This is necessary because `Tcl_Eval()` is not thread-safe
+— eggdrop's main loop runs on a background thread, and the test runs on the
+main thread.
+
+The config template conditionally adds a `listen <port> script` handler that
+accepts TCP connections on localhost, reads one Tcl command per line, evaluates
+it via `catch {uplevel #0 $text}`, and responds with `<code> <result>\n`.
+Code 0 means success; any other code is a Tcl error.
+
+`EggtestBuilder::spawn()` picks a free TCP port, passes it to the template as
+`tcl_eval_port`, and after eggdrop starts, connects a `TcpStream` to the eval
+server. The `Eggtest::tcl(script)` method writes a line, reads the response,
+and panics on Tcl errors.
+
+The reverse DNS hook (`rust_dns_hostbyip`) must call `call_hostbyip()` for
+the eval server's localhost connection — without it, eggdrop waits for DNS
+resolution and drops the connection.
+
+### Channel join helper
+
+`IRCd::join_chan()` replays the full post-JOIN server sequence that eggdrop
+expects when joining a channel with WHOX enabled:
+
+1. Expects `JOIN #chan` from eggdrop
+2. Sends JOIN echo, 353 NAMES, 366 end-of-NAMES
+3. Expects `MODE #chan +b`, sends 367 ban entries + 368 end
+4. Expects `MODE #chan +e`, sends 349 end
+5. Expects `MODE #chan +I`, sends 347 end
+6. Expects `MODE #chan`, sends 324 (modes) + 329 (creation time)
+7. Expects `WHO #chan c%chnufat,222`, sends 354 WHOX entries + 315 end
+
+Parameters include the bot's nick/user/host, a list of `ChannelMember` structs
+(nick, user, host, WHO flags, account), and a list of ban strings for the 367
+replies.
 
 ### Running tests
 
@@ -168,6 +208,10 @@ via nextest is required because eggdrop uses global state.
 | `tests/connect.rs` | Verifies eggdrop registers (NICK/USER) on connect |
 | `tests/ping.rs` | Verifies eggdrop responds to PING |
 | `tests/isupport.rs` | Verifies ISUPPORT parsing (NICKLEN, WHOX, MODES, MAXLIST) |
+| `tests/extban_parse.rs` | Pure FFI unit tests for `extban_parse`, `is_extban_mask`, `extban_is_enforceable_flag` (no eggdrop instance needed) |
+| `tests/extban_isupport.rs` | ISUPPORT-dependent tests for prefix extraction, flag support checks |
+| `tests/extban_matching.rs` | `banmask_matches_member` tests (requires IRCd for ISUPPORT state) |
+| `tests/extban_integration.rs` | Full integration: channel join, ban storage, sticky flags, enforcement, account changes |
 
 ## Alternatives considered
 

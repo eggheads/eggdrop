@@ -33,3 +33,21 @@ proc evnt:init_server {type} {
 source scripts/alltools.tcl
 source scripts/action.fix.tcl
 source scripts/dccwhois.tcl
+{% for chan in channels %}
+channel add "{{ chan }}"
+{% endfor %}
+{% for line in tcl_extra %}
+{{ line }}
+{% endfor %}
+{% if tcl_eval_port %}
+proc _test_eval_accept {idx} {
+  control $idx _test_eval_input
+}
+proc _test_eval_input {idx text} {
+  if {$text eq ""} { return 1 }
+  set code [catch {uplevel #0 $text} result]
+  putdcc $idx "$code $result"
+  return 0
+}
+listen {{ tcl_eval_port }} script _test_eval_accept
+{% endif %}

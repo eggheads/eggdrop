@@ -14,7 +14,7 @@ macro_rules! read_static {
 use std::ffi::{CStr, CString, c_char, c_int};
 use std::fs::File;
 use std::io::{BufRead, BufReader, LineWriter, Write as IoWrite};
-use std::net::{Ipv4Addr, Ipv6Addr};
+use std::net::{Ipv4Addr, Ipv6Addr, TcpStream};
 use std::os::unix::io::FromRawFd;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Mutex, OnceLock};
@@ -26,6 +26,14 @@ use eggdrop::{HOOK_DNS_HOSTBYIP, HOOK_DNS_IPBYHOST, add_hook, sockname_t};
 unsafe extern "C" {
     fn eggdrop_main(argc: c_int, argv: *mut *mut c_char) -> c_int;
     fn call_ipbyhost(hostn: *mut c_char, ip: *mut sockname_t, ok: c_int);
+    fn call_hostbyip(ip: *mut sockname_t, hostn: *mut c_char, ok: c_int);
+    pub fn isupport_get(key: *const c_char, keylen: usize) -> *const c_char;
+    pub fn extban_parse(mask: *const c_char, typ: *mut c_char, arg: *mut *const c_char) -> c_int;
+    pub fn extban_flag_supported_local(flag: c_char) -> c_int;
+    pub fn is_extban_mask(mask: *const c_char) -> c_int;
+    pub fn get_extban_prefix(prefix: *mut c_char);
+    pub fn extban_is_enforceable_flag(flag: c_char, account_extban_flag: c_char) -> c_int;
+    pub fn banmask_matches_member(banmask: *const c_char, user: *const c_char, m: *mut eggdrop::memberlist) -> c_int;
 }
 
 /// Build a sockname_t containing an IPv4 address
@@ -53,6 +61,12 @@ unsafe extern "C" fn rust_dns_hostbyip(addr: *mut sockname_t) {
         _ => format!("unknown family {}", family),
     };
     eprintln!("[eggtest dns] reverse lookup for: {}", ip_str);
+
+    // Resolve all reverse lookups to the IP string itself
+    let hostname = CString::new(ip_str).unwrap();
+    unsafe {
+        call_hostbyip(addr, hostname.as_ptr() as *mut c_char, 1);
+    }
 }
 
 unsafe extern "C" fn rust_dns_ipbyhost(hostname: *mut c_char) {
@@ -119,6 +133,15 @@ unsafe extern "C" fn connect(fd: c_int, addr: *const libc::sockaddr, len: libc::
 
     let real_connect = get_real_connect();
     unsafe { real_connect(fd, addr, len) }
+}
+
+/// A member in a simulated channel for join_chan().
+pub struct ChannelMember<'a> {
+    pub nick: &'a str,
+    pub user: &'a str,
+    pub host: &'a str,
+    pub flags: &'a str,   // WHO flags: "H" (here), "H@" (here+op), "H+" (here+voice)
+    pub account: &'a str, // Account name, "*" if not logged in
 }
 
 /// Handle to the fake IRC server side of the socketpair.
@@ -196,6 +219,7 @@ impl std::ops::Index<usize> for IRCline {
 impl IRCd {
     /// Send a raw IRC line (appends \r\n).
     pub fn send(&mut self, line: &str) {
+        eprintln!("[eggtest ircd] -> {line:?}");
         write!(self.writer, "{}\r\n", line).expect("write to fake ircd socket");
     }
 
@@ -283,6 +307,66 @@ impl IRCd {
         nick_line[1].clone()
     }
 
+    /// Simulate eggdrop joining a channel: handle the full JOIN/NAMES/MODE/WHO sequence.
+    /// `botnick` is the bot's nick, `botuser` is the bot's username, `bothost` is the bot's host.
+    /// `chan` is the channel name. `members` lists other channel members (the bot is added
+    /// automatically to NAMES and WHO). `bans` are raw 367 ban entries
+    /// (e.g. `"*!*@evil.com setter 1700000000"`).
+    pub fn join_chan(&mut self, nick: &str, user: &str, host: &str, chan: &str, members: &[ChannelMember], bans: &[&str]) {
+        // 1. expect JOIN from bot
+        self.expect(&format!("JOIN {chan}"), "10s");
+
+        // 2. send JOIN echo, NAMES (353), end of NAMES (366)
+        self.send(&format!(":{nick}!{user}@{host} JOIN :{chan}"));
+        let mut names = nick.to_string();
+        for m in members {
+            names.push(' ');
+            if m.flags.contains('@') {
+                names.push('@');
+            } else if m.flags.contains('+') {
+                names.push('+');
+            }
+            names.push_str(m.nick);
+        }
+        self.send(&format!(":irc.test 353 {nick} = {chan} :{names}"));
+        self.send(&format!(":irc.test 366 {nick} {chan} :End of /NAMES list."));
+
+        // 3. expect MODE +b, send ban list + end
+        self.expect(&format!("MODE {chan} +b"), "5s");
+        for ban in bans {
+            self.send(&format!(":irc.test 367 {nick} {chan} {ban}"));
+        }
+        self.send(&format!(":irc.test 368 {nick} {chan} :End of Channel Ban List"));
+
+        // 4. expect MODE +e, send end of exception list
+        self.expect(&format!("MODE {chan} +e"), "5s");
+        self.send(&format!(":irc.test 349 {nick} {chan} :End of Channel Exception List"));
+
+        // 5. expect MODE +I, send end of invite list
+        self.expect(&format!("MODE {chan} +I"), "5s");
+        self.send(&format!(":irc.test 347 {nick} {chan} :End of Channel Invite List"));
+
+        // 6. expect MODE #chan (channel modes query), send 324 + 329
+        self.expect(&format!("MODE {chan}"), "5s");
+        self.send(&format!(":irc.test 324 {nick} {chan} +"));
+        self.send(&format!(":irc.test 329 {nick} {chan} 1700000000"));
+
+        // 7. expect WHO (WHOX: WHO #chan c%chnufat,222), send 354 entries + 315 end
+        self.expect_prefix(&format!("WHO {chan}"), "10s");
+        // Bot's own WHO entry
+        self.send(&format!(":irc.test 354 {nick} 222 {chan} {user} {host} {nick} H :0 eggdrop"));
+        // Other members
+        for m in members {
+            let mnick = m.nick;
+            let muser = m.user;
+            let mhost = m.host;
+            let mflags = m.flags;
+            let maccount = m.account;
+            self.send(&format!(":irc.test 354 {nick} 222 {chan} {muser} {mhost} {mnick} {mflags} {maccount}"));
+        }
+        self.send(&format!(":irc.test 315 {nick} {chan} :End of /WHO list."));
+    }
+
     /// Send a standard IRC welcome burst (001-005).
     pub fn send_welcome(&mut self, nick: &str) {
         self.send(&format!(":irc.test 001 {} :Welcome to the test network", nick));
@@ -308,12 +392,16 @@ pub struct EggtestBuilder {
     settings: Vec<(String, String)>,
     modules: Vec<String>,
     isupport: Vec<String>,
+    channels: Vec<String>,
+    tcl_extra: Vec<String>,
     use_ircd: bool,
 }
 
 /// The main test handle. Created via `Eggtest::builder().spawn()`.
 pub struct Eggtest {
     pub ircd: IRCd,
+    tcl_reader: BufReader<TcpStream>,
+    tcl_writer: TcpStream,
     _workdir: TempDir,
 }
 
@@ -324,6 +412,8 @@ impl Eggtest {
             settings: Vec::new(),
             modules: DEFAULT_MODULES.iter().map(|s| s.to_string()).collect(),
             isupport: DEFAULT_ISUPPORT.iter().map(|s| s.to_string()).collect(),
+            channels: Vec::new(),
+            tcl_extra: Vec::new(),
             use_ircd: true,
         }
     }
@@ -331,6 +421,23 @@ impl Eggtest {
     /// Shorthand: spawn with default settings.
     pub fn spawn() -> Eggtest {
         Eggtest::builder().spawn()
+    }
+
+    /// Evaluate a Tcl script in eggdrop's interpreter via the eval server socket.
+    /// Runs on eggdrop's main thread (thread-safe). Returns the Tcl result string.
+    /// Panics on Tcl errors.
+    pub fn tcl(&mut self, script: &str) -> String {
+        IoWrite::write_fmt(&mut self.tcl_writer, format_args!("{}\n", script)).expect("write to tcl eval socket");
+        IoWrite::flush(&mut self.tcl_writer).expect("flush tcl eval socket");
+        let mut line = String::new();
+        self.tcl_reader.read_line(&mut line).expect("read from tcl eval socket");
+        let line = line.trim_end_matches(&['\r', '\n'][..]);
+        match line.split_once(' ') {
+            Some(("0", result)) => result.to_string(),
+            Some((code, result)) => panic!("Tcl error (code {code}): {result}"),
+            None if line == "0" => String::new(),
+            None => panic!("unexpected tcl eval response: {line:?}"),
+        }
     }
 }
 
@@ -351,6 +458,12 @@ impl EggtestBuilder {
         self
     }
 
+    /// Add channels to the config. Each entry is a channel name (e.g. "#test").
+    pub fn with_channels(mut self, channels: Vec<&str>) -> Self {
+        self.channels = channels.into_iter().map(|s| s.to_string()).collect();
+        self
+    }
+
     /// Enable or disable the fake IRC server (DNS hooks, connect interception).
     /// Default is true.
     pub fn with_ircd(mut self, enabled: bool) -> Self {
@@ -367,6 +480,12 @@ impl EggtestBuilder {
     /// Build the config, start eggdrop, wait for IRC connection.
     pub fn spawn(self) -> Eggtest {
         let eggdrop_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+
+        // Pick a free port for the Tcl eval server
+        let tcl_eval_port = {
+            let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind to find free port");
+            listener.local_addr().unwrap().port()
+        };
 
         // Create a temporary working directory with symlinks to eggdrop's runtime dirs
         let workdir = TempDir::new().expect("create temp workdir");
@@ -385,6 +504,9 @@ impl EggtestBuilder {
             .render(minijinja::context! {
                 modules => self.modules,
                 settings => self.settings,
+                channels => self.channels,
+                tcl_extra => self.tcl_extra,
+                tcl_eval_port => tcl_eval_port,
             })
             .expect("render config template");
         std::fs::write(&conf_path, &config).expect("write eggdrop.conf");
@@ -442,8 +564,18 @@ impl EggtestBuilder {
             panic!("Eggtest::spawn() without ircd not yet supported — use with_ircd(true)")
         };
 
+        // Connect to the Tcl eval server (listen is set up during config sourcing,
+        // which completes before the IRC connection, so it's ready by now).
+        let tcl_stream = TcpStream::connect(("127.0.0.1", tcl_eval_port))
+            .expect("connect to tcl eval port");
+        tcl_stream.set_read_timeout(Some(Duration::from_secs(10))).unwrap();
+        let tcl_writer = tcl_stream.try_clone().expect("clone tcl stream");
+        let tcl_reader = BufReader::new(tcl_stream);
+
         Eggtest {
             ircd,
+            tcl_reader,
+            tcl_writer,
             _workdir: workdir,
         }
     }

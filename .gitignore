@@ -42,3 +42,4 @@ mod.xlibs
 __pycache__
 .clangd
 .claude
+compile_commands.json

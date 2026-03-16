@@ -235,71 +235,74 @@ fn find_c_files_for_objects(src_dir: &Path, obj_files: &HashSet<String>) -> Vec<
     c_files
 }
 
-/// Run clang -Xclang -ast-dump=json on each .c file in parallel,
+/// Run clang -Xclang -ast-dump=json on .c files (4 at a time to limit memory),
 /// extract file-scope static variable declarations with their types.
 fn extract_static_types(c_files: &[PathBuf], clang_args: &[&str]) -> HashMap<String, String> {
     use std::thread;
 
-    let handles: Vec<_> = c_files
-        .iter()
-        .map(|c_file| {
-            let c_file = c_file.clone();
-            let args: Vec<String> = clang_args.iter().map(|s| s.to_string()).collect();
-            thread::spawn(move || {
-                let output = Command::new("clang")
-                    .arg("-Xclang")
-                    .arg("-ast-dump=json")
-                    .arg("-fsyntax-only")
-                    .args(&args)
-                    .arg(&c_file)
-                    .output();
-
-                let output = match output {
-                    Ok(o) if o.status.success() => o,
-                    _ => return Vec::new(),
-                };
-
-                let ast: serde_json::Value = match serde_json::from_slice(&output.stdout) {
-                    Ok(v) => v,
-                    Err(_) => return Vec::new(),
-                };
-
-                let mut results = Vec::new();
-                if let Some(inner) = ast.get("inner").and_then(|v| v.as_array()) {
-                    for node in inner {
-                        if node.get("kind").and_then(|v| v.as_str()) != Some("VarDecl") {
-                            continue;
-                        }
-                        if node.get("storageClass").and_then(|v| v.as_str()) != Some("static") {
-                            continue;
-                        }
-                        let name = match node.get("name").and_then(|v| v.as_str()) {
-                            Some(n) => n.to_string(),
-                            None => continue,
-                        };
-                        let qualtype = match node
-                            .get("type")
-                            .and_then(|v| v.get("qualType"))
-                            .and_then(|v| v.as_str())
-                        {
-                            Some(t) => t.to_string(),
-                            None => continue,
-                        };
-                        results.push((name, qualtype));
-                    }
-                }
-                results
-            })
-        })
-        .collect();
-
     let mut types = HashMap::new();
-    for handle in handles {
-        if let Ok(results) = handle.join() {
-            for (name, qualtype) in results {
-                // Use first occurrence (some names may appear in multiple files
-                // but colliders are excluded from globalization anyway)
-                types.entry(name).or_insert(qualtype);
+
+    // Process in chunks of 4 to avoid OOM from parallel clang JSON AST dumps
+    for chunk in c_files.chunks(4) {
+        let handles: Vec<_> = chunk
+            .iter()
+            .map(|c_file| {
+                let c_file = c_file.clone();
+                let args: Vec<String> = clang_args.iter().map(|s| s.to_string()).collect();
+                thread::spawn(move || {
+                    let output = Command::new("clang")
+                        .arg("-Xclang")
+                        .arg("-ast-dump=json")
+                        .arg("-fsyntax-only")
+                        .args(&args)
+                        .arg(&c_file)
+                        .output();
+
+                    let output = match output {
+                        Ok(o) if o.status.success() => o,
+                        _ => return Vec::new(),
+                    };
+
+                    let ast: serde_json::Value = match serde_json::from_slice(&output.stdout) {
+                        Ok(v) => v,
+                        Err(_) => return Vec::new(),
+                    };
+
+                    let mut results = Vec::new();
+                    if let Some(inner) = ast.get("inner").and_then(|v| v.as_array()) {
+                        for node in inner {
+                            if node.get("kind").and_then(|v| v.as_str()) != Some("VarDecl") {
+                                continue;
+                            }
+                            if node.get("storageClass").and_then(|v| v.as_str()) != Some("static")
+                            {
+                                continue;
+                            }
+                            let name = match node.get("name").and_then(|v| v.as_str()) {
+                                Some(n) => n.to_string(),
+                                None => continue,
+                            };
+                            let qualtype = match node
+                                .get("type")
+                                .and_then(|v| v.get("qualType"))
+                                .and_then(|v| v.as_str())
+                            {
+                                Some(t) => t.to_string(),
+                                None => continue,
+                            };
+                            results.push((name, qualtype));
+                        }
+                    }
+                    results
+                })
+            })
+            .collect();
+
+        for handle in handles {
+            if let Ok(results) = handle.join() {
+                for (name, qualtype) in results {
+                    types.entry(name).or_insert(qualtype);
+                }
             }
         }
     }
