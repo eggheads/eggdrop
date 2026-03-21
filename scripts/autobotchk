@@ -94,6 +94,8 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #   28Nov2022: Added -systemd option, to (duh) create a systemd job
 #   16Mar2026: Added -unitname command-line option and input validation
 #              for systemd unit names (restricted to [a-zA-Z0-9_-])
+#   21Mar2026: -unitname now implies -systemd; default botnet-nick validated
+#              against allowed charset at interactive prompt
 
 if {$argc == 0} {
   puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"
@@ -101,7 +103,7 @@ if {$argc == 0} {
   puts "--------"
   puts " systemd options:"
   puts "  -systemd (install systemd job instead of cron)"
-  puts "  -unitname <name> (specify systemd unit name, bypasses prompt)"
+  puts "  -unitname <name> (specify systemd unit name, implies -systemd)"
   puts ""
   puts " crontab options:"
   puts "  -dir     (directory to run autobotchk in)"
@@ -167,6 +169,8 @@ while {[set opt [newsplit argv]] != ""} {
         exit 1
       }
       set systemd_unitname $unitname_arg
+      # -unitname implies -systemd
+      set systemd 1
     }
     "-time" -
     "-1" { set delay 1 }
@@ -300,8 +304,14 @@ if {$systemd} {
       flush stdout
       set input [string trim [gets stdin]]
       if {$input eq ""} {
-        set unitname ${botnet-nick}
-        break
+        # Validate the default botnet-nick before accepting it
+        if {[regexp {^[a-zA-Z0-9_-]+$} ${botnet-nick}]} {
+          set unitname ${botnet-nick}
+          break
+        } else {
+          puts "ERROR: Default botnet-nick '${botnet-nick}' contains invalid characters."
+          puts "Please enter a valid unit name manually (only letters, numbers, underscores, and hyphens are allowed)."
+        }
       } elseif {[regexp {^[a-zA-Z0-9_-]+$} $input]} {
         set unitname $input
         break
@@ -310,7 +320,7 @@ if {$systemd} {
       }
     }
   }
-  
+
   puts "Enabling user lingering..."
   if {[catch {exec loginctl enable-linger} res]} {
     puts "Oops, something went wrong. Is systemd running on this system?"
