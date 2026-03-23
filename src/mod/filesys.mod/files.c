@@ -243,7 +243,15 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           s = nrealloc(s, strlen(s) + 2);
           strcat(s, "/");
       }
-      snprintf(work, PATH_MAX, "%s%s", s, elem);
+      if (snprintf(work, PATH_MAX, "%s%s", s, elem) >= PATH_MAX) {
+        /* path too long */
+        free_fdbe(&fdbe);
+        my_free(elem);
+        my_free(new);
+        my_free(s);
+        malloc_strcpy(*real, current);
+        return 0;
+      }
       malloc_strcpy_nocheck(*real, work);
       s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
       sprintf(s, "%s%s", dccdir, *real);
