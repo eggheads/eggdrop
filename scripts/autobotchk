@@ -325,6 +325,7 @@ if {$systemd} {
     puts "  *** ERROR: systemd unit '${unitname}.service' already exists."
     puts "  Use -unitname <n> to specify a different name, or remove the existing unit first:"
     puts "    systemctl --user disable ${unitname}.service"
+    puts "    systemctl --user stop ${unitname}.service (if running)"
     puts "    rm $servicefile"
     exit 1
   }
@@ -350,7 +351,7 @@ if {$systemd} {
   puts $fd "WantedBy=default.target"
   close $fd
 
-  if {[catch {exec systemctl --user enable ${unitname}.service} res]} {
+  if {[catch {exec systemctl --user enable ${unitname}.service 2>/dev/null} res]} {
     puts "  *** ERROR during systemctl --user enable ${unitname}.service: $res"
   }
   puts "systemd job successfully installed as '${unitname}.service'."
