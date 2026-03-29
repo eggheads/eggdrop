@@ -98,7 +98,8 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #              against allowed charset at interactive prompt
 #   29Mar2026: Removed interactive unit name prompt; unit name now defaults
 #              to botnet-nick automatically (validated against allowed charset);
-#              use -unitname to override
+#              use -unitname to override; added check for existing .service
+#              file to prevent silently clobbering a running bot's unit
 
 if {$argc == 0} {
   puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"
@@ -319,7 +320,15 @@ if {$systemd} {
     puts "  *** ERROR: unable to create directory $::env(HOME)/.config/systemd/user or exists as file: $res"
     exit 1
   }
-  if {[catch {open "$::env(HOME)/.config/systemd/user/${unitname}.service" w} fd]} {
+  set servicefile "$::env(HOME)/.config/systemd/user/${unitname}.service"
+  if {[file exists $servicefile]} {
+    puts "  *** ERROR: systemd unit '${unitname}.service' already exists."
+    puts "  Use -unitname <n> to specify a different name, or remove the existing unit first:"
+    puts "    systemctl --user disable ${unitname}.service"
+    puts "    rm $servicefile"
+    exit 1
+  }
+  if {[catch {open $servicefile w} fd]} {
     puts "  *** ERROR: unable to open '${unitname}.service' for writing: $fd"
     puts ""
     exit 1
