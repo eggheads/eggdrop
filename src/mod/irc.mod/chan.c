@@ -134,7 +134,7 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
   /* Try account extban matching */
-  if (type && v && type == v[0]) {
+  if (v && v[0] && type == v[0]) {
     return !rfc_casecmp(m->account, arg);
   }
 
