@@ -214,7 +214,7 @@ static void read_lang(char *langfile)
   char *ltext = NULL;
   char *ctmp, *ctmp1;
   int ltextsize = sizeof lbuf;
-  int lidx;
+  unsigned int lidx;
   int lnew = 1;
   int lline = 1;
   int lskip = 0;
@@ -536,7 +536,8 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
 {
   lang_tab *l;
   char ltext2[512];
-  int idx2, i;
+  unsigned int idx2;
+  int i;
 
   putlog(LOG_CMDS, "*", "#%s# ldump %s", dcc[idx].nick, par);
   if (par[0]) {
@@ -744,12 +745,9 @@ static tcl_cmds langtcls[] = {
 
 void init_language(int flag)
 {
-  int i;
   char *deflang;
 
   if (flag) {
-    for (i = 0; i < 32; i++)
-      langtab[i] = 0;
     /* The default language is always BASELANG as language files are
      * guaranteed to exist in that language.
      */
