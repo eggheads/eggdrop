@@ -544,7 +544,7 @@ typedef struct {
   char *szlast;                 /* for 'Last message repeated n times'
                                  * stuff in misc.c/putlog() <cybah>         */
   int szlast_len;               /* sizeof szlast                            */
-  int repeats;                  /* number of times szLast has been repeated */
+  int repeats;                  /* number of times szlast has been repeated */
   unsigned int flags;           /* other flags <rtc>                        */
   FILE *f;                      /* existing file                            */
 } log_t;
