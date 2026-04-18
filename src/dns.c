@@ -591,6 +591,7 @@ void core_dns_hostbyip(sockname_t *addr)
   if (pipe(dtn->fildes) < 0) {
     putlog(LOG_MISC, "*", "core_dns_hostbyip(): pipe(): error: %s", strerror(errno));
     call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
+    pthread_mutex_destroy(&dtn->mutex);
     nfree(dtn);
     return;
   }
@@ -600,6 +601,7 @@ void core_dns_hostbyip(sockname_t *addr)
     call_hostbyip(addr, iptostr(&addr->addr.sa), 0);
     close(dtn->fildes[0]);
     close(dtn->fildes[1]);
+    pthread_mutex_destroy(&dtn->mutex);
     nfree(dtn);
     return;
   }
