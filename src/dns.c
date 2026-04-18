@@ -630,20 +630,19 @@ void core_dns_ipbyhost(char *host)
     nfree(dtn);
     return;
   }
-  dtn->next = dns_thread_head->next;
-  dns_thread_head->next = dtn;
   strlcpy(dtn->host, host, sizeof dtn->host);
   if (pthread_create(&(dtn->thread_id), &attr, thread_dns_ipbyhost, (void *) dtn)) {
     putlog(LOG_MISC, "*", "core_dns_ipbyhost(): pthread_create(): error = %s", strerror(errno));
     call_ipbyhost(host, &addr, 0);
     close(dtn->fildes[0]);
     close(dtn->fildes[1]);
-    dns_thread_head->next = dtn->next;
     pthread_mutex_destroy(&dtn->mutex);
     nfree(dtn);
     return;
   }
   dtn->type = DTN_TYPE_IPBYHOST;
+  dtn->next = dns_thread_head->next;
+  dns_thread_head->next = dtn;
 }
 #else /* EGG_TDNS */
 /*
