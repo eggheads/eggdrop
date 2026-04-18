@@ -25,7 +25,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define MODULE_NAME "irc"
+#define MAKING_IRC
+
+#include "src/mod/module.h"
 #include "irc.h"
+#include "irc_proto.h"
+#include "server.mod/server.h"
+#include "channels.mod/channels.h"
 
 
 static time_t last_ctcp = (time_t) 0L;
@@ -122,7 +129,7 @@ static void setaccount(char *nick, char *account)
 
 /* Returns the current channel mode.
  */
-static char *getchanmode(struct chanset_t *chan)
+char *getchanmode(struct chanset_t *chan)
 {
   static char s[121];
   int atr, i;
@@ -176,7 +183,7 @@ static char *getchanmode(struct chanset_t *chan)
   return s;
 }
 
-static void check_exemptlist(struct chanset_t *chan, char *from)
+void check_exemptlist(struct chanset_t *chan, char *from)
 {
   masklist *e;
   int ok = 0;
@@ -198,7 +205,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
  * Moved all do_ban(), do_exempt() and do_invite() into this single function
  * as the code bloat is starting to get ridiculous <cybah>
  */
-static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
+void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 {
   for (; m && m->mask[0]; m = m->next)
     if (cmp_masks(mask, m->mask) && rfc_casecmp(mask, m->mask))
@@ -212,8 +219,8 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
  *
  * victim for flood-deop, account for flood-join
  */
-static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-                             struct chanset_t *chan, int which, char *victim_or_account)
+int detect_chan_flood(char *floodnick, char *floodhost, char *from,
+                     struct chanset_t *chan, int which, char *victim_or_account)
 {
   char h[NICKMAX+UHOSTLEN+1], ftype[12], *p;
   struct userrec *u;
@@ -402,7 +409,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 
 /* Given a [nick!]user@host, place a quick ban on them on a chan.
  */
-static char *quickban(struct chanset_t *chan, char *uhost)
+char *quickban(struct chanset_t *chan, char *uhost)
 {
   static char s1[512];
 
@@ -414,8 +421,8 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 /* Kick any user (except friends/masters) with certain mask from channel
  * with a specified comment.  Ernst 18/3/1998
  */
-static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
-                     int bantype)
+void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
+              int bantype)
 {
   memberlist *m;
   char kicknick[512], s[NICKMAX+UHOSTLEN+1];
@@ -500,7 +507,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 /* This is a bit cumbersome at the moment, but it works... Any improvements
  * then feel free to have a go.. Jason
  */
-static void refresh_exempt(struct chanset_t *chan, char *user)
+void refresh_exempt(struct chanset_t *chan, char *user)
 {
   maskrec *e;
   masklist *b;
@@ -634,8 +641,8 @@ static void recheck_invites(struct chanset_t *chan)
 
 /* Resets the masks on the channel.
  */
-static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
-                       maskrec *global_masks, char mode)
+void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
+                maskrec *global_masks, char mode)
 {
   if (!me_op(chan) && (!me_halfop(chan) ||
       (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
@@ -665,7 +672,7 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
     break;
   }
 }
-static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
+void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
 {
   memberlist *m;
   char user[NICKMAX+UHOSTLEN+1];
@@ -685,7 +692,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
     add_mode(chan, '+', 'b', banmask);
 }
 
-static void recheck_channel_modes(struct chanset_t *chan)
+void recheck_channel_modes(struct chanset_t *chan)
 {
   int cur = chan->channel.mode, mns = chan->mode_mns_prot,
       pls = chan->mode_pls_prot;
@@ -879,7 +886,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
   }
 }
 
-static void check_this_user(char *hand, int delete, char *host)
+void check_this_user(char *hand, int delete, char *host)
 {
   char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
@@ -901,7 +908,7 @@ static void check_this_user(char *hand, int delete, char *host)
 
 /* Things to do when i just became a chanop:
  */
-static void recheck_channel(struct chanset_t *chan, int dobans)
+void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -1882,7 +1889,7 @@ static int got332(char *from, char *msg)
 
 /* Set delay for +o, +h, or +v channel modes
  */
-static void set_delay(struct chanset_t *chan, char *nick)
+void set_delay(struct chanset_t *chan, char *nick)
 {
   time_t a_delay;
   int aop_min, aop_max, aop_diff, count = 0;
@@ -2876,7 +2883,7 @@ static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
   return 0;
 }
 
-static cmd_t irc_raw[] = {
+cmd_t irc_raw[] = {
   {"324",     "",   (IntFunc) got324,          "irc:324"},
   {"352",     "",   (IntFunc) got352,          "irc:352"},
   {"353",     "",   (IntFunc) got353,          "irc:353"},
@@ -2915,12 +2922,12 @@ static cmd_t irc_raw[] = {
   {NULL,     NULL,  NULL,                           NULL}
 };
 
-static cmd_t irc_rawt[] = {
+cmd_t irc_rawt[] = {
   {"*",       "",   (IntFunc) gotrawt,        "irc:rawt"},
   {NULL,    NULL,   NULL,                           NULL}
 };
 
-static cmd_t irc_isupport_binds[] = {
+cmd_t irc_isupport_binds[] = {
   {"*",       "",   (IntFunc) irc_isupport, "irc:isupport"},
   {NULL,    NULL,   NULL,                             NULL}
 };

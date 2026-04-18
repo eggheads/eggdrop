@@ -21,6 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define MODULE_NAME "irc"
+#define MAKING_IRC
+
+#include "src/mod/module.h"
+#include "irc.h"
+#include "irc_proto.h"
+#include "server.mod/server.h"
+#include "channels.mod/channels.h"
+
 static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 {
   char host[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN], handle[HANDLEN + 1];
@@ -1116,7 +1125,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
  * The function is responsible for any logging. Return 1 if successful,
  * 0 if not.
  */
-static cmd_t C_msg[] = {
+cmd_t C_msg[] = {
   {"addhost", "",    (IntFunc) msg_addhost, NULL},
   {"die",     "n",   (IntFunc) msg_die,     NULL},
   {"go",      "",    (IntFunc) msg_go,      NULL},

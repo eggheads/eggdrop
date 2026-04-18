@@ -23,6 +23,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#define MODULE_NAME "irc"
+#define MAKING_IRC
+
+#include "src/mod/module.h"
+#include "irc.h"
+#include "irc_proto.h"
+#include "server.mod/server.h"
+#include "channels.mod/channels.h"
+
 /* Reversing this mode? */
 static int reversing = 0;
 
@@ -62,7 +71,7 @@ static struct chanset_t *modebind_refresh(char *chname,
   return chan;
 }
 
-static void flush_mode(struct chanset_t *chan, int pri)
+void flush_mode(struct chanset_t *chan, int pri)
 {
   char *p, out[512], post[512];
   size_t postsize = sizeof(post);
@@ -196,8 +205,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
 
 /* Queue a channel mode change
  */
-static void real_add_mode(struct chanset_t *chan,
-                          char plus, char mode, char *op)
+void real_add_mode(struct chanset_t *chan,
+                   char plus, char mode, char *op)
 {
   int i, type, modes, l;
   masklist *m;
@@ -988,7 +997,7 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
     add_mode(chan, '+', 'I', who);
 }
 
-static int gotmode(char *from, char *origmsg)
+int gotmode(char *from, char *origmsg)
 {
   char *nick, *ch, *op, *chg, *msg;
   char s[UHOSTLEN], buf[511];
