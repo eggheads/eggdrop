@@ -414,6 +414,11 @@ void chanprog()
         nfree(logs[i].chname);
         logs[i].chname = NULL;
       }
+      if (logs[i].szlast != NULL) {
+        nfree(logs[i].szlast);
+        logs[i].szlast = NULL;
+        logs[i].szlast_len = 0;
+      }
       if (logs[i].f != NULL) {
         fclose(logs[i].f);
         logs[i].f = NULL;
