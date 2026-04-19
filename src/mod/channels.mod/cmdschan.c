@@ -195,7 +195,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
        */
       if ((me = module_find("irc", 0, 0))) {
         if (!extbanflag || extban_enabled)
-          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_default_sticky);
+          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         else
           dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
@@ -219,7 +219,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       if ((me = module_find("irc", 0, 0))) {
         if (!extbanflag || extban_enabled) {
           for (chan = chanset; chan != NULL; chan = chan->next)
-            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_default_sticky);
+            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         } else
           dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
@@ -252,6 +252,10 @@ static void cmd_pls_extban(struct userrec *u, int idx, char *par)
   arg = newsplit(&par);
   if (!arg[0]) {
     dprintf(idx, "Usage: +extban <flag> <value> [channel] [%%<XyXdXhXm>] [reason]\n");
+    return;
+  }
+  if (!isalnum(flag)) {
+    dprintf(idx, "Invalid value, letters and numbers only");
     return;
   }
 

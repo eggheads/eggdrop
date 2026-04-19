@@ -1195,7 +1195,7 @@ static int write_exempts(FILE *f, int idx)
           expire = e->expire;
           added = e->added;
           if (!mask ||
-              fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
+              fprintf(f, "%s %s:%s%ld%s:+%ld:%ld:%s:%s\n", "%", mask,
                       (e->flags & MASKREC_PERM) ? "+" : "", expire,
                       (e->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) e->lastactive, e->user ? e->user : botnetnick,
@@ -1255,7 +1255,7 @@ static int write_invites(FILE *f, int idx)
           expire = ir->expire;
           added = ir->added;
           if (!mask ||
-              fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+              fprintf(f, "@ %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                       (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                       (ir->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) ir->lastactive, ir->user ? ir->user : botnetnick,
