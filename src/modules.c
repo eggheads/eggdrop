@@ -174,6 +174,7 @@ void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
 void (*webui_dcc_telnet_hostresolved) (int, int) = 0;
 size_t (*webui_frame) (char **, char *, size_t) = 0;
 void (*webui_unframe) (int, char *, int *) = 0;
+void (*hook_reset_member) () = null_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -632,7 +633,8 @@ Function global_table[] = {
   (Function) dcc_telnet_hostresolved2,
   (Function) findsock,
 /* 328 - 331 */
-  (Function) & stealth_telnets    /* int                                 */
+  (Function) & stealth_telnets,   /* int                                 */
+  (Function) do_hook_reset_member
 };
 
 void init_modules(void)
@@ -1239,4 +1241,8 @@ void do_module_report(int idx, int details, char *which)
   }
   if (which)
     dprintf(idx, "No such module.\n");
+}
+
+void do_hook_reset_member() {
+  call_hook(HOOK_RESET_MEMBER);
 }

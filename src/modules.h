@@ -46,6 +46,7 @@ void mod_free(void *, const char *, const char *, int);
 void add_hook(int, Function);
 void del_hook(int, Function);
 void *get_next_hook(int, void *);
+void do_hook_reset_member();
 
 extern struct hook_entry {
   struct hook_entry *next;

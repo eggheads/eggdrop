@@ -532,6 +532,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define findsock ((int(*)(int))global[327])
 /* 328 - 331 */
 #define stealth_telnets (*(int *)(global[328]))
+#define do_hook_reset_member ((void (*) ())global[329])
 
 
 /* hostmasking */
