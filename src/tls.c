@@ -866,10 +866,10 @@ static void ssl_info(const SSL *ssl, int where, int ret)
 
   /* We're doing non-blocking IO, so we check here if the handshake has
      finished */
+  sock = SSL_get_fd(ssl);
   if (where & SSL_CB_HANDSHAKE_DONE) {
     /* Callback for completed handshake. Cheaper and more convenient than
        using H_tls */
-    sock = SSL_get_fd(ssl);
     if (data->cb)
       data->cb(sock);
     /* Call TLS binds. We allow scripts to take over or disable displaying of
@@ -877,8 +877,8 @@ static void ssl_info(const SSL *ssl, int where, int ret)
     if (check_tcl_tls(sock))
       return;
 
-    putlog(data->loglevel, "*", "TLS: handshake successful. Secure connection "
-           "established.");
+    putlog(data->loglevel, "*", "TLS: sock %d handshake successful. Secure "
+           "connection established.", sock);
 
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L /* 3.0.0 */
     if ((cert = SSL_get0_peer_certificate(ssl))) {
@@ -918,8 +918,8 @@ static void ssl_info(const SSL *ssl, int where, int ret)
   } else if (where & SSL_CB_ALERT) {
     if (strcmp(SSL_alert_type_string(ret), "W") ||
         strcmp(SSL_alert_desc_string(ret), "CN")) {
-      putlog(data->loglevel, "*", "TLS: alert during %s: %s (%s).",
-             (where & SSL_CB_READ) ? "read" : "write",
+      putlog(data->loglevel, "*", "TLS: sock %d alert during %s: %s (%s).",
+             sock, (where & SSL_CB_READ) ? "read" : "write",
              SSL_alert_type_string_long(ret),
              SSL_alert_desc_string_long(ret));
       if (!strcmp(SSL_alert_type_string(ret), "F") &&
@@ -927,7 +927,7 @@ static void ssl_info(const SSL *ssl, int where, int ret)
         putlog(LOG_MISC, "*", "TLS: Long TLSCiphertext field received, connection failed. Is this really a TLS port?");
     } else {
       /* Ignore close notify warnings */
-      debug1("TLS: Received close notify during %s",
+      debug2("TLS: sock %d Received close notify during %s", sock,
              (where & SSL_CB_READ) ? "read" : "write");
     }
   } else if (where & SSL_CB_EXIT) {
@@ -941,7 +941,8 @@ static void ssl_info(const SSL *ssl, int where, int ret)
       /* However we still check <0 as man example does so too */
       if (err & (SSL_ERROR_WANT_READ | SSL_ERROR_WANT_WRITE)) {
         /* Errors to be ignored for non-blocking */
-        debug1("TLS: awaiting more %s", (err & SSL_ERROR_WANT_READ) ? "reads" : "writes");
+        debug2("TLS: sock %d awaiting more %s", sock,
+               (err & SSL_ERROR_WANT_READ) ? "reads" : "writes");
       } else {
         putlog(data->loglevel, "*", "TLS: error in: %s.",
                SSL_state_string_long(ssl));
@@ -950,13 +951,13 @@ static void ssl_info(const SSL *ssl, int where, int ret)
   }
   /* Display the state of the engine for debugging purposes */
   else if (where == SSL_CB_HANDSHAKE_START)
-    debug1("TLS: handshake start: %s", SSL_state_string_long(ssl));
+    debug2("TLS: sock %d handshake start: %s", sock, SSL_state_string_long(ssl));
   else if (where == SSL_CB_CONNECT_LOOP)
-    debug1("TLS: connect loop: %s", SSL_state_string_long(ssl));
+    debug2("TLS: sock %d connect loop: %s", sock, SSL_state_string_long(ssl));
   else if (where == SSL_CB_ACCEPT_LOOP)
-    debug1("TLS: accept loop: %s", SSL_state_string_long(ssl));
+    debug2("TLS: sock %d accept loop: %s", sock, SSL_state_string_long(ssl));
   else
-    debug1("TLS: state change: %s", SSL_state_string_long(ssl));
+    debug2("TLS: sock %d state change: %s", sock, SSL_state_string_long(ssl));
 }
 
 /* Switch a socket to SSL communication
@@ -983,7 +984,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   ssl_appdata *data;
   struct threaddata *td = threaddata();
 
-  debug0("TLS: attempting SSL negotiation...");
+  debug1("TLS: sock %d attempting SSL negotiation...", sock);
   if (!ssl_ctx && ssl_init()) {
     debug0("TLS: Failed. OpenSSL not initialized properly.");
     return -1;
@@ -1069,7 +1070,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
   err = SSL_get_error(td->socklist[i].ssl, ret);
   /* Normal condition for async I/O, similar to EAGAIN */
   if (ret > 0 || err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE) {
-    debug0("TLS: handshake in progress");
+    debug1("TLS: sock %d handshake in progress", sock);
     return 0;
   }
   if ((err = ERR_peek_error())) {
