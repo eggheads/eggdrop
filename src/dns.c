@@ -278,15 +278,28 @@ void dcc_dnshostbyip(sockname_t *ip)
 static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
-  int objc = 0;
-  Tcl_Obj *objv[5];
+  int objc = 0, objc2;
+  Tcl_Obj *objv[4 + 16], *list, **objv2;
+  int i;
 
   objv[objc++] = Tcl_NewStringObj(tclinfo->proc, -1);
   objv[objc++] = Tcl_NewStringObj(iptostr(&ip->addr.sa), -1);
   objv[objc++] = Tcl_NewStringObj(hostn, -1);
   objv[objc++] = Tcl_NewStringObj(ok ? "1" : "0", -1);
-  if ((tclinfo->paras) && (*(tclinfo->paras)))
-    objv[objc++] = Tcl_NewStringObj(tclinfo->paras, -1);
+  if ((tclinfo->paras) && (*(tclinfo->paras))) {
+    list = Tcl_NewStringObj(tclinfo->paras, -1);
+    if (Tcl_ListObjGetElements(interp, list, &objc2, &objv2) == TCL_OK) {
+      if (objc2 > 16) {
+        objc2 = 16;
+      }
+      for (i = 0; i < objc2; i++) {
+        objv[objc++] = objv2[i];
+      }
+    } else {
+      putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
+      Tcl_BackgroundError(interp);
+    }
+  }
   for (int i = 0; i < objc; i++) {
     Tcl_IncrRefCount(objv[i]);
   }
