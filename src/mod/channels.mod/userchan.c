@@ -1135,7 +1135,7 @@ static int write_bans(FILE *f, int idx)
           expire = b->expire;
           added = b->added;
           if (!mask ||
-              fprintf(f, "- %s:%s%lu%s:+%ld:%ld:%s:%s\n", mask,
+              fprintf(f, "- %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                       (b->flags & MASKREC_PERM) ? "+" : "", expire,
                       (b->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) b->lastactive, b->user ? b->user : botnetnick,
@@ -1168,7 +1168,7 @@ static int write_exempts(FILE *f, int idx)
     expire = e->expire;
     added = e->added;
     if (!mask ||
-        fprintf(f, "%s %s:%s%ld%s:+%lu:%lu:%s:%s\n", "%", mask,
+        fprintf(f, "%s %s:%s%ld%s:+%ld:%ld:%s:%s\n", "%", mask,
                 (e->flags & MASKREC_PERM) ? "+" : "", expire,
                 (e->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) e->lastactive, e->user ? e->user : botnetnick,
