@@ -41,10 +41,10 @@ static void truncate_mask_hostname(char *s) {
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
-  char extbanflag = 0, account_extban_flag = 0;
+  char extbanflag = 0;
   int extban_enabled = 1;
   int extban_default_sticky = 0;
-  const char *value, *comma, *types, *extbanargs;
+  const char *value, *comma, *types;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -128,16 +128,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     if (is_extban_mask(who)) {
       strlcpy(s, who, sizeof s);
       /* If its an extban, check if it needs to be set as a sticky ban */
-      if (extban_parse(s, &extbanflag, &extbanargs)) {
-        const char *account_extban;
-
-        account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-        if (account_extban && account_extban[0]) {
-          account_extban_flag = account_extban[0];
-        }
-        extban_default_sticky = !extban_is_enforceable_flag(extbanflag, account_extban_flag);
-        if (extban_default_sticky)
-          sticky = 1;
+      if (extban_parse(s, &extbanflag, NULL)) {
         value = isupport_get("EXTBAN", strlen("EXTBAN"));
         if (value && value[0]) {
           comma = strchr(value, ',');
