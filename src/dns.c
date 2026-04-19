@@ -298,6 +298,7 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
     } else {
       putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
       Tcl_BackgroundError(interp);
+      goto error;
     }
   }
   for (i = 0; i < 4; i++) {
@@ -310,6 +311,7 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
   for (i = 0; i < 4; i++) {
     Tcl_DecrRefCount(objv[i]);
   }
+error:
   if (list)
     Tcl_DecrRefCount(list);
   nfree(objv);
