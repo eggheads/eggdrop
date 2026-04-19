@@ -60,7 +60,7 @@ int bot_timeout = 60;           /* Bot timeout value                          */
 int identtimeout = 5;           /* Timeout value for ident lookups            */
 int dupwait_timeout = 5;        /* Timeout for rejecting duplicate entries    */
 int protect_telnet = 1;         /* Even bother with ident lookups :)          */
-int flood_telnet_thr = 5;       /* Number of telnet connections to be
+int flood_telnet_thr = 16;      /* Number of telnet connections to be
                                  * considered a flood                         */
 int flood_telnet_time = 60;     /* In how many seconds?                       */
 char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
@@ -90,19 +90,17 @@ static int detect_telnet(unsigned char *buf)
 }
 
 /* Escape telnet IAC and prepend CR to LF */
-static char *escape_telnet(char *s)
+static char *escape_telnet(char *restrict dst, const char *restrict src, size_t dstsize)
 {
-  static char buf[1024];
   char *p;
 
-  for (p = buf; *s && (p < (buf + sizeof(buf) - 2)); *p++ = *s++)
-    if ((unsigned char) *s == TLN_IAC)
-      *p++ = *s;
-    else if (*s == '\n')
+  for (p = dst; *src && (p < (dst + dstsize - 2)); *p++ = *src++)
+    if ((unsigned char) *src == TLN_IAC)
+      *p++ = *src;
+    else if (*src == '\n')
       *p++ = '\r';
   *p = 0;
-
-  return buf;
+  return dst;
 }
 
 static void strip_telnet(int sock, char *buf, int *len)
@@ -451,30 +449,24 @@ static void free_dcc_bot_(int n, void *x)
 static void out_dcc_bot(int idx, char *buf, void *x)
 {
   size_t len = strlen(buf);
-  /* We don't really use x here, so "use it" for the compiler */
-  (void)x;
 
   if (raw_log) {
     /* strip \n from end as putlog appends this */
     char *p = buf, *fnd = NULL;
-
     if (len && buf[len - 1] == '\n') {
       /* Make a copy as buf could be const */
-      fnd = nmalloc(len + 1);
-      strcpy(fnd, buf);
+      fnd = nmalloc(len);
+      memcpy(fnd, buf, len - 1);
+      fnd[len - 1] = 0;
       p = fnd;
     }
-
     if (!strncmp(p, "s ", 2))
       putlog(LOG_BOTSHROUT, "*", "{b->%s} %s", dcc[idx].nick, p + 2);
     else
       putlog(LOG_BOTNETOUT, "*", "[b->%s] %s", dcc[idx].nick, p);
-
     if (fnd)
       nfree(fnd);
-
   }
-
   tputs(dcc[idx].sock, buf, len);
 }
 
@@ -600,14 +592,14 @@ struct dcc_table DCC_FORK_BOT = {
  */
 static int dcc_bot_check_digest(int idx, char *remote_digest)
 {
-  char digest_string[33];       /* 32 for digest in hex + null */
+  char digest_string[35]; /* 32 for digest in hex + null, but also used for (1) */
   unsigned char digest[16];
   int i, ret;
   char *password = get_bot_pass(dcc[idx].user);
 
   if (!password)
     return 1;
-  snprintf(digest_string, 33, "<%lx%lx@", (long) getpid(),
+  snprintf(digest_string, sizeof digest_string, "<%lx%lx@", (long) getpid(), /* (1) */
            (unsigned long) dcc[idx].timeval);
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined(HAVE_EVP_MD5)
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
@@ -737,7 +729,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       dcc[idx].u.chat->con_flags = (atr & USER_MASTER) ? conmask : 0;
       dcc[idx].u.chat->channel = -2;
       /* Turn echo back on for telnet sessions (send IAC WON'T ECHO). */
-      if (dcc[idx].status & STAT_TELNET)
+      if (dcc[idx].status & (STAT_TELNET | STAT_WS))
         tputs(dcc[idx].sock, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\n", 4);
       dcc_chatter(idx);
     }
@@ -965,11 +957,14 @@ static void append_line(int idx, char *line)
 static void out_dcc_general(int idx, char *buf, void *x)
 {
   struct chat_info *p = (struct chat_info *) x;
-  char *y = buf;
+  char dst[1024];
+  char *y;
 
   strip_mirc_codes(p->strip_flags, buf);
-  if (dcc[idx].status & STAT_TELNET)
-    y = escape_telnet(buf);
+  if (dcc[idx].status & STAT_TELNET) {
+    y = escape_telnet(dst, buf, sizeof dst);
+  } else
+    y = buf;
   if (dcc[idx].status & STAT_PAGE)
     append_line(idx, y);
   else
@@ -1283,7 +1278,6 @@ static void dcc_telnet(int idx, char *buf, int i)
     return;
   }
 
-  dcc[i].u.dns->ip = &dcc[i].sockname;
   dcc[i].sock = sock;
   dcc[i].port = port;
 #ifdef TLS
@@ -1296,11 +1290,18 @@ static void dcc_telnet(int idx, char *buf, int i)
      */
     if (!(tls_vfyclients & TLS_VERIFYCN))
       threaddata()->socklist[findsock(sock)].flags |= SOCK_VIRTUAL;
-    else if (ssl_handshake(dcc[i].sock, TLS_LISTEN, tls_vfyclients,
-        LOG_MISC, NULL, NULL)) {
-      killsock(dcc[i].sock);
-      lostdcc(i);
-      return;
+    else {
+#ifdef TLS
+      if (!strcmp(dcc[idx].nick, "(webui)"))
+        ssl_cleanup(); /* reset ssl_ctx for websocket */
+#endif /* TLS */
+      if (ssl_handshake(dcc[i].sock, TLS_LISTEN,
+                        strcmp(dcc[idx].nick, "(webui)") ? tls_vfyclients : 0,
+                        LOG_MISC, NULL, NULL)) {
+        killsock(dcc[i].sock);
+        lostdcc(i);
+        return;
+      }
     }
   }
 #endif
@@ -1314,12 +1315,73 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc_dnshostbyip(&dcc[i].sockname);
 }
 
+/* we need this for dcc_telnet_hostresolved() could now branch to DCC_TABLE
+ * and for either branch we need to continue here
+ */
+void dcc_telnet_hostresolved2(int i, int idx) {
+  int sock, j;
+
+  /* Skip ident lookup if disabled */
+  if (identtimeout <= 0) {
+    dcc[i].u.ident_sock = dcc[idx].sock;
+    dcc_telnet_got_ident(i, dcc[idx].host);
+    return;
+  }
+
+  changeover_dcc(i, &DCC_IDENTWAIT, 0);
+  dcc[i].timeval = now;
+  dcc[i].u.ident_sock = dcc[idx].sock;
+  sock = -1;
+  j = new_dcc(&DCC_IDENT, 0);
+  if (j < 0)
+    putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
+  else {
+    memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
+    dcc[j].sock = getsock(dcc[j].sockname.family, 0);
+    if (dcc[j].sock >= 0) {
+      sockname_t name;
+      name.family = dcc[j].sockname.family;
+      name.addrlen = sizeof(name.addr);
+      if (getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen) < 0)
+        debug2("dcc: dcc_telnet_hostresolved(): getsockname() socket %ld error %s", dcc[i].sock, strerror(errno));
+      setsnport(name, 0);
+      if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
+        debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
+      setsnport(dcc[j].sockname, 113);
+      if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
+          dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
+        killsock(dcc[j].sock);
+        lostdcc(j);
+        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
+        j = 0;
+      }
+      sock = dcc[j].sock;
+    }
+  }
+  if (j < 0) {
+    dcc_telnet_got_ident(i, dcc[idx].host);
+    return;
+  }
+  dcc[j].sock = sock;
+  dcc[j].port = 113;
+  dcc[j].addr = dcc[i].addr;
+  strcpy(dcc[j].host, dcc[i].host);
+  strcpy(dcc[j].nick, "*");
+  dcc[j].u.ident_sock = dcc[i].sock;
+  dcc[j].timeval = now;
+#ifdef CYGWIN_HACKS
+  threaddata()->socklist[findsock(dcc[j].sock)].flags = SOCK_CONNECT;
+#endif
+  dprintf(j, "%d, %d\n", dcc[i].port, dcc[idx].port);
+}
+
+/* dcc[i].type == DNSWAIT */
 static void dcc_telnet_hostresolved(int i)
 {
   int idx;
-  int j = 0, sock;
-  char s[sizeof lasttelnethost], *userhost;
+  char s[sizeof lasttelnethost];
 
+  debug0("dcc_telnet_hostresolved()");
   strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
 
   for (idx = 0; idx < dcc_total; idx++)
@@ -1344,7 +1406,6 @@ static void dcc_telnet_hostresolved(int i)
     }
   }
   snprintf(s, sizeof s, "-telnet!telnet@%s", dcc[i].host);
-  userhost = s + strlen("-telnet!");
   if (match_ignore(s) || detect_telnet_flood(s)) {
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1373,62 +1434,19 @@ static void dcc_telnet_hostresolved(int i)
     changeover_dcc(i, &DCC_SOCKET, 0);
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    strlcpy(dcc[i].host, userhost, UHOSTLEN);
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
 
-  /* Skip ident lookup if disabled */
-  if (identtimeout <= 0) {
-    dcc[i].u.ident_sock = dcc[idx].sock;
-    dcc_telnet_got_ident(i, userhost);
+#ifdef TLS
+  /* Delay ident lookup for webui http until websocket */
+  if (!strcmp(dcc[idx].nick, "(webui)")) {
+    webui_dcc_telnet_hostresolved(i, idx);
     return;
   }
+#endif /* TLS */
 
-  changeover_dcc(i, &DCC_IDENTWAIT, 0);
-  dcc[i].timeval = now;
-  dcc[i].u.ident_sock = dcc[idx].sock;
-  sock = -1;
-  j = new_dcc(&DCC_IDENT, 0);
-  if (j < 0)
-    putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
-  else {
-    memcpy(&dcc[j].sockname, &dcc[i].sockname, sizeof(sockname_t));
-    dcc[j].sock = getsock(dcc[j].sockname.family, 0);
-    if (dcc[j].sock >= 0) {
-      sockname_t name;
-      name.addrlen = sizeof(name.addr);
-      if (getsockname(dcc[i].sock, &name.addr.sa, &name.addrlen) < 0)
-        debug2("dcc: dcc_telnet_hostresolved(): getsockname() socket %ld error %s", dcc[i].sock, strerror(errno));
-      setsnport(name, 0);
-      if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
-        debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
-      setsnport(dcc[j].sockname, 113);
-      if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
-          dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
-        killsock(dcc[j].sock);
-        lostdcc(j);
-        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
-        j = 0;
-      }
-      sock = dcc[j].sock;
-    }
-  }
-  if (j < 0) {
-    dcc_telnet_got_ident(i, userhost);
-    return;
-  }
-  dcc[j].sock = sock;
-  dcc[j].port = 113;
-  dcc[j].addr = dcc[i].addr;
-  strcpy(dcc[j].host, dcc[i].host);
-  strcpy(dcc[j].nick, "*");
-  dcc[j].u.ident_sock = dcc[i].sock;
-  dcc[j].timeval = now;
-#ifdef CYGWIN_HACKS
-  threaddata()->socklist[findsock(dcc[j].sock)].flags = SOCK_CONNECT;
-#endif
-  dprintf(j, "%d, %d\n", dcc[i].port, dcc[idx].port);
+  dcc_telnet_hostresolved2(i, idx);
 }
 
 static void eof_dcc_telnet(int idx)
@@ -1558,7 +1576,6 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   int ok = 0;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
   struct dcc_table *old = dcc[idx].type;
-
   if (detect_telnet((unsigned char *) buf)) {
     dcc[idx].status |= STAT_TELNET;
     strip_telnet(dcc[idx].sock, buf, &atr);
@@ -1825,9 +1842,10 @@ static void dcc_telnet_pass(int idx, int atr)
      */
 
     /* Turn off remote telnet echo (send IAC WILL ECHO). */
-    if (dcc[idx].status & STAT_TELNET) {
-      char buf[512];
-      snprintf(buf, sizeof buf, "\n%s%s\r\n", escape_telnet(DCC_ENTERPASS),
+    if (dcc[idx].status & (STAT_TELNET | STAT_WS)) {
+      char dst[506], buf[512];
+      snprintf(buf, sizeof buf, "\n%s%s\r\n",
+               escape_telnet(dst, DCC_ENTERPASS, sizeof dst),
                TLN_IAC_C TLN_WILL_C TLN_ECHO_C);
       tputs(dcc[idx].sock, buf, strlen(buf));
     } else
@@ -2391,7 +2409,6 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Do not buffer data anymore. All received and stored data is passed
    * over to the dcc functions from now on.  */
   sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-
   dcc[i].type = &DCC_TELNET_ID;
   dcc[i].u.chat = get_data_ptr(sizeof(struct chat_info));
   egg_bzero(dcc[i].u.chat, sizeof(struct chat_info));
@@ -2400,17 +2417,20 @@ static void dcc_telnet_got_ident(int i, char *host)
    * STATUS option as a hopefully harmless way to detect if the other
    * side is a telnet client or not. */
 #ifdef TLS
-  if (!dcc[i].ssl)
+  if (!dcc[i].ssl && strcmp(dcc[idx].nick, "(webui)"))
     dprintf(i, TLN_IAC_C TLN_WILL_C TLN_STATUS_C);
 #endif
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
-  if (!strcmp(dcc[idx].nick, "(bots)"))
-    dcc[i].status |= STAT_BOTONLY;
   if (!strcmp(dcc[idx].nick, "(users)"))
     dcc[i].status |= STAT_USRONLY;
+  else if (!strcmp(dcc[idx].nick, "(bots)"))
+    dcc[i].status |= STAT_BOTONLY;
+  else if (!strcmp(dcc[idx].nick, "(webui)"))
+    dcc[i].status |= STAT_WS;
   /* Copy acceptable-nick/host mask */
-  strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN);
+  strlcpy(dcc[i].nick, dcc[idx].host, sizeof dcc[i].nick);
+
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
   /* Displays a customizable banner. */

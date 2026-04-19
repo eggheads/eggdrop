@@ -146,11 +146,11 @@ static void dns_dcchostbyip(sockname_t *ip, char *hostn, int ok, void *other)
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) && (
 #ifdef IPV6
         (ip->family == AF_INET6 &&
-          IN6_ARE_ADDR_EQUAL(&dcc[idx].u.dns->ip->addr.s6.sin6_addr,
+          IN6_ARE_ADDR_EQUAL(&dcc[idx].sockname.addr.s6.sin6_addr,
                              &ip->addr.s6.sin6_addr)) ||
         (ip->family == AF_INET &&
 #endif
-          (dcc[idx].u.dns->ip->addr.s4.sin_addr.s_addr ==
+          (dcc[idx].sockname.addr.s4.sin_addr.s_addr ==
                               ip->addr.s4.sin_addr.s_addr)))
 #ifdef IPV6
        )
@@ -180,10 +180,7 @@ static void dns_dccipbyhost(sockname_t *ip, char *hostn, int ok, void *other)
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
         !strcasecmp(dcc[idx].u.dns->host, hostn)) {
       if (ok) {
-        if (dcc[idx].u.dns->ip)
-          memcpy(dcc[idx].u.dns->ip, ip, sizeof(sockname_t));
-        else
-          memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
+        memcpy(&dcc[idx].sockname, ip, sizeof(sockname_t));
         dcc[idx].u.dns->dns_success(idx);
       } else
         dcc[idx].u.dns->dns_failure(idx);

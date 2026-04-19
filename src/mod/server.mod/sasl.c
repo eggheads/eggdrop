@@ -7,9 +7,7 @@
  * Copyright (C) 2019 - 2025 Eggheads Development Team
  */
 
-#undef answer /* before resolv.h because it could collide with src/mod/module.h
-               * (dietlibc) */
-#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include "src/mod/module.h"
 
 /* RFC 5802 - printable ASCII characters excluding ','
  * printable = %x21-2B / %x2D-7E
@@ -534,7 +532,7 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 static int gotauthenticate(char *from, char *msg)
 {
   char client_msg_plain[1024];
-  int client_msg_plain_len;
+  int client_msg_plain_len = 0;
 #ifdef TLS
   char server_msg_plain[1024];
   char error_msg[1050]; /* snprintf() truncation should be tolerable */
