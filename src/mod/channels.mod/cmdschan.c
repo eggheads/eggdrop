@@ -24,6 +24,20 @@ static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 int extban_parse(const char *mask, char *type, const char **arg);
 
+/* Placeholder code if we only want to allow advertised extbans to be set
+static int is_extban_flag_advertised(char flag)
+{
+  const char *value, *comma, *types;
+
+  value = isupport_get("EXTBAN", strlen("EXTBAN"));
+  if (!value || !value[0])
+    return 0;
+  comma = strchr(value, ',');
+  types = comma ? comma + 1 : value;
+  return strchr(types, flag) ? 1 : 0;
+}
+*/
+
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
 static void truncate_mask_hostname(char *s) {
   char *r = NULL;
@@ -183,7 +197,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         if (!extbanflag || extban_enabled)
           (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_default_sticky);
         else
-          dprintf(idx, "The %c extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the %c flag enabled.\n", extbanflag, extbanflag);
+          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+                                    extbanflag, EXTBAN_NOT_ENABLED3);
       }
     } else {
       u_addban(NULL, s, dcc[idx].nick, par,
@@ -206,7 +221,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
           for (chan = chanset; chan != NULL; chan = chan->next)
             (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky || extban_default_sticky);
         } else
-          dprintf(idx, "The %c extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the %c flag enabled.\n", extbanflag, extbanflag);
+          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+                                    extbanflag, EXTBAN_NOT_ENABLED3);
       }
     }
   }
@@ -227,6 +243,12 @@ static void cmd_pls_extban(struct userrec *u, int idx, char *par)
   }
 
   flag = flagstr[0];
+/* Placeholder code if we want to only allow advertised extbans to be set
+  if (!is_extban_flag_advertised(flag)) {
+    dprintf(idx, "The %c extban is not enabled on this server.\n", flag);
+    return;
+  }
+ */
   arg = newsplit(&par);
   if (!arg[0]) {
     dprintf(idx, "Usage: +extban <flag> <value> [channel] [%%<XyXdXhXm>] [reason]\n");
