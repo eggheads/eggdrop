@@ -2343,7 +2343,7 @@ static int gotkick(char *from, char *origmsg)
       clear_channel(chan, CHAN_RESETALL);
       return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
     } else
-      kicked_me = 1; // unset CHAN_ACTIVE aftter check_tcl_kick()
+      kicked_me = 1; /* unset CHAN_ACTIVE before check_tcl_kick() */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
