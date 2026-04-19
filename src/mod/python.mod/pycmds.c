@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2024 Eggheads Development Team
+ * Copyright (C) 2020 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>
-#include <datetime.h>
-#include <tcl.h>
-#include "src/mod/module.h"
 
 typedef struct {
   PyObject_HEAD
@@ -38,7 +34,7 @@ typedef struct {
   tcl_bind_list_t *bindtable;
   PyObject *callback;
 } PythonBind;
-  
+
 static PyTypeObject TclFuncType, PythonBindType;
 static int eval_idx = -1;
 
@@ -64,6 +60,11 @@ static void cmd_python(struct userrec *u, int idx, char *par) {
   PyObject *pystr, *module_name, *pymodule, *pyfunc, *pyval, *item;
   Py_ssize_t n;
   int i;
+
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
+    return;
+  }
 
   PyErr_Clear();
 
@@ -220,7 +221,7 @@ static PyObject *py_unbind(PyObject *self, PyObject *args) {
     PyErr_SetString(EggdropError, "Invalid argument for unbind method");
     return NULL;
   }
- 
+
   bind = (PythonBind *)self;
   unbind_bind_entry(bind->bindtable, bind->flags, bind->mask, bind->tclcmdname);
   // cleanup in python_bind_destroyed callback when Tcl command is destroyed
@@ -242,7 +243,7 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
   Py_hash_t hash;
   char *bindtype, *mask, *flags;
   tcl_bind_list_t *tl;
- 
+
   // type flags mask callback
   if (!PyArg_ParseTuple(args, "sssO", &bindtype, &flags, &mask, &callback) || !callback) {
     PyErr_SetString(EggdropError, "wrong arguments");
@@ -274,7 +275,7 @@ static PyObject *py_bind(PyObject *self, PyObject *args) {
   bind_bind_entry(tl, flags, mask, bind->tclcmdname);
 
   Py_INCREF((PyObject *)bind);
-  return (PyObject *)bind;  
+  return (PyObject *)bind;
 }
 
 static Tcl_Obj *py_list_to_tcl_obj(PyObject *o) {
@@ -435,11 +436,11 @@ static PyMethodDef EggTclMethods[] = {
     {"__dir__", py_dir, METH_VARARGS, ""},
     {"__getattr__", py_findtclfunc, METH_VARARGS, "fallback to call Tcl functions transparently"},
     {NULL, NULL, 0, NULL}
-};  
+};
 
 static cmd_t mydcc[] = {
   /* command  flags  function     tcl-name */
-  {"python",    "",     (IntFunc) cmd_python,   NULL},
+  {"python",    "n",    (IntFunc) cmd_python,   NULL},
   {NULL,        NULL,   NULL,                   NULL}  /* Mark end. */
 };
 

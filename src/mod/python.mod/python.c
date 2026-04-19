@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2024 Eggheads Development Team
+ * Copyright (C) 2020 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,6 @@
 #include "src/mod/server.mod/server.h"
 #include "python.h"
 
-//static PyObject *pymodobj;
 static PyObject *pirp, *pglobals;
 
 #undef global
@@ -160,6 +159,7 @@ char *python_start(Function *global_funcs)
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_tcl_commands(my_tcl_cmds);
+  add_help_reference("python.help");
   add_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
   add_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
   return NULL;

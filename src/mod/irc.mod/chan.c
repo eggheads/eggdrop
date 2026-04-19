@@ -8,7 +8,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -106,9 +106,9 @@ static void setaccount(char *nick, char *account)
         /* account was known */
         if (m->account[0]) {
           if (!strcmp(account, "*")) {
-            putlog(LOG_MODES, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
+            putlog(LOG_JOIN, chan->dname, "%s!%s has logged out of their account", nick, m->userhost);
           } else {
-            putlog(LOG_MODES, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
+            putlog(LOG_JOIN, chan->dname, "%s!%s logged in to their account %s", nick, m->userhost, account);
           }
           check_tcl_account(m->nick, m->userhost, get_user_from_member(m), chan->dname, account);
         }
@@ -1024,7 +1024,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           set_key(chan, p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           set_key(chan, p);
           *p = 0;
@@ -1047,7 +1047,7 @@ static int got324(char *from, char *msg)
         if (q != NULL) {
           *q = 0;
           chan->channel.maxmembers = atoi(p);
-          strcpy(p, q + 1);
+          memmove(p, q + 1, strlen(q + 1) + 1);
         } else {
           chan->channel.maxmembers = atoi(p);
           *p = 0;
@@ -1205,6 +1205,7 @@ static int got354(char *from, char *msg)
         }
         flags = newsplit(&msg);     /* Grab the flags */
         account = newsplit(&msg);   /* Grab the account name */
+        fixcolon(account);
         got352or4(chan, user, host, nick, flags, account);
       }
     }
@@ -1299,7 +1300,7 @@ static int got353(char *from, char *msg)
     }
     /* The assumption here is the user enabled userhost-in-names because WHO
      * is disabled. We remove the pending flag here because we'll never get a
-     * a WHO to do it
+     * WHO to do it.
      */
     if (chan) {
       chan->status |= CHAN_ACTIVE;
@@ -1428,8 +1429,7 @@ static int got367(char *from, char *origmsg)
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strlcpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1477,8 +1477,7 @@ static int got348(char *from, char *origmsg)
   if (use_exempts == 0)
     return 0;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1521,8 +1520,7 @@ static int got346(char *from, char *origmsg)
   char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   if (use_invites == 0)
     return 0;
@@ -1956,13 +1954,12 @@ static int gotjoin(char *from, char *channame)
 
   strlcpy(uhost, from, sizeof buf);
   nick = splitnick(&uhost);
+  // :nick!user@host JOIN :#chan
   chname = newsplit(&channame);
+  fixcolon(chname);
   if (extjoin) {
     // :nick!user@host JOIN #chan account :realname
     account = newsplit(&channame);
-  } else {
-    // :nick!user@host JOIN :#chan
-    fixcolon(chname);
   }
   chan = findchan_by_dname(chname);
   if (!chan && chname[0] == '!') {
@@ -2112,7 +2109,10 @@ static int gotjoin(char *from, char *channame)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC &
+            (chan->channel.members == 1 ? ~CHAN_RESETWHO : CHAN_RESETALL)), /* do not remove myself again */
+            1);
+
         } else {
           struct chanuserrec *cr;
 
@@ -2320,6 +2320,7 @@ static int gotkick(char *from, char *origmsg)
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  int kicked_me = 0;
 
   strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
@@ -2328,19 +2329,21 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan) &&
-      !channel_inactive(chan)) {
-    chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
+  if (match_my_nick(nick) && !channel_inactive(chan)) {
+    if (channel_pending(chan)) {
+      chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-    clear_channel(chan, CHAN_RESETALL);
-    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+      clear_channel(chan, CHAN_RESETALL);
+      return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    } else
+      kicked_me = 1; /* unset CHAN_ACTIVE before check_tcl_kick() */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
@@ -2360,6 +2363,8 @@ static int gotkick(char *from, char *origmsg)
     /* This _needs_ to use chan->dname <cybah> */
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
+    if (kicked_me)
+      chan->status &= ~CHAN_ACTIVE;
     check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
 
     chan = findchan(chname);
@@ -2599,7 +2604,7 @@ static int gotmsg(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strlcpy(buf2, p1, sizeof buf2);
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
@@ -2717,7 +2722,7 @@ static int gotnotice(char *from, char *msg)
       *p = 0;
       ctcp = buf2;
       strcpy(ctcp, p1);
-      memmove(p1 - 1, p + 1, strlen(p));
+      memmove(p1 - 1, p + 1, strlen(p + 1) + 1);
       p = strchr(msg, 1);
       detect_chan_flood(nick, uhost, from, chan,
                         strncmp(ctcp, "ACTION ", 7) ?
@@ -2866,7 +2871,7 @@ static int irc_isupport(char *key, char *isset_str, char *value)
 
 static int gotrawt(char *from, char *msg, Tcl_Obj *tags) {
   Tcl_Obj *valueobj;
-  if (TCL_OK != Tcl_DictObjGet(interp, tags, Tcl_NewStringObj("account", -1), &valueobj)) {
+  if (TCL_OK != Tcl_DictObjGet(interp, tags, tcl_account, &valueobj)) {
     putlog(LOG_MISC, "*", "ERROR: irc:rawt called with invalid dictionary");
     return 0;
   }

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +64,7 @@ void tandout_but(int x, const char *format, ...)
 #endif
 
 /* Thank you ircu :) */
-static char tobase64array[64] = {
+static const char tobase64array[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
   'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -814,8 +814,6 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
 
   /* Might be form "sock:nick" */
-  splitcn(ssf, from, ':', sizeof ssf);
-  rmspace(ssf);
   splitcn(ss, to, ':', sizeof ss);
   rmspace(ss);
   if (!ss[0]) {

@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,7 +77,7 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
            require_p, share_greet, use_invites, use_exempts, password_timeout,
            force_expire, protect_readonly, reserved_port_min, reserved_port_max,
-           quiet_reject;
+           quiet_reject, stealth_telnets;
 extern volatile sig_atomic_t do_restart;
 
 int copy_to_tmp = 1; /* TODO: remove from module API for eggdrop 2.0 */
@@ -95,7 +95,7 @@ extern time_t now, online_since;
 extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
-extern char argv0;
+extern const char *argv0;
 
 
 int xtra_kill();
@@ -171,6 +171,9 @@ int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
+void (*webui_dcc_telnet_hostresolved) (int, int) = 0;
+size_t (*webui_frame) (char **, char *, size_t) = 0;
+void (*webui_unframe) (int, char *, int *) = 0;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -608,7 +611,7 @@ Function global_table[] = {
 #else
   (Function) 0,
 #endif
-/* 312 - 315 */    
+/* 312 - 315 */
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) crypto_verify,
   (Function) egg_uname,
@@ -626,7 +629,11 @@ Function global_table[] = {
 /* 324 - 327 */
   (Function) find_member_from_nick,
   (Function) get_user_from_member,
-  (Function) splitcn,
+  (Function) dcc_telnet_hostresolved2,
+  (Function) findsock,
+/* 328 - 331 */
+  (Function) & stealth_telnets,   /* int                                 */
+  (Function) splitcn
 };
 
 void init_modules(void)
@@ -1108,6 +1115,15 @@ void add_hook(int hook_num, Function func)
       if (dns_ipbyhost == core_dns_ipbyhost)
         dns_ipbyhost = (void (*)(char *)) func;
       break;
+    case HOOK_DCC_TELNET_HOSTRESOLVED:
+      webui_dcc_telnet_hostresolved = (void (*)(int, int)) func;
+      break;
+    case HOOK_WEBUI_FRAME:
+      webui_frame = (size_t (*)(char **, char *, size_t)) func;
+      break;
+    case HOOK_WEBUI_UNFRAME:
+      webui_unframe = (void (*)(int, char *, int *)) func;
+      break;
     }
 }
 
@@ -1177,6 +1193,18 @@ void del_hook(int hook_num, Function func)
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == (void (*)(char *)) func)
         dns_ipbyhost = core_dns_ipbyhost;
+      break;
+    case HOOK_DCC_TELNET_HOSTRESOLVED:
+      if (webui_dcc_telnet_hostresolved == (void (*)(int, int)) func)
+        webui_dcc_telnet_hostresolved = (void (*)(int, int)) null_func;
+      break;
+    case HOOK_WEBUI_FRAME:
+      if (webui_frame == (size_t (*)(char **, char *, size_t)) func)
+        webui_frame = (size_t (*)(char**, char *, size_t)) null_func;
+      break;
+    case HOOK_WEBUI_UNFRAME:
+      if (webui_unframe == (void (*)(int, char *, int *)) func)
+        webui_unframe = (void (*)(int, char *, int *)) null_func;
       break;
     }
 }

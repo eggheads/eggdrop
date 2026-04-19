@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2024 Eggheads Development Team
+ * Copyright (C) 2019 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -161,10 +161,8 @@ static void ident_oidentd()
       }
     }
     fclose(fd);
-  } else {
-    putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
-            "for reading");
-  }
+  } else if (errno != ENOENT)
+    putlog(LOG_MISC, "*", "IDENT error: fopen(%s): %s", path, strerror(errno));
   /* To minimize a known race condition, this code is called now */
   servidx = -1;
   for (i = 0; i < dcc_total; i++)

@@ -393,7 +393,7 @@ Advanced Settings
     you use a Sun "telnet passthru" firewall, prefix the host with a "!".
 
   set nat-ip "127.0.0.1"
-    If you have a NAT firewall (you box has an IP in one of the following
+    If you have a NAT firewall (your box has an IP in one of the following
     ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
     10.0.0.0-10.255.255.255 and your firewall transparently changes your
     address to a unique address for your box) or you have IP masquerading
@@ -631,4 +631,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2024 Eggheads Development Team
+Copyright (C) 2000 - 2025 Eggheads Development Team

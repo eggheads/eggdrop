@@ -28,12 +28,12 @@ distclean: clean
 
 #safety hash
 ../uptime.o: .././uptime.mod/uptime.c .././uptime.mod/uptime.h \
- .././uptime.mod/../module.h ../../../src/main.h ../../../config.h \
+ ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
  ../../../eggint.h ../../../lush.h ../../../src/lang.h \
  ../../../src/eggdrop.h ../../../src/compat/in6.h ../../../src/flags.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
  ../../../src/compat/base64.h ../../../src/compat/inet_aton.h \
  ../../../src/compat/snprintf.h ../../../src/compat/explicit_bzero.h \
- ../../../src/compat/strlcpy.h .././uptime.mod/../modvals.h \
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
  ../../../src/tandem.h .././uptime.mod/../server.mod/server.h
