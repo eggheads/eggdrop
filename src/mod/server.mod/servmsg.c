@@ -2068,7 +2068,7 @@ static void server_resolve_success(int servidx)
   setsnport(dcc[servidx].sockname, dcc[servidx].port);
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
-    char *errstr = NULL;
+    char *errstr = "";
     if (errno == EINVAL) {
       errstr = IRC_VHOSTWRONGNET;
     } else if (errno == EADDRNOTAVAIL) {
@@ -2078,12 +2078,12 @@ static void server_resolve_success(int servidx)
       errstr = strerror(errno);
       snprintf(errstr2, sizeof errstr2, " prefer-ipv6 %i", pref_af);
 #endif
-    } else if (errno != EINPROGRESS) {
+    } else {
       errstr = strerror(errno);
     }
 #ifdef TLS
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].ssl,
-                      dcc[servidx].port);
+                        dcc[servidx].port);
 #else
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
 #endif
