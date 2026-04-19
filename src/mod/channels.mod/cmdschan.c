@@ -502,7 +502,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 
 static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 {
-  int console = 0, i = 0, j;
+  int console = 0, i, j;
   struct chanset_t *chan = NULL;
   char s[UHOSTLEN], *ban, *chname, *mask;
   masklist *b;
@@ -1022,7 +1022,7 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
 
 static void cmd_stick_yn(int idx, char *par, int yn)
 {
-  int i = 0, j;
+  int i, j;
   struct chanset_t *chan, *achan;
   char *stick_type, s[UHOSTLEN], chname[CHANNELLEN + 1];
   module_entry *me;
