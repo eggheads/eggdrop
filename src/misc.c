@@ -608,7 +608,8 @@ void putlog (int type, char *chname, const char *format, ...)
                 logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
               }
             }
-            strlcpy(logs[i].szlast, out + tsl, logs[i].szlast_len);
+            if (logs[i].szlast)
+              strlcpy(logs[i].szlast, out + tsl, logs[i].szlast_len);
           }
         }
       }
