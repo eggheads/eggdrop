@@ -279,9 +279,10 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
   int objc = 0, objc2;
-  Tcl_Obj *objv[4 + 16], *list = NULL, **objv2;
+  Tcl_Obj **objv, *list = NULL, **objv2;
   int i;
 
+  objv = nmalloc(sizeof(Tcl_Obj *) * 4);
   objv[objc++] = Tcl_NewStringObj(tclinfo->proc, -1);
   objv[objc++] = Tcl_NewStringObj(iptostr(&ip->addr.sa), -1);
   objv[objc++] = Tcl_NewStringObj(hostn, -1);
@@ -290,9 +291,7 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
     list = Tcl_NewStringObj(tclinfo->paras, -1);
     Tcl_IncrRefCount(list);
     if (Tcl_ListObjGetElements(interp, list, &objc2, &objv2) == TCL_OK) {
-      if (objc2 > 16) {
-        objc2 = 16;
-      }
+      objv = nrealloc(objv, sizeof(Tcl_Obj *) * (4 + objc2));
       for (i = 0; i < objc2; i++) {
         objv[objc++] = objv2[i];
       }
@@ -313,6 +312,7 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
   }
   if (list)
     Tcl_DecrRefCount(list);
+  nfree(objv);
   nfree(tclinfo->proc);
   if (tclinfo->paras)
     nfree(tclinfo->paras);
