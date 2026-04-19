@@ -954,7 +954,8 @@ static void append_line(int idx, char *line)
     /* get_data_ptr() -> n_malloc() could destroy line, so copy line to line_r
      * to make append_line() reentrant
      */
-    strlcpy(line_r, line, sizeof line_r);
+    if (strlcpy(line_r, line, sizeof line_r) >= l)
+      l = strlen(line_r);
 
     p = get_data_ptr(sizeof(struct msgq));
     p->len = l;
