@@ -598,7 +598,7 @@ void putlog (int type, char *chname, const char *format, ...)
                */
             }
             fputs(out, logs[i].f);
-            size_t l = strlen(out + tsl);
+            size_t l = strlen(out + tsl) + 1;
             if (l > logs[i].szlast_len) {
               if (!logs[i].szlast_len) {
                 logs[i].szlast_len = MIN(MAX(l, 128), LOGLINELEN);
