@@ -132,8 +132,9 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         const char *account_extban;
 
         account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-        if (account_extban && account_extban[0])
+        if (account_extban && account_extban[0]) {
           account_extban_flag = account_extban[0];
+        }
         extban_default_sticky = !extban_is_enforceable_flag(extbanflag, account_extban_flag);
         if (extban_default_sticky)
           sticky = 1;
@@ -172,9 +173,10 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       u_addban(chan, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
       if (par[0] == '*' || extban_default_sticky) {
-        sticky = 1;
-        if (par[0] == '*')
+        if (par[0] == '*') {
           par++;
+          sticky = 1;
+        }
         putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s) (sticky)",
                dcc[idx].nick, dcc[idx].u.chat->con_chan, s, chan->dname, par);
         dprintf(idx, "New %s sticky ban: %s (%s)\n", chan->dname, s, par);
@@ -196,9 +198,10 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       u_addban(NULL, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
       if (par[0] == '*' || extban_default_sticky) {
-        sticky = 1;
-        if (par[0] == '*')
+        if (par[0] == '*') {
+          sticky = 1;
           par++;
+        }
         putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
                dcc[idx].nick, s, par);
         dprintf(idx, "New sticky ban: %s (%s)\n", s, par);

@@ -253,6 +253,9 @@ static int u_match_mask(maskrec *rec, char *mask)
   for (; rec; rec = rec->next) {
     /* Am I an extban? */
     if (extban_parse(rec->mask, &type, &arg)) {
+      if (!m || !m->nick[0] || !m-account[0]) {
+        continue;
+      }
       if (accountflag && (type == accountflag[0])) {
         if (!rfc_casecmp(m->account, arg)) {
           return 1;

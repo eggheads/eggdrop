@@ -171,7 +171,6 @@ static void setaccount(char *nick, char *account)
 
         egg_snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
         if (u_match_mask(global_bans, user) || u_match_mask(chan->bans, user)) {
-          check_this_ban(chan, user, 0);
           refresh_ban_kick(chan, user, m->nick);
         }
       }
@@ -493,7 +492,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
-        match_addr(hostmask, s) && !chan_sentkick(m) &&
+        banmask_matches_member(hostmask, s, m) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
         !glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
         isexempted(chan, s)) || (u_match_mask(global_exempts, s) ||
