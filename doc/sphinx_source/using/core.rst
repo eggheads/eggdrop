@@ -1,4 +1,4 @@
-Last revised: August 29, 2023
+Last revised: Feb 25, 2025
 
 =====================
 Eggdrop Core Settings
@@ -185,8 +185,9 @@ logfile <logflags> <channel> "logs/logfile"
 
   set timestamp-format "[%H:%M:%S]"
     Set the following to the timestamp for the logfile entries. Popular times
-    might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec).
-    Read 'man strftime' for more formatting options. Keep it below 32 chars.
+    might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec). Read
+    'man strftime' for more formatting options. Additionally eggdrop supports "%f"
+    for milliseconds. Keep it below 32 chars.
 
   set keep-all-logs 0
     If you want to keep your logfiles forever, turn this setting on. All
