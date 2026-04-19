@@ -2320,6 +2320,7 @@ static int gotkick(char *from, char *origmsg)
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  int kicked_me = 0;
 
   strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
@@ -2328,19 +2329,21 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan) &&
-      !channel_inactive(chan)) {
-    chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
+  if (match_my_nick(nick) && !channel_inactive(chan)) {
+    if (channel_pending(chan)) {
+      chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-    clear_channel(chan, CHAN_RESETALL);
-    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+      clear_channel(chan, CHAN_RESETALL);
+      return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    } else
+      kicked_me = 1; /* unset CHAN_ACTIVE before check_tcl_kick() */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
@@ -2360,6 +2363,8 @@ static int gotkick(char *from, char *origmsg)
     /* This _needs_ to use chan->dname <cybah> */
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
+    if (kicked_me)
+      chan->status &= ~CHAN_ACTIVE;
     check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
 
     chan = findchan(chname);

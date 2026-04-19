@@ -273,34 +273,45 @@ void dcc_dnshostbyip(sockname_t *ip)
 static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
-  Tcl_DString list;
+  int objc = 0, objc2;
+  Tcl_Obj **objv, *list = NULL, **objv2;
+  int i;
 
-  Tcl_DStringInit(&list);
-  Tcl_DStringAppendElement(&list, tclinfo->proc);
-  Tcl_DStringAppendElement(&list, iptostr(&ip->addr.sa));
-  Tcl_DStringAppendElement(&list, hostn);
-  Tcl_DStringAppendElement(&list, ok ? "1" : "0");
-
-  if (tclinfo->paras) {
-    EGG_CONST char *argv[2];
-    char *output;
-
-    argv[0] = Tcl_DStringValue(&list);
-    argv[1] = tclinfo->paras;
-    output = Tcl_Concat(2, argv);
-
-    if (Tcl_Eval(interp, output) == TCL_ERROR) {
+  objv = nmalloc(sizeof(Tcl_Obj *) * 4);
+  objv[objc] = Tcl_NewStringObj(tclinfo->proc, -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  objv[objc] = Tcl_NewStringObj(iptostr(&ip->addr.sa), -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  objv[objc] = Tcl_NewStringObj(hostn, -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  objv[objc] = Tcl_NewStringObj(ok ? "1" : "0", -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  if ((tclinfo->paras) && (*(tclinfo->paras))) {
+    list = Tcl_NewStringObj(tclinfo->paras, -1);
+    Tcl_IncrRefCount(list);
+    if (Tcl_ListObjGetElements(interp, list, &objc2, &objv2) == TCL_OK) {
+      objv = nrealloc(objv, sizeof(Tcl_Obj *) * (4 + objc2));
+      for (i = 0; i < objc2; i++) {
+        objv[objc++] = objv2[i];
+      }
+    } else {
       putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
       Tcl_BackgroundError(interp);
+      goto error;
     }
-    Tcl_Free(output);
-  } else if (Tcl_Eval(interp, Tcl_DStringValue(&list)) == TCL_ERROR) {
+  }
+
+  if (Tcl_EvalObjv(interp, objc, objv, 0) == TCL_ERROR) {
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
     Tcl_BackgroundError(interp);
   }
-
-  Tcl_DStringFree(&list);
-
+error:
+  for (i = 0; i < 4; i++) {
+    Tcl_DecrRefCount(objv[i]);
+  }
+  if (list)
+    Tcl_DecrRefCount(list);
+  nfree(objv);
   nfree(tclinfo->proc);
   if (tclinfo->paras)
     nfree(tclinfo->paras);

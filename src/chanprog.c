@@ -316,6 +316,14 @@ void tell_verbose_status(int idx)
                "Threaded DNS core is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+  int j = 0;
+  size_t k = max_logs * sizeof(log_t);
+  for (int i = 0; i < max_logs; i++) {
+    if (logs[i].filename)
+      j++;
+    k += logs[i].szlast_len;
+  }
+  dprintf(idx, "Log table: %d/%d %zu bytes\n", j, max_logs, k);
 }
 
 /* Show all internal state variables
@@ -409,6 +417,11 @@ void chanprog()
       if (logs[i].chname != NULL) {
         nfree(logs[i].chname);
         logs[i].chname = NULL;
+      }
+      if (logs[i].szlast != NULL) {
+        nfree(logs[i].szlast);
+        logs[i].szlast = NULL;
+        logs[i].szlast_len = 0;
       }
       if (logs[i].f != NULL) {
         fclose(logs[i].f);

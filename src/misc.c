@@ -86,6 +86,8 @@ int expmem_misc()
     for (item = current->first; item; item = item->next)
       tot += sizeof(struct help_list_t) + strlen(item->name) + 1;
   }
+  for (int i = 0; i < max_logs; i++)
+    tot += logs[i].szlast_len;
   return tot + (max_logs * sizeof(log_t));
 }
 
@@ -95,20 +97,9 @@ void init_misc()
 
   if (max_logs < 1)
     max_logs = 1;
-  if (logs)
-    logs = nrealloc(logs, max_logs * sizeof(log_t));
-  else
-    logs = nmalloc(max_logs * sizeof(log_t));
-  for (; last < max_logs; last++) {
-    logs[last].filename = logs[last].chname = NULL;
-    logs[last].mask = 0;
-    logs[last].f = NULL;
-    /* Added by cybah  */
-    logs[last].szlast[0] = 0;
-    logs[last].repeats = 0;
-    /* Added by rtc  */
-    logs[last].flags = 0;
-  }
+  logs = nrealloc(logs, max_logs * sizeof(log_t));
+  memset(logs + last, 0, (max_logs - last) * sizeof(log_t));
+  last = max_logs;
 }
 
 
@@ -587,7 +578,7 @@ void putlog (int type, char *chname, const char *format, ...)
           /* Check if this is the same as the last line added to
            * the log. <cybah>
            */
-          if (!strcasecmp(out + tsl, logs[i].szlast))
+          if (logs[i].szlast && !strcasecmp(out + tsl, logs[i].szlast))
             /* It is a repeat, so increment repeats */
             logs[i].repeats++;
           else {
@@ -607,7 +598,18 @@ void putlog (int type, char *chname, const char *format, ...)
                */
             }
             fputs(out, logs[i].f);
-            strlcpy(logs[i].szlast, out + tsl, LOGLINEMAX);
+            size_t l = strlen(out + tsl) + 1;
+            if (l > logs[i].szlast_len) {
+              if (!logs[i].szlast_len) {
+                logs[i].szlast_len = MIN(MAX(l, 128), LOGLINELEN);
+                logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
+              } else if (logs[i].szlast_len < LOGLINELEN) {
+                logs[i].szlast_len = MIN(MAX(l, logs[i].szlast_len << 1), LOGLINELEN);
+                logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
+              }
+            }
+            if (logs[i].szlast)
+              strlcpy(logs[i].szlast, out + tsl, logs[i].szlast_len);
           }
         }
       }

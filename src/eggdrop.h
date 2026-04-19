@@ -545,9 +545,10 @@ typedef struct {
   char *filename;
   unsigned int mask;            /* what to send to this log                 */
   char *chname;                 /* which channel                            */
-  char szlast[LOGLINELEN];      /* for 'Last message repeated n times'
+  char *szlast;                 /* for 'Last message repeated n times'
                                  * stuff in misc.c/putlog() <cybah>         */
-  int repeats;                  /* number of times szLast has been repeated */
+  int szlast_len;               /* sizeof szlast                            */
+  int repeats;                  /* number of times szlast has been repeated */
   unsigned int flags;           /* other flags <rtc>                        */
   FILE *f;                      /* existing file                            */
 } log_t;
@@ -737,6 +738,13 @@ enum {
 #ifndef STRINGIFY
 #  define STRINGIFY(x) STRINGIFY1(x)
 #  define STRINGIFY1(x) #x
+#endif
+
+#ifndef MIN
+  #define MIN(a,b) (((a)<(b))?(a):(b))
+#endif
+#ifndef MAX
+  #define MAX(a,b) (((a)>(b))?(a):(b))
 #endif
 
 #ifdef EGG_TDNS
