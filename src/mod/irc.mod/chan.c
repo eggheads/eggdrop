@@ -114,9 +114,9 @@ static int extban_flag_supported(char flag)
   return 0;
 }
 
-/* Document whether a ban matches a specific channel member
+/* Document whether a ban matches a specific channel member.
  * banmask can be normal or extban, user is the traditional userhost.
- * Returns 1 if the ban mask matches the member, 0 if not
+ * Returns 1 if the ban mask matches the member, 0 if not.
  */
 static int banmask_matches_member(const char *banmask, const char *user, memberlist *m)
 {
@@ -145,6 +145,16 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   return 0;
 }
 
+
+static int banmask_list_matches_member(maskrec *list, const char *user, memberlist *m)
+{
+  for (; list; list = list->next)
+    if (banmask_matches_member(list->mask, user, m))
+      return 1;
+  return 0;
+}
+
+
 /* set user account on all members on all channels,
  * trigger account bind if account state was not "unknown" (empty string)
  */
@@ -170,7 +180,8 @@ static void setaccount(char *nick, char *account)
         strlcpy(m->account, account, sizeof m->account);
 
         egg_snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
-        if (u_match_mask(global_bans, user) || u_match_mask(chan->bans, user)) {
+        if (banmask_list_matches_member(global_bans, user, m) ||
+                banmask_list_matches_member(chan->bans, user, m)) {
           refresh_ban_kick(chan, user, m->nick);
         }
       }
