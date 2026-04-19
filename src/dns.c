@@ -283,10 +283,14 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
   int i;
 
   objv = nmalloc(sizeof(Tcl_Obj *) * 4);
-  objv[objc++] = Tcl_NewStringObj(tclinfo->proc, -1);
-  objv[objc++] = Tcl_NewStringObj(iptostr(&ip->addr.sa), -1);
-  objv[objc++] = Tcl_NewStringObj(hostn, -1);
-  objv[objc++] = Tcl_NewStringObj(ok ? "1" : "0", -1);
+  objv[objc] = Tcl_NewStringObj(tclinfo->proc, -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  objv[objc] = Tcl_NewStringObj(iptostr(&ip->addr.sa), -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  objv[objc] = Tcl_NewStringObj(hostn, -1);
+  Tcl_IncrRefCount(objv[objc++]);
+  objv[objc] = Tcl_NewStringObj(ok ? "1" : "0", -1);
+  Tcl_IncrRefCount(objv[objc++]);
   if ((tclinfo->paras) && (*(tclinfo->paras))) {
     list = Tcl_NewStringObj(tclinfo->paras, -1);
     Tcl_IncrRefCount(list);
@@ -301,17 +305,15 @@ static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other
       goto error;
     }
   }
-  for (i = 0; i < 4; i++) {
-    Tcl_IncrRefCount(objv[i]);
-  }
+
   if (Tcl_EvalObjv(interp, objc, objv, 0) == TCL_ERROR) {
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, tcl_resultstring());
     Tcl_BackgroundError(interp);
   }
+error:
   for (i = 0; i < 4; i++) {
     Tcl_DecrRefCount(objv[i]);
   }
-error:
   if (list)
     Tcl_DecrRefCount(list);
   nfree(objv);
