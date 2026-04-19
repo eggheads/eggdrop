@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -210,10 +210,11 @@ static void recheck_lang_sections(void)
 static void read_lang(char *langfile)
 {
   FILE *FLANG;
-  char lbuf[512];
+  char lbuf[256];
   char *ltext = NULL;
   char *ctmp, *ctmp1;
-  int lidx;
+  int ltextsize = sizeof lbuf;
+  unsigned int lidx;
   int lnew = 1;
   int lline = 1;
   int lskip = 0;
@@ -228,7 +229,7 @@ static void read_lang(char *langfile)
   }
 
   for (*(ltext = nmalloc(sizeof lbuf)) = 0; fgets(lbuf, sizeof lbuf, FLANG);
-       ltext = nrealloc(ltext, strlen(ltext) + sizeof lbuf), lskip = 0) {
+       lskip = 0) {
     if (lnew) {
       if ((lbuf[0] == '#') || (sscanf(lbuf, "%s", ltext) == EOF))
         lskip = 1;
@@ -238,20 +239,29 @@ static void read_lang(char *langfile)
         lskip = 1;
       }
       if (lskip) {
-        while (!strchr(lbuf, '\n') && fgets(lbuf, 511, FLANG) != NULL) {
+        while (!strchr(lbuf, '\n') && fgets(lbuf, sizeof lbuf, FLANG) != NULL) {
           lline++;
         }
         /* fgets == NULL means error or empty file, so check for error */
         if (ferror(FLANG)) {
           putlog(LOG_MISC, "*", "LANG: Error reading lang file.");
         }
-        lline++;
         lnew = 1;
         continue;
       }
-      strcpy(ltext, strchr(lbuf, ',') + 1);
-    } else
-      strcpy(strchr(ltext, 0), lbuf);
+      if ((ctmp = strchr(lbuf, ',')))
+        strcpy(ltext, ctmp + 1);
+      else 
+        putlog(LOG_MISC, "*", "LANG: Malformed text line (missing ,) in %s at %d.",
+               langfile, lline);
+    } else {
+      int len = strlen(ltext);
+      if ((len + strlen(lbuf) + 1) > ltextsize) {
+        ltextsize += sizeof lbuf;
+        ltext = nrealloc(ltext, ltextsize);
+      }
+      strcpy(ltext + len, lbuf);
+    }
     if ((ctmp = strchr(ltext, '\n'))) {
       lline++;
       *ctmp = 0;
@@ -526,7 +536,8 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
 {
   lang_tab *l;
   char ltext2[512];
-  int idx2, i;
+  unsigned int idx2;
+  int i;
 
   putlog(LOG_CMDS, "*", "#%s# ldump %s", dcc[idx].nick, par);
   if (par[0]) {
@@ -734,12 +745,9 @@ static tcl_cmds langtcls[] = {
 
 void init_language(int flag)
 {
-  int i;
   char *deflang;
 
   if (flag) {
-    for (i = 0; i < 32; i++)
-      langtab[i] = 0;
     /* The default language is always BASELANG as language files are
      * guaranteed to exist in that language.
      */

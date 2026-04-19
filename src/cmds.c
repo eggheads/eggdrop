@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2577,7 +2577,7 @@ int stripmodes(char *s)
   return res;
 }
 
-char *stripmasktype(int x)
+const char *stripmasktype(int x)
 {
   static char s[20];
   char *p = s;
@@ -2753,9 +2753,13 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].user = u;
         strcpy(dcc[idx].nick, par);
         /* Display password prompt and turn off echo (send IAC WILL ECHO). */
-        dprintf(idx, "Enter password for %s%s\n", par,
-                (dcc[idx].status & STAT_TELNET) ? TLN_IAC_C TLN_WILL_C
-                TLN_ECHO_C : "");
+        if (dcc[idx].status & STAT_TELNET) {
+          char buf[512];
+          snprintf(buf, sizeof buf, "Enter password for %s" TLN_IAC_C TLN_WILL_C
+                   TLN_ECHO_C "\r\n", par);
+          tputs(dcc[idx].sock, buf, strlen(buf));
+        } else
+          dprintf(idx, "Enter password for %s\n", par);
         dcc[idx].type = &DCC_CHAT_PASS;
       } else if (atr & USER_OWNER) {
         if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
@@ -2841,7 +2845,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   char *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2876,7 +2880,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   char s[512], *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2916,7 +2920,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
 {
   const char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2938,7 +2942,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 {
   char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2997,14 +3001,14 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
         p_expire = p + 1;
       }
     }
-    /* For whomever is stuck with maintaining this in 2033- this will
+    /* For whomever is stuck with maintaining this in 2033 - this will
      * break. Hopefully we've dealt with the max unixtime issue by now
      * (Year 2038 problem), but if you're reading this, clearly we
      * haven't because we are lazy. Sorry.
      */
     if (expire_time > (60 * 60 * 24 * 365 * 5)) {
-      dprintf(idx, "expire time must be equal to or less than 5 years" 
-          "(1825 days)\n");
+      dprintf(idx, "expire time must be equal to or less than 5 years "
+              "(1825 days)\n");
       return;
     }
   }
