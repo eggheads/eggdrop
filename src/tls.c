@@ -191,7 +191,12 @@ void verify_cert_expiry(int idx) {
   x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
 #endif
   if (x509) {
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+    int e;
+    if (!X509_check_certificate_times(NULL, x509, &e) && (e == X509_V_ERR_CERT_HAS_EXPIRED)) {
+#else
     if (X509_cmp_current_time(X509_get_notAfter(x509)) < 0) {
+#endif
       if (idx) {
         dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
         dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n\n");
