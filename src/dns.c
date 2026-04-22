@@ -273,8 +273,9 @@ void dcc_dnshostbyip(sockname_t *ip)
 static void dns_tcl_iporhostres(sockname_t *ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
-  int objc = 0, objc2;
+  int objc = 0;
   Tcl_Obj **objv, *list = NULL, **objv2;
+  Tcl_Size objc2;
   int i;
 
   objv = nmalloc(sizeof(Tcl_Obj *) * 4);
