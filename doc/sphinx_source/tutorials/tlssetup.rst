@@ -45,7 +45,7 @@ If an Eggdrop is going to listen/accept connections on a TLS port (more on that 
 
 The wizard will walk you through generating a keypair and will, by default, install to ~/eggdrop (the install location can be changed by "make sslcert DEST=/path/to/eggdrop/install"
 
-In your config file, uncomment the "ssl-privatekey" and "ssl-certificate" settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop'd directory.
+In your config file, uncomment the "ssl-privatekey" and "ssl-certificate" settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrops directory.
 
 Configuration File Preparation - Listening with TLS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
