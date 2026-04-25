@@ -466,33 +466,22 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
                     time_t expire_time, int flags)
 {
-  char host[1024], s[1024], extbantype, account_extban_flag = 0, isextban;
-  const char *extbanarg, *account_extban;
+  char host[1024], s[1024];
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  isextban = is_extban_mask(ban);
-  if (isextban) {
+  if (is_extban_mask(ban)) {
     strlcpy(host, ban, sizeof host);
   } else {
     /* Choke check: fix broken bans (must have '!' and '@') */
     fix_broken_mask(host, ban, sizeof host);
-  }
-  if (isextban) {
-    account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-    if (account_extban && account_extban[0])
-      account_extban_flag = account_extban[0];
-    if (extban_parse(host, &extbantype, &extbanarg) &&
-        !extban_is_enforceable_flag(extbantype, account_extban_flag))
-      flags |= MASKREC_STICKY;
-  }
-
-  if (!isextban && (me = module_find("server", 0, 0)) && me->funcs) {
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-    if (match_addr(host, s)) {
-      putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
-      return 0;
+    if ((me = module_find("server", 0, 0)) && me->funcs) {
+      simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
+                     me->funcs[SERVER_BOTUSERHOST]);
+      if (match_addr(host, s)) {
+        putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
+        return 0;
+      }
     }
   }
   if (expire_time == now)

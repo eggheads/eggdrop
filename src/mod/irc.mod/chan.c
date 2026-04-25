@@ -98,9 +98,9 @@ static int extban_flag_supported(char flag)
 {
   module_entry *me;
   const char *value = NULL, *comma, *types;
- 
+
   me = module_find("server", 0, 0);
-  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) { 
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     value = (const char *)isupport_get("EXTBAN", strlen("EXTBAN"));
   }
   if (!value || !value[0])
@@ -112,6 +112,24 @@ static int extban_flag_supported(char flag)
     if (*types == flag)
       return 1;
   return 0;
+}
+
+/* True if mask is an extban whose flag eggdrop cannot enforce by kicking.
+ * Decided at runtime from current ISUPPORT - never persisted to the userfile.
+ */
+static int extban_is_unenforceable(const char *mask)
+{
+  char extflag;
+  const char *extarg, *acc;
+
+  if (!extban_parse(mask, &extflag, &extarg))
+    return 0;
+  if (extflag == 'U')
+    return 0;
+  acc = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+  if (acc && acc[0] && extflag == acc[0])
+    return 0;
+  return 1;
 }
 
 /* Document whether a ban matches a specific channel member.
@@ -652,7 +670,7 @@ static void recheck_bans(struct chanset_t *chan)
       if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag))
         continue;
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY)))
+          (u->flags & MASKREC_STICKY) || extban_is_unenforceable(u->mask)))
         add_mode(chan, '+', 'b', u->mask);
     }
   }
@@ -762,7 +780,8 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
            u_match_mask(chan->exempts, user))))
       refresh_ban_kick(chan, user, m->nick);
   }
-  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky))
+  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
+      extban_is_unenforceable(banmask)))
     add_mode(chan, '+', 'b', banmask);
 }
 

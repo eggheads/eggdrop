@@ -65,15 +65,6 @@ struct udef_struct {
                                 * structures.                          */
 };
 
-/* List of extban flags that Eggdrop can actively enforce.
- * Any extban flag not in this list is treated as sticky by default.
- */
-static int extban_is_enforceable_flag(char flag, char account_extban_flag)
-{
-  return (flag == 'U' || (account_extban_flag && flag == account_extban_flag));
-}
-
-
 static void del_chanrec(struct userrec *u, char *);
 static struct chanuserrec *get_chanrec(struct userrec *u, char *chname);
 static struct chanuserrec *add_chanrec(struct userrec *u, char *chname);
