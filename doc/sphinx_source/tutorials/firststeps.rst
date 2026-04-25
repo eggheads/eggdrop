@@ -23,6 +23,10 @@ This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.
 
 If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
 
+For additional information of connecting to the partyline using tls, please read the `TLS docs <https://docs.eggheads.org/using/tls.html>`_.
+
+There are also other clients to connect to the partyline, like `pefero <https://codeberg.org/mortmann/pefero>`_.
+
 Common first steps
 ------------------
 
