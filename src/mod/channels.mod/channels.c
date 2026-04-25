@@ -32,7 +32,17 @@ static void get_extban_prefix(char *prefix);
 static int is_extban_mask(const char *mask);
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
-const char *isupport_get(const char *name, size_t len);
+
+/* Look up an ISUPPORT (raw 005) value via server.mod, if loaded.
+ * Returns NULL if server.mod is not loaded or the key isn't set.
+ */
+static const char *servermod_isupport_get(const char *name)
+{
+  module_entry *me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT])
+    return ((const char *(*)(const char *, size_t)) me->funcs[SERVER_GET_ISUPPORT])(name, strlen(name));
+  return NULL;
+}
 
 static p_tcl_bind_list H_chanset;
 
@@ -103,7 +113,7 @@ static void get_extban_prefix(char *prefix)
   if (prefix) {
     *prefix = '\0';
   }
-  value = isupport_get("EXTBAN", strlen("EXTBAN"));
+  value = servermod_isupport_get("EXTBAN");
   if (!value || !value[0]) {
     //TO DO: log issue to partyline
     return;
@@ -874,7 +884,7 @@ static char *traced_account_extban(ClientData cdata, Tcl_Interp *irp,
                                    EGG_CONST char *name1,
                                    EGG_CONST char *name2, int flags)
 {
-  const char *account_extban = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+  const char *account_extban = servermod_isupport_get("ACCOUNTEXTBAN");
 
   Tcl_SetVar2(interp, name1, name2,
               (account_extban && account_extban[0]) ? account_extban : "",

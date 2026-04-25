@@ -29,7 +29,7 @@ static int is_extban_flag_advertised(char flag)
 {
   const char *value, *comma, *types;
 
-  value = isupport_get("EXTBAN", strlen("EXTBAN"));
+  value = servermod_isupport_get("EXTBAN");
   if (!value || !value[0])
     return 0;
   comma = strchr(value, ',');
@@ -142,7 +142,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       strlcpy(s, who, sizeof s);
       /* If its an extban, check if it needs to be set as a sticky ban */
       if (extban_parse(s, &extbanflag, NULL)) {
-        value = isupport_get("EXTBAN", strlen("EXTBAN"));
+        value = servermod_isupport_get("EXTBAN");
         if (value && value[0]) {
           comma = strchr(value, ',');
           types = comma ? comma + 1 : value;

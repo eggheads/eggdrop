@@ -220,12 +220,10 @@ static int u_equals_mask(maskrec *u, char *mask)
 
 static int u_match_mask(maskrec *rec, char *mask)
 {
-
   char type, nick[NICKLEN];
   char *bang;
-  const char *arg, *accountflag = NULL;
+  const char *arg, *accountflag;
   memberlist *m = NULL;
-  module_entry *me;
 
   if (mask && mask[0]) {
     bang = strchr(mask, '!');
@@ -246,10 +244,7 @@ static int u_match_mask(maskrec *rec, char *mask)
   /* Loop through all ban records, see if user matches based on mask or
    * flag (extban).
    */
-  me = module_find("server", 0, 0);
-  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
-    accountflag = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-  }
+  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
   for (; rec; rec = rec->next) {
     /* Am I an extban? */
     if (extban_parse(rec->mask, &type, &arg)) {
