@@ -5,17 +5,17 @@
    in effect for every channel if no channel is specified. Prefixing a comment
    with '@' will make it only visible within the bot, and not used as the ban
    reason. Prefixing the comment with '*' will make the ban sticky. Ban time
-   has to be expressed in years, days, hours and/or minutes.
+   has to be expressed in years, days, hours and/or minutes. Extended ban
+   (extban) hostmasks can be set as well.
 
 See also: bans, -ban, stick, unstick
 %{help=+extban}%{+lo|lo}
 ###  %b+extban%b <flag> <value> [channel] [%%<XyXdXhXm>] [comment]
-   Adds a channel extban using allowed ISUPPORT EXTBAN values.
-   Extban masks are created as [prefix]<flag>:<value>
-
-   Not all extbans (notice blocking, ctcp blocking, etc) can be enforced by
-   Eggdrop. These non-enforceable extbans are set on-channel and managed as
-   sticky bans.
+   Wrapper command for .+ban to adds a channel extban using allowed ISUPPORT
+   EXTBAN values and prefixes. Extbans should still be removed using the .-ban
+   command. Extban masks are created as [prefix]<flag>:<value>. Not all extbans
+   (notice blocking, ctcp blocking, etc) can be enforced by Eggdrop. These
+   non-enforceable extbans are set on-channel and managed as sticky bans.
 
 See also: +ban, -ban, bans
 %{help=+exempt}%{+lo|lo}
