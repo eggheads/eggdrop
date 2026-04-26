@@ -958,16 +958,21 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 }
 
 /* got 324: mode status
- * <server> 324 <to> <channel> <mode>
+ * <server> 324 <to> <channel> <mode> [<mode params>...]
  */
-static int got324(char *from, char *msg)
+static int got324(char *from, char *origmsg)
 {
-  int i = 1, ok = 0;
-  char *p, *q, *chname;
+  int i = 1, ok = 0, nextarg = 3;
+  char *chname, *chg, *arg, buf[511];
+  struct parsed_irc msg;
   struct chanset_t *chan;
 
-  newsplit(&msg);
-  chname = newsplit(&msg);
+  strlcpy(buf, origmsg, sizeof buf);
+  msg = parse_irc(buf);
+  if (msg.argc < 3)
+    return 0;
+  chname = msg.argv[1];
+  chg = msg.argv[2];
   chan = findchan(chname);
   if (!chan) {
     putlog(LOG_MISC, "*", "%s: %s", IRC_UNEXPECTEDMODE, chname);
@@ -978,58 +983,65 @@ static int got324(char *from, char *msg)
     ok = 1;
   chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
-  while (msg[i] != 0) {
-    if (msg[i] == 'i')
-      chan->channel.mode |= CHANINV;
-    if (msg[i] == 'p')
-      chan->channel.mode |= CHANPRIV;
-    if (msg[i] == 's')
-      chan->channel.mode |= CHANSEC;
-    if (msg[i] == 'm')
-      chan->channel.mode |= CHANMODER;
-    if (msg[i] == 'c')
-      chan->channel.mode |= CHANNOCLR;
-    if (msg[i] == 'C')
-      chan->channel.mode |= CHANNOCTCP;
-    if (msg[i] == 'R')
-      chan->channel.mode |= CHANREGON;
-    if (msg[i] == 'M')
-      chan->channel.mode |= CHANMODREG;
-    if (msg[i] == 'r')
-      chan->channel.mode |= CHANLONLY;
-    if (msg[i] == 'D')
-      chan->channel.mode |= CHANDELJN;
-    if (msg[i] == 'u')
-      chan->channel.mode |= CHANSTRIP;
-    if (msg[i] == 'N')
-      chan->channel.mode |= CHANNONOTC;
-    if (msg[i] == 'T')
-      chan->channel.mode |= CHANNOAMSG;
-    if (msg[i] == 'd')
-      chan->channel.mode |= CHANINVIS;
-    if (msg[i] == 't')
-      chan->channel.mode |= CHANTOPIC;
-    if (msg[i] == 'n')
-      chan->channel.mode |= CHANNOMSG;
-    if (msg[i] == 'a')
-      chan->channel.mode |= CHANANON;
-    if (msg[i] == 'q')
-      chan->channel.mode |= CHANQUIET;
-    if (msg[i] == 'k') {
-      chan->channel.mode |= CHANKEY;
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* Test for null key assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          set_key(chan, p);
-          memmove(p, q + 1, strlen(q + 1) + 1);
-        } else {
-          set_key(chan, p);
-          *p = 0;
-        }
+  while (chg[i] != 0) {
+    arg = NULL;
+    if (MODE_HAS_SET_ARG(chg[i])) {
+      if (nextarg < (int) msg.argc) {
+        arg = msg.argv[nextarg++];
+      } else {
+        putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for +%c", origmsg, chg[i]);
       }
+    }
+    /* hardcoded assumptions in the existing old select code, SANITY CHECK */
+    if (strchr("kl", chg[i]) && !arg) {
+      arg = "";
+      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has a parameter but isupport says no", origmsg, chg[i]);
+    }
+    if (strchr("ipsmcCRMrDuNTdtnaq", chg[i]) && arg) {
+      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has no parameter but isupport says yes, ignoring", origmsg, chg[i]);
+      i++;
+      continue;
+    }
+    if (chg[i] == 'i')
+      chan->channel.mode |= CHANINV;
+    if (chg[i] == 'p')
+      chan->channel.mode |= CHANPRIV;
+    if (chg[i] == 's')
+      chan->channel.mode |= CHANSEC;
+    if (chg[i] == 'm')
+      chan->channel.mode |= CHANMODER;
+    if (chg[i] == 'c')
+      chan->channel.mode |= CHANNOCLR;
+    if (chg[i] == 'C')
+      chan->channel.mode |= CHANNOCTCP;
+    if (chg[i] == 'R')
+      chan->channel.mode |= CHANREGON;
+    if (chg[i] == 'M')
+      chan->channel.mode |= CHANMODREG;
+    if (chg[i] == 'r')
+      chan->channel.mode |= CHANLONLY;
+    if (chg[i] == 'D')
+      chan->channel.mode |= CHANDELJN;
+    if (chg[i] == 'u')
+      chan->channel.mode |= CHANSTRIP;
+    if (chg[i] == 'N')
+      chan->channel.mode |= CHANNONOTC;
+    if (chg[i] == 'T')
+      chan->channel.mode |= CHANNOAMSG;
+    if (chg[i] == 'd')
+      chan->channel.mode |= CHANINVIS;
+    if (chg[i] == 't')
+      chan->channel.mode |= CHANTOPIC;
+    if (chg[i] == 'n')
+      chan->channel.mode |= CHANNOMSG;
+    if (chg[i] == 'a')
+      chan->channel.mode |= CHANANON;
+    if (chg[i] == 'q')
+      chan->channel.mode |= CHANQUIET;
+    if (chg[i] == 'k') {
+      chan->channel.mode |= CHANKEY;
+      if (*arg)
+        set_key(chan, arg);
       if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
           !strcmp("*", chan->channel.key)))
         /* Undernet use to show a blank channel key if one was set when
@@ -1039,20 +1051,9 @@ static int got324(char *from, char *msg)
          * (guppy 22Dec2001) */
         chan->status |= CHAN_ASKEDMODES;
     }
-    if (msg[i] == 'l') {
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null limit assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          chan->channel.maxmembers = atoi(p);
-          memmove(p, q + 1, strlen(q + 1) + 1);
-        } else {
-          chan->channel.maxmembers = atoi(p);
-          *p = 0;
-        }
-      }
+    if (chg[i] == 'l') {
+      if (*arg)
+        chan->channel.maxmembers = atoi(arg);
     }
     i++;
   }
