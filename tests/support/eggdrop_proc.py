@@ -16,10 +16,18 @@ from .waiters import WaitTimeout, wait_for_log_match
 
 
 class EggdropDiedError(Exception):
-    pass
+    """Raised when an operation is attempted on an Eggdrop that has exited."""
 
 
 class EggdropProc:
+    """Spawned Eggdrop subprocess with a captured stdout drain.
+
+    `start()` spawns the bot; `terminate()` ends it (SIGTERM, then SIGKILL
+    after the grace period). Stdout/stderr are streamed into both an
+    in-memory ring (`stdout_text()`) and an on-disk log (`log_path`) so
+    failures can be inspected post-mortem.
+    """
+
     def __init__(
         self,
         binary: Path,
@@ -29,6 +37,12 @@ class EggdropProc:
         log_path: Path | None = None,
         terminal: bool = False,
     ) -> None:
+        """Configure (but do not start) a wrapped Eggdrop process.
+
+        `terminal=True` spawns with `-nt` (HQ partyline on stdin, owner
+        perms auto-granted); `False` uses `-n` (foreground only, no
+        partyline). `env` is merged on top of the parent process env.
+        """
         self._binary = binary
         self._config = config_path
         self._cwd = cwd
@@ -42,6 +56,7 @@ class EggdropProc:
         self._log_fp: IO[str] | None = None
 
     def start(self) -> EggdropProc:
+        """Spawn Eggdrop and start the background stdout-drain thread."""
         # Lifetime spans process; closed in terminate().
         self._log_fp = open(self._log_path, "w", encoding="utf-8")  # noqa: SIM115
         flags = "-nt" if self._terminal else "-n"
@@ -93,10 +108,12 @@ class EggdropProc:
         return self._log_path
 
     def stdout_text(self) -> str:
+        """Snapshot of everything written to stdout/stderr so far. Thread-safe."""
         with self._buf_lock:
             return self._buf.getvalue()
 
     def assert_alive(self) -> None:
+        """Raise `EggdropDiedError` if the process has exited."""
         rc = self.proc.poll()
         if rc is not None:
             raise EggdropDiedError(
@@ -104,6 +121,12 @@ class EggdropProc:
             )
 
     def wait_for_log(self, pattern: str, timeout: float = 10.0) -> re.Match[str]:
+        """Poll stdout for `pattern`. If it never appears, surface a useful error.
+
+        On timeout, `assert_alive()` is called first so a dead Eggdrop
+        produces an `EggdropDiedError` (with the captured log) rather than
+        a generic `WaitTimeout`.
+        """
         try:
             return wait_for_log_match(self.stdout_text, pattern, timeout=timeout)
         except WaitTimeout:

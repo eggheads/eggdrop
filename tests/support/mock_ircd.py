@@ -24,20 +24,38 @@ _T = TypeVar("_T")
 
 
 class MockIrcdError(Exception):
-    pass
+    """Raised on a timeout or other harness-side error against the mock IRCd."""
 
 
 class UnexpectedReconnect(MockIrcdError):
-    pass
+    """Raised at `stop()` if the bot reconnected when `allow_reconnect=False`."""
 
 
 class MockIrcd:
+    """Synchronous-facade mock IRCd, listening on `127.0.0.1:0`.
+
+    Internally an asyncio TCP server runs on a private event loop in a
+    background thread. The public API is plain blocking calls (`recv()`,
+    `send()`, `expect_recv_match()`, ...) so test code stays linear.
+
+    Auto-handles client `PING` and (by default) the `CAP LS`/`REQ`/`END`
+    handshake so individual tests don't have to repeat that boilerplate.
+    Pass `auto_cap=False` to drive CAP negotiation explicitly.
+    """
+
     def __init__(
         self,
         allow_reconnect: bool = False,
         auto_cap: bool = True,
         server_name: str = "mock.test",
     ) -> None:
+        """Configure (but do not start) a mock IRCd.
+
+        `allow_reconnect`: if False, a second client connection during the
+            test is treated as a hard error at `stop()` time.
+        `auto_cap`: auto-respond to `CAP LS`/`REQ`/`LIST` with empty caps.
+        `server_name`: source prefix for synthetic numerics (`:server 001 ...`).
+        """
         self._allow_reconnect = allow_reconnect
         self._auto_cap = auto_cap
         self._server_name = server_name
@@ -56,11 +74,17 @@ class MockIrcd:
     # ---------- lifecycle ----------
 
     def start(self) -> MockIrcd:
+        """Start the asyncio loop thread and bind the listener. Sets `self.port`."""
         self._thread.start()
         self._submit(self._async_start()).result(timeout=5)
         return self
 
     def stop(self) -> None:
+        """Close the listener, stop the loop thread, and assert no rogue reconnects.
+
+        Raises `UnexpectedReconnect` if the client connected more than once
+        without `allow_reconnect=True`.
+        """
         if self._loop.is_running():
             with contextlib.suppress(Exception):
                 self._submit(self._async_stop()).result(timeout=5)
@@ -153,9 +177,11 @@ class MockIrcd:
     # ---------- synchronous facade ----------
 
     def _submit(self, coro: Coroutine[Any, Any, _T]) -> Future[_T]:
+        """Schedule a coroutine on the bg loop, return a thread-safe Future."""
         return asyncio.run_coroutine_threadsafe(coro, self._loop)
 
     def wait_for_connect(self, timeout: float = 10.0) -> None:
+        """Block until the first client (Eggdrop) opens the TCP connection."""
         async def _wait() -> None:
             assert self._connect_evt is not None
             await asyncio.wait_for(self._connect_evt.wait(), timeout)
@@ -163,6 +189,10 @@ class MockIrcd:
         self._submit(_wait()).result(timeout=timeout + 1)
 
     def recv(self, timeout: float = 5.0) -> str:
+        """Pop the next non-PING/CAP line from the client's recv queue.
+
+        Raises `MockIrcdError` if no line arrives within `timeout`.
+        """
         async def _recv() -> str:
             assert self._recv_q is not None
             return await asyncio.wait_for(self._recv_q.get(), timeout)
@@ -175,6 +205,7 @@ class MockIrcd:
             ) from e
 
     def expect_recv(self, expected: str, timeout: float = 5.0) -> str:
+        """`recv()` and assert the line equals `expected` exactly."""
         line = self.recv(timeout)
         if line != expected:
             raise AssertionError(
@@ -183,6 +214,7 @@ class MockIrcd:
         return line
 
     def expect_recv_match(self, pattern: str, timeout: float = 5.0) -> re.Match[str]:
+        """`recv()` and assert the line matches `pattern` (re.match anchored)."""
         line = self.recv(timeout)
         m = re.match(pattern, line)
         if not m:
@@ -209,6 +241,7 @@ class MockIrcd:
         )
 
     def send(self, line: str) -> None:
+        """Push a single IRC line (CRLF appended automatically) to the client."""
         async def _send() -> None:
             assert self._writer is not None, "no client connected"
             data = (line.rstrip("\r\n") + "\r\n").encode()
@@ -218,6 +251,7 @@ class MockIrcd:
         self._submit(_send()).result(timeout=5)
 
     def send_from(self, prefix: str, rest: str) -> None:
+        """Convenience: `send(":<prefix> <rest>")`. Use for messages from other users."""
         self.send(f":{prefix} {rest}")
 
     def send_welcome(
@@ -226,6 +260,11 @@ class MockIrcd:
         server: str = "mock.test",
         isupport: Iterable[str] | None = None,
     ) -> None:
+        """Send the registration response: 001-004, optional 005, then 376.
+
+        `isupport` is a list of raw `KEY=VALUE` (or bare `KEY`) tokens
+        joined into the 005 line; pass `None` to skip the 005 entirely.
+        """
         self.send(f":{server} 001 {nick} :Welcome to mock {nick}")
         self.send(f":{server} 002 {nick} :Your host is {server}")
         self.send(f":{server} 003 {nick} :This server was created today")
@@ -238,6 +277,7 @@ class MockIrcd:
     def send_names(
         self, nick: str, channel: str, members: Iterable[str], server: str = "mock.test"
     ) -> None:
+        """Send a 353 NAMES line followed by the 366 end-of-list."""
         names = " ".join(members)
         self.send(f":{server} 353 {nick} = {channel} :{names}")
         self.send(f":{server} 366 {nick} {channel} :End of /NAMES")

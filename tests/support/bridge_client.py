@@ -25,6 +25,7 @@ class BridgeClient:
     """
 
     def __init__(self, host: str, port: int, timeout: float = 5.0) -> None:
+        """Open a TCP connection to the bridge. Raises `OSError` if it can't connect."""
         self._host = host
         self._port = port
         self._sock = socket.create_connection((host, port), timeout=timeout)
@@ -35,6 +36,11 @@ class BridgeClient:
     def connect_with_retry(
         cls, host: str, port: int, total_timeout: float = 5.0
     ) -> BridgeClient:
+        """Retry the connect every 50 ms until `total_timeout` elapses.
+
+        Used by the `tcl_bridge` fixture to wait through Eggdrop's startup
+        between writing the port file and accepting on it.
+        """
         deadline = time.monotonic() + total_timeout
         last: Exception | None = None
         while time.monotonic() < deadline:
@@ -49,6 +55,7 @@ class BridgeClient:
         )
 
     def close(self) -> None:
+        """Close the TCP connection. Idempotent; safe to call on a closed socket."""
         with contextlib.suppress(OSError):
             self._sock.close()
 

@@ -17,10 +17,11 @@ from __future__ import annotations
 
 
 class ProtocolError(Exception):
-    pass
+    """Raised on a malformed frame (bad escape sequence or framing)."""
 
 
 def escape(s: str) -> str:
+    """Escape `\\`, `\\n`, `\\r` so the result fits on a single wire line."""
     return (
         s.replace("\\", "\\\\")
         .replace("\n", "\\n")
@@ -29,6 +30,7 @@ def escape(s: str) -> str:
 
 
 def unescape(s: str) -> str:
+    """Inverse of `escape`. Raises `ProtocolError` on dangling/unknown escapes."""
     out: list[str] = []
     i = 0
     n = len(s)
@@ -54,10 +56,12 @@ def unescape(s: str) -> str:
 
 
 def encode_request(cmd: str) -> bytes:
+    """Frame a Tcl command for transmission to the bridge listener."""
     return (escape(cmd) + "\n").encode("utf-8")
 
 
 def encode_response(tag: str, payload: str) -> bytes:
+    """Frame an `OK`/`ERR` reply (used by the Tcl side; tests use the bridge for input)."""
     return (tag + " " + escape(payload) + "\n").encode("utf-8")
 
 

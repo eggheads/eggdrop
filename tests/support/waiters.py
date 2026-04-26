@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 class WaitTimeout(Exception):
-    pass
+    """Raised by any `wait_for*` helper when its deadline passes."""
 
 
 def wait_for_file(
@@ -30,6 +30,11 @@ def wait_for(
     poll: float = 0.05,
     description: str = "predicate",
 ) -> None:
+    """Poll `predicate()` every `poll` seconds until it returns truthy.
+
+    `description` is included in the timeout error message — supply something
+    specific so test failures are self-explanatory.
+    """
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         if predicate():

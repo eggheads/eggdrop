@@ -335,9 +335,7 @@ def test_gotmode_extended_prefix_modes_qa_consume_args_correctly(
     drive_registration(
         mock_ircd, isupport_tokens=[f"PREFIX={prefix}", f"CHANMODES={chanmodes}"]
     )
-    chan = drive_join_with_names(
-        mock_ircd, "@TestBot owner_user admin_user voice_user"
-    )
+    chan = drive_join_with_names(mock_ircd, "@TestBot owner_user admin_user voice_user")
     wait_for_isupport(tcl_bridge, "PREFIX", prefix)
     wait_for(
         lambda: tcl_bridge.eval_ok(f'onchan voice_user "{chan}"') == "1",
@@ -345,9 +343,7 @@ def test_gotmode_extended_prefix_modes_qa_consume_args_correctly(
         description="voice_user to appear in chanlist",
     )
 
-    mock_ircd.send(
-        f":someop!u@h MODE {chan} +qav owner_user admin_user voice_user"
-    )
+    mock_ircd.send(f":someop!u@h MODE {chan} +qav owner_user admin_user voice_user")
 
     wait_for(
         lambda: tcl_bridge.eval_ok(f'isvoice voice_user "{chan}"') == "1",

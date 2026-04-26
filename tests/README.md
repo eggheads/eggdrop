@@ -278,7 +278,13 @@ tests/
     ├── test_framing.py
     ├── test_smoke_connect.py
     ├── test_partyline_chan.py
-    └── test_isupport_modes.py
+    ├── test_isupport_modes.py
+    ├── test_tcl_passwdok.py             # ported from eggdrop_tcl_passwdok.bats
+    ├── test_tcl_iscmds.py               # ported from eggdrop_tcl_iscmds.bats
+    ├── test_tcl_matchattr.py            # ported from eggdrop_tcl_matchattr.bats
+    ├── test_tcl_server.py               # ported from eggdrop_tcl_server.bats
+    ├── test_tcl_addbot.py               # ported from eggdrop_tcl_addbot.bats
+    └── test_chanset_inputvalidation.py  # ported from eggdrop_chanset_inputvalidation.bats
 ```
 
 ## Bridge wire protocol
@@ -415,6 +421,41 @@ xdg-open cov-html/index.html
 - **No `time.sleep` in tests.** Use `waiters.wait_for(...)` /
   `wait_for_file(...)` / `mock_ircd.drain_until(...)` — every wait has an
   explicit timeout and a description.
+
+## Converted from the legacy `eggdrop-tests/` BATS suite
+
+The 6 Tcl-only `.bats` files from the legacy suite have been ported into
+this framework. The original ran `cmd_accept.tcl` (a precursor to
+`test_bridge.tcl`) on TCP port 45678 and asserted on `nc localhost 45678`
+output — exactly the same shape as `tcl_bridge.eval_ok()`, so the
+mapping is line-for-line.
+
+| Legacy `.bats` file | New file | Notes |
+| --- | --- | --- |
+| `eggdrop_tcl_passwdok.bats` | `tests/test_tcl_passwdok.py` | 6 tests |
+| `eggdrop_tcl_iscmds.bats` | `tests/test_tcl_iscmds.py` | 22 tests (isban / isbansticky / isexempt / isinvite) |
+| `eggdrop_tcl_matchattr.bats` | `tests/test_tcl_matchattr.py` | 23 tests; the 3 "rejects unknown flag" cases now document the new silent-accept behavior since `tcl_matchattr` no longer errors on unknown flags |
+| `eggdrop_tcl_server.bats` | `tests/test_tcl_server.py` | 13 tests; ported from the old `addserver`/`delserver`/`set servers` API to the current `server add` / `server remove` / `server list` |
+| `eggdrop_tcl_addbot.bats` | `tests/test_tcl_addbot.py` | 13 tests; the 8 IPv6 cases auto-skip via an `ipv6_required` fixture when Eggdrop is built without IPv6 |
+| `eggdrop_chanset_inputvalidation.bats` | `tests/test_chanset_inputvalidation.py` | 9 tests for `flood-deop X:Y` parsing |
+
+Files that were **not** converted, with reasons:
+
+- `eggdrop_botnet_linking.bats`, `eggdrop_botnet_partyline.bats` — need
+  multiple bots talking to each other; no multi-bot fixture in this
+  framework yet.
+- `eggdrop_ssl_config.bats`, `eggdrop_ssl_sni.bats` — SSL/TLS not modeled
+  in the mock IRCd.
+- `eggdrop_compile_*.bats` (5 files) — build-system tests, unrelated to
+  runtime behavior. The `make test` target replaces what the
+  `eggdrop_compile_testrun.bats` covered.
+- `eggdrop_partyline_bans.bats`, `eggdrop_partyline_flags.bats`,
+  `eggdrop_console_flags.bats` — drive partyline commands and assert on
+  textual output through a TCP partyline (port 1111/3015 in the legacy
+  conf). Convertible using the existing `@pytest.mark.partyline` marker
+  and `eggdrop_proc.send_partyline()`, but those tests assert on
+  free-form output strings; preferring to land them as state-checking
+  tests via `tcl_bridge` when possible. Deferred.
 
 ## What's intentionally out of scope (for now)
 
