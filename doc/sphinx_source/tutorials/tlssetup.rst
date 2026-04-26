@@ -3,7 +3,7 @@ Enabling TLS Security on Eggdrop
 
 There are several ways TLS encryption can protect communication between your Eggdrop and the world. This guide will walk you through a few common scenarios and how to properly set up TLS protection.
 
-Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term "SSL" is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term "SSL" used to describe a secure connection method, to include with within Eggdrop's own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term "SSL" be sure to correct them, we're sure they will *definitely* appreciate it :)
+Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term "SSL" is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term "SSL" used to describe a secure connection method, including Eggdrop's own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term "SSL" be sure to correct them, we're sure they will *definitely* appreciate it :)
 
 Pre-requisites
 --------------
