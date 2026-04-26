@@ -62,7 +62,7 @@ depend:
 	$(CC) -I.. -DMAKING_DEPEND -DHAVE_CONFIG_H -MM *.c > .depend
 
 clean:
-	@rm -f .depend *.o *.a *~
+	@rm -f .depend *.o *.a *~ *.gcda *.gcno
 
 main.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) \

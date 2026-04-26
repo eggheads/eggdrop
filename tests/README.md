@@ -6,10 +6,23 @@ risk to the bot itself: nothing here changes Eggdrop's source.
 
 ## Quick start
 
+The fastest way from a fresh clone to a green suite, with coverage
+instrumentation enabled:
+
 ```sh
-make                                 # build the eggdrop binary in repo root
+make test                            # distclean, configure --enable-coverage,
+                                     # make config, make debug, pytest
+```
+
+The `test` target lives in the top-level `Makefile`. It rebuilds from
+scratch every time, so it's the right entry point for CI or for verifying
+a clean state. For a faster inner-loop while developing tests, build once
+and re-run pytest directly:
+
+```sh
+make                                 # build eggdrop in the repo root
 cd tests
-uv sync                              # set up the .venv from pyproject.toml
+uv sync                              # set up .venv from pyproject.toml (one-time)
 uv run pytest                        # run the suite
 uv run pytest -v -k partyline        # run a subset
 ```
@@ -264,7 +277,8 @@ tests/
 └── tests/
     ├── test_framing.py
     ├── test_smoke_connect.py
-    └── test_partyline_chan.py
+    ├── test_partyline_chan.py
+    └── test_isupport_modes.py
 ```
 
 ## Bridge wire protocol
@@ -303,6 +317,85 @@ Request: `<escaped command>\n`. Response: `OK <escaped result>\n` or
 - For verbose live output: `uv run pytest -s --log-cli-level=DEBUG path::to::test`.
 - To poke the bridge by hand from a hung test, copy the port out of
   `<tmp>/bridge.port` and `nc 127.0.0.1 <port>`.
+
+## Coverage (gcov / lcov)
+
+Eggdrop's `configure` script has an `--enable-coverage` flag (added for
+this test harness, see `aclocal.m4` → `EGG_ENABLE_COVERAGE`). It injects
+`--coverage -fPIC -O0 -ggdb3` into `CFLAGS` and `--coverage` into
+`LDFLAGS`, so the build emits `.gcno` notes alongside every `.o`, and
+each spawned process drops `.gcda` runtime data when it exits.
+
+### Build with coverage
+
+The top-level `make test` target does the full build + run cycle:
+
+```sh
+make test                            # = distclean → configure --enable-coverage
+                                     #   → make config → make debug → pytest
+```
+
+Or do it by hand if you want to control the steps:
+
+```sh
+make distclean
+./configure --enable-coverage
+make config
+make debug
+```
+
+`config.log` will note `enabling gcov coverage instrumentation: --coverage
+-fPIC -O0 -ggdb3` and `src/Makefile` will have the flags wired into
+`CFLAGS`/`LDFLAGS`. After `make debug`, every `.o` has a `.gcno` next to it
+in the same directory.
+
+### Run the suite to populate `.gcda`
+
+```sh
+cd tests
+uv run pytest                       # each spawned Eggdrop writes .gcda on exit
+```
+
+`.gcda` files land beside the corresponding `.gcno`/`.o`. One full suite
+run produces ~30+ `.gcda` files across `src/` and `src/mod/*/`. To reset
+between runs (without rebuilding) just delete the data:
+
+```sh
+find . -name '*.gcda' -delete       # keeps .gcno (build state) in place
+```
+
+`make clean` removes both `.gcno` and `.gcda` everywhere as a side
+effect; you'd then need to rebuild before the next coverage run.
+
+### Inspect coverage
+
+Per-file:
+
+```sh
+gcov -o src/mod/server.mod src/mod/server.mod/server.c
+# → server.c.gcov; first line reports "Lines executed: NN.NN% of N"
+```
+
+Whole-tree HTML with `lcov`:
+
+```sh
+lcov --capture --directory . --output-file cov.info
+genhtml cov.info --output-directory cov-html
+xdg-open cov-html/index.html
+```
+
+### Notes
+
+- Coverage builds are **not** for production — `-O0` plus instrumentation
+  is slow, and `.gcda` files accumulate in the source tree (until you
+  reset them with `find . -name '*.gcda' -delete` or `make clean`).
+- If you change source files between runs without rebuilding,
+  `.gcda`/`.gcno` go out of sync and `gcov` will refuse the data. Re-run
+  `make debug` after every source change, or delete the stale `.gcda`s.
+- Each Eggdrop process writes its `.gcda`s on clean exit. Tests that kill
+  the bot with `SIGKILL` (only happens after `SIGTERM` times out) will
+  miss data from that process; the harness uses `bridge.eval("die ...")`
+  / `SIGTERM` first so this is rare.
 
 ## Why some things are the way they are
 

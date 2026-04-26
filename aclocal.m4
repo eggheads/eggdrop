@@ -489,6 +489,28 @@ EOF
 ])
 
 
+dnl EGG_ENABLE_COVERAGE()
+dnl
+dnl Adds gcov instrumentation to CFLAGS/LDFLAGS so a build produces .gcno
+dnl files at compile time and .gcda files at run time. Use lcov / gcov to
+dnl summarize after running the test suite. Off by default; only meant for
+dnl development builds against the test harness, never production.
+dnl
+AC_DEFUN([EGG_ENABLE_COVERAGE],
+[
+  AC_ARG_ENABLE([coverage],
+                [  --enable-coverage       build with gcov instrumentation (developer / test-coverage)],
+                [enable_coverage="$enableval"],
+                [enable_coverage="no"])
+
+  if test "$enable_coverage" = yes; then
+    AC_MSG_NOTICE([enabling gcov coverage instrumentation: --coverage -fPIC -O0 -ggdb3])
+    CFLAGS="$CFLAGS --coverage -fPIC -O0 -ggdb3"
+    LDFLAGS="$LDFLAGS --coverage"
+  fi
+])
+
+
 dnl
 dnl Checks for operating system and module support.
 dnl
