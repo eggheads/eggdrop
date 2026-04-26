@@ -61,7 +61,7 @@ jobs:
           tar xzf openssl-0.9.8zh.tar.gz && \
           cd openssl-0.9.8zh && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
       - name: GCC Problem Matcher
-        run: echo "::add-matcher::.github/problem-matchers/gcc.json"
+        run: echo "::add-matcher::eggdrop/.github/problem-matchers/gcc.json"
       - name: Build
         run: |
           cd $GITHUB_WORKSPACE/eggdrop
@@ -91,7 +91,7 @@ jobs:
           tar xzf openssl-1.0.2u.tar.gz && \
           cd openssl-1.0.2u && ./config --prefix=$HOME/ssl -fPIC && make -j4 && make install_sw
       - name: GCC Problem Matcher
-        run: echo "::add-matcher::.github/problem-matchers/gcc.json"
+        run: echo "::add-matcher::eggdrop/.github/problem-matchers/gcc.json"
       - name: Build
         run: |
           cd $GITHUB_WORKSPACE/eggdrop
@@ -124,7 +124,7 @@ jobs:
         with:
           path: "eggdrop"
       - name: GCC Problem Matcher
-        run: echo "::add-matcher::.github/problem-matchers/gcc.json"
+        run: echo "::add-matcher::eggdrop/.github/problem-matchers/gcc.json"
       - name: Build
         run: |
           cd $GITHUB_WORKSPACE/eggdrop
@@ -168,7 +168,7 @@ jobs:
       - name: install dependencies
         run: sudo apt-get update && sudo apt-get install tcl tcl-dev
       - name: GCC Problem Matcher
-        run: echo "::add-matcher::.github/problem-matchers/gcc.json"
+        run: echo "::add-matcher::eggdrop/.github/problem-matchers/gcc.json"
       - name: Build
         run: |
           cd $GITHUB_WORKSPACE/eggdrop
