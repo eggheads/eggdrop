@@ -39,7 +39,7 @@ set flood-msg 0
 set flood-ctcp 0
 
 set raw-log 1
-logfile mcorvx * "{{ logfile_path }}"
+logfile {{ log_flags }} * "{{ logfile_path }}"
 set log-time 0
 set keep-all-logs 0
 

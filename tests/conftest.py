@@ -91,6 +91,7 @@ class EggdropConfig:
             extra_tcl="",
             server_cycle_wait=10,
             server_timeout=30,
+            log_flags="mcorvxd",
             tmpdir=str(self.tmp),
             userfile_path=str(self.userfile_path),
             chanfile_path=str(self.chanfile_path),

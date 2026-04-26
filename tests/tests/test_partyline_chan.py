@@ -1,4 +1,4 @@
-"""Partyline integration test: drive the HQ partyline via stdin, verify via bridge."""
+"""Partyline integration test: drive HQ partyline via stdin, verify via bridge."""
 
 from __future__ import annotations
 
@@ -6,18 +6,9 @@ import pytest
 
 from support.bridge_client import BridgeClient
 from support.eggdrop_proc import EggdropProc
+from support.irc_helpers import drive_join_with_names, drive_registration
 from support.mock_ircd import MockIrcd
 from support.waiters import wait_for
-
-
-def _complete_registration(mock_ircd: MockIrcd) -> None:
-    mock_ircd.wait_for_connect(timeout=10.0)
-    for _ in range(2):  # NICK + USER
-        mock_ircd.recv(timeout=5.0)
-    mock_ircd.send_welcome(nick="TestBot")
-    mock_ircd.drain_until(lambda line: line.startswith("JOIN "), timeout=10.0)
-    mock_ircd.send(":mock.test 353 TestBot = #test :@TestBot")
-    mock_ircd.send(":mock.test 366 TestBot #test :End of /NAMES")
 
 
 @pytest.mark.partyline
@@ -27,7 +18,8 @@ def test_partyline_add_channel(
     tcl_bridge: BridgeClient,
 ) -> None:
     """Add a channel via the HQ partyline `.+chan` command, verify via bridge."""
-    _complete_registration(mock_ircd)
+    drive_registration(mock_ircd)
+    drive_join_with_names(mock_ircd, "@TestBot")
 
     # Sanity: only the templated #test is configured.
     assert tcl_bridge.eval_ok("llength [channels]") == "1"
@@ -41,8 +33,7 @@ def test_partyline_add_channel(
     wait_for(
         lambda: tcl_bridge.eval_ok(
             'expr {[lsearch [channels] "#pytest"] >= 0}'
-        )
-        == "1",
+        ) == "1",
         timeout=5.0,
         description="partyline .+chan #pytest to register",
     )

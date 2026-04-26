@@ -93,20 +93,12 @@ This is `tests/test_partyline_chan.py` (also runnable as
 
 ```python
 import pytest
-from support.eggdrop_proc import EggdropProc
+
 from support.bridge_client import BridgeClient
+from support.eggdrop_proc import EggdropProc
+from support.irc_helpers import drive_join_with_names, drive_registration
 from support.mock_ircd import MockIrcd
 from support.waiters import wait_for
-
-
-def _complete_registration(mock_ircd: MockIrcd) -> None:
-    mock_ircd.wait_for_connect(timeout=10.0)
-    for _ in range(2):                       # NICK + USER
-        mock_ircd.recv(timeout=5.0)
-    mock_ircd.send_welcome(nick="TestBot")   # 001-004 + 376
-    mock_ircd.drain_until(lambda l: l.startswith("JOIN "), timeout=10.0)
-    mock_ircd.send(":mock.test 353 TestBot = #test :@TestBot")
-    mock_ircd.send(":mock.test 366 TestBot #test :End of /NAMES")
 
 
 @pytest.mark.partyline                       # ← spawns eggdrop with -nt
@@ -115,7 +107,9 @@ def test_partyline_add_channel(
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
 ) -> None:
-    _complete_registration(mock_ircd)
+    drive_registration(mock_ircd)            # NICK + USER → welcome
+    drive_join_with_names(mock_ircd, "@TestBot")  # JOIN echo + NAMES + WHO + ...
+
     assert tcl_bridge.eval_ok("llength [channels]") == "1"
 
     eggdrop_proc.send_partyline(".+chan #pytest")
@@ -132,8 +126,8 @@ def test_partyline_add_channel(
 What this exercises:
 
 1. **IRCd dialogue**: TCP connect → CAP/NICK/USER (auto-handled) → welcome
-   → JOIN → NAMES. The mock IRCd auto-PONGs and auto-handles `CAP LS` so
-   tests don't repeat that boilerplate.
+   → JOIN → NAMES → bot's post-join MODE/WHO queries serviced. The mock
+   IRCd auto-PONGs and auto-handles `CAP LS`; the helpers drive the rest.
 2. **Partyline command**: `eggdrop_proc.send_partyline(".+chan #pytest")`
    writes to Eggdrop's stdin. The `@pytest.mark.partyline` marker tells the
    `eggdrop_proc` fixture to spawn with `-nt` instead of `-n`, opening the
@@ -144,6 +138,75 @@ What this exercises:
    Polling is needed because `.+chan` runs through Eggdrop's event loop
    asynchronously from the stdin write; `wait_for` has an explicit timeout
    instead of `time.sleep()`.
+
+## Helpers (`support/irc_helpers.py`)
+
+Shared multi-step IRC interactions so tests don't repeat boilerplate.
+
+### `drive_registration(mock_ircd, nick="TestBot", isupport_tokens=None)`
+
+Drives Eggdrop through IRC registration:
+
+1. Waits for the bot's TCP connect.
+2. Drains the bot's `NICK` and `USER` (in either order).
+3. Sends the welcome sequence (001-004, optional 005 with
+   `isupport_tokens`, 376 end-of-MOTD).
+
+`isupport_tokens` is a list of raw `KEY=VALUE` (or bare `KEY`) strings
+that go into a single 005 line. Use this to test parsing of specific
+tokens, e.g.:
+
+```python
+drive_registration(mock_ircd, isupport_tokens=[
+    "PREFIX=(qaohv)~&@%+",
+    "CHANMODES=beI,kLf,l,psmntirzMQNRTOVKDdGPZSCc",
+])
+```
+
+After this returns, Eggdrop has processed 005 and is about to JOIN
+configured channels.
+
+### `drive_join_with_names(mock_ircd, members_with_prefix, nick="TestBot", server="mock.test") -> str`
+
+Mimics a real IRCd's full post-JOIN dance for the bot:
+
+1. Waits for the bot's `JOIN #chan`.
+2. Echoes `:nick!u@h JOIN :#chan` back so Eggdrop populates `chan->name`
+   and considers itself joined.
+3. Sends `353` NAMES with `members_with_prefix` (a NAMES-style string
+   like `"@TestBot ~bigboss +regular"`) and `366` end-of-NAMES.
+4. Drains the post-join queries Eggdrop fires off:
+   - `MODE +b/+e/+I` → empty `368/349/347` end-of-list replies
+   - `WHO #chan` → one `352` per member (prefix symbols passed through to
+     the WHO flags field, so `opchars`-based op detection picks them up)
+     followed by `315` end-of-WHO
+5. Leaves `MODE #chan` (no list flag) **unanswered** so individual tests
+   can send their own `324` mode reply if they need to.
+
+Returns the channel name. Quiesces when no new lines arrive for ~300 ms
+(or after a 5 s hard cap).
+
+```python
+chan = drive_join_with_names(mock_ircd, "@TestBot alice +bob")
+# bot is now fully joined to chan; alice is a plain member, bob is voiced
+mock_ircd.send(f":mock.test 324 TestBot {chan} +ntk secret")  # custom 324
+```
+
+### `wait_for_isupport(bridge, key, expected, timeout=5.0)`
+
+Polls `isupport get <key>` over the bridge until it returns `expected`.
+Useful right after `drive_registration(..., isupport_tokens=...)` to
+ensure Eggdrop has finished processing 005 before assertions run.
+
+```python
+wait_for_isupport(tcl_bridge, "PREFIX", "(qaohv)~&@%+")
+```
+
+### `split_member_prefix(token) -> (nick, prefix_symbols)`
+
+Tiny helper used internally by `drive_join_with_names`; exposed for
+test code that needs to do the same parsing. `"@alice"` → `("alice", "@")`,
+`"~&boss"` → `("boss", "~&")`, `"plain"` → `("plain", "")`.
 
 ## Fixtures
 
@@ -192,6 +255,7 @@ tests/
 │   ├── test_bridge.tcl          # sourced inside Eggdrop, opens TCP listener
 │   ├── bridge_client.py         # Python client → eval_ok("...")
 │   ├── mock_ircd.py             # asyncio IRCd, sync facade
+│   ├── irc_helpers.py           # drive_registration, drive_join_with_names, ...
 │   ├── eggdrop_proc.py          # subprocess wrapper, stdout drain, terminate
 │   └── waiters.py               # wait_for / wait_for_file / wait_for_log_match
 ├── templates/
