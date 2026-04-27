@@ -415,7 +415,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe1a,Verbindung zu %s zurueckgewiesen (falscher hostname)
 0xe1b,Telnet-Verbindung: %s/%d
 0xe1c,Ident fehlgeschlagen fuer %s: %s
-0xe1d,(!) Port %d fuer eingehende Verbindungen ohne meine Erlaubnis verboten.
+0xe1d,(!) Empfangsport %d ploetzlich ausgefallen.
 0xe1e,%s zurueckgewiesen (falscher Nick)
 0xe1f,%s zurueckgewiesen (kein Bot)
 0xe20,%s zurueckgewiesen (kein Benutzer)
