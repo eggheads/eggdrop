@@ -11,7 +11,7 @@
 See also: bans, -ban, stick, unstick
 %{help=+extban}%{+lo|lo}
 ###  %b+extban%b <flag> <value> [channel] [%%<XyXdXhXm>] [comment]
-   Wrapper command for .+ban to adds a channel extban using allowed ISUPPORT
+   Wrapper command for .+ban to add a channel extban using allowed ISUPPORT
    EXTBAN values and prefixes. Extbans should still be removed using the .-ban
    command. Extban masks are created as [prefix]<flag>:<value>. Not all extbans
    (notice blocking, ctcp blocking, etc) can be enforced by Eggdrop. These

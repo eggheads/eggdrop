@@ -230,6 +230,16 @@ static void cmd_pls_extban(struct userrec *u, int idx, char *par)
   char extban[UHOSTLEN], forwarded[LOGLINEMAX];
   char flag;
   char prefix = '\0';
+  const char *value;
+
+/* Mostly for not knowing what is allowed and the extban prefix while not
+ * connected, we disable the command if we don't know what it is
+ */
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0]) {
+    dprintf(idx, "You must be connected to a server with EXTBAN support to use +extban.\n");
+    return;
+  }
 
   flagstr = newsplit(&par);
   if (!flagstr[0] || flagstr[1]) {
