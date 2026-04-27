@@ -339,7 +339,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb49,Verbindung wird hergestellt mit
 0xb4a,Kann den Benutzer zur Weiterleitung nicht finden!
 0xb4b,Konnte keine Verbindung aufbauen zu
-0xb4c,Weiterleitung zu mir selbst?  Was zum Teufel soll der Sinn davon sein?!
+0xb4c,Weiterleitung zu mir selbst?  Was zum Teufel soll das bringen?!
 0xb4d,Baue Verbindung auf zu
 0xb4e,(schreibe in eine eigene Zeile *BYE* um abzubrechen.)
 0xb4f,Breche Weiterleitungsversuch ab zu
