@@ -315,7 +315,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb31,Ergebnis der Rueckverfolgung
 0xb32,existiert nicht
 0xb33,Rauswuerfe durch Leute von anderen Bots aus sind nicht erlaubt.
-0xb34,Kann den Besitzer des Bots nicht rauswerden.
+0xb34,Kann den Bot-Besitzer nicht rauswerfen.
 0xb35,DATEIUEBERTRAGUNG ABGEWIESEN
 0xb37,Benutzer im Botnet
 0xb38,Partyline
