@@ -248,10 +248,10 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x669,Telnet-Verbindungsaufbau-Flood von %s!  Wird ab sofort ignoriert!
 0x66a,Gebannt:
 0x66b,join Flood
-0x66c,schmeiss meine Freunde nicht hier raus, mein Lieber
+0x66c,schmeiss meine Freunde nicht hier raus, Kumpel
 0x66d,...und komm nicht zurueck.
 0x66e,wechsle zurueck zum altnick %s
-0x66f,deop meine Freunde nicht, mein Lieber
+0x66f,deop meine Freunde nicht, Kumpel
 0x670,Ausnahme entfernt
 0x671,Einladung entfernt
 0x672,NICK flood von @%s!  Wird gebannt.
