@@ -208,9 +208,9 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x644,Server ist eingeschlafen; springe auf den naechsten...
 0x645,Verbindung getrennt von
 0x646,Im Moment kein Server.
-0x647,Mode-Queue ist bei
-0x648,Server-Queue ist bei
-0x649,Hilfe-Queue ist bei
+0x647,Mode-Warteschlange ist bei
+0x648,Server-Warteschlange ist bei
+0x649,Hilfe-Warteschlange ist bei
 0x64a,Der Vhost, der in der Konfig eingestellt ist, kann nicht benutzt werden um zu dieser IP-Adresse zu verbinden
 0x64b,Der Vhost, der in der Konfig eingestellt ist, ist auf diesem Computer nicht verfuegbar
 0x64c,Bearbeite Channel
