@@ -622,14 +622,21 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     Darwin)
-      # We should support Mac OS X (at least 10.1 and later) now.
-      # Use rld on < 10.1.
-      if test "$ac_cv_func_NSLinkModule" = no; then
-        LOAD_METHOD="rld"
-      fi
-      LOAD_METHOD="dyld"
-      EGG_DARWIN_BUNDLE
-      EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
+      case "$egg_cv_var_system_release" in
+        2*)
+          WEIRD_OS="no"
+        ;;
+        *)
+          # Use rld on < macOS 10.1.
+          if test "$ac_cv_func_NSLinkModule" = no; then
+            LOAD_METHOD="rld"
+          fi
+          LOAD_METHOD="dyld"
+          # Use bundle on macOS < 11 (Darwin 20).
+          EGG_DARWIN_BUNDLE
+          EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
+        ;;
+      esac
     ;;
     Haiku)
       WEIRD_OS="no"
@@ -802,10 +809,19 @@ AC_DEFUN([EGG_CHECK_OS],
       SHLIB_LD="$CC -shared"
     ;;
     Darwin)
-      # Mac OS X
-      SHLIB_CC="$CC -fPIC"
-      SHLIB_LD="ld -bundle -undefined error"
-      AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on Mac OS X with dns.mod.])
+      # macOS.
+      case "$egg_cv_var_system_release" in
+        2*)
+          SHLIB_CC="$CC -fPIC"
+          SHLIB_LD="$CC -shared"
+        ;;
+        *)
+          # macOS < 11 (Darwin 20).
+          SHLIB_CC="$CC -fPIC"
+          SHLIB_LD="ld -bundle -undefined error"
+          AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on macOS with dns.mod.])
+        ;;
+      esac
     ;;
     *)
       if test -r /mach; then

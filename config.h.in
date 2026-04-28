@@ -25,7 +25,7 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
-/* Define if running on Mac OS X with dns.mod. */
+/* Define if running on macOS with dns.mod. */
 #undef BIND_8_COMPAT
 
 /* Define if running on NeXT Step. */
