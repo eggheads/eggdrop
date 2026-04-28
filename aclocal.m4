@@ -810,18 +810,17 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     Darwin)
       # macOS.
+      SHLIB_CC="$CC -fPIC"
       case "$egg_cv_var_system_release" in
         2*)
-          SHLIB_CC="$CC -fPIC"
           SHLIB_LD="$CC -shared"
         ;;
         *)
           # macOS < 11 (Darwin 20).
-          SHLIB_CC="$CC -fPIC"
           SHLIB_LD="ld -bundle -undefined error"
-          AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on macOS with dns.mod.])
         ;;
       esac
+      AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on macOS with dns.mod.])
     ;;
     *)
       if test -r /mach; then

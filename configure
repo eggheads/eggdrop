@@ -6743,20 +6743,19 @@ printf "%s\n" "#define STOP_UAC 1" >>confdefs.h
     ;;
     Darwin)
       # macOS.
+      SHLIB_CC="$CC -fPIC"
       case "$egg_cv_var_system_release" in
         2*)
-          SHLIB_CC="$CC -fPIC"
           SHLIB_LD="$CC -shared"
         ;;
         *)
           # macOS < 11 (Darwin 20).
-          SHLIB_CC="$CC -fPIC"
           SHLIB_LD="ld -bundle -undefined error"
+        ;;
+      esac
 
 printf "%s\n" "#define BIND_8_COMPAT 1" >>confdefs.h
 
-        ;;
-      esac
     ;;
     *)
       if test -r /mach; then
