@@ -191,7 +191,7 @@ static void deq_msg()
 
   /* Send up to 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
-    while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
+    while (modeq.head && (burst < 5) && ((last_time - now) < MAXPENALTY)) {
       if (deq_kick(DP_MODE)) {
         burst++;
         continue;
@@ -219,8 +219,7 @@ static void deq_msg()
     return;
   }
 
-  /* Send something from the normal msg q even if we're slightly bursting */
-  if (burst > 1)
+  if (modeq.head || (!modeq.head && (burst > 4)))
     return;
 
   if (mq.head) {
