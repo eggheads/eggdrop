@@ -6388,22 +6388,10 @@ then :
   printf "%s\n" "#define HAVE_LOADER_H 1" >>confdefs.h
 
 fi
-ac_fn_c_check_header_compile "$LINENO" "rld.h" "ac_cv_header_rld_h" "$ac_includes_default"
-if test "x$ac_cv_header_rld_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_RLD_H 1" >>confdefs.h
-
-fi
 ac_fn_c_check_header_compile "$LINENO" "mach-o/dyld.h" "ac_cv_header_mach_o_dyld_h" "$ac_includes_default"
 if test "x$ac_cv_header_mach_o_dyld_h" = xyes
 then :
   printf "%s\n" "#define HAVE_MACH_O_DYLD_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "mach-o/rld.h" "ac_cv_header_mach_o_rld_h" "$ac_includes_default"
-if test "x$ac_cv_header_mach_o_rld_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_MACH_O_RLD_H 1" >>confdefs.h
 
 fi
 
@@ -6429,12 +6417,6 @@ ac_fn_c_check_func "$LINENO" "shl_load" "ac_cv_func_shl_load"
 if test "x$ac_cv_func_shl_load" = xyes
 then :
   printf "%s\n" "#define HAVE_SHL_LOAD 1" >>confdefs.h
-
-fi
-ac_fn_c_check_func "$LINENO" "rld_load" "ac_cv_func_rld_load"
-if test "x$ac_cv_func_rld_load" = xyes
-then :
-  printf "%s\n" "#define HAVE_RLD_LOAD 1" >>confdefs.h
 
 fi
 
@@ -6490,10 +6472,6 @@ fi
           WEIRD_OS="no"
         ;;
         *)
-          # Use rld on < macOS 10.1.
-          if test "$ac_cv_func_NSLinkModule" = no; then
-            LOAD_METHOD="rld"
-          fi
           LOAD_METHOD="dyld"
           # Use bundle on macOS < 11 (Darwin 20).
 
@@ -6540,18 +6518,10 @@ EOF
       WEIRD_OS="no"
     ;;
     *)
-      if test -r /mach; then
-        # At this point, we're guessing this is NeXT Step. We support rld, so
-        # modules will probably work on NeXT now, but we have absolutely no way
-        # to test this. I've never even seen a NeXT box, let alone do I know of
-        # one I can test this on.
-        LOAD_METHOD="rld"
-      else
-        # QNX apparently supports dlopen()... Fallthrough.
-        if test -r /cmds; then
-          UNKNOWN_OS="yes"
-          MODULES_OK="no"
-        fi
+      # QNX apparently supports dlopen()... Fallthrough.
+      if test -r /cmds; then
+        UNKNOWN_OS="yes"
+        MODULES_OK="no"
       fi
     ;;
   esac
@@ -6579,11 +6549,6 @@ printf "%s\n" "#define MOD_USE_DYLD 1" >>confdefs.h
       loader)
 
 printf "%s\n" "#define MOD_USE_LOADER 1" >>confdefs.h
-
-      ;;
-      rld)
-
-printf "%s\n" "#define MOD_USE_RLD 1" >>confdefs.h
 
       ;;
     esac

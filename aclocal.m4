@@ -573,8 +573,8 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
 
   AC_MSG_CHECKING([module loading capabilities])
   AC_MSG_RESULT
-  AC_CHECK_HEADERS([dl.h dlfcn.h loader.h rld.h mach-o/dyld.h mach-o/rld.h])
-  AC_CHECK_FUNCS([dlopen load NSLinkModule shl_load rld_load])
+  AC_CHECK_HEADERS([dl.h dlfcn.h loader.h mach-o/dyld.h])
+  AC_CHECK_FUNCS([dlopen load NSLinkModule shl_load])
 
   # Note to other maintainers:
   # Bourne shell has no concept of "fall through"
@@ -627,10 +627,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
           WEIRD_OS="no"
         ;;
         *)
-          # Use rld on < macOS 10.1.
-          if test "$ac_cv_func_NSLinkModule" = no; then
-            LOAD_METHOD="rld"
-          fi
           LOAD_METHOD="dyld"
           # Use bundle on macOS < 11 (Darwin 20).
           EGG_DARWIN_BUNDLE
@@ -645,18 +641,10 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     *)
-      if test -r /mach; then
-        # At this point, we're guessing this is NeXT Step. We support rld, so
-        # modules will probably work on NeXT now, but we have absolutely no way
-        # to test this. I've never even seen a NeXT box, let alone do I know of
-        # one I can test this on.
-        LOAD_METHOD="rld"
-      else
-        # QNX apparently supports dlopen()... Fallthrough.
-        if test -r /cmds; then
-          UNKNOWN_OS="yes"
-          MODULES_OK="no"
-        fi
+      # QNX apparently supports dlopen()... Fallthrough.
+      if test -r /cmds; then
+        UNKNOWN_OS="yes"
+        MODULES_OK="no"
       fi
     ;;
   esac
@@ -675,9 +663,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       ;;
       loader)
         AC_DEFINE(MOD_USE_LOADER, 1, [Define if modules should be loaded using the ldr*() and *load() functions.])
-      ;;
-      rld)
-        AC_DEFINE(MOD_USE_RLD, 1, [Define if modules should be loaded using the rld_*() functions.])
       ;;
     esac
   else
