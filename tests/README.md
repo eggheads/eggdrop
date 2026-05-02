@@ -32,36 +32,33 @@ clean. CI runs them.
 
 ## Architectural approach
 
-```
-                     ┌──────────────────── per-test tmpdir ────────────────────┐
-                     │  eggdrop.conf  eggdrop.user  eggdrop.log  bridge.port    │
-                     └─────────────▲───────────────────────────────────▲────────┘
-                                   │ rendered                          │ written
-                                   │ (jinja2)                          │ at startup
-                                   │                                   │
-   ┌─────────────┐                 │                       ┌───────────┴──────┐
-   │   pytest    │                 │                       │ test_bridge.tcl  │
-   │   test fn   │                 │                       │ (sourced from    │
-   └──────┬──────┘                 │                       │  eggdrop.conf)   │
-          │                        │                       └─────────▲────────┘
-          │ uses fixtures          │                                 │
-          │                        │                                 │ Tcl
-          │                        │                                 │ eval
-          │                        │                                 │
-          │   ┌─────────────────┐  │   ┌────────────────────────┐    │
-          ├──▶│   mock_ircd     │◀─┼──▶│  eggdrop subprocess    │◀───┤
-          │   │  (asyncio TCP,  │  │   │   eggdrop -n / -nt     │    │
-          │   │   sync facade)  │  │   │   <stdout drained to   │    │
-          │   └─────────────────┘  │   │    eggdrop.stdout.log> │    │
-          │            ▲           │   └─────────┬──────────────┘    │
-          │            │ IRC       │             │ stdin (partyline) │
-          │            │ TCP       │             │ if -nt mode       │
-          │            │           │             │                   │
-          │   ┌────────┴───────┐   │   ┌─────────┴──────────┐  ┌────┴────────┐
-          └──▶│  tcl_bridge    │◀──┘   │ send_partyline()   │  │ eval_ok()   │
-              │ (TCP client,   │       │ on EggdropProc     │  │ on Bridge-  │
-              │  framing.py)   │       │                    │  │ Client      │
-              └────────────────┘       └────────────────────┘  └─────────────┘
+```mermaid
+flowchart LR
+    test["pytest<br/>test fn"]
+
+    subgraph harness ["Python harness fixtures"]
+        direction TB
+        mock["mock_ircd<br/>(asyncio TCP, sync facade)"]
+        bridge["tcl_bridge<br/>(TCP client, framing.py)"]
+    end
+
+    subgraph tmpdir ["per-test tmpdir"]
+        files[("eggdrop.conf<br/>eggdrop.user<br/>bridge.port<br/>eggdrop.log<br/>eggdrop.stdout.log")]
+    end
+
+    subgraph egg ["eggdrop subprocess (-n / -nt)"]
+        bot["eggdrop binary"]
+        ebridge["test_bridge.tcl<br/>(sourced from eggdrop.conf)"]
+        bot -. "sources at startup" .-> ebridge
+    end
+
+    test --> mock
+    test --> bridge
+    test -. "render (jinja2)" .-> files
+    bot -. "writes at startup<br/>+ stdout drain" .-> files
+    mock <-->|"IRC over TCP"| bot
+    bridge <-->|"Tcl eval (TCP framed)"| ebridge
+    test -- "send_partyline()<br/>via stdin (-nt only)" --> bot
 ```
 
 Three loops in play:
