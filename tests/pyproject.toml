@@ -20,6 +20,9 @@ markers = [
     "slow: end-to-end tests that exercise reconnect/timeouts",
     "partyline: spawns eggdrop with -nt so stdin is the HQ partyline",
 ]
+# Keep tmpdir only when a test fails; pytest sweeps it on session exit.
+tmp_path_retention_policy = "failed"
+tmp_path_retention_count = 3
 
 [tool.ruff]
 target-version = "py311"
