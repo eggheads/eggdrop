@@ -40,11 +40,11 @@ You can change the basic Eggdrop appearance and behavior in this section.
 
   set timezone "America/New_York"
     This setting defines which timezone your bot is in. It's used for internal
-    routines as well as for logfile timestamping and scripting purposes. The
-    timezone string specifies an abbreviation for the timezone and must be three
-    or more alphabetic characters. For example, timezone "Europe/Berlin"
-    automatically adjusts for standard time and daylight saving time. See
-    https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#Time_zone_abbreviations.
+    routines as well as for logfile timestamping and scripting purposes. It
+    must be three or more alphabetic characters. For example, timezone
+    "Europe/Berlin" automatically adjusts for standard time and daylight saving
+    time. See
+    https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 
   set env(TZ) "$timezone" (disabled by default)
     If you don't want to use the timezone setting for scripting purposes
