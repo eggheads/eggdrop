@@ -112,12 +112,15 @@ class MockIrcd:
 
     async def _async_stop(self) -> None:
         if self._writer is not None:
+            self._writer.close()
+            # wait_closed can hang if the peer is gone (FIN never ACKed).
+            # Bound it tightly — we're tearing down the loop anyway.
             with contextlib.suppress(Exception):
-                self._writer.close()
-                await self._writer.wait_closed()
+                await asyncio.wait_for(self._writer.wait_closed(), timeout=0.5)
         if self._server is not None:
             self._server.close()
-            await self._server.wait_closed()
+            with contextlib.suppress(Exception):
+                await asyncio.wait_for(self._server.wait_closed(), timeout=0.5)
 
     # ---------- client handler ----------
 

@@ -131,6 +131,21 @@ def eggdrop_config(tmp_eggdir: Path, mock_ircd: MockIrcd) -> EggdropConfig:
     return EggdropConfig(tmp=tmp_eggdir, mock_ircd_port=mock_ircd.port)
 
 
+def _request_clean_shutdown(port_file: Path) -> None:
+    """Open a fresh bridge connection and send Tcl `die` so Eggdrop exits via
+    its own atexit path (writes userfile/chanfile, runs gcov atexit, etc.).
+
+    The bridge connection drops as a side effect; that's fine — we just need
+    the request to land. All errors are swallowed; this is best-effort.
+    """
+    if not port_file.exists():
+        return
+    with contextlib.suppress(Exception):
+        port = int(port_file.read_text().strip())
+        with BridgeClient("127.0.0.1", port, timeout=2.0) as client:
+            client.eval("die test cleanup", timeout=2.0)
+
+
 @pytest.fixture
 def eggdrop_proc(
     eggdrop_config: EggdropConfig,
@@ -160,7 +175,11 @@ def eggdrop_proc(
     try:
         yield proc
     finally:
-        rc = proc.terminate(timeout=5)
+        # Prefer a clean Tcl `die` so atexit handlers (incl. gcov) run; fall
+        # back to SIGTERM with a generous timeout for slow CI disks where the
+        # gcov .gcda dump on exit can take several seconds.
+        _request_clean_shutdown(port_file)
+        rc = proc.terminate(timeout=30)
         # On failure, attach the eggdrop log to the report.
         rep = getattr(request.node, "rep_call", None)
         if rep is not None and rep.failed:

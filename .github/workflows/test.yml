@@ -33,11 +33,11 @@ jobs:
 
       - name: Install Python deps
         working-directory: tests
-        run: uv sync --frozen
+        run: uv sync --frozen --no-managed-python
 
       - name: Run pytest (populates .gcda, writes junit XML)
         working-directory: tests
-        run: uv run pytest --junitxml=results.xml -v
+        run: uv run --no-managed-python pytest --junitxml=results.xml -v
 
       - name: Publish test report
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
