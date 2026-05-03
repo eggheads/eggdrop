@@ -49,6 +49,12 @@ if test "x$python_config_bin" != "x"; then
 
   AC_MSG_CHECKING([for python C flags])
   PYTHON_CFLAGS=`$python_config_bin $PYTHON_CONFIG_ARGS --cflags`
+  # remove preprocessor args
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-Wp,[[^ ]]*//g'`
+  # remove march
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-march=[[^ ]]*//g'`
+  # remove mtune
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-mtune=[[^ ]]*//g'`
   AC_MSG_RESULT([$PYTHON_CFLAGS])
   AC_SUBST(PYTHON_CFLAGS)
 
@@ -61,7 +67,7 @@ fi
 
 # Check python path
 AC_ARG_VAR([PYTHON_VERSION],[The installed Python
-version to use, for example '2.3'. This string
+version to use, for example '3.8'. This string
 will be appended to the Python interpreter
 canonical name.])
 

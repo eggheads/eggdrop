@@ -31,7 +31,7 @@ typedef struct isupport {
 
 static isupport_t *isupport_list;
 static p_tcl_bind_list H_isupport;
-static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ov)@+ CHANMODES=b,k,l,imnpst MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+";
+static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ohv)@%+ CHANMODES=beI,k,l,imnpstcCMRrDuNdTaq MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+";
 
 static int hexdigit2dec[128] = {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   0 -   9 */
@@ -418,7 +418,7 @@ void isupport_clear_values(int cleardefaultvalues) {
 void isupport_preconnect(void) {
   const char *def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
 
-  if (!def)
+  if (!def || !*def)
     def = isupport_default;
   isupport_parse(def, isupport_setdefault);
 }

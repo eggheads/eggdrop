@@ -1058,16 +1058,21 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 }
 
 /* got 324: mode status
- * <server> 324 <to> <channel> <mode>
+ * <server> 324 <to> <channel> <mode> [<mode params>...]
  */
-static int got324(char *from, char *msg)
+static int got324(char *from, char *origmsg)
 {
-  int i = 1, ok = 0;
-  char *p, *q, *chname;
+  int i = 1, ok = 0, nextarg = 3;
+  char *chname, *chg, *arg, buf[511];
+  struct parsed_irc msg;
   struct chanset_t *chan;
 
-  newsplit(&msg);
-  chname = newsplit(&msg);
+  strlcpy(buf, origmsg, sizeof buf);
+  msg = parse_irc(buf);
+  if (msg.argc < 3)
+    return 0;
+  chname = msg.argv[1];
+  chg = msg.argv[2];
   chan = findchan(chname);
   if (!chan) {
     putlog(LOG_MISC, "*", "%s: %s", IRC_UNEXPECTEDMODE, chname);
@@ -1078,58 +1083,65 @@ static int got324(char *from, char *msg)
     ok = 1;
   chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
-  while (msg[i] != 0) {
-    if (msg[i] == 'i')
-      chan->channel.mode |= CHANINV;
-    if (msg[i] == 'p')
-      chan->channel.mode |= CHANPRIV;
-    if (msg[i] == 's')
-      chan->channel.mode |= CHANSEC;
-    if (msg[i] == 'm')
-      chan->channel.mode |= CHANMODER;
-    if (msg[i] == 'c')
-      chan->channel.mode |= CHANNOCLR;
-    if (msg[i] == 'C')
-      chan->channel.mode |= CHANNOCTCP;
-    if (msg[i] == 'R')
-      chan->channel.mode |= CHANREGON;
-    if (msg[i] == 'M')
-      chan->channel.mode |= CHANMODREG;
-    if (msg[i] == 'r')
-      chan->channel.mode |= CHANLONLY;
-    if (msg[i] == 'D')
-      chan->channel.mode |= CHANDELJN;
-    if (msg[i] == 'u')
-      chan->channel.mode |= CHANSTRIP;
-    if (msg[i] == 'N')
-      chan->channel.mode |= CHANNONOTC;
-    if (msg[i] == 'T')
-      chan->channel.mode |= CHANNOAMSG;
-    if (msg[i] == 'd')
-      chan->channel.mode |= CHANINVIS;
-    if (msg[i] == 't')
-      chan->channel.mode |= CHANTOPIC;
-    if (msg[i] == 'n')
-      chan->channel.mode |= CHANNOMSG;
-    if (msg[i] == 'a')
-      chan->channel.mode |= CHANANON;
-    if (msg[i] == 'q')
-      chan->channel.mode |= CHANQUIET;
-    if (msg[i] == 'k') {
-      chan->channel.mode |= CHANKEY;
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* Test for null key assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          set_key(chan, p);
-          memmove(p, q + 1, strlen(q + 1) + 1);
-        } else {
-          set_key(chan, p);
-          *p = 0;
-        }
+  while (chg[i] != 0) {
+    arg = NULL;
+    if (MODE_HAS_SET_ARG(chg[i])) {
+      if (nextarg < (int) msg.argc) {
+        arg = msg.argv[nextarg++];
+      } else {
+        putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for +%c", origmsg, chg[i]);
       }
+    }
+    /* hardcoded assumptions in the existing old select code, SANITY CHECK */
+    if (strchr("kl", chg[i]) && !arg) {
+      arg = "";
+      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has a parameter but isupport says no", origmsg, chg[i]);
+    }
+    if (strchr("ipsmcCRMrDuNTdtnaq", chg[i]) && arg) {
+      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has no parameter but isupport says yes, ignoring", origmsg, chg[i]);
+      i++;
+      continue;
+    }
+    if (chg[i] == 'i')
+      chan->channel.mode |= CHANINV;
+    if (chg[i] == 'p')
+      chan->channel.mode |= CHANPRIV;
+    if (chg[i] == 's')
+      chan->channel.mode |= CHANSEC;
+    if (chg[i] == 'm')
+      chan->channel.mode |= CHANMODER;
+    if (chg[i] == 'c')
+      chan->channel.mode |= CHANNOCLR;
+    if (chg[i] == 'C')
+      chan->channel.mode |= CHANNOCTCP;
+    if (chg[i] == 'R')
+      chan->channel.mode |= CHANREGON;
+    if (chg[i] == 'M')
+      chan->channel.mode |= CHANMODREG;
+    if (chg[i] == 'r')
+      chan->channel.mode |= CHANLONLY;
+    if (chg[i] == 'D')
+      chan->channel.mode |= CHANDELJN;
+    if (chg[i] == 'u')
+      chan->channel.mode |= CHANSTRIP;
+    if (chg[i] == 'N')
+      chan->channel.mode |= CHANNONOTC;
+    if (chg[i] == 'T')
+      chan->channel.mode |= CHANNOAMSG;
+    if (chg[i] == 'd')
+      chan->channel.mode |= CHANINVIS;
+    if (chg[i] == 't')
+      chan->channel.mode |= CHANTOPIC;
+    if (chg[i] == 'n')
+      chan->channel.mode |= CHANNOMSG;
+    if (chg[i] == 'a')
+      chan->channel.mode |= CHANANON;
+    if (chg[i] == 'q')
+      chan->channel.mode |= CHANQUIET;
+    if (chg[i] == 'k') {
+      chan->channel.mode |= CHANKEY;
+      if (*arg)
+        set_key(chan, arg);
       if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
           !strcmp("*", chan->channel.key)))
         /* Undernet use to show a blank channel key if one was set when
@@ -1139,20 +1151,9 @@ static int got324(char *from, char *msg)
          * (guppy 22Dec2001) */
         chan->status |= CHAN_ASKEDMODES;
     }
-    if (msg[i] == 'l') {
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null limit assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          chan->channel.maxmembers = atoi(p);
-          memmove(p, q + 1, strlen(q + 1) + 1);
-        } else {
-          chan->channel.maxmembers = atoi(p);
-          *p = 0;
-        }
-      }
+    if (chg[i] == 'l') {
+      if (*arg)
+        chan->channel.maxmembers = atoi(arg);
     }
     i++;
   }
@@ -2420,6 +2421,7 @@ static int gotkick(char *from, char *origmsg)
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  int kicked_me = 0;
 
   strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
@@ -2428,19 +2430,21 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan) &&
-      !channel_inactive(chan)) {
-    chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
+  if (match_my_nick(nick) && !channel_inactive(chan)) {
+    if (channel_pending(chan)) {
+      chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-    clear_channel(chan, CHAN_RESETALL);
-    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+      clear_channel(chan, CHAN_RESETALL);
+      return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    } else
+      kicked_me = 1; /* unset CHAN_ACTIVE before check_tcl_kick() */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
@@ -2460,6 +2464,8 @@ static int gotkick(char *from, char *origmsg)
     /* This _needs_ to use chan->dname <cybah> */
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
+    if (kicked_me)
+      chan->status &= ~CHAN_ACTIVE;
     check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
 
     chan = findchan(chname);
@@ -2938,6 +2944,108 @@ static int parse_maxlist(const char *value)
   return 0;
 }
 
+// selectively update global information table,
+// either chanmodes only or prefix modes only,
+// then delete all non-existing modes of that type only
+static void update_chanmodes(mode_info_t *modes, int is_prefix)
+{
+  for (int i = 0; i < 256; i++) {
+    if (modes[i].type) {
+      // is in the new mode info, must overwrite even if type changed
+      modecharinfo[i] = modes[i]; // struct copy
+    } else if (modecharinfo[i].type) {
+      // was in the old mode info but not in the new mode info -> delete
+      // but respect if its type has already changed
+      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) || (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
+        memset(&modecharinfo[i], 0, sizeof modecharinfo[i]);
+      }
+    }
+  }
+  if (!is_prefix) {
+    // assume that if +e/+I are list-type modes that they are exempts and invites
+    use_exempts = (MODE_TYPE('e') == MODETYPE_LIST);
+    use_invites = (MODE_TYPE('I') == MODETYPE_LIST);
+  }
+}
+
+// CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz
+// listmodes, keymodes, limitmodes, flagmodes
+static int process_chanmodes(char *value)
+{
+  mode_type_t modetype = MODETYPE_LIST;
+  mode_info_t modes[256];
+
+  memset(&modes, 0, sizeof modes);
+
+  while (*value) {
+    // parse all modes until ','
+    while (*value && isalnum((unsigned char)*value)) {
+      modes[(unsigned char)*value].type = modetype;
+      modes[(unsigned char)*value].prefix = '\0';
+      debug2("Learned mode type: +%c type %s", *value, MODE_TYPE_STR(modetype));
+      value++;
+    }
+    // sanity check
+    if ((modetype != MODETYPE_FLAG && *value != ',') || (modetype == MODETYPE_FLAG && *value)) {
+      return -1;
+    }
+    // next section in order
+    if (modetype == MODETYPE_LIST) {
+      modetype = MODETYPE_KEY;
+    } else if (modetype == MODETYPE_KEY) {
+      modetype = MODETYPE_LIMIT;
+    } else if (modetype == MODETYPE_LIMIT) {
+      modetype = MODETYPE_FLAG;
+    } else {
+      break;
+    }
+    value++;
+  }
+  if (modetype != MODETYPE_FLAG) {
+    return -1;
+  }
+  // update global info table, but only for chanmodes (not prefix modes)
+  update_chanmodes(modes, 0);
+  return 0;
+}
+
+// PREFIX=(ov)@+
+static int process_prefix(const char *value)
+{
+  const char *prefix = value;
+  mode_info_t modes[256];
+
+  memset(&modes, 0, sizeof modes);
+
+  if (*value++ != '(') {
+    return -1;
+  }
+  while (*prefix && *prefix != ')') {
+    prefix++;
+  }
+  if (*prefix++ != ')') {
+    return -1;
+  }
+  // PREFIX=(ov)@+
+  // *value--^  ^--*prefix
+  while (*value && *value != ')') {
+    if (!*prefix || !isalnum((unsigned char)*value)) {
+      return -1;
+    }
+    modes[(unsigned char)*value].type = MODETYPE_PREFIX;
+    modes[(unsigned char)*value].prefix = *prefix;
+    debug3("Learned mode type: +%c type %s, prefixchar %c", *value, MODE_TYPE_STR(MODETYPE_PREFIX), *prefix);
+    value++;
+    prefix++;
+  }
+  if (*value != ')' || *prefix) {
+    return -1;
+  }
+  // update global info table, but only for prefixes
+  update_chanmodes(modes, 1);
+  return 0;
+}
+
 static int irc_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
@@ -2960,6 +3068,20 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
+  } else if (!strcmp(key, "CHANMODES")) {
+    if (!isset) {
+      value = "";
+    }
+    if (process_chanmodes(value)) {
+      putlog(LOG_MISC, "*", "Error: isupport unable to parse CHANMODES=%s, ignoring", isset ? value : "(unset)");
+    }
+  } else if (!strcmp(key, "PREFIX")) {
+    if (!isset) {
+      value = "";
+    }
+    if (process_prefix(value)) {
+      putlog(LOG_MISC, "*", "Error: isupport unable to parse PREFIX=%s, ignoring", isset ? value : "(unset)");
+    }
   }
   return 0;
 }

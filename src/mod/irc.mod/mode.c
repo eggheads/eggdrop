@@ -990,33 +990,30 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
 
 static int gotmode(char *from, char *origmsg)
 {
-  char *nick, *ch, *op, *chg, *msg;
-  char s[UHOSTLEN], buf[511];
-  char ms2[3];
-  int z;
+  char *nick, *ch, *chg;
+  char s[UHOSTLEN], buf[511], joinbuf[512];
+  char ms2[3], *arg;
+  int nextarg;
+  struct parsed_irc msg;
   struct userrec *u;
   memberlist *m;
   struct chanset_t *chan;
 
   strlcpy(buf, origmsg, sizeof buf);
-  msg = buf;
+  msg = parse_irc(buf);
   /* Usermode changes? */
-  if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
-    ch = newsplit(&msg);
-    chg = newsplit(&msg);
+  if (msg.argc > 1 && (strchr(CHANMETA, msg.argv[0][0]) != NULL)) {
+    ch = msg.argv[0];
+    chg = msg.argv[1];
+    nextarg = 2;
     reversing = 0;
     chan = findchan(ch);
     if (!chan) {
       putlog(LOG_MISC, "*", CHAN_FORCEJOIN, ch);
       dprintf(DP_SERVER, "PART %s\n", ch);
     } else if (channel_active(chan) || channel_pending(chan)) {
-      z = strlen(msg);
-      if (msg[--z] == ' ')      /* I hate cosmetic bugs :P -poptix */
-        msg[z] = 0;
-      if (msg[0] == ':')
-        msg++;
       putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s", ch, chg,
-             msg, from);
+             join_str_array(msg.argv + 2, msg.argc - 2, " ", joinbuf, sizeof joinbuf), from);
       nick = splitnick(&from);
       m = ismember(chan, nick);
       if (m) {
@@ -1046,8 +1043,24 @@ static int gotmode(char *from, char *origmsg)
       ms2[0] = '+';
       ms2[2] = 0;
       while ((ms2[1] = *chg)) {
+        arg = NULL;
         int todo = 0;
 
+        if (*chg != '+' && *chg != '-') {
+          if ((ms2[0] == '+' && MODE_HAS_SET_ARG(*chg)) || (ms2[0] == '-' && MODE_HAS_UNSET_ARG(*chg))) {
+            if (nextarg < msg.argc) {
+              arg = msg.argv[nextarg++];
+            } else {
+              putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for %c%c", origmsg, ms2[0], *chg);
+            }
+          }
+          /* hardcoded assumptions in the existing old select code, SANITY CHECK */
+          if (((ms2[0] == '+' && strchr("behIklov", *chg)) || (ms2[0] == '-' && strchr("behIkov", *chg))) && !arg) {
+              arg = "";
+              putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change %c%c has a parameter but isupport says no", origmsg, ms2[0], *chg);
+          }
+          debug5("%s: split mode change '%s%s%s' by %s", ch, ms2, arg ? " " : "", arg ? arg : "", from);
+        }
         switch (*chg) {
         case '+':
           ms2[0] = '+';
@@ -1163,11 +1176,7 @@ static int gotmode(char *from, char *origmsg)
             }
             chan->channel.maxmembers = 0;
           } else {
-            op = newsplit(&msg);
-            fixcolon(op);
-            if (*op == '\0')
-              break;
-            chan->channel.maxmembers = atoi(op);
+            chan->channel.maxmembers = atoi(arg);
             check_tcl_mode(nick, from, u, chan->dname, ms2,
                            int_to_base10(chan->channel.maxmembers));
             /* The Tcl proc might have modified/removed the chan or user */
@@ -1192,19 +1201,14 @@ static int gotmode(char *from, char *origmsg)
             chan->channel.mode |= CHANKEY;
           else
             chan->channel.mode &= ~CHANKEY;
-          op = newsplit(&msg);
-          fixcolon(op);
-          if (*op == '\0') {
-            break;
-          }
-          check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+          check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
           /* The Tcl proc might have modified/removed the chan or user */
           if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
             return 0;
           if (ms2[0] == '+') {
-            set_key(chan, op);
+            set_key(chan, arg);
             if (channel_active(chan))
-              got_key(chan, nick, from, op);
+              got_key(chan, nick, from, arg);
           } else {
             if (channel_active(chan)) {
               if (reversing && chan->channel.key[0])
@@ -1217,29 +1221,23 @@ static int gotmode(char *from, char *origmsg)
           }
           break;
         case 'o':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_op(chan, nick, from, op, u, &user);
+            got_op(chan, nick, from, arg, u, &user);
           else
-            got_deop(chan, nick, from, op, u);
+            got_deop(chan, nick, from, arg, u);
           break;
         case 'h':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_halfop(chan, nick, from, op, u, &user);
+            got_halfop(chan, nick, from, arg, u, &user);
           else
-            got_dehalfop(chan, nick, from, op, u);
+            got_dehalfop(chan, nick, from, arg, u);
           break;
         case 'v':
-          op = newsplit(&msg);
-          fixcolon(op);
-          m = ismember(chan, op);
+          m = ismember(chan, arg);
           if (!m) {
             if (channel_pending(chan))
               break;
-            putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, op);
+            putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, arg);
             chan->status |= CHAN_PEND;
             refresh_who_chan(chan->name);
           } else {
@@ -1248,21 +1246,21 @@ static int gotmode(char *from, char *origmsg)
             if (ms2[0] == '+') {
               m->flags &= ~SENTVOICE;
               m->flags |= CHANVOICE;
-              check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+              check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
               if (!(chan = modebind_refresh(ch, from, &user, s, &victim)))
                 return 0;
               if (channel_active(chan) && !glob_master(user) &&
                   !chan_master(user) && !match_my_nick(nick)) {
                 if (chan_quiet(victim) ||
                     (glob_quiet(victim) && !chan_voice(victim)))
-                  add_mode(chan, '-', 'v', op);
+                  add_mode(chan, '-', 'v', arg);
                 else if (reversing)
-                  add_mode(chan, '-', 'v', op);
+                  add_mode(chan, '-', 'v', arg);
               }
             } else {
               m->flags &= ~SENTDEVOICE;
               m->flags &= ~CHANVOICE;
-              check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+              check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
               if (!(chan = modebind_refresh(ch, from, &user, s, &victim)))
                 return 0;
               if (channel_active(chan) && !glob_master(user) &&
@@ -1271,36 +1269,30 @@ static int gotmode(char *from, char *origmsg)
                     (chan_voice(victim) || glob_voice(victim))) ||
                     (!chan_quiet(victim) && (glob_gvoice(victim) ||
                     chan_gvoice(victim))))
-                  add_mode(chan, '+', 'v', op);
+                  add_mode(chan, '+', 'v', arg);
                 else if (reversing)
-                  add_mode(chan, '+', 'v', op);
+                  add_mode(chan, '+', 'v', arg);
               }
             }
           }
           break;
         case 'b':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_ban(chan, nick, from, op, ch, u);
+            got_ban(chan, nick, from, arg, ch, u);
           else
-            got_unban(chan, nick, from, op, ch, u);
+            got_unban(chan, nick, from, arg, ch, u);
           break;
         case 'e':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_exempt(chan, nick, from, op, ch, u);
+            got_exempt(chan, nick, from, arg, ch, u);
           else
-            got_unexempt(chan, nick, from, op, ch, u);
+            got_unexempt(chan, nick, from, arg, ch, u);
           break;
         case 'I':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_invite(chan, nick, from, op, ch, u);
+            got_invite(chan, nick, from, arg, ch, u);
           else
-            got_uninvite(chan, nick, from, op, ch, u);
+            got_uninvite(chan, nick, from, arg, ch, u);
           break;
         }
         if (todo) {
