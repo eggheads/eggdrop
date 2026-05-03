@@ -16,6 +16,8 @@ See also: bans, -ban, stick, unstick
    command. Extban masks are created as [prefix]<flag>:<value>. Not all extbans
    (notice blocking, ctcp blocking, etc) can be enforced by Eggdrop. These
    non-enforceable extbans are set on-channel and managed as sticky bans.
+   Currently only extban flags (not long names) are supported. This command
+   can only be used while connected to a server.
 
 See also: +ban, -ban, bans
 %{help=+exempt}%{+lo|lo}
