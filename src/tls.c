@@ -191,7 +191,12 @@ void verify_cert_expiry(int idx) {
   x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
 #endif
   if (x509) {
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+    int e;
+    if (!X509_check_certificate_times(NULL, x509, &e) && (e == X509_V_ERR_CERT_HAS_EXPIRED)) {
+#else
     if (X509_cmp_current_time(X509_get_notAfter(x509)) < 0) {
+#endif
       if (idx) {
         dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
         dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n\n");
@@ -456,7 +461,13 @@ const char *ssl_getuid(int sock)
 {
   int idx;
   X509 *cert;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+  const
+#endif
   X509_NAME *subj;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+  const
+#endif
   ASN1_STRING *name;
 
   if (!(cert = ssl_getcert(sock)))
@@ -563,6 +574,9 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
     }
     sk_GENERAL_NAME_free(altname);
   } else { /* no subjectAltName, try to match against the subject CNs */
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+    const
+#endif
     X509_NAME *subj; /* certificate subject */
 
     /* the following is just for information */
@@ -583,6 +597,9 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
       match = 0;
     } else { /* we have a subject name, look at it */
       int pos = -1;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+      const
+#endif
       ASN1_STRING *name;
 
       /* Look for commonName attributes in the subject name */
@@ -616,7 +633,11 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
  *
  * You need to nfree() the returned pointer.
  */
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+static char *ssl_printname(const X509_NAME *name)
+#else
 static char *ssl_printname(X509_NAME *name)
+#endif
 {
   long len;
   char *data, *buf;
@@ -727,6 +748,9 @@ static char *ssl_printnum(ASN1_INTEGER *i)
 static void ssl_showcert(X509 *cert, const int loglev)
 {
   char *buf, *from, *to;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+  const
+#endif
   X509_NAME *name;
   unsigned int len;
   unsigned char md[EVP_MAX_MD_SIZE];

@@ -28,9 +28,21 @@
 #include "src/mod/module.h"
 
 static Function *global = NULL;
-
+static void get_extban_prefix(char *prefix);
+static int is_extban_mask(const char *mask);
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
+
+/* Look up an ISUPPORT (raw 005) value via server.mod, if loaded.
+ * Returns NULL if server.mod is not loaded or the key isn't set.
+ */
+static const char *servermod_isupport_get(const char *name)
+{
+  module_entry *me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT])
+    return ((const char *(*)(const char *, size_t)) me->funcs[SERVER_GET_ISUPPORT])(name, strlen(name));
+  return NULL;
+}
 
 static p_tcl_bind_list H_chanset;
 
@@ -55,6 +67,73 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 #include "userchan.c"
 #include "udefchan.c"
 
+/* Parse extban mask into type and arg pointers.
+ * Supports both prefixed (<prefix><type>:<arg>) and non-prefixed (<type>:<arg>) forms.
+ */
+int extban_parse(const char *mask, char *type, const char **arg) {
+  /* now we know mask is set, don't check it again later*/
+  if (!mask || !mask[0] || strlen(mask) < 3)
+    return 0;
+
+/* Break out no-prefix mask */
+  if (isalnum((unsigned char) mask[0]) && mask[1] == ':') {
+    if (type)
+      *type = mask[0];
+    if (arg)
+      *arg = mask + 2;
+    return 1;
+  }
+
+/* Break out prefix mask */
+  if (isalnum((unsigned char) mask[1]) && mask[2] == ':') {
+    if (type)
+      *type = mask[1];
+    if (arg)
+      *arg = mask + 3;
+    return 1;
+  }
+
+  return 0;
+}
+
+/* Return 1 if mask uses extban syntax. */
+static int is_extban_mask(const char *mask)
+{
+  return extban_parse(mask, NULL, NULL);
+}
+
+/* Extban prefix from ISUPPORT EXTBAN, if present.
+ * EXTBAN grammar is [prefix],<types> 
+ */
+static void get_extban_prefix(char *prefix)
+{
+  const char *value, *comma;
+
+  /* Clear out old value */
+  if (prefix) {
+    *prefix = '\0';
+  }
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0]) {
+    //TO DO: log issue to partyline
+    return;
+  }
+  comma = strchr(value, ',');
+  if (comma) {
+    if (comma == value) {
+      // No prefix
+      return;
+    }
+    if ((comma - value) == 1) {
+      if (prefix)
+        *prefix = value[0];
+      // Prefix
+      return;
+    }
+  }
+  // What do we do if no , present?
+  return;
+}
 
 static void *channel_malloc(int size, char *file, int line)
 {
@@ -801,6 +880,23 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
+static char *traced_account_extban(ClientData cdata, Tcl_Interp *irp,
+                                   EGG_CONST char *name1,
+                                   EGG_CONST char *name2, int flags)
+{
+  const char *account_extban = servermod_isupport_get("ACCOUNTEXTBAN");
+
+  Tcl_SetVar2(interp, name1, name2,
+              (account_extban && account_extban[0]) ? account_extban : "",
+              TCL_GLOBAL_ONLY);
+  if (flags & TCL_TRACE_UNSETS) {
+    Tcl_TraceVar(interp, "account-extban",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_account_extban, NULL);
+  }
+  return NULL;
+}
+
 static tcl_ints my_tcl_ints[] = {
   {"use-info",                 &use_info,                0},
   {"quiet-save",               &quiet_save,              0},
@@ -879,6 +975,10 @@ static char *channels_close()
   Tcl_UntraceVar(interp, "default-chanset",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_globchanset, NULL);
+  Tcl_UntraceVar(interp, "account-extban",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_account_extban, NULL);
+  traced_account_extban(NULL, interp, "account-extban", NULL, TCL_TRACE_READS);
   rem_help_reference("channels.help");
   rem_help_reference("chaninfo.help");
   module_undepend(MODULE_NAME);
@@ -950,6 +1050,7 @@ static Function channels_table[] = {
   (Function) & global_exempt_time,
   /* 48 - 51 */
   (Function) & global_invite_time,
+  (Function) extban_parse,
 };
 
 char *channels_start(Function *global_funcs)
@@ -1030,6 +1131,9 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  Tcl_TraceVar(interp, "account-extban",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_account_extban, NULL);
   H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);

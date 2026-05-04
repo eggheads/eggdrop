@@ -633,6 +633,8 @@ Function global_table[] = {
   (Function) findsock,
 /* 328 - 331 */
   (Function) & stealth_telnets,   /* int                                 */
+  (Function) parse_irc,
+  (Function) join_str_array,
   (Function) splitcn
 };
 

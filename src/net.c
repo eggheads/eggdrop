@@ -1390,8 +1390,8 @@ void tputs(int z, char *s, unsigned int len)
     inhere = 1;
 
     putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
-    s2[len - 1] = 0;
-    putlog(LOG_MISC, "*", "!-> '%s'", s2);
+    s[len - 1] = 0;
+    putlog(LOG_MISC, "*", "!-> '%s'", s);
 
     inhere = 0;
   }
