@@ -822,12 +822,16 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     errno = 0;
     lval = strtol(ss, &endptr, 10);
     if (*endptr) {
-      dprintf(idx, "add_note(): sock not a number\n");
+      if (idx >= 0)
+        dprintf(idx, "add_note(): sock not a number\n");
+
       return NOTE_ERROR;
     }
     if ((errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) ||
         (lval > INT_MAX || lval < INT_MIN)) {
-      dprintf(idx, "add_note(): sock out of range\n");
+      if (idx >= 0)
+        dprintf(idx, "add_note(): sock out of range\n");
+
       return NOTE_ERROR;
     }
     sock = lval;
