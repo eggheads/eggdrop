@@ -296,9 +296,16 @@ static void refresh_who_chan(char *channame)
 static void newmask(masklist *m, char *s, char *who)
 {
   for (; m && m->mask[0] && rfc_casecmp(m->mask, s); m = m->next);
+  if (!m) {
+    putlog(LOG_MISC, "*", "BUG!! newmask(): m == NULL.\n"
+                          "   This is a known bug we haven't fixed yet. If this\n"
+                          "   bot is the newest eggdrop version available and you\n"
+                          "   know a *reliable* way to reproduce the bug, please\n"
+                          "   contact us - we need your help!\n");
+    return;
+  }
   if (m->mask[0])
     return;                     /* Already existent mask */
-
   m->next = (masklist *) channel_malloc(sizeof(masklist));
   m->next->next = NULL;
   m->next->mask = (char *) channel_malloc(1);
