@@ -1324,7 +1324,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
   /* Skip ident lookup if disabled */
   if (identtimeout <= 0) {
     dcc[i].u.ident_sock = dcc[idx].sock;
-    dcc_telnet_got_ident(i, dcc[idx].host);
+    dcc_telnet_got_ident(i, dcc[i].host);
     return;
   }
 
@@ -1379,7 +1379,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
 static void dcc_telnet_hostresolved(int i)
 {
   int idx;
-  char s[sizeof lasttelnethost];
+  char s[sizeof lasttelnethost], *userhost;
 
   debug0("dcc_telnet_hostresolved()");
   strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
@@ -1429,11 +1429,14 @@ static void dcc_telnet_hostresolved(int i)
   }
 #endif
 
+  userhost = s + strlen("-telnet!");
+
   /* Skip ident lookup for public script listeners */
   if ((dcc[idx].status & LSTN_PUBLIC) && !strcmp(dcc[idx].nick, "(script)")) {
     changeover_dcc(i, &DCC_SOCKET, 0);
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
+    strlcpy(dcc[i].host, userhost, UHOSTLEN);
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
@@ -1446,6 +1449,7 @@ static void dcc_telnet_hostresolved(int i)
   }
 #endif /* TLS */
 
+  strlcpy(dcc[i].host, userhost, UHOSTLEN);
   dcc_telnet_hostresolved2(i, idx);
 }
 
