@@ -86,8 +86,20 @@ class EggdropConfig:
             mod_path=str(REPO_ROOT) + "/",
             help_path=str(REPO_ROOT / "help") + "/",
             bridge_tcl_path=str(BRIDGE_TCL),
+            modules=[
+                "pbkdf2",
+                "channels",
+                "server",
+                "ctcp",
+                "irc",
+                "console",
+                "notes",
+            ],
             extra_modules=[],
             channels=[{"name": "#test", "chanmode": "+nt"}],
+            chanfile_channels=[],
+            userfile_ban_lines=[],
+            userfile_chan_ban_lines={},
             extra_tcl="",
             server_cycle_wait=10,
             server_timeout=30,
@@ -111,8 +123,12 @@ class EggdropConfig:
         self.userfile_path.write_text(
             _jinja_env.get_template("userfile.j2").render(**ctx)
         )
-        # channels module wants to fopen the chanfile read-write; touch it.
-        self.chanfile_path.touch()
+        # channels.mod wants to fopen the chanfile read-write; rendering
+        # an empty `chanfile_channels` list produces an empty file, same
+        # as touching it would.
+        self.chanfile_path.write_text(
+            _jinja_env.get_template("chanfile.j2").render(**ctx)
+        )
         self.rendered = True
 
 

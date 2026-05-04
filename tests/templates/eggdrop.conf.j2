@@ -3,13 +3,9 @@
 set mod-path "{{ mod_path }}"
 set help-path "{{ help_path }}"
 
-loadmodule pbkdf2
-loadmodule channels
-loadmodule server
-loadmodule ctcp
-loadmodule irc
-loadmodule console
-loadmodule notes
+{% for m in modules %}
+loadmodule {{ m }}
+{% endfor %}
 {% for m in extra_modules %}
 loadmodule "{{ m }}"
 {% endfor %}
@@ -27,6 +23,7 @@ set userfile "{{ userfile_path }}"
 set chanfile "{{ chanfile_path }}"
 set pidfile  "{{ pidfile_path }}"
 
+{% if 'server' in modules %}
 set net-type "Other"
 set default-port "{{ mock_ircd_port }}"
 set servers [list]
@@ -37,6 +34,7 @@ set server-timeout "{{ server_timeout }}"
 set msg-rate 0
 set flood-msg 0
 set flood-ctcp 0
+{% endif %}
 
 set raw-log 1
 logfile {{ log_flags }} * "{{ logfile_path }}"

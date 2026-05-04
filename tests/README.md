@@ -253,6 +253,88 @@ def test_with_custom_nick(eggdrop_config, eggdrop_proc, mock_ircd, tcl_bridge):
 If you don't call `render()`, the `eggdrop_proc` fixture renders with
 defaults from `EggdropConfig.context()`.
 
+`render()` only takes effect *before* the proc fixture evaluates. If your
+test parameter list pulls in `eggdrop_proc` directly, the proc has already
+spawned by the time the test body runs. To customise after the dataclass
+exists but before the bot starts, take `eggdrop_config` + `request:
+pytest.FixtureRequest`, render, then lazy-load the rest:
+
+```python
+def test_loads_my_userfile(eggdrop_config, request: pytest.FixtureRequest):
+    eggdrop_config.render(...)
+    eggdrop_config.userfile_path.write_text(...)  # tweak files post-render
+    proc = request.getfixturevalue("eggdrop_proc")
+    bridge = request.getfixturevalue("tcl_bridge")
+```
+
+### Pre-populating the userfile
+
+Two template variables (rendered by `templates/userfile.j2`) inject
+already-formatted ban-record lines into the userfile that's written
+before the bot starts:
+
+- `userfile_ban_lines` — list of strings, written under `*ban - -`.
+- `userfile_chan_ban_lines` — dict of `chan-name → list of strings`,
+  each list written under `::<chan-name> bans`. The channel must be
+  configured before the userfile is read; the default eggdrop.conf
+  `channels` list handles this for `#test` automatically (see
+  `chanprog.c:452` for the order: conf load → HOOK_REHASH →
+  `readuserfile`).
+
+Build the strings with `support.userfile_helpers.format_userfile_ban`,
+which takes every field as a required keyword argument (`mask`, `perm`,
+`sticky`, `expire`, `added`, `lastactive`, `creator`, `desc`) and
+hex-escapes `:` / `\\` in the mask per `src/misc.c:str_escape`. The
+template itself is a flat iteration; all formatting lives in Python.
+
+```python
+from support.userfile_helpers import format_userfile_ban
+
+eggdrop_config.render(
+    userfile_ban_lines=[
+        format_userfile_ban(
+            mask="a:storedacct", perm=True, sticky=False, expire=0,
+            added=1700000000, lastactive=0, creator="owner",
+            desc="from disk",
+        ),
+    ],
+    userfile_chan_ban_lines={
+        "#test": [
+            format_userfile_ban(
+                mask="~a:chanonlyacct", perm=True, sticky=False, expire=0,
+                added=1700000000, lastactive=0, creator="owner",
+                desc="per-chan",
+            ),
+        ],
+    },
+)
+```
+
+The chanfile is rendered from `templates/chanfile.j2`. Pass
+`chanfile_channels=[{"name": "#chan", "options": "..."}]` if you need
+to register channels at chanfile-load time (rather than via
+`channels` in the conf). Default is empty — most tests use the
+conf-level `channel add` instead.
+
+### Selecting which modules to load
+
+The `modules` template variable controls the `loadmodule` lines and gates
+the server-related conf block (`set net-type`, `server add`, `set
+msg-rate`, ...) on whether `server` is in the list. Default is the full
+chain needed for IRC behaviour: `["pbkdf2", "channels", "server", "ctcp",
+"irc", "console", "notes"]`.
+
+Override to test channels-mod-only scenarios (e.g. behaviour when
+server.mod is absent — irc.mod and ctcp.mod will fail to load alongside
+since they `module_depend` on server):
+
+```python
+eggdrop_config.render(modules=["pbkdf2", "channels", "console", "notes"])
+```
+
+`extra_modules` still appends in addition to `modules`, so it's the right
+knob for opting into share/transfer/etc. without changing the base list.
+
 ## Layout
 
 ```
