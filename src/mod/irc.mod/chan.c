@@ -35,6 +35,8 @@ static char last_invchan[CHANNELLEN + 1] = "";
 static char botflag005;
 
 static int got315(char *from, char *msg);
+static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick);
+static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky);
 
 /* ID length for !channels.
  */
@@ -92,6 +94,85 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
+static int extban_flag_supported(char flag)
+{
+  module_entry *me;
+  const char *value = NULL, *comma, *types;
+
+  me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
+    value = (const char *)isupport_get("EXTBAN", strlen("EXTBAN"));
+  }
+  if (!value || !value[0])
+    return 0;
+
+  comma = strchr(value, ',');
+  types = comma ? comma + 1 : value;
+  for (; *types; types++)
+    if (*types == flag)
+      return 1;
+  return 0;
+}
+
+/* True if mask is an extban whose flag eggdrop cannot enforce by kicking.
+ * Decided at runtime from current ISUPPORT - never persisted to the userfile.
+ */
+static int extban_is_unenforceable(const char *mask)
+{
+  char extflag;
+  const char *extarg, *acc;
+
+  if (!extban_parse(mask, &extflag, &extarg))
+    return 0;
+  if (extflag == 'U')
+    return 0;
+  acc = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+  if (acc && acc[0] && extflag == acc[0])
+    return 0;
+  return 1;
+}
+
+/* Document whether a ban matches a specific channel member.
+ * banmask can be normal or extban, user is the traditional userhost.
+ * Returns 1 if the ban mask matches the member, 0 if not.
+ */
+static int banmask_matches_member(const char *banmask, const char *user, memberlist *m)
+{
+  module_entry *me;
+  char type;
+  const char *v = NULL, *arg = NULL;
+
+  /* Am I an extban? */
+  if (!extban_parse(banmask, &type, &arg)) {
+    return match_addr((char *) banmask, (char *) user);
+  }
+
+  me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
+    v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+  }
+  /* Try account extban matching */
+  if (v && v[0] && type == v[0]) {
+    return !rfc_casecmp(m->account, arg);
+  }
+
+  /* Try U (unregistered) extban matching */
+  if (type == 'U') {
+    return !strcmp(m->account, "*") && match_addr((char *) arg, (char *) user);
+  }
+  return 0;
+}
+
+
+static int banmask_list_matches_member(maskrec *list, const char *user, memberlist *m)
+{
+  for (; list; list = list->next)
+    if (banmask_matches_member(list->mask, user, m))
+      return 1;
+  return 0;
+}
+
+
 /* set user account on all members on all channels,
  * trigger account bind if account state was not "unknown" (empty string)
  */
@@ -103,6 +184,8 @@ static void setaccount(char *nick, char *account)
   for (chan = chanset; chan; chan = chan->next) {
     if ((m = ismember(chan, nick))) {
       if (rfc_casecmp(m->account, account)) {
+        char user[UHOSTLEN];
+
         /* account was known */
         if (m->account[0]) {
           if (!strcmp(account, "*")) {
@@ -113,6 +196,12 @@ static void setaccount(char *nick, char *account)
           check_tcl_account(m->nick, m->userhost, get_user_from_member(m), chan->dname, account);
         }
         strlcpy(m->account, account, sizeof m->account);
+
+        egg_snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
+        if (banmask_list_matches_member(global_bans, user, m) ||
+                banmask_list_matches_member(chan->bans, user, m)) {
+          refresh_ban_kick(chan, user, m->nick);
+        }
       }
     }
   }
@@ -432,7 +521,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
-        match_addr(hostmask, s) && !chan_sentkick(m) &&
+        banmask_matches_member(hostmask, s, m) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
         !glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
         isexempted(chan, s)) || (u_match_mask(global_exempts, s) ||
@@ -475,7 +564,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   /* Check global bans in first cycle and channel bans in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
-      if (match_addr(b->mask, user)) {
+      if (banmask_matches_member(b->mask, user, m)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
         get_user_flagrec(get_user_from_member(m), &fr,
@@ -574,10 +663,16 @@ static void recheck_bans(struct chanset_t *chan)
 
   /* Check global bans in first cycle and channel bans in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
-    for (u = cycle ? chan->bans : global_bans; u; u = u->next)
+    for (u = cycle ? chan->bans : global_bans; u; u = u->next) {
+      char extflag;
+      const char *extarg;
+
+      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag))
+        continue;
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY)))
+          (u->flags & MASKREC_STICKY) || extban_is_unenforceable(u->mask)))
         add_mode(chan, '+', 'b', u->mask);
+    }
   }
 }
 
@@ -668,20 +763,25 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
 static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
 {
   memberlist *m;
-  char user[NICKMAX+UHOSTLEN+1];
+  char user[NICKMAX+UHOSTLEN+1], extflag;
+  const char *extarg;
 
   if (HALFOP_CANTDOMODE('b'))
     return;
 
+  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported(extflag))
+    return;
+
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
-    if (match_addr(banmask, user) &&
+    if (banmask_matches_member(banmask, user, m) &&
         !(use_exempts &&
           (u_match_mask(global_exempts, user) ||
            u_match_mask(chan->exempts, user))))
       refresh_ban_kick(chan, user, m->nick);
   }
-  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky))
+  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
+      extban_is_unenforceable(banmask)))
     add_mode(chan, '+', 'b', banmask);
 }
 
@@ -958,16 +1058,21 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 }
 
 /* got 324: mode status
- * <server> 324 <to> <channel> <mode>
+ * <server> 324 <to> <channel> <mode> [<mode params>...]
  */
-static int got324(char *from, char *msg)
+static int got324(char *from, char *origmsg)
 {
-  int i = 1, ok = 0;
-  char *p, *q, *chname;
+  int i = 1, ok = 0, nextarg = 3;
+  char *chname, *chg, *arg, buf[511];
+  struct parsed_irc msg;
   struct chanset_t *chan;
 
-  newsplit(&msg);
-  chname = newsplit(&msg);
+  strlcpy(buf, origmsg, sizeof buf);
+  msg = parse_irc(buf);
+  if (msg.argc < 3)
+    return 0;
+  chname = msg.argv[1];
+  chg = msg.argv[2];
   chan = findchan(chname);
   if (!chan) {
     putlog(LOG_MISC, "*", "%s: %s", IRC_UNEXPECTEDMODE, chname);
@@ -978,58 +1083,65 @@ static int got324(char *from, char *msg)
     ok = 1;
   chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
-  while (msg[i] != 0) {
-    if (msg[i] == 'i')
-      chan->channel.mode |= CHANINV;
-    if (msg[i] == 'p')
-      chan->channel.mode |= CHANPRIV;
-    if (msg[i] == 's')
-      chan->channel.mode |= CHANSEC;
-    if (msg[i] == 'm')
-      chan->channel.mode |= CHANMODER;
-    if (msg[i] == 'c')
-      chan->channel.mode |= CHANNOCLR;
-    if (msg[i] == 'C')
-      chan->channel.mode |= CHANNOCTCP;
-    if (msg[i] == 'R')
-      chan->channel.mode |= CHANREGON;
-    if (msg[i] == 'M')
-      chan->channel.mode |= CHANMODREG;
-    if (msg[i] == 'r')
-      chan->channel.mode |= CHANLONLY;
-    if (msg[i] == 'D')
-      chan->channel.mode |= CHANDELJN;
-    if (msg[i] == 'u')
-      chan->channel.mode |= CHANSTRIP;
-    if (msg[i] == 'N')
-      chan->channel.mode |= CHANNONOTC;
-    if (msg[i] == 'T')
-      chan->channel.mode |= CHANNOAMSG;
-    if (msg[i] == 'd')
-      chan->channel.mode |= CHANINVIS;
-    if (msg[i] == 't')
-      chan->channel.mode |= CHANTOPIC;
-    if (msg[i] == 'n')
-      chan->channel.mode |= CHANNOMSG;
-    if (msg[i] == 'a')
-      chan->channel.mode |= CHANANON;
-    if (msg[i] == 'q')
-      chan->channel.mode |= CHANQUIET;
-    if (msg[i] == 'k') {
-      chan->channel.mode |= CHANKEY;
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* Test for null key assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          set_key(chan, p);
-          memmove(p, q + 1, strlen(q + 1) + 1);
-        } else {
-          set_key(chan, p);
-          *p = 0;
-        }
+  while (chg[i] != 0) {
+    arg = NULL;
+    if (MODE_HAS_SET_ARG(chg[i])) {
+      if (nextarg < (int) msg.argc) {
+        arg = msg.argv[nextarg++];
+      } else {
+        putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for +%c", origmsg, chg[i]);
       }
+    }
+    /* hardcoded assumptions in the existing old select code, SANITY CHECK */
+    if (strchr("kl", chg[i]) && !arg) {
+      arg = "";
+      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has a parameter but isupport says no", origmsg, chg[i]);
+    }
+    if (strchr("ipsmcCRMrDuNTdtnaq", chg[i]) && arg) {
+      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has no parameter but isupport says yes, ignoring", origmsg, chg[i]);
+      i++;
+      continue;
+    }
+    if (chg[i] == 'i')
+      chan->channel.mode |= CHANINV;
+    if (chg[i] == 'p')
+      chan->channel.mode |= CHANPRIV;
+    if (chg[i] == 's')
+      chan->channel.mode |= CHANSEC;
+    if (chg[i] == 'm')
+      chan->channel.mode |= CHANMODER;
+    if (chg[i] == 'c')
+      chan->channel.mode |= CHANNOCLR;
+    if (chg[i] == 'C')
+      chan->channel.mode |= CHANNOCTCP;
+    if (chg[i] == 'R')
+      chan->channel.mode |= CHANREGON;
+    if (chg[i] == 'M')
+      chan->channel.mode |= CHANMODREG;
+    if (chg[i] == 'r')
+      chan->channel.mode |= CHANLONLY;
+    if (chg[i] == 'D')
+      chan->channel.mode |= CHANDELJN;
+    if (chg[i] == 'u')
+      chan->channel.mode |= CHANSTRIP;
+    if (chg[i] == 'N')
+      chan->channel.mode |= CHANNONOTC;
+    if (chg[i] == 'T')
+      chan->channel.mode |= CHANNOAMSG;
+    if (chg[i] == 'd')
+      chan->channel.mode |= CHANINVIS;
+    if (chg[i] == 't')
+      chan->channel.mode |= CHANTOPIC;
+    if (chg[i] == 'n')
+      chan->channel.mode |= CHANNOMSG;
+    if (chg[i] == 'a')
+      chan->channel.mode |= CHANANON;
+    if (chg[i] == 'q')
+      chan->channel.mode |= CHANQUIET;
+    if (chg[i] == 'k') {
+      chan->channel.mode |= CHANKEY;
+      if (*arg)
+        set_key(chan, arg);
       if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
           !strcmp("*", chan->channel.key)))
         /* Undernet use to show a blank channel key if one was set when
@@ -1039,20 +1151,9 @@ static int got324(char *from, char *msg)
          * (guppy 22Dec2001) */
         chan->status |= CHAN_ASKEDMODES;
     }
-    if (msg[i] == 'l') {
-      p = strchr(msg, ' ');
-      if (p != NULL) {          /* test for null limit assignment */
-        p++;
-        q = strchr(p, ' ');
-        if (q != NULL) {
-          *q = 0;
-          chan->channel.maxmembers = atoi(p);
-          memmove(p, q + 1, strlen(q + 1) + 1);
-        } else {
-          chan->channel.maxmembers = atoi(p);
-          *p = 0;
-        }
-      }
+    if (chg[i] == 'l') {
+      if (*arg)
+        chan->channel.maxmembers = atoi(arg);
     }
     i++;
   }
@@ -2109,7 +2210,10 @@ static int gotjoin(char *from, char *channame)
           else
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
-          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC), 1);
+          reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC &
+            (chan->channel.members == 1 ? ~CHAN_RESETWHO : CHAN_RESETALL)), /* do not remove myself again */
+            1);
+
         } else {
           struct chanuserrec *cr;
 
@@ -2166,7 +2270,7 @@ static int gotjoin(char *from, char *channame)
               (!use_exempts || !isexempted(chan, from)) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
-              if (match_addr(b->mask, from)) {
+              if (banmask_matches_member(b->mask, from, m)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
                         IRC_YOUREBANNED);
                 m->flags |= SENTKICK;
@@ -2317,6 +2421,7 @@ static int gotkick(char *from, char *origmsg)
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  int kicked_me = 0;
 
   strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
@@ -2325,19 +2430,21 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan) &&
-      !channel_inactive(chan)) {
-    chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
+  if (match_my_nick(nick) && !channel_inactive(chan)) {
+    if (channel_pending(chan)) {
+      chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-    if (key[0])
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              chan->name[0] ? chan->name : chan->dname, key);
-    else
-      dprintf(DP_SERVER, "JOIN %s\n",
-              chan->name[0] ? chan->name : chan->dname);
-    clear_channel(chan, CHAN_RESETALL);
-    return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+      clear_channel(chan, CHAN_RESETALL);
+      return 0; /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
+    } else
+      kicked_me = 1; /* unset CHAN_ACTIVE before check_tcl_kick() */
   }
   if (channel_active(chan)) {
     fixcolon(msg);
@@ -2357,6 +2464,8 @@ static int gotkick(char *from, char *origmsg)
     /* This _needs_ to use chan->dname <cybah> */
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
+    if (kicked_me)
+      chan->status &= ~CHAN_ACTIVE;
     check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
 
     chan = findchan(chname);
@@ -2835,6 +2944,108 @@ static int parse_maxlist(const char *value)
   return 0;
 }
 
+// selectively update global information table,
+// either chanmodes only or prefix modes only,
+// then delete all non-existing modes of that type only
+static void update_chanmodes(mode_info_t *modes, int is_prefix)
+{
+  for (int i = 0; i < 256; i++) {
+    if (modes[i].type) {
+      // is in the new mode info, must overwrite even if type changed
+      modecharinfo[i] = modes[i]; // struct copy
+    } else if (modecharinfo[i].type) {
+      // was in the old mode info but not in the new mode info -> delete
+      // but respect if its type has already changed
+      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) || (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
+        memset(&modecharinfo[i], 0, sizeof modecharinfo[i]);
+      }
+    }
+  }
+  if (!is_prefix) {
+    // assume that if +e/+I are list-type modes that they are exempts and invites
+    use_exempts = (MODE_TYPE('e') == MODETYPE_LIST);
+    use_invites = (MODE_TYPE('I') == MODETYPE_LIST);
+  }
+}
+
+// CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz
+// listmodes, keymodes, limitmodes, flagmodes
+static int process_chanmodes(char *value)
+{
+  mode_type_t modetype = MODETYPE_LIST;
+  mode_info_t modes[256];
+
+  memset(&modes, 0, sizeof modes);
+
+  while (*value) {
+    // parse all modes until ','
+    while (*value && isalnum((unsigned char)*value)) {
+      modes[(unsigned char)*value].type = modetype;
+      modes[(unsigned char)*value].prefix = '\0';
+      debug2("Learned mode type: +%c type %s", *value, MODE_TYPE_STR(modetype));
+      value++;
+    }
+    // sanity check
+    if ((modetype != MODETYPE_FLAG && *value != ',') || (modetype == MODETYPE_FLAG && *value)) {
+      return -1;
+    }
+    // next section in order
+    if (modetype == MODETYPE_LIST) {
+      modetype = MODETYPE_KEY;
+    } else if (modetype == MODETYPE_KEY) {
+      modetype = MODETYPE_LIMIT;
+    } else if (modetype == MODETYPE_LIMIT) {
+      modetype = MODETYPE_FLAG;
+    } else {
+      break;
+    }
+    value++;
+  }
+  if (modetype != MODETYPE_FLAG) {
+    return -1;
+  }
+  // update global info table, but only for chanmodes (not prefix modes)
+  update_chanmodes(modes, 0);
+  return 0;
+}
+
+// PREFIX=(ov)@+
+static int process_prefix(const char *value)
+{
+  const char *prefix = value;
+  mode_info_t modes[256];
+
+  memset(&modes, 0, sizeof modes);
+
+  if (*value++ != '(') {
+    return -1;
+  }
+  while (*prefix && *prefix != ')') {
+    prefix++;
+  }
+  if (*prefix++ != ')') {
+    return -1;
+  }
+  // PREFIX=(ov)@+
+  // *value--^  ^--*prefix
+  while (*value && *value != ')') {
+    if (!*prefix || !isalnum((unsigned char)*value)) {
+      return -1;
+    }
+    modes[(unsigned char)*value].type = MODETYPE_PREFIX;
+    modes[(unsigned char)*value].prefix = *prefix;
+    debug3("Learned mode type: +%c type %s, prefixchar %c", *value, MODE_TYPE_STR(MODETYPE_PREFIX), *prefix);
+    value++;
+    prefix++;
+  }
+  if (*value != ')' || *prefix) {
+    return -1;
+  }
+  // update global info table, but only for prefixes
+  update_chanmodes(modes, 1);
+  return 0;
+}
+
 static int irc_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
@@ -2857,6 +3068,20 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
   } else if (!strcmp(key, "BOT")) {
     botflag005 = value[0];
+  } else if (!strcmp(key, "CHANMODES")) {
+    if (!isset) {
+      value = "";
+    }
+    if (process_chanmodes(value)) {
+      putlog(LOG_MISC, "*", "Error: isupport unable to parse CHANMODES=%s, ignoring", isset ? value : "(unset)");
+    }
+  } else if (!strcmp(key, "PREFIX")) {
+    if (!isset) {
+      value = "";
+    }
+    if (process_prefix(value)) {
+      putlog(LOG_MISC, "*", "Error: isupport unable to parse PREFIX=%s, ignoring", isset ? value : "(unset)");
+    }
   }
   return 0;
 }

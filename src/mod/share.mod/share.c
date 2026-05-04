@@ -2032,14 +2032,14 @@ static void finish_share(int idx)
 static void start_sending_users(int idx)
 {
   struct userrec *u;
-  char share_file[1024], s1[64];
+  char r[9], share_file[PATH_MAX], s1[64], s[EGG_INET_ADDRSTRLEN];
   int i = 1;
   struct chanuserrec *ch;
   struct chanset_t *cst;
-  char s[EGG_INET_ADDRSTRLEN];
 
-  snprintf(share_file, sizeof share_file, ".share.%s.%" PRId64, dcc[idx].nick,
-           (int64_t) now);
+  make_rand_str_from_chars(r, (sizeof r) - 1, CHARSET_LOWER_ALPHA);
+  snprintf(share_file, sizeof share_file, ".share.%s.%" PRId64 ".%s",
+           dcc[idx].nick, (int64_t) now, r);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
            dcc[idx].nick);

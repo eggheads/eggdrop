@@ -2900,6 +2900,13 @@ language
 
   Module: core
 
+^^^^^^^^^^^^^^
+account-extban
+^^^^^^^^^^^^^^
+  Value: a string containing the value of ACCOUNTEXTBAN provided by the 005 connection message. This is the raw value and, depending on the IRC server formatting, could be in multiple formats such as "a", or "a,account".
+
+  Module: channel
+
 Binds
 -----
 

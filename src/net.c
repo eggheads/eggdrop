@@ -1028,6 +1028,10 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           continue;           /* EAGAIN */
         }
       }
+#ifdef TLS
+      if (socklist[i].flags & SOCK_WS)
+        webui_unframe(slist[i].sock, s, &x);
+#endif /* TLS */
       s[x] = 0;
       *len = x;
       if (slist[i].flags & SOCK_PROXYWAIT) {
@@ -1074,11 +1078,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #ifdef EGG_TDNS
   dtn_prev = dns_thread_head;
   for (dtn = dtn_prev->next; dtn; dtn = dtn->next) {
-    pthread_mutex_lock(&dtn->mutex);
-    if (*dtn->strerror)
-      debug2("%s: hostname %s", dtn->strerror, dtn->host);
     fd = dtn->fildes[0];
     if (FD_ISSET(fd, &fdr)) {
+      pthread_mutex_lock(&dtn->mutex);
+      if (*dtn->strerror)
+        debug2("%s: hostname %s", dtn->strerror, dtn->host);
       if (dtn->type == DTN_TYPE_HOSTBYIP)
         call_hostbyip(&dtn->addr, dtn->host, !*dtn->strerror);
       else
@@ -1090,8 +1094,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       dtn_prev->next = dtn->next;
       nfree(dtn);
       dtn = dtn_prev;
-    } else
-      pthread_mutex_unlock(&dtn->mutex);
+    }
     dtn_prev = dtn;
   }
 #endif
@@ -1311,7 +1314,7 @@ int sockgets(char *s, int *len)
 void tputs(int z, char *s, unsigned int len)
 {
   int i, x, idx;
-  char *p;
+  char *p, *s2 = 0;
   static int inhere = 0;
   struct threaddata *td = threaddata();
 
@@ -1356,8 +1359,12 @@ void tputs(int z, char *s, unsigned int len)
         return;
       }
 #ifdef TLS
+      if (!(socklist[i].flags & SOCK_WS))
+        s2 = s;
+      else
+        len = webui_frame(&s2, s, len);
       if (socklist[i].ssl) {
-        x = SSL_write(socklist[i].ssl, s, len);
+        x = SSL_write(socklist[i].ssl, s2, len);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
           if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
@@ -1371,15 +1378,17 @@ void tputs(int z, char *s, unsigned int len)
           x = -1;
         }
       } else /* not ssl, use regular write() */
-#endif
+#else
+      s2 = s;
+#endif /* TLS */
       /* Try. */
-      x = write(z, s, len);
+      x = write(z, s2, len);
       if (x == -1)
         x = 0;
       if (x < len) {
         /* Socket is full, queue it */
         socklist[i].handler.sock.outbuf = nmalloc(len - x);
-        memcpy(socklist[i].handler.sock.outbuf, &s[x], len - x);
+        memcpy(socklist[i].handler.sock.outbuf, &s2[x], len - x);
         socklist[i].handler.sock.outbuflen = len - x;
       }
       return;
