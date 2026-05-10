@@ -173,10 +173,34 @@ drive_registration(mock_ircd, isupport_tokens=[
 ])
 ```
 
+To influence which IRCv3 caps the bot negotiates, override the
+`mock_ircd` fixture for the test and construct the IRCd with the cap
+list. The bot sends `CAP LS 302` the moment TCP connects, before the
+test body runs, so the cap list has to be set at construction time:
+
+```python
+@pytest.fixture
+def mock_ircd():
+    ircd = MockIrcd(advertised_caps=["account-tag"]).start()
+    try:
+        yield ircd
+    finally:
+        with contextlib.suppress(Exception):
+            ircd.stop()
+
+def test_account_tag_negotiated(eggdrop_proc, mock_ircd, tcl_bridge):
+    drive_registration(mock_ircd)
+    assert "account-tag" in tcl_bridge.eval_ok("cap enabled").split()
+```
+
+The bot only `REQ`s caps it has enabled in config (e.g. `account-tag`
+is opt-in via `set account-tag 1` in the rendered eggdrop.conf — pass
+`extra_tcl="set account-tag 1\n"` to `eggdrop_config.render`).
+
 After this returns, Eggdrop has processed 005 and is about to JOIN
 configured channels.
 
-### `drive_join_with_names(mock_ircd, members_with_prefix, nick="TestBot", server="mock.test") -> str`
+### `drive_join_with_names(mock_ircd, members_with_prefix, nick="TestBot", server="mock.test", member_accounts=None) -> str`
 
 Mimics a real IRCd's full post-JOIN dance for the bot:
 
@@ -187,11 +211,18 @@ Mimics a real IRCd's full post-JOIN dance for the bot:
    like `"@TestBot ~bigboss +regular"`) and `366` end-of-NAMES.
 4. Drains the post-join queries Eggdrop fires off:
    - `MODE +b/+e/+I` → empty `368/349/347` end-of-list replies
-   - `WHO #chan` → one `352` per member (prefix symbols passed through to
-     the WHO flags field, so `opchars`-based op detection picks them up)
-     followed by `315` end-of-WHO
+   - `WHO #chan ...` → if the bot sent a WHOX-style request (the
+     `c%chnufat,222` form, used when `WHOX` ISUPPORT is on), reply with
+     one `354` per member carrying the per-member account from
+     `member_accounts` (default `*` = not logged in). Otherwise reply
+     with one `352` per member (prefix symbols passed through to the WHO
+     flags field, so `opchars`-based op detection picks them up). Either
+     form ends with `315`.
 5. Leaves `MODE #chan` (no list flag) **unanswered** so individual tests
    can send their own `324` mode reply if they need to.
+
+`member_accounts` is a `dict[str, str]` mapping member nick → account
+name. Only consulted on the WHOX path; ignored for plain WHO.
 
 Returns the channel name. Quiesces when no new lines arrive for ~300 ms
 (or after a 5 s hard cap).
@@ -200,6 +231,12 @@ Returns the channel name. Quiesces when no new lines arrive for ~300 ms
 chan = drive_join_with_names(mock_ircd, "@TestBot alice +bob")
 # bot is now fully joined to chan; alice is a plain member, bob is voiced
 mock_ircd.send(f":mock.test 324 TestBot {chan} +ntk secret")  # custom 324
+
+# WHOX flavour (bot is on a network that advertised WHOX in 005):
+chan = drive_join_with_names(
+    mock_ircd, "@op alice", member_accounts={"op": "op"}
+)
+# op's account is now "op" via 354 → got354 → setaccount
 ```
 
 ### `wait_for_isupport(bridge, key, expected, timeout=5.0)`
@@ -232,6 +269,13 @@ test code that needs to do the same parsing. `"@alice"` → `("alice", "@")`,
 The fixtures wire to each other: pulling in `tcl_bridge` is enough — it
 depends on `eggdrop_proc` which depends on `eggdrop_config` and
 `mock_ircd`, all of which depend on `tmp_eggdir`.
+
+### Markers
+
+| Marker | Effect |
+| --- | --- |
+| `@pytest.mark.partyline` | `eggdrop_proc` spawns with `-nt`; HQ partyline available on stdin |
+| `@pytest.mark.slow` | Tag for end-to-end / reconnect / timeout-driven tests |
 
 ## Customising a test's eggdrop.conf
 

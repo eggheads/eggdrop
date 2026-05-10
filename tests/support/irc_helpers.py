@@ -47,6 +47,12 @@ def drive_registration(
     Waits for the TCP connect, drains the bot's NICK + USER, then sends the
     welcome sequence (001-004 + optional 005 with `isupport_tokens` + 376).
     Returns once the welcome is on the wire.
+
+    To influence which IRCv3 caps the bot negotiates, construct the IRCd with
+    `MockIrcd(advertised_caps=[...])` (typically via a local `mock_ircd`
+    fixture override). The cap list has to be set at construction time
+    because the bot sends `CAP LS 302` immediately on TCP connect — before
+    this helper runs.
     """
     mock_ircd.wait_for_connect(timeout=10.0)
     for _ in range(2):  # NICK and USER
@@ -59,6 +65,7 @@ def drive_join_with_names(
     members_with_prefix: str,
     nick: str = "TestBot",
     server: str = "mock.test",
+    member_accounts: dict[str, str] | None = None,
 ) -> str:
     """Drive a realistic post-registration channel JOIN to completion.
 
@@ -68,10 +75,16 @@ def drive_join_with_names(
       3. send NAMES (353) with `members_with_prefix` + end (366)
       4. drain the bot's post-join queries:
          * `MODE #chan +b/+e/+I` → empty 368/349/347 end-of-list replies
-         * `WHO #chan` → one 352 per member (prefix symbols passed through to
-           the flags field so opchars-based op detection works) + 315
+         * `WHO #chan ...` → if the bot sent a WHOX-style request (the
+           `c%chnufat,222` form, used when WHOX ISUPPORT is on), reply with
+           one 354 per member carrying the per-member account from
+           `member_accounts` (default "*" = not logged in). Otherwise reply
+           with one 352 per member. Either form ends with 315.
       5. leave `MODE #chan` (no list flag) unanswered so tests can send
          their own 324 reply
+
+    `member_accounts` maps member nick → account name; nicks not in the dict
+    get "*". Only consulted on the WHOX path; ignored for plain WHO.
     Returns the channel name. Quiesces when no new lines arrive for ~300 ms
     or after a 5 s hard cap.
     """
@@ -86,16 +99,26 @@ def drive_join_with_names(
     members: list[tuple[str, str]] = [
         split_member_prefix(t) for t in members_with_prefix.split() if t
     ]
+    accounts = member_accounts or {}
 
-    def reply_who() -> None:
+    def reply_who(whox: bool) -> None:
         for member_nick, prefix_syms in members:
             ident = "u"
             host = "h.example.com"
             flags = "H" + prefix_syms  # H = here (not away)
-            mock_ircd.send(
-                f":{server} 352 {nick} {chan} {ident} {host} {server} "
-                f"{member_nick} {flags} :0 {member_nick}"
-            )
+            if whox:
+                # 354 format from chan.c:got354:
+                # ":<srv> 354 <botnick> 222 <chan> <user> <host> <nick> <flags> <account>"
+                acct = accounts.get(member_nick, "*")
+                mock_ircd.send(
+                    f":{server} 354 {nick} 222 {chan} {ident} {host} "
+                    f"{member_nick} {flags} {acct}"
+                )
+            else:
+                mock_ircd.send(
+                    f":{server} 352 {nick} {chan} {ident} {host} {server} "
+                    f"{member_nick} {flags} :0 {member_nick}"
+                )
         mock_ircd.send(f":{server} 315 {nick} {chan} :End of /WHO list.")
 
     deadline = time.monotonic() + 5.0
@@ -116,7 +139,9 @@ def drive_join_with_names(
                 f":{server} 347 {nick} {chan} :End of Channel Invite List"
             )
         elif line.startswith(f"WHO {chan}"):
-            reply_who()
+            # WHOX form is `WHO #chan c%chnufat,222`; eggdrop emits this when
+            # use_354 (WHOX ISUPPORT) is on and parses replies from got354.
+            reply_who(whox=",222" in line)
         # MODE #chan (no list flag) — left for the test to answer with 324.
         # Anything else is silently drained.
     return chan

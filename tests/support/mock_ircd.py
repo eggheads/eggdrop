@@ -48,17 +48,25 @@ class MockIrcd:
         allow_reconnect: bool = False,
         auto_cap: bool = True,
         server_name: str = "mock.test",
+        advertised_caps: Iterable[str] | None = None,
     ) -> None:
         """Configure (but do not start) a mock IRCd.
 
         `allow_reconnect`: if False, a second client connection during the
             test is treated as a hard error at `stop()` time.
-        `auto_cap`: auto-respond to `CAP LS`/`REQ`/`LIST` with empty caps.
+        `auto_cap`: auto-respond to `CAP LS`/`REQ`/`LIST`. `CAP REQ` is
+            always ACKed for whatever the bot asks for.
         `server_name`: source prefix for synthetic numerics (`:server 001 ...`).
+        `advertised_caps`: caps offered in `CAP LS` replies. Default empty.
+            Tests that need specific caps construct their own MockIrcd
+            (typically via a local `mock_ircd` fixture override) — by the
+            time the test body runs the bot has already sent `CAP LS 302`,
+            so the cap list must be set at construction time.
         """
         self._allow_reconnect = allow_reconnect
         self._auto_cap = auto_cap
         self._server_name = server_name
+        self._advertised_caps = " ".join(advertised_caps or [])
         self._loop = asyncio.new_event_loop()
         self._thread = threading.Thread(
             target=self._loop.run_forever, name="MockIrcd", daemon=True
@@ -158,15 +166,16 @@ class MockIrcd:
     def _handle_cap(self, text: str, writer: asyncio.StreamWriter) -> None:
         """Auto-respond to client CAP commands so tests don't have to.
 
-        Strategy: advertise no capabilities. Eggdrop sees nothing it wants,
-        sends `CAP END`, and proceeds with NICK/USER.
+        Replies to `CAP LS` with the caps the IRCd was constructed with
+        (default empty), and ACKs whatever the bot then asks for in
+        `CAP REQ`.
         """
         parts = text.split(maxsplit=2)
         sub = parts[1].upper() if len(parts) >= 2 else ""
         srv = self._server_name
         # Use "*" as the unregistered nick placeholder per RFC.
         if sub == "LS":
-            writer.write(f":{srv} CAP * LS :\r\n".encode())
+            writer.write(f":{srv} CAP * LS :{self._advertised_caps}\r\n".encode())
         elif sub == "REQ":
             cap = parts[2] if len(parts) >= 3 else ":"
             if cap.startswith(":"):
