@@ -6467,11 +6467,11 @@ fi
       WEIRD_OS="no"
     ;;
     Darwin)
-      # In macOS 10.4 (Darwin 9), dlopen was rewritten to be a native part of dyld.
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking darwin version >= 9 with native dlopen" >&5
-printf %s "checking darwin version >= 9 with native dlopen... " >&6; }
+      # In macOS 10.4 (Darwin 8), dlopen was rewritten to be a native part of dyld.
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking darwin version >= 8 with native dlopen" >&5
+printf %s "checking darwin version >= 8 with native dlopen... " >&6; }
       darwin_major_version=`echo $egg_cv_var_system_release | cut -d. -f1`
-      if test $darwin_major_version -ge 9; then
+      if test $darwin_major_version -ge 8; then
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
         WEIRD_OS="no"

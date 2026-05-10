@@ -622,10 +622,10 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     Darwin)
-      # In macOS 10.4 (Darwin 9), dlopen was rewritten to be a native part of dyld.
-      AC_MSG_CHECKING([darwin version >= 9 with native dlopen])
+      # In macOS 10.4 (Darwin 8), dlopen was rewritten to be a native part of dyld.
+      AC_MSG_CHECKING([darwin version >= 8 with native dlopen])
       darwin_major_version=`echo $egg_cv_var_system_release | cut -d. -f1`
-      if test $darwin_major_version -ge 9; then
+      if test $darwin_major_version -ge 8; then
         AC_MSG_RESULT([yes])
         WEIRD_OS="no"
       else
