@@ -553,8 +553,9 @@ int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
     if (errno == EINPROGRESS) {
       /* Async connection... don't return socket descriptor
        * until after we confirm if it was successful or not */
-      tv.tv_sec = 0; /* dont block */
-      tv.tv_usec = 0;
+      tv.tv_sec = 0;
+      tv.tv_usec = 500000; /* 0.5 second timeout, more than enough to detect
+                            * ECONNREFUSED */
       FD_ZERO(&sockset);
       FD_SET(s, &sockset);
       select(s + 1, NULL, &sockset, NULL, &tv);
