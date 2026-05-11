@@ -757,6 +757,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   #define FROMLEN 40
   int status, i, iaway, sock;
   long lval;
+  // ss = long->string = 19 digits + 1 sign + 1 NULL = 21 bytes
   char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[21], ssf[20 + 1 + sizeof botf], *endptr;
   struct userrec *u;
 
