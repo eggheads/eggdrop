@@ -187,7 +187,7 @@ while {[set opt [newsplit argv]] != ""} {
         puts ""
         exit
       }
-      if {![file isfile $venv/bin/activate]} {
+      if {![file isfile [file join $venv bin activate]]} {
         puts "*** ERROR: $venv does not appear to be a valid Python virtual environment"
         puts ""
         exit
@@ -360,7 +360,7 @@ if {$systemd} {
   puts $fd "\[Service\]"
   puts $fd "WorkingDirectory=${dir}"
   if {$venv ne ""} {
-    puts $fd "ExecStart=/bin/sh -c '. ${venv}/bin/activate && exec ${dir}/eggdrop ${config}'"
+    puts $fd "ExecStart=/bin/sh -c '. [file join ${venv} bin activate] && exec ${dir}/eggdrop ${config}'"
   } else {
     puts $fd "ExecStart=${dir}/eggdrop ${config}"
   }
@@ -428,7 +428,7 @@ cd \$botdir
 "
  if {$venv ne ""} {
   puts $fd "# activate Python virtual environment
-. ${venv}/bin/activate"
+. '[file join ${venv} bin activate]'"
  }
  puts $fd "
 # is there a pid file?
