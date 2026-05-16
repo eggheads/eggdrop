@@ -187,6 +187,7 @@ while {[set opt [newsplit argv]] != ""} {
         puts ""
         exit
       }
+      set venv [file normalize $venv]
       if {![file isfile [file join $venv bin activate]]} {
         puts "*** ERROR: $venv does not appear to be a valid Python virtual environment"
         puts ""
