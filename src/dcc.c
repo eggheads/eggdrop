@@ -1335,11 +1335,13 @@ static void dcc_telnet(int idx, char *buf, int i)
  */
 void dcc_telnet_hostresolved2(int i, int idx) {
   int sock, j;
+  char userhost[7 + UHOSTLEN]; /* telnet@ */
 
+  snprintf(userhost, sizeof userhost, "telnet@%s", dcc[i].host);
   /* Skip ident lookup if disabled */
   if (identtimeout <= 0) {
     dcc[i].u.ident_sock = dcc[idx].sock;
-    dcc_telnet_got_ident(i, dcc[idx].host);
+    dcc_telnet_got_ident(i, userhost);
     return;
   }
 
@@ -1372,7 +1374,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
     }
   }
   if (j < 0) {
-    dcc_telnet_got_ident(i, dcc[idx].host);
+    dcc_telnet_got_ident(i, userhost);
     return;
   }
   dcc[j].sock = sock;
@@ -2320,7 +2322,7 @@ void dcc_ident(int idx, char *buf, int len)
 
 void eof_timeout_dcc_ident(int idx, const char *s)
 {
-  char buf[7 + UHOSTLEN];
+  char buf[7 + UHOSTLEN]; /* telnet@ */
   int i;
 
   for (i = 0; i < dcc_total; i++)
