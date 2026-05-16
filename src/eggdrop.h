@@ -95,7 +95,7 @@
 
 /* This allows us to make things a lot less messy in modules.c. */
 #ifndef STATIC
-#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_RLD) && !defined(MOD_USE_LOADER))
+#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_LOADER))
 #    include "Error: You can't compile with module support on this system (try make static)."
 #  else
 #    ifdef MOD_USE_DL
@@ -104,7 +104,6 @@
 #      endif
 #      undef MOD_USE_SHL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_SHL
@@ -113,7 +112,6 @@
 #      endif
 #      undef MOD_USE_DL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_DYLD
@@ -122,16 +120,6 @@
 #      endif
 #      undef MOD_USE_DL
 #      undef MOD_USE_SHL
-#      undef MOD_USE_RLD
-#      undef MOD_USE_LOADER
-#    endif
-#    ifdef MOD_USE_RLD
-#      ifndef HAVE_RLD_LOAD
-#        include "Error: We have detected that rld_load() should be used to load modules on this OS; but it was not found. Please use 'make static'."
-#      endif
-#      undef MOD_USE_DL
-#      undef MOD_USE_SHL
-#      undef MOD_USE_DYLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_LOADER
@@ -141,7 +129,6 @@
 #      undef MOD_USE_DL
 #      undef MOD_USE_SHL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #    endif
 #  endif
 #endif

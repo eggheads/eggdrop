@@ -211,9 +211,9 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x644,Server ist eingeschlafen; springe auf den naechsten...
 0x645,Verbindung getrennt von
 0x646,Im Moment kein Server.
-0x647,Mode-Queue ist bei
-0x648,Server-Queue ist bei
-0x649,Hilfe-Queue ist bei
+0x647,Mode-Warteschlange ist bei
+0x648,Server-Warteschlange ist bei
+0x649,Hilfe-Warteschlange ist bei
 0x64a,Der Vhost, der in der Konfig eingestellt ist, kann nicht benutzt werden um zu dieser IP-Adresse zu verbinden
 0x64b,Der Vhost, der in der Konfig eingestellt ist, ist auf diesem Computer nicht verfuegbar
 0x64c,Bearbeite Channel
@@ -251,10 +251,10 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x669,Telnet-Verbindungsaufbau-Flood von %s!  Wird ab sofort ignoriert!
 0x66a,Gebannt:
 0x66b,join Flood
-0x66c,schmeiss meine Freunde nicht hier raus, mein Lieber
+0x66c,schmeiss meine Freunde nicht hier raus, Kumpel
 0x66d,...und komm nicht zurueck.
 0x66e,wechsle zurueck zum altnick %s
-0x66f,deop meine Freunde nicht, mein Lieber
+0x66f,deop meine Freunde nicht, Kumpel
 0x670,Ausnahme entfernt
 0x671,Einladung entfernt
 0x672,NICK flood von @%s!  Wird gebannt.
@@ -318,7 +318,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb31,Ergebnis der Rueckverfolgung
 0xb32,existiert nicht
 0xb33,Rauswuerfe durch Leute von anderen Bots aus sind nicht erlaubt.
-0xb34,Kann den Besitzer des Bots nicht rauswerden.
+0xb34,Kann den Bot-Besitzer nicht rauswerfen.
 0xb35,DATEIUEBERTRAGUNG ABGEWIESEN
 0xb37,Benutzer im Botnet
 0xb38,Partyline
@@ -342,7 +342,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xb49,Verbindung wird hergestellt mit
 0xb4a,Kann den Benutzer zur Weiterleitung nicht finden!
 0xb4b,Konnte keine Verbindung aufbauen zu
-0xb4c,Weiterleitung zu mir selbst?  Was zum Teufel soll der Sinn davon sein?!
+0xb4c,Weiterleitung zu mir selbst?  Was zum Teufel soll das bringen?!
 0xb4d,Baue Verbindung auf zu
 0xb4e,(schreibe in eine eigene Zeile *BYE* um abzubrechen.)
 0xb4f,Breche Weiterleitungsversuch ab zu
@@ -418,7 +418,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe1a,Verbindung zu %s zurueckgewiesen (falscher hostname)
 0xe1b,Telnet-Verbindung: %s/%d
 0xe1c,Ident fehlgeschlagen fuer %s: %s
-0xe1d,(!) Port %d fuer eingehende Verbindungen ohne meine Erlaubnis verboten.
+0xe1d,(!) Empfangsport %d ploetzlich ausgefallen.
 0xe1e,%s zurueckgewiesen (falscher Nick)
 0xe1f,%s zurueckgewiesen (kein Bot)
 0xe20,%s zurueckgewiesen (kein Benutzer)

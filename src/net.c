@@ -530,6 +530,57 @@ static int get_port_from_addr(const sockname_t *addr)
 #endif
 }
 
+/* Check for O_NONBLOCK connect() EINPROGRESS could be ECONNREFUSED
+ * eggdrop sockets are always O_NONBLOCK, see setsock()
+ */
+int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
+  int rc, res, e;
+  struct timeval tv;
+  fd_set sockset;
+  socklen_t res_len;
+
+  rc = connect(s, &addr->addr.sa, addr->addrlen);
+  /* To minimize a proven race condition, call ident here (especially when
+   * rc < 0 and errno == EINPROGRESS)
+   */
+  if (check_tcl_event_ident) {
+    /* push/pop errno, better safe than sorry */
+    e = errno;
+    check_tcl_event("ident");
+    errno = e;
+  }
+  if (rc < 0) {
+    if (errno == EINPROGRESS) {
+      /* Async connection... don't return socket descriptor
+       * until after we confirm if it was successful or not */
+      tv.tv_sec = 0;
+      tv.tv_usec = 500000; /* 0.5 second timeout, more than enough to detect
+                            * ECONNREFUSED */
+      FD_ZERO(&sockset);
+      FD_SET(s, &sockset);
+      select(s + 1, NULL, &sockset, NULL, &tv);
+      res_len = sizeof(res);
+      getsockopt(s, SOL_SOCKET, SO_ERROR, &res, &res_len);
+      if (res == EINPROGRESS) /* Operation now in progress */
+        return s; /* This could probably fail somewhere */
+      if (res == ECONNREFUSED) { /* Connection refused */
+        debug2("net: attempted socket connection refused: %s:%i",
+               iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        errno = res;
+        return -4;
+      }
+      if (res != 0) {
+        debug1("net: getsockopt error %d", res);
+        return -1;
+      }
+      return s; /* async success! */
+    }
+    debug2("net: check_connect(): socket %i error %s", s, strerror(errno));
+    return -1;
+  }
+  return s;
+}
+
 /* Starts a connection attempt through a socket
  *
  * The server address should be filled in addr by setsockname() or by the
@@ -540,11 +591,8 @@ static int get_port_from_addr(const sockname_t *addr)
  */
 int open_telnet_raw(int sock, sockname_t *addr)
 {
+  int i, j;
   sockname_t name;
-  socklen_t res_len;
-  fd_set sockset;
-  struct timeval tv;
-  int i, j, rc, errno_tmp, res;
   struct threaddata *td = threaddata();
 
   for (i = 0; i < dcc_total; i++)
@@ -568,45 +616,7 @@ int open_telnet_raw(int sock, sockname_t *addr)
   }
   if (addr->family == AF_INET && firewall[0])
     return proxy_connect(sock, addr);
-  rc = connect(sock, &addr->addr.sa, addr->addrlen);
-  /* To minimize a proven race condition, call ident here (especially when
-   * rc < 0 and errno == EINPROGRESS)
-   */
-  if (dcc[i].status & STAT_SERV) {
-    errno_tmp = errno;
-    check_tcl_event("ident");
-    errno = errno_tmp;
-  }
-  if (rc < 0) {
-    if (errno == EINPROGRESS) {
-      /* Async connection... don't return socket descriptor
-       * until after we confirm if it was successful or not */
-      tv.tv_sec = 1;
-      tv.tv_usec = 0;
-      FD_ZERO(&sockset);
-      FD_SET(sock, &sockset);
-      select(sock + 1, NULL, &sockset, NULL, &tv);
-      res_len = sizeof(res);
-      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
-      if (res == EINPROGRESS) /* Operation now in progress */
-        return sock; /* This could probably fail somewhere */
-      if (res == ECONNREFUSED) { /* Connection refused */
-        debug2("net: attempted socket connection refused: %s:%i",
-               iptostr(&addr->addr.sa), get_port_from_addr(addr));
-        errno = res;
-        return -4;
-      }
-      if (res != 0) {
-        debug1("net: getsockopt error %d", res);
-        return -1;
-      }
-      return sock; /* async success! */
-    }
-    else {
-      return -1;
-    }
-  }
-  return sock;
+  return connect_nonblock(sock, addr, dcc[i].status & STAT_SERV);
 }
 
 /* Ordinary non-binary connection attempt
@@ -1083,6 +1093,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
       if (pthread_join(dtn->thread_id, &res))
         putlog(LOG_MISC, "*", "sockread(): pthread_join(): error = %s", strerror(errno));
       dtn_prev->next = dtn->next;
+      pthread_mutex_destroy(&dtn->mutex);
       nfree(dtn);
       dtn = dtn_prev;
     }

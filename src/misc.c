@@ -182,6 +182,8 @@ int my_strcpy(char *a, const char *b)
 }
 
 /* Split first word off of rest and put it in first
+ *
+ * Please use splitcn() instead
  */
 void splitc(char *first, char *rest, char divider)
 {
@@ -199,14 +201,11 @@ void splitc(char *first, char *rest, char divider)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
-/*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
- * terminating null).
+/* As above, but lets you specify the 'max' number of bytes
  *
  * Example of use:
  *
- * char buf[HANDLEN + 1];
- *
- * splitcn(buf, input, "@", HANDLEN);
+ * splitcn(buf, input, '@', sizeof buf);
  *
  * <Cybah>
  */

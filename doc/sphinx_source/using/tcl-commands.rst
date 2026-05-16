@@ -1650,6 +1650,28 @@ strip <idx> [+/-strip-flags]
 
   Module: core
 
+^^^^^^^^^^^^^^^^^^^
+page <idx> [number]
+^^^^^^^^^^^^^^^^^^^
+
+  Description: This allows you to slow down the number of lines the bot sends
+
+  to a user at once via the partyline. When enabled, any commands that send
+
+  greater than the specified number of lines will stop when that number is
+
+  reached and wait for the user to type another command (or press enter) to
+
+  continue. If the user has too many pending lines, he may be booted off the
+
+  bot.
+
+  Returns: new value of page lines for that user (or the current value, if
+
+  status was omitted)
+
+  Module: core
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 putbot <bot-nick> <message>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -167,7 +167,7 @@ MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 all: @DEFAULT_MAKE@
 
 eggclean:
-	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~
+	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~ *.gcda *.gcno
 	@cd doc && $(MAKE) clean
 	@cd scripts && $(MAKE) clean
 	@cd src && $(MAKE) clean

@@ -3,8 +3,100 @@ name: Tests + coverage
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: write # for dorny/test-reporter
+
 jobs:
-  dummy:
+  test:
+    name: Build, test, coverage
     runs-on: ubuntu-latest
     steps:
-      - run: echo hi
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install build + coverage deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential autoconf tcl-dev libssl-dev lcov
+
+      - name: Configure + build eggdrop (--enable-coverage, debug)
+        run: |
+          ./configure --enable-coverage
+          make config
+          make debug
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b #v8.1.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: tests/uv.lock
+
+      - name: Install Python deps
+        working-directory: tests
+        run: uv sync --frozen --no-managed-python
+
+      - name: Run pytest (populates .gcda, writes junit XML)
+        working-directory: tests
+        run: uv run --no-managed-python pytest --junitxml=results.xml -v
+
+      - name: Publish test report
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
+        if: always() # show results even on failure
+        with:
+          name: pytest results
+          path: tests/results.xml
+          reporter: java-junit # JUnit XML format
+
+      - name: Upload eggdrop runtime logs on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: eggdrop-logs
+          # The harness keeps each test's tmpdir under /tmp/pytest-of-runner/.
+          path: /tmp/pytest-of-runner/pytest-current/**/*.log
+          if-no-files-found: ignore
+
+      # ---------------- coverage report (only when tests pass) ----------------
+
+      - name: Capture coverage with lcov
+        if: success()
+        run: |
+          lcov --capture --directory . --output-file coverage.info \
+               --rc lcov_branch_coverage=1 \
+               --ignore-errors source,unused
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info \
+               --ignore-errors unused
+          lcov --summary coverage.info | tee coverage-summary.txt
+
+      - name: Generate HTML report
+        if: success()
+        run: genhtml coverage.info --output-directory coverage-html --branch-coverage
+
+      - name: Write job summary
+        if: success()
+        run: |
+          {
+            echo '## Coverage summary'
+            echo ''
+            echo '```'
+            cat coverage-summary.txt
+            echo '```'
+            echo ''
+            echo 'Full HTML report is available as the **coverage-html** artifact below.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload HTML report as artifact
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-html
+          path: coverage-html/
+          retention-days: 30
+
+      - name: Upload coverage.info as artifact
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-info
+          path: coverage.info
+          retention-days: 30

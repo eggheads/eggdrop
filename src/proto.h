@@ -173,6 +173,7 @@ void del_dcc(int);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
+void init_tdns();
 extern void (*dns_hostbyip) (sockname_t *);
 void core_dns_hostbyip(sockname_t *);
 void call_hostbyip(sockname_t *, char *, int);
@@ -286,6 +287,7 @@ int open_listen(int *);
 void getvhost(sockname_t *, int);
 int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
+int connect_nonblock(int, sockname_t *, int);
 int open_telnet_raw(int, sockname_t *);
 int open_telnet(int, char *, int);
 int answer(int, sockname_t *, uint16_t *, int);

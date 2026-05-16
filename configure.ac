@@ -83,6 +83,9 @@ AC_CHECK_PROG(UNAME,uname,uname)
 # Do this *before* EGG_CHECK_OS
 EGG_ENABLE_STRIP
 
+# Optional: build with gcov instrumentation for the test suite.
+EGG_ENABLE_COVERAGE
+
 
 # Checks for system libraries.
 EGG_CHECK_LIBS

@@ -1064,9 +1064,8 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
 #ifdef EGG_TDNS
-  /* initialize dns_thread_head before chanprog() */
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
+  /* initialize attr and dns_thread_head before chanprog() */
+  init_tdns();
 #endif
   ctime_r(&now, s);
   s[24] = 0;

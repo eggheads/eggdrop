@@ -489,6 +489,28 @@ EOF
 ])
 
 
+dnl EGG_ENABLE_COVERAGE()
+dnl
+dnl Adds gcov instrumentation to CFLAGS/LDFLAGS so a build produces .gcno
+dnl files at compile time and .gcda files at run time. Use lcov / gcov to
+dnl summarize after running the test suite. Off by default; only meant for
+dnl development builds against the test harness, never production.
+dnl
+AC_DEFUN([EGG_ENABLE_COVERAGE],
+[
+  AC_ARG_ENABLE([coverage],
+                [  --enable-coverage       build with gcov instrumentation (developer / test-coverage)],
+                [enable_coverage="$enableval"],
+                [enable_coverage="no"])
+
+  if test "$enable_coverage" = yes; then
+    AC_MSG_NOTICE([enabling gcov coverage instrumentation: --coverage -fPIC -O0 -ggdb3])
+    CFLAGS="$CFLAGS --coverage -fPIC -O0 -ggdb3"
+    LDFLAGS="$LDFLAGS --coverage"
+  fi
+])
+
+
 dnl
 dnl Checks for operating system and module support.
 dnl
@@ -573,8 +595,8 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
 
   AC_MSG_CHECKING([module loading capabilities])
   AC_MSG_RESULT
-  AC_CHECK_HEADERS([dl.h dlfcn.h loader.h rld.h mach-o/dyld.h mach-o/rld.h])
-  AC_CHECK_FUNCS([dlopen load NSLinkModule shl_load rld_load])
+  AC_CHECK_HEADERS([dl.h dlfcn.h loader.h mach-o/dyld.h])
+  AC_CHECK_FUNCS([dlopen load NSLinkModule shl_load])
 
   # Note to other maintainers:
   # Bourne shell has no concept of "fall through"
@@ -622,14 +644,18 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     Darwin)
-      # We should support Mac OS X (at least 10.1 and later) now.
-      # Use rld on < 10.1.
-      if test "$ac_cv_func_NSLinkModule" = no; then
-        LOAD_METHOD="rld"
+      # In macOS 10.4 (Darwin 8), dlopen was rewritten to be a native part of dyld.
+      AC_MSG_CHECKING([darwin version >= 8 with native dlopen])
+      darwin_major_version=`echo $egg_cv_var_system_release | cut -d. -f1`
+      if test $darwin_major_version -ge 8; then
+        AC_MSG_RESULT([yes])
+        WEIRD_OS="no"
+      else
+        AC_MSG_RESULT([no])
+        LOAD_METHOD="dyld"
+        EGG_DARWIN_BUNDLE
+        EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
       fi
-      LOAD_METHOD="dyld"
-      EGG_DARWIN_BUNDLE
-      EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
     ;;
     Haiku)
       WEIRD_OS="no"
@@ -638,18 +664,10 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     *)
-      if test -r /mach; then
-        # At this point, we're guessing this is NeXT Step. We support rld, so
-        # modules will probably work on NeXT now, but we have absolutely no way
-        # to test this. I've never even seen a NeXT box, let alone do I know of
-        # one I can test this on.
-        LOAD_METHOD="rld"
-      else
-        # QNX apparently supports dlopen()... Fallthrough.
-        if test -r /cmds; then
-          UNKNOWN_OS="yes"
-          MODULES_OK="no"
-        fi
+      # QNX apparently supports dlopen()... Fallthrough.
+      if test -r /cmds; then
+        UNKNOWN_OS="yes"
+        MODULES_OK="no"
       fi
     ;;
   esac
@@ -668,9 +686,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       ;;
       loader)
         AC_DEFINE(MOD_USE_LOADER, 1, [Define if modules should be loaded using the ldr*() and *load() functions.])
-      ;;
-      rld)
-        AC_DEFINE(MOD_USE_RLD, 1, [Define if modules should be loaded using the rld_*() functions.])
       ;;
     esac
   else
@@ -802,21 +817,24 @@ AC_DEFUN([EGG_CHECK_OS],
       SHLIB_LD="$CC -shared"
     ;;
     Darwin)
-      # Mac OS X
+      # macOS.
       SHLIB_CC="$CC -fPIC"
-      SHLIB_LD="ld -bundle -undefined error"
-      AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on Mac OS X with dns.mod.])
+      case "$egg_cv_var_system_release" in
+        2*)
+          SHLIB_LD="$CC -shared"
+        ;;
+        *)
+          # macOS < 11 (Darwin 20).
+          SHLIB_LD="ld -bundle -undefined error"
+        ;;
+      esac
+      AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on macOS with dns.mod.])
     ;;
     *)
-      if test -r /mach; then
-        # At this point, we're guessing this is NeXT Step.
-        AC_DEFINE(BORGCUBES, 1, [Define if running on NeXT Step.])
-      else
-        if test -r /cmds; then
-          # Probably QNX.
-          SHLIB_LD="ld -shared"
-          SHLIB_STRIP="touch"
-        fi
+      if test -r /cmds; then
+        # Probably QNX.
+        SHLIB_LD="ld -shared"
+        SHLIB_STRIP="touch"
       fi
     ;;
   esac

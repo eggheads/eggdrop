@@ -1355,8 +1355,7 @@ static int tcl_boot STDVAR
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
-    splitc(whonick, who, '@');
-    whonick[HANDLEN] = 0;
+    splitcn(whonick, who, '@', sizeof whonick);
     if (!strcasecmp(who, botnetnick))
       strlcpy(who, whonick, sizeof who);
     else if (remote_boots > 0) {

@@ -25,6 +25,7 @@
 
 #include "main.h"
 #include <errno.h>
+#include "modules.h"
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
@@ -918,8 +919,10 @@ static void append_line(int idx, char *line)
   struct msgq *p, *q;
   struct chat_info *c = (dcc[idx].type == &DCC_CHAT) ? dcc[idx].u.chat :
                         dcc[idx].u.file->chat;
+  module_entry *me;
+  char line_r[LOGLINELEN];
 
-  if (c->current_lines > 1000) {
+  if (c->current_lines > 2000) {
     /* They're probably trying to fill up the bot nuke the sods :) */
     for (p = c->buffer; p; p = q) {
       q = p->next;
@@ -927,8 +930,16 @@ static void append_line(int idx, char *line)
       nfree(p);
     }
     c->buffer = 0;
+
+    /* Turn paging off to avoid infinite loop */
     dcc[idx].status &= ~STAT_PAGE;
-    do_boot(idx, botnetnick, "too many pages - sendq full");
+    if ((me = module_find("console", 1, 1))) {
+      Function *func = me->funcs;
+      (func[CONSOLE_DOSTORE]) (idx);
+    }
+    debug0("dcc.c: append_line(): Paging turned off.");
+
+    do_boot(idx, botnetnick, "more than 1000 page lines - sendq full");
     return;
   }
   if ((c->line_count < c->max_line) && (c->buffer == NULL)) {
@@ -940,13 +951,17 @@ static void append_line(int idx, char *line)
       q = NULL;
     else
       for (q = c->buffer; q->next; q = q->next);
+    /* get_data_ptr() -> n_malloc() could destroy line, so copy line to line_r
+     * to make append_line() reentrant
+     */
+    if (strlcpy(line_r, line, sizeof line_r) >= l)
+      l = strlen(line_r);
 
     p = get_data_ptr(sizeof(struct msgq));
-
     p->len = l;
     p->msg = get_data_ptr(l + 1);
     p->next = NULL;
-    strcpy(p->msg, line);
+    strlcpy(p->msg, line_r, l + 1);
     if (q == NULL)
       c->buffer = p;
     else
@@ -1348,14 +1363,12 @@ void dcc_telnet_hostresolved2(int i, int idx) {
       if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
         debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
       setsnport(dcc[j].sockname, 113);
-      if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
-          dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
+      if ((sock = connect_nonblock(dcc[j].sock, &dcc[j].sockname, 0)) < 0) {
+        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         killsock(dcc[j].sock);
         lostdcc(j);
-        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
-        j = 0;
+        j = -1;
       }
-      sock = dcc[j].sock;
     }
   }
   if (j < 0) {
