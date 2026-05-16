@@ -1105,7 +1105,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
       char *response;
       char *body = "Error: HTTP request received on an SSL port, please try HTTPS";
       j = snprintf(NULL, 0,
-        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "HTTP/1.1 400 \r\n" /* textual phrase is OPTIONAL */
         "Content-Length: %zu\r\n"
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
@@ -1114,7 +1114,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
           body);
       response = nmalloc(j + 1);
       sprintf(response,
-        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "HTTP/1.1 400 \r\n" /* textual phrase is OPTIONAL */
         "Content-Length: %zu\r\n"
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
