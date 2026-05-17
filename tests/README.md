@@ -149,11 +149,17 @@ What this exercises:
    asynchronously from the stdin write; `wait_for` has an explicit timeout
    instead of `time.sleep()`.
 
-## Helpers (`support/irc_helpers.py`)
+## Helpers
+
+Shared utilities for things tests would otherwise hand-roll. Each lives in
+its own module under `support/`; add a new module here (and a new
+subsection below) when something doesn't fit an existing one.
+
+### IRC dialogue (`support/irc_helpers.py`)
 
 Shared multi-step IRC interactions so tests don't repeat boilerplate.
 
-### `drive_registration(mock_ircd, nick="TestBot", isupport_tokens=None)`
+#### `drive_registration(mock_ircd, nick="TestBot", isupport_tokens=None)`
 
 Drives Eggdrop through IRC registration:
 
@@ -200,7 +206,7 @@ is opt-in via `set account-tag 1` in the rendered eggdrop.conf — pass
 After this returns, Eggdrop has processed 005 and is about to JOIN
 configured channels.
 
-### `drive_join_with_names(mock_ircd, members_with_prefix, nick="TestBot", server="mock.test", member_accounts=None) -> str`
+#### `drive_join_with_names(mock_ircd, members_with_prefix, nick="TestBot", server="mock.test", member_accounts=None) -> str`
 
 Mimics a real IRCd's full post-JOIN dance for the bot:
 
@@ -239,7 +245,7 @@ chan = drive_join_with_names(
 # op's account is now "op" via 354 → got354 → setaccount
 ```
 
-### `wait_for_isupport(bridge, key, expected, timeout=5.0)`
+#### `wait_for_isupport(bridge, key, expected, timeout=5.0)`
 
 Polls `isupport get <key>` over the bridge until it returns `expected`.
 Useful right after `drive_registration(..., isupport_tokens=...)` to
@@ -249,11 +255,44 @@ ensure Eggdrop has finished processing 005 before assertions run.
 wait_for_isupport(tcl_bridge, "PREFIX", "(qaohv)~&@%+")
 ```
 
-### `split_member_prefix(token) -> (nick, prefix_symbols)`
+#### `split_member_prefix(token) -> (nick, prefix_symbols)`
 
 Tiny helper used internally by `drive_join_with_names`; exposed for
 test code that needs to do the same parsing. `"@alice"` → `("alice", "@")`,
 `"~&boss"` → `("boss", "~&")`, `"plain"` → `("plain", "")`.
+
+### Ident responder (`support/identd.py`)
+
+Test-time RFC 1413 ident server, bound to `127.0.0.1:1113`. Used by tests
+that exercise the inbound DCC/telnet ident lookup path in
+`src/dcc.c:dcc_telnet_hostresolved2`. Eggdrop normally queries TCP/113,
+which is privileged; when the spawn env has `EGGDROP_TEST=1` the bot
+connects to `1113` instead (see the lazy `getenv` in
+`dcc_telnet_hostresolved2`), so the test process doesn't need root or
+`CAP_NET_BIND_SERVICE`.
+
+```python
+from support.identd import IdentServer
+
+# Reply with USERID — exercises the happy-path parse in dcc_ident.
+with IdentServer("respond", user="alice"):
+    ...  # open inbound DCC; bot resolves host as alice@<peer>
+
+# Accept then hold; eggdrop's identtimeout eventually fires.
+with IdentServer("timeout"):
+    ...  # bot resolves host as telnet@<peer> after identtimeout
+```
+
+To exercise the **connection-refused** path, just *don't* construct one
+— with nothing listening on 1113 the kernel returns RST, and the bot
+resolves the host as `telnet@<peer>` immediately. See
+`tests/test_ident_scenarios.py` for the full three-modes × two-timeouts
+matrix.
+
+Caveat: eggdrop's `check_expired_dcc` only runs every 10s
+(`src/main.c:556`), so the effective wait for the timeout case is
+`identtimeout + up-to-10s`, not exactly `identtimeout`. Tests waiting on
+the ident timeout need a poll window of roughly `identtimeout + 12s`.
 
 ## Fixtures
 
@@ -392,16 +431,20 @@ tests/
 │   ├── bridge_client.py         # Python client → eval_ok("...")
 │   ├── mock_ircd.py             # asyncio IRCd, sync facade
 │   ├── irc_helpers.py           # drive_registration, drive_join_with_names, ...
+│   ├── identd.py                # IdentServer — RFC 1413 responder on 127.0.0.1:1113
+│   ├── userfile_helpers.py      # format_userfile_ban (escaping per src/misc.c:str_escape)
 │   ├── eggdrop_proc.py          # subprocess wrapper, stdout drain, terminate
 │   └── waiters.py               # wait_for / wait_for_file / wait_for_log_match
 ├── templates/
 │   ├── eggdrop.conf.j2
-│   └── userfile.j2
+│   ├── userfile.j2
+│   └── chanfile.j2
 └── tests/
     ├── test_framing.py
     ├── test_smoke_connect.py
     ├── test_partyline_chan.py
     ├── test_isupport_modes.py
+    ├── test_ident_scenarios.py          # ident lookup refused / timeout / success
     ├── test_tcl_passwdok.py             # ported from eggdrop_tcl_passwdok.bats
     ├── test_tcl_iscmds.py               # ported from eggdrop_tcl_iscmds.bats
     ├── test_tcl_matchattr.py            # ported from eggdrop_tcl_matchattr.bats

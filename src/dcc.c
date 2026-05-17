@@ -1336,6 +1336,11 @@ static void dcc_telnet(int idx, char *buf, int i)
 void dcc_telnet_hostresolved2(int i, int idx) {
   int sock, j;
   char userhost[7 + UHOSTLEN]; /* telnet@ */
+  /* Read EGGDROP_TEST once on first call; lets the integration test
+   * harness redirect the ident lookup to an unprivileged port. */
+  static int ident_target_port = 0;
+  if (!ident_target_port)
+    ident_target_port = getenv("EGGDROP_TEST") ? 1113 : 113;
 
   snprintf(userhost, sizeof userhost, "telnet@%s", dcc[i].host);
   /* Skip ident lookup if disabled */
@@ -1364,7 +1369,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
       setsnport(name, 0);
       if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
         debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
-      setsnport(dcc[j].sockname, 113);
+      setsnport(dcc[j].sockname, ident_target_port);
       if ((sock = connect_nonblock(dcc[j].sock, &dcc[j].sockname, 0)) < 0) {
         putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         killsock(dcc[j].sock);
@@ -1378,7 +1383,7 @@ void dcc_telnet_hostresolved2(int i, int idx) {
     return;
   }
   dcc[j].sock = sock;
-  dcc[j].port = 113;
+  dcc[j].port = ident_target_port;
   dcc[j].addr = dcc[i].addr;
   strcpy(dcc[j].host, dcc[i].host);
   strcpy(dcc[j].nick, "*");
