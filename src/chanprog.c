@@ -189,26 +189,24 @@ void tell_verbose_uptime(int idx)
   s[0] = 0;
   if (now2 > 86400) {
     /* days */
-    sprintf(s, "%d day", (int) (now2 / 86400));
-    if ((int) (now2 / 86400) >= 2)
-      strcat(s, "s");
-    strcat(s, ", ");
+    snprintf(s, sizeof(s), "%d day%s, ", (int) (now2 / 86400),
+             (int) (now2 / 86400) >= 2 ? "s" : "");
     now2 -= (((int) (now2 / 86400)) * 86400);
   }
   hr = (time_t) ((int) now2 / 3600);
   now2 -= (hr * 3600);
   min = (time_t) ((int) now2 / 60);
-  sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
+  snprintf(&s[strlen(s)], sizeof(s) - strlen(s), "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strcpy(s1, MISC_BACKGROUND);
+    snprintf(s1, sizeof(s1), "%s", MISC_BACKGROUND);
   else {
     if (term_z >= 0)
-      strcpy(s1, MISC_TERMMODE);
+      snprintf(s1, sizeof(s1), "%s", MISC_TERMMODE);
     else if (con_chan)
-      strcpy(s1, MISC_STATMODE);
+      snprintf(s1, sizeof(s1), "%s", MISC_STATMODE);
     else
-      strcpy(s1, MISC_LOGMODE);
+      snprintf(s1, sizeof(s1), "%s", MISC_LOGMODE);
   }
   dprintf(idx, "%s %s  (%s)\n", MISC_ONLINEFOR, s, s1);
 }
@@ -229,16 +227,14 @@ void tell_verbose_status(int idx)
   s[0] = 0;
   if (now2 > 86400) {
     /* days */
-    sprintf(s, "%d day", (int) (now2 / 86400));
-    if ((int) (now2 / 86400) >= 2)
-      strcat(s, "s");
-    strcat(s, ", ");
+    snprintf(s, sizeof(s), "%d day%s, ", (int) (now2 / 86400),
+             (int) (now2 / 86400) >= 2 ? "s" : "");
     now2 -= (((int) (now2 / 86400)) * 86400);
   }
   hr = (time_t) ((int) now2 / 3600);
   now2 -= (hr * 3600);
   min = (time_t) ((int) now2 / 60);
-  sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
+  snprintf(&s[strlen(s)], sizeof(s) - strlen(s), "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
     strlcpy(s1, MISC_BACKGROUND, sizeof s1);
@@ -381,7 +377,7 @@ void reaffirm_owners()
       q = p + 1;
       p = strchr(q, ',');
     }
-    strcpy(s, q);
+    snprintf(s, sizeof(s), "%s", q);
     rmspace(s);
     u = get_user_by_handle(userlist, s);
     if (u)
@@ -467,7 +463,7 @@ void chanprog()
 
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
-      strcat(helpdir, "/");
+      snprintf(helpdir + strlen(helpdir), sizeof(helpdir) - strlen(helpdir), "/");
 
   reaffirm_owners();
   check_tcl_event("userfile-loaded");
@@ -523,7 +519,7 @@ char * add_timer(tcl_timer_t ** stack, int elapse, int count,
   (*stack)->mins = (*stack)->interval = elapse;
   (*stack)->count = count;
   (*stack)->cmd = nmalloc(strlen(cmd) + 1);
-  strcpy((*stack)->cmd, cmd);
+  memcpy((*stack)->cmd, cmd, strlen(cmd) + 1);
   /* If it's just being added back and already had an id,
    * don't create a new one.
    */
@@ -533,7 +529,7 @@ char * add_timer(tcl_timer_t ** stack, int elapse, int count,
     (*stack)->id = timer_id++;
   if (name) {
     (*stack)->name = nmalloc(strlen(name) + 1);
-    strcpy((*stack)->name, name);
+    memcpy((*stack)->name, name, strlen(name) + 1);
   } else {
     (*stack)->name = NULL;
     ret = snprintf(stringid, sizeof stringid, "%lu", (*stack)->id);
@@ -673,7 +669,7 @@ int isowner(char *name) {
   char *sep = ", \t\n\v\f\r";
   char *word;
 
-  strcpy(s, owner);
+  snprintf(s, sizeof(s), "%s", owner);
   for (word = strtok(s, sep); word; word = strtok(NULL, sep)) {
     if (!strcasecmp(name, word)) {
       return 1;
@@ -702,7 +698,7 @@ void add_hq_user()
                               USER_VOICE | USER_XFER | USER_HIGHLITE;
     /* Add to permowner list if there's place */
     if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
-      strcat(owner, " " EGG_BG_HANDLE);
+      snprintf(owner + strlen(owner), sizeof(owner) - strlen(owner), " %s", EGG_BG_HANDLE);
 
     /* Update laston info, gets cleared at rehash/reload */
     touch_laston(dcc[term_z].user, "partyline", now);
