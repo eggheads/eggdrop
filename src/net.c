@@ -1376,7 +1376,7 @@ void tputs(int z, char *s, unsigned int len)
             else {
               inhere = 1; /* Out there, somewhere */
               unsigned long e;
-              while ((e = ERR_get_error()) != 0)
+              while ((e = ERR_get_error()))
                 debug1("tputs(): SSL error = %s", ERR_error_string(e, 0));
               inhere = 0;
             }
