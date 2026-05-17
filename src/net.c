@@ -1366,6 +1366,7 @@ void tputs(int z, char *s, unsigned int len)
       else
         len = webui_frame(&s2, s, len);
       if (socklist[i].ssl) {
+        ERR_clear_error();
         x = SSL_write(socklist[i].ssl, s2, len);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
