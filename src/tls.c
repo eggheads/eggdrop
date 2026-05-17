@@ -1084,7 +1084,8 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     return 0;
   }
   if ((err = ERR_peek_error())) {
-    if (ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
+    if ((td->socklist[i].flags &= SOCK_WEBUI) &&
+        ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
         ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST) {
       /* We dont have access to real port, host or dcc information here */
       putlog(LOG_MISC, "*", "TLS: error: HTTP request received on an SSL port");
