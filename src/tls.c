@@ -1110,7 +1110,6 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
           body);
       if (write(sock, response, j) < 0) /* tputs() cannot be used here */
         putlog(LOG_MISC, "*", "TLS: error: write(sock %i): %s", sock, strerror(errno));
-      // TODO: after reading of remaining bytes / ssl shutdown ?
       nfree(response);
     } else {
       putlog(data->loglevel, "*",
