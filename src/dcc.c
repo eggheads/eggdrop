@@ -1284,7 +1284,10 @@ static void dcc_telnet(int idx, char *buf, int i)
     return;
   }
   /* Buffer data received on this socket. */
-  sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
+  if (!strcmp(dcc[idx].nick, "(webui)"))
+    sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER | SOCK_WEBUI);
+  else
+    sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
   if (port < 1024) {
     putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
