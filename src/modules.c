@@ -162,7 +162,7 @@ int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
-void (*webui_dcc_telnet_hostresolved) (int, int) = 0;
+void (*webui_dcc_telnet_hostresolved) (int, int) = (void (*)(int, int)) null_func;
 size_t (*webui_frame) (char **, char *, size_t) = 0;
 void (*webui_unframe) (int, char *, int *) = 0;
 
