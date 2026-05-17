@@ -136,21 +136,19 @@ static X509 *ssl_getcert(int sock)
  * Return value: ptr to the hexadecimal representation of the fingerprint or
  * NULL in case of error.
  */
-static char *ssl_getfp_from_cert(X509 *cert)
+static char *ssl_getfp_from_cert(X509 *cert, const EVP_MD* type)
 {
   char *p;
   unsigned int i;
-  static char fp[SHA_DIGEST_LENGTH * 3];
-  unsigned char md[SHA_DIGEST_LENGTH];
+  static char fp[EVP_MAX_MD_SIZE * 3];
+  unsigned char md[EVP_MAX_MD_SIZE];
 
-  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+  if (!X509_digest(cert, type, md, &i)) {
     putlog(LOG_MISC, "*", "ERROR: TLS: ssl_getfp_from_cert(): X509_digest()");
-    X509_free(cert);
     return NULL;
   }
   if (!(p = OPENSSL_buf2hexstr(md, i))) {
     putlog(LOG_MISC, "*", "ERROR: TLS: ssl_getfp_from_cert(): OPENSSL_buf2hexstr()");
-    X509_free(cert);
     return NULL;
   }
   strlcpy(fp, p, sizeof fp);
@@ -173,7 +171,7 @@ char *ssl_getfp(int sock)
 
   if (!(cert = ssl_getcert(sock)))
     return NULL;
-  fp = ssl_getfp_from_cert(cert);
+  fp = ssl_getfp_from_cert(cert, EVP_sha1());
 #if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
   X509_free(cert);
 #endif
@@ -182,6 +180,7 @@ char *ssl_getfp(int sock)
 
 void verify_cert_expiry(int idx) {
   X509 *x509;
+  static char last_tls_certfile[sizeof tls_certfile];
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
   x509 = SSL_CTX_get0_certificate(ssl_ctx); /* The returned pointer must not be freed by the caller. */
 #else
@@ -191,6 +190,11 @@ void verify_cert_expiry(int idx) {
   x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
 #endif
   if (x509) {
+    if (strcmp(tls_certfile, last_tls_certfile)) {
+      putlog(LOG_MISC, "*", "Certificate loaded: %s (sha256 fingerprint %s)",
+             tls_certfile, ssl_getfp_from_cert(x509, EVP_sha256()));
+      strlcpy(last_tls_certfile, tls_certfile, sizeof last_tls_certfile);
+    }
 #if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
     int e;
     if (!X509_check_certificate_times(NULL, x509, &e) && (e == X509_V_ERR_CERT_HAS_EXPIRED)) {
@@ -264,23 +268,6 @@ int ssl_init()
           tls_certfile, ERR_error_string(ERR_get_error(), NULL));
       fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
-
-    /* TODO: sha256 fingerprint
-     *       print this fingerprint to every user / every partyline login
-     *       maybe only print it when webui is enabled
-     *       compatibility to older openssl is possible, similar to #1411
-     *       this functionality could be sepped into a side-PR
-     *       or functionality of #1411 can be reused once merged
-     *
-     *       for now, just disable the fingerprint for openssl < 1.0.2
-     */
-#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
-    // TODO: ssl_getfp_from_cert() must not free the cert from SSL_CTX_get0_certificate()
-    putlog(LOG_MISC, "*", "Certificate loaded: %s (sha1 fingerprint %s)",
-           tls_certfile,
-           ssl_getfp_from_cert(SSL_CTX_get0_certificate(ssl_ctx)));
-#endif
-
     verify_cert_expiry(0);
     if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
