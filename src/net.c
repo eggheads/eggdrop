@@ -420,8 +420,8 @@ void killsock(int sock)
   int i;
   struct threaddata *td = threaddata();
 
-  /* Ignore invalid sockets.  */
-  if (sock < 0)
+  /* Ignore invalid sockets and stdout. */
+  if ((sock < 0) || (sock == 1))
     return;
 
   for (i = 0; i < td->MAXSOCKS; i++) {
