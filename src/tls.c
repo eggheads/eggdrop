@@ -937,9 +937,14 @@ static void ssl_info(const SSL *ssl, int where, int ret)
           !strcmp(SSL_alert_desc_string(ret), "RO"))
         putlog(LOG_MISC, "*", "TLS: Long TLSCiphertext field received, connection failed. Is this really a TLS port?");
     } else {
-      /* Ignore close notify warnings */
-      debug1("TLS: Received close notify during %s",
-             (where & SSL_CB_READ) ? "read" : "write");
+      /* Ignore close notify warnings and stop writing to sock */
+      sock = SSL_get_fd(ssl);
+      debug2("TLS: Received close notify during %s sock %i",
+             (where & SSL_CB_READ) ? "read" : "write", sock);
+      if (where & SSL_CB_WRITE) {
+        int idx = findidx(sock);
+        lostdcc(idx);
+      }
     }
   } else if (where & SSL_CB_EXIT) {
     /* SSL_CB_EXIT may point to soft error for non-blocking! */
