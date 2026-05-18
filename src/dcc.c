@@ -1452,6 +1452,13 @@ static void dcc_telnet_hostresolved(int i)
   }
 #endif
 
+  /* dcc type is DNSWAIT
+   * free its dcc[i].u.dns_info
+   * because lostdcc() is not called on it
+   * but its type is changed and dcc[i].u is reused
+   */
+  dcc[i].type->kill(i, dcc[i].u.other);
+
   /* Skip ident lookup for public script listeners */
   if ((dcc[idx].status & LSTN_PUBLIC) && !strcmp(dcc[idx].nick, "(script)")) {
     changeover_dcc(i, &DCC_SOCKET, 0);
