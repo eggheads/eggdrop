@@ -1471,6 +1471,7 @@ void dequeue_sockets()
       errno = 0;
 #ifdef TLS
       if (socklist[i].ssl) {
+        ERR_clear_error();
         x = SSL_write(socklist[i].ssl, socklist[i].handler.sock.outbuf,
                       socklist[i].handler.sock.outbuflen);
         if (x < 0) {
