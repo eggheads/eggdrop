@@ -1377,6 +1377,7 @@ void tputs(int z, char *s, unsigned int len)
             debug1("tputs(): SSL error = %s",
                    ERR_error_string(ERR_get_error(), 0));
             inhere = 0;
+            return;
           }
           x = -1;
         }
