@@ -163,8 +163,10 @@ void fatal(const char *s, int recoverable)
 
   putlog(LOG_MISC, "*", "* %s", s);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].sock >= 0)
+    if (dcc[i].sock >= 0) {
       killsock(dcc[i].sock);
+      dcc[i].sock = -1;
+    }
 #ifdef TLS
   ssl_cleanup();
 #endif
