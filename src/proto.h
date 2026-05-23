@@ -154,6 +154,7 @@ extern void (*sharein) (int, char *);
 void chanout_but(int x, int chan, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 void dcc_chatter(int);
 void lostdcc(int);
+void lostdcc_deferred(int);
 void killtransfer(int);
 void removedcc(int);
 void makepass(char *);

@@ -353,6 +353,18 @@ void lostdcc(int n)
   dcc[n].type = &DCC_LOST;
 }
 
+/* Mark an entry as lost, to be reaped in the mainloop asynchronously.
+ * Avoids reentrancy issues
+ */
+void lostdcc_deferred(int n)
+{
+  /* sanity check */
+  if (n < 0 || n >= max_dcc) {
+    return;
+  }
+  dcc[n].status |= STAT_LOSTDCC;
+}
+
 /* Remove entry from dcc list. Think twice before using this function,
  * because it invalidates any variables that point to a specific dcc
  * entry!
@@ -385,6 +397,12 @@ void dcc_remove_lost(void)
       dcc[i].sock = -1;
       removedcc(i);
       i--;
+    } else if (dcc[i].status & STAT_LOSTDCC) {
+      /* intentionally after DCC_LOST cleanup,
+       * so it doesn't clean immediately
+       */
+      dcc[i].status &= ~STAT_LOSTDCC;
+      lostdcc(i);
     }
   }
 }

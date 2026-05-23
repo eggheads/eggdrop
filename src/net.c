@@ -420,8 +420,8 @@ void killsock(int sock)
   int i;
   struct threaddata *td = threaddata();
 
-  /* Ignore invalid sockets and stdout. */
-  if ((sock < 0) || (sock == 1))
+  /* Ignore invalid sockets and stdout/stderr. */
+  if ((sock < 0) || (sock == STDOUT) || (sock == STDERR))
     return;
 
   for (i = 0; i < td->MAXSOCKS; i++) {
@@ -1370,14 +1370,17 @@ void tputs(int z, char *s, unsigned int len)
         x = SSL_write(socklist[i].ssl, s2, len);
         if (x < 0) {
           int err = SSL_get_error(socklist[i].ssl, x);
-          if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ)
+          if (err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ) {
             errno = EAGAIN;
-          else if (!inhere) { /* Out there, somewhere */
+          } else if (err == SSL_ERROR_ZERO_RETURN) {
+            /* Peer sent close notify, lostdcc_deferred() was already
+             * scheduled from ssl_info(). Don't queue more data. */
+            return;
+          } else if (!inhere) { /* Out there, somewhere */
             inhere = 1;
             debug1("tputs(): SSL error = %s",
                    ERR_error_string(ERR_get_error(), 0));
             inhere = 0;
-            return;
           }
           x = -1;
         }

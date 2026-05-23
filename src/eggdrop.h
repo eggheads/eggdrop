@@ -482,6 +482,7 @@ struct dupwait_info {
 #define STAT_PAGE    0x00080    /* page output to the user              */
 #define STAT_SERV    0x00100    /* this is a server connection          */
 #define STAT_WS      0x00200    /* webui websocket                      */
+#define STAT_LOSTDCC 0x00400    /* closed by remote, call lostdcc()     */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -594,8 +595,8 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
-#define SOCK_WEBUI      0x1000  /* webui websocket                      */
-#define SOCK_WS         0x2000  /* webui websocket                      */
+#define SOCK_WEBUI      0x1000  /* webui websocket pre-upgrade          */
+#define SOCK_WS         0x2000  /* webui websocket after framed upgrade */
 
 /* Flags to sock_has_data
  */

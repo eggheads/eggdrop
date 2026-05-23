@@ -136,7 +136,7 @@ static X509 *ssl_getcert(int sock)
  * Return value: ptr to the hexadecimal representation of the fingerprint or
  * NULL in case of error.
  */
-static char *ssl_getfp_from_cert(X509 *cert, const EVP_MD* type)
+static char *ssl_getfp_from_cert(X509 *cert, const EVP_MD *type)
 {
   char *p;
   unsigned int i;
@@ -178,6 +178,7 @@ char *ssl_getfp(int sock)
   return fp;
 }
 
+// FIXME: Assumption is fingerprint stays the same if path doesn't change
 void verify_cert_expiry(int idx) {
   X509 *x509;
   static char last_tls_certfile[sizeof tls_certfile];
@@ -191,8 +192,9 @@ void verify_cert_expiry(int idx) {
 #endif
   if (x509) {
     if (strcmp(tls_certfile, last_tls_certfile)) {
+      const char *fp = ssl_getfp_from_cert(x509, EVP_sha256());
       putlog(LOG_MISC, "*", "Certificate loaded: %s (sha256 fingerprint %s)",
-             tls_certfile, ssl_getfp_from_cert(x509, EVP_sha256()));
+             tls_certfile, fp ? fp : "(error getting fp)");
       strlcpy(last_tls_certfile, tls_certfile, sizeof last_tls_certfile);
     }
 #if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
@@ -942,8 +944,11 @@ static void ssl_info(const SSL *ssl, int where, int ret)
       debug2("TLS: Received close notify during %s sock %i",
              (where & SSL_CB_READ) ? "read" : "write", sock);
       if (where & SSL_CB_WRITE) {
-        int idx = findidx(sock);
-        lostdcc(idx);
+        int i = findsock(sock);
+        if (i >= 0 && (threaddata()->socklist[i].flags & SOCK_WEBUI)) {
+          int idx = findidx(sock);
+          lostdcc_deferred(idx);
+        }
       }
     }
   } else if (where & SSL_CB_EXIT) {
@@ -1089,7 +1094,7 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     return 0;
   }
   if ((err = ERR_peek_error())) {
-    if ((td->socklist[i].flags &= SOCK_WEBUI) &&
+    if ((td->socklist[i].flags & SOCK_WEBUI) &&
         ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
         ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST) {
       /* We dont have access to real port, host or dcc information here */
