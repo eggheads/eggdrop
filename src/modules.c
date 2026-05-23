@@ -163,7 +163,7 @@ int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
 void (*webui_dcc_telnet_hostresolved) (int, int) = (void (*)(int, int)) null_func;
-size_t (*webui_frame) (char **, char *, size_t) = (void (*)(char **, char * ,size_t)) null_func;
+size_t (*webui_frame) (char **, char *, size_t) = (size_t (*)(char **, char * ,size_t)) null_func;
 void (*webui_unframe) (int, char *, int *) = (void (*)(int, char *, int *)) null_func;
 
 module_entry *module_list;
