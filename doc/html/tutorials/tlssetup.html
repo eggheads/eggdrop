@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Enabling TLS Security on Eggdrop &#8212; Eggdrop 1.10.1rc2 documentation</title>
+    <title>Enabling TLS Security on Eggdrop &#8212; Eggdrop 1.10.2rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=290de6c6"></script>
+    <script src="../_static/documentation_options.js?v=1e47a2e8"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.1rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.2rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="firststeps.html" title="Common First Steps"
              accesskey="P">previous</a> |
@@ -74,6 +74,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Tcl Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pythonscript.html">Writing an Eggdrop Python Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
@@ -107,7 +108,7 @@
   <section id="enabling-tls-security-on-eggdrop">
 <h1>Enabling TLS Security on Eggdrop<a class="headerlink" href="#enabling-tls-security-on-eggdrop" title="Link to this heading">¶</a></h1>
 <p>There are several ways TLS encryption can protect communication between your Eggdrop and the world. This guide will walk you through a few common scenarios and how to properly set up TLS protection.</p>
-<p>Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term “SSL” is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term “SSL” used to describe a secure connection method, to include with within Eggdrop’s own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term “SSL” be sure to correct them, we’re sure they will <em>definitely</em> appreciate it :)</p>
+<p>Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term “SSL” is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term “SSL” used to describe a secure connection method, including Eggdrop’s own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term “SSL” be sure to correct them, we’re sure they will <em>definitely</em> appreciate it :)</p>
 <section id="pre-requisites">
 <h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">¶</a></h2>
 <p>Your server must have OpenSSL (or an equivalent fork) installed. Most commonly this is done through your OS’s package manager. Both the main package as well as the development headers must be installed. On a Debian/Ubuntu distro, this can be done by running:</p>
@@ -146,7 +147,7 @@
 </pre></div>
 </div>
 <p>The wizard will walk you through generating a keypair and will, by default, install to ~/eggdrop (the install location can be changed by “make sslcert DEST=/path/to/eggdrop/install”</p>
-<p>In your config file, uncomment the “ssl-privatekey” and “ssl-certificate” settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop’d directory.</p>
+<p>In your config file, uncomment the “ssl-privatekey” and “ssl-certificate” settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop’s directory.</p>
 </section>
 <section id="configuration-file-preparation-listening-with-tls">
 <h3>Configuration File Preparation - Listening with TLS<a class="headerlink" href="#configuration-file-preparation-listening-with-tls" title="Link to this heading">¶</a></h3>
@@ -167,7 +168,7 @@
 </section>
 <section id="additional-information">
 <h2>Additional Information<a class="headerlink" href="#additional-information" title="Link to this heading">¶</a></h2>
-<p>For additional information and a more thorough explanation of Eggdrop’s TLS implementation, please read the <a class="reference external" href="https://docs.egheads.org/using/tls.html">TLS docs</a></p>
+<p>For additional information and a more thorough explanation of Eggdrop’s TLS implementation, please read the <a class="reference external" href="https://docs.eggheads.org/using/tls.html">TLS docs</a>.</p>
 </section>
 </section>
 
@@ -198,7 +199,7 @@
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2025, Eggheads.
-      Last updated on Jun 28, 2025.
+      Last updated on May 23, 2026.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
         </div>

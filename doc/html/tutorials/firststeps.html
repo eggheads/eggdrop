@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Common First Steps &#8212; Eggdrop 1.10.1rc2 documentation</title>
+    <title>Common First Steps &#8212; Eggdrop 1.10.2rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=290de6c6"></script>
+    <script src="../_static/documentation_options.js?v=1e47a2e8"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.1rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.2rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="setup.html" title="Setting Up Eggdrop"
              accesskey="P">previous</a> |
@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="firstscript.html">Writing an Eggdrop Tcl Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pythonscript.html">Writing an Eggdrop Python Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
@@ -116,7 +117,10 @@
 <span class="n">This</span> <span class="n">will</span> <span class="n">make</span> <span class="n">the</span> <span class="n">bot</span> <span class="n">recognize</span> <span class="n">you</span> <span class="k">as</span> <span class="n">the</span> <span class="n">master</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>You can either telnet to the bot, or connect to the bot using DCC Chat. To telnet, you’ll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command:</p>
+<p>You can either connect to the bot via telnet (unencrypted), connect to the bot using DCC Chat (unencrypted), connect to the bot using SCHAT (encrypted), or use TLS-compatible socket client (encrypted).</p>
+<section id="telnet">
+<h3>Telnet<a class="headerlink" href="#telnet" title="Link to this heading">¶</a></h3>
+<p>To telnet, you’ll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">telnet</span> <span class="o">&lt;</span><span class="n">IP</span> <span class="n">of</span> <span class="n">bot</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">listen</span> <span class="n">port</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -125,7 +129,20 @@
 </pre></div>
 </div>
 <p>This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.</p>
-<p>If you choose not to telnet to connect to the partyline, you can either <code class="docutils literal notranslate"><span class="pre">/dcc</span> <span class="pre">chat</span> <span class="pre">BotNick</span></code> or <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">BotNick</span> <span class="pre">chat</span></code>. If one of those methods does not work for you, try the other. Once you’re on the bot for the first time, type <code class="docutils literal notranslate"><span class="pre">.help</span></code> for a short list of available commands, or <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">all</span></code> for a more thorough list.</p>
+</section>
+<section id="dcc-chat">
+<h3>DCC Chat<a class="headerlink" href="#dcc-chat" title="Link to this heading">¶</a></h3>
+<p>To use a DCC chat connection in your IRC client, you can either <code class="docutils literal notranslate"><span class="pre">/dcc</span> <span class="pre">chat</span> <span class="pre">BotNick</span></code> or <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">BotNick</span> <span class="pre">chat</span></code>.</p>
+</section>
+<section id="schat">
+<h3>SCHAT<a class="headerlink" href="#schat" title="Link to this heading">¶</a></h3>
+<p>SCHAT (Secure Chat) is a sub-protocol of Secure Direct Client-to-Client (SDCC) that enables encrypted TLS sessions between two users. KVIrc and AdiIRC are examples of IRC clients that support the SCHAT protocol. If TLS is configured for your Eggdrop, you can connect via <code class="docutils literal notranslate"><span class="pre">/ctcp</span> <span class="pre">bot</span> <span class="pre">schat</span></code>.</p>
+</section>
+<section id="direct-tls">
+<h3>Direct TLS<a class="headerlink" href="#direct-tls" title="Link to this heading">¶</a></h3>
+<p>To use a client such as openssl to wrap your connection with TLS, please read the <a class="reference external" href="https://docs.eggheads.org/using/tls.html#keys-certificates-and-authentication">TLS docs</a> regarding partyline connection. There are also other clients that can connect to the partyline with TLS, like <a class="reference external" href="https://codeberg.org/mortmann/pefero">pefero</a>, maintained by Eggdrop contributor mortmann.</p>
+<p>If one of those methods does not work for you, try another. Once you’re on the bot for the first time, type <code class="docutils literal notranslate"><span class="pre">.help</span></code> for a short list of available commands, or <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">all</span></code> for a more thorough list.</p>
+</section>
 </section>
 <section id="id1">
 <h2>Common first steps<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
@@ -155,11 +172,11 @@
 <section id="assign-permission-flags">
 <h3>Assign Permission Flags<a class="headerlink" href="#assign-permission-flags" title="Link to this heading">¶</a></h3>
 <p>To assign an access level to a user, first read <code class="docutils literal notranslate"><span class="pre">.help</span> <span class="pre">whois</span></code> for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span> <span class="o">&lt;+</span><span class="n">flag</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>So to grant a user the voice flag, you would do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="o">+</span><span class="n">v</span> <span class="n">handle</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">chattr</span> <span class="n">handle</span> <span class="o">+</span><span class="n">v</span>
 </pre></div>
 </div>
 <p>It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.</p>
@@ -310,7 +327,7 @@
           
     <div class="footer" role="contentinfo">
     &#169; Copyright 2025, Eggheads.
-      Last updated on Jun 28, 2025.
+      Last updated on May 23, 2026.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
         </div>
