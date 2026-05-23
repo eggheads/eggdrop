@@ -12,6 +12,7 @@ Eggdrop v1.10.2rc1:
              * Update version strings to 1.10.2
              * Roll webui version requirement
              * NEWS
+             * Add python script tutorial to doc tree
   2026-05-17 * Fix ident lookup bugs introduced by webui
                  [Found by: Geo / Patch by: thommey]
   2026-05-16 * Add testing framework
