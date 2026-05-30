@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.10.1. Most scripts written for the v1.3, v1.4,
+This list is accurate for Eggdrop v1.10.2. Most scripts written for the v1.3, v1.4,
 1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
 Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
@@ -1650,6 +1650,28 @@ strip <idx> [+/-strip-flags]
 
   Module: core
 
+^^^^^^^^^^^^^^^^^^^
+page <idx> [number]
+^^^^^^^^^^^^^^^^^^^
+
+  Description: This allows you to slow down the number of lines the bot sends
+
+  to a user at once via the partyline. When enabled, any commands that send
+
+  greater than the specified number of lines will stop when that number is
+
+  reached and wait for the user to type another command (or press enter) to
+
+  continue. If the user has too many pending lines, he may be booted off the
+
+  bot.
+
+  Returns: new value of page lines for that user (or the current value, if
+
+  status was omitted)
+
+  Module: core
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 putbot <bot-nick> <message>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2823,14 +2845,14 @@ serveraddress
 ^^^^^^^
 version
 ^^^^^^^
-  Value: current bot version "1.1.2+pl1.10.1201"; first item is the text version, to include a patch string if present, and second item is a numerical version
+  Value: current bot version "1.1.2+pl1.10.2201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module: core
 
 ^^^^^^^^^^^
 numversion*
 ^^^^^^^^^^^
-  Value: the current numeric bot version (for example: "1.10.11"). Numerical version is in the format of "MNNRRPP", where:
+  Value: the current numeric bot version (for example: "1.10.21"). Numerical version is in the format of "MNNRRPP", where:
 
   +------+---------------------------------------+
   | M    | major release number                  |
@@ -2899,6 +2921,13 @@ language
   Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file
 
   Module: core
+
+^^^^^^^^^^^^^^
+account-extban
+^^^^^^^^^^^^^^
+  Value: a string containing the value of ACCOUNTEXTBAN provided by the 005 connection message. This is the raw value and, depending on the IRC server formatting, could be in multiple formats such as "a", or "a,account".
+
+  Module: channel
 
 Binds
 -----

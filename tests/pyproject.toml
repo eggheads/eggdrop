@@ -1,0 +1,52 @@
+[project]
+name = "eggdrop-tests"
+version = "0.0.0"
+description = "Integration test harness for Eggdrop"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-timeout>=2.3",
+    "jinja2>=3.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra -q --strict-markers --timeout=60 --tb=short"
+markers = [
+    "slow: end-to-end tests that exercise reconnect/timeouts",
+    "partyline: spawns eggdrop with -nt so stdin is the HQ partyline",
+]
+# pytest sweeps it on session exit.
+tmp_path_retention_policy = "all"
+tmp_path_retention_count = 3
+
+[tool.ruff]
+target-version = "py311"
+src = ["."]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",      # pycodestyle + pyflakes
+    "I",                # isort
+    "B",                # bugbear
+    "UP",               # pyupgrade
+    "SIM",              # simplifications
+    "RET",              # return statements
+    "PIE",              # misc
+    "PT",               # pytest style
+    "RUF",              # ruff-specific
+]
+ignore = [
+    "E501",             # line length — let formatter handle
+    "PT011",            # pytest.raises(Exception) — fine here
+]
+
+[tool.ty.src]
+include = ["support", "tests", "conftest.py"]
+
+[tool.ty.rules]
+# All on by default; bump anything we want stricter here.

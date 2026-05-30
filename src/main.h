@@ -74,6 +74,15 @@
 #endif
 
 #include <sys/types.h>
+
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+               * (dietlibc) */
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#ifndef HAVE_BASE64
+#  undef b64_ntop
+#  undef b64_pton
+#endif
+
 #include "lush.h"
 #include "lang.h"
 #include "eggdrop.h"
@@ -115,10 +124,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
         else                                                            \
           (x) = newsplit(&(x));                                         \
 } while (0)
-
-#ifdef BORGCUBES
-#  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
-#endif /* BORGCUBES */
 
 /* Handle for the user that's used when starting eggdrop with -t */
 #define EGG_BG_HANDLE "-HQ"

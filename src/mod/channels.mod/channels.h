@@ -180,6 +180,7 @@ static int check_tcl_chanset(const char *, const char *, const char *);
 #define global_exempt_time (*(int *)(channels_funcs[47]))
 /* 48 - 51 */
 #define global_invite_time (*(int *)(channels_funcs[48]))
+#define extban_parse ((int (*)(const char *, char *, const char **))channels_funcs[49])
 
 #endif /* MAKING_CHANNELS */
 

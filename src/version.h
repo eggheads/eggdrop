@@ -26,6 +26,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define EGG_STRINGVER "1.10.1"
-#define EGG_NUMVER 1100100
+#define EGG_STRINGVER "1.10.2"
+#define EGG_NUMVER 1100200
 #define EGG_PATCH "alpha"

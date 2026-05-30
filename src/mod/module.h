@@ -528,7 +528,13 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 /* 324 - 327 */
 #define find_member_from_nick ((memberlist * (*) (char *))global[324])
 #define get_user_from_member ((struct userrec * (*) (memberlist *))global[325])
-
+#define dcc_telnet_hostresolved2 ((void(*)(int, int))global[326])
+#define findsock ((int(*)(int))global[327])
+/* 328 - 331 */
+#define stealth_telnets (*(int *)(global[328]))
+#define parse_irc ((parsed_irc_t (*)(char *))global[329])
+#define join_str_array ((char *(*)(char **, int, char *, char *, size_t))global[330])
+#define splitcn ((void (*)(char *, char *, char, size_t))global[331])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

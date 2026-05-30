@@ -25,7 +25,7 @@ depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/python.c -MT ../python.o > .depend
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~ *.gcda *.gcno
 
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status
