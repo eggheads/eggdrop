@@ -123,14 +123,14 @@ static int init_uptime(void)
   strlcpy(uptime_version, z, sizeof uptime_version);
 
   if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    putlog(LOG_DEBUG, "*", "Error: init_uptime(): socket(): %s", strerror(errno));
+    putlog(LOG_DEBUG, "*", "init_uptime(): socket(): %s", strerror(errno));
     return ((uptimesock = -1));
   }
   egg_bzero(&sai, sizeof(sai));
   sai.sin_addr.s_addr = INADDR_ANY;
   sai.sin_family = AF_INET;
   if (bind(uptimesock, (struct sockaddr *) &sai, sizeof(sai)) < 0) {
-    putlog(LOG_DEBUG, "*", "Error: init_uptime(): bind(): %s", strerror(errno));
+    putlog(LOG_DEBUG, "*", "init_uptime(): bind(): %s", strerror(errno));
     close(uptimesock);
     return ((uptimesock = -1));
   }
@@ -205,7 +205,7 @@ static int send_uptime(void)
   len = sendto(uptimesock, (void *) mem, len, 0, res0->ai_addr,
                res0->ai_addrlen);
   if (len < 0)
-    putlog(LOG_DEBUG, "*", "Error: send_uptime(): sendto(): %s", strerror(errno));
+    putlog(LOG_DEBUG, "*", "send_uptime(): sendto(): %s", strerror(errno));
   nfree(mem);
   return len;
 }
