@@ -3049,7 +3049,10 @@ static int irc_isupport(char *key, char *isset_str, char *value)
   if (!strcmp(key, "WHOX")) {
     use_354 = isset;
   } else if (!strcmp(key, "MODES")) {
-    isupport_parseint(key, isset ? value : NULL, 3, 64, 1, 3, &modesperline);
+    /* Clamped to MODES_PER_LINE_MAX: the queue in chanset_t.cmode[] has
+     * exactly that many slots, a larger modesperline overruns it. */
+    isupport_parseint(key, isset ? value : NULL, 3, MODES_PER_LINE_MAX, 1, 3,
+                      &modesperline);
   } else if (!strcmp(key, "MAXLIST")) {
     parse_maxlist(isset ? value : NULL);
   } else if (!strcmp(key, "MAXEXCEPTS")) {
