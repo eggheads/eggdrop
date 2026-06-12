@@ -162,9 +162,32 @@ review changed an earlier call, only the final decision is recorded here.
   contribute prefix state (so the generalized `got352or4` clears prefix
   bits on that path exactly as it clears CHANOP today: zero behaviour
   change).
-- **D-PFX6 (Q9): Negotiate `multi-prefix`** where the server offers it (add
-  to known caps + REQ). Improves the 352 and NAMES paths; 354 is already
-  complete.
+- **D-PFX6 (Q9, mechanism grill-2): Negotiate `multi-prefix`** where the
+  server offers it. server.mod has no module-cap-registration API and we are
+  not adding one for a single cap: the request lives in server.mod's CAP LS
+  handler like sasl/account-notify, gated on a new `multi-prefix` config var
+  **defaulting to 1** (precedent: `extended-join` defaults on despite
+  changing raw `JOIN` lines far more invasively than `@+nick` in NAMES; the
+  var is the script-compat escape hatch, noted in UPGRADING). irc.mod's
+  352/353/354 parsers strip **all** leading prefix chars unconditionally —
+  correct under both cap states since nicks cannot start with a prefix char.
+  Improves the 352 and NAMES paths; 354 is already complete.
+- **D-PFX8 (grill-2): Member prefix bits are rank-indexed (`1 << rank`),
+  resynced on PREFIX change.** A mid-session 005 PREFIX re-announcement
+  (rare; e.g. InspIRCd module load) would silently remap every member's held
+  bits. When `update_chanmodes(is_prefix=1)` results in an effectively
+  different prefix set/order: clear `prefixmodes`/`wasprefix` (and the
+  legacy mirror bits) on all members and `reset_chan_info(chan,
+  CHAN_RESETWHO)` each active channel — WHOX rebuilds authoritative state.
+  Per-letter stable bit allocation was rejected: more bookkeeping, and rank
+  shifts under `can_set_mode` anyway, so it only half-solves the problem.
+- **D-PFX9 (grill-2): The 8-prefix cap degrades tracking, never parsing.**
+  PREFIX letters beyond `MAX_PREFIX_MODES` keep a full `modecharinfo` entry
+  (type=PREFIX, prefix char, rank — uint8 positions beyond 7 are fine), so
+  arg consumption, `bind mode`, and `can_set_mode` stay correct; only the
+  per-member bit is unavailable (`isprefix`-family returns 0; log once at
+  PREFIX-parse time). Fully dropping the letter would desync the parser —
+  one `+X nick` and every later arg in the line is misattributed.
 - **D-PFX7 (Q1/Q10): Merge op+halfop policy into one parameterized
   `got_prefixmode`/`got_deprefixmode` pair** (true structural twins:
   CHANOP↔CHANHALFOP, protectops↔protecthalfops, autoop↔autohalfop, shared
@@ -194,6 +217,32 @@ review changed an earlier call, only the final decision is recorded here.
   (`chanmode_prot_arg(chan, mode)` etc.).
 - **D-CHM5 (Q13/old): `getchanmode` ordering may change** (not API-breaking):
   bitset order `a-z`, `A-Z`, `0-9`, args appended in the same order.
+- **D-CHM6 (grill-2): Flag-mode reversal stays strictly chanmode-gated —
+  this is intent, not accident.** Step 0 found that under `reversing`
+  (bounce-modes / fakeop / desync) a flag mode is only reversed when it is
+  also chanmode-protected in the corresponding direction (mode.c:1314
+  reduces to the same protection test as the non-reversing branch, minus
+  the master exemption). Rationale: only a `chanmode` entry expresses the
+  user's intent to enforce; other flag modes are irrelevant. The generic
+  dispatch preserves this exactly. Per-class `reversing` table: PREFIX —
+  unconditional reverse; FLAG — only if chanmode-protected; KEY/LIMIT —
+  restore previous value; b/e/I — own bounce settings; generic LIST —
+  **never bounced** (no policy basis; future per-type setting alongside the
+  generic list-add command). Now contractual: pinned by a negative
+  characterization test (server `+s` under bounce-modes, `s` not in
+  chanmode → not reversed).
+- **D-CHM7 (grill-2): Enforcement gates on an explicit "modes known"
+  state.** `CHAN_ASKEDMODES` means "info incomplete, re-ask at next
+  recheck" (Undernet `+k *`), but `reset_chan_info` *clears* it when
+  sending the join-time `MODE` query (irc.c:461), so end-of-WHO enforcement
+  can run against `channel.mode == 0` and push the whole chanmode blind —
+  every step-0 test needed a fake 324 reply to keep wires clean. Fix: the
+  new tracking struct carries a modes-known flag (false at join/reset, set
+  by got324); `recheck_channel_modes` and the generic arg-mode protection
+  additionally gate on it. `CHAN_ASKEDMODES` keeps its re-ask semantics
+  untouched. `got324` keeps running recheck even while CHAN_PEND, so
+  enforcement timing on normal networks (324 before 315) is byte-identical.
+  D-test: delay 324 past 315 → no push before 324, correct push after.
 
 ### ISUPPORT availability & persistence
 
@@ -201,6 +250,23 @@ review changed an earlier call, only the final decision is recorded here.
   from the (possibly persisted, see below) ISUPPORT defaults before connect;
   `pushmode` therefore errors only on genuinely-unknown letters, not on
   standard modes used pre-connect.
+- **D-ISU6 (grill-2): Generic replay fixes *all* stale-on-load isupport
+  consumers, not just CHANMODES/PREFIX.** The isupport store is push-only:
+  values are delivered once, at change time, to whoever is bound at that
+  moment (isupport.c:410 documents the resulting hole). After a
+  mid-connection irc.mod reload, `use_354`, `modesperline`,
+  `max_exempts/max_bans/max_modes`, `botflag005` and `modecharinfo` all
+  silently revert to compiled defaults. Fix: (a) parse the default ISUPPORT
+  string eagerly in `isupport_init()` (it was deferred to preconnect *only*
+  because of the bind-ordering problem this replay removes; `preconnect()`
+  keeps re-applying the `isupport-default` Tcl var before each connect);
+  (b) export `isupport_replay()` (appended `server_funcs` slot) which walks
+  `isupport_list` and re-fires the bind table for every record with an
+  effective value; (c) every consumer module calls it in its `_start` right
+  after `add_builtins(H_isupport, ...)`. Contract change, documented in
+  UPGRADING: **isupport binds must be idempotent** — they may be re-fired
+  with unchanged values when a module loads. All existing handlers already
+  are.
 - **D-ISU2 (Q5/Q6): Persist the last-seen ISUPPORT to the userfile.** Store
   the **whole verbatim** ISUPPORT string — all 005 lines concatenated in
   arrival order, **no dedup** — as a single `#`-prefixed comment header line
@@ -236,6 +302,27 @@ review changed an earlier call, only the final decision is recorded here.
 - **D-Q3 (D14): `prevent_mixing`/`compat` behaviour kept as-is** — the e/I
   flush-barrier is preserved; it splits lines, it does not reorder within a
   line, so it coexists with D-Q1.
+- **D-Q4 (grill-2): Honor server MODES up to a sanity cap of 32** (seen in
+  the wild) instead of clamping to 6. The new queue is a fixed array of 32
+  `{char sign; char modechar; char *arg;}` entries in `chanset_t` (defined
+  openly in src/chan.h; `arg` nmalloc'd by irc.mod, walked directly by
+  channels.mod `clear_channel`/`expmem` as today — no opaque-pointer
+  machinery). `modesperline` governs the flush threshold only, clamped
+  1..32 **at parse time and at point of use** (the per-second re-clamp in
+  `flush_modes` dies). Flushing is additionally **byte-budget-aware**:
+  flush when the count reaches `modesperline` *or* the projected line would
+  exceed ~450 bytes — 12-32 ban masks blow the 512-byte line limit, and
+  this also fixes the latent truncation bug where 6 long masks already can.
+  D-tests: A9 (MODES=4 split) unchanged; B0's MODES=20-clamped pin becomes
+  an intentional change (honored, byte-split); new test for byte-budget
+  splitting with long masks.
+- **D-Q5 (grill-2): The legacy queue block is removed outright** —
+  `pls/mns/key/rmkey/limit/bytes/compat/cmode[]` leave `chanset_t` and
+  `MODES_PER_LINE_MAX` leaves chan.h (out-of-irc.mod users are only
+  channels.mod expmem/clear_channel, both in-tree). Explicit deviation from
+  the keep-fields-as-mirrors rule: this is transient outbound state, not
+  observable channel state; third-party code reading it has no defensible
+  use. Source-compat note in UPGRADING.
 
 ### List modes
 
@@ -250,7 +337,8 @@ review changed an earlier call, only the final decision is recorded here.
   `{mask, who, time}`), updated from live `+X mask`/`-X mask`, firing
   `bind mode`, settable via `pushmode`, exposed read-only via a new Tcl
   command (e.g. `chanmodelist <chan> <mode>`). **No enforcement, no
-  persistence, no sticky/dynamic, no initial-list query** in this branch.
+  persistence, no sticky/dynamic, no initial-list query, no bouncing
+  (D-CHM6)** in this branch.
 
 ### Tcl / introspection
 
@@ -292,7 +380,9 @@ typedef struct mode_info {
 
 Helpers: `MODE_RANK(c)`, `mode_by_prefixchar(char)`, `mode_to_index(c)`
 (`a-z`→0-25, `A-Z`→26-51, `0-9`→52-61, else -1). PREFIX entries beyond
-`MAX_PREFIX_MODES` (8) are logged and ignored.
+`MAX_PREFIX_MODES` (8) keep full `modecharinfo` entries (parsing, bind,
+rank stay correct) but get no per-member bit — see D-PFX9. New bitfield
+fields use `uint8_t` throughout.
 
 ### `chan_t` additions (appended; "may change — use accessors")
 
@@ -321,9 +411,11 @@ legacy `CHANOP`(literal o)/`CHANHALFOP`/`CHANVOICE` and `WAS*`/`SENT*` bits.
 
 ### Capability `can_set_mode(chan, mode)` — see D-PFX4.
 
-### Outbound queue — see D-Q1/D-Q2. New ordered `(sign, mode, arg)` queue;
-legacy `pls/mns/cmode/key/rmkey/limit/bytes/compat` fields remain in the
-struct (source compat) but are no longer the queue of record.
+### Outbound queue — see D-Q1/D-Q2/D-Q4/D-Q5. New ordered `(sign, mode,
+arg)` queue: fixed 32-entry array in `chanset_t`, replacing the legacy
+`pls/mns/cmode/key/rmkey/limit/bytes/compat` fields, which are **removed**
+along with `MODES_PER_LINE_MAX`. Flush at `modesperline` entries (clamped
+1..32 at use) or the ~450-byte line budget, whichever first.
 
 ### `gotmode()` dispatch (state-vs-bind ordering is a contract)
 
@@ -358,33 +450,46 @@ dedup; chanfile chanmode round-trip; full join handshake (NAMES/WHO/WHOX/315
 sync). Fix the `modesperline`/`cmode[]` OOB (clamp `MODES` to
 `MODES_PER_LINE_MAX`).
 
-**Step 1 — `rank` + helpers.** Add `rank` to `mode_info_t`, populate in
-`process_prefix()`; add `mode_to_index`/`MODE_RANK`/`mode_by_prefixchar`.
-Seed `modecharinfo` from defaults at load (D-ISU1). No behaviour change.
+**Step 1 — `rank` + helpers + isupport replay.** Add `rank` to
+`mode_info_t`, populate in `process_prefix()` (log-once past
+`MAX_PREFIX_MODES`, D-PFX9); add
+`mode_to_index`/`MODE_RANK`/`mode_by_prefixchar`. server.mod: parse
+defaults eagerly in `isupport_init()`, export `isupport_replay()`;
+`irc_start` calls it after adding binds (D-ISU1/D-ISU6) — fixes all stale
+isupport state on module (re)load, not just modecharinfo. No behaviour
+change otherwise.
 
 **Step 2 — Member prefix storage.** Add the bitset fields + accessors with
 legacy-flag mirroring (D-PFX2). Generalize `got352or4()` flags parsing to
-the full PREFIX set; remove `opchars` (deprecation warning); negotiate
-`multi-prefix`. NAMES untouched. Convert `gotmode` prefix cases and
-`real_add_mode()` SENT logic to accessors.
+the full PREFIX set; remove `opchars` (deprecation warning); `multi-prefix`
+via server.mod CAP LS list + config var default-on (D-PFX6); 352/353/354
+parsers strip all leading prefix chars unconditionally; member resync on
+effective PREFIX change (D-PFX8). NAMES untouched. Convert `gotmode`
+prefix cases and `real_add_mode()` SENT logic to accessors.
 
 **Step 3 — Capability.** Add `can_set_mode()`; convert
 `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`/`NOHALFOPS_MODES` sites; keep
 `NO_HALFOP_CHANMODES`.
 
 **Step 4 — Channel mode storage.** Add `modeflags`/`modeargs` + accessors,
-type-gated mirror (D-CHM1/D-CHM2). Convert `got324`/`gotmode`/`set_key`/
-join/reset writers. `getchanmode` still from legacy fields here.
+type-gated mirror (D-CHM1/D-CHM2), explicit modes-known state gating
+enforcement (D-CHM7). Convert `got324`/`gotmode`/`set_key`/join/reset
+writers. `getchanmode` still from legacy fields here.
 
 **Step 5 — Generic `gotmode` dispatch + `bind mode` for all.** Rewrite the
 switch to type dispatch (ordering table); merge op+halfop policy
 (D-PFX7), keep voice separate; new generic list store for non-b/e/I list
 modes (D-LST2); b/e/I handlers unchanged (D-LST1); remove gotmode sanity
-warnings (D-OOS3). `bounce-modes` covers all modes.
+warnings (D-OOS3). Reversal semantics preserved exactly per the per-class
+table in D-CHM6 (flag bounce stays chanmode-gated; generic lists never
+bounced).
 
-**Step 6 — Outbound queue + `pushmode`.** New ordered queue (D-Q1/D-Q2);
-`add_mode()` validating wrapper; `pushmode` errors to Tcl (D-TCL2); key/limit
-as ordinary entries; `prevent_mixing` barrier preserved (D-Q3).
+**Step 6 — Outbound queue + `pushmode`.** New ordered 32-entry queue
+(D-Q1/D-Q2/D-Q4); remove legacy queue fields + `MODES_PER_LINE_MAX`
+(D-Q5); honor MODES up to 32 with byte-budget flushing, drop the
+per-second re-clamp; `add_mode()` validating wrapper; `pushmode` errors to
+Tcl (D-TCL2); key/limit as ordinary entries; `prevent_mixing` barrier
+preserved (D-Q3).
 
 **Step 7 — `getchanmode`/`got324` from new storage.** Render from
 `modeflags`/`modeargs` (D-CHM5); delete per-letter `got324` chain + its

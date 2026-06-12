@@ -260,7 +260,8 @@ def test_a22_desync_mode_by_nonop_member_kicks_and_reverses(
     The reversal is asserted on a prefix mode (+o alice → -o alice):
     `reversing` reverts prefix modes unconditionally, while plain flag
     modes (e.g. +s) are only reverted when also chanmode-protected —
-    a desynced +s is kicked for but NOT bounced today.
+    a desynced +s is kicked for but NOT bounced (D-CHM6: intent — only a
+    chanmode entry expresses a wish to enforce; pinned below).
     """
     drive_registration(mock_ircd)
     chan = drive_join_with_names(mock_ircd, "@TestBot bob alice", chanmodes_324="+nt")
@@ -287,10 +288,10 @@ def test_a23_bounce_modes_bounces_server_not_user(
     mode is not (sentinel: the user +m comes first and produces no
     reaction, so the first outbound line is the -k).
 
-    +k is used because plain flag modes (e.g. server +i) are currently
-    only bounced when ALSO chanmode-protected — got_key has its own
-    bounce_modes handling. D10 allows the refactor to broaden flag-mode
-    bouncing, so the unprotected-flag negative is deliberately unpinned.
+    +k is used because plain flag modes (e.g. server +i) are only bounced
+    when ALSO chanmode-protected — got_key has its own bounce_modes
+    handling. The unprotected-flag negative is pinned separately below
+    (D-CHM6).
     """
     drive_registration(mock_ircd)
     chan = drive_join_with_names(mock_ircd, "@TestBot @someop", chanmodes_324="+nt")
@@ -301,3 +302,31 @@ def test_a23_bounce_modes_bounces_server_not_user(
     mock_ircd.send(f":mock.test MODE {chan} +k skey")
     line = next_mode_line(mock_ircd, chan)
     assert line == f"MODE {chan} -k skey", line
+
+
+def test_a23_bounce_modes_flag_requires_chanmode_protection(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    """D-CHM6 pin: under bounce-modes a flag mode is reversed only if it
+    is chanmode-protected in that direction — only a chanmode entry
+    expresses the user's intent to enforce, other flags are irrelevant.
+
+    The default chanmode is +nt, so a server `-t+s` must produce exactly
+    `+t` (protected) and never touch `s` (unprotected). Both reversals
+    would be queued in the same gotmode pass, so a `-s` would appear in
+    the same outbound line; a pushed ban then proves nothing trails.
+    """
+    drive_registration(mock_ircd)
+    chan = drive_join_with_names(mock_ircd, "@TestBot @someop", chanmodes_324="+nt")
+    wait_onchan(tcl_bridge, "someop", chan)
+    tcl_bridge.eval_ok("set bounce-modes 1")
+
+    mock_ircd.send(f":mock.test MODE {chan} -t+s")
+    line = next_mode_line(mock_ircd, chan)
+    assert line == f"MODE {chan} +t", line
+
+    tcl_bridge.eval_ok(f'pushmode "{chan}" +b "sentinel!*@*"')
+    tcl_bridge.eval_ok(f'flushmode "{chan}"')
+    assert next_mode_line(mock_ircd, chan) == f"MODE {chan} +b sentinel!*@*"

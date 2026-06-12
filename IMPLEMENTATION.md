@@ -146,27 +146,47 @@ changes C behaviour (except 0.1).
 
 ---
 
-## Step 1 — `rank` field + mode-index helpers + seeding
+## Step 1 — `rank` field + mode-index helpers + isupport replay
 
-No behaviour change. Pure infrastructure.
+No behaviour change. Pure infrastructure. Two commits: (a) server.mod
+replay, (b) irc.mod rank/helpers.
 
-- [ ] Add `unsigned char rank` to `mode_info_t` (src/mod/irc.mod/irc.h);
+- [ ] server.mod (D-ISU6): parse the default ISUPPORT string eagerly in
+      `isupport_init()` (src/mod/server.mod/isupport.c) so records exist
+      from module load; keep `isupport_preconnect()` re-applying the
+      `isupport-default` Tcl var before each connect (fires binds only on
+      change, as today).
+- [ ] server.mod: add `isupport_replay()` — walk `isupport_list`, re-fire
+      the H_isupport bind table for every record with an effective value
+      (server value, else default). Export via appended `server_funcs`
+      slot + server.h macro.
+- [ ] irc.mod: call `isupport_replay()` in `irc_start` immediately after
+      `add_builtins(H_isupport, irc_isupport_binds)` — covers fresh start
+      *and* reload-while-connected for ALL isupport-derived state
+      (`use_354`, `modesperline`, `max_*`, `botflag005`, `modecharinfo`).
+- [ ] Document in doc/sphinx (isupport bind docs) + UPGRADING: isupport
+      binds must be idempotent; they may be re-fired with unchanged values
+      when a module loads.
+- [ ] Add `uint8_t rank` to `mode_info_t` (src/mod/irc.mod/irc.h);
       sentinel (e.g. `0xFF`/`PREFIX_RANK_NONE`) for non-prefix modes.
 - [ ] Populate `rank` in `process_prefix()` (src/mod/irc.mod/chan.c) from
-      position in the PREFIX token (0 = highest). Log + ignore prefix
-      modes beyond `MAX_PREFIX_MODES` (8).
+      position in the PREFIX token (0 = highest). Prefix modes beyond
+      `MAX_PREFIX_MODES` (8) keep their full `modecharinfo` entry (type,
+      prefix char, rank — parsing/bind/rank-compare stay correct); only
+      per-member bit tracking is unavailable; log once at parse time
+      (D-PFX9).
 - [ ] Add helpers in irc.h/irc.c: `MODE_RANK(c)`, `mode_by_prefixchar(c)`,
       `mode_to_index(c)` (`a-z`→0–25, `A-Z`→26–51, `0-9`→52–61, else -1).
-- [ ] Seed `modecharinfo` at irc.mod load by running
-      `process_chanmodes`/`process_prefix` on the compiled-in default
-      ISUPPORT values (D-ISU1) so the table is never empty pre-connect.
 
 ### Gate 1
 
 - [ ] Build clean; full pytest green (all A-tests unchanged).
-- [ ] Manual check via debug log: startup (before any connect) logs the
-      `Learned mode type:` lines for the default CHANMODES/PREFIX.
-- [ ] Committed.
+- [ ] B1 test: `Learned mode type:` debug lines appear at irc.mod load
+      (before any connect) for the default CHANMODES/PREFIX; values from a
+      connection's 005 survive an irc.mod unload/load cycle (partyline
+      `.module` or restart-free reload — assert via post-reload behaviour,
+      e.g. correct arg consumption for a non-default mode).
+- [ ] Committed (server.mod and irc.mod parts separately).
 
 ---
 
@@ -175,8 +195,12 @@ No behaviour change. Pure infrastructure.
 Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
 `opchars` is deprecated.
 
-- [ ] Append to `memberlist` (src/chan.h): `unsigned char prefixmodes,
+- [ ] Append to `memberlist` (src/chan.h): `uint8_t prefixmodes,
       wasprefix, sentplus, sentminus` (bit `1<<rank`).
+- [ ] Member resync on effective PREFIX change (D-PFX8): when
+      `update_chanmodes(is_prefix=1)` changes the prefix set/order, clear
+      all members' `prefixmodes`/`wasprefix` + legacy mirror bits and
+      `reset_chan_info(chan, CHAN_RESETWHO)` each active channel.
 - [ ] Add accessors (irc.mod): `member_has_prefixmode`,
       `member_had_prefixmode`, `member_has_prefixmode_atleast`,
       `member_set_prefixmode` — each accepts a mode letter *or* prefix
@@ -193,10 +217,12 @@ Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
       accessors (state reads/writes only — policy untouched in this step).
 - [ ] Remove `opchars` recognition; keep the Tcl variable accepted but
       ignored, log a deprecation warning when set (D-PFX5 rollout).
-- [ ] Negotiate `multi-prefix`: add to server.mod known caps
-      (src/mod/server.mod/server.c cap table) following the
-      `away-notify` pattern; decide default-on (it is read-only protocol
-      sugar) and document.
+- [ ] Negotiate `multi-prefix` (D-PFX6): add to server.mod's CAP LS
+      request list (servmsg.c:1565 pattern), gated on new `multi-prefix`
+      config var **defaulting to 1** (precedent: `extended-join`,
+      servmsg.c:44). 352/353/354 parsers strip all leading prefix chars
+      unconditionally. UPGRADING note for raw-bind scripts + the var as
+      escape hatch.
 - [ ] **Rewrite** `test_names_with_extended_prefix_grants_op_when_opchars_includes_it`
       (tests/tests/test_isupport_modes.py) per ARCHITECTURE.md §D: `~`-only
       owner is *not* `isop`; owner tracked via the new prefix state
@@ -269,11 +295,19 @@ mirrors.
       `channel.maxmembers` in irc.mod (`got324`, `gotmode`, `set_key`
       callers, join/reset paths) to the accessors. `getchanmode()` keeps
       rendering from legacy fields in this step.
+- [ ] Explicit modes-known state (D-CHM7): flag in the new store, false at
+      join/`clear_channel`/reset, set by `got324`;
+      `recheck_channel_modes()` additionally gates on it (the
+      `CHAN_ASKEDMODES` re-ask semantics stay untouched; `got324` keeps
+      running recheck while CHAN_PEND). Kills the enforce-against-zero
+      window that forced the `chanmodes_324` test workaround.
 - [ ] New tests (B4): inbound `MODE +S` (advertised flag) and `324 … j 3:5`
       → state queryable (until step 10 commands exist, assert indirectly:
       legacy fields unchanged for classic modes, and add a temporary
       C-debug or use `getchanmode` for classic; the full assertions land
-      with B10 — keep B4 minimal here and extend in step 10).
+      with B10 — keep B4 minimal here and extend in step 10). D-CHM7
+      test: withhold 324 until after 315 → no chanmode push before 324,
+      correct push right after 324 arrives.
 
 ### Gate 4
 
@@ -309,15 +343,19 @@ state-vs-bind ordering table, and `bind mode` for all modes.
 - [ ] Generic list store for non-b/e/I LIST modes (D-LST2): per-channel
       map mode char → list of `{mask, who, time}`; update on `±X mask`;
       no enforcement/persistence/initial query. Free on channel reset.
-- [ ] `bounce-modes` applies to all server-sourced modes incl. unknown
-      flags (D10).
+- [ ] Reversal semantics preserved exactly per D-CHM6's per-class table:
+      flag bounce/reversal stays strictly chanmode-gated (intent — pinned
+      by the step-0 negative test); prefix unconditional; key/limit
+      restore previous; b/e/I own settings; generic LIST never bounced.
 - [ ] Remove the gotmode sanity-check warnings (the
       `strchr("behIklov"…)` block) — superseded by the dispatch (D-OOS3).
 - [ ] New tests (B5): `+S` flag tracked + `bind mode +S|`; `+j 3:5`
       tracked with arg; quiet-LIST `+q mask` → generic store, **no**
       `CHANQUIET` (assert `getchanmode` has no `q`), `bind mode +q mask`;
-      flag-q net inverse; server-set unknown flag bounced under
-      `bounce-modes`.
+      flag-q net inverse; server-set non-classic flag in `chanmode` (e.g.
+      `chanmode +ntS`, server `-S`) reversed — generic protection reaches
+      non-classic flags; the step-0 negative (unprotected flag never
+      bounced) still green.
 
 ### Gate 5
 
@@ -331,13 +369,22 @@ state-vs-bind ordering table, and `bind mode` for all modes.
 
 ## Step 6 — Outbound queue rework + `pushmode` validation
 
-Implements D-Q1/D-Q2/D-Q3, D-TCL2. Removes the `cmode[]`/`pls`/`mns`
-limitations.
+Implements D-Q1/D-Q2/D-Q3/D-Q4/D-Q5, D-TCL2. Removes the
+`cmode[]`/`pls`/`mns` limitations and the 6-modes-per-line cap.
 
-- [ ] Add the insertion-ordered queue to `chanset_t` (appended fields):
-      entries `(sign, mode, arg)`. Legacy `pls/mns/cmode/key/rmkey/limit/
-      bytes/compat` fields **remain in the struct** (source compat),
-      marked deprecated, no longer used as the queue of record.
+- [ ] Replace the legacy queue block in `chanset_t` (src/chan.h):
+      `pls/mns/key/rmkey/limit/bytes/compat/cmode[]` are **removed**
+      (D-Q5), along with `MODES_PER_LINE_MAX`; new fixed 32-entry array of
+      `{char sign; char modechar; char *arg;}`. Update channels.mod
+      `clear_channel`/`expmem` (channels.c:416, 826) to walk the new
+      array. UPGRADING note for the removed fields/macro.
+- [ ] Honor server MODES up to 32 (D-Q4): widen the `irc_isupport()`
+      MODES clamp to 1..32 (default 3); clamp `modesperline` at point of
+      use instead of the per-second re-clamp in `flush_modes`
+      (irc.c:1051) — delete the re-clamp.
+- [ ] Byte-budget flushing: flush when entry count reaches `modesperline`
+      *or* the projected line would exceed ~450 bytes (also fixes the
+      latent 6-long-masks truncation bug).
 - [ ] Rewrite `real_add_mode()` as a validating wrapper preserving the
       exported `add_mode(chan, plus, mode, op)` signature: `modecharinfo`
       arg-validation (`MODE_HAS_SET_ARG`/`MODE_HAS_UNSET_ARG`) →
@@ -356,14 +403,20 @@ limitations.
       semantics are unchanged.
 - [ ] New tests (B6): `pushmode +j 3:5` on the wire; push-order
       `+b-b+b a b c` single line; `pushmode +Z` (unknown) → Tcl error;
-      `pushmode +j` (missing arg) → error.
+      `pushmode +j` (missing arg) → error; byte-budget split with long
+      masks (line < 512 bytes always).
+- [ ] **Rewrite B0** (sanctioned, D-category): `MODES=20` is now honored —
+      assert >6 modes per line where the byte budget allows, masks
+      complete across lines.
 
 ### Gate 6
 
 - [ ] Build clean; A6–A9 (queue characterization) green **unmodified** —
-      identical wire output from the new queue. Full suite green.
-- [ ] B6 green. B0 still green (line limit now enforced by the new
-      flush).
+      identical wire output from the new queue (A9's MODES=4 split is the
+      canary). Full suite green.
+- [ ] B6 green, rewritten B0 green.
+- [ ] Grep gate: `grep -rn "MODES_PER_LINE_MAX\|->cmode\|->pls\b\|->mns\b"
+      src/` empty.
 - [ ] Committed.
 
 ---
