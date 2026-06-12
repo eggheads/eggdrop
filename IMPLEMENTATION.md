@@ -19,7 +19,7 @@ coverage matrix). This file only sequences the work; when in doubt about
 
 ## Ground rules (from ARCHITECTURE.md — violations are bugs)
 
-- [ ] Read ARCHITECTURE.md in full before writing any code.
+- [x] Read ARCHITECTURE.md in full before writing any code.
 - **Source compatibility is paramount.** Legacy fields
   (`chan->channel.mode/.key/.maxmembers`, `memberlist.flags`,
   `mode_pls_prot`/`mode_mns_prot`/`limit_prot`/`key_prot`,
@@ -59,16 +59,29 @@ this step is the out-of-bounds clamp.
 
 ### 0.1 C fix: MODES clamp
 
-- [ ] In `irc_isupport()` (src/mod/irc.mod/chan.c, `MODES` branch): clamp
+- [x] In `irc_isupport()` (src/mod/irc.mod/chan.c, `MODES` branch): clamp
       the parsed value to `MODES_PER_LINE_MAX` (src/chan.h) instead of 64.
       `modesperline` must never exceed the `cmode[]` array bound.
+- [x] **Bonus bugfix found by characterization (A13):** `got_op()` and
+      `got_halfop()` passed an *uninitialized* `s[UHOSTLEN]` to
+      `modebind_refresh()` as the victim userhost, so the victim's flag
+      record was re-resolved from stack garbage after the bind — `+bitch`
+      then deopped even +o users. Fixed by filling `s` like
+      `got_deop`/`got_dehalfop`/the `v` case do
+      (`simple_sprintf(s, "%s!%s", m->nick, m->userhost)`). Separate
+      commit; report upstream-worthy.
 
 ### 0.2 Test infrastructure
 
-- [ ] Add helper(s) in `tests/support/` as needed: create a test user with
+- [x] Add helper(s) in `tests/support/` as needed: create a test user with
       flags via bridge (`adduser`/`chattr`), install a `bind mode`
       accumulator proc, snapshot/diff outbound IRC lines. Keep them in
       existing modules where they fit (`irc_helpers.py`).
+      Added: `wait_onchan`, `create_test_user`, `install_mode_log`/
+      `get_mode_log`, and `drive_join_with_names(chanmodes_324=...,
+      join_line=...)` (answers the bare join-time `MODE #chan` query —
+      without it the op bot queues its desired chanmode at end-of-WHO and
+      pollutes wire assertions; see helper docstring).
 
 ### 0.3 Characterization suites (test IDs per ARCHITECTURE.md §Test plan A)
 
@@ -77,42 +90,59 @@ actual current behaviour differs from the spec sketch, pin the *actual*
 behaviour and note the deviation in the test docstring** — step 0 never
 changes C behaviour (except 0.1).
 
-- [ ] `tests/tests/test_modes_characterization.py`: A1 (getchanmode
+- [x] `tests/tests/test_modes_characterization.py`: A1 (getchanmode
       format, flag letters as *set membership*), A2 (bind mode args +
       `wasop` inside bind, `-l`→`""` quirk), A3 (WHO status both WHOX 354
-      and plain 352; away `G`→`isaway`; 005 `BOT=B` flag→`isircbot`), A4
-      (userhost-in-names NAMES path is status-blind), A5 (netsplit WASOP +
-      stopnethack-mode 2 server-reop; FAKEOP deop for non-wasop member),
-      A27 (Undernet `324 +k *` → MODE re-ask once opped), A29–A31 already
-      exist in `test_isupport_modes.py` — verify they pass, do not move.
-- [ ] `tests/tests/test_modes_pushmode.py`: A6 (classic pushmode + SENT
+      and plain 352; away `G`→`isaway`; 005 `BOT=B` flag→`isircbot`), A5
+      (netsplit WASOP + stopnethack-mode 2 server-reop; FAKEOP deop for
+      non-wasop member), A27 (Undernet `324 +k *` → MODE re-ask once
+      opped), A29–A31 already exist in `test_isupport_modes.py` —
+      verified passing, not moved. A4 lives in
+      `test_modes_userhost_in_names.py` (needs a module-local mock_ircd
+      override: CAP ACK only enables caps with a record from CAP LS).
+- [x] `tests/tests/test_modes_pushmode.py`: A6 (classic pushmode + SENT
       dedup), A7 (pushmode `+k/+l/-k` wire output), A8 (`prevent_mixing`
       e/I two-line split), A9 (`MODES=4` line splitting, args aligned).
-- [ ] `tests/tests/test_modes_policy.py`: A13 (+bitch), A14
-      (protectops/protectfriends re-op), A15 (revenge on deop of +f
-      friend — if too flaky, pin a narrower slice and document), A16
-      (bot-deop → `bind need` op + SENT clearing), A17 (autoop/autovoice
-      with `aop-delay 0:0`), A22 (desync/fake-mode kick), A23
-      (bounce-modes: server-sourced `+i` bounced, user-sourced not).
-- [ ] `tests/tests/test_modes_enforcement.py`: A10 (chanmode flag enforce
-      live + on-join recheck), A11 (key enforce + JOIN key + `-k` re-add +
-      stranger `+k` replaced + `chanmode -k` bounce), A12 (limit enforce),
-      A18 (enforcebans kick), A19 (ban-on-bot bounce), A20 (sticky ban
-      re-add; `-dynamicbans` userfile ban pushed on join), A21
+- [x] `tests/tests/test_modes_policy.py`: A13 (+bitch; also pins the
+      chanset-recheck sweep of existing unauthorized ops), A14
+      (protectops/protectfriends re-op), A15 (revenge — requires +revenge
+      AND a matching protect* setting per want_to_revenge; +revenge alone
+      never punishes), A16 (bot-deop → `bind need` op + SENT clearing;
+      mind Tcl brace-quoting of leading-# list elements in accumulators),
+      A17 (autoop/autovoice with `aop-delay 0:0`), A22 (desync kick;
+      reversal asserted on a prefix mode — flag modes are NOT bounced
+      unless also chanmode-protected), A23 (bounce-modes via server `+k`;
+      plain flag modes currently only bounce when chanmode-protected,
+      negative deliberately unpinned per D10).
+- [x] `tests/tests/test_modes_enforcement.py`: A10 (chanmode flag enforce
+      live (`+nt-i`) + on-join recheck), A11 (key enforce + JOIN key +
+      `-k` re-add + stranger `+k` replaced + `chanmode -k` bounce), A12
+      (limit enforce), A18 (enforcebans kick), A19 (ban-on-bot bounce),
+      A20 (sticky ban re-add + `-dynamicbans` re-add after unban), A21
       (`-userexempts` bounce), A24 (b/e/I list tracking via numerics +
       live MODE), A25 (chanmode round-trip: `channel set`, partyline
-      `.chanset`, persistence across save+rehash), A26 (partyline `.op`,
-      `.kickban`), A28 (bind-proc removes channel mid-burst → no crash).
-- [ ] B0 clamp test: 005 `MODES=20`, queue ≥7 modes, `assert_alive()`,
+      `.chanset`, savechannels→chanfile→rehash survival; note rehash
+      WRITES the chanfile from memory before re-reading, so
+      restore-after-memory-change is untestable by design), A26
+      (partyline `.op`, `.kickban`), A28 (bind-proc removes channel
+      mid-burst → no crash).
+- [x] B0 clamp test: 005 `MODES=20`, queue ≥7 modes, `assert_alive()`,
       every emitted `MODE` line has ≤ `MODES_PER_LINE_MAX` mode letters.
 
 ### Gate 0
 
-- [ ] `make distclean && ./configure && make config && make` clean (no new warnings in touched files).
-- [ ] Full `uv run pytest` green, including every A-test and B0.
-- [ ] `ruff check` and `ty check` clean.
-- [ ] B0 fails when the 0.1 clamp is reverted (verify once, locally).
-- [ ] Committed (tests + clamp may be separate commits).
+- [x] Build clean (no new warnings in touched files).
+- [x] Full `uv run pytest` green (197 tests), including every A-test and B0.
+- [x] `ruff check` and `ty check` clean.
+- [x] B0-fails-when-reverted: **inapplicable as specified** — verified
+      empirically that the per-second `flush_modes()` (irc.c) already
+      re-clamps `modesperline` each tick, so the unclamped parse is only
+      exposed in a sub-second window that can't be hit deterministically
+      from outside. B0 stays as the user-visible contract test (lines
+      never exceed `MODES_PER_LINE_MAX`); the parse-time clamp closes the
+      remaining UB window. ARCHITECTURE.md updated.
+- [x] Committed (clamp, got_op/got_halfop bugfix, and tests as separate
+      commits).
 
 ---
 

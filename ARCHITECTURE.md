@@ -111,9 +111,14 @@ groups `-b/-e/-I` before `+b/+e/+I` and emits k/l from special slots.
 `irc_isupport()` parses `MODES` up to 64 into `modesperline`
 (`chan.c:3056`) but `cmode[]` is `MODES_PER_LINE_MAX` = 6
 (`src/chan.h:39,210`) and `real_add_mode()`/`flush_mode()` loop
-`i < modesperline` over it → out-of-bounds write on servers advertising
-`MODES>6` (InspIRCd ~20). Clamp to `MODES_PER_LINE_MAX` immediately; the
-queue rework removes the fixed array.
+`i < modesperline` over it → out-of-bounds access on servers advertising
+`MODES>6` (InspIRCd ~20). Mitigating detail found during step 0: the
+per-second `flush_modes()` (irc.c) re-clamps `modesperline` to
+`MODES_PER_LINE_MAX` on every tick, so the OOB window is only the
+sub-second gap between 005 processing and the next tick (e.g. modes
+pushed from a raw/isupport bind). Still UB — clamp at parse time
+(done in step 0); the queue rework removes the fixed array and can lift
+the 6-mode ceiling properly.
 
 ## Decisions
 

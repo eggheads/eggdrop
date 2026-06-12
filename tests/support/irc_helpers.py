@@ -66,6 +66,8 @@ def drive_join_with_names(
     nick: str = "TestBot",
     server: str = "mock.test",
     member_accounts: dict[str, str] | None = None,
+    chanmodes_324: str | None = None,
+    join_line: str | None = None,
 ) -> str:
     """Drive a realistic post-registration channel JOIN to completion.
 
@@ -80,17 +82,28 @@ def drive_join_with_names(
            one 354 per member carrying the per-member account from
            `member_accounts` (default "*" = not logged in). Otherwise reply
            with one 352 per member. Either form ends with 315.
-      5. leave `MODE #chan` (no list flag) unanswered so tests can send
-         their own 324 reply
+      5. answer the bare `MODE #chan` query with `324 <chanmodes_324>` when
+         `chanmodes_324` is given (e.g. "+nt"); otherwise leave it
+         unanswered so tests can send their own 324 reply.
+
+    Note when leaving it unanswered: on a channel with a `chanmode`
+    setting the op bot queues its desired modes at end-of-WHO *before* any
+    324 arrives (reset_chan_info clears ASKEDMODES when it sends the MODE
+    query), so the next flush carries e.g. `+tn`. Tests that assert on
+    outbound MODE lines should pass `chanmodes_324` matching the
+    channel's chanmode to keep the queue clean.
 
     `member_accounts` maps member nick → account name; nicks not in the dict
     get "*". Only consulted on the WHOX path; ignored for plain WHO.
+    `join_line` lets a test that already consumed the bot's JOIN (e.g. to
+    assert the join key) pass it in instead of draining for it.
     Returns the channel name. Quiesces when no new lines arrive for ~300 ms
     or after a 5 s hard cap.
     """
-    join_line = mock_ircd.drain_until(
-        lambda line: line.startswith("JOIN "), timeout=10.0
-    )[-1]
+    if join_line is None:
+        join_line = mock_ircd.drain_until(
+            lambda line: line.startswith("JOIN "), timeout=10.0
+        )[-1]
     chan = join_line.split()[1]
     mock_ircd.send(f":{nick}!u@h JOIN :{chan}")
     mock_ircd.send(f":{server} 353 {nick} = {chan} :{members_with_prefix}")
@@ -142,8 +155,10 @@ def drive_join_with_names(
             # WHOX form is `WHO #chan c%chnufat,222`; eggdrop emits this when
             # use_354 (WHOX ISUPPORT) is on and parses replies from got354.
             reply_who(whox=",222" in line)
-        # MODE #chan (no list flag) — left for the test to answer with 324.
-        # Anything else is silently drained.
+        elif line == f"MODE {chan}" and chanmodes_324 is not None:
+            mock_ircd.send(f":{server} 324 {nick} {chan} {chanmodes_324}")
+        # A bare MODE #chan without chanmodes_324 is left for the test to
+        # answer with its own 324. Anything else is silently drained.
     return chan
 
 
@@ -156,3 +171,57 @@ def wait_for_isupport(
         timeout=timeout,
         description=f"isupport {key}={expected!r}",
     )
+
+
+def wait_onchan(
+    bridge: BridgeClient, nick: str, chan: str, timeout: float = 5.0
+) -> None:
+    """Block until `nick` appears on `chan` in the bot's memberlist."""
+    wait_for(
+        lambda: bridge.eval_ok(f'onchan {nick} "{chan}"') == "1",
+        timeout=timeout,
+        description=f"{nick} to appear on {chan}",
+    )
+
+
+def create_test_user(
+    bridge: BridgeClient,
+    handle: str,
+    hostmask: str,
+    flags: str = "",
+    chan: str | None = None,
+) -> None:
+    """Create a user record with `flags` via the bridge.
+
+    Members driven through `drive_join_with_names` all share the
+    `u@h.example.com` userhost, so per-user records must match by nick:
+    pass e.g. `hostmask="alice!*@*"`. Create users *before* the member is
+    seen on a channel — the memberlist caches negative user lookups.
+    """
+    bridge.eval_ok(f"adduser {handle} {hostmask}")
+    if flags:
+        target = f" {chan}" if chan else ""
+        bridge.eval_ok(f"chattr {handle} {flags}{target}")
+
+
+def install_mode_log(bridge: BridgeClient) -> None:
+    """Install a `bind mode` accumulator.
+
+    Each fired bind appends `<mode>|<victim>|<wasop victim>` to a global
+    Tcl list; read it back with `get_mode_log`.
+    """
+    bridge.eval_ok("set ::modelog {}")
+    bridge.eval_ok(
+        "proc test:modeacc {nick uhost hand chan mode victim} "
+        '{lappend ::modelog "$mode|$victim|[wasop $victim $chan]"}'
+    )
+    bridge.eval_ok("bind mode - * test:modeacc")
+
+
+def get_mode_log(bridge: BridgeClient) -> list[str]:
+    """Return the entries accumulated by `install_mode_log`.
+
+    Entries never contain spaces (mode chars, nicks, and masks are
+    space-free), so the Tcl list splits cleanly.
+    """
+    return bridge.eval_ok("set ::modelog").split()
