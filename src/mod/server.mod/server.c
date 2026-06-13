@@ -2364,7 +2364,8 @@ static Function server_table[] = {
   (Function) encode_msgtags,
   /* 52 - 55 */
   (Function) & H_monitor,
-  (Function) isupport_get_prefixchars
+  (Function) isupport_get_prefixchars,
+  (Function) isupport_replay
 };
 
 char *server_start(Function *global_funcs)
