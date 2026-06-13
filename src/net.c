@@ -1024,10 +1024,16 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                 * otherwise it will connect. */
           *len = slist[i].sock;
           slist[i].flags &= ~SOCK_CONNECT;
-          debug2("net: eof!(read) socket %d error %s", slist[i].sock, strerror(errno));
+          if (x < 0)
+            debug2("net: eof!(read) socket %d error %s", slist[i].sock, strerror(errno));
+          else
+            debug1("net: eof!(read) socket %d", slist[i].sock);
           return -1;
         } else {
-          debug2("net: EAGAIN socket %d error %s", slist[i].sock, strerror(errno));
+          if (x < 0)
+            debug2("net: EAGAIN socket %d error %s", slist[i].sock, strerror(errno));
+          else
+            debug1("net: EAGAIN socket %d", slist[i].sock);
           continue;           /* EAGAIN */
         }
       }
