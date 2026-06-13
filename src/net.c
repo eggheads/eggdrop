@@ -974,7 +974,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #endif
           res2_len = sizeof(res2);
           getsockopt(slist[i].sock, SOL_SOCKET, SO_ERROR, &res2, &res2_len);
-          if (res2 > 0 && res2 != EINPROGRESS) {
+          if ((res2 > 0) && (res2 != EINPROGRESS)) {
             debug2("net: connect! sock %d error %s", slist[i].sock, strerror(res2));
             s[0] = 0;
             *len = slist[i].sock;
