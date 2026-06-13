@@ -11,6 +11,8 @@ membership + arg order), not the incidental detail.
 
 from __future__ import annotations
 
+import pytest
+
 from support.bridge_client import BridgeClient
 from support.eggdrop_proc import EggdropProc
 from support.irc_helpers import (
@@ -76,6 +78,43 @@ def test_a1_botisop_from_names_prefix(
     wait_onchan(tcl_bridge, "plain", chan)
     assert tcl_bridge.eval_ok(f'botisop "{chan}"') == "1"
     assert tcl_bridge.eval_ok(f'botishalfop "{chan}"') == "0"
+
+
+@pytest.mark.parametrize(
+    ("bot_token", "expected_op", "expected_halfop", "expected_voice"),
+    [
+        ("@TestBot", "1", "0", "0"),
+        ("%TestBot", "0", "1", "0"),
+        ("+TestBot", "0", "0", "1"),
+        ("TestBot", "0", "0", "0"),
+    ],
+)
+def test_a1_bot_status_helpers_match_member_status(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+    bot_token: str,
+    expected_op: str,
+    expected_halfop: str,
+    expected_voice: str,
+) -> None:
+    """botisop/botishalfop/botisvoice are compatibility wrappers for
+    the bot's literal o/h/v member status, not rank-based capability.
+    """
+    drive_registration(mock_ircd)
+    chan = drive_join_with_names(mock_ircd, f"{bot_token} plain")
+    wait_onchan(tcl_bridge, "plain", chan)
+
+    for bot_cmd, member_cmd, expected in (
+        ("botisop", "isop", expected_op),
+        ("botishalfop", "ishalfop", expected_halfop),
+        ("botisvoice", "isvoice", expected_voice),
+    ):
+        bot_value = tcl_bridge.eval_ok(f'{bot_cmd} "{chan}"')
+        member_value = tcl_bridge.eval_ok(f'{member_cmd} TestBot "{chan}"')
+        assert bot_value == expected, bot_cmd
+        assert member_value == expected, member_cmd
+        assert bot_value == member_value, (bot_cmd, member_cmd)
 
 
 # ---------- A2: bind mode args + wasop visibility ----------

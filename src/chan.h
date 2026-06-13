@@ -53,6 +53,11 @@ typedef struct memstruct {
   struct userrec *user; /* cached user lookup */
   int tried_getuser; /* negative user lookup cache */
   struct memstruct *next;
+  /* arbmodes: may change - use accessors */
+  uint8_t prefixmodes; /* bit (1<<rank) per held prefix mode */
+  uint8_t wasprefix;   /* held before split / for bind mode  */
+  uint8_t sentplus;    /* +mode already queued               */
+  uint8_t sentminus;   /* -mode already queued               */
 } memberlist;
 
 #define CHANOP       0x00001 /* channel +o                                   */

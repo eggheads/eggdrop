@@ -157,7 +157,8 @@ review changed an earlier call, only the final decision is recorded here.
   multi-prefix; legacy 352 reports only the highest. Generalize
   `got352or4()`'s flags-field parsing from `@`/`%`/`+`/`opchars` to the
   full PREFIX set; remove `opchars` (Tcl variable accepted-but-ignored with
-  a deprecation warning this release). **NAMES (353) logic is unchanged** —
+  a once-per-irc.mod-load deprecation warning on Tcl writes this release).
+  **NAMES (353) logic is unchanged** —
   stays gated on `userhost-in-names`, still passes `""` flags, does not
   contribute prefix state (so the generalized `got352or4` clears prefix
   bits on that path exactly as it clears CHANOP today: zero behaviour
@@ -165,20 +166,25 @@ review changed an earlier call, only the final decision is recorded here.
 - **D-PFX6 (Q9, mechanism grill-2): Negotiate `multi-prefix`** where the
   server offers it. server.mod has no module-cap-registration API and we are
   not adding one for a single cap: the request lives in server.mod's CAP LS
-  handler like sasl/account-notify, gated on a new `multi-prefix` config var
-  **defaulting to 1** (precedent: `extended-join` defaults on despite
-  changing raw `JOIN` lines far more invasively than `@+nick` in NAMES; the
-  var is the script-compat escape hatch, noted in UPGRADING). irc.mod's
-  352/353/354 parsers strip **all** leading prefix chars unconditionally —
-  correct under both cap states since nicks cannot start with a prefix char.
-  Improves the 352 and NAMES paths; 354 is already complete.
+  handler like sasl/account-notify, gated on a new server.mod-local
+  `multi-prefix` Tcl config var **defaulting to 1** (precedent:
+  `extended-join` defaults on despite changing raw `JOIN` lines far more
+  invasively than `@+nick` in NAMES; the var is the script-compat escape
+  hatch, noted in UPGRADING). The var is not exported through the C module
+  API unless a later step strictly needs it. irc.mod's 352/353/354 parsers
+  strip **all** leading current PREFIX chars unconditionally — correct under
+  both cap states since nicks cannot start with a prefix char under the
+  advertised PREFIX set; they also keep a conservative legacy fallback for
+  `@`/`%`/`+` when the prefix table is missing or incomplete. Improves the
+  352 and NAMES paths; 354 is already complete.
 - **D-PFX8 (grill-2): Member prefix bits are rank-indexed (`1 << rank`),
   resynced on PREFIX change.** A mid-session 005 PREFIX re-announcement
   (rare; e.g. InspIRCd module load) would silently remap every member's held
   bits. When `update_chanmodes(is_prefix=1)` results in an effectively
-  different prefix set/order: clear `prefixmodes`/`wasprefix` (and the
-  legacy mirror bits) on all members and `reset_chan_info(chan,
+  different prefix set/order: clear `prefixmodes`/`wasprefix`/sent bits (and
+  the legacy mirror bits) on all members and `reset_chan_info(chan,
   CHAN_RESETWHO)` each active channel — WHOX rebuilds authoritative state.
+  Identical replays (including step-1 isupport replay) do not reset members.
   Per-letter stable bit allocation was rejected: more bookkeeping, and rank
   shifts under `can_set_mode` anyway, so it only half-solves the problem.
 - **D-PFX9 (grill-2): The 8-prefix cap degrades tracking, never parsing.**
@@ -370,11 +376,11 @@ review changed an earlier call, only the final decision is recorded here.
 
 ```c
 typedef struct mode_info {
-  mode_type_t type;
-  char prefix;          /* prefix char for MODETYPE_PREFIX, else 0  */
+  uint8_t type;         /* mode_type_t value                         */
   uint8_t rank;         /* PREFIX position, 0 = highest; sentinel for
                            non-prefix modes. Doubles as bit index into the
                            per-member prefix bitsets (max MAX_PREFIX_MODES). */
+  char prefix;          /* prefix char for MODETYPE_PREFIX, else 0   */
 } mode_info_t;
 ```
 
@@ -382,7 +388,10 @@ Helpers: `MODE_RANK(c)`, `mode_by_prefixchar(char)`, `mode_to_index(c)`
 (`a-z`→0-25, `A-Z`→26-51, `0-9`→52-61, else -1). PREFIX entries beyond
 `MAX_PREFIX_MODES` (8) keep full `modecharinfo` entries (parsing, bind,
 rank stay correct) but get no per-member bit — see D-PFX9. New bitfield
-fields use `uint8_t` throughout.
+fields use `uint8_t` throughout. The field order is intentionally
+no-padding/byte-comparable; temporary `mode_info_t` arrays explicitly write
+all fields, including invalid entries, so effective PREFIX changes can be
+detected with `memcmp`.
 
 ### `chan_t` additions (appended; "may change — use accessors")
 
@@ -404,10 +413,16 @@ uint8_t sentplus;     /* +mode already queued (anti-loop)          */
 uint8_t sentminus;    /* -mode already queued                      */
 ```
 
-Accessors take a mode letter *or* prefix char:
+Internal irc.mod accessors stay private/static unless a later step strictly
+needs C module API exposure. Accessors take a mode letter (`a-zA-Z0-9`) or a
+prefix char (anything else, resolved through `mode_by_prefixchar()`):
 `member_has_prefixmode`, `member_had_prefixmode`,
-`member_has_prefixmode_atleast`, `member_set_prefixmode`. They mirror the
-legacy `CHANOP`(literal o)/`CHANHALFOP`/`CHANVOICE` and `WAS*`/`SENT*` bits.
+`member_has_prefixmode_atleast`, current/was setters, and sentplus/sentminus
+readers/setters. They no-op silently for ranks beyond `MAX_PREFIX_MODES`.
+They mirror the legacy `CHANOP`(literal o)/`CHANHALFOP`/`CHANVOICE` and
+`WAS*`/`SENT*` bits for o/h/v. `wasprefix` follows the `wasop` bind-time
+contract: current state changes before `bind mode`, previous-state bits
+change after the bind.
 
 ### Capability `can_set_mode(chan, mode)` — see D-PFX4.
 
@@ -459,13 +474,16 @@ defaults eagerly in `isupport_init()`, export `isupport_replay()`;
 isupport state on module (re)load, not just modecharinfo. No behaviour
 change otherwise.
 
-**Step 2 — Member prefix storage.** Add the bitset fields + accessors with
-legacy-flag mirroring (D-PFX2). Generalize `got352or4()` flags parsing to
-the full PREFIX set; remove `opchars` (deprecation warning); `multi-prefix`
-via server.mod CAP LS list + config var default-on (D-PFX6); 352/353/354
-parsers strip all leading prefix chars unconditionally; member resync on
-effective PREFIX change (D-PFX8). NAMES untouched. Convert `gotmode`
-prefix cases and `real_add_mode()` SENT logic to accessors.
+**Step 2 — Member prefix storage.** Repack `mode_info_t` into its
+no-padding byte-comparable layout. Add the bitset fields + private/static
+accessors with legacy-flag mirroring (D-PFX2). Generalize `got352or4()`
+flags parsing to the full PREFIX set; remove `opchars` (once-per-load
+deprecation warning on Tcl writes); `multi-prefix` via server.mod CAP LS
+list + server.mod-local config var default-on (D-PFX6); 352/353/354 parsers
+strip leading current PREFIX chars with `@`/`%`/`+` fallback; member resync
+only on effective PREFIX change (D-PFX8). NAMES remains status-blind. Convert
+`gotmode` prefix cases and `real_add_mode()` SENT logic to accessors without
+pulling the arbitrary outbound queue rewrite forward.
 
 **Step 3 — Capability.** Add `can_set_mode()`; convert
 `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`/`NOHALFOPS_MODES` sites; keep
@@ -564,10 +582,12 @@ the bridge.
 
 **Core state & formats**
 
-- **A1 `getchanmode` format.** After `324 +ntkl secret 42`: flags contain
-  `n t k l` (set membership, not order — D-CHM5), then `secret 42` in that
-  exact arg order. Also `botisop`/`botishalfop` reflect the bot's own NAMES
-  prefix.
+- **A1 `getchanmode` format + bot status compatibility.** After `324 +ntkl
+  secret 42`: flags contain `n t k l` (set membership, not order —
+  D-CHM5), then `secret 42` in that exact arg order. Also
+  `botisop`/`botishalfop`/`botisvoice` match the member-level
+  `isop`/`ishalfop`/`isvoice` result for the bot across `@`/`%`/`+`/plain
+  NAMES prefixes.
 - **A2 `bind mode` args + `wasop` inside the bind.** Accumulate
   `"$mode|$victim|[wasop $victim $chan]"` from a `bind mode`; drive
   `MODE #c +o-o+v+b-l alice alice bob *!*@x`; assert sequence
@@ -672,11 +692,13 @@ the bridge.
   `assert_alive`, emitted lines never exceed `MODES_PER_LINE_MAX` modes.
   Plus all of section A.
 - **Step 2 (member prefixes)** — `multi-prefix` REQ'd (override `mock_ircd`
-  caps; `cap enabled` contains it); WHOX `354` with `~&@%+` ⇒ `isprefix q
-  owner`, `isprefixatleast o owner`, `isop owner` **literal-o** (false for
-  `~`-only, true for `~@`); MODE `+q nick` on a prefix-q network updates
-  `isprefix` and fires `bind mode`; `opchars` in conf ⇒ deprecation
-  warning, no effect on recognition.
+  caps; `cap enabled` contains it); WHOX `354` with `~&@%+` ⇒ `isop` is
+  **literal-o** (false for `~`-only, true for `~@`); MODE `+q nick` on a
+  prefix-q network consumes the nick and fires `bind mode`; `opchars` in
+  conf ⇒ deprecation warning, no effect on recognition. Direct
+  `isprefix`/`wasprefix` assertions are deferred to step 10, when those Tcl
+  commands exist; arbitrary parameterized outbound `pushmode +q nick` waits
+  for the step-6 queue rewrite.
 - **Step 3 (capability)** — bot as `%`: `pushmode +v` emits, `+o`/`+h` do
   **not** (rank), `+b`/flags emit (non-prefix at-least-halfop); bot as `@`:
   `+o` emits (self-rank exception); on a quiet-LIST network bot-as-`%`
@@ -769,9 +791,10 @@ call out the behaviour change (a previously-skipped mode is now tracked).
 - **`test_names_with_extended_prefix_grants_op_when_opchars_includes_it`**
   depends on `opchars`, which D-PFX5 removes. It is **rewritten** in step 2
   to assert the new contract: with WHOX/`multi-prefix`, a `~`-only owner is
-  tracked via `isprefix q`/`isprefixatleast o`, and `isop` is literal-`o`
-  (so a `~`-only owner is **not** `isop`). The old behaviour (owner counts
-  as op because `opchars` includes `~`) is gone by design.
+  **not** `isop`, while `~@` is `isop` via literal `o`; generic owner state
+  is asserted through `isprefix q`/`isprefixatleast o` when the step-10
+  commands land. The old behaviour (owner counts as op because `opchars`
+  includes `~`) is gone by design.
 - **`getchanmode` flag ordering** (D-CHM5): any test asserting the exact
   flag-letter *order* must assert set membership instead. A1 is written this
   way from the start to avoid a churn.

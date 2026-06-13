@@ -63,12 +63,12 @@ typedef enum mode_type {
 #define PREFIX_RANK_NONE 0xFF
 
 typedef struct mode_info {
-  mode_type_t type;
-  char prefix;          /* prefix char for MODETYPE_PREFIX, else 0          */
+  uint8_t type;         /* mode_type_t value                                */
   uint8_t rank;         /* PREFIX position, 0 = highest; PREFIX_RANK_NONE
                            for non-prefix modes. Doubles as the bit index
                            into per-member prefix bitsets when
                            rank < MAX_PREFIX_MODES. */
+  char prefix;          /* prefix char for MODETYPE_PREFIX, else 0          */
 } mode_info_t;
 
 /* The 62 channel mode letters that get a per-channel bitset slot, in
