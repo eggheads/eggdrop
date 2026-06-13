@@ -1471,6 +1471,11 @@ char *irc_start(Function *global_funcs)
   Tcl_IncrRefCount(tcl_account);
   add_builtins(H_rawt, irc_rawt);
   add_builtins(H_isupport, irc_isupport_binds);
+  /* Pull current isupport values (server.mod parses defaults eagerly and
+   * retains live 005 values across an irc.mod reload) through the binds we
+   * just added; they fire only on change otherwise, leaving modecharinfo and
+   * the other isupport-derived state empty until the next value change. */
+  isupport_replay();
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);

@@ -52,11 +52,42 @@ typedef enum mode_type {
 #define MODE_HAS_SET_ARG(c) (MODE_TYPE((c)) >= MODETYPE_LIMIT)
 #define MODE_HAS_UNSET_ARG(c) (MODE_TYPE((c)) >= MODETYPE_KEY)
 #define MODE_PREFIX(c) (modecharinfo[(unsigned char)(c)].prefix)
+#define MODE_RANK(c) (modecharinfo[(unsigned char)(c)].rank)
+
+/* Highest number of prefix modes a member can hold, bounding the per-member
+ * prefix bitsets (bit 1<<rank). Prefix modes ranked at or beyond this keep a
+ * full modecharinfo entry (parsing/bind/rank stay correct) but get no
+ * per-member tracking. */
+#define MAX_PREFIX_MODES 8
+/* mode_info_t.rank sentinel for non-prefix (or untracked) modes. */
+#define PREFIX_RANK_NONE 0xFF
 
 typedef struct mode_info {
   mode_type_t type;
-  char prefix;
+  char prefix;          /* prefix char for MODETYPE_PREFIX, else 0          */
+  uint8_t rank;         /* PREFIX position, 0 = highest; PREFIX_RANK_NONE
+                           for non-prefix modes. Doubles as the bit index
+                           into per-member prefix bitsets when
+                           rank < MAX_PREFIX_MODES. */
 } mode_info_t;
+
+/* The 62 channel mode letters that get a per-channel bitset slot, in
+ * bitset/render order (see D-CHM5). Indexing this string is the inverse of
+ * mode_to_index() and is what getchanmode() renders from. */
+#define MODE_INDEX_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+/* Bit index for a channel mode letter in the per-channel mode bitset:
+ * a-z -> 0-25, A-Z -> 26-51, 0-9 -> 52-61, anything else (incl. '\0') -> -1.
+ * A table lookup rather than letter arithmetic, because C only guarantees
+ * the decimal digits are contiguous in the execution charset (C99 5.2.1),
+ * not the letters. Pure function of the letter (independent of
+ * modecharinfo). */
+static inline int mode_to_index(char c)
+{
+  const char *p = c ? strchr(MODE_INDEX_CHARS, c) : NULL;
+
+  return p ? (int) (p - MODE_INDEX_CHARS) : -1;
+}
 
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);

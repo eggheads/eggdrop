@@ -151,42 +151,47 @@ changes C behaviour (except 0.1).
 No behaviour change. Pure infrastructure. Two commits: (a) server.mod
 replay, (b) irc.mod rank/helpers.
 
-- [ ] server.mod (D-ISU6): parse the default ISUPPORT string eagerly in
+- [x] server.mod (D-ISU6): parse the default ISUPPORT string eagerly in
       `isupport_init()` (src/mod/server.mod/isupport.c) so records exist
       from module load; keep `isupport_preconnect()` re-applying the
       `isupport-default` Tcl var before each connect (fires binds only on
       change, as today).
-- [ ] server.mod: add `isupport_replay()` — walk `isupport_list`, re-fire
+- [x] server.mod: add `isupport_replay()` — walk `isupport_list`, re-fire
       the H_isupport bind table for every record with an effective value
-      (server value, else default). Export via appended `server_funcs`
+      (server value, else default). Export via appended `server_funcs[54]`
       slot + server.h macro.
-- [ ] irc.mod: call `isupport_replay()` in `irc_start` immediately after
+- [x] irc.mod: call `isupport_replay()` in `irc_start` immediately after
       `add_builtins(H_isupport, irc_isupport_binds)` — covers fresh start
       *and* reload-while-connected for ALL isupport-derived state
       (`use_354`, `modesperline`, `max_*`, `botflag005`, `modecharinfo`).
-- [ ] Document in doc/sphinx (isupport bind docs) + UPGRADING: isupport
+- [x] Document in doc/sphinx (isupport bind docs) + UPGRADING: isupport
       binds must be idempotent; they may be re-fired with unchanged values
       when a module loads.
-- [ ] Add `uint8_t rank` to `mode_info_t` (src/mod/irc.mod/irc.h);
-      sentinel (e.g. `0xFF`/`PREFIX_RANK_NONE`) for non-prefix modes.
-- [ ] Populate `rank` in `process_prefix()` (src/mod/irc.mod/chan.c) from
+- [x] Add `uint8_t rank` to `mode_info_t` (src/mod/irc.mod/irc.h);
+      `PREFIX_RANK_NONE` (0xFF) for non-prefix modes.
+- [x] Populate `rank` in `process_prefix()` (src/mod/irc.mod/chan.c) from
       position in the PREFIX token (0 = highest). Prefix modes beyond
       `MAX_PREFIX_MODES` (8) keep their full `modecharinfo` entry (type,
       prefix char, rank — parsing/bind/rank-compare stay correct); only
       per-member bit tracking is unavailable; log once at parse time
-      (D-PFX9).
-- [ ] Add helpers in irc.h/irc.c: `MODE_RANK(c)`, `mode_by_prefixchar(c)`,
-      `mode_to_index(c)` (`a-z`→0–25, `A-Z`→26–51, `0-9`→52–61, else -1).
+      (D-PFX9). Also set the sentinel on non-prefix modes in
+      `process_chanmodes()`.
+- [x] Add helpers: `MODE_RANK(c)` macro + `static inline mode_to_index(c)`
+      in irc.h (`a-z`→0–25, `A-Z`→26–51, `0-9`→52–61, else -1);
+      `static inline mode_by_prefixchar(c)` in chan.c (scans
+      `modecharinfo`). `static inline` keeps them warning-free until their
+      first caller lands in steps 2/4.
 
 ### Gate 1
 
-- [ ] Build clean; full pytest green (all A-tests unchanged).
-- [ ] B1 test: `Learned mode type:` debug lines appear at irc.mod load
-      (before any connect) for the default CHANMODES/PREFIX; values from a
-      connection's 005 survive an irc.mod unload/load cycle (partyline
-      `.module` or restart-free reload — assert via post-reload behaviour,
-      e.g. correct arg consumption for a non-default mode).
-- [ ] Committed (server.mod and irc.mod parts separately).
+- [x] Build clean (no warnings in touched files); full pytest green (all
+      A-tests unchanged, 200 total).
+- [x] B1 test (`test_modes_isupport_seed.py`): `.status all` shows the
+      default PREFIX/CHANMODES parsed *before any connect*; a server's 005
+      `Z` flag survives an irc.mod unload/reload while connected. Both
+      assertions verified to FAIL with the `isupport_replay()` call removed
+      (meaningful regression coverage), pass with it restored.
+- [x] Committed (server.mod and irc.mod parts separately).
 
 ---
 

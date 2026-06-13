@@ -88,6 +88,13 @@ Tcl Commands
 A lot of backwards-compatible additions and changes have been made to
 Tcl commands. Please look at doc/tcl-commands.doc to see them.
 
+The "isupport" bind is now also replayed -- fired once for every
+currently-known key with its current value -- whenever a module that
+consumes isupport is (re)loaded, in addition to firing on value changes.
+This ensures consumers loaded after the values arrived (and modules
+reloaded mid-connection) see the current state. Bound procs must be
+idempotent: receiving the value already in effect must be harmless.
+
 Documentation
 
 Documentation has been updated to reflect new and removed commands and

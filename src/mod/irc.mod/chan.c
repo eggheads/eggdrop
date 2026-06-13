@@ -2964,6 +2964,16 @@ static void update_chanmodes(mode_info_t *modes, int is_prefix)
   }
 }
 
+/* Return the channel mode letter for a prefix char (e.g. '@' -> 'o'), or 0
+ * if no current PREFIX entry uses that char. */
+static inline char mode_by_prefixchar(char prefixchar)
+{
+  for (int i = 0; i < 256; i++)
+    if (modecharinfo[i].type == MODETYPE_PREFIX && modecharinfo[i].prefix == prefixchar)
+      return (char) i;
+  return 0;
+}
+
 // CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz
 // listmodes, keymodes, limitmodes, flagmodes
 static int process_chanmodes(char *value)
@@ -2978,6 +2988,7 @@ static int process_chanmodes(char *value)
     while (*value && isalnum((unsigned char)*value)) {
       modes[(unsigned char)*value].type = modetype;
       modes[(unsigned char)*value].prefix = '\0';
+      modes[(unsigned char)*value].rank = PREFIX_RANK_NONE;
       debug2("Learned mode type: +%c type %s", *value, MODE_TYPE_STR(modetype));
       value++;
     }
@@ -3010,6 +3021,7 @@ static int process_prefix(const char *value)
 {
   const char *prefix = value;
   mode_info_t modes[256];
+  uint8_t rank = 0;
 
   memset(&modes, 0, sizeof modes);
 
@@ -3030,7 +3042,17 @@ static int process_prefix(const char *value)
     }
     modes[(unsigned char)*value].type = MODETYPE_PREFIX;
     modes[(unsigned char)*value].prefix = *prefix;
+    /* Rank is the position in the PREFIX token, 0 = highest. Prefix modes
+     * ranked at or beyond MAX_PREFIX_MODES are still parsed correctly but
+     * cannot be tracked per member (the bitset is only that wide). */
+    modes[(unsigned char)*value].rank = rank;
+    if (rank == MAX_PREFIX_MODES)
+      putlog(LOG_MISC, "*", "Warning: isupport PREFIX has more than %d prefix "
+             "modes; per-member tracking disabled for prefix mode +%c and beyond",
+             MAX_PREFIX_MODES, *value);
     debug3("Learned mode type: +%c type %s, prefixchar %c", *value, MODE_TYPE_STR(MODETYPE_PREFIX), *prefix);
+    if (rank < PREFIX_RANK_NONE)
+      rank++;
     value++;
     prefix++;
   }

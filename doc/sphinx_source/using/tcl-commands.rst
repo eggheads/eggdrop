@@ -3622,6 +3622,8 @@ The following is a list of bind types and how they work. Below each bind type is
  
   Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
 
+  Note: this bind fires on value *changes* only, so a proc bound after values were already received would otherwise never see them. To close that gap the bind is also replayed -- fired once for every currently-known key with its current value -- whenever a module that consumes isupport is (re)loaded. Procs must therefore be idempotent: receiving a value identical to the one already in effect must be harmless. The replay uses the same arguments as a normal change, so $::server may be non-empty during it.
+
   Module: server
 
 (55) MONITOR (stackable)
