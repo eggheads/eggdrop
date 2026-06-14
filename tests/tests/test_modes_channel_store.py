@@ -18,8 +18,7 @@ def next_mode_line(mock_ircd: MockIrcd, chan: str, timeout: float = 5.0) -> str:
 def assert_no_mode_push(mock_ircd: MockIrcd, chan: str) -> None:
     try:
         line = mock_ircd.drain_until(
-            lambda line: line.startswith(f"MODE {chan} +")
-            or line.startswith(f"MODE {chan} -"),
+            lambda line: line.startswith((f"MODE {chan} +", f"MODE {chan} -")),
             timeout=1.25,
         )[-1]
     except MockIrcdError:

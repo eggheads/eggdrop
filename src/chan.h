@@ -104,6 +104,19 @@ typedef struct maskstruct {
   struct maskstruct *next;
 } masklist;
 
+typedef struct chanmode_maskstruct {
+  char *mask;
+  char *who;
+  time_t timer;
+  struct chanmode_maskstruct *next;
+} chanmode_masklist;
+
+typedef struct chanmode_liststruct {
+  char mode;
+  chanmode_masklist *masks;
+  struct chanmode_liststruct *next;
+} chanmode_list;
+
 /* Used for temporary bans, exempts and invites */
 typedef struct maskrec {
   struct maskrec *next;
@@ -134,6 +147,7 @@ struct chan_t {
   /* arbmodes: may change - use accessors */
   uint64_t modeflags; /* bit mode_to_index(c) set = mode c active */
   char *modeargs[62]; /* arg for set arg-taking modes, else NULL  */
+  chanmode_list *modelists; /* non-b/e/I LIST modes */
 };
 
 #define CHANINV    0x0001  /* i                        */
@@ -213,6 +227,9 @@ struct chanset_t {
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];
   char deopd[NICKLEN];   /* last user deopped                 */
+  /* arbmodes: may change - use accessors */
+  uint64_t mode_pls_prot_generic; /* desired + non-classic modes */
+  uint64_t mode_mns_prot_generic; /* desired - non-classic modes */
 };
 
 #define CHAN_ENFORCEBANS    0x0001     /* +enforcebans    */

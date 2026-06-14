@@ -1312,6 +1312,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
   int i, x = 0, found, old_status = chan->status,
       old_mode_mns_prot = chan->mode_mns_prot,
       old_mode_pls_prot = chan->mode_pls_prot;
+  uint64_t old_mode_mns_prot_generic = chan->mode_mns_prot_generic,
+           old_mode_pls_prot_generic = chan->mode_pls_prot_generic;
   struct udef_struct *ul;
   char s[121];
   char *endptr;
@@ -1750,7 +1752,9 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       if ((me = module_find("irc", 0, 0)))
         (me->funcs[IRC_RECHECK_CHANNEL]) (chan, 1);
     } else if (old_mode_pls_prot != chan->mode_pls_prot ||
-             old_mode_mns_prot != chan->mode_mns_prot)
+             old_mode_mns_prot != chan->mode_mns_prot ||
+             old_mode_pls_prot_generic != chan->mode_pls_prot_generic ||
+             old_mode_mns_prot_generic != chan->mode_mns_prot_generic)
       if ((me = module_find("irc", 1, 2)))
         (me->funcs[IRC_RECHECK_CHANNEL_MODES]) (chan);
   }
@@ -2038,6 +2042,8 @@ static void init_masklist(masklist *m)
 static void clear_channel_mode_store(struct chanset_t *chan)
 {
   int i;
+  chanmode_list *ml, *ml_next;
+  chanmode_masklist *mask, *mask_next;
 
   for (i = 0; i < (int) (sizeof chan->channel.modeargs /
       sizeof chan->channel.modeargs[0]); i++) {
@@ -2045,6 +2051,19 @@ static void clear_channel_mode_store(struct chanset_t *chan)
       nfree(chan->channel.modeargs[i]);
     chan->channel.modeargs[i] = NULL;
   }
+  for (ml = chan->channel.modelists; ml; ml = ml_next) {
+    ml_next = ml->next;
+    for (mask = ml->masks; mask; mask = mask_next) {
+      mask_next = mask->next;
+      if (mask->mask)
+        nfree(mask->mask);
+      if (mask->who)
+        nfree(mask->who);
+      nfree(mask);
+    }
+    nfree(ml);
+  }
+  chan->channel.modelists = NULL;
   chan->channel.modeflags = 0;
 }
 

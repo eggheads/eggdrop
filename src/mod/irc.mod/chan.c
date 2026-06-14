@@ -153,6 +153,24 @@ static int chanmode_legacy_flag_bit(char mode)
   }
 }
 
+static int chanmode_pls_protected(struct chanset_t *chan, char mode)
+{
+  int legacy = chanmode_legacy_flag_bit(mode);
+  uint64_t bit = chanmode_bit(mode);
+
+  return legacy ? (chan->mode_pls_prot & legacy) != 0 :
+                  (bit && (chan->mode_pls_prot_generic & bit));
+}
+
+static int chanmode_mns_protected(struct chanset_t *chan, char mode)
+{
+  int legacy = chanmode_legacy_flag_bit(mode);
+  uint64_t bit = chanmode_bit(mode);
+
+  return legacy ? (chan->mode_mns_prot & legacy) != 0 :
+                  (bit && (chan->mode_mns_prot_generic & bit));
+}
+
 static void chanmode_set_arg(struct chanset_t *chan, int idx, const char *arg)
 {
   if (chan->channel.modeargs[idx])
@@ -227,6 +245,26 @@ static const char *chanmode_getarg(struct chanset_t *chan, char mode)
   return chan->channel.modeargs[idx];
 }
 
+static void chanmode_list_clear(struct chanset_t *chan)
+{
+  chanmode_list *list, *list_next;
+  chanmode_masklist *entry, *entry_next;
+
+  for (list = chan->channel.modelists; list; list = list_next) {
+    list_next = list->next;
+    for (entry = list->masks; entry; entry = entry_next) {
+      entry_next = entry->next;
+      if (entry->mask)
+        nfree(entry->mask);
+      if (entry->who)
+        nfree(entry->who);
+      nfree(entry);
+    }
+    nfree(list);
+  }
+  chan->channel.modelists = NULL;
+}
+
 static void chanmode_clear(struct chanset_t *chan)
 {
   int i;
@@ -237,10 +275,106 @@ static void chanmode_clear(struct chanset_t *chan)
       nfree(chan->channel.modeargs[i]);
     chan->channel.modeargs[i] = NULL;
   }
+  chanmode_list_clear(chan);
   chan->channel.modeflags = 0;
   chan->channel.mode = 0;
   chan->channel.maxmembers = 0;
   set_key(chan, NULL);
+}
+
+static chanmode_list *chanmode_list_find(struct chanset_t *chan, char mode,
+                                         int create)
+{
+  chanmode_list *list, *last = NULL;
+
+  if (!chan || mode_to_index(mode) < 0 || MODE_TYPE(mode) != MODETYPE_LIST)
+    return NULL;
+  for (list = chan->channel.modelists; list; list = list->next) {
+    if (list->mode == mode)
+      return list;
+    last = list;
+  }
+  if (!create)
+    return NULL;
+  list = (chanmode_list *) channel_malloc(sizeof *list);
+  list->mode = mode;
+  list->masks = NULL;
+  list->next = NULL;
+  if (last)
+    last->next = list;
+  else
+    chan->channel.modelists = list;
+  return list;
+}
+
+static char *chanmode_list_strdup(const char *s)
+{
+  char *copy = (char *) channel_malloc(strlen(s) + 1);
+
+  strcpy(copy, s);
+  return copy;
+}
+
+static void chanmode_list_add(struct chanset_t *chan, char mode,
+                              const char *mask, const char *who)
+{
+  chanmode_list *list;
+  chanmode_masklist *entry;
+
+  if (!mask)
+    return;
+  list = chanmode_list_find(chan, mode, 1);
+  if (!list)
+    return;
+  for (entry = list->masks; entry; entry = entry->next) {
+    if (!rfc_casecmp(entry->mask, mask)) {
+      if (entry->who)
+        nfree(entry->who);
+      entry->who = chanmode_list_strdup(who ? who : "");
+      entry->timer = now;
+      return;
+    }
+  }
+  entry = (chanmode_masklist *) channel_malloc(sizeof *entry);
+  entry->mask = chanmode_list_strdup(mask);
+  entry->who = chanmode_list_strdup(who ? who : "");
+  entry->timer = now;
+  entry->next = list->masks;
+  list->masks = entry;
+}
+
+static void chanmode_list_remove(struct chanset_t *chan, char mode,
+                                 const char *mask)
+{
+  chanmode_list *list;
+  chanmode_masklist *entry, *prev = NULL;
+
+  if (!mask)
+    return;
+  list = chanmode_list_find(chan, mode, 0);
+  if (!list)
+    return;
+  for (entry = list->masks; entry; prev = entry, entry = entry->next) {
+    if (!rfc_casecmp(entry->mask, mask)) {
+      if (prev)
+        prev->next = entry->next;
+      else
+        list->masks = entry->next;
+      if (entry->mask)
+        nfree(entry->mask);
+      if (entry->who)
+        nfree(entry->who);
+      nfree(entry);
+      return;
+    }
+  }
+}
+
+static chanmode_masklist *chanmode_list_masks(struct chanset_t *chan, char mode)
+{
+  chanmode_list *list = chanmode_list_find(chan, mode, 0);
+
+  return list ? list->masks : NULL;
 }
 
 static int chanmodes_known(struct chanset_t *chan)

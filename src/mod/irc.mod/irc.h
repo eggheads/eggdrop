@@ -115,7 +115,13 @@ static int chanmode_isset(struct chanset_t *, char);
 static const char *chanmode_getarg(struct chanset_t *, char);
 static void chanmode_clear(struct chanset_t *);
 static int chanmode_legacy_flag_bit(char);
+static int chanmode_pls_protected(struct chanset_t *, char);
+static int chanmode_mns_protected(struct chanset_t *, char);
 static int chanmode_standing_type(char);
+static void chanmode_list_add(struct chanset_t *, char, const char *,
+                              const char *);
+static void chanmode_list_remove(struct chanset_t *, char, const char *);
+static chanmode_masklist *chanmode_list_masks(struct chanset_t *, char);
 static int chanmodes_known(struct chanset_t *);
 static void chanmodes_set_known(struct chanset_t *, int);
 static int any_ops(struct chanset_t *);
@@ -144,11 +150,6 @@ static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
                              char *);
 static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
-static void got_op(struct chanset_t *chan, char *nick, char *from, char *who,
-                   struct userrec *opu, struct flag_record *opper);
-static void got_halfop(struct chanset_t *chan, char *nick, char *from,
-                       char *who, struct userrec *opu,
-                       struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static int gotmode(char *, char *);

@@ -366,34 +366,34 @@ mirrors.
 The big one. Implements D-PFX1/D-PFX7, D-LST1/D-LST2, D10, the
 state-vs-bind ordering table, and `bind mode` for all modes.
 
-- [ ] Rewrite `gotmode()` (src/mod/irc.mod/mode.c) as `modecharinfo` type
+- [x] Rewrite `gotmode()` (src/mod/irc.mod/mode.c) as `modecharinfo` type
       dispatch per the ordering table in ARCHITECTURE.md §Target design.
       Preserve the preamble exactly (desync/fake-mode kick, `reversing`
       reset, CHAN_ASKEDMODES tail).
-- [ ] `check_tcl_mode` fires for **every** mode change with type-based
+- [x] `check_tcl_mode` fires for **every** mode change with type-based
       args (prefix→nick, list→mask, key/limit→arg, flag→`""`; keep the
       `-l`→`""` quirk). Preserve `modebind_refresh` re-entrancy handling
       after every bind call.
-- [ ] Merge `got_op`+`got_halfop` → parameterized `got_prefixmode`, and
+- [x] Merge `got_op`+`got_halfop` → parameterized `got_prefixmode`, and
       `got_deop`+`got_dehalfop` → `got_deprefixmode` (CHANOP↔CHANHALFOP,
       protectops↔protecthalfops, autoop↔autohalfop, shared stopnethack;
       op-only extras — revenge, flood-deop, need-op, `deopd` — stay
       op-conditional *visibly*, not buried). Keep the voice policy
       separate. Higher prefixes: state + bind only, **no policy**
       (D-PFX1).
-- [ ] b/e/I: route through the dispatch, keep
+- [x] b/e/I: route through the dispatch, keep
       `got_ban/got_unban/got_exempt/got_unexempt/got_invite/got_uninvite`
       as-is (D-LST1).
-- [ ] Generic list store for non-b/e/I LIST modes (D-LST2): per-channel
+- [x] Generic list store for non-b/e/I LIST modes (D-LST2): per-channel
       map mode char → list of `{mask, who, time}`; update on `±X mask`;
       no enforcement/persistence/initial query. Free on channel reset.
-- [ ] Reversal semantics preserved exactly per D-CHM6's per-class table:
+- [x] Reversal semantics preserved exactly per D-CHM6's per-class table:
       flag bounce/reversal stays strictly chanmode-gated (intent — pinned
       by the step-0 negative test); prefix unconditional; key/limit
       restore previous; b/e/I own settings; generic LIST never bounced.
-- [ ] Remove the gotmode sanity-check warnings (the
+- [x] Remove the gotmode sanity-check warnings (the
       `strchr("behIklov"…)` block) — superseded by the dispatch (D-OOS3).
-- [ ] New tests (B5): `+S` flag tracked + `bind mode +S|`; `+j 3:5`
+- [x] New tests (B5): `+S` flag tracked + `bind mode +S|`; `+j 3:5`
       tracked with arg; quiet-LIST `+q mask` → generic store, **no**
       `CHANQUIET` (assert `getchanmode` has no `q`), `bind mode +q mask`;
       flag-q net inverse; server-set non-classic flag in `chanmode` (e.g.
@@ -403,11 +403,11 @@ state-vs-bind ordering table, and `bind mode` for all modes.
 
 ### Gate 5
 
-- [ ] Build clean; **entire A-suite green unmodified** — this gate is the
+- [x] Build clean; **entire A-suite green unmodified** — this gate is the
       whole point of step 0. Pay special attention to A2 (bind ordering),
       A5/A13–A17 (policy merge), A22/A23 (preamble/bounce).
-- [ ] B5 green.
-- [ ] Committed.
+- [x] B5 green.
+- [x] Committed.
 
 ---
 

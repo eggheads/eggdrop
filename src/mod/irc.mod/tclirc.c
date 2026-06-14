@@ -681,6 +681,62 @@ static int tcl_getchanmode STDVAR
   return TCL_OK;
 }
 
+static int tcl_getchanmodes STDVAR
+{
+  struct chanset_t *chan;
+  const char *p;
+  char mode[2];
+
+  BADARGS(2, 2, " channel");
+
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  mode[1] = 0;
+  for (p = MODE_INDEX_CHARS; *p; p++) {
+    int type = MODE_TYPE(*p);
+
+    if (type == MODETYPE_INVALID || type == MODETYPE_LIST ||
+        type == MODETYPE_PREFIX || !chanmode_isset(chan, *p))
+      continue;
+    mode[0] = *p;
+    Tcl_AppendElement(irp, mode);
+    Tcl_AppendElement(irp, chanmode_getarg(chan, *p) ?
+                      chanmode_getarg(chan, *p) : "");
+  }
+  return TCL_OK;
+}
+
+static int tcl_chanmodelist STDVAR
+{
+  struct chanset_t *chan;
+  chanmode_masklist *mask;
+  char mode;
+
+  BADARGS(3, 3, " channel mode");
+
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  if (!argv[2][0] || argv[2][1]) {
+    Tcl_AppendResult(irp, "mode must be one character", NULL);
+    return TCL_ERROR;
+  }
+  mode = argv[2][0];
+  if (MODE_TYPE(mode) != MODETYPE_LIST || mode == 'b' || mode == 'e' ||
+      mode == 'I') {
+    Tcl_AppendResult(irp, "not a generic list mode: ", argv[2], NULL);
+    return TCL_ERROR;
+  }
+  for (mask = chanmode_list_masks(chan, mode); mask; mask = mask->next)
+    Tcl_AppendElement(irp, mask->mask);
+  return TCL_OK;
+}
+
 static int tcl_getchanjoin STDVAR
 {
   struct chanset_t *chan;
@@ -1219,6 +1275,8 @@ static tcl_cmds tclchan_cmds[] = {
   {"hand2nick",      tcl_hand2nick},
   {"nick2hand",      tcl_nick2hand},
   {"getchanmode",    tcl_getchanmode},
+  {"getchanmodes",   tcl_getchanmodes},
+  {"chanmodelist",   tcl_chanmodelist},
   {"getchanjoin",    tcl_getchanjoin},
   {"flushmode",      tcl_flushmode},
   {"pushmode",       tcl_pushmode},

@@ -49,6 +49,38 @@ static p_tcl_bind_list H_chanset;
 
 static struct udef_struct *udef;
 
+#define CHANMODE_INDEX_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+static int channels_mode_to_index(char mode)
+{
+  char *p = mode ? strchr(CHANMODE_INDEX_CHARS, mode) : NULL;
+
+  return p ? (int) (p - CHANMODE_INDEX_CHARS) : -1;
+}
+
+static uint64_t channels_mode_bit(char mode)
+{
+  int idx = channels_mode_to_index(mode);
+
+  return idx < 0 ? 0 : ((uint64_t) 1 << idx);
+}
+
+static int channels_should_store_generic_mode(char mode)
+{
+  return isalnum((unsigned char) mode) && mode != 'b' && mode != 'e' &&
+         mode != 'I' && mode != 'o' && mode != 'h' && mode != 'v';
+}
+
+static char *append_generic_prot_modes(char *p, uint64_t modes)
+{
+  const char *c;
+
+  for (c = CHANMODE_INDEX_CHARS; *c; c++)
+    if (modes & channels_mode_bit(*c))
+      *p++ = *c;
+  return p;
+}
+
 static int use_info, chan_hack, quiet_save, global_revenge_mode,
            global_stopnethack_mode, global_idle_kick, global_aop_min,
            global_aop_max, global_ban_time, global_exempt_time,
@@ -209,6 +241,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
 
   /* Clear old modes */
   chan->mode_mns_prot = chan->mode_pls_prot = 0;
+  chan->mode_pls_prot_generic = chan->mode_mns_prot_generic = 0;
   chan->limit_prot = 0;
   chan->key_prot[0] = 0;
   for (s = newsplit(&set); *s; s++) {
@@ -289,6 +322,19 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
           strlcpy(chan->key_prot, s1, sizeof chan->key_prot);
       }
       break;
+    default:
+      if (channels_should_store_generic_mode(*s)) {
+        uint64_t bit = channels_mode_bit(*s);
+
+        if (pos) {
+          chan->mode_pls_prot_generic |= bit;
+          chan->mode_mns_prot_generic &= ~bit;
+        } else {
+          chan->mode_pls_prot_generic &= ~bit;
+          chan->mode_mns_prot_generic |= bit;
+        }
+      }
+      break;
     }
     if (i) {
       if (pos) {
@@ -314,7 +360,8 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
   for (i = 0; i < 2; i++) {
     if (i == 0) {
       tst = chan->mode_pls_prot;
-      if ((tst) || (chan->limit_prot != 0) || (chan->key_prot[0]))
+      if ((tst) || (chan->limit_prot != 0) || (chan->key_prot[0]) ||
+          chan->mode_pls_prot_generic)
         *p++ = '+';
       if (chan->limit_prot != 0) {
         *p++ = 'l';
@@ -326,7 +373,7 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
       }
     } else {
       tst = chan->mode_mns_prot;
-      if (tst)
+      if (tst || chan->mode_mns_prot_generic)
         *p++ = '-';
       if (tst & CHANKEY)
         *p++ = 'k';
@@ -367,6 +414,8 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
       *p++ = 'a';
     if (tst & CHANQUIET)
       *p++ = 'q';
+    p = append_generic_prot_modes(p, i == 0 ? chan->mode_pls_prot_generic :
+                                  chan->mode_mns_prot_generic);
   }
   *p = 0;
   if (s1[0]) {
@@ -860,6 +909,25 @@ static int expmem_masklist(masklist *m)
   return result;
 }
 
+static int expmem_chanmode_lists(chanmode_list *list)
+{
+  int result = 0;
+
+  for (; list; list = list->next) {
+    chanmode_masklist *mask;
+
+    result += sizeof(chanmode_list);
+    for (mask = list->masks; mask; mask = mask->next) {
+      result += sizeof(chanmode_masklist);
+      if (mask->mask)
+        result += strlen(mask->mask) + 1;
+      if (mask->who)
+        result += strlen(mask->who) + 1;
+    }
+  }
+  return result;
+}
+
 static int channels_expmem()
 {
   int tot = 0, i;
@@ -881,6 +949,7 @@ static int channels_expmem()
         sizeof chan->channel.modeargs[0]); i++)
       if (chan->channel.modeargs[i])
         tot += strlen(chan->channel.modeargs[i]) + 1;
+    tot += expmem_chanmode_lists(chan->channel.modelists);
     for (i = 0; i < MODES_PER_LINE_MAX && chan->cmode[i].op; i++)
       tot += strlen(chan->cmode[i].op) + 1;
     if (chan->key)
