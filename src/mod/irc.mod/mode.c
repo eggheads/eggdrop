@@ -566,7 +566,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   char ch[sizeof chan->name];
   char s[UHOSTLEN], s1[UHOSTLEN];
   struct userrec *u;
-  int had_halfop;
+  int had_op;
 
   m = ismember(chan, who);
   if (!m) {
@@ -584,7 +584,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
-  had_halfop = member_has_prefixmode(m, 'o');
+  had_op = member_has_prefixmode(m, 'o');
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
    */
@@ -611,7 +611,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
                chan_friend(victim)))
         ok = 0;
     }
-    if ((reversing || !ok) && had_halfop && !match_my_nick(nick) &&
+    if ((reversing || !ok) && had_op && !match_my_nick(nick) &&
         rfc_casecmp(who, nick) && !match_my_nick(who) && !glob_master(user) &&
         !chan_master(user) && !glob_bot(user) && ((chan_op(victim) ||
         (glob_op(victim) && !chan_deop(victim))) || !channel_bitch(chan)))
@@ -682,7 +682,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
-  had_halfop = member_has_prefixmode(m, 'o');
+  had_halfop = member_has_prefixmode(m, 'h');
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
    */
