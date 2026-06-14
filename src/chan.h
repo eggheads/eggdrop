@@ -28,18 +28,11 @@
 /* Valid channel prefixes. */
 #define CHANMETA "#&!+"
 
-/* Modes the bot cannot set as halfop. You can add +b, +e, and +I to this to
- * prevent them from being set as halfop. */
-#define NOHALFOPS_MODES "ahoq"
-
 /* Only send modes as op (b, e, and I excluded)? */
 #undef NO_HALFOP_CHANMODES
 
 /* Hard limit of modes per line. */
 #define MODES_PER_LINE_MAX 6
-
-#define HALFOP_CANTDOMODE(_a) (!me_op(chan) && (!me_halfop(chan) || (strchr(NOHALFOPS_MODES, _a) != NULL)))
-#define HALFOP_CANDOMODE(_a)  (me_op(chan) || (me_halfop(chan) && (strchr(NOHALFOPS_MODES, _a) == NULL)))
 
 typedef struct memstruct {
   char nick[NICKLEN];

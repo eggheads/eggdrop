@@ -289,16 +289,16 @@ Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
 Implements D-PFX4. Replaces `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`/
 `NOHALFOPS_MODES`.
 
-- [ ] Implement `can_set_mode(struct chanset_t *chan, char mode)` in
+- [x] Implement `can_set_mode(struct chanset_t *chan, char mode)` in
       irc.mod per D-PFX4: best-rank from the bot's own prefix bitset;
       rank 0 → anything; prefix target → strictly-lower rank only, except
       `o` may set/unset `o`; non-prefix target → `me_op || me_halfop`.
       Honor `NO_HALFOP_CHANMODES` (keep the ifdef).
-- [ ] Convert every `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE` call site
+- [x] Convert every `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE` call site
       (mode.c, chan.c, cmdsirc.c, msgcmds.c, irc.c — `grep -rn
       HALFOP_CA src/`) to `can_set_mode()`. Delete the macros and
       `NOHALFOPS_MODES` from src/chan.h.
-- [ ] New tests (B3): bot as `%` → `pushmode +v` emits, `+o`/`+h`
+- [x] New tests (B3): bot as `%` → `pushmode +v` emits, `+o`/`+h`
       suppressed, `+b` and a flag mode emit; bot as `@` → `+o`/`-o` emit
       (self-rank exception); quiet-LIST net, bot as `%` → `pushmode +q
       mask` emits (old `NOHALFOPS_MODES q` block gone — this is an
@@ -306,9 +306,9 @@ Implements D-PFX4. Replaces `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`/
 
 ### Gate 3
 
-- [ ] Build clean; full pytest green (A-suite untouched; A26 partyline
+- [x] Build clean; full pytest green (A-suite untouched; A26 partyline
       command tests confirm cmdsirc.c conversion).
-- [ ] B3 green. Grep gate: `grep -rn "NOHALFOPS\|HALFOP_CA" src/` empty.
+- [x] B3 green. Grep gate: `grep -rn "NOHALFOPS\|HALFOP_CA" src/` empty.
 - [ ] Committed.
 
 ---

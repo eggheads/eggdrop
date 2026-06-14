@@ -204,13 +204,8 @@ static void real_add_mode(struct chanset_t *chan,
   memberlist *mx;
   char s[21];
 
-  /* Some IRCds do not allow halfops to set certain modes. The modes halfops
-   * are not allowed to set can be changed in chan.h. */
-#ifdef NO_HALFOP_CHANMODES
-  if (!me_op(chan))
-#else
-  if (HALFOP_CANTDOMODE(mode))
-#endif
+  /* Capability is rank-based for PREFIX modes, literal o/h for non-prefix. */
+  if (!can_set_mode(chan, mode))
     return;
 
   if (mode == 'o' || mode == 'h' || mode == 'v') {
@@ -423,7 +418,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (nick[0] && HALFOP_CANDOMODE('o') && !match_my_nick(who) &&
+  if (nick[0] && can_set_mode(chan, 'o') && !match_my_nick(who) &&
       !match_my_nick(nick)) {
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
         !chan_master(*opper) && !(glob_op(victim) || glob_bot(victim)) &&
@@ -434,10 +429,10 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'o', who);
     else if (reversing)
       add_mode(chan, '-', 'o', who);
-  } else if (reversing && HALFOP_CANDOMODE('o') && !match_my_nick(who) &&
+  } else if (reversing && can_set_mode(chan, 'o') && !match_my_nick(who) &&
              !match_my_nick(nick))
     add_mode(chan, '-', 'o', who);
-  if (!nick[0] && HALFOP_CANDOMODE('o') && !match_my_nick(who)) {
+  if (!nick[0] && can_set_mode(chan, 'o') && !match_my_nick(who)) {
     if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
       m->flags |= FAKEOP;
       add_mode(chan, '-', 'o', who);
@@ -513,7 +508,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (nick[0] && HALFOP_CANDOMODE('h') && !match_my_nick(who) &&
+  if (nick[0] && can_set_mode(chan, 'h') && !match_my_nick(who) &&
       !match_my_nick(nick)) {
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
         !chan_master(*opper) && !(glob_halfop(victim) || glob_op(victim) ||
@@ -525,10 +520,10 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'h', who);
     else if (reversing)
       add_mode(chan, '-', 'h', who);
-  } else if (reversing && HALFOP_CANDOMODE('h') && !match_my_nick(who) &&
+  } else if (reversing && can_set_mode(chan, 'h') && !match_my_nick(who) &&
              !match_my_nick(nick))
     add_mode(chan, '-', 'h', who);
-  if (!nick[0] && HALFOP_CANDOMODE('h') && !match_my_nick(who)) {
+  if (!nick[0] && can_set_mode(chan, 'h') && !match_my_nick(who)) {
     if (chan_dehalfop(victim) || (glob_dehalfop(victim) &&
         !chan_halfop(victim))) {
       m->flags |= FAKEHALFOP;
@@ -605,7 +600,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (HALFOP_CANDOMODE('o')) {
+  if (can_set_mode(chan, 'o')) {
     int ok = 1;
 
     if (!glob_deop(victim) && !chan_deop(victim)) {
@@ -705,7 +700,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
     return;
 
   /* Dehalfop'd someone on my oplist? */
-  if (HALFOP_CANDOMODE('h')) {
+  if (can_set_mode(chan, 'h')) {
     int ok = 1;
 
     if (!glob_dehalfop(victim) && !chan_dehalfop(victim)) {
@@ -748,7 +743,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
   if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
     return;
 
-  if (channel_pending(chan) || HALFOP_CANTDOMODE('b'))
+  if (channel_pending(chan) || !can_set_mode(chan, 'b'))
     return;
 
   if (match_addr(who, me) && !isexempted(chan, me)) {
@@ -846,7 +841,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
   if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
     return;
 
-  if (channel_pending(chan) || HALFOP_CANTDOMODE('e'))
+  if (channel_pending(chan) || !can_set_mode(chan, 'e'))
     return;
 
   if (!match_my_nick(nick)) {
@@ -923,7 +918,7 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
   if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
     return;
 
-  if (channel_pending(chan) || HALFOP_CANTDOMODE('I'))
+  if (channel_pending(chan) || !can_set_mode(chan, 'I'))
     return;
 
   if (!match_my_nick(nick)) {

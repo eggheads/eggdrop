@@ -208,7 +208,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     maskaddr(whobad, s1, chan->ban_type);
     simple_sprintf(s, "(%s) %s", ct, reason);
     u_addban(chan, s1, botnetnick, s, now + (60 * chan->ban_time), 0);
-    if (!mevictim && HALFOP_CANDOMODE('b')) {
+    if (!mevictim && can_set_mode(chan, 'b')) {
       add_mode(chan, '+', 'b', s1);
       flush_mode(chan, QUICK);
     }
@@ -217,7 +217,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   if (!mevictim && (chan->revenge_mode > 1) && (!channel_dontkickops(chan) ||
       (!chan_op(fr) && (!glob_op(fr) || chan_deop(fr)))) &&
       !chan_sentkick(m) && (me_op(chan) || (me_halfop(chan) &&
-      !chan_hasop(m) && (strchr(NOHALFOPS_MODES, 'b') == NULL)))) {
+      !chan_hasop(m)))) {
     dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, badnick, kick_msg);
     m->flags |= SENTKICK;
   }
