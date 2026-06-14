@@ -400,6 +400,11 @@ state-vs-bind ordering table, and `bind mode` for all modes.
       `chanmode +ntS`, server `-S`) reversed — generic protection reaches
       non-classic flags; the step-0 negative (unprotected flag never
       bounced) still green.
+- [x] Sequencing note: this step pulled forward narrow read-only
+      `getchanmodes`/`chanmodelist` Tcl commands and a FLAG-only generic
+      protection bitset (`mode_pls_prot_generic`/`mode_mns_prot_generic`) so
+      B5 could assert state and non-classic flag reversal directly. Steps 8
+      and 10 complete those surfaces rather than introducing them from zero.
 
 ### Gate 5
 
@@ -503,14 +508,17 @@ Implements D-TCL3, D-CHM3, D-CHM4, D-ISU-adjacent lazy re-parse (D11).
       unknown to current `modecharinfo`. `channel get`/chanfile write
       return/persist the verbatim string.
 - [ ] Parse verbatim → generic desired-mode store (uint64 pls/mns + args
-      for LIMIT/KEY-type letters). Classic letters additionally maintain
-      `mode_pls_prot`/`mode_mns_prot`/`limit_prot`/`key_prot` mirrors
-      (D-CHM4). LIST/PREFIX-type letters: warn + ignore (D-CHM3).
+      for LIMIT/KEY-type letters), extending/replacing step 5's FLAG-only
+      `mode_pls_prot_generic`/`mode_mns_prot_generic` bridge. Classic
+      letters additionally maintain `mode_pls_prot`/`mode_mns_prot`/
+      `limit_prot`/`key_prot` mirrors (D-CHM4). LIST/PREFIX-type letters:
+      warn + ignore (D-CHM3).
 - [ ] Re-parse lazily: on connect (post-005) and on CHANMODES/PREFIX
       isupport changes (hook the existing irc.mod isupport bind).
 - [ ] Rewrite `recheck_channel_modes()` generically over the desired
       store (flags + parameterized enforce). Convert the `gotmode`
-      enforcement reads to the store.
+      enforcement reads from the step-5 bridge/legacy fields to the final
+      store.
 - [ ] Add `chanmode_prot_arg(chan, mode)` accessor; convert all internal
       `key_prot`/`limit_prot` readers — including every JOIN-key idiom
       site (`grep -rn "key_prot" src/`) in irc.mod, server.mod,
@@ -576,13 +584,13 @@ Implements D-ISU2..5.
 
 Implements D-TCL1; closes the loop for assertions deferred from steps 4–5.
 
-- [ ] Implement in tclirc.c (names final per ARCHITECTURE.md):
+- [ ] Complete in tclirc.c (names final per ARCHITECTURE.md):
       `chanmodeinfo <mode-or-prefixchar>` (dict: type/prefix/rank),
-      `getchanmodes <chan>` (dict of set non-list modes → arg, `""` if
-      none), `isprefix`/`wasprefix`/`isprefixatleast
-      <mode-or-prefixchar> <nick> [chan]`, `chanmodelist <chan> <mode>`.
-- [ ] Extend B4/B5 tests to assert through these commands (replace any
-      interim indirect assertions).
+      `isprefix`/`wasprefix`/`isprefixatleast <mode-or-prefixchar> <nick>
+      [chan]`, plus any API polish/error handling needed for the step-5
+      `getchanmodes <chan>` and `chanmodelist <chan> <mode>` commands.
+- [ ] Extend B4/B5 tests to assert through these commands where not already
+      covered by the step-5 `getchanmodes`/`chanmodelist` assertions.
 - [ ] B10: direct bridge tests for each command (arg handling, error
       cases, unknown mode/nick/chan).
 - [ ] Docs: `doc/sphinx_source/using/tcl-commands.rst` (new commands,

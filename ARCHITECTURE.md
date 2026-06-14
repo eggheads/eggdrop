@@ -216,6 +216,10 @@ review changed an earlier call, only the final decision is recorded here.
   new, e.g. `+S`) and any LIMIT/KEY-type letter *with its argument* (e.g.
   `+j 3:5` like `+l 10`). LIST/PREFIX-type letters in a `chanmode` string
   are **warned and ignored** (no standing-enforce semantics).
+  Implementation note: step 5 pulled forward a minimal FLAG-only generic
+  protection bitset so live `gotmode` reversal can cover non-classic flags;
+  step 8 replaces/extends that into the final verbatim, type-aware desired
+  store with parameter arguments.
 - **D-CHM4 (Q8): Keep `key_prot`/`limit_prot` (and `mode_pls_prot`/
   `mode_mns_prot`) as compat mirrors** — source compat is most important.
   The new generic desired-mode store is the source of truth; the legacy
@@ -354,6 +358,10 @@ review changed an earlier call, only the final decision is recorded here.
   `getchanmodes <chan>` (set non-list modes → arg), `isprefix` /
   `wasprefix` / `isprefixatleast <mode-or-prefixchar> <nick> [chan]`,
   `chanmodelist <chan> <mode>` (generic list masks).
+  Implementation note: step 5 added `getchanmodes` and `chanmodelist` early
+  as narrow read-only assertions for B5. Step 10 completes the remaining
+  commands, error coverage, docs, and any API polish those early commands
+  still need.
 - **D-TCL2 (D21): `pushmode` errors to Tcl** on a mode unknown to
   `modecharinfo` or an argument-count mismatch for the mode's type. No
   silent drop, no pass-through.
@@ -399,12 +407,28 @@ detected with `memcmp`.
 ```c
 uint64_t modeflags;        /* bit mode_to_index(c) set = mode c active   */
 char    *modeargs[62];     /* arg for set arg-taking modes, else NULL    */
+chanmode_list *modelists;  /* non-b/e/I LIST modes                       */
 ```
 
 Accessors (irc.mod): `chanmode_set/unset/isset/getarg/clear`. They maintain
 the type-gated legacy mirror (`channel.mode` bit, `channel.key`,
 `channel.maxmembers`). `modeflags` also reserves an internal high bit for
 the D-CHM7 "modes known" state; only bits 0..61 are mode-letter slots.
+`modelists` is the live, read-only generic LIST store from D-LST2; it is
+not persisted and has no enforcement or initial-list query.
+
+### `chanset_t` additions (appended; "may change — use accessors")
+
+```c
+uint64_t mode_pls_prot_generic; /* desired + non-classic FLAG modes */
+uint64_t mode_mns_prot_generic; /* desired - non-classic FLAG modes */
+```
+
+These are the step-5 FLAG-only protection bridge for non-classic modes
+(`+S`/`-S` style). Step 8's verbatim chanmode work should replace or
+extend this into the final generic desired-mode store, including KEY/LIMIT
+arguments and type-aware LIST/PREFIX rejection, while keeping the legacy
+`mode_pls_prot`/`mode_mns_prot` mirrors correct for classic letters.
 
 ### `memberlist` additions (appended; "may change — use accessors")
 
@@ -502,7 +526,9 @@ switch to type dispatch (ordering table); merge op+halfop policy
 modes (D-LST2); b/e/I handlers unchanged (D-LST1); remove gotmode sanity
 warnings (D-OOS3). Reversal semantics preserved exactly per the per-class
 table in D-CHM6 (flag bounce stays chanmode-gated; generic lists never
-bounced).
+bounced). This step also pulled forward the minimal read-only
+`getchanmodes`/`chanmodelist` Tcl commands and a FLAG-only generic
+protection bitset to make B5 directly assertable.
 
 **Step 6 — Outbound queue + `pushmode`.** New ordered 32-entry queue
 (D-Q1/D-Q2/D-Q4); remove legacy queue fields + `MODES_PER_LINE_MAX`
@@ -516,17 +542,19 @@ preserved (D-Q3).
 warnings.
 
 **Step 8 — channels.mod chanmode.** Verbatim storage/persistence with
-warn-on-unknown (D-TCL3); classic mirrors maintained; generic protection
-incl. params (D-CHM3); `recheck_channel_modes()` generic; lazy re-parse on
-connect/isupport change; refactor JOIN-key + `*_prot` readers to accessors
-(D-CHM4).
+warn-on-unknown (D-TCL3); classic mirrors maintained; extend/replace the
+step-5 FLAG-only generic protection bridge with the final generic desired
+store incl. params (D-CHM3); `recheck_channel_modes()` generic; lazy
+re-parse on connect/isupport change; refactor JOIN-key + `*_prot` readers
+to accessors (D-CHM4).
 
 **Step 9 — ISUPPORT persistence.** Core global + `write_userfile` emit +
 read capture gated to `bu == userlist` (D-ISU2..5); server.mod apply on
 `userfile-loaded` via `isupport-default`.
 
-**Step 10 — New Tcl introspection + docs.** `chanmodeinfo`, `getchanmodes`,
-`isprefix`/`wasprefix`/`isprefixatleast`, `chanmodelist` (D-TCL1); docs
+**Step 10 — New Tcl introspection + docs.** Complete `chanmodeinfo`,
+`isprefix`/`wasprefix`/`isprefixatleast`, and the already-started
+`getchanmodes`/`chanmodelist` surfaces (D-TCL1); docs
 (`tcl-commands.rst`, `bind mode` coverage, `opchars`/`NOHALFOPS_MODES`
 deprecation, UPGRADING/NEWS).
 
