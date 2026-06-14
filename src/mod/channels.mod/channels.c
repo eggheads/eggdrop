@@ -877,6 +877,10 @@ static int channels_expmem()
     tot += expmem_masklist(chan->channel.exempt);
     tot += expmem_masklist(chan->channel.invite);
 
+    for (i = 0; i < (int) (sizeof chan->channel.modeargs /
+        sizeof chan->channel.modeargs[0]); i++)
+      if (chan->channel.modeargs[i])
+        tot += strlen(chan->channel.modeargs[i]) + 1;
     for (i = 0; i < MODES_PER_LINE_MAX && chan->cmode[i].op; i++)
       tot += strlen(chan->cmode[i].op) + 1;
     if (chan->key)

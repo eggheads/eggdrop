@@ -2035,6 +2035,19 @@ static void init_masklist(masklist *m)
   m->next = NULL;
 }
 
+static void clear_channel_mode_store(struct chanset_t *chan)
+{
+  int i;
+
+  for (i = 0; i < (int) (sizeof chan->channel.modeargs /
+      sizeof chan->channel.modeargs[0]); i++) {
+    if (chan->channel.modeargs[i])
+      nfree(chan->channel.modeargs[i]);
+    chan->channel.modeargs[i] = NULL;
+  }
+  chan->channel.modeflags = 0;
+}
+
 /* Initialize out the channel record.
  */
 static void init_channel(struct chanset_t *chan, int reset)
@@ -2054,6 +2067,7 @@ static void init_channel(struct chanset_t *chan, int reset)
   }
 
   if (flags & CHAN_RESETMODES) {
+    clear_channel_mode_store(chan);
     chan->channel.mode = 0;
     chan->channel.maxmembers = 0;
     if (chan->channel.key) {
@@ -2123,6 +2137,8 @@ static void clear_channel(struct chanset_t *chan, int reset)
   }
   if ((flags & CHAN_RESETTOPIC) && chan->channel.topic)
     nfree(chan->channel.topic);
+  if (!reset && (flags & CHAN_RESETMODES))
+    clear_channel_mode_store(chan);
   if (reset)
     init_channel(chan, reset);
 }

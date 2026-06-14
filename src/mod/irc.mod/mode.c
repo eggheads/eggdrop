@@ -1014,6 +1014,7 @@ static int gotmode(char *from, char *origmsg)
 {
   char *nick, *ch, *chg;
   char s[UHOSTLEN], buf[511], joinbuf[512];
+  char oldkey[512];
   char ms2[3], *arg;
   int nextarg;
   struct parsed_irc msg;
@@ -1066,7 +1067,7 @@ static int gotmode(char *from, char *origmsg)
       ms2[2] = 0;
       while ((ms2[1] = *chg)) {
         arg = NULL;
-        int todo = 0;
+        int generic = 0, todo = 0;
 
         if (*chg != '+' && *chg != '-') {
           if ((ms2[0] == '+' && MODE_HAS_SET_ARG(*chg)) || (ms2[0] == '-' && MODE_HAS_UNSET_ARG(*chg))) {
@@ -1099,94 +1100,134 @@ static int gotmode(char *from, char *origmsg)
           ms2[0] = '-';
           break;
         case 'i':
-          todo = CHANINV;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'p':
-          todo = CHANPRIV;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 's':
-          todo = CHANSEC;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'm':
-          todo = CHANMODER;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'c':
-          todo = CHANNOCLR;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'C':
-          todo = CHANNOCTCP;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'R':
-          todo = CHANREGON;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'M':
-          todo = CHANMODREG;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'r':
-          todo = CHANLONLY;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'D':
-          todo = CHANDELJN;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'u':
-          todo = CHANSTRIP;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'N':
-          todo = CHANNONOTC;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'T':
-          todo = CHANNOAMSG;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'd':
-          todo = CHANINVIS;
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 't':
-          todo = CHANTOPIC;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'n':
-          todo = CHANNOMSG;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'a':
-          todo = CHANANON;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'q':
-          todo = CHANQUIET;
-          if (!nick[0] && bounce_modes)
+          todo = chanmode_legacy_flag_bit(*chg);
+          if (todo && !nick[0] && bounce_modes)
             reversing = 1;
+          if (!todo)
+            generic = chanmode_standing_type(*chg);
           break;
         case 'l':
+          if (MODE_TYPE('l') != MODETYPE_LIMIT) {
+            generic = chanmode_standing_type(*chg);
+            break;
+          }
           if (!nick[0] && bounce_modes)
             reversing = 1;
           if (ms2[0] == '-') {
@@ -1204,9 +1245,9 @@ static int gotmode(char *from, char *origmsg)
                 add_mode(chan, '+', 'l', s);
               }
             }
-            chan->channel.maxmembers = 0;
+            chanmode_unset(chan, 'l');
           } else {
-            chan->channel.maxmembers = atoi(arg);
+            chanmode_set(chan, 'l', arg);
             check_tcl_mode(nick, from, u, chan->dname, ms2,
                            int_to_base10(chan->channel.maxmembers));
             /* The Tcl proc might have modified/removed the chan or user */
@@ -1227,27 +1268,32 @@ static int gotmode(char *from, char *origmsg)
           }
           break;
         case 'k':
+          if (MODE_TYPE('k') != MODETYPE_KEY) {
+            generic = chanmode_standing_type(*chg);
+            break;
+          }
+          strlcpy(oldkey, chan->channel.key, sizeof oldkey);
           if (ms2[0] == '+')
-            chan->channel.mode |= CHANKEY;
+            chanmode_set(chan, 'k', arg);
           else
-            chan->channel.mode &= ~CHANKEY;
+            chanmode_unset(chan, 'k');
           check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
           /* The Tcl proc might have modified/removed the chan or user */
           if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
             return 0;
           if (ms2[0] == '+') {
-            set_key(chan, arg);
+            chanmode_set(chan, 'k', arg);
             if (channel_active(chan))
               got_key(chan, nick, from, arg);
           } else {
             if (channel_active(chan)) {
-              if (reversing && chan->channel.key[0])
-                add_mode(chan, '+', 'k', chan->channel.key);
+              if (reversing && oldkey[0])
+                add_mode(chan, '+', 'k', oldkey);
               else if (chan->key_prot[0] && !glob_master(user) &&
                        !chan_master(user) && !match_my_nick(nick))
                 add_mode(chan, '+', 'k', chan->key_prot);
             }
-            set_key(chan, NULL);
+            chanmode_unset(chan, 'k');
           }
           break;
         case 'o':
@@ -1328,15 +1374,24 @@ static int gotmode(char *from, char *origmsg)
           else
             got_uninvite(chan, nick, from, arg, ch, u);
           break;
+        default:
+          generic = chanmode_standing_type(*chg);
+          break;
+        }
+        if (generic) {
+          if (ms2[0] == '+')
+            chanmode_set(chan, *chg, arg);
+          else
+            chanmode_unset(chan, *chg);
         }
         if (todo) {
           check_tcl_mode(nick, from, u, chan->dname, ms2, "");
           if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
             return 0;
           if (ms2[0] == '+')
-            chan->channel.mode |= todo;
+            chanmode_set(chan, *chg, NULL);
           else
-            chan->channel.mode &= ~todo;
+            chanmode_unset(chan, *chg);
           if (channel_active(chan)) {
             if ((((ms2[0] == '+') && (chan->mode_mns_prot & todo)) ||
                 ((ms2[0] == '-') && (chan->mode_pls_prot & todo))) &&

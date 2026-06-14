@@ -28,7 +28,7 @@
 /* Valid channel prefixes. */
 #define CHANMETA "#&!+"
 
-/* Only send modes as op (b, e, and I excluded)? */
+/* Only allow non-rank-0 bots to send modes as literal op (b/e/I excluded)? */
 #undef NO_HALFOP_CHANMODES
 
 /* Hard limit of modes per line. */
@@ -131,6 +131,9 @@ struct chan_t {
   unsigned int mode;
   int maxmembers;
   int members;
+  /* arbmodes: may change - use accessors */
+  uint64_t modeflags; /* bit mode_to_index(c) set = mode c active */
+  char *modeargs[62]; /* arg for set arg-taking modes, else NULL  */
 };
 
 #define CHANINV    0x0001  /* i                        */

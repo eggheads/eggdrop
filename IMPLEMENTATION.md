@@ -44,10 +44,9 @@ coverage matrix). This file only sequences the work; when in doubt about
 ```sh
 make -j 9                     # incremental build (configure once)
 cd tests && uv sync           # one-time venv setup
-uv run pytest                 # full suite
-uv run pytest -k modes -x     # the mode suites
-uv tool run ruff check . && uv tool run ty check .   # lint/type, must be clean
-make test                     # full from-scratch coverage build + suite (slow; use at gates)
+cd tests && uv run pytest                 # full suite (very slow)
+cd tests && uv run pytest -k modes -x     # the mode suites (slow)
+cd tests && uv tool run ruff check . && uv tool run ty check .   # lint/type, must be clean
 ```
 
 ---
@@ -280,7 +279,7 @@ Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
 - [x] B2 tests green.
 - [x] Grep gate: no remaining reads of `opchars` in C code
       (`grep -rn opchars src/` → only the deprecated Tcl variable shim).
-- [ ] Committed.
+- [x] Committed.
 
 ---
 
@@ -301,15 +300,17 @@ Implements D-PFX4. Replaces `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`/
 - [x] New tests (B3): bot as `%` → `pushmode +v` emits, `+o`/`+h`
       suppressed, `+b` and a flag mode emit; bot as `@` → `+o`/`-o` emit
       (self-rank exception); quiet-LIST net, bot as `%` → `pushmode +q
-      mask` emits (old `NOHALFOPS_MODES q` block gone — this is an
-      intentional behaviour fix, note it for the PR).
+      mask` is not capability-suppressed (pre-step-6 legacy queueing may
+      emit only the mode letter; arg-carrying generic LIST queueing waits
+      for step 6). The old `NOHALFOPS_MODES q` block is gone — this is an
+      intentional behaviour fix, note it for the PR.
 
 ### Gate 3
 
 - [x] Build clean; full pytest green (A-suite untouched; A26 partyline
       command tests confirm cmdsirc.c conversion).
 - [x] B3 green. Grep gate: `grep -rn "NOHALFOPS\|HALFOP_CA" src/` empty.
-- [ ] Committed.
+- [x] Committed.
 
 ---
 
@@ -318,30 +319,33 @@ Implements D-PFX4. Replaces `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`/
 Implements D-CHM1/D-CHM2. Legacy `channel.mode`/`key`/`maxmembers` become
 mirrors.
 
-- [ ] Append to `struct chan_t` (src/chan.h): `uint64_t modeflags;
+- [x] Append to `struct chan_t` (src/chan.h): `uint64_t modeflags;
       char *modeargs[62];` with the "may change — use accessors" comment.
-- [ ] Implement accessors in irc.mod: `chanmode_set(chan, mode, arg)`,
+- [x] Implement accessors in irc.mod: `chanmode_set(chan, mode, arg)`,
       `chanmode_unset`, `chanmode_isset`, `chanmode_getarg`,
       `chanmode_clear` (frees args; call from reset/part/rejoin paths
       where `channel.mode` is currently zeroed, e.g. `reset_chan_info`,
       got324 entry, channel teardown — find with `grep -n "channel.mode
       = 0" src/mod/irc.mod/`).
-- [ ] Type-gated legacy mirror inside set/unset (D-CHM2): update the
+- [x] Type-gated legacy mirror inside set/unset (D-CHM2): update the
       legacy `CHAN*` bit only when `MODE_TYPE(c)==MODETYPE_FLAG` *and*
       the letter is one of the historic 20; `k` (KEY-typed) also maintains
       `CHANKEY` + `set_key()`; `l` (LIMIT-typed) also maintains
       `channel.maxmembers`.
-- [ ] Convert all writers of `channel.mode`/`channel.key`/
+- [x] Convert all writers of `channel.mode`/`channel.key`/
       `channel.maxmembers` in irc.mod (`got324`, `gotmode`, `set_key`
       callers, join/reset paths) to the accessors. `getchanmode()` keeps
       rendering from legacy fields in this step.
-- [ ] Explicit modes-known state (D-CHM7): flag in the new store, false at
+- [x] `channels.mod` cleanup/accounting detail: `clear_channel`/`init_channel`
+      free `modeargs` directly, and `channels_expmem()` counts them because
+      shared channel allocations are owned by channels.mod.
+- [x] Explicit modes-known state (D-CHM7): flag in the new store, false at
       join/`clear_channel`/reset, set by `got324`;
       `recheck_channel_modes()` additionally gates on it (the
       `CHAN_ASKEDMODES` re-ask semantics stay untouched; `got324` keeps
       running recheck while CHAN_PEND). Kills the enforce-against-zero
       window that forced the `chanmodes_324` test workaround.
-- [ ] New tests (B4): inbound `MODE +S` (advertised flag) and `324 … j 3:5`
+- [x] New tests (B4): inbound `MODE +S` (advertised flag) and `324 … j 3:5`
       → state queryable (until step 10 commands exist, assert indirectly:
       legacy fields unchanged for classic modes, and add a temporary
       C-debug or use `getchanmode` for classic; the full assertions land
@@ -351,9 +355,9 @@ mirrors.
 
 ### Gate 4
 
-- [ ] Build clean; full pytest green (A1/A10–A12/A24/A27 are the canaries
+- [x] Build clean; full pytest green (A1/A10–A12/A24/A27 are the canaries
       for mirror correctness).
-- [ ] Committed.
+- [x] Committed.
 
 ---
 

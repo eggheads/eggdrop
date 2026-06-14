@@ -151,7 +151,8 @@ review changed an earlier call, only the final decision is recorded here.
   Replaces `HALFOP_CANTDOMODE`/`HALFOP_CANDOMODE`. The per-mode
   `NOHALFOPS_MODES "ahoq"` string is **removed** (subsumed by rank for a/h/o;
   the `q`-as-quiet case is *fixed* — a halfop may now set quiet, a list
-  mode). The coarse `NO_HALFOP_CHANMODES` ifdef is **kept**.
+  mode). The coarse `NO_HALFOP_CHANMODES` ifdef is **kept** for non-rank-0
+  bots; rank 0 still may set anything per this rule.
 - **D-PFX5 (Q9): WHO/WHOX is the authoritative prefix source.** 354 (WHOX,
   already preferred via `use_354`) reports **all** prefixes even without
   multi-prefix; legacy 352 reports only the highest. Generalize
@@ -402,7 +403,8 @@ char    *modeargs[62];     /* arg for set arg-taking modes, else NULL    */
 
 Accessors (irc.mod): `chanmode_set/unset/isset/getarg/clear`. They maintain
 the type-gated legacy mirror (`channel.mode` bit, `channel.key`,
-`channel.maxmembers`).
+`channel.maxmembers`). `modeflags` also reserves an internal high bit for
+the D-CHM7 "modes known" state; only bits 0..61 are mode-letter slots.
 
 ### `memberlist` additions (appended; "may change — use accessors")
 
@@ -702,7 +704,9 @@ the bridge.
 - **Step 3 (capability)** — bot as `%`: `pushmode +v` emits, `+o`/`+h` do
   **not** (rank), `+b`/flags emit (non-prefix at-least-halfop); bot as `@`:
   `+o` emits (self-rank exception); on a quiet-LIST network bot-as-`%`
-  `pushmode +q mask` emits (the old `NOHALFOPS_MODES q` block is gone).
+  `pushmode +q mask` is no longer capability-suppressed (legacy queueing
+  still drops the LIST argument until the step-6 queue rewrite; the old
+  `NOHALFOPS_MODES q` block is gone).
 - **Steps 4–5 (generic dispatch + tracking)** — inbound `+S` (advertised
   FLAG) ⇒ in `getchanmodes`, `bind mode` fires `+S|`; `+j 3:5` ⇒
   `getchanmodes` has `j → 3:5`; quiet-LIST `+q *!*@x` ⇒ `chanmodelist #c q`

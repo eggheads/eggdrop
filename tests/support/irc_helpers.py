@@ -86,12 +86,9 @@ def drive_join_with_names(
          `chanmodes_324` is given (e.g. "+nt"); otherwise leave it
          unanswered so tests can send their own 324 reply.
 
-    Note when leaving it unanswered: on a channel with a `chanmode`
-    setting the op bot queues its desired modes at end-of-WHO *before* any
-    324 arrives (reset_chan_info clears ASKEDMODES when it sends the MODE
-    query), so the next flush carries e.g. `+tn`. Tests that assert on
-    outbound MODE lines should pass `chanmodes_324` matching the
-    channel's chanmode to keep the queue clean.
+    Note when leaving it unanswered: the bot now waits for a real 324 before
+    enforcing standing chanmodes, so tests may send their own delayed 324
+    after this helper returns.
 
     `member_accounts` maps member nick → account name; nicks not in the dict
     get "*". Only consulted on the WHOX path; ignored for plain WHO.
