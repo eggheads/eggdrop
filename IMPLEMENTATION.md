@@ -503,29 +503,33 @@ Implements D-CHM5. The sanctioned A-test migration happens here.
 
 Implements D-TCL3, D-CHM3, D-CHM4, D-ISU-adjacent lazy re-parse (D11).
 
-- [ ] Append `char *chanmode_verbatim` (or sized buffer) to `chanset_t`;
+- [x] Append `char *chanmode_verbatim` (or sized buffer) to `chanset_t`;
       `channel set/add … chanmode` and `.chanset` store verbatim after
-      validating shape (`±[a-zA-Z0-9]` words + args); warn on letters
-      unknown to current `modecharinfo`. `channel get`/chanfile write
-      return/persist the verbatim string.
-- [ ] Parse verbatim → generic desired-mode store (uint64 pls/mns + args
+      validating shape (`±[a-zA-Z0-9]` words + args, plus the legacy
+      signless first mode word); warn on letters unknown to current
+      `modecharinfo`. `channel get`/chanfile write return/persist the
+      verbatim string.
+- [x] Parse verbatim → generic desired-mode store (uint64 pls/mns + args
       for LIMIT/KEY-type letters), extending/replacing step 5's FLAG-only
       `mode_pls_prot_generic`/`mode_mns_prot_generic` bridge. Classic
       letters additionally maintain `mode_pls_prot`/`mode_mns_prot`/
       `limit_prot`/`key_prot` mirrors (D-CHM4). LIST/PREFIX-type letters:
       warn + ignore (D-CHM3).
-- [ ] Re-parse lazily: on connect (post-005) and on CHANMODES/PREFIX
-      isupport changes (hook the existing irc.mod isupport bind).
-- [ ] Rewrite `recheck_channel_modes()` generically over the desired
+- [x] Re-parse immediately via an appended `irc.mod` module slot when
+      `channel set/add … chanmode` runs while irc.mod is loaded, and lazily
+      on CHANMODES/PREFIX isupport replay/changes (hook the existing
+      irc.mod isupport bind). Active channels are rechecked after an
+      isupport-driven reparse.
+- [x] Rewrite `recheck_channel_modes()` generically over the desired
       store (flags + parameterized enforce). Convert the `gotmode`
       enforcement reads from the step-5 bridge/legacy fields to the final
       store.
-- [ ] Add `chanmode_prot_arg(chan, mode)` accessor; convert all internal
+- [x] Add `chanmode_prot_arg(chan, mode)` accessor; convert all internal
       `key_prot`/`limit_prot` readers — including every JOIN-key idiom
       site (`grep -rn "key_prot" src/`) in irc.mod, server.mod,
       channels.mod — to accessors. Fields stay, writers keep them
       mirrored.
-- [ ] New tests (B8): `.chanset #c chanmode +zS` pre-connect → stored
+- [x] New tests (B8): `.chanset #c chanmode +zS` pre-connect → stored
       verbatim + warned, `channel get` returns it; post-connect (z/S
       advertised) both enforced; `+j 3:5` param enforcement; LIST/PREFIX
       letter in chanmode → warn+ignore; reconnect with different
@@ -533,12 +537,12 @@ Implements D-TCL3, D-CHM3, D-CHM4, D-ISU-adjacent lazy re-parse (D11).
 
 ### Gate 8
 
-- [ ] Build clean; A10–A12, A25 (enforcement + round-trip) green
+- [x] Build clean; A10–A12, A25 (enforcement + round-trip) green
       **unmodified**; full suite green.
-- [ ] B8 green. Grep gate: no direct `chan->key_prot`/`chan->limit_prot`
+- [x] B8 green. Grep gate: no direct `chan->key_prot`/`chan->limit_prot`
       *reads* outside channels.mod's mirror-writer and the accessor
       (`grep -rn "key_prot\|limit_prot" src/` — writers/mirrors only).
-- [ ] Committed.
+- [x] Committed.
 
 ---
 

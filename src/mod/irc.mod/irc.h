@@ -117,6 +117,7 @@ static void chanmode_clear(struct chanset_t *);
 static int chanmode_legacy_flag_bit(char);
 static int chanmode_pls_protected(struct chanset_t *, char);
 static int chanmode_mns_protected(struct chanset_t *, char);
+static int reparse_channel_modes(struct chanset_t *, Tcl_Interp *, int);
 static int chanmode_standing_type(char);
 static void chanmode_list_add(struct chanset_t *, char, const char *,
                               const char *);
@@ -129,6 +130,7 @@ static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
 static int mode_queue_line_limit(void);
 static void flush_mode(struct chanset_t *, int);
+static void recheck_channel_modes(struct chanset_t *);
 static void set_delay(struct chanset_t *, char *);
 static void refresh_who_chan(char *);
 

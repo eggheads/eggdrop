@@ -49,25 +49,9 @@ static p_tcl_bind_list H_chanset;
 
 static struct udef_struct *udef;
 
-#define CHANMODE_INDEX_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-static int channels_mode_to_index(char mode)
-{
-  char *p = mode ? strchr(CHANMODE_INDEX_CHARS, mode) : NULL;
-
-  return p ? (int) (p - CHANMODE_INDEX_CHARS) : -1;
-}
-
-static uint64_t channels_mode_bit(char mode)
-{
-  int idx = channels_mode_to_index(mode);
-
-  return idx < 0 ? 0 : ((uint64_t) 1 << idx);
-}
-
 static int channels_should_store_generic_mode(char mode)
 {
-  return isalnum((unsigned char) mode) && mode != 'b' && mode != 'e' &&
+  return chanmode_prot_index(mode) >= 0 && mode != 'b' && mode != 'e' &&
          mode != 'I' && mode != 'o' && mode != 'h' && mode != 'v';
 }
 
@@ -76,7 +60,7 @@ static char *append_generic_prot_modes(char *p, uint64_t modes)
   const char *c;
 
   for (c = CHANMODE_INDEX_CHARS; *c; c++)
-    if (modes & channels_mode_bit(*c))
+    if (modes & chanmode_prot_bit(*c))
       *p++ = *c;
   return p;
 }
@@ -234,18 +218,198 @@ static void *channel_malloc(int size, char *file, int line)
   return p;
 }
 
-static void set_mode_protect(struct chanset_t *chan, char *set)
+static void clear_mode_protect_store(struct chanset_t *chan)
 {
-  int i, pos = 1;
-  char *s, *s1;
+  int i;
 
-  /* Clear old modes */
   chan->mode_mns_prot = chan->mode_pls_prot = 0;
   chan->mode_pls_prot_generic = chan->mode_mns_prot_generic = 0;
   chan->limit_prot = 0;
   chan->key_prot[0] = 0;
-  for (s = newsplit(&set); *s; s++) {
-    i = 0;
+  for (i = 0; i < (int) (sizeof chan->mode_prot_args /
+      sizeof chan->mode_prot_args[0]); i++) {
+    if (chan->mode_prot_args[i])
+      nfree(chan->mode_prot_args[i]);
+    chan->mode_prot_args[i] = NULL;
+  }
+}
+
+static void free_mode_protect(struct chanset_t *chan)
+{
+  clear_mode_protect_store(chan);
+  if (chan->chanmode_verbatim) {
+    nfree(chan->chanmode_verbatim);
+    chan->chanmode_verbatim = NULL;
+  }
+}
+
+static void set_mode_protect_arg(struct chanset_t *chan, char mode,
+                                 const char *arg)
+{
+  int idx = chanmode_prot_index(mode);
+
+  if (idx < 0)
+    return;
+  if (chan->mode_prot_args[idx])
+    nfree(chan->mode_prot_args[idx]);
+  chan->mode_prot_args[idx] = NULL;
+  if (arg) {
+    chan->mode_prot_args[idx] = nmalloc(strlen(arg) + 1);
+    strcpy(chan->mode_prot_args[idx], arg);
+  }
+}
+
+static int legacy_mode_protect_bit(char mode)
+{
+  switch (mode) {
+  case 'i':
+    return CHANINV;
+  case 'p':
+    return CHANPRIV;
+  case 's':
+    return CHANSEC;
+  case 'm':
+    return CHANMODER;
+  case 'c':
+    return CHANNOCLR;
+  case 'C':
+    return CHANNOCTCP;
+  case 'R':
+    return CHANREGON;
+  case 'M':
+    return CHANMODREG;
+  case 'r':
+    return CHANLONLY;
+  case 'D':
+    return CHANDELJN;
+  case 'u':
+    return CHANSTRIP;
+  case 'N':
+    return CHANNONOTC;
+  case 'T':
+    return CHANNOAMSG;
+  case 't':
+    return CHANTOPIC;
+  case 'n':
+    return CHANNOMSG;
+  case 'a':
+    return CHANANON;
+  case 'q':
+    return CHANQUIET;
+  case 'l':
+    return CHANLIMIT;
+  case 'k':
+    return CHANKEY;
+  default:
+    return 0;
+  }
+}
+
+static void set_mode_protect_bit(struct chanset_t *chan, int pos, char mode,
+                                 const char *arg)
+{
+  uint64_t bit = chanmode_prot_bit(mode);
+  int legacy = legacy_mode_protect_bit(mode);
+
+  if (!bit)
+    return;
+  if (pos) {
+    chan->mode_pls_prot_generic |= bit;
+    chan->mode_mns_prot_generic &= ~bit;
+    set_mode_protect_arg(chan, mode, arg);
+    if (legacy) {
+      chan->mode_pls_prot |= legacy;
+      chan->mode_mns_prot &= ~legacy;
+    }
+    if (mode == 'l')
+      chan->limit_prot = arg && arg[0] ? atoi(arg) : 0;
+    else if (mode == 'k') {
+      chan->key_prot[0] = 0;
+      if (arg && arg[0])
+        strlcpy(chan->key_prot, arg, sizeof chan->key_prot);
+    }
+  } else {
+    chan->mode_pls_prot_generic &= ~bit;
+    chan->mode_mns_prot_generic |= bit;
+    set_mode_protect_arg(chan, mode, NULL);
+    if (legacy) {
+      chan->mode_pls_prot &= ~legacy;
+      chan->mode_mns_prot |= legacy;
+    }
+    if (mode == 'l')
+      chan->limit_prot = 0;
+    else if (mode == 'k')
+      chan->key_prot[0] = 0;
+  }
+}
+
+static void apply_mode_protect_policy(struct chanset_t *chan)
+{
+  uint64_t p_bit = chanmode_prot_bit('p');
+
+  /* Prevents a +s-p +p-s flood (fixed by drummer). */
+  if (chanmode_pls_prot_isset(chan, 's') && !allow_ps) {
+    chan->mode_pls_prot &= ~CHANPRIV;
+    chan->mode_pls_prot_generic &= ~p_bit;
+    set_mode_protect_arg(chan, 'p', NULL);
+  }
+}
+
+static int chanmode_shape_valid(const char *set, Tcl_Interp *irp)
+{
+  char *copy, *cursor, *token;
+  int saw_modes = 0;
+
+  copy = nmalloc(strlen(set) + 1);
+  strcpy(copy, set);
+  cursor = copy;
+  for (token = newsplit(&cursor); token[0]; token = newsplit(&cursor)) {
+    char *p;
+    int saw_letter = 0;
+
+    if (token[0] == '+' || token[0] == '-' || !saw_modes) {
+      for (p = token; *p; p++) {
+        if (*p == '+' || *p == '-')
+          continue;
+        if (!isalnum((unsigned char) *p))
+          break;
+        saw_letter = 1;
+      }
+      if (*p || !saw_letter) {
+        if (!saw_modes) {
+          if (irp)
+            Tcl_AppendResult(irp, "invalid chanmode shape: ", token, NULL);
+          nfree(copy);
+          return 0;
+        }
+      } else {
+        saw_modes = 1;
+      }
+    }
+  }
+  nfree(copy);
+  return 1;
+}
+
+static void set_mode_protect_verbatim(struct chanset_t *chan, const char *set)
+{
+  if (chan->chanmode_verbatim)
+    nfree(chan->chanmode_verbatim);
+  chan->chanmode_verbatim = nmalloc(strlen(set) + 1);
+  strcpy(chan->chanmode_verbatim, set);
+}
+
+static void parse_mode_protect_compat(struct chanset_t *chan, const char *set)
+{
+  int pos = 1;
+  char *copy, *cursor, *s, *s1;
+
+  copy = nmalloc(strlen(set) + 1);
+  strcpy(copy, set);
+  cursor = copy;
+  for (s = newsplit(&cursor); *s; s++) {
+    char mode = *s;
+
     switch (*s) {
     case '+':
       pos = 1;
@@ -253,123 +417,81 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
     case '-':
       pos = 0;
       break;
-    case 'i':
-      i = CHANINV;
-      break;
-    case 'p':
-      i = CHANPRIV;
-      break;
-    case 's':
-      i = CHANSEC;
-      break;
-    case 'm':
-      i = CHANMODER;
-      break;
-    case 'c':
-      i = CHANNOCLR;
-      break;
-    case 'C':
-      i = CHANNOCTCP;
-      break;
-    case 'R':
-      i = CHANREGON;
-      break;
-    case 'M':
-      i = CHANMODREG;
-      break;
-    case 'r':
-      i = CHANLONLY;
-      break;
-    case 'D':
-      i = CHANDELJN;
-      break;
-    case 'u':
-      i = CHANSTRIP;
-      break;
-    case 'N':
-      i = CHANNONOTC;
-      break;
-    case 'T':
-      i = CHANNOAMSG;
-      break;
-    case 't':
-      i = CHANTOPIC;
-      break;
-    case 'n':
-      i = CHANNOMSG;
-      break;
-    case 'a':
-      i = CHANANON;
-      break;
-    case 'q':
-      i = CHANQUIET;
-      break;
     case 'l':
-      i = CHANLIMIT;
-      chan->limit_prot = 0;
+      s1 = "";
       if (pos) {
-        s1 = newsplit(&set);
-        if (s1[0])
-          chan->limit_prot = atoi(s1);
+        s1 = newsplit(&cursor);
       }
+      set_mode_protect_bit(chan, pos, mode, s1);
       break;
     case 'k':
-      i = CHANKEY;
-      chan->key_prot[0] = 0;
+      s1 = "";
       if (pos) {
-        s1 = newsplit(&set);
-        if (s1[0])
-          strlcpy(chan->key_prot, s1, sizeof chan->key_prot);
+        s1 = newsplit(&cursor);
       }
+      set_mode_protect_bit(chan, pos, mode, s1);
       break;
     default:
-      if (channels_should_store_generic_mode(*s)) {
-        uint64_t bit = channels_mode_bit(*s);
-
-        if (pos) {
-          chan->mode_pls_prot_generic |= bit;
-          chan->mode_mns_prot_generic &= ~bit;
-        } else {
-          chan->mode_pls_prot_generic &= ~bit;
-          chan->mode_mns_prot_generic |= bit;
-        }
-      }
+      if (legacy_mode_protect_bit(mode) || channels_should_store_generic_mode(mode))
+        set_mode_protect_bit(chan, pos, mode, NULL);
       break;
     }
-    if (i) {
-      if (pos) {
-        chan->mode_pls_prot |= i;
-        chan->mode_mns_prot &= ~i;
-      } else {
-        chan->mode_pls_prot &= ~i;
-        chan->mode_mns_prot |= i;
-      }
-    }
   }
-  /* Prevents a +s-p +p-s flood  (fixed by drummer) */
-  if (chan->mode_pls_prot & CHANSEC && !allow_ps)
-    chan->mode_pls_prot &= ~CHANPRIV;
+  nfree(copy);
+  apply_mode_protect_policy(chan);
 }
 
-static void get_mode_protect(struct chanset_t *chan, char *s)
+static int set_mode_protect(struct chanset_t *chan, const char *set,
+                            Tcl_Interp *irp)
+{
+  module_entry *me;
+
+  if (!set)
+    set = "";
+  if (!chanmode_shape_valid(set, irp))
+    return TCL_ERROR;
+  set_mode_protect_verbatim(chan, set);
+  clear_mode_protect_store(chan);
+  parse_mode_protect_compat(chan, set);
+  me = module_find("irc", 0, 0);
+  if (me && me->funcs && me->funcs[IRC_REPARSE_CHANNEL_MODES]) {
+    int ret = ((int (*)(struct chanset_t *, Tcl_Interp *, int))
+               me->funcs[IRC_REPARSE_CHANNEL_MODES]) (chan, irp, 1);
+
+    apply_mode_protect_policy(chan);
+    return ret;
+  }
+  return TCL_OK;
+}
+
+static void get_mode_protect(struct chanset_t *chan, char *s, size_t slen)
 {
   char *p = s, s1[122];
   int i, tst;
 
+  if (!slen)
+    return;
+  if (chan->chanmode_verbatim) {
+    strlcpy(s, chan->chanmode_verbatim, slen);
+    return;
+  }
   s1[0] = 0;
   for (i = 0; i < 2; i++) {
     if (i == 0) {
+      const char *limit_arg = chanmode_prot_arg(chan, 'l');
+      const char *key_arg = chanmode_prot_arg(chan, 'k');
+
       tst = chan->mode_pls_prot;
-      if ((tst) || (chan->limit_prot != 0) || (chan->key_prot[0]) ||
+      if ((tst) || limit_arg[0] || key_arg[0] ||
           chan->mode_pls_prot_generic)
         *p++ = '+';
-      if (chan->limit_prot != 0) {
+      if (limit_arg[0]) {
         *p++ = 'l';
-        snprintf(s1 + strlen(s1), (sizeof s1) - strlen(s1), "%d ", chan->limit_prot);
+        snprintf(s1 + strlen(s1), (sizeof s1) - strlen(s1), "%s ", limit_arg);
       }
-      if (chan->key_prot[0]) {
+      if (key_arg[0]) {
         *p++ = 'k';
-        snprintf(s1 + strlen(s1), (sizeof s1) - strlen(s1), "%s ", chan->key_prot);
+        snprintf(s1 + strlen(s1), (sizeof s1) - strlen(s1), "%s ", key_arg);
       }
     } else {
       tst = chan->mode_mns_prot;
@@ -420,8 +542,8 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
   *p = 0;
   if (s1[0]) {
     s1[strlen(s1) - 1] = 0;
-    strcat(s, " ");
-    strcat(s, s1);
+    strlcat(s, " ", slen);
+    strlcat(s, s1, slen);
   }
 }
 
@@ -501,6 +623,7 @@ static void remove_channel(struct chanset_t *chan)
     (me->funcs[IRC_DO_CHANNEL_PART]) (chan);
 
   clear_channel(chan, 0);
+  free_mode_protect(chan);
   noshare = 1;
   /* Remove channel-bans */
   while (chan->bans)
@@ -604,7 +727,7 @@ static void write_channels()
           botnetnick, ver, s1);
   for (chan = chanset; chan; chan = chan->next) {
     convert_element(chan->dname, name);
-    get_mode_protect(chan, w);
+    get_mode_protect(chan, w, sizeof w);
     convert_element(w, w2);
     convert_element(chan->need_op, need1);
     convert_element(chan->need_invite, need2);
@@ -787,7 +910,7 @@ static void channels_report(int idx, int details)
       strcat(s, s1);
 
       s2[0] = 0;
-      get_mode_protect(chan, s2);
+      get_mode_protect(chan, s2, sizeof s2);
 
       if (s2[0]) {
         int len = strlen(s);
@@ -946,6 +1069,12 @@ static int channels_expmem()
     for (i = 0; i < MODEQUEUE_MAX; i++)
       if (chan->modequeue[i].arg)
         tot += strlen(chan->modequeue[i].arg) + 1;
+    for (i = 0; i < (int) (sizeof chan->mode_prot_args /
+        sizeof chan->mode_prot_args[0]); i++)
+      if (chan->mode_prot_args[i])
+        tot += strlen(chan->mode_prot_args[i]) + 1;
+    if (chan->chanmode_verbatim)
+      tot += strlen(chan->chanmode_verbatim) + 1;
   }
   tot += expmem_udef(udef);
   if (lastdeletedmask)

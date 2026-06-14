@@ -218,8 +218,8 @@ review changed an earlier call, only the final decision is recorded here.
   are **warned and ignored** (no standing-enforce semantics).
   Implementation note: step 5 pulled forward a minimal FLAG-only generic
   protection bitset so live `gotmode` reversal can cover non-classic flags;
-  step 8 replaces/extends that into the final verbatim, type-aware desired
-  store with parameter arguments.
+  step 8 replaced that with the final verbatim, type-aware desired store
+  with parameter arguments.
 - **D-CHM4 (Q8): Keep `key_prot`/`limit_prot` (and `mode_pls_prot`/
   `mode_mns_prot`) as compat mirrors** — source compat is most important.
   The new generic desired-mode store is the source of truth; the legacy
@@ -368,8 +368,10 @@ review changed an earlier call, only the final decision is recorded here.
 - **D-TCL3 (D22): `chanmode` stored verbatim** in channels.mod and the
   chanfile; parsed against live `modecharinfo`; `.chanset chanmode` accepts
   any `±[a-zA-Z0-9]`(+args) string but **warns** about letters it cannot yet
-  classify. With D-ISU2 the early window shrinks (defaults/persisted seed the
-  table), so verbatim deferral only matters for still-unknown letters.
+  classify. The legacy signless first mode word is also accepted and stored
+  verbatim (`nt` remains valid for `default-chanmode`/old chanfiles).
+  With D-ISU2 the early window shrinks (defaults/persisted seed the table),
+  so verbatim deferral only matters for still-unknown letters.
 
 ### Out of scope / unchanged
 
@@ -423,15 +425,23 @@ which is delta-tracked from live MODE/list numerics.
 ### `chanset_t` additions (appended; "may change — use accessors")
 
 ```c
-uint64_t mode_pls_prot_generic; /* desired + non-classic FLAG modes */
-uint64_t mode_mns_prot_generic; /* desired - non-classic FLAG modes */
+uint64_t mode_pls_prot_generic; /* desired + enforceable modes      */
+uint64_t mode_mns_prot_generic; /* desired - enforceable modes      */
+char *mode_prot_args[62];       /* desired + KEY/LIMIT arguments    */
+char *chanmode_verbatim;        /* configured chanmode string       */
 ```
 
-These are the step-5 FLAG-only protection bridge for non-classic modes
-(`+S`/`-S` style). Step 8's verbatim chanmode work should replace or
-extend this into the final generic desired-mode store, including KEY/LIMIT
-arguments and type-aware LIST/PREFIX rejection, while keeping the legacy
-`mode_pls_prot`/`mode_mns_prot` mirrors correct for classic letters.
+This is the final step-8 generic desired-mode store. `chanmode_verbatim` is
+the source for `channel get ... chanmode` and chanfile persistence; the
+bitsets/args are derived from it against live `modecharinfo`. Shared inline
+accessors in `chan.h` (`chanmode_pls_prot_isset`,
+`chanmode_mns_prot_isset`, `chanmode_prot_arg`) are used for internal reads,
+with `chanmode_prot_arg()` returning `""` when a mode has no desired `+`
+argument. `channels.mod` keeps a conservative compatibility parse for
+classic flags and k/l before irc.mod is available; irc.mod re-parses with
+full type information via the appended `IRC_REPARSE_CHANNEL_MODES` module
+slot and on CHANMODES/PREFIX ISUPPORT changes. Legacy `mode_pls_prot`/
+`mode_mns_prot`/`key_prot`/`limit_prot` stay as mirrors only.
 
 ### `memberlist` additions (appended; "may change — use accessors")
 
@@ -546,11 +556,12 @@ warnings; 324 clears standing non-list mode state only, preserving
 delta-tracked generic LIST modes.
 
 **Step 8 — channels.mod chanmode.** Verbatim storage/persistence with
-warn-on-unknown (D-TCL3); classic mirrors maintained; extend/replace the
-step-5 FLAG-only generic protection bridge with the final generic desired
-store incl. params (D-CHM3); `recheck_channel_modes()` generic; lazy
-re-parse on connect/isupport change; refactor JOIN-key + `*_prot` readers
-to accessors (D-CHM4).
+warn-on-unknown (D-TCL3); classic mirrors maintained; replace the step-5
+FLAG-only generic protection bridge with the final generic desired store
+incl. params (D-CHM3); `recheck_channel_modes()` generic; immediate re-parse
+on `channel set/add chanmode` when irc.mod is loaded plus lazy re-parse on
+ISUPPORT replay/change; refactor JOIN-key + `*_prot` readers to accessors
+(D-CHM4). Legacy signless `chanmode` strings remain accepted and verbatim.
 
 **Step 9 — ISUPPORT persistence.** Core global + `write_userfile` emit +
 read capture gated to `bu == userlist` (D-ISU2..5); server.mod apply on

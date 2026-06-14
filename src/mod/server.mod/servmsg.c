@@ -395,7 +395,8 @@ static int got001(char *from, char *msg)
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan)) {
 
-        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        key = chan->channel.key[0] ? chan->channel.key :
+              (char *) chanmode_prot_arg(chan, 'k');
         if (key[0])
           dprintf(DP_SERVER, "JOIN %s %s\n",
                   chan->name[0] ? chan->name : chan->dname, key);
@@ -438,7 +439,8 @@ static int got442(char *from, char *msg)
       (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
     chan->status &= ~CHAN_ACTIVE;
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    key = chan->channel.key[0] ? chan->channel.key :
+          (char *) chanmode_prot_arg(chan, 'k');
     if (key[0])
       dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, key);
     else

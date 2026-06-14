@@ -371,20 +371,22 @@ static void real_add_mode(struct chanset_t *chan,
 
 static void got_key(struct chanset_t *chan, char *nick, char *from, char *key)
 {
+  const char *desired = chanmode_prot_arg(chan, 'k');
+
   if (!nick[0] && bounce_modes)
     reversing = 1;
 
   if (!(glob_master(user) || glob_bot(user) || chan_master(user)) &&
       !match_my_nick(nick)) {
-    if ((reversing && !chan->key_prot[0]) || (chan->mode_mns_prot & CHANKEY)) {
+    if ((reversing && !desired[0]) || chanmode_mns_protected(chan, 'k')) {
       if (strlen(key) != 0)
         add_mode(chan, '-', 'k', key);
       else
         add_mode(chan, '-', 'k', "");
     }
-    if ((chan->mode_pls_prot & CHANKEY) && (chan->key_prot[0] != 0) &&
-        strcmp(key, chan->key_prot)) {
-      add_mode(chan, '+', 'k', chan->key_prot);
+    if (chanmode_pls_protected(chan, 'k') && desired[0] &&
+        strcmp(key, desired)) {
+      add_mode(chan, '+', 'k', (char *) desired);
     }
   }
 }
@@ -1037,12 +1039,13 @@ static struct chanset_t *got_keymode(struct chanset_t *chan, char *ch,
                                      char *modechange, char *arg,
                                      struct userrec *u)
 {
-  char oldkey[512];
+  char oldarg[512];
+  const char *current;
 
-  if (mode == 'k')
-    strlcpy(oldkey, chan->channel.key, sizeof oldkey);
-  else
-    oldkey[0] = 0;
+  if (!nick[0] && bounce_modes)
+    reversing = 1;
+  current = chanmode_getarg(chan, mode);
+  strlcpy(oldarg, current ? current : "", sizeof oldarg);
   if (modechange[0] == '+')
     chanmode_set(chan, mode, arg);
   else
@@ -1054,13 +1057,26 @@ static struct chanset_t *got_keymode(struct chanset_t *chan, char *ch,
     chanmode_set(chan, mode, arg);
     if (mode == 'k' && channel_active(chan))
       got_key(chan, nick, from, arg ? arg : "");
+    else if (channel_active(chan) &&
+             !(glob_master(user) || glob_bot(user) || chan_master(user)) &&
+             !match_my_nick(nick)) {
+      const char *desired = chanmode_prot_arg(chan, mode);
+
+      if ((reversing && !desired[0]) || chanmode_mns_protected(chan, mode))
+        add_mode(chan, '-', mode, arg ? arg : "");
+      if (chanmode_pls_protected(chan, mode) && desired[0] &&
+          strcmp(arg ? arg : "", desired))
+        add_mode(chan, '+', mode, (char *) desired);
+    }
   } else {
-    if (mode == 'k' && channel_active(chan)) {
-      if (reversing && oldkey[0])
-        add_mode(chan, '+', mode, oldkey);
-      else if (chan->key_prot[0] && !glob_master(user) &&
+    if (channel_active(chan)) {
+      const char *desired = chanmode_prot_arg(chan, mode);
+
+      if (reversing && oldarg[0])
+        add_mode(chan, '+', mode, oldarg);
+      else if (desired[0] && !glob_master(user) &&
                !chan_master(user) && !match_my_nick(nick))
-        add_mode(chan, '+', mode, chan->key_prot);
+        add_mode(chan, '+', mode, (char *) desired);
     }
     chanmode_unset(chan, mode);
   }
@@ -1073,6 +1089,7 @@ static struct chanset_t *got_limitmode(struct chanset_t *chan, char *ch,
                                        struct userrec *u)
 {
   char s[UHOSTLEN], bindarg[512];
+  const char *desired;
 
   if (!nick[0] && bounce_modes)
     reversing = 1;
@@ -1080,15 +1097,15 @@ static struct chanset_t *got_limitmode(struct chanset_t *chan, char *ch,
     check_tcl_mode(nick, from, u, chan->dname, modechange, "");
     if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
       return NULL;
-    if (mode == 'l' && channel_active(chan)) {
-      if (reversing && (chan->channel.maxmembers != 0)) {
-        simple_sprintf(s, "%d", chan->channel.maxmembers);
-        add_mode(chan, '+', mode, s);
-      } else if ((chan->limit_prot != 0) && !glob_master(user) &&
-                 !chan_master(user) && !match_my_nick(nick)) {
-        simple_sprintf(s, "%d", chan->limit_prot);
-        add_mode(chan, '+', mode, s);
-      }
+    if (channel_active(chan)) {
+      const char *current = chanmode_getarg(chan, mode);
+
+      desired = chanmode_prot_arg(chan, mode);
+      if (reversing && current && current[0])
+        add_mode(chan, '+', mode, (char *) current);
+      else if (desired[0] && !glob_master(user) &&
+               !chan_master(user) && !match_my_nick(nick))
+        add_mode(chan, '+', mode, (char *) desired);
     }
     chanmode_unset(chan, mode);
   } else {
@@ -1102,17 +1119,16 @@ static struct chanset_t *got_limitmode(struct chanset_t *chan, char *ch,
       return NULL;
     if (channel_pending(chan))
       return chan;
-    if (mode == 'l') {
-      if ((reversing && !(chan->mode_pls_prot & CHANLIMIT)) ||
-          ((chan->mode_mns_prot & CHANLIMIT) && !glob_master(user) &&
-          !chan_master(user)))
-        add_mode(chan, '-', mode, "");
-      if ((chan->limit_prot != chan->channel.maxmembers) &&
-          (chan->mode_pls_prot & CHANLIMIT) && (chan->limit_prot != 0) &&
-          !glob_master(user) && !chan_master(user)) {
-        simple_sprintf(s, "%d", chan->limit_prot);
-        add_mode(chan, '+', mode, s);
-      }
+    desired = chanmode_prot_arg(chan, mode);
+    if ((reversing && !chanmode_pls_protected(chan, mode)) ||
+        (chanmode_mns_protected(chan, mode) && !glob_master(user) &&
+        !chan_master(user)))
+      add_mode(chan, '-', mode, "");
+    if (desired[0] && strcmp(arg ? arg : "", desired) &&
+        chanmode_pls_protected(chan, mode) && !glob_master(user) &&
+        !chan_master(user)) {
+      strlcpy(s, desired, sizeof s);
+      add_mode(chan, '+', mode, s);
     }
   }
   return chan;

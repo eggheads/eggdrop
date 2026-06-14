@@ -34,6 +34,9 @@
 /* Hard limit of queued outbound modes per channel. */
 #define MODEQUEUE_MAX 32
 
+/* The 62 mode letters that get bitset slots in generic channel mode stores. */
+#define CHANMODE_INDEX_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 typedef struct memstruct {
   char nick[NICKLEN];
   char userhost[UHOSTLEN];
@@ -224,9 +227,54 @@ struct chanset_t {
   int floodnum[FLOOD_CHAN_MAX];
   char deopd[NICKLEN];   /* last user deopped                 */
   /* arbmodes: may change - use accessors */
-  uint64_t mode_pls_prot_generic; /* desired + non-classic modes */
-  uint64_t mode_mns_prot_generic; /* desired - non-classic modes */
+  uint64_t mode_pls_prot_generic; /* desired + modes             */
+  uint64_t mode_mns_prot_generic; /* desired - modes             */
+  char *mode_prot_args[62];       /* desired + mode arguments    */
+  char *chanmode_verbatim;        /* configured chanmode string  */
 };
+
+static inline int chanmode_prot_index(char mode)
+{
+  const char *p;
+
+  for (p = CHANMODE_INDEX_CHARS; *p; p++)
+    if (*p == mode)
+      return (int) (p - CHANMODE_INDEX_CHARS);
+  return -1;
+}
+
+static inline uint64_t chanmode_prot_bit(char mode)
+{
+  int idx = chanmode_prot_index(mode);
+
+  return idx < 0 ? 0 : ((uint64_t) 1 << idx);
+}
+
+static inline int chanmode_pls_prot_isset(const struct chanset_t *chan,
+                                          char mode)
+{
+  uint64_t bit = chanmode_prot_bit(mode);
+
+  return bit && (chan->mode_pls_prot_generic & bit);
+}
+
+static inline int chanmode_mns_prot_isset(const struct chanset_t *chan,
+                                          char mode)
+{
+  uint64_t bit = chanmode_prot_bit(mode);
+
+  return bit && (chan->mode_mns_prot_generic & bit);
+}
+
+static inline const char *chanmode_prot_arg(const struct chanset_t *chan,
+                                            char mode)
+{
+  int idx = chanmode_prot_index(mode);
+
+  if (idx < 0 || !chanmode_pls_prot_isset(chan, mode))
+    return "";
+  return chan->mode_prot_args[idx] ? chan->mode_prot_args[idx] : "";
+}
 
 #define CHAN_ENFORCEBANS    0x0001     /* +enforcebans    */
 #define CHAN_DYNAMICBANS    0x0002     /* +dynamicbans    */

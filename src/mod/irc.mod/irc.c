@@ -553,9 +553,9 @@ static void check_lonely_channel(struct chanset_t *chan)
       dprintf(DP_MODE, "PART %s\n", chan->name);
 
       /* If it's a !chan, we need to recreate the channel with !!chan <cybah> */
-      if (chan->key_prot[0])
+      if (chanmode_prot_arg(chan, 'k')[0])
         dprintf(DP_MODE, "JOIN %s%s %s\n", (chan->dname[0] == '!') ? "!" : "",
-                chan->dname, chan->key_prot);
+                chan->dname, chanmode_prot_arg(chan, 'k'));
       else
         dprintf(DP_MODE, "JOIN %s%s\n", (chan->dname[0] == '!') ? "!" : "",
                 chan->dname);
@@ -698,7 +698,8 @@ static void check_expired_chanstuff()
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
 
-      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      key = chan->channel.key[0] ? chan->channel.key :
+            (char *) chanmode_prot_arg(chan, 'k');
       if (key[0]) {
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
@@ -1423,7 +1424,8 @@ static Function irc_table[] = {
   /* 28 - 31 */
   (Function) & H_ircaway,       /* p_tcl_bind_list              */
   (Function) NULL,              /* Was H_monitor                */
-  (Function) & H_chghost        /* p_tcl_bind_list              */
+  (Function) & H_chghost,       /* p_tcl_bind_list              */
+  (Function) reparse_channel_modes
 };
 
 char *irc_start(Function *global_funcs)
@@ -1447,9 +1449,11 @@ char *irc_start(Function *global_funcs)
   }
   for (chan = chanset; chan; chan = chan->next) {
     if (!channel_inactive(chan)) {
-      if (chan->key_prot[0])
+      const char *key = chanmode_prot_arg(chan, 'k');
+
+      if (key[0])
         dprintf(DP_SERVER, "JOIN %s %s\n",
-                chan->name[0] ? chan->name : chan->dname, chan->key_prot);
+                chan->name[0] ? chan->name : chan->dname, key);
       else
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
