@@ -474,27 +474,28 @@ Implements D-Q1/D-Q2/D-Q3/D-Q4/D-Q5, D-TCL2. Removes the
 
 Implements D-CHM5. The sanctioned A-test migration happens here.
 
-- [ ] Rewrite `getchanmode()` to render from `modeflags`/`modeargs`:
+- [x] Rewrite `getchanmode()` to render from `modeflags`/`modeargs`:
       flags in bitset order (`a-z`, `A-Z`, `0-9`), args appended in the
       same order. Same `+flags arg arg` shape.
-- [ ] Rewrite `got324()` generically (type dispatch, like gotmode but
+- [x] Rewrite `got324()` generically (type dispatch, like gotmode but
       state-only + recheck trigger); preserve the `key=*` →
       `CHAN_ASKEDMODES` quirk (A27) and the ASKEDMODES→
       `recheck_channel_modes` tail. Delete the per-letter chain and its
       sanity warnings.
-- [ ] **Migrate** (ARCHITECTURE.md §C) the two existing 324 skip/warn
+- [x] **Migrate** (ARCHITECTURE.md §C) the two existing 324 skip/warn
       tests to assert tracking: unknown-to-legacy modes now appear in
       `getchanmode`; the conflict-warning assertions are removed. Note
       the behaviour change in the PR description draft.
-- [ ] New tests (B7): 324 with arbitrary advertised flag/param modes
+- [x] New tests (B7): 324 with arbitrary advertised flag/param modes
       appears in `getchanmode` (set-membership + args).
 
 ### Gate 7
 
-- [ ] Build clean; full suite green with **only** the two sanctioned test
-      migrations changed (diff of `tests/` must show nothing else).
-- [ ] A1 (set-membership form) passes against the new ordering.
-- [ ] Committed.
+- [x] Build clean; full suite green. Test diff includes the two sanctioned
+      324 migrations, B7 assertions, and the live-MODE sibling whose old
+      `getchanmode` expectation conflicted with D-CHM5.
+- [x] A1 (set-membership form) passes against the new ordering.
+- [x] Committed.
 
 ---
 

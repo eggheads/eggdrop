@@ -26,7 +26,7 @@ def assert_no_mode_push(mock_ircd: MockIrcd, chan: str) -> None:
     raise AssertionError(f"unexpected mode push before 324: {line}")
 
 
-def test_b4_inbound_advertised_flag_does_not_touch_legacy_getchanmode(
+def test_b7_inbound_advertised_flag_appears_in_getchanmode(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
@@ -36,14 +36,19 @@ def test_b4_inbound_advertised_flag_does_not_touch_legacy_getchanmode(
     drive_registration(mock_ircd, isupport_tokens=[f"CHANMODES={chanmodes}"])
     chan = drive_join_with_names(mock_ircd, "@TestBot @someop", chanmodes_324="+nt")
     before = tcl_bridge.eval_ok(f'getchanmode "{chan}"')
+    assert "S" not in before.split()[0]
 
     mock_ircd.send(f":someop!u@h MODE {chan} +S")
     eggdrop_proc.wait_for_log(r"mode change '\+S")
 
-    assert tcl_bridge.eval_ok(f'getchanmode "{chan}"') == before
+    wait_for(
+        lambda: "S" in tcl_bridge.eval_ok(f'getchanmode "{chan}"').split()[0],
+        timeout=5.0,
+        description="+S to appear in getchanmode",
+    )
 
 
-def test_b4_324_generic_arg_mode_does_not_touch_legacy_getchanmode(
+def test_b7_324_arbitrary_flag_and_arg_modes_appear_in_getchanmode(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
@@ -55,20 +60,19 @@ def test_b4_324_generic_arg_mode_does_not_touch_legacy_getchanmode(
 
     mock_ircd.send(f":mock.test 324 TestBot {chan} +ntSj 3:5")
     wait_for(
-        lambda: {"n", "t"}.issubset(
-            set(tcl_bridge.eval_ok(f'getchanmode "{chan}"').split()[0])
-        ),
+        lambda: "3:5" in tcl_bridge.eval_ok(f'getchanmode "{chan}"'),
         timeout=5.0,
-        description="324 +ntSj to update classic mode mirrors",
+        description="324 +ntSj to update generic mode store",
     )
 
     mode = tcl_bridge.eval_ok(f'getchanmode "{chan}"')
-    flags = mode.split()[0]
-    assert "n" in flags
-    assert "t" in flags
-    assert "S" not in flags
-    assert "j" not in flags
-    assert "3:5" not in mode
+    parts = mode.split()
+    assert len(parts) == 2, mode
+    flags = parts[0]
+    assert set("ntSj") <= set(flags), mode
+    assert parts[1] == "3:5"
+    assert tcl_bridge.eval_ok(f'dict get [getchanmodes "{chan}"] S') == ""
+    assert tcl_bridge.eval_ok(f'dict get [getchanmodes "{chan}"] j') == "3:5"
 
 
 def test_b4_modes_known_gate_delays_join_enforcement_until_324(

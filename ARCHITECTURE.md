@@ -415,7 +415,10 @@ the type-gated legacy mirror (`channel.mode` bit, `channel.key`,
 `channel.maxmembers`). `modeflags` also reserves an internal high bit for
 the D-CHM7 "modes known" state; only bits 0..61 are mode-letter slots.
 `modelists` is the live, read-only generic LIST store from D-LST2; it is
-not persisted and has no enforcement or initial-list query.
+not persisted and has no enforcement or initial-list query. Because 324 is
+a snapshot of standing non-list channel modes, a 324 refresh clears and
+rebuilds only `modeflags`/`modeargs` state; it must not clear `modelists`,
+which is delta-tracked from live MODE/list numerics.
 
 ### `chanset_t` additions (appended; "may change — use accessors")
 
@@ -539,7 +542,8 @@ preserved (D-Q3).
 
 **Step 7 — `getchanmode`/`got324` from new storage.** Render from
 `modeflags`/`modeargs` (D-CHM5); delete per-letter `got324` chain + its
-warnings.
+warnings; 324 clears standing non-list mode state only, preserving
+delta-tracked generic LIST modes.
 
 **Step 8 — channels.mod chanmode.** Verbatim storage/persistence with
 warn-on-unknown (D-TCL3); classic mirrors maintained; extend/replace the

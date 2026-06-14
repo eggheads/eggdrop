@@ -8,9 +8,9 @@ a complete story.
 Coverage:
 - 005 parsing of PREFIX and CHANMODES → debug log + isupport state
 - `.status all` on the partyline reflects what was parsed
-- Raw 324 (RPL_CHANNELMODEIS) with mixed known/unknown modes after join
+- Raw 324 (RPL_CHANNELMODEIS) with arbitrary advertised modes after join
 - Inbound MODE messages mixing prefix modes, hardcoded modes, and unknown
-  modes — Eggdrop must skip what it doesn't know but still apply known
+  modes — Eggdrop must track what ISUPPORT advertises and still apply known
   ones in the right slots (op grant, key after junk modes).
 """
 
@@ -207,14 +207,13 @@ def test_status_all_reports_parsed_isupport(
 # ---------- raw 324 with mixed modes ----------
 
 
-def test_got324_skips_unknown_mode_but_applies_key(
+def test_got324_tracks_advertised_arg_mode_and_key(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
 ) -> None:
-    """324 `+fk test_f test_k` — `f` (forward, common on Charybdis) is unknown
-    to Eggdrop but isupport says it has a parameter; `f` is skipped, the key
-    `test_k` still applies."""
+    """324 `+fk test_f test_k` — `f` (forward, common on Charybdis)
+    is advertised as a parameter mode, so both `f` and the key are tracked."""
     prefix = "(ohv)@%+"
     # 'f' lives in the KEY section here (kfL), so isupport says it takes an arg.
     chanmodes = "beI,kfL,lj,psmntirRcOAQKVCuzNSMTG"
@@ -234,28 +233,28 @@ def test_got324_skips_unknown_mode_but_applies_key(
     )
 
     chanmode_str = tcl_bridge.eval_ok(f'getchanmode "{chan}"')
-    # Format is "+<flags>k <key>" — verify 'k' is set, key is correct,
-    # and 'f' (unknown) does not appear in the flags.
-    flags, _, key = chanmode_str.partition(" ")
+    parts = chanmode_str.split()
+    assert len(parts) == 3, chanmode_str
+    flags = parts[0]
     assert "k" in flags, chanmode_str
-    assert "f" not in flags, chanmode_str
-    assert key.strip() == "test_k", chanmode_str
+    assert "f" in flags, chanmode_str
+    assert parts[1] == "test_f", chanmode_str
+    assert parts[2] == "test_k", chanmode_str
 
 
-def test_got324_conflict_eggdrop_says_noargs_isupport_says_args(
+def test_got324_tracks_legacy_noarg_letter_as_advertised_arg_mode(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
 ) -> None:
-    """If isupport puts a mode Eggdrop hardcodes as no-arg into a section
-    with args, got324 logs a warning and skips that mode (consuming its
-    arg). The next mode in line still gets parsed correctly.
+    """If ISUPPORT puts a legacy no-arg letter in an arg-taking section,
+    got324 follows ISUPPORT and tracks it with the supplied argument.
 
-    Constructed CHANMODES: 'q' (Eggdrop hardcodes it as no-arg / quiet) is
-    placed in the LIST section (with-arg). Sending `324 +qk arg_q test_k`
-    must skip the `q arg_q` pair entirely and still apply `+k test_k`.
+    Constructed CHANMODES: 'q' (historically hardcoded as no-arg / quiet) is
+    placed in the KEY section. Sending `324 +qk arg_q test_k` tracks both
+    `q arg_q` and `k test_k`.
     """
-    chanmodes = "beIq,k,l,imnpst"  # 'q' in LIST → isupport says it takes arg
+    chanmodes = "beI,kq,l,imnpst"  # 'q' in KEY → isupport says it takes arg
 
     drive_registration(mock_ircd, isupport_tokens=[f"CHANMODES={chanmodes}"])
     chan = drive_join_with_names(mock_ircd, "@TestBot")
@@ -264,16 +263,17 @@ def test_got324_conflict_eggdrop_says_noargs_isupport_says_args(
     mock_ircd.send(f":mock.test 324 TestBot {chan} +qk arg_q test_k")
 
     wait_for(
-        lambda: "test_k" in tcl_bridge.eval_ok(f'getchanmode "{chan}"'),
+        lambda: "arg_q" in tcl_bridge.eval_ok(f'getchanmode "{chan}"'),
         timeout=5.0,
-        description="324 to apply key=test_k after skipped +q",
+        description="324 to track +q arg_q",
     )
 
-    log = eggdrop_proc.log_path.read_text()
-    assert re.search(
-        r"Eggdrop assumes mode change \+q has no parameter but isupport says yes",
-        log,
-    ), "expected the +q conflict warning in the log"
+    chanmode_str = tcl_bridge.eval_ok(f'getchanmode "{chan}"')
+    parts = chanmode_str.split()
+    assert len(parts) == 3, chanmode_str
+    assert set("kq") <= set(parts[0]), chanmode_str
+    assert parts[1] == "test_k", chanmode_str
+    assert parts[2] == "arg_q", chanmode_str
 
 
 # ---------- inbound MODE while joined ----------
@@ -286,8 +286,7 @@ def test_gotmode_op_via_prefix_after_unknown_mode_with_arg(
 ) -> None:
     """MODE `+ofk alice test_f test_k` on a joined channel:
     - alice gets opped (prefix mode +o consumes its arg correctly),
-    - 'f' is consumed-and-discarded (unknown to Eggdrop but isupport says
-      it takes an arg),
+    - 'f' is tracked as an advertised parameter mode,
     - 'k' still applies with `test_k`.
     """
     prefix = "(ohv)@%+"
@@ -312,9 +311,11 @@ def test_gotmode_op_via_prefix_after_unknown_mode_with_arg(
         description="alice to be opped via prefix +o",
     )
     chanmode_str = tcl_bridge.eval_ok(f'getchanmode "{chan}"')
-    flags, _, key = chanmode_str.partition(" ")
-    assert key.strip() == "test_k", chanmode_str
-    assert "f" not in flags, chanmode_str
+    parts = chanmode_str.split()
+    assert len(parts) == 3, chanmode_str
+    assert set("fk") <= set(parts[0]), chanmode_str
+    assert parts[1] == "test_f", chanmode_str
+    assert parts[2] == "test_k", chanmode_str
 
 
 def test_gotmode_extended_prefix_modes_qa_consume_args_correctly(

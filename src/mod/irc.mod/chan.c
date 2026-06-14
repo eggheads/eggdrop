@@ -265,7 +265,7 @@ static void chanmode_list_clear(struct chanset_t *chan)
   chan->channel.modelists = NULL;
 }
 
-static void chanmode_clear(struct chanset_t *chan)
+static void chanmode_clear_standing(struct chanset_t *chan)
 {
   int i;
 
@@ -275,11 +275,16 @@ static void chanmode_clear(struct chanset_t *chan)
       nfree(chan->channel.modeargs[i]);
     chan->channel.modeargs[i] = NULL;
   }
-  chanmode_list_clear(chan);
   chan->channel.modeflags = 0;
   chan->channel.mode = 0;
   chan->channel.maxmembers = 0;
   set_key(chan, NULL);
+}
+
+static void chanmode_clear(struct chanset_t *chan)
+{
+  chanmode_clear_standing(chan);
+  chanmode_list_clear(chan);
 }
 
 static chanmode_list *chanmode_list_find(struct chanset_t *chan, char mode,
@@ -786,55 +791,41 @@ static void setaccount(char *nick, char *account)
  */
 static char *getchanmode(struct chanset_t *chan)
 {
-  static char s[121];
-  int atr, i;
+  static char s[512];
+  const char *p;
+  size_t len = 1;
 
   s[0] = '+';
-  i = 1;
-  atr = chan->channel.mode;
-  if (atr & CHANINV)
-    s[i++] = 'i';
-  if (atr & CHANPRIV)
-    s[i++] = 'p';
-  if (atr & CHANSEC)
-    s[i++] = 's';
-  if (atr & CHANMODER)
-    s[i++] = 'm';
-  if (atr & CHANNOCLR)
-    s[i++] = 'c';
-  if (atr & CHANNOCTCP)
-    s[i++] = 'C';
-  if (atr & CHANREGON)
-    s[i++] = 'R';
-  if (atr & CHANTOPIC)
-    s[i++] = 't';
-  if (atr & CHANMODREG)
-    s[i++] = 'M';
-  if (atr & CHANLONLY)
-    s[i++] = 'r';
-  if (atr & CHANDELJN)
-    s[i++] = 'D';
-  if (atr & CHANSTRIP)
-    s[i++] = 'u';
-  if (atr & CHANNONOTC)
-    s[i++] = 'N';
-  if (atr & CHANNOAMSG)
-    s[i++] = 'T';
-  if (atr & CHANINVIS)
-    s[i++] = 'd';
-  if (atr & CHANNOMSG)
-    s[i++] = 'n';
-  if (atr & CHANANON)
-    s[i++] = 'a';
-  if (atr & CHANKEY)
-    s[i++] = 'k';
-  if (chan->channel.maxmembers != 0)
-    s[i++] = 'l';
-  s[i] = 0;
-  if (chan->channel.key[0])
-    i += sprintf(s + i, " %s", chan->channel.key);
-  if (chan->channel.maxmembers != 0)
-    sprintf(s + i, " %d", chan->channel.maxmembers);
+  s[1] = 0;
+  for (p = MODE_INDEX_CHARS; *p; p++) {
+    int type = MODE_TYPE(*p);
+
+    if (type == MODETYPE_INVALID || type == MODETYPE_LIST ||
+        type == MODETYPE_PREFIX || !chanmode_isset(chan, *p))
+      continue;
+    if (len + 1 < sizeof s) {
+      s[len++] = *p;
+      s[len] = 0;
+    }
+  }
+  for (p = MODE_INDEX_CHARS; *p && len < sizeof s; p++) {
+    int type = MODE_TYPE(*p);
+    const char *arg;
+    int wrote;
+
+    if ((type != MODETYPE_KEY && type != MODETYPE_LIMIT) ||
+        !chanmode_isset(chan, *p))
+      continue;
+    arg = chanmode_getarg(chan, *p);
+    wrote = egg_snprintf(s + len, sizeof s - len, " %s", arg ? arg : "");
+    if (wrote < 0)
+      break;
+    if ((size_t) wrote >= sizeof s - len) {
+      s[sizeof s - 1] = 0;
+      break;
+    }
+    len += (size_t) wrote;
+  }
   return s;
 }
 
@@ -1646,7 +1637,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
  */
 static int got324(char *from, char *origmsg)
 {
-  int i = 1, ok = 0, nextarg = 3;
+  int ok = 0, nextarg = 3, sign = '+';
   char *chname, *chg, *arg, buf[511];
   const char *key_arg;
   struct parsed_irc msg;
@@ -1667,39 +1658,59 @@ static int got324(char *from, char *origmsg)
   if (chan->status & CHAN_ASKEDMODES)
     ok = 1;
   chan->status &= ~CHAN_ASKEDMODES;
-  chanmode_clear(chan);
-  while (chg[i] != 0) {
+  chanmode_clear_standing(chan);
+  while (*chg) {
+    int mode_type;
+
     arg = NULL;
-    if (MODE_HAS_SET_ARG(chg[i])) {
+    switch (*chg) {
+    case '+':
+      sign = '+';
+      chg++;
+      continue;
+    case '-':
+      sign = '-';
+      chg++;
+      continue;
+    }
+    if ((sign == '+' && MODE_HAS_SET_ARG(*chg)) ||
+        (sign == '-' && MODE_HAS_UNSET_ARG(*chg))) {
       if (nextarg < (int) msg.argc) {
         arg = msg.argv[nextarg++];
       } else {
-        putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for +%c", origmsg, chg[i]);
+        putlog(LOG_MISC, "*",
+               "Error parsing modes in '%s', not enough arguments for %c%c",
+               origmsg, sign, *chg);
       }
     }
-    /* hardcoded assumptions in the existing old select code, SANITY CHECK */
-    if (strchr("kl", chg[i]) && !arg) {
-      arg = "";
-      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has a parameter but isupport says no", origmsg, chg[i]);
+    mode_type = MODE_TYPE(*chg);
+    switch (mode_type) {
+    case MODETYPE_FLAG:
+    case MODETYPE_KEY:
+    case MODETYPE_LIMIT:
+      if (sign == '+')
+        chanmode_set(chan, *chg, arg);
+      else
+        chanmode_unset(chan, *chg);
+      if (*chg == 'k' && sign == '+') {
+        key_arg = chanmode_getarg(chan, 'k');
+        if (chanmode_isset(chan, 'k') && (!key_arg || !key_arg[0] ||
+            !strcmp("*", key_arg)))
+          /* Undernet use to show a blank channel key if one was set when
+           * you first joined a channel; however, this has been replaced by
+           * an asterisk and this has been agreed upon by other major IRC
+           * networks so we'll check for an asterisk here as well
+           * (guppy 22Dec2001) */
+          chan->status |= CHAN_ASKEDMODES;
+      }
+      break;
+    case MODETYPE_LIST:
+    case MODETYPE_PREFIX:
+    case MODETYPE_INVALID:
+    default:
+      break;
     }
-    if (strchr("ipsmcCRMrDuNTdtnaq", chg[i]) && arg) {
-      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has no parameter but isupport says yes, ignoring", origmsg, chg[i]);
-      i++;
-      continue;
-    }
-    chanmode_set(chan, chg[i], arg);
-    if (chg[i] == 'k') {
-      key_arg = chanmode_getarg(chan, 'k');
-      if (chanmode_isset(chan, 'k') && (!key_arg || !key_arg[0] ||
-          !strcmp("*", key_arg)))
-        /* Undernet use to show a blank channel key if one was set when
-         * you first joined a channel; however, this has been replaced by
-         * an asterisk and this has been agreed upon by other major IRC
-         * networks so we'll check for an asterisk here as well
-         * (guppy 22Dec2001) */
-        chan->status |= CHAN_ASKEDMODES;
-    }
-    i++;
+    chg++;
   }
   chanmodes_set_known(chan, 1);
   if (ok || channel_active(chan))
