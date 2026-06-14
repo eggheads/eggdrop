@@ -352,30 +352,26 @@ def test_gotmode_extended_prefix_modes_qa_consume_args_correctly(
     )
 
 
-def test_names_with_extended_prefix_grants_op_when_opchars_includes_it(
+def test_names_with_extended_prefix_uses_literal_o_for_isop(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
 ) -> None:
-    """NAMES line with `~` (owner) prefix grants op when `opchars` contains it.
+    """Extended owner/admin prefixes no longer imply op via `opchars`.
 
-    Eggdrop's op-recognition uses the `opchars` set; for networks with
-    extended prefixes admins typically configure `opchars "~&@"`. With that
-    config, a `~user` in NAMES (and the corresponding WHO 352 with `H~` in
-    flags) lands as op.
+    A `~`-only owner is tracked as a generic prefix internally but is not
+    `isop`; `~@` is `isop` because it includes literal +o.
     """
     prefix = "(qaohv)~&@%+"
 
-    drive_registration(mock_ircd, isupport_tokens=[f"PREFIX={prefix}"])
-    # Set opchars to include owner/admin symbols. Must happen before the JOIN
-    # is driven because that's when NAMES + WHO 352 entries are processed.
-    tcl_bridge.eval_ok('set opchars "~&@"')
-
-    chan = drive_join_with_names(mock_ircd, "@TestBot ~bigboss +regular")
+    drive_registration(mock_ircd, isupport_tokens=["WHOX", f"PREFIX={prefix}"])
+    chan = drive_join_with_names(mock_ircd, "@TestBot ~bigboss ~@opboss +regular")
     wait_for(
-        lambda: tcl_bridge.eval_ok(f'onchan bigboss "{chan}"') == "1",
+        lambda: tcl_bridge.eval_ok(f'onchan opboss "{chan}"') == "1",
         timeout=5.0,
-        description="bigboss to appear in chanlist",
+        description="opboss to appear in chanlist",
     )
-    assert tcl_bridge.eval_ok(f'isop bigboss "{chan}"') == "1"
+
+    assert tcl_bridge.eval_ok(f'isop bigboss "{chan}"') == "0"
+    assert tcl_bridge.eval_ok(f'isop opboss "{chan}"') == "1"
     assert tcl_bridge.eval_ok(f'isvoice regular "{chan}"') == "1"

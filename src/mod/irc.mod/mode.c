@@ -217,35 +217,15 @@ static void real_add_mode(struct chanset_t *chan,
     mx = ismember(chan, op);
     if (!mx)
       return;
-    if (plus == '-' && mode == 'o') {
-      if (chan_sentdeop(mx) || !chan_hasop(mx))
+    if (plus == '-') {
+      if (member_prefix_sentminus(mx, mode) || !member_has_prefixmode(mx, mode))
         return;
-      mx->flags |= SENTDEOP;
+      member_set_prefix_sentminus(mx, mode, 1);
     }
-    if (plus == '+' && mode == 'o') {
-      if (chan_sentop(mx) || chan_hasop(mx))
+    if (plus == '+') {
+      if (member_prefix_sentplus(mx, mode) || member_has_prefixmode(mx, mode))
         return;
-      mx->flags |= SENTOP;
-    }
-    if (plus == '-' && mode == 'h') {
-      if (chan_sentdehalfop(mx) || !chan_hashalfop(mx))
-        return;
-      mx->flags |= SENTDEHALFOP;
-    }
-    if (plus == '+' && mode == 'h') {
-      if (chan_senthalfop(mx) || chan_hashalfop(mx))
-        return;
-      mx->flags |= SENTHALFOP;
-    }
-    if (plus == '-' && mode == 'v') {
-      if (chan_sentdevoice(mx) || !chan_hasvoice(mx))
-        return;
-      mx->flags |= SENTDEVOICE;
-    }
-    if (plus == '+' && mode == 'v') {
-      if (chan_sentvoice(mx) || chan_hasvoice(mx))
-        return;
-      mx->flags |= SENTVOICE;
+      member_set_prefix_sentplus(mx, mode, 1);
     }
   }
 
@@ -428,7 +408,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
    */
-  m->flags |= CHANOP;
+  member_set_prefixmode(m, 'o', 1);
   check_tcl_mode(nick, from, opu, chan->dname, "+o", who);
   if (!(chan = modebind_refresh(ch, from, opper, s, &victim)) ||
       !(m = ismember(chan, who)))
@@ -438,7 +418,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
    * now can use [wasop nick chan] to check if user was op or wasnt.
    * (drummer)
    */
-  m->flags &= ~SENTOP;
+  member_set_prefix_sentplus(m, 'o', 0);
 
   if (channel_pending(chan))
     return;
@@ -485,7 +465,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       }
     }
   }
-  m->flags |= WASOP;
+  member_set_wasprefixmode(m, 'o', 1);
   if (check_chan)
     recheck_channel(chan, 1);
 }
@@ -523,12 +503,12 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
    */
-  m->flags |= CHANHALFOP;
+  member_set_prefixmode(m, 'h', 1);
   check_tcl_mode(nick, from, opu, chan->dname, "+h", who);
   if (!(chan = modebind_refresh(ch, from, opper, s, &victim)) ||
       !(m = ismember(chan, who)))
     return;
-  m->flags &= ~SENTHALFOP;
+  member_set_prefix_sentplus(m, 'h', 0);
 
   if (channel_pending(chan))
     return;
@@ -579,7 +559,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
       }
     }
   }
-  m->flags |= WASHALFOP;
+  member_set_wasprefixmode(m, 'h', 1);
   if (check_chan)
     recheck_channel(chan, 1);
 }
@@ -609,16 +589,18 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
-  had_halfop = chan_hasop(m);
+  had_halfop = member_has_prefixmode(m, 'o');
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
    */
-  m->flags &= ~(CHANOP | SENTDEOP | FAKEOP);
+  member_set_prefixmode(m, 'o', 0);
+  member_set_prefix_sentminus(m, 'o', 0);
+  m->flags &= ~FAKEOP;
   check_tcl_mode(nick, from, opu, chan->dname, "-o", who);
   if (!(chan = modebind_refresh(ch, from, &user, s, &victim)) ||
       !(m = ismember(chan, who)))
     return;
-  m->flags &= ~WASOP;
+  member_set_wasprefixmode(m, 'o', 0);
 
   if (channel_pending(chan))
     return;
@@ -663,8 +645,12 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     /* Cancel any pending kicks and modes */
     memberlist *m2;
 
-    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-      m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
+    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next) {
+      m2->sentplus = 0;
+      m2->sentminus = 0;
+      m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTHALFOP |
+                     SENTDEHALFOP | SENTVOICE | SENTDEVOICE);
+    }
 
     check_tcl_need(chan->dname, "op");
     if (chan->need_op[0])
@@ -701,17 +687,19 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
-  had_halfop = chan_hasop(m);
+  had_halfop = member_has_prefixmode(m, 'o');
   /* Flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated.
    */
-  m->flags &= ~(CHANHALFOP | SENTDEHALFOP | FAKEHALFOP);
+  member_set_prefixmode(m, 'h', 0);
+  member_set_prefix_sentminus(m, 'h', 0);
+  m->flags &= ~FAKEHALFOP;
   check_tcl_mode(nick, from, opu, chan->dname, "-h", who);
   if (!(chan = modebind_refresh(ch, from, &user, s, &victim)) ||
       !(m = ismember(chan, who)))
     return;
   /* Check comments in got_op()  (drummer) */
-  m->flags &= ~WASHALFOP;
+  member_set_wasprefixmode(m, 'h', 0);
 
   if (channel_pending(chan))
     return;
@@ -990,6 +978,43 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
     add_mode(chan, '+', 'I', who);
 }
 
+static struct chanset_t *got_generic_prefixmode(struct chanset_t *chan,
+                                               char *ch, char *nick,
+                                               char *from, char mode,
+                                               char *modechange, char *who,
+                                               struct userrec *opu)
+{
+  memberlist *m;
+  char s[UHOSTLEN];
+
+  if (!who)
+    return chan;
+  m = ismember(chan, who);
+  if (!m) {
+    if (channel_pending(chan))
+      return chan;
+    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    chan->status |= CHAN_PEND;
+    refresh_who_chan(chan->name);
+    return chan;
+  }
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
+  get_user_flagrec(get_user_from_member(m), &victim, chan->dname);
+  if (modechange[0] == '+') {
+    member_set_prefixmode(m, mode, 1);
+    member_set_prefix_sentplus(m, mode, 0);
+  } else {
+    member_set_prefixmode(m, mode, 0);
+    member_set_prefix_sentminus(m, mode, 0);
+  }
+  check_tcl_mode(nick, from, opu, chan->dname, modechange, who);
+  if (!(chan = modebind_refresh(ch, from, &user, s, &victim)) ||
+      !(m = ismember(chan, who)))
+    return NULL;
+  member_set_wasprefixmode(m, mode, modechange[0] == '+');
+  return chan;
+}
+
 static int gotmode(char *from, char *origmsg)
 {
   char *nick, *ch, *chg;
@@ -1062,6 +1087,14 @@ static int gotmode(char *from, char *origmsg)
               putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change %c%c has a parameter but isupport says no", origmsg, ms2[0], *chg);
           }
           debug5("%s: split mode change '%s%s%s' by %s", ch, ms2, arg ? " " : "", arg ? arg : "", from);
+        }
+        if (*chg != '+' && *chg != '-' && MODE_TYPE(*chg) == MODETYPE_PREFIX &&
+            *chg != 'o' && *chg != 'h' && *chg != 'v') {
+          chan = got_generic_prefixmode(chan, ch, nick, from, *chg, ms2, arg, u);
+          if (!chan)
+            return 0;
+          chg++;
+          continue;
         }
         switch (*chg) {
         case '+':
@@ -1246,11 +1279,13 @@ static int gotmode(char *from, char *origmsg)
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
             get_user_flagrec(get_user_from_member(m), &victim, chan->dname);
             if (ms2[0] == '+') {
-              m->flags &= ~SENTVOICE;
-              m->flags |= CHANVOICE;
+              member_set_prefix_sentplus(m, 'v', 0);
+              member_set_prefixmode(m, 'v', 1);
               check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
-              if (!(chan = modebind_refresh(ch, from, &user, s, &victim)))
+              if (!(chan = modebind_refresh(ch, from, &user, s, &victim)) ||
+                  !(m = ismember(chan, arg)))
                 return 0;
+              member_set_wasprefixmode(m, 'v', 1);
               if (channel_active(chan) && !glob_master(user) &&
                   !chan_master(user) && !match_my_nick(nick)) {
                 if (chan_quiet(victim) ||
@@ -1260,11 +1295,13 @@ static int gotmode(char *from, char *origmsg)
                   add_mode(chan, '-', 'v', arg);
               }
             } else {
-              m->flags &= ~SENTDEVOICE;
-              m->flags &= ~CHANVOICE;
+              member_set_prefix_sentminus(m, 'v', 0);
+              member_set_prefixmode(m, 'v', 0);
               check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
-              if (!(chan = modebind_refresh(ch, from, &user, s, &victim)))
+              if (!(chan = modebind_refresh(ch, from, &user, s, &victim)) ||
+                  !(m = ismember(chan, arg)))
                 return 0;
+              member_set_wasprefixmode(m, 'v', 0);
               if (channel_active(chan) && !glob_master(user) &&
                   !chan_master(user) && !match_my_nick(nick)) {
                 if ((channel_autovoice(chan) && !chan_quiet(victim) &&

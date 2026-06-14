@@ -200,22 +200,22 @@ replay, (b) irc.mod rank/helpers.
 Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
 `opchars` is deprecated.
 
-- [ ] Repack `mode_info_t` (src/mod/irc.mod/irc.h) into a no-padding,
+- [x] Repack `mode_info_t` (src/mod/irc.mod/irc.h) into a no-padding,
       byte-comparable layout: `uint8_t type; uint8_t rank; char prefix`.
       Keep `mode_type_t` as the symbolic enum, but store it as `uint8_t`.
       Explicitly write every field in temporary `mode_info_t` arrays
       (`MODETYPE_INVALID`, `PREFIX_RANK_NONE`, `'\0'` for empty entries) so
       PREFIX-change detection can use `memcmp` safely.
-- [ ] Append to `memberlist` (src/chan.h): `uint8_t prefixmodes,
+- [x] Append to `memberlist` (src/chan.h): `uint8_t prefixmodes,
       wasprefix, sentplus, sentminus` (bit `1<<rank`).
-- [ ] Member resync on effective PREFIX change (D-PFX8): when
+- [x] Member resync on effective PREFIX change (D-PFX8): when
       `update_chanmodes(is_prefix=1)` changes the effective prefix set/order
       (compare old/new prefix entries; do nothing on identical replay), clear
       all members' `prefixmodes`/`wasprefix`/`sentplus`/`sentminus` +
       legacy mirror bits (`CHANOP`/`CHANHALFOP`/`CHANVOICE`,
       `WASOP`/`WASHALFOP`, prefix `SENT*`, and `FAKEOP`/`FAKEHALFOP`) and
       `reset_chan_info(chan, CHAN_RESETWHO)` each active channel.
-- [ ] Add accessors (irc.mod): `member_has_prefixmode`,
+- [x] Add accessors (irc.mod): `member_has_prefixmode`,
       `member_had_prefixmode`, `member_has_prefixmode_atleast`,
       plus sent-state readers/setters. Keep them private/static in irc.mod
       unless a later step strictly needs C module API exposure. Accessor
@@ -226,46 +226,46 @@ Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
       each maintains the legacy mirror: `CHANOP` ⇔ literal `o`,
       `CHANHALFOP` ⇔ `h`, `CHANVOICE` ⇔ `v`, plus `WASOP`/`WASHALFOP` and
       prefix `SENT*` mirroring for o/h/v.
-- [ ] Zero-initialize newly allocated `memberlist` nodes/sentinels
+- [x] Zero-initialize newly allocated `memberlist` nodes/sentinels
       (`newmember()` and the `killmember()` fallback sentinel) so appended
       prefix fields never inherit allocator garbage. On netsplit rejoin,
       copy pre-split `prefixmodes` into `wasprefix`, clear current/sent
       prefix state, and preserve the legacy WAS mirrors.
-- [ ] Rewrite `got352or4()` flags parsing: iterate the WHO flags field and
+- [x] Rewrite `got352or4()` flags parsing: iterate the WHO flags field and
       set the full prefix bitset via `modecharinfo` (replacing `opchars`,
       hardcoded `'%'`/`'+'`). Keep `'G'` (away), `botflag005`, `H`,
       `STOPWHO` logic as-is. Empty flags (`""` from the NAMES path) clears
       the bitset — preserving A4.
-- [ ] Convert `gotmode` o/h/v cases, `got_op/got_halfop/got_deop/
+- [x] Convert `gotmode` o/h/v cases, `got_op/got_halfop/got_deop/
       got_dehalfop`, `real_add_mode()` SENT/dup logic, and
       `me_op`/`me_halfop`/`me_voice` to the accessors (state reads/writes
       only — policy untouched in this step). The exported compatibility
       helpers must remain byte-for-byte behaviourally identical; A1 now
       compares `botisop`/`botishalfop`/`botisvoice` with the corresponding
       member-level Tcl commands for the bot.
-- [ ] Add a narrow generic PREFIX branch in the existing `gotmode()`:
+- [x] Add a narrow generic PREFIX branch in the existing `gotmode()`:
       advertised prefix modes other than o/h/v consume the nick argument,
       update member prefix state, fire `bind mode`, and run
       `modebind_refresh()`, but execute no built-in policy. Preserve
       WAS/wasprefix bind-time semantics: current state changes before the
       bind, `wasprefix` changes after the bind.
-- [ ] Remove `opchars` recognition; keep the Tcl variable accepted but
+- [x] Remove `opchars` recognition; keep the Tcl variable accepted but
       ignored, log a deprecation warning once per irc.mod load when Tcl
       writes it (not for internal default initialization).
-- [ ] Negotiate `multi-prefix` (D-PFX6): add to server.mod's CAP LS
+- [x] Negotiate `multi-prefix` (D-PFX6): add to server.mod's CAP LS
       request list (servmsg.c:1565 pattern), gated on a server.mod-local
       Tcl config var `multi-prefix` **defaulting to 1** (precedent:
       `extended-join`, servmsg.c:44). Do not export it through
       `server_funcs`. 352/353/354 parsers strip all leading current PREFIX
       chars, plus legacy fallback `@`/`%`/`+` when needed. UPGRADING note
       for raw-bind scripts + the var as escape hatch.
-- [ ] **Rewrite** `test_names_with_extended_prefix_grants_op_when_opchars_includes_it`
+- [x] **Rewrite** `test_names_with_extended_prefix_grants_op_when_opchars_includes_it`
       (tests/tests/test_isupport_modes.py) per ARCHITECTURE.md §D: `~`-only
       owner is *not* `isop`; `~@` owner is `isop` via literal `o`.
       Generic owner state is asserted via step-10 commands once they exist;
       until then, assert literal-o `isop` behaviour, WHO prefix consumption,
       and `bind mode` firing for generic prefixes.
-- [ ] New tests (B2): multi-prefix REQ'd (`cap enabled`); WHOX 354 with
+- [x] New tests (B2): multi-prefix REQ'd (`cap enabled`); WHOX 354 with
       `~&@%+` → literal-o `isop` semantics (`~`-only false, `~@` true);
       `opchars` deprecation warning + no effect on `~` recognition; MODE
       `+q nick` (prefix-q net) consumes the nick and fires `bind mode +q
@@ -275,10 +275,10 @@ Implements D-PFX2/D-PFX5/D-PFX6. `isop`/`me_op` become literal-`o`;
 
 ### Gate 2
 
-- [ ] Build clean; full pytest green — **all A-tests pass unmodified**
+- [x] Build clean; full pytest green — **all A-tests pass unmodified**
       except the one sanctioned rewrite above.
-- [ ] B2 tests green.
-- [ ] Grep gate: no remaining reads of `opchars` in C code
+- [x] B2 tests green.
+- [x] Grep gate: no remaining reads of `opchars` in C code
       (`grep -rn opchars src/` → only the deprecated Tcl variable shim).
 - [ ] Committed.
 

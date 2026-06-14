@@ -41,7 +41,7 @@ static int monitor_add(char * nick, int send);
 static int monitor_del (char *nick);
 static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
 static void monitor_clear();
-int account_notify = 1, extended_join = 1, account_tag = 0;
+int account_notify = 1, extended_join = 1, account_tag = 0, multi_prefix = 1;
 
 extern int sasl;
 extern int sasl_authenticate_initial(const struct cap_values *);
@@ -1574,6 +1574,9 @@ static int gotcap(char *from, char *msg) {
           add_req(current->name);
       } else if (!strcmp(current->name, "extended-join")) {
         if ((extended_join) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "multi-prefix")) {
+        if ((multi_prefix) && (!current->enabled))
           add_req(current->name);
       } else if (!strcmp(current->name, "invite-notify")) {
         if ((invite_notify) && (!current->enabled))

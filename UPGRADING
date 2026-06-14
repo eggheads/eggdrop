@@ -95,6 +95,16 @@ This ensures consumers loaded after the values arrived (and modules
 reloaded mid-connection) see the current state. Bound procs must be
 idempotent: receiving the value already in effect must be harmless.
 
+Eggdrop now requests the IRCv3 multi-prefix capability by default when the
+server advertises it. This makes NAMES replies include all prefix symbols
+(e.g. @+) instead of only the highest one. Scripts using raw 353/NAMES binds
+should be prepared for stacked prefixes. To keep the old CAP negotiation
+behavior, set "multi-prefix" to 0 in the server module config.
+
+The irc module's "opchars" setting is deprecated and ignored. Prefix status
+is derived from ISUPPORT PREFIX; "isop"/"botisop" now mean literal +o, not
+owner/admin prefixes configured through opchars.
+
 Documentation
 
 Documentation has been updated to reflect new and removed commands and

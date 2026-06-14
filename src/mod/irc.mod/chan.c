@@ -42,6 +42,252 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky);
  */
 #define CHANNEL_ID_LEN 5
 
+static void init_mode_info_array(mode_info_t modes[256])
+{
+  int i;
+
+  for (i = 0; i < 256; i++) {
+    modes[i].type = MODETYPE_INVALID;
+    modes[i].rank = PREFIX_RANK_NONE;
+    modes[i].prefix = '\0';
+  }
+}
+
+static void init_modecharinfo(void)
+{
+  init_mode_info_array(modecharinfo);
+}
+
+static void clear_mode_info(mode_info_t *mode)
+{
+  mode->type = MODETYPE_INVALID;
+  mode->rank = PREFIX_RANK_NONE;
+  mode->prefix = '\0';
+}
+
+/* Return the channel mode letter for a prefix char (e.g. '@' -> 'o'), or 0
+ * if no current PREFIX entry uses that char. */
+static inline char mode_by_prefixchar(char prefixchar)
+{
+  int i;
+
+  for (i = 0; i < 256; i++)
+    if (modecharinfo[i].type == MODETYPE_PREFIX &&
+        modecharinfo[i].prefix == prefixchar)
+      return (char) i;
+  return 0;
+}
+
+static char prefix_mode_from_token(char c)
+{
+  if (mode_to_index(c) >= 0)
+    return c;
+  return mode_by_prefixchar(c);
+}
+
+static uint8_t prefix_bit(char c)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t rank;
+
+  if (!mode || MODE_TYPE(mode) != MODETYPE_PREFIX)
+    return 0;
+  rank = MODE_RANK(mode);
+  if (rank >= MAX_PREFIX_MODES)
+    return 0;
+  return (uint8_t) (1u << rank);
+}
+
+static void member_mirror_current_prefix(memberlist *m, char mode, int set)
+{
+  unsigned long flag = 0;
+
+  if (mode == 'o')
+    flag = CHANOP;
+  else if (mode == 'h')
+    flag = CHANHALFOP;
+  else if (mode == 'v')
+    flag = CHANVOICE;
+  if (!flag)
+    return;
+  if (set)
+    m->flags |= flag;
+  else
+    m->flags &= ~flag;
+}
+
+static void member_mirror_wasprefix(memberlist *m, char mode, int set)
+{
+  unsigned long flag = 0;
+
+  if (mode == 'o')
+    flag = WASOP;
+  else if (mode == 'h')
+    flag = WASHALFOP;
+  if (!flag)
+    return;
+  if (set)
+    m->flags |= flag;
+  else
+    m->flags &= ~flag;
+}
+
+static void member_mirror_sentprefix(memberlist *m, char mode, int plus,
+                                     int set)
+{
+  unsigned long flag = 0;
+
+  if (mode == 'o')
+    flag = plus ? SENTOP : SENTDEOP;
+  else if (mode == 'h')
+    flag = plus ? SENTHALFOP : SENTDEHALFOP;
+  else if (mode == 'v')
+    flag = plus ? SENTVOICE : SENTDEVOICE;
+  if (!flag)
+    return;
+  if (set)
+    m->flags |= flag;
+  else
+    m->flags &= ~flag;
+}
+
+static int member_has_prefixmode(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->prefixmodes & bit);
+}
+
+static int member_had_prefixmode(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->wasprefix & bit);
+}
+
+static inline int member_has_prefixmode_atleast(memberlist *m, char c)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t rank;
+
+  if (!m || !mode || MODE_TYPE(mode) != MODETYPE_PREFIX)
+    return 0;
+  rank = MODE_RANK(mode);
+  if (rank >= MAX_PREFIX_MODES)
+    return 0;
+  return (m->prefixmodes & (uint8_t) ((1u << (rank + 1)) - 1)) != 0;
+}
+
+static void member_set_prefixmode(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->prefixmodes |= bit;
+  else
+    m->prefixmodes &= ~bit;
+  member_mirror_current_prefix(m, mode, set);
+}
+
+static void member_set_wasprefixmode(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->wasprefix |= bit;
+  else
+    m->wasprefix &= ~bit;
+  member_mirror_wasprefix(m, mode, set);
+}
+
+static int member_prefix_sentplus(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->sentplus & bit);
+}
+
+static int member_prefix_sentminus(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->sentminus & bit);
+}
+
+static void member_set_prefix_sentplus(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->sentplus |= bit;
+  else
+    m->sentplus &= ~bit;
+  member_mirror_sentprefix(m, mode, 1, set);
+}
+
+static void member_set_prefix_sentminus(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->sentminus |= bit;
+  else
+    m->sentminus &= ~bit;
+  member_mirror_sentprefix(m, mode, 0, set);
+}
+
+static void member_clear_prefix_state(memberlist *m)
+{
+  m->prefixmodes = 0;
+  m->wasprefix = 0;
+  m->sentplus = 0;
+  m->sentminus = 0;
+  m->flags &= ~(CHANOP | CHANHALFOP | CHANVOICE | WASOP | WASHALFOP |
+                SENTOP | SENTDEOP | SENTHALFOP | SENTDEHALFOP |
+                SENTVOICE | SENTDEVOICE | FAKEOP | FAKEHALFOP);
+}
+
+static void resync_members_for_prefix_change(void)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      member_clear_prefix_state(m);
+    if (channel_active(chan))
+      reset_chan_info(chan, CHAN_RESETWHO, 1);
+  }
+}
+
+static void strip_member_prefix_chars(char **nick)
+{
+  int stripped;
+
+  do {
+    stripped = 0;
+    if ((*nick)[0] && mode_by_prefixchar((*nick)[0])) {
+      (*nick)++;
+      stripped = 1;
+    } else if ((*nick)[0] == '@' || (*nick)[0] == '%' || (*nick)[0] == '+') {
+      (*nick)++;
+      stripped = 1;
+    }
+  } while (stripped);
+}
+
 
 /* Returns a pointer to a new channel member structure.
  */
@@ -50,12 +296,10 @@ static memberlist *newmember(struct chanset_t *chan)
   memberlist *x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next);
+  memset(x, 0, sizeof *x);
   x->next = (memberlist *) channel_malloc(sizeof(memberlist));
+  memset(x->next, 0, sizeof *x->next);
   x->next->next = NULL;
-  x->next->nick[0] = 0;
-  x->next->split = 0L;
-  x->next->last = 0L;
-  x->next->delay = 0L;
   chan->channel.members++;
   return x;
 }
@@ -903,7 +1147,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
         else {
           set_delay(chan, m->nick);
-          m->flags |= SENTOP;
+          member_set_prefix_sentplus(m, 'o', 1);
         }
       }
     }
@@ -923,7 +1167,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
         else {
           set_delay(chan, m->nick);
-          m->flags |= SENTHALFOP;
+          member_set_prefix_sentplus(m, 'h', 1);
         }
       }
     }
@@ -941,7 +1185,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
         else {
           set_delay(chan, m->nick);
-          m->flags |= SENTVOICE;
+          member_set_prefix_sentplus(m, 'v', 1);
         }
       }
     }
@@ -1017,7 +1261,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       stop_reset = 1;
     /* Perhaps we were halfop and tried to halfop/kick the user earlier but
      * the server rejected the request, so let's try again. */
-    m->flags &= ~(SENTHALFOP | SENTKICK);
+    member_set_prefix_sentplus(m, 'h', 0);
+    m->flags &= ~SENTKICK;
     check_this_member(chan, m->nick, &fr);
   }
   /* Most IRCDs nowadays require +h/+o for getting e/I lists,
@@ -1183,18 +1428,17 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
   }
   m->flags |= WHO_SYNCED;
-  if (strpbrk(flags, opchars) != NULL)
-    m->flags |= (CHANOP | WASOP);
-  else
-    m->flags &= ~(CHANOP | WASOP);
-  if (strchr(flags, '%') != NULL)
-    m->flags |= (CHANHALFOP | WASHALFOP);
-  else
-    m->flags &= ~(CHANHALFOP | WASHALFOP);
-  if (strchr(flags, '+') != NULL)
-    m->flags |= CHANVOICE;
-  else
-    m->flags &= ~CHANVOICE;
+  m->prefixmodes = 0;
+  m->wasprefix = 0;
+  m->flags &= ~(CHANOP | CHANHALFOP | CHANVOICE | WASOP | WASHALFOP);
+  for (const char *flagp = flags; *flagp; flagp++) {
+    char mode = mode_by_prefixchar(*flagp);
+
+    if (mode) {
+      member_set_prefixmode(m, mode, 1);
+      member_set_wasprefixmode(m, mode, 1);
+    }
+  }
   if (strchr(flags, 'G') != NULL)
     m->flags |= IRCAWAY;
   else
@@ -1238,6 +1482,7 @@ static int got352(char *from, char *msg)
     host = newsplit(&msg);      /* Grab the host */
     newsplit(&msg);             /* Skip the server */
     nick = newsplit(&msg);      /* Grab the nick */
+    strip_member_prefix_chars(&nick);
     flags = newsplit(&msg);     /* Grab the flags */
     got352or4(chan, user, host, nick, flags, NULL);
   }
@@ -1300,6 +1545,7 @@ static int got354(char *from, char *msg)
           host = nick;
           nick = newsplit(&msg);
         }
+        strip_member_prefix_chars(&nick);
         flags = newsplit(&msg);     /* Grab the flags */
         account = newsplit(&msg);   /* Grab the account name */
         fixcolon(account);
@@ -1357,13 +1603,10 @@ static int gotchghost(char *from, char *msg) {
 static int got353(char *from, char *msg)
 {
   struct capability *current;
-  char prefixchars[64];
   char *nameptr, *chname, *uhost, *nick, *p, *host = NULL;
   struct chanset_t *chan = NULL;
-  int i;
 
   if ((current = find_capability("userhost-in-names")) && current->enabled) {
-    strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
     newsplit(&msg);
     newsplit(&msg); /* Get rid of =, @, or * symbol */
     chname = newsplit(&msg);
@@ -1376,14 +1619,7 @@ static int got353(char *from, char *msg)
       fixcolon(uhost);
       nick = splitnick(&uhost);
       /* Strip @, +, etc chars prefixed to nicks in NAMES */
-      for (i = 0; prefixchars[i]; i++) {
-        if(nick[0] == prefixchars[i]) {
-          nick=nick+1;
-        }
-      }
-      if ((nick[0] == '+') || (nick[0] == '%')) {
-        nick=nick+1;
-      }
+      strip_member_prefix_chars(&nick);
       p = strchr(uhost, '@');
       if (p) {
         *p = 0;
@@ -2150,7 +2386,12 @@ static int gotjoin(char *from, char *channame)
         m->split = 0;
         m->last = now;
         m->delay = 0L;
-        m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
+        m->wasprefix = m->prefixmodes;
+        m->prefixmodes = 0;
+        m->sentplus = 0;
+        m->sentminus = 0;
+        m->flags = (member_had_prefixmode(m, 'o') ? WASOP : 0) |
+                   (member_had_prefixmode(m, 'h') ? WASHALFOP : 0);
         m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
@@ -2297,7 +2538,7 @@ static int gotjoin(char *from, char *channame)
             add_mode(chan, '+', 'o', nick);
           else {
             set_delay(chan, nick);
-            m->flags |= SENTOP;
+            member_set_prefix_sentplus(m, 'o', 1);
           }
         } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'h') == NULL)) &&
                    (chan_halfop(fr) || (glob_halfop(fr) &&
@@ -2307,7 +2548,7 @@ static int gotjoin(char *from, char *channame)
             add_mode(chan, '+', 'h', nick);
           else {
             set_delay(chan, nick);
-            m->flags |= SENTHALFOP;
+            member_set_prefix_sentplus(m, 'h', 1);
           }
         } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'v') == NULL)) &&
                    ((channel_autovoice(chan) && (chan_voice(fr) ||
@@ -2318,7 +2559,7 @@ static int gotjoin(char *from, char *channame)
             add_mode(chan, '+', 'v', nick);
           else {
             set_delay(chan, nick);
-            m->flags |= SENTVOICE;
+            member_set_prefix_sentplus(m, 'v', 1);
           }
         }
 #ifdef NO_HALFOP_CHANMODES
@@ -2548,11 +2789,11 @@ static int gotnick(char *from, char *msg)
         continue;
       }
       /* don't fill the serverqueue with modes or kicks in a nickflood */
-      if (chan_sentkick(m) || chan_sentdeop(m) || chan_sentop(m) ||
-          chan_sentdehalfop(m) || chan_senthalfop(m) || chan_sentdevoice(m) ||
-          chan_sentvoice(m))
+      if (chan_sentkick(m) || m->sentplus || m->sentminus)
         m->flags |= STOPCHECK;
       /* Any pending kick or mode to the old nick is lost. */
+      m->sentplus = 0;
+      m->sentminus = 0;
       m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTDEHALFOP | SENTHALFOP |
                     SENTVOICE | SENTDEVOICE);
       /* nick-ban or nick is +k or something? */
@@ -2945,15 +3186,27 @@ static int parse_maxlist(const char *value)
 // then delete all non-existing modes of that type only
 static void update_chanmodes(mode_info_t *modes, int is_prefix)
 {
-  for (int i = 0; i < 256; i++) {
+  int i, prefix_changed = 0;
+  mode_info_t old_prefixes[256];
+
+  if (is_prefix) {
+    init_mode_info_array(old_prefixes);
+    for (i = 0; i < 256; i++)
+      if (modecharinfo[i].type == MODETYPE_PREFIX)
+        old_prefixes[i] = modecharinfo[i];
+    prefix_changed = memcmp(old_prefixes, modes, sizeof old_prefixes) != 0;
+  }
+
+  for (i = 0; i < 256; i++) {
     if (modes[i].type) {
       // is in the new mode info, must overwrite even if type changed
       modecharinfo[i] = modes[i]; // struct copy
     } else if (modecharinfo[i].type) {
       // was in the old mode info but not in the new mode info -> delete
       // but respect if its type has already changed
-      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) || (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
-        memset(&modecharinfo[i], 0, sizeof modecharinfo[i]);
+      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) ||
+          (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
+        clear_mode_info(&modecharinfo[i]);
       }
     }
   }
@@ -2961,17 +3214,9 @@ static void update_chanmodes(mode_info_t *modes, int is_prefix)
     // assume that if +e/+I are list-type modes that they are exempts and invites
     use_exempts = (MODE_TYPE('e') == MODETYPE_LIST);
     use_invites = (MODE_TYPE('I') == MODETYPE_LIST);
+  } else if (prefix_changed) {
+    resync_members_for_prefix_change();
   }
-}
-
-/* Return the channel mode letter for a prefix char (e.g. '@' -> 'o'), or 0
- * if no current PREFIX entry uses that char. */
-static inline char mode_by_prefixchar(char prefixchar)
-{
-  for (int i = 0; i < 256; i++)
-    if (modecharinfo[i].type == MODETYPE_PREFIX && modecharinfo[i].prefix == prefixchar)
-      return (char) i;
-  return 0;
 }
 
 // CHANMODES=eIbq,k,flj,CFLMPQScgimnprstuz
@@ -2981,7 +3226,7 @@ static int process_chanmodes(char *value)
   mode_type_t modetype = MODETYPE_LIST;
   mode_info_t modes[256];
 
-  memset(&modes, 0, sizeof modes);
+  init_mode_info_array(modes);
 
   while (*value) {
     // parse all modes until ','
@@ -3023,7 +3268,7 @@ static int process_prefix(const char *value)
   mode_info_t modes[256];
   uint8_t rank = 0;
 
-  memset(&modes, 0, sizeof modes);
+  init_mode_info_array(modes);
 
   if (*value++ != '(') {
     return -1;

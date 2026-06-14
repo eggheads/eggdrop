@@ -63,7 +63,8 @@ static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
 static int include_lk = 1;      /* For correct calculation in real_add_mode. */
 
-static char opchars[8];         /* the chars in a /who reply meaning op */
+static char opchars[8];         /* Deprecated; accepted but ignored. */
+static int opchars_warned = 0;
 
 static Tcl_Obj *tcl_account;
 
@@ -352,8 +353,7 @@ static int killmember(struct chanset_t *chan, char *nick)
   }
   if (!chan->channel.member) {
     chan->channel.member = (memberlist *) channel_malloc(sizeof(memberlist));
-    chan->channel.member->nick[0] = 0;
-    chan->channel.member->next = NULL;
+    memset(chan->channel.member, 0, sizeof *chan->channel.member);
   }
   return 1;
 }
@@ -367,7 +367,7 @@ static int me_op(struct chanset_t *chan)
   mx = ismember(chan, botname);
   if (!mx)
     return 0;
-  if (chan_hasop(mx))
+  if (member_has_prefixmode(mx, 'o'))
     return 1;
   else
     return 0;
@@ -382,7 +382,7 @@ static int me_halfop(struct chanset_t *chan)
   mx = ismember(chan, botname);
   if (!mx)
     return 0;
-  if (chan_hashalfop(mx))
+  if (member_has_prefixmode(mx, 'h'))
     return 1;
   else
     return 0;
@@ -397,7 +397,7 @@ static int me_voice(struct chanset_t *chan)
   mx = ismember(chan, botname);
   if (!mx)
     return 0;
-  if (chan_hasvoice(mx))
+  if (member_has_prefixmode(mx, 'v'))
     return 1;
   else
     return 0;
@@ -1056,16 +1056,16 @@ static void flush_modes()
       if (m->delay && m->delay <= now) {
         m->delay = 0L;
         m->flags &= ~FULL_DELAY;
-        if (chan_sentop(m)) {
-          m->flags &= ~SENTOP;
+        if (member_prefix_sentplus(m, 'o')) {
+          member_set_prefix_sentplus(m, 'o', 0);
           add_mode(chan, '+', 'o', m->nick);
         }
-        if (chan_senthalfop(m)) {
-          m->flags &= ~SENTHALFOP;
+        if (member_prefix_sentplus(m, 'h')) {
+          member_set_prefix_sentplus(m, 'h', 0);
           add_mode(chan, '+', 'h', m->nick);
         }
-        if (chan_sentvoice(m)) {
-          m->flags &= ~SENTVOICE;
+        if (member_prefix_sentplus(m, 'v')) {
+          member_set_prefix_sentplus(m, 'v', 0);
           add_mode(chan, '+', 'v', m->nick);
         }
       }
@@ -1322,6 +1322,18 @@ static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
+static char *traced_opchars(ClientData cdata, Tcl_Interp *irp,
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
+{
+  if ((flags & TCL_TRACE_WRITES) && !opchars_warned) {
+    putlog(LOG_MISC, "*", "Warning: opchars is deprecated and ignored; "
+           "prefix status is derived from ISUPPORT PREFIX");
+    opchars_warned = 1;
+  }
+  return NULL;
+}
+
 static int irc_expmem()
 {
   return 0;
@@ -1372,6 +1384,7 @@ static char *irc_close()
   Tcl_UntraceVar(interp, "net-type",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nettype, NULL);
+  Tcl_UntraceVar(interp, "opchars", TCL_TRACE_WRITES, traced_opchars, NULL);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1462,7 +1475,10 @@ char *irc_start(Function *global_funcs)
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_rfccompliant, NULL);
   strcpy(opchars, "@");
+  opchars_warned = 0;
+  init_modecharinfo();
   add_tcl_strings(mystrings);
+  Tcl_TraceVar(interp, "opchars", TCL_TRACE_WRITES, traced_opchars, NULL);
   add_tcl_ints(myints);
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
