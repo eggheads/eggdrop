@@ -26,14 +26,7 @@
 /* Reversing this mode? */
 static int reversing = 0;
 
-#define PLUS    0x01
-#define MINUS   0x02
-#define CHOP    0x04
-#define BAN     0x08
-#define VOICE   0x10
-#define EXEMPT  0x20
-#define INVITE  0x40
-#define CHHOP   0x80
+#define MODEQUEUE_LINE_BUDGET 450
 
 static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -62,136 +55,305 @@ static struct chanset_t *modebind_refresh(char *chname,
   return chan;
 }
 
+static int mode_queue_line_limit(void)
+{
+  if (modesperline < 1)
+    return 1;
+  if (modesperline > MODEQUEUE_MAX)
+    return MODEQUEUE_MAX;
+  return modesperline;
+}
+
+static int mode_queue_count(struct chanset_t *chan)
+{
+  int i;
+
+  for (i = 0; i < MODEQUEUE_MAX && chan->modequeue[i].sign; i++);
+  return i;
+}
+
+static void mode_queue_clear_entry(modequeue_entry *entry)
+{
+  if (entry->arg)
+    nfree(entry->arg);
+  entry->arg = NULL;
+  entry->sign = 0;
+  entry->modechar = 0;
+}
+
+static int mode_queue_class(char mode)
+{
+  return (mode == 'e' || mode == 'I') ? 2 : 1;
+}
+
+static int mode_queue_current_class(struct chanset_t *chan)
+{
+  int i;
+
+  for (i = 0; i < MODEQUEUE_MAX && chan->modequeue[i].sign; i++)
+    return mode_queue_class(chan->modequeue[i].modechar);
+  return 0;
+}
+
+static size_t mode_queue_wire_len(struct chanset_t *chan, char sign,
+                                  char mode, const char *arg)
+{
+  size_t modelen = 0, arglen = 0;
+  char cursign = 0;
+  int i;
+
+  for (i = 0; i < MODEQUEUE_MAX && chan->modequeue[i].sign; i++) {
+    if (chan->modequeue[i].sign != cursign) {
+      modelen++;
+      cursign = chan->modequeue[i].sign;
+    }
+    modelen++;
+    if (chan->modequeue[i].arg && chan->modequeue[i].arg[0])
+      arglen += strlen(chan->modequeue[i].arg) + (arglen ? 1 : 0);
+  }
+  if (sign != cursign)
+    modelen++;
+  modelen++;
+  if (arg && arg[0])
+    arglen += strlen(arg) + (arglen ? 1 : 0);
+
+  return 5 + strlen(chan->name) + 1 + modelen + (arglen ? 1 + arglen : 0) + 1;
+}
+
+static int mode_queue_duplicate(struct chanset_t *chan, char sign, char mode,
+                                const char *arg)
+{
+  int i;
+
+  for (i = 0; i < MODEQUEUE_MAX && chan->modequeue[i].sign; i++) {
+    const char *queued_arg = chan->modequeue[i].arg ?
+                             chan->modequeue[i].arg : "";
+    const char *new_arg = arg ? arg : "";
+
+    if (chan->modequeue[i].sign != sign || chan->modequeue[i].modechar != mode)
+      continue;
+    if (mode == 'b' || mode == 'e' || mode == 'I') {
+      if (!rfc_casecmp(queued_arg, new_arg))
+        return 1;
+    } else if (!strcmp(queued_arg, new_arg))
+      return 1;
+  }
+  return 0;
+}
+
+static int mode_queue_validate(char sign, char mode, const char *arg,
+                               int arg_given, char *err, size_t errlen)
+{
+  int needs_arg;
+
+  if (sign != '+' && sign != '-') {
+    if (err)
+      snprintf(err, errlen, "invalid mode sign: %c", sign);
+    return 0;
+  }
+  if (MODE_TYPE(mode) == MODETYPE_INVALID) {
+    if (err)
+      snprintf(err, errlen, "unknown mode: %c%c", sign, mode);
+    return 0;
+  }
+  needs_arg = (sign == '+') ? MODE_HAS_SET_ARG(mode) :
+                              MODE_HAS_UNSET_ARG(mode);
+  if (needs_arg && (!arg || !arg[0])) {
+    if (err)
+      snprintf(err, errlen, "missing argument for mode %c%c", sign, mode);
+    return 0;
+  }
+  if (!needs_arg && arg_given) {
+    if (err)
+      snprintf(err, errlen, "excess argument for mode %c%c", sign, mode);
+    return 0;
+  }
+  return 1;
+}
+
+static int mode_queue_list_state_allows(struct chanset_t *chan, char sign,
+                                        char mode, const char *arg)
+{
+  masklist *m;
+
+  /*
+   * FIXME: Some networks remove overlapped bans,
+   *        IRCnet does not (poptix/drummer)
+   *
+   * Note:  On IRCnet ischanXXX() should be used, otherwise isXXXed().
+   */
+  if ((sign == '-' && ((mode == 'b' && !ischanban(chan, (char *) arg)) ||
+      (mode == 'e' && !ischanexempt(chan, (char *) arg)) ||
+      (mode == 'I' && !ischaninvite(chan, (char *) arg)))) ||
+      (sign == '+' && ((mode == 'b' && ischanban(chan, (char *) arg)) ||
+      (mode == 'e' && ischanexempt(chan, (char *) arg)) ||
+      (mode == 'I' && ischaninvite(chan, (char *) arg)))))
+    return 0;
+
+  if (sign == '+') {
+    int bans = 0, exempts = 0, invites = 0;
+
+    for (m = chan->channel.ban; m && m->mask[0]; m = m->next)
+      bans++;
+    if ((mode == 'b') && (bans >= max_bans))
+      return 0;
+
+    for (m = chan->channel.exempt; m && m->mask[0]; m = m->next)
+      exempts++;
+    if ((mode == 'e') && (exempts >= max_exempts))
+      return 0;
+
+    for (m = chan->channel.invite; m && m->mask[0]; m = m->next)
+      invites++;
+    if ((mode == 'I') && (invites >= max_invites))
+      return 0;
+
+    if (bans + exempts + invites >= max_modes)
+      return 0;
+  }
+  return 1;
+}
+
+static int mode_queue_append(struct chanset_t *chan, char sign, char mode,
+                             const char *arg)
+{
+  int count = mode_queue_count(chan);
+
+  if (count >= MODEQUEUE_MAX)
+    return 0;
+  chan->modequeue[count].sign = sign;
+  chan->modequeue[count].modechar = mode;
+  if (arg && arg[0]) {
+    chan->modequeue[count].arg = (char *) channel_malloc(strlen(arg) + 1);
+    if (chan->modequeue[count].arg)
+      strcpy(chan->modequeue[count].arg, arg);
+  } else
+    chan->modequeue[count].arg = NULL;
+  return 1;
+}
+
+static void mode_queue_send_line(struct chanset_t *chan, int pri,
+                                 const char *modes, const char *args)
+{
+  int dest = (pri == QUICK) ? DP_MODE : DP_SERVER;
+
+  if (args[0])
+    dprintf(dest, "MODE %s %s %s\n", chan->name, modes, args);
+  else
+    dprintf(dest, "MODE %s %s\n", chan->name, modes);
+}
+
 static void flush_mode(struct chanset_t *chan, int pri)
 {
-  char *p, out[512], post[512];
-  size_t postsize = sizeof(post);
-  int i, plus = 2;              /* 0 = '-', 1 = '+', 2 = none */
+  char modes[(MODEQUEUE_MAX * 2) + 2], args[512], cursign = 0;
+  size_t modelen = 0, arglen = 0;
+  int i, line_modes = 0, linelimit = mode_queue_line_limit();
 
-  p = out;
-  post[0] = 0, postsize--;
+  modes[0] = 0;
+  args[0] = 0;
 
-  if (chan->mns[0]) {
-    *p++ = '-', plus = 0;
-    for (i = 0; i < strlen(chan->mns); i++)
-      *p++ = chan->mns[i];
-    chan->mns[0] = 0;
-  }
+  for (i = 0; i < MODEQUEUE_MAX && chan->modequeue[i].sign; i++) {
+    modequeue_entry *entry = &chan->modequeue[i];
+    size_t add_modelen = 1 + (entry->sign != cursign ? 1 : 0);
+    size_t add_arglen = entry->arg && entry->arg[0] ?
+                        strlen(entry->arg) + (arglen ? 1 : 0) : 0;
+    size_t projected = 5 + strlen(chan->name) + 1 + modelen + add_modelen +
+                       (arglen + add_arglen ? 1 + arglen + add_arglen : 0) +
+                       1;
 
-  if (chan->pls[0]) {
-    *p++ = '+', plus = 1;
-    for (i = 0; i < strlen(chan->pls); i++)
-      *p++ = chan->pls[i];
-    chan->pls[0] = 0;
-  }
-
-  chan->bytes = 0;
-  chan->compat = 0;
-
-  /* +k or +l ? */
-  if (chan->key && !chan->rmkey) {
-    if (plus != 1) {
-      *p++ = '+', plus = 1;
+    if (line_modes && (line_modes >= linelimit ||
+        projected > MODEQUEUE_LINE_BUDGET)) {
+      mode_queue_send_line(chan, pri, modes, args);
+      modes[0] = 0;
+      args[0] = 0;
+      cursign = 0;
+      modelen = 0;
+      arglen = 0;
+      line_modes = 0;
+      add_modelen = 2;
+      add_arglen = entry->arg && entry->arg[0] ? strlen(entry->arg) : 0;
     }
-    *p++ = 'k';
 
-    postsize -= egg_strcatn(post, chan->key, sizeof(post));
-    postsize -= egg_strcatn(post, " ", sizeof(post));
-
-    nfree(chan->key), chan->key = NULL;
-  }
-
-  /* max +l is signed 2^32 on IRCnet at least... so make sure we've got at least
-   * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
-   * terminating null in 'post', so make sure postsize >= 12.
-   */
-  if (chan->limit != 0 && postsize >= 12) {
-    if (plus != 1) {
-      *p++ = '+', plus = 1;
+    if (entry->sign != cursign) {
+      modes[modelen++] = entry->sign;
+      modes[modelen] = 0;
+      cursign = entry->sign;
     }
-    *p++ = 'l';
+    modes[modelen++] = entry->modechar;
+    modes[modelen] = 0;
 
-    /* 'sizeof(post) - 1' is used because we want to overwrite the old null */
-    postsize -=
-      sprintf(&post[(sizeof(post) - 1) - postsize], "%d ", chan->limit);
-
-    chan->limit = 0;
-  }
-
-  /* -k ? */
-  if (chan->rmkey) {
-    if (plus) {
-      *p++ = '-', plus = 0;
-    }
-    *p++ = 'k';
-
-    postsize -= egg_strcatn(post, chan->rmkey, sizeof(post));
-    postsize -= egg_strcatn(post, " ", sizeof(post));
-
-    nfree(chan->rmkey), chan->rmkey = NULL;
-  }
-
-  /* Do -{b,e,I} before +{b,e,I} to avoid the server ignoring overlaps */
-  for (i = 0; i < modesperline; i++) {
-    if ((chan->cmode[i].type & MINUS) && postsize > strlen(chan->cmode[i].op)) {
-      if (plus) {
-        *p++ = '-', plus = 0;
+    if (entry->arg && entry->arg[0]) {
+      if (arglen) {
+        strlcat(args, " ", sizeof args);
+        arglen++;
       }
-
-      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-              ((chan->cmode[i].type & CHOP) ? 'o' :
-              ((chan->cmode[i].type & CHHOP) ? 'h' :
-              ((chan->cmode[i].type & EXEMPT) ? 'e' :
-              ((chan->cmode[i].type & INVITE) ? 'I' : 'v')))));
-
-      postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
-      postsize -= egg_strcatn(post, " ", sizeof(post));
-
-      nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
-      chan->cmode[i].type = 0;
+      strlcat(args, entry->arg, sizeof args);
+      arglen += strlen(entry->arg);
     }
+    line_modes++;
+    mode_queue_clear_entry(entry);
   }
 
-  /* now do all the + modes... */
-  for (i = 0; i < modesperline; i++) {
-    if ((chan->cmode[i].type & PLUS) && postsize > strlen(chan->cmode[i].op)) {
-      if (plus != 1) {
-        *p++ = '+', plus = 1;
-      }
+  if (line_modes)
+    mode_queue_send_line(chan, pri, modes, args);
+}
 
-      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-              ((chan->cmode[i].type & CHOP) ? 'o' :
-              ((chan->cmode[i].type & CHHOP) ? 'h' :
-              ((chan->cmode[i].type & EXEMPT) ? 'e' :
-              ((chan->cmode[i].type & INVITE) ? 'I' : 'v')))));
+static int queue_mode_change(struct chanset_t *chan, char sign, char mode,
+                             const char *arg, int arg_given, char *err,
+                             size_t errlen)
+{
+  int count, queued;
+  memberlist *mx = NULL;
 
-      postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
-      postsize -= egg_strcatn(post, " ", sizeof(post));
+  if (!mode_queue_validate(sign, mode, arg, arg_given, err, errlen))
+    return -1;
 
-      nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
-      chan->cmode[i].type = 0;
-    }
+  /* Capability is rank-based for PREFIX modes, literal o/h for non-prefix. */
+  if (!can_set_mode(chan, mode))
+    return 0;
+
+  if (MODE_TYPE(mode) == MODETYPE_PREFIX) {
+    mx = ismember(chan, (char *) arg);
+    if (!mx)
+      return 0;
+    if (sign == '-') {
+      if (member_prefix_sentminus(mx, mode) || !member_has_prefixmode(mx, mode))
+        return 0;
+    } else if (member_prefix_sentplus(mx, mode) ||
+        member_has_prefixmode(mx, mode))
+      return 0;
+  } else if (mode == 'b' || mode == 'e' || mode == 'I') {
+    if (!mode_queue_list_state_allows(chan, sign, mode, arg))
+      return 0;
   }
 
-  /* remember to terminate the buffer ('out')... */
-  *p = 0;
+  if (mode_queue_duplicate(chan, sign, mode, arg))
+    return 0;
 
-  if (post[0]) {
-    /* remove the trailing space... */
-    size_t index = (sizeof(post) - 1) - postsize;
+  if (prevent_mixing && mode_queue_count(chan) &&
+      mode_queue_current_class(chan) != mode_queue_class(mode))
+    flush_mode(chan, NORMAL);
 
-    if (index > 0 && post[index - 1] == ' ')
-      post[index - 1] = 0;
+  count = mode_queue_count(chan);
+  if (count && (count >= mode_queue_line_limit() ||
+      mode_queue_wire_len(chan, sign, mode, arg) > MODEQUEUE_LINE_BUDGET))
+    flush_mode(chan, NORMAL);
 
-    egg_strcatn(out, " ", sizeof(out));
-    egg_strcatn(out, post, sizeof(out));
-  }
-  if (out[0]) {
-    if (pri == QUICK)
-      dprintf(DP_MODE, "MODE %s %s\n", chan->name, out);
+  queued = mode_queue_append(chan, sign, mode, arg);
+  if (!queued)
+    return 0;
+
+  if (mx) {
+    if (sign == '-')
+      member_set_prefix_sentminus(mx, mode, 1);
     else
-      dprintf(DP_SERVER, "MODE %s %s\n", chan->name, out);
+      member_set_prefix_sentplus(mx, mode, 1);
   }
+
+  if (mode_queue_count(chan) >= mode_queue_line_limit())
+    flush_mode(chan, NORMAL);
+
+  return 1;
 }
 
 /* Queue a channel mode change
@@ -199,152 +361,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
 static void real_add_mode(struct chanset_t *chan,
                           char plus, char mode, char *op)
 {
-  int i, type, modes, l;
-  masklist *m;
-  memberlist *mx;
-  char s[21];
-
-  /* Capability is rank-based for PREFIX modes, literal o/h for non-prefix. */
-  if (!can_set_mode(chan, mode))
-    return;
-
-  if (mode == 'o' || mode == 'h' || mode == 'v') {
-    mx = ismember(chan, op);
-    if (!mx)
-      return;
-    if (plus == '-') {
-      if (member_prefix_sentminus(mx, mode) || !member_has_prefixmode(mx, mode))
-        return;
-      member_set_prefix_sentminus(mx, mode, 1);
-    }
-    if (plus == '+') {
-      if (member_prefix_sentplus(mx, mode) || member_has_prefixmode(mx, mode))
-        return;
-      member_set_prefix_sentplus(mx, mode, 1);
-    }
-  }
-
-  if (chan->compat == 0) {
-    if (mode == 'e' || mode == 'I')
-      chan->compat = 2;
-    else
-      chan->compat = 1;
-  } else if (mode == 'e' || mode == 'I') {
-    if (prevent_mixing && chan->compat == 1)
-      flush_mode(chan, NORMAL);
-  } else if (prevent_mixing && chan->compat == 2)
-    flush_mode(chan, NORMAL);
-
-  if (mode == 'o' || mode == 'h' || mode == 'b' || mode == 'v' || mode == 'e' ||
-      mode == 'I') {
-    type = (plus == '+' ? PLUS : MINUS) | (mode == 'o' ? CHOP : (mode == 'h' ?
-           CHHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ?
-           EXEMPT : INVITE)))));
-    /*
-     * FIXME: Some networks remove overlapped bans,
-     *        IRCnet does not (poptix/drummer)
-     *
-     * Note:  On IRCnet ischanXXX() should be used, otherwise isXXXed().
-     */
-    if ((plus == '-' && ((mode == 'b' && !ischanban(chan, op)) ||
-        (mode == 'e' && !ischanexempt(chan, op)) ||
-        (mode == 'I' && !ischaninvite(chan, op)))) || (plus == '+' &&
-        ((mode == 'b' && ischanban(chan, op)) ||
-        (mode == 'e' && ischanexempt(chan, op)) ||
-        (mode == 'I' && ischaninvite(chan, op)))))
-      return;
-
-    /* If there are already max_bans bans, max_exempts exemptions,
-     * max_invites invitations or max_modes +b/+e/+I modes on the
-     * channel, don't try to add one more.
-     */
-    if (plus == '+' && (mode == 'b' || mode == 'e' || mode == 'I')) {
-      int bans = 0, exempts = 0, invites = 0;
-
-      for (m = chan->channel.ban; m && m->mask[0]; m = m->next)
-        bans++;
-      if ((mode == 'b') && (bans >= max_bans))
-        return;
-
-      for (m = chan->channel.exempt; m && m->mask[0]; m = m->next)
-        exempts++;
-      if ((mode == 'e') && (exempts >= max_exempts))
-        return;
-
-      for (m = chan->channel.invite; m && m->mask[0]; m = m->next)
-        invites++;
-      if ((mode == 'I') && (invites >= max_invites))
-        return;
-
-      if (bans + exempts + invites >= max_modes)
-        return;
-    }
-
-    /* op-type mode change */
-    for (i = 0; i < modesperline; i++)
-      if (chan->cmode[i].type == type && chan->cmode[i].op != NULL &&
-          !rfc_casecmp(chan->cmode[i].op, op))
-        return;                 /* Already in there :- duplicate */
-    l = strlen(op) + 1;
-    if (chan->bytes + l > mode_buf_len)
-      flush_mode(chan, NORMAL);
-    for (i = 0; i < modesperline; i++)
-      if (chan->cmode[i].type == 0) {
-        chan->cmode[i].type = type;
-        chan->cmode[i].op = (char *) channel_malloc(l);
-        chan->bytes += l;       /* Add 1 for safety */
-        strcpy(chan->cmode[i].op, op);
-        break;
-      }
-  }
-
-  /* +k ? store key */
-  else if (plus == '+' && mode == 'k') {
-    if (chan->key)
-      nfree(chan->key);
-    chan->key = (char *) channel_malloc(strlen(op) + 1);
-    if (chan->key)
-      strcpy(chan->key, op);
-  }
-  /* -k ? store removed key */
-  else if (plus == '-' && mode == 'k') {
-    if (chan->rmkey)
-      nfree(chan->rmkey);
-    chan->rmkey = (char *) channel_malloc(strlen(op) + 1);
-    if (chan->rmkey)
-      strcpy(chan->rmkey, op);
-  }
-  /* +l ? store limit */
-  else if (plus == '+' && mode == 'l')
-    chan->limit = atoi(op);
-  else {
-    /* Typical mode changes */
-    if (plus == '+')
-      strcpy(s, chan->pls);
-    else
-      strcpy(s, chan->mns);
-    if (!strchr(s, mode)) {
-      if (plus == '+') {
-        chan->pls[strlen(chan->pls) + 1] = 0;
-        chan->pls[strlen(chan->pls)] = mode;
-      } else {
-        chan->mns[strlen(chan->mns) + 1] = 0;
-        chan->mns[strlen(chan->mns)] = mode;
-      }
-    }
-  }
-  modes = modesperline;         /* Check for full buffer. */
-  for (i = 0; i < modesperline; i++)
-    if (chan->cmode[i].type)
-      modes--;
-  if (include_lk && chan->limit)
-    modes--;
-  if (include_lk && chan->rmkey)
-    modes--;
-  if (include_lk && chan->key)
-    modes--;
-  if (modes < 1)
-    flush_mode(chan, NORMAL);   /* Full buffer! Flush modes. */
+  queue_mode_change(chan, plus, mode, op ? op : "", op && op[0], NULL, 0);
 }
 
 

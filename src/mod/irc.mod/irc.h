@@ -127,6 +127,7 @@ static void chanmodes_set_known(struct chanset_t *, int);
 static int any_ops(struct chanset_t *);
 static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
+static int mode_queue_line_limit(void);
 static void flush_mode(struct chanset_t *, int);
 static void set_delay(struct chanset_t *, char *);
 static void refresh_who_chan(char *);

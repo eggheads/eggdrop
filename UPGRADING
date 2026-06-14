@@ -105,6 +105,14 @@ The irc module's "opchars" setting is deprecated and ignored. Prefix status
 is derived from ISUPPORT PREFIX; "isop"/"botisop" now mean literal +o, not
 owner/admin prefixes configured through opchars.
 
+The irc module's internal outbound mode queue has been replaced with an
+ISUPPORT-aware queue. Source modules must no longer read or write the removed
+struct chanset_t queue fields "pls", "mns", "key", "rmkey", "limit", "bytes",
+"compat", or "cmode[]"; the MODES_PER_LINE_MAX macro has also been removed.
+Use add_mode() to queue outbound channel modes. The "modes-per-line" setting
+and server MODES token may now be honored up to 32 entries per line, subject
+to IRC line-length splitting.
+
 Documentation
 
 Documentation has been updated to reflect new and removed commands and

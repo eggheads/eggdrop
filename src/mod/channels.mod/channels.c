@@ -491,7 +491,6 @@ static int chanset_unlink(struct chanset_t *chan)
  */
 static void remove_channel(struct chanset_t *chan)
 {
-  int i;
   module_entry *me;
 
   /* Remove the channel from the list, so that no one can pull it
@@ -516,12 +515,6 @@ static void remove_channel(struct chanset_t *chan)
   user_del_chan(chan->dname);
   noshare = 0;
   nfree(chan->channel.key);
-  for (i = 0; i < MODES_PER_LINE_MAX && chan->cmode[i].op; i++)
-    nfree(chan->cmode[i].op);
-  if (chan->key)
-    nfree(chan->key);
-  if (chan->rmkey)
-    nfree(chan->rmkey);
   nfree(chan);
 }
 
@@ -950,12 +943,9 @@ static int channels_expmem()
       if (chan->channel.modeargs[i])
         tot += strlen(chan->channel.modeargs[i]) + 1;
     tot += expmem_chanmode_lists(chan->channel.modelists);
-    for (i = 0; i < MODES_PER_LINE_MAX && chan->cmode[i].op; i++)
-      tot += strlen(chan->cmode[i].op) + 1;
-    if (chan->key)
-      tot += strlen(chan->key) + 1;
-    if (chan->rmkey)
-      tot += strlen(chan->rmkey) + 1;
+    for (i = 0; i < MODEQUEUE_MAX; i++)
+      if (chan->modequeue[i].arg)
+        tot += strlen(chan->modequeue[i].arg) + 1;
   }
   tot += expmem_udef(udef);
   if (lastdeletedmask)

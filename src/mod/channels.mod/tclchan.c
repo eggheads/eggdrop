@@ -2067,6 +2067,19 @@ static void clear_channel_mode_store(struct chanset_t *chan)
   chan->channel.modeflags = 0;
 }
 
+static void clear_channel_mode_queue(struct chanset_t *chan)
+{
+  int i;
+
+  for (i = 0; i < MODEQUEUE_MAX; i++) {
+    if (chan->modequeue[i].arg)
+      nfree(chan->modequeue[i].arg);
+    chan->modequeue[i].arg = NULL;
+    chan->modequeue[i].sign = 0;
+    chan->modequeue[i].modechar = 0;
+  }
+}
+
 /* Initialize out the channel record.
  */
 static void init_channel(struct chanset_t *chan, int reset)
@@ -2156,6 +2169,8 @@ static void clear_channel(struct chanset_t *chan, int reset)
   }
   if ((flags & CHAN_RESETTOPIC) && chan->channel.topic)
     nfree(chan->channel.topic);
+  if (flags & CHAN_RESETMODES)
+    clear_channel_mode_queue(chan);
   if (!reset && (flags & CHAN_RESETMODES))
     clear_channel_mode_store(chan);
   if (reset)

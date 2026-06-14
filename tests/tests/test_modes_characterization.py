@@ -25,8 +25,6 @@ from support.irc_helpers import (
 from support.mock_ircd import MockIrcd
 from support.waiters import wait_for
 
-MODES_PER_LINE_MAX = 6  # src/chan.h
-
 
 def wait_onchan(bridge: BridgeClient, nick: str, chan: str) -> None:
     wait_for(
@@ -285,35 +283,32 @@ def test_a27_key_star_reasks_modes_when_opped(
     assert lines[-1] == f"MODE {chan}"
 
 
-# ---------- B0: MODES is clamped to the queue capacity ----------
+# ---------- B0: MODES up to 32 is honored by the queue ----------
 
 
-def test_b0_modes_isupport_clamped_to_queue_capacity(
+def test_b0_modes_isupport_honored_above_legacy_six(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
 ) -> None:
-    """A server advertising MODES=20 must not make Eggdrop exceed (or
-    overrun — pre-clamp this was an out-of-bounds write) its 6-slot
-    queue: 7 queued bans flush as 6+1, never 7 on one line."""
+    """A server advertising MODES=20 is honored by the 32-slot queue:
+    short masks can exceed the legacy six-mode line cap and all masks
+    still arrive with aligned arguments."""
     drive_registration(mock_ircd, isupport_tokens=["MODES=20"])
     wait_for_isupport(tcl_bridge, "MODES", "20")
     chan = drive_join_with_names(mock_ircd, "@TestBot", chanmodes_324="+nt")
 
-    for i in range(7):
+    for i in range(12):
         tcl_bridge.eval_ok(f'pushmode "{chan}" +b "m{i}!*@*"')
     tcl_bridge.eval_ok(f'flushmode "{chan}"')
 
     eggdrop_proc.assert_alive()
-    seen_masks: set[str] = set()
-    while len(seen_masks) < 7:
-        line = mock_ircd.drain_until(
-            lambda line: line.startswith(f"MODE {chan} "), timeout=5.0
-        )[-1]
-        words = line.split()
-        modes = words[2].lstrip("+-")
-        args = words[3:]
-        assert len(modes) <= MODES_PER_LINE_MAX, line
-        assert len(args) == len(modes), line
-        seen_masks.update(args)
-    assert seen_masks == {f"m{i}!*@*" for i in range(7)}
+    line = mock_ircd.drain_until(
+        lambda line: line.startswith(f"MODE {chan} "), timeout=5.0
+    )[-1]
+    words = line.split()
+    modes = words[2].lstrip("+-")
+    args = words[3:]
+    assert len(modes) > 6, line
+    assert len(args) == len(modes), line
+    assert args == [f"m{i}!*@*" for i in range(12)]

@@ -2556,14 +2556,14 @@ static void set_delay(struct chanset_t *chan, char *nick)
       if (m2->delay && !(m2->flags & FULL_DELAY)) {
         m2->delay = a_delay;
 
-        if (count + 1 >= modesperline)
+        if (count + 1 >= mode_queue_line_limit())
           m2->flags |= FULL_DELAY;
 
       }
     }
   }
 
-  if (count + 1 >= modesperline)
+  if (count + 1 >= mode_queue_line_limit())
     m->flags |= FULL_DELAY;
 
   m->delay = a_delay;
@@ -3614,9 +3614,8 @@ static int irc_isupport(char *key, char *isset_str, char *value)
   if (!strcmp(key, "WHOX")) {
     use_354 = isset;
   } else if (!strcmp(key, "MODES")) {
-    /* Clamped to MODES_PER_LINE_MAX: the queue in chanset_t.cmode[] has
-     * exactly that many slots, a larger modesperline overruns it. */
-    isupport_parseint(key, isset ? value : NULL, 3, MODES_PER_LINE_MAX, 1, 3,
+    /* Clamp to the fixed outbound queue capacity. */
+    isupport_parseint(key, isset ? value : NULL, 3, MODEQUEUE_MAX, 1, 3,
                       &modesperline);
   } else if (!strcmp(key, "MAXLIST")) {
     parse_maxlist(isset ? value : NULL);

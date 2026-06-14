@@ -31,8 +31,8 @@
 /* Only allow non-rank-0 bots to send modes as literal op (b/e/I excluded)? */
 #undef NO_HALFOP_CHANMODES
 
-/* Hard limit of modes per line. */
-#define MODES_PER_LINE_MAX 6
+/* Hard limit of queued outbound modes per channel. */
+#define MODEQUEUE_MAX 32
 
 typedef struct memstruct {
   char nick[NICKLEN];
@@ -116,6 +116,12 @@ typedef struct chanmode_liststruct {
   chanmode_masklist *masks;
   struct chanmode_liststruct *next;
 } chanmode_list;
+
+typedef struct modequeue_entry {
+  char sign;
+  char modechar;
+  char *arg;
+} modequeue_entry;
 
 /* Used for temporary bans, exempts and invites */
 typedef struct maskrec {
@@ -212,17 +218,7 @@ struct chanset_t {
   int mode_mns_prot;     /* modes to reject                   */
   int limit_prot;        /* desired limit                     */
   char key_prot[121];    /* desired password                  */
-  char pls[21];          /* positive mode changes             */
-  char mns[21];          /* negative mode changes             */
-  char *key;             /* new key to set                    */
-  char *rmkey;           /* old key to remove                 */
-  int limit;             /* new limit to set                  */
-  int bytes;             /* total bytes so far                */
-  int compat;            /* prevents mixing of old/new modes  */
-  struct {
-    char *op;
-    int type;
-  } cmode[MODES_PER_LINE_MAX];
+  modequeue_entry modequeue[MODEQUEUE_MAX]; /* queued outbound modes */
   char floodwho[FLOOD_CHAN_MAX][256]; /* can be nick or host */
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];

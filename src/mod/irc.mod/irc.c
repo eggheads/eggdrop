@@ -1044,9 +1044,6 @@ static void flush_modes()
   struct chanset_t *chan;
   memberlist *m;
 
-  if (modesperline > MODES_PER_LINE_MAX)
-    modesperline = MODES_PER_LINE_MAX;
-
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->delay && m->delay <= now) {

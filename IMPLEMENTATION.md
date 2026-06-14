@@ -421,52 +421,52 @@ state-vs-bind ordering table, and `bind mode` for all modes.
 Implements D-Q1/D-Q2/D-Q3/D-Q4/D-Q5, D-TCL2. Removes the
 `cmode[]`/`pls`/`mns` limitations and the 6-modes-per-line cap.
 
-- [ ] Replace the legacy queue block in `chanset_t` (src/chan.h):
+- [x] Replace the legacy queue block in `chanset_t` (src/chan.h):
       `pls/mns/key/rmkey/limit/bytes/compat/cmode[]` are **removed**
       (D-Q5), along with `MODES_PER_LINE_MAX`; new fixed 32-entry array of
       `{char sign; char modechar; char *arg;}`. Update channels.mod
       `clear_channel`/`expmem` (channels.c:416, 826) to walk the new
       array. UPGRADING note for the removed fields/macro.
-- [ ] Honor server MODES up to 32 (D-Q4): widen the `irc_isupport()`
+- [x] Honor server MODES up to 32 (D-Q4): widen the `irc_isupport()`
       MODES clamp to 1..32 (default 3); clamp `modesperline` at point of
       use instead of the per-second re-clamp in `flush_modes`
       (irc.c:1051) — delete the re-clamp.
-- [ ] Byte-budget flushing: flush when entry count reaches `modesperline`
+- [x] Byte-budget flushing: flush when entry count reaches `modesperline`
       *or* the projected line would exceed ~450 bytes (also fixes the
       latent 6-long-masks truncation bug).
-- [ ] Rewrite `real_add_mode()` as a validating wrapper preserving the
+- [x] Rewrite `real_add_mode()` as a validating wrapper preserving the
       exported `add_mode(chan, plus, mode, op)` signature: `modecharinfo`
       arg-validation (`MODE_HAS_SET_ARG`/`MODE_HAS_UNSET_ARG`) →
       `can_set_mode()` → per-class dedup (prefix via `sentplus/sentminus`
       + state; b/e/I via `ischan*` + `max_*` caps as today; flags drop
       exact queued duplicates) → append.
-- [ ] Rewrite `flush_mode()`: walk in insertion order, emit sign changes
+- [x] Rewrite `flush_mode()`: walk in insertion order, emit sign changes
       inline (`+b-b+b a b c`), split lines at `modesperline` modes /
       buffer limits; k/l are ordinary entries (drop `include_lk`
       special-casing from the line-budget); preserve the
       `prevent_mixing` e/I flush-barrier behaviour (D-Q3).
-- [ ] `tcl_pushmode`: surface validation failures as Tcl errors (unknown
+- [x] `tcl_pushmode`: surface validation failures as Tcl errors (unknown
       mode, missing/excess arg) — D-TCL2.
-- [ ] Audit internal `add_mode` callers that relied on the old
+- [x] Audit internal `add_mode` callers that relied on the old
       "-list before +list" grouping; reorder call sites if needed so wire
       semantics are unchanged.
-- [ ] New tests (B6): `pushmode +j 3:5` on the wire; push-order
+- [x] New tests (B6): `pushmode +j 3:5` on the wire; push-order
       `+b-b+b a b c` single line; `pushmode +Z` (unknown) → Tcl error;
       `pushmode +j` (missing arg) → error; byte-budget split with long
       masks (line < 512 bytes always).
-- [ ] **Rewrite B0** (sanctioned, D-category): `MODES=20` is now honored —
+- [x] **Rewrite B0** (sanctioned, D-category): `MODES=20` is now honored —
       assert >6 modes per line where the byte budget allows, masks
       complete across lines.
 
 ### Gate 6
 
-- [ ] Build clean; A6–A9 (queue characterization) green **unmodified** —
+- [x] Build clean; A6–A9 (queue characterization) green **unmodified** —
       identical wire output from the new queue (A9's MODES=4 split is the
       canary). Full suite green.
-- [ ] B6 green, rewritten B0 green.
-- [ ] Grep gate: `grep -rn "MODES_PER_LINE_MAX\|->cmode\|->pls\b\|->mns\b"
+- [x] B6 green, rewritten B0 green.
+- [x] Grep gate: `grep -rn "MODES_PER_LINE_MAX\|->cmode\|->pls\b\|->mns\b"
       src/` empty.
-- [ ] Committed.
+- [x] Committed.
 
 ---
 

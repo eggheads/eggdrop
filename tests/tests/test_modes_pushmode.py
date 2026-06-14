@@ -10,7 +10,9 @@ enforcement leaves the queue clean (see drive_join_with_names docstring).
 
 from __future__ import annotations
 
-from support.bridge_client import BridgeClient
+import pytest
+
+from support.bridge_client import BridgeClient, BridgeError
 from support.eggdrop_proc import EggdropProc
 from support.irc_helpers import (
     drive_join_with_names,
@@ -169,3 +171,103 @@ def test_a9_line_splitting_modes_4(
     second = next_mode_line(mock_ircd, chan)
     assert first == f"MODE {chan} +bbbb m0!*@* m1!*@* m2!*@* m3!*@*", first
     assert second == f"MODE {chan} +bb m4!*@* m5!*@*", second
+
+
+# ---------- B6: arbitrary queue and pushmode validation ----------
+
+
+def test_b6_pushmode_generic_limit_mode_reaches_wire(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    chanmodes = "beI,k,lj,imnpst"
+    drive_registration(mock_ircd, isupport_tokens=[f"CHANMODES={chanmodes}"])
+    wait_for_isupport(tcl_bridge, "CHANMODES", chanmodes)
+    chan = drive_join_with_names(mock_ircd, "@TestBot", chanmodes_324="+nt")
+
+    tcl_bridge.eval_ok(f'pushmode "{chan}" +j 3:5')
+    tcl_bridge.eval_ok(f'flushmode "{chan}"')
+
+    assert next_mode_line(mock_ircd, chan) == f"MODE {chan} +j 3:5"
+
+
+def test_b6_push_order_preserves_interleaved_signs(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    drive_registration(mock_ircd)
+    chan = drive_join_with_names(mock_ircd, "@TestBot", chanmodes_324="+nt")
+
+    mock_ircd.send(f":mock.test MODE {chan} +b b!*@*")
+    wait_for(
+        lambda: tcl_bridge.eval_ok(f'ischanban "b!*@*" "{chan}"') == "1",
+        timeout=5.0,
+        description="server ban tracked",
+    )
+
+    tcl_bridge.eval_ok(f'pushmode "{chan}" +b "a!*@*"')
+    tcl_bridge.eval_ok(f'pushmode "{chan}" -b "b!*@*"')
+    tcl_bridge.eval_ok(f'pushmode "{chan}" +b "c!*@*"')
+    tcl_bridge.eval_ok(f'flushmode "{chan}"')
+
+    assert next_mode_line(mock_ircd, chan) == f"MODE {chan} +b-b+b a!*@* b!*@* c!*@*"
+
+
+def test_b6_pushmode_unknown_mode_errors(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    drive_registration(mock_ircd)
+    chan = drive_join_with_names(mock_ircd, "@TestBot", chanmodes_324="+nt")
+
+    with pytest.raises(BridgeError, match=r"unknown mode: \+Z"):
+        tcl_bridge.eval_ok(f'pushmode "{chan}" +Z')
+
+
+def test_b6_pushmode_argument_validation_errors(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    chanmodes = "beI,k,lj,imnpst"
+    drive_registration(mock_ircd, isupport_tokens=[f"CHANMODES={chanmodes}"])
+    wait_for_isupport(tcl_bridge, "CHANMODES", chanmodes)
+    chan = drive_join_with_names(mock_ircd, "@TestBot", chanmodes_324="+nt")
+
+    with pytest.raises(BridgeError, match=r"missing argument for mode \+j"):
+        tcl_bridge.eval_ok(f'pushmode "{chan}" +j')
+    with pytest.raises(BridgeError, match=r"excess argument for mode \+i"):
+        tcl_bridge.eval_ok(f'pushmode "{chan}" +i stray')
+
+
+def test_b6_byte_budget_splits_long_masks_without_truncation(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    drive_registration(mock_ircd, isupport_tokens=["MODES=20"])
+    wait_for_isupport(tcl_bridge, "MODES", "20")
+    chan = drive_join_with_names(mock_ircd, "@TestBot", chanmodes_324="+nt")
+    masks = [f"m{i}{'x' * 60}!*@example.test" for i in range(12)]
+
+    for mask in masks:
+        tcl_bridge.eval_ok(f'pushmode "{chan}" +b "{mask}"')
+    tcl_bridge.eval_ok(f'flushmode "{chan}"')
+
+    seen: list[str] = []
+    lines: list[str] = []
+    while len(seen) < len(masks):
+        line = next_mode_line(mock_ircd, chan)
+        lines.append(line)
+        assert len(line) < 512, line
+        words = line.split()
+        modes = words[2].replace("+", "").replace("-", "")
+        args = words[3:]
+        assert len(args) == len(modes), line
+        seen.extend(args)
+
+    assert len(lines) > 1
+    assert seen == masks

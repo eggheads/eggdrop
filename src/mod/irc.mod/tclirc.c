@@ -812,6 +812,8 @@ static int tcl_pushmode STDVAR
 {
   struct chanset_t *chan;
   char plus, mode;
+  char err[128];
+  size_t mod_len;
 
   BADARGS(3, 4, " channel mode ?arg?");
 
@@ -821,16 +823,27 @@ static int tcl_pushmode STDVAR
     return TCL_ERROR;
   }
   plus = argv[2][0];
+  mod_len = strlen(argv[2]);
 
-  mode = argv[2][1];
   if ((plus != '+') && (plus != '-')) {
+    if (mod_len != 1) {
+      Tcl_AppendResult(irp, "mode must be one character", NULL);
+      return TCL_ERROR;
+    }
     mode = plus;
     plus = '+';
+  } else {
+    if (mod_len != 2) {
+      Tcl_AppendResult(irp, "mode must be one character", NULL);
+      return TCL_ERROR;
+    }
+    mode = argv[2][1];
   }
-  if (argc == 4)
-    add_mode(chan, plus, mode, argv[3]);
-  else
-    add_mode(chan, plus, mode, "");
+  if (queue_mode_change(chan, plus, mode, argc == 4 ? argv[3] : "",
+      argc == 4, err, sizeof err) < 0) {
+    Tcl_AppendResult(irp, err, NULL);
+    return TCL_ERROR;
+  }
   return TCL_OK;
 }
 
