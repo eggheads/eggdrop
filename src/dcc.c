@@ -396,7 +396,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   else if (!strcasecmp(code, "passreq")) {
     pass = get_bot_pass(u);
-    if (!pass || !crypto_verify(pass, "-")) {
+    if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
     } else {
