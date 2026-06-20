@@ -360,14 +360,14 @@ static char *get_bot_pass(struct userrec *u) {
       if (!pass) {
         pass = pass2;
         if (encrypt_pass) {
-	  /* get_user() returns a pointer of struct user_entry
+          /* get_user() returns a pointer of struct user_entry
            * and set_user()->pass2_set() could free() and realloc it
-	   * so fetch it again with get_user()
-	   */
+           * so fetch it again with get_user()
+           */
           set_user(&USERENTRY_PASS, u, pass);
           pass = get_user(&USERENTRY_PASS2, u);
-	}
-      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        }
+      } else if (crypto_verify(pass2, pass) && encrypt_pass2)
         pass = pass2;
     } else if (pass && encrypt_pass2)
         set_user(&USERENTRY_PASS2, u, pass);
@@ -396,7 +396,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   else if (!strcasecmp(code, "passreq")) {
     pass = get_bot_pass(u);
-    if (!pass || !strcmp(pass, "-")) {
+    if (!pass || !crypto_verify(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
     } else {
