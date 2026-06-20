@@ -398,7 +398,7 @@ static uff_table_t compress_uff_table[] = {
 static tcl_ints my_tcl_ints[] = {
   {"share-compressed",    (int *)&share_compressed,    0},
   {"compress-level",      (int *)&compress_level,      0},
-  {"max_uncompress_size", (int *)&max_uncompress_size, 0},
+  {"max-uncompress-size", (int *)&max_uncompress_size, 0},
   {NULL,                  NULL,                        0}
 };
 
