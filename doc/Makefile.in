@@ -17,7 +17,7 @@ PBKDF2 TLS TRICKS USERS Versions tcl-commands.doc twitch-tcl-commands.doc
 
 MAN1 = man1/eggdrop.1
 
-WEB_ROOT = $(srcdir)/html/*.html
+WEB_ROOT = $(srcdir)/html/*.html $(srcdir)/html/*.js
 WEB_ABOUT = $(srcdir)/html/about/*.html
 WEB_INSTALL = $(srcdir)/html/install/*.html
 WEB_MOD = $(srcdir)/html/modules/*.html
@@ -107,7 +107,7 @@ install:
 	fi
 	@if test "x`echo $(WEB_ABOUT)`" != "x$(WEB_ABOUT)"; then \
 		for i in `echo $(WEB_ABOUT)`; do \
-			$(INSTALL_DATA) $$i $(DEST)/doc/html/appendices; \
+			$(INSTALL_DATA) $$i $(DEST)/doc/html/about; \
 		done; \
 	fi
 	@if test "x`echo $(WEB_INSTALL)`" != "x$(WEB_INSTALL)"; then \
