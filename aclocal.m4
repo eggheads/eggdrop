@@ -663,6 +663,9 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
     Minix)
       WEIRD_OS="no"
     ;;
+    GNU)
+      WEIRD_OS="no"
+    ;;
     *)
       # QNX apparently supports dlopen()... Fallthrough.
       if test -r /cmds; then
@@ -829,6 +832,10 @@ AC_DEFUN([EGG_CHECK_OS],
         ;;
       esac
       AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on macOS with dns.mod.])
+    ;;
+    GNU)
+      SHLIB_CC="$CC -fPIC"
+      SHLIB_LD="$CC -shared -nostartfiles"
     ;;
     *)
       if test -r /cmds; then
