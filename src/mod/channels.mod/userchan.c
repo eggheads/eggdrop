@@ -241,30 +241,24 @@ static int u_match_mask(maskrec *rec, char *mask)
     }
   }
 
-  /* Loop through all ban records, see if user matches based on mask or
-   * flag (extban).
-   */
   accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+
   for (; rec; rec = rec->next) {
-    /* Am I an extban? */
     if (extban_parse(rec->mask, &type, &arg)) {
-      if (!m || !m->nick[0] || !m->account[0]) {
+      if (!m || !m->nick[0] || !m->account[0])
         continue;
-      }
       if (accountflag && (type == accountflag[0])) {
-        if (!rfc_casecmp(m->account, arg)) {
+        if (!rfc_casecmp(m->account, arg))
           return 1;
-        }
       } else if (type == 'U') {
-        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask)) {
+        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask))
           return 1;
-        }
       }
       continue;
     }
-
-    if (match_addr(rec->mask, mask))
+    if (match_addr(rec->mask, mask)) {
       return 1;
+    }
   }
   return 0;
 }

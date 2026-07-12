@@ -71,25 +71,30 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
  * Supports both prefixed (<prefix><type>:<arg>) and non-prefixed (<type>:<arg>) forms.
  */
 int extban_parse(const char *mask, char *type, const char **arg) {
-  /* now we know mask is set, don't check it again later*/
+  char advertised_prefix = '\0';
   if (!mask || !mask[0] || strlen(mask) < 3)
     return 0;
 
-/* Break out no-prefix mask */
+/* Break out mask with no prefix  */
   if (isalnum((unsigned char) mask[0]) && mask[1] == ':') {
     if (type)
       *type = mask[0];
     if (arg)
-      *arg = mask + 2;
+      *arg = mask + 2; /* a:x!y@z -- mask+2 = x */
     return 1;
   }
 
-/* Break out prefix mask */
+/* Break out mask with a prefix */
   if (isalnum((unsigned char) mask[1]) && mask[2] == ':') {
+    get_extban_prefix(&advertised_prefix);
     if (type)
       *type = mask[1];
     if (arg)
-      *arg = mask + 3;
+      *arg = mask + 3; /* ~a:x!y@z -- mask+3 = x */
+    /* Prevent ee:x!y@z from sneaking through */
+    if (advertised_prefix && mask[0] != advertised_prefix) {
+      return 0;
+    }
     return 1;
   }
 

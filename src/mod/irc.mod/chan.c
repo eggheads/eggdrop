@@ -114,21 +114,21 @@ static int extban_flag_supported(char flag)
   return 0;
 }
 
-/* True if mask is an extban whose flag eggdrop cannot enforce by kicking.
- * Decided at runtime from current ISUPPORT - never persisted to the userfile.
- */
-static int extban_is_unenforceable(const char *mask)
+static int extban_requires_server_matching(const char *mask)
 {
   char extflag;
   const char *extarg, *acc;
 
   if (!extban_parse(mask, &extflag, &extarg))
     return 0;
+
   if (extflag == 'U')
     return 0;
+
   acc = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   if (acc && acc[0] && extflag == acc[0])
     return 0;
+
   return 1;
 }
 
@@ -142,24 +142,20 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   char type;
   const char *v = NULL, *arg = NULL;
 
-  /* Am I an extban? */
-  if (!extban_parse(banmask, &type, &arg)) {
+  if (!extban_parse(banmask, &type, &arg))
     return match_addr((char *) banmask, (char *) user);
-  }
 
   me = module_find("server", 0, 0);
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
-  /* Try account extban matching */
-  if (v && v[0] && type == v[0]) {
-    return !rfc_casecmp(m->account, arg);
-  }
 
-  /* Try U (unregistered) extban matching */
-  if (type == 'U') {
+  if (v && v[0] && type == v[0])
+    return !rfc_casecmp(m->account, arg);
+
+  if (type == 'U')
     return !strcmp(m->account, "*") && match_addr((char *) arg, (char *) user);
-  }
+
   return 0;
 }
 
@@ -667,11 +663,14 @@ static void recheck_bans(struct chanset_t *chan)
       char extflag;
       const char *extarg;
 
-      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag))
+      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag)) {
         continue;
+      }
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY) || extban_is_unenforceable(u->mask)))
+          (u->flags & MASKREC_STICKY) ||
+          extban_requires_server_matching(u->mask))) {
         add_mode(chan, '+', 'b', u->mask);
+      }
     }
   }
 }
@@ -766,23 +765,27 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   char user[NICKMAX+UHOSTLEN+1], extflag;
   const char *extarg;
 
-  if (HALFOP_CANTDOMODE('b'))
+  if (HALFOP_CANTDOMODE('b')) {
     return;
+  }
 
-  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported(extflag))
+  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported(extflag)) {
     return;
+  }
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
     if (banmask_matches_member(banmask, user, m) &&
         !(use_exempts &&
           (u_match_mask(global_exempts, user) ||
-           u_match_mask(chan->exempts, user))))
+           u_match_mask(chan->exempts, user)))) {
       refresh_ban_kick(chan, user, m->nick);
+    }
   }
   if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
-      extban_is_unenforceable(banmask)))
+      extban_requires_server_matching(banmask))) {
     add_mode(chan, '+', 'b', banmask);
+  }
 }
 
 static void recheck_channel_modes(struct chanset_t *chan)

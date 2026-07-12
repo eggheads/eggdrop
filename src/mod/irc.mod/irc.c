@@ -624,7 +624,6 @@ static void check_expired_chanstuff()
             if (now - b->timer > 60 * chan->ban_time &&
                 !u_sticky_mask(chan->bans, b->mask) &&
                 !u_sticky_mask(global_bans, b->mask) &&
-                !extban_is_unenforceable(b->mask) &&
                 expired_mask(chan, b->who)) {
               putlog(LOG_MODES, chan->dname,
                      "(%s) Channel ban on %s expired.", chan->dname, b->mask);
