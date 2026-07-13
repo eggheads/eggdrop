@@ -703,12 +703,13 @@ static void check_expired_chanstuff()
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
 
       key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-      if (key[0])
+      if (key[0]) {
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
-      else
+      } else {
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
+      }
     }
   }
 }

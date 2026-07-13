@@ -245,7 +245,6 @@ static int u_match_mask(maskrec *rec, char *mask)
 
   for (; rec; rec = rec->next) {
     if (extban_parse(rec->mask, &type, &arg)) {
-<<<<<<< HEAD
       if (!m || !m->nick[0] || !m->account[0])
         continue;
       if (accountflag && (type == accountflag[0])) {

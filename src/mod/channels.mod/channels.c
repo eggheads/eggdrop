@@ -121,21 +121,6 @@ int extban_parse(const char *mask, char *type, const char **arg) {
       *arg = mask + 2; /* a:x!y@z -- mask+2 = x */
     return 1;
   }
-
-/* Break out mask with a prefix */
-  if (isalnum((unsigned char) mask[1]) && mask[2] == ':') {
-    get_extban_prefix(&advertised_prefix);
-    if (type)
-      *type = mask[1];
-    if (arg)
-      *arg = mask + 3; /* ~a:x!y@z -- mask+3 = x */
-    /* Prevent ee:x!y@z from sneaking through */
-    if (advertised_prefix && mask[0] != advertised_prefix) {
-      return 0;
-    }
-    return 1;
-  }
-
   return 0;
 }
 

@@ -704,7 +704,7 @@ static void recheck_bans(struct chanset_t *chan)
         continue;
       }
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY) || extban_is_unmatchable(u->mask)))
+          (u->flags & MASKREC_STICKY) || extban_is_unmatchable(u->mask))) {
         add_mode(chan, '+', 'b', u->mask);
       }
     }
@@ -819,7 +819,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
     }
   }
   if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
-      extban_is_unmatchable(banmask)))
+      extban_is_unmatchable(banmask))) {
     add_mode(chan, '+', 'b', banmask);
   }
 }
