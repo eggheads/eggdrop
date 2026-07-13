@@ -38,6 +38,23 @@ static int is_extban_flag_advertised(char flag)
 }
 */
 
+static int extban_flag_supported(char flag)
+{
+  const char *accountflag, *value, *comma, *types;
+
+  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (accountflag && accountflag[0] && flag == accountflag[0])
+    return 1;
+
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0])
+    return 0;
+
+  comma = strchr(value, ',');
+  types = comma ? comma + 1 : value;
+  return strchr(types, flag) ? 1 : 0;
+}
+
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
 static void truncate_mask_hostname(char *s) {
   char *r = NULL;
@@ -57,7 +74,6 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   char extbanflag = 0;
   int extban_enabled = 1;
-  const char *value, *comma, *types;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -142,14 +158,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       strlcpy(s, who, sizeof s);
       /* If its an extban, check if it needs to be set as a sticky ban */
       if (extban_parse(s, &extbanflag, NULL)) {
-        value = servermod_isupport_get("EXTBAN");
-        if (value && value[0]) {
-          comma = strchr(value, ',');
-          types = comma ? comma + 1 : value;
-          extban_enabled = strchr(types, extbanflag) ? 1 : 0;
-        } else {
-          extban_enabled = 0;
-        }
+        extban_enabled = extban_flag_supported(extbanflag);
       }
     } else {
       /* Fix missing ! or @ BEFORE checking against myself */
@@ -194,7 +203,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         if (!extbanflag || extban_enabled)
           (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         else
-          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
       }
     } else {

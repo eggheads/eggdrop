@@ -97,14 +97,20 @@ static void update_idle(char *chname, char *nick)
 static int extban_flag_supported(char flag)
 {
   module_entry *me;
-  const char *value = NULL, *comma, *types;
+  const char *accountflag = NULL, *value = NULL, *comma, *types;
 
   me = module_find("server", 0, 0);
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
+    accountflag = (const char *)isupport_get("ACCOUNTEXTBAN",
+        strlen("ACCOUNTEXTBAN"));
     value = (const char *)isupport_get("EXTBAN", strlen("EXTBAN"));
   }
-  if (!value || !value[0])
+  if (accountflag && accountflag[0] && flag == accountflag[0]) {
+    return 1;
+  }
+  if (!value || !value[0]) {
     return 0;
+  }
 
   comma = strchr(value, ',');
   types = comma ? comma + 1 : value;
@@ -114,22 +120,23 @@ static int extban_flag_supported(char flag)
   return 0;
 }
 
-static int extban_requires_server_matching(const char *mask)
+static int extban_is_matchable(const char *mask)
 {
   char extflag;
   const char *extarg, *acc;
 
   if (!extban_parse(mask, &extflag, &extarg))
     return 0;
-
-  if (extflag == 'U')
-    return 0;
-
   acc = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-  if (acc && acc[0] && extflag == acc[0])
-    return 0;
+  if (acc && acc[0] && extflag == acc[0]) {
+    return 1;
+  }
+  return strchr(MATCHABLE_EXTBANS, extflag) ? 1 : 0;
+}
 
-  return 1;
+static int extban_is_unmatchable(const char *mask)
+{
+  return extban_parse(mask, NULL, NULL) && !extban_is_matchable(mask);
 }
 
 /* Document whether a ban matches a specific channel member.
@@ -149,16 +156,41 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
-
-  if (v && v[0] && type == v[0])
-    return !rfc_casecmp(m->account, arg);
-
-  if (type == 'U')
-    return !strcmp(m->account, "*") && match_addr((char *) arg, (char *) user);
-
+  /* Try account extban matching */
+  if (v && v[0] && type == v[0]) {
+    return m->account[0] && !rfc_casecmp(m->account, arg);
+  }
+  /* Locally matchable extbans match their argument as a usermask. */
+  if (strchr(MATCHABLE_EXTBANS, type)) {
+    return match_addr((char *) arg, (char *) user);
+  }
   return 0;
 }
 
+static int banmask_enforces_member(const char *banmask, const char *user, memberlist *m)
+{
+  module_entry *me;
+  char type;
+  const char *v = NULL, *arg = NULL;
+
+  if (!extban_parse(banmask, &type, &arg)) {
+    return match_addr((char *) banmask, (char *) user);
+  }
+
+  me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
+    v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+  }
+  if (v && v[0] && type == v[0]) {
+    return m->account[0] && !rfc_casecmp(m->account, arg);
+  }
+
+  if (strchr(ENFORCEABLE_EXTBANS, type)) {
+    return match_addr((char *) arg, (char *) user);
+  }
+
+  return 0;
+}
 
 static int banmask_list_matches_member(maskrec *list, const char *user, memberlist *m)
 {
@@ -517,7 +549,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
-        banmask_matches_member(hostmask, s, m) && !chan_sentkick(m) &&
+        banmask_enforces_member(hostmask, s, m) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
         !glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
         isexempted(chan, s)) || (u_match_mask(global_exempts, s) ||
@@ -563,6 +595,11 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       if (banmask_matches_member(b->mask, user, m)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
+        if (!banmask_enforces_member(b->mask, user, m)) {
+          do_mask(chan, chan->channel.ban, b->mask, 'b');
+          b->lastactive = now;
+          return;
+        }
         get_user_flagrec(get_user_from_member(m), &fr,
                          chan->dname);
         if (!glob_friend(fr) && !chan_friend(fr)) {
@@ -667,8 +704,7 @@ static void recheck_bans(struct chanset_t *chan)
         continue;
       }
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY) ||
-          extban_requires_server_matching(u->mask))) {
+          (u->flags & MASKREC_STICKY) || extban_is_unmatchable(u->mask)))
         add_mode(chan, '+', 'b', u->mask);
       }
     }
@@ -783,7 +819,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
     }
   }
   if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
-      extban_requires_server_matching(banmask))) {
+      extban_is_unmatchable(banmask)))
     add_mode(chan, '+', 'b', banmask);
   }
 }
@@ -2273,7 +2309,7 @@ static int gotjoin(char *from, char *channame)
               (!use_exempts || !isexempted(chan, from)) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
-              if (banmask_matches_member(b->mask, from, m)) {
+              if (banmask_enforces_member(b->mask, from, m)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
                         IRC_YOUREBANNED);
                 m->flags |= SENTKICK;

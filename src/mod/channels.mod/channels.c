@@ -71,12 +71,50 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
  * Supports both prefixed (<prefix><type>:<arg>) and non-prefixed (<type>:<arg>) forms.
  */
 int extban_parse(const char *mask, char *type, const char **arg) {
-  char advertised_prefix = '\0';
+  const char *value, *comma;
+  char prefix = 0;
+
+  /* now we know mask is set, don't check it again later*/
   if (!mask || !mask[0] || strlen(mask) < 3)
     return 0;
 
-/* Break out mask with no prefix  */
+  value = servermod_isupport_get("EXTBAN");
+  if (value && value[0]) {
+    comma = strchr(value, ',');
+    if (comma && comma - value == 1)
+      prefix = value[0];
+  }
+
+  /* Break out prefixed masks first when the server advertised a prefix. */
+  if (prefix && mask[0] == prefix && isalnum((unsigned char) mask[1]) &&
+      mask[2] == ':') {
+    if (type) {
+      *type = mask[1];
+    }
+    if (arg) {
+      *arg = mask + 3;
+    }
+    return 1;
+  }
+
+  /* Break out no-prefix mask. If EXTBAN is known and did not advertise a
+   * prefix, this is the only accepted form.
+   */
   if (isalnum((unsigned char) mask[0]) && mask[1] == ':') {
+    if (type) {
+      *type = mask[0];
+    }
+    if (arg) {
+      *arg = mask + 2;
+    }
+    return 1;
+  }
+
+/* If EXTBAN is unknown (e.g. before connect), retain the historical fallback
+ * so stored prefixed extbans can still be parsed.
+ */
+  if ((!value || !value[0]) && isalnum((unsigned char) mask[1]) &&
+      mask[2] == ':') {
     if (type)
       *type = mask[0];
     if (arg)
@@ -902,6 +940,27 @@ static char *traced_account_extban(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
+static char *traced_extban_flags(ClientData cdata, Tcl_Interp *irp,
+                                  EGG_CONST char *name1,
+                                  EGG_CONST char *name2, int flags)
+{
+  const char *extban = servermod_isupport_get("EXTBAN");
+  const char *comma, *extban_flags = "";
+
+  if (extban && extban[0]) {
+    comma = strchr(extban, ',');
+    extban_flags = comma ? comma + 1 : extban;
+  }
+
+  Tcl_SetVar2(interp, name1, name2, extban_flags, TCL_GLOBAL_ONLY);
+  if (flags & TCL_TRACE_UNSETS) {
+    Tcl_TraceVar(interp, "extban-flags",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_extban_flags, NULL);
+  }
+  return NULL;
+}
+
 static tcl_ints my_tcl_ints[] = {
   {"use-info",                 &use_info,                0},
   {"quiet-save",               &quiet_save,              0},
@@ -983,7 +1042,11 @@ static char *channels_close()
   Tcl_UntraceVar(interp, "account-extban",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_account_extban, NULL);
+  Tcl_UntraceVar(interp, "extban-flags",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_extban_flags, NULL);
   traced_account_extban(NULL, interp, "account-extban", NULL, TCL_TRACE_READS);
+  traced_extban_flags(NULL, interp, "extban-flags", NULL, TCL_TRACE_READS);
   rem_help_reference("channels.help");
   rem_help_reference("chaninfo.help");
   module_undepend(MODULE_NAME);
@@ -1139,6 +1202,10 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "account-extban",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_account_extban, NULL);
+  Tcl_TraceVar(interp, "extban-flags",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_extban_flags, NULL);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);

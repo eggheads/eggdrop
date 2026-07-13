@@ -31,6 +31,16 @@
 #define MASKREASON_MAX 307    /* Max length of ban/invite/exempt/etc reasons. */
 #define MASKREASON_LEN (MASKREASON_MAX + 1)
 
+/* Extban flags Eggdrop can enforce by kicking matching users.
+ * ACCOUNTEXTBAN is also enforceable and is checked dynamically.
+ */
+#define ENFORCEABLE_EXTBANS "U"
+
+/* Extban flags Eggdrop can match against nick!user@host masks for
+ * dynamic ban placement/removal without enforcing kicks.
+ */
+#define MATCHABLE_EXTBANS "UABCmNpqQT"
+
 /* Flags for reset_chan_info() */
 #define CHAN_RESETMODES   0x01
 #define CHAN_RESETWHO     0x02

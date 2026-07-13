@@ -2929,6 +2929,13 @@ account-extban
 
   Module: channel
 
+extban-flags
+^^^^^^^^^^^^
+  Value: a string containing the allowed extban flag characters advertised by EXTBAN in the 005 connection message. If EXTBAN advertises a prefix, such as "$,aUq", the prefix is omitted and this variable contains only the flags, such as "aUq".
+
+  Module: channel
+
+
 Binds
 -----
 
