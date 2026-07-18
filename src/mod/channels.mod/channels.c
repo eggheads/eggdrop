@@ -69,6 +69,10 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 
 /* Parse extban mask into type and arg pointers.
  * Supports both prefixed (<prefix><type>:<arg>) and non-prefixed (<type>:<arg>) forms.
+ * Returns a 1 if mask is an extban mask, 0 otherwise
+ * If 1 is returned:
+ *   type is filled with the extban character
+ *   arg points to the extban value
  */
 int extban_parse(const char *mask, char *type, const char **arg) {
   const char *value, *comma;

@@ -158,6 +158,10 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       strlcpy(s, who, sizeof s);
       /* If its an extban, check if it needs to be set as a sticky ban */
       if (extban_parse(s, &extbanflag, NULL)) {
+        if (!isalnum((unsigned char) s[0]) && isalnum((unsigned char) s[1]) &&
+            s[2] == ':') {
+          extbanflag = s[1];
+        }
         extban_enabled = extban_flag_supported(extbanflag);
       }
     } else {
