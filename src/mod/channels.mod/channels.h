@@ -129,6 +129,7 @@ static void remove_channel(struct chanset_t *);
 static intptr_t ngetudef(char *, char *);
 static int expired_mask(struct chanset_t *chan, char *who);
 static int check_tcl_chanset(const char *, const char *, const char *);
+static int extban_flag_supported(char flag);
 
 
 #else
