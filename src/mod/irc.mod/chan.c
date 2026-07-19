@@ -94,32 +94,6 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
-static int extban_flag_supported(char flag)
-{
-  module_entry *me;
-  const char *accountflag = NULL, *value = NULL, *comma, *types;
-
-  me = module_find("server", 0, 0);
-  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
-    accountflag = (const char *)isupport_get("ACCOUNTEXTBAN",
-        strlen("ACCOUNTEXTBAN"));
-    value = (const char *)isupport_get("EXTBAN", strlen("EXTBAN"));
-  }
-  if (accountflag && accountflag[0] && flag == accountflag[0]) {
-    return 1;
-  }
-  if (!value || !value[0]) {
-    return 0;
-  }
-
-  comma = strchr(value, ',');
-  types = comma ? comma + 1 : value;
-  for (; *types; types++)
-    if (*types == flag)
-      return 1;
-  return 0;
-}
-
 static int extban_is_matchable(const char *mask)
 {
   char extflag;

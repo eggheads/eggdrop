@@ -450,6 +450,7 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
   }
 }
 
+/* Takes mask in the full $a:mask format */
 static int extban_is_matchable(const char *mask)
 {
   char extflag;

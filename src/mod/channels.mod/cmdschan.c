@@ -38,23 +38,6 @@ static int is_extban_flag_advertised(char flag)
 }
 */
 
-static int extban_flag_supported(char flag)
-{
-  const char *accountflag, *value, *comma, *types;
-
-  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
-  if (accountflag && accountflag[0] && flag == accountflag[0])
-    return 1;
-
-  value = servermod_isupport_get("EXTBAN");
-  if (!value || !value[0])
-    return 0;
-
-  comma = strchr(value, ',');
-  types = comma ? comma + 1 : value;
-  return strchr(types, flag) ? 1 : 0;
-}
-
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
 static void truncate_mask_hostname(char *s) {
   char *r = NULL;
@@ -156,13 +139,15 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       who[UHOSTMAX - 4] = 0;
     if (is_extban_mask(who)) {
       strlcpy(s, who, sizeof s);
-      /* If its an extban, check if it needs to be set as a sticky ban */
+      /* If its an extban, check if it is supported by the server */
       if (extban_parse(s, &extbanflag, NULL)) {
         if (!isalnum((unsigned char) s[0]) && isalnum((unsigned char) s[1]) &&
             s[2] == ':') {
           extbanflag = s[1];
         }
         extban_enabled = extban_flag_supported(extbanflag);
+        if (!extban_is_matchable(s))
+          sticky = 1;
       }
     } else {
       /* Fix missing ! or @ BEFORE checking against myself */
@@ -229,7 +214,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
           for (chan = chanset; chan != NULL; chan = chan->next)
             (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         } else
-          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
       }
     }

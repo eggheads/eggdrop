@@ -30,6 +30,7 @@
 static Function *global = NULL;
 static void get_extban_prefix(char *prefix);
 static int is_extban_mask(const char *mask);
+static int extban_is_matchable(const char *mask);
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
 
@@ -126,6 +127,27 @@ int extban_parse(const char *mask, char *type, const char **arg) {
     return 1;
   }
   return 0;
+}
+
+/* Return 1 if the server currently advertises support for the given extban
+ * flag, either through ACCOUNTEXTBAN or the EXTBAN type list; otherwise return
+ * 0 so callers can avoid trying to set or recheck it on this server.
+ */
+int extban_flag_supported(char flag)
+{
+  const char *accountflag, *value, *comma, *types;
+
+  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (accountflag && accountflag[0] && flag == accountflag[0])
+    return 1;
+
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0])
+    return 0;
+
+  comma = strchr(value, ',');
+  types = comma ? comma + 1 : value;
+  return strchr(types, flag) ? 1 : 0;
 }
 
 /* Return 1 if mask uses extban syntax. */
@@ -1108,6 +1130,7 @@ static Function channels_table[] = {
   /* 48 - 51 */
   (Function) & global_invite_time,
   (Function) extban_parse,
+  (Function) extban_flag_supported
 };
 
 char *channels_start(Function *global_funcs)
