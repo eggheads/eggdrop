@@ -103,7 +103,7 @@ static int is_extban_mask(const char *mask)
 }
 
 /* Extban prefix from ISUPPORT EXTBAN, if present.
- * EXTBAN grammar is [prefix],<types> 
+ * EXTBAN grammar is [prefix],<types>
  */
 static void get_extban_prefix(char *prefix)
 {

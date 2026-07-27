@@ -1628,7 +1628,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
             len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, 
+            egg_snprintf(answers + len, (sizeof answers) - len,
                 (len == 0) ? "%s" : " %s", list[0]);        /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid mode.\n",
