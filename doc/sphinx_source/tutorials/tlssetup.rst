@@ -65,4 +65,4 @@ will use TLS to connect to 1.2.3.4 on port 5555 the next time a connection is at
 
 Additional Information
 ----------------------
-For additional information and a more thorough explanation of Eggdrop's TLS implementation, please read the `TLS docs <https://docs.eggheads.org/using/tls.html>`_.
+For additional information and a more thorough explanation of Eggdrop's TLS implementation, please read the :ref:`tls` docs.
