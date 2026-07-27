@@ -27,8 +27,6 @@
 #include "ctcp.h"
 #include "src/mod/module.h"
 #include "server.mod/server.h"
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 static Function *global = NULL, *server_funcs = NULL;
 
@@ -83,7 +81,7 @@ static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
+static int ctcp_CLIENTINFO(char *nick, char *uhost, char *handle,
                            char *object, char *keyword, char *msg)
 {
   char *p = NULL;
@@ -110,8 +108,6 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
     p = CLIENTINFO_ACTION;
   else if (!strcasecmp(msg, "dcc"))
     p = CLIENTINFO_DCC;
-  else if (!strcasecmp(msg, "utc"))
-    p = CLIENTINFO_UTC;
   else if (!strcasecmp(msg, "ping"))
     p = CLIENTINFO_PING;
   else if (!strcasecmp(msg, "echo"))

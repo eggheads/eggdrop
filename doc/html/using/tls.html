@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TLS support &#8212; Eggdrop 1.10.0rc2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <title>TLS support &#8212; Eggdrop 1.10.1rc2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=3bcbdadc"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=290de6c6"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="IRCv3 support" href="ircv3.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.0rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.1rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="ipv6.html" title="IPv6 support"
              accesskey="P">previous</a> |
@@ -74,7 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firststeps.html">Common First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Tcl Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
@@ -106,7 +106,7 @@
           <div class="body" role="main">
             
   <p>TLS support
-Last revised: Jan 26, 2020</p>
+Last revised: Mar 1, 2025</p>
 <section id="tls-support">
 <h1>TLS support<a class="headerlink" href="#tls-support" title="Link to this heading">¶</a></h1>
 <p>This document provides information about TLS support which is a new
@@ -150,7 +150,7 @@ to configure their own environments and assist in debugging).</p>
 a plus sign. Example: .jump irc.server.com +6697. The same goes for
 the server list in the config file.</p>
 <p>Some NickServ services allow you to authenticate with a certificate.
-Eggdrop will use the certificte pair specified in ssl-privatekey/
+Eggdrop will use the certificate pair specified in ssl-privatekey/
 ssl-certificate for authentication.</p>
 </section>
 <section id="botnet">
@@ -228,8 +228,8 @@ command from the Eggdrop source directory:</p>
 </div>
 <p>When asked about bot’s handle, put your handle instead. How to use your
 new certificate to connect to Eggdrop, depends on your irc client.
-To connect to your bot from the command line, you can use the OpenSSL
-ssl client:</p>
+To connect to your bot from the command line using the key/cert files
+generated in the previous step, you can use the OpenSSL ssl client</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">s_client</span> <span class="o">-</span><span class="n">cert</span> <span class="n">my</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">key</span> <span class="n">my</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">connect</span> <span class="n">host</span><span class="p">:</span><span class="n">sslport</span>
 </pre></div>
 </div>
@@ -326,9 +326,9 @@ or expired certificates. Details are documented in eggdrop.conf.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, Eggheads.
-      Last updated on Oct 13, 2024.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    &#169; Copyright 2025, Eggheads.
+      Last updated on Jun 28, 2025.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
         </div>
         <div class="clearer"></div>

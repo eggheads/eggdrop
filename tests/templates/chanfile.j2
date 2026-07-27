@@ -1,0 +1,15 @@
+{#- Chanfile template.
+
+   Tests pass `chanfile_channels` as a list of {"name": ..., "options": ...}
+   records. `options` is a Tcl-syntax options block (verbatim) — defaults to
+   the empty block `{}`, which is enough to make findchan_by_dname() return
+   the channel during userfile load. By default the list is empty and the
+   chanfile is empty.
+
+   Channels added via the eggdrop.conf `channels` template variable are
+   *also* registered (via `channel add` lines in the conf) and run before
+   the chanfile, so most tests don't need to populate this file at all.
+-#}
+{%- for ch in chanfile_channels -%}
+channel add {{ ch.name }} { {{ ch.options | default('') }} }
+{% endfor -%}

@@ -29,7 +29,7 @@ depend:
 	$(CC) -I../.. -I../../src -DMAKING_DEPEND -DHAVE_CONFIG_H -MM *.c > .depend
 
 clean:
-	@rm -f .depend *.o *~
+	@rm -f .depend *.o *~ *.gcda *.gcno
 
 compat: $(OBJS)
 

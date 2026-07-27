@@ -1,6 +1,6 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.69)
+AC_PREREQ(2.71)
 
 sinclude(../eggmod.m4)
 builtin(include,../../../m4/python.m4)
@@ -49,6 +49,12 @@ if test "x$python_config_bin" != "x"; then
 
   AC_MSG_CHECKING([for python C flags])
   PYTHON_CFLAGS=`$python_config_bin $PYTHON_CONFIG_ARGS --cflags`
+  # remove preprocessor args
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-Wp,[[^ ]]*//g'`
+  # remove march
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-march=[[^ ]]*//g'`
+  # remove mtune
+  PYTHON_CFLAGS=`echo $PYTHON_CFLAGS | sed 's/-mtune=[[^ ]]*//g'`
   AC_MSG_RESULT([$PYTHON_CFLAGS])
   AC_SUBST(PYTHON_CFLAGS)
 
@@ -61,7 +67,7 @@ fi
 
 # Check python path
 AC_ARG_VAR([PYTHON_VERSION],[The installed Python
-version to use, for example '2.3'. This string
+version to use, for example '3.8'. This string
 will be appended to the Python interpreter
 canonical name.])
 
@@ -73,7 +79,7 @@ AC_MSG_CHECKING([python version is >= 3.8.0])
 if test "x$ax_check_ver" = x"no"; then
   python_avail="false"
   AC_MSG_RESULT([no ($PYTHON_VERSION)])
-  AC_MSG_WARN([Eggdrop requires python version 3.8.0 or higher])
+  AC_MSG_WARN([Compiling Eggdrop with python requires python version 3.8.0 or higher])
 else
   AC_MSG_RESULT([yes ($PYTHON_VERSION)])
 fi

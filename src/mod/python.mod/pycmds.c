@@ -20,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>
-#include <datetime.h>
-#include <tcl.h>
-#include "src/mod/module.h"
 
 typedef struct {
   PyObject_HEAD
@@ -175,6 +171,7 @@ static PyObject *py_parse_tcl_list(PyObject *self, PyObject *args) {
   if (Tcl_ListObjLength(tclinterp, strobj, &max) != TCL_OK) {
     Tcl_DecrRefCount(strobj);
     PyErr_SetString(EggdropError, "Supplied string is not a Tcl list");
+    return NULL;
   }
   result = PyList_New(max);
   for (int i = 0; i < max; i++) {

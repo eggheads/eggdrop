@@ -1227,11 +1227,9 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
  * Returns 2 if maximum number of nicks to be monitored reached
  */
 static int monitor_add(char * nick, int send) {
-  struct monitor_list *entry = nmalloc(sizeof(struct monitor_list));
+  struct monitor_list *entry;
   struct monitor_list *current = monitor;
   int count = 0;
-
-  memset(entry, 0, sizeof *entry);
 
   /* Check for duplicates before adding */
   while (current != NULL) {
@@ -1244,13 +1242,14 @@ static int monitor_add(char * nick, int send) {
   if (count >= max_monitor) {
     return 2;
   }
+  entry = nmalloc(sizeof(struct monitor_list));
+  memset(entry, 0, sizeof *entry);
   strlcpy(entry->nick, nick, NICKLEN);
   entry->next = monitor;
   monitor = entry;
   if (send) {
     dprintf(DP_SERVER, "MONITOR + %s\n", nick);
   }
-
   return 0;
 }
 
@@ -1923,7 +1922,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
     dcc[i].port = atoi(prt);
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-    dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
@@ -2080,7 +2078,7 @@ static void server_die()
     dprintf(-serv, "%s\n", msg);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[->] %s", msg);
-    sleep(3);                   /* Give the server time to understand */
+    sleep(1); /* Give the server time to understand. 1s should be enough. */
   }
   nuke_server(NULL);
 }

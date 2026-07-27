@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
+#include "src/eggdrop.h"
 #include "tandem.h"
 #include "modules.h"
 
@@ -46,7 +47,7 @@ extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
-extern Tcl_Interp *interp;
+time_t now2_last = 0; /* cache expensive localtime() */
 
 char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
 char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
@@ -86,6 +87,8 @@ int expmem_misc()
     for (item = current->first; item; item = item->next)
       tot += sizeof(struct help_list_t) + strlen(item->name) + 1;
   }
+  for (int i = 0; i < max_logs; i++)
+    tot += logs[i].szlast_len;
   return tot + (max_logs * sizeof(log_t));
 }
 
@@ -95,20 +98,9 @@ void init_misc()
 
   if (max_logs < 1)
     max_logs = 1;
-  if (logs)
-    logs = nrealloc(logs, max_logs * sizeof(log_t));
-  else
-    logs = nmalloc(max_logs * sizeof(log_t));
-  for (; last < max_logs; last++) {
-    logs[last].filename = logs[last].chname = NULL;
-    logs[last].mask = 0;
-    logs[last].f = NULL;
-    /* Added by cybah  */
-    logs[last].szlast[0] = 0;
-    logs[last].repeats = 0;
-    /* Added by rtc  */
-    logs[last].flags = 0;
-  }
+  logs = nrealloc(logs, max_logs * sizeof(log_t));
+  memset(logs + last, 0, (max_logs - last) * sizeof(log_t));
+  last = max_logs;
 }
 
 
@@ -190,6 +182,8 @@ int my_strcpy(char *a, const char *b)
 }
 
 /* Split first word off of rest and put it in first
+ *
+ * Please use splitcn() instead
  */
 void splitc(char *first, char *rest, char divider)
 {
@@ -207,14 +201,11 @@ void splitc(char *first, char *rest, char divider)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
-/*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
- * terminating null).
+/* As above, but lets you specify the 'max' number of bytes
  *
  * Example of use:
  *
- * char buf[HANDLEN + 1];
- *
- * splitcn(buf, input, "@", HANDLEN);
+ * splitcn(buf, input, '@', sizeof buf);
  *
  * <Cybah>
  */
@@ -276,6 +267,60 @@ char *newsplit(char **rest)
     *o++ = 0;
   *rest = o;
   return r;
+}
+
+// WARNING: modifies original text
+// Split IRC text into words (without the "from" component, which could also start with ':')
+// - replace all ' ' with \0, splitting into words
+// - if a word starts with ':' it is the last word, it can contain spaces
+// - return argc/argv structure (pointers into original text)
+struct parsed_irc parse_irc(char *text)
+{
+  struct parsed_irc result = {.argc = 0};
+
+  while (*text) {
+    while (*text == ' ') {
+      *text++ = '\0';
+    }
+    if (!*text) {
+      break;
+    }
+    if (result.argc == MAX_IRC_TOKENS - 1) {
+      putlog(LOG_MISC, "*", "parse_irc() error: too many tokens, PLEASE REPORT THIS BUG");
+      result.argv[result.argc++] = text;
+      break;
+    } else if (*text == ':') {
+      *text++ = '\0';
+      result.argv[result.argc++] = text;
+      break;
+    } else {
+      result.argv[result.argc++] = text;
+      while (*text && *text != ' ') {
+        text++;
+      }
+    }
+  }
+
+  return result;
+}
+
+char *join_str_array(char **argv, int argc, char *delim, char *outbuf, size_t outbufsiz)
+{
+  size_t written = 0;
+
+  if (!argc) {
+    outbuf[0] = '\0';
+    return outbuf;
+  }
+
+  for (int i = 0; i < argc; i++) {
+    written += snprintf(outbuf + written, outbufsiz - written, "%s%s", argv[i], i == argc - 1 ? "" : delim);
+    if (written >= outbufsiz) {
+      written = outbufsiz - 1;
+      break;
+    }
+  }
+  return outbuf;
 }
 
 /* maskhost(), modified to support custom mask types, as defined
@@ -516,7 +561,6 @@ void putlog (int type, char *chname, const char *format, ...)
   char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
-  static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm t;
 
   if (now2 != now2_last) {
@@ -587,7 +631,7 @@ void putlog (int type, char *chname, const char *format, ...)
           /* Check if this is the same as the last line added to
            * the log. <cybah>
            */
-          if (!strcasecmp(out + tsl, logs[i].szlast))
+          if (logs[i].szlast && !strcasecmp(out + tsl, logs[i].szlast))
             /* It is a repeat, so increment repeats */
             logs[i].repeats++;
           else {
@@ -607,7 +651,18 @@ void putlog (int type, char *chname, const char *format, ...)
                */
             }
             fputs(out, logs[i].f);
-            strlcpy(logs[i].szlast, out + tsl, LOGLINEMAX);
+            size_t l = strlen(out + tsl) + 1;
+            if (l > logs[i].szlast_len) {
+              if (!logs[i].szlast_len) {
+                logs[i].szlast_len = MIN(MAX(l, 128), LOGLINELEN);
+                logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
+              } else if (logs[i].szlast_len < LOGLINELEN) {
+                logs[i].szlast_len = MIN(MAX(l, logs[i].szlast_len << 1), LOGLINELEN);
+                logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
+              }
+            }
+            if (logs[i].szlast)
+              strlcpy(logs[i].szlast, out + tsl, logs[i].szlast_len);
           }
         }
       }
@@ -1143,7 +1198,7 @@ void debug_help(int idx)
   }
 }
 
-FILE *resolve_help(int dcc, char *file)
+static FILE *resolve_help(int dcc, char *file)
 {
 
   char s[1024];
@@ -1218,7 +1273,7 @@ static int display_tellhelp(int idx, char *file, FILE *f,
 
   if (f) {
     help_subst(NULL, NULL, 0,
-               (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+               (dcc[idx].status & (STAT_TELNET | STAT_WS)) ? 0 : HELP_IRC, NULL);
     /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
     while (!feof(f) && fgets(s, HELP_BUF_LEN, f) != NULL) {
       if (s[strlen(s) - 1] == '\n')
@@ -1309,7 +1364,7 @@ void sub_lang(int idx, char *text)
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
-             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+             (dcc[idx].status & (STAT_TELNET | STAT_WS)) ? 0 : HELP_IRC, NULL);
   strlcpy(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
@@ -1350,7 +1405,7 @@ void show_motd(int idx)
   dprintf(idx, "\n");
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0,
-             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+             (dcc[idx].status & (STAT_TELNET | STAT_WS)) ? 0 : HELP_IRC, NULL);
   /* don't check for feof after fgets, skips last line if it has no \n (ie on windows) */
   while (!feof(vv) && fgets(s, sizeof s, vv) != NULL) {
     if (s[strlen(s) - 1] == '\n')

@@ -16,6 +16,42 @@ Last revised: June 14, 2025
 
      _________________________________________________________________
 
+Eggdrop v1.10.2rc1:
+
+ General changes:
+    - Added the ability to implement extended bans
+    - Added initial handling of arbitrary modes via 005 messages
+    - Fixed compile warnings when using openssl 4.0.0
+    - Fixed a type error when compiling with Tcl 9
+    - Fixed an issue where rehashing causes an issue releasing and reopening
+      a listen port, causing Eggdrop to quit
+    - Added option for unique systemd unit naming to autobotchk
+    - Added support for declaring a python virtual environment when starting
+      with autobotchk
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - None
+
+ Module changes:
+    - Fixed traffic counter in transfer.mod
+    - Fixed a crash condition in the notes module when adding a note
+
+ Eggdrop config changes:
+    - Added Python module to eggdrop-basic.conf
+    - Removed the "offset" setting from the config
+    - Updated timezone setting description to use "time setting" instead of "timezone"
+    - Use time setting in set enz(TZ)
+
+ Documentation changes:
+    - Added partyline help to python.mod 
+    - Updated methods to connect to partyline
+    - Updated net-type settings to reflect current usage
+
+     _________________________________________________________________
+
 Eggdrop v1.10.1:
 
  General changes:
