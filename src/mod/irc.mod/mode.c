@@ -421,6 +421,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
@@ -515,6 +516,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
