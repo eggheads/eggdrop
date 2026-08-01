@@ -1,8 +1,11 @@
 
-Eggdrop Changes (Last Updated 2026-05-23):
+Eggdrop Changes (Last Updated 2026-08-01):
 __________________________________________
 
-Eggdrop v1.10.2rc1:
+Eggdrop v1.10.2rc2:
+
+
+Eggdrop v1.10.2rc1 (2026-05-23):
 
   2026-05-23 * Add bug-detect logic for #202
                  [Found by: Arkadietz / Patch by: michaelortmann]
@@ -13,6 +16,7 @@ Eggdrop v1.10.2rc1:
              * Roll webui version requirement
              * NEWS
              * Add python script tutorial to doc tree
+             * Eggdrop v1.10.2 Release Candidate 1
   2026-05-17 * Fix ident lookup bugs introduced by webui
                  [Found by: Geo / Patch by: thommey]
   2026-05-16 * Add testing framework
