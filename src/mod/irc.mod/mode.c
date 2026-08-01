@@ -421,6 +421,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
@@ -515,6 +516,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
@@ -680,7 +682,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 {
   memberlist *m;
   char ch[sizeof chan->name];
-  char s[UHOSTLEN], s1[UHOSTLEN];
+  char s[UHOSTLEN];
   struct userrec *u;
   int had_halfop;
 
@@ -695,7 +697,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   }
 
   strcpy(ch, chan->name);
-  simple_sprintf(s1, "%s!%s", nick, from);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
