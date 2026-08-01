@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from panflute import *
 
 def upper(elem, doc):
