@@ -142,8 +142,12 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       /* If its an extban, check if it is supported by the server */
       if (extban_parse(s, &extbanflag, NULL)) {
         extban_enabled = extban_flag_supported(extbanflag);
-        if (!extban_is_matchable(s))
+        if (!extban_is_matchable(s) && par[0] != '*') {
+          dprintf(idx, "Extban type '%c' cannot be matched by Eggdrop"
+                       ", so it is forced to be sticky.\n", extbanflag);
           sticky = 1;
+
+        }
       }
     } else {
       /* Fix missing ! or @ BEFORE checking against myself */
