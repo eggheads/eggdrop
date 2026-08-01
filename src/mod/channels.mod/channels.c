@@ -116,14 +116,14 @@ int extban_parse(const char *mask, char *type, const char **arg) {
   }
 
 /* If EXTBAN is unknown (e.g. before connect), retain the historical fallback
- * so stored prefixed extbans can still be parsed. With any non-alnum prefixchar.
+ * so stored prefixed extbans can still be parsediwth any non-alnum prefixchar.
  */
   if ((!value || !value[0]) && !isalnum((unsigned char) mask[0]) &&
       isalnum((unsigned char) mask[1]) && mask[2] == ':') {
     if (type)
       *type = mask[1];
     if (arg)
-      *arg = mask + 3; /* ~a:x!y@z -- mask+2 = x */
+      *arg = mask + 3; /* ~a:x!y@z -- mask+3 = x */
     return 1;
   }
   return 0;
