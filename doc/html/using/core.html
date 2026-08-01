@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Eggdrop Core Settings &#8212; Eggdrop 1.10.1rc2 documentation</title>
+    <title>Eggdrop Core Settings &#8212; Eggdrop 1.10.2rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/eggdrop.css?v=ab48a1b6" />
-    <script src="../_static/documentation_options.js?v=290de6c6"></script>
+    <script src="../_static/documentation_options.js?v=1e47a2e8"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="search" title="Search" href="../search.html" />
@@ -18,7 +18,7 @@
     <div class="header-wrapper" role="banner">
       <div class="header">
         <div class="headertitle"><a
-          href="../index.html">Eggdrop 1.10.1rc2 documentation</a></div>
+          href="../index.html">Eggdrop 1.10.2rc2 documentation</a></div>
         <div class="rel" role="navigation" aria-label="related navigation">
           <a href="features.html" title="Eggdrop Features"
              accesskey="P">previous</a> |
@@ -80,6 +80,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tlssetup.html">Enabling TLS Security on Eggdrop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/userfilesharing.html">Sharing Userfiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/firstscript.html">Writing an Eggdrop Tcl Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/pythonscript.html">Writing an Eggdrop Python Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/module.html">Writing a Basic Eggdrop Module</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Eggdrop Modules</span></p>
@@ -110,7 +111,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p>Last revised: August 29, 2023</p>
+  <p>Last revised: October 2, 2025</p>
 <section id="eggdrop-core-settings">
 <h1>Eggdrop Core Settings<a class="headerlink" href="#eggdrop-core-settings" title="Link to this heading">¶</a></h1>
 <p>This file describes the syntax and all the settings of your Eggdrop
@@ -141,19 +142,14 @@ no effect if an ident daemon is running on your bot’s machine.</p>
 <dt>set network “SomeIrcNetwork”</dt><dd><p>This setting is used only for info to share with others on your botnet.
 Set this to the IRC network your bot is connected to.</p>
 </dd>
-<dt>set timezone “EST”</dt><dd><p>This setting defines which timezone is your bot in. It’s used for internal
-routines as well as for logfile timestamping and scripting purposes.
-The timezone string specifies the name of the timezone and must be three
-or more alphabetic characters. For example, Central European Time(UTC+1)
-should be “CET”.</p>
+<dt>set timezone “America/New_York”</dt><dd><p>This setting defines which timezone your bot is in. It’s used for internal
+routines as well as for logfile timestamping and scripting purposes. It
+must be three or more alphabetic characters. For example, timezone
+“Europe/Berlin” automatically adjusts for standard time and daylight saving
+time. See
+<a class="reference external" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List">https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List</a></p>
 </dd>
-<dt>set offset “5”</dt><dd><p>The offset setting specifies the time value to be added to the local
-time to get Coordinated Universal Time (UTC aka GMT). The offset is
-positive if the local timezone is west of the Prime Meridian and
-negative if it is east. The value (in hours) must be between -23 and
-23. For example, if the timezone is UTC+1, the offset is -1.</p>
-</dd>
-<dt>set env(TZ) “$timezone $offset” (disabled by default)</dt><dd><p>If you don’t want to use the timezone setting for scripting purposes
+<dt>set env(TZ) “$timezone” (disabled by default)</dt><dd><p>If you don’t want to use the timezone setting for scripting purposes
 only, but instead everywhere possible, then use this setting.</p>
 </dd>
 </dl>
@@ -496,7 +492,7 @@ lookup (you might want to increase this if you are on a slow network).</p>
 <dt>set firewall “!sun-barr.ebay:3666”</dt><dd><p>Set this to your socks host if your Eggdrop sits behind a firewall. If
 you use a Sun “telnet passthru” firewall, prefix the host with a “!”.</p>
 </dd>
-<dt>set nat-ip “127.0.0.1”</dt><dd><p>If you have a NAT firewall (you box has an IP in one of the following
+<dt>set nat-ip “127.0.0.1”</dt><dd><p>If you have a NAT firewall (your box has an IP in one of the following
 ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
 10.0.0.0-10.255.255.255 and your firewall transparently changes your
 address to a unique address for your box) or you have IP masquerading
@@ -758,8 +754,8 @@ path to them.</p>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2025, Eggheads.
-      Last updated on Jun 28, 2025.
+    &#169; Copyright 2026, Eggheads.
+      Last updated on Aug 01, 2026.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
         </div>
