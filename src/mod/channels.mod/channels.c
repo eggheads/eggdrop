@@ -116,14 +116,14 @@ int extban_parse(const char *mask, char *type, const char **arg) {
   }
 
 /* If EXTBAN is unknown (e.g. before connect), retain the historical fallback
- * so stored prefixed extbans can still be parsed.
+ * so stored prefixed extbans can still be parsed. With any non-alnum prefixchar.
  */
-  if ((!value || !value[0]) && isalnum((unsigned char) mask[1]) &&
-      mask[2] == ':') {
+  if ((!value || !value[0]) && !isalnum((unsigned char) mask[0]) &&
+      isalnum((unsigned char) mask[1]) && mask[2] == ':') {
     if (type)
-      *type = mask[0];
+      *type = mask[1];
     if (arg)
-      *arg = mask + 2; /* a:x!y@z -- mask+2 = x */
+      *arg = mask + 3; /* ~a:x!y@z -- mask+2 = x */
     return 1;
   }
   return 0;
@@ -157,7 +157,7 @@ static int is_extban_mask(const char *mask)
 }
 
 /* Extban prefix from ISUPPORT EXTBAN, if present.
- * EXTBAN grammar is [prefix],<types> 
+ * EXTBAN grammar is [prefix],<types>
  */
 static void get_extban_prefix(char *prefix)
 {

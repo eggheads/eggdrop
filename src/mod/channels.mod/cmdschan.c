@@ -141,10 +141,6 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       strlcpy(s, who, sizeof s);
       /* If its an extban, check if it is supported by the server */
       if (extban_parse(s, &extbanflag, NULL)) {
-        if (!isalnum((unsigned char) s[0]) && isalnum((unsigned char) s[1]) &&
-            s[2] == ':') {
-          extbanflag = s[1];
-        }
         extban_enabled = extban_flag_supported(extbanflag);
         if (!extban_is_matchable(s))
           sticky = 1;
@@ -1626,7 +1622,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
             len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, 
+            egg_snprintf(answers + len, (sizeof answers) - len,
                 (len == 0) ? "%s" : " %s", list[0]);        /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid mode.\n",
