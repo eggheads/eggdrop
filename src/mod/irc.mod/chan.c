@@ -94,25 +94,6 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
-static int extban_is_matchable(const char *mask)
-{
-  char extflag;
-  const char *extarg, *acc;
-
-  if (!extban_parse(mask, &extflag, &extarg))
-    return 0;
-  acc = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-  if (acc && acc[0] && extflag == acc[0]) {
-    return 1;
-  }
-  return strchr(MATCHABLE_EXTBANS, extflag) ? 1 : 0;
-}
-
-static int extban_is_unmatchable(const char *mask)
-{
-  return extban_parse(mask, NULL, NULL) && !extban_is_matchable(mask);
-}
-
 /* Document whether a ban matches a specific channel member.
  * banmask can be normal or extban, user is the traditional userhost.
  * Returns 1 if the ban mask matches the member, 0 if not.
@@ -677,8 +658,7 @@ static void recheck_bans(struct chanset_t *chan)
       if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag)) {
         continue;
       }
-      if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY) || extban_is_unmatchable(u->mask))) {
+      if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) || (u->flags & MASKREC_STICKY))) {
         add_mode(chan, '+', 'b', u->mask);
       }
     }
@@ -792,8 +772,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
       refresh_ban_kick(chan, user, m->nick);
     }
   }
-  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
-      extban_is_unmatchable(banmask))) {
+  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky)) {
     add_mode(chan, '+', 'b', banmask);
   }
 }
