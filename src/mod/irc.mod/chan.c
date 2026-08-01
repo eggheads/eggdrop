@@ -772,6 +772,10 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
       refresh_ban_kick(chan, user, m->nick);
     }
   }
+  /* extbans overwrite sticky when not matchable, update local variable */
+  if (!sticky && (u_sticky_mask(chan->bans, banmask) || u_sticky_mask(global_bans, banmask))) {
+    sticky = 1;
+  }
   if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky)) {
     add_mode(chan, '+', 'b', banmask);
   }
