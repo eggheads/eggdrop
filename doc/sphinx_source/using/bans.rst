@@ -6,7 +6,7 @@ Bans, Invites, and Exempts
 ==========================
 
 
-  I assume that you know how bans work on IRC. Eggdrop handles bans, exempts
+  Eggdrop handles bans, exempts
   and invites in various ways, and this file is intended to help clarify how
   these modes are used within the bot. From here on, 'mode' applies to all
   three modes (bans, exempts, and invites) unless otherwise specified. There
@@ -73,4 +73,18 @@ Bans, Invites, and Exempts
              (defined in config file) or until the channel goes -i again,
              whichever happens last.
 
-  Copyright (C) 1999 - 2025 Eggheads Development Team
+-----------------------
+Extended Bans (EXTBANS)
+-----------------------
+
+As of version 1.10.2, Eggdrop incorportes extended ban support. Exteneded bans give new functionality to the traditional IRC ban through the use of new prefix to the banmask. Eggdrop currently only supports single-character extended ban flags, not longform (ie "a", but not "account").
+
+When a ban is added through Eggdrop with the .+extban command, Eggdrop automatically takes the EXTBAN prefix for the server and prepends it to the EXTBAN flag the user provides. This is the preferred method of adding extbans to ensure they are functionally added to Eggdrop
+
+If you add an extended ban via .+ban instead of .+extban, Eggdrop assumes you know what you are doing and gives the user lattitude to set what they want. When an extban ban is added through Eggdrop with the .+ban command, Eggdrop identifies and parses the supplied mask as extban syntax before storing it. Eggdrop will then check whether the provided extban flag is supported by the current server, either through ACCOUNTEXTBAN or the advertised EXTBAN flags. If the flag is not supported, Eggdrop will save the ban internally but will not set it on the channel until connected to a server that supports that flag. If the flag is supported and locally matchable (ACCOUNTEXTBAN or one of UABCmNpqQT), Eggdrop will store it like a normal ban. 
+
+However, some extended bans cannot be matched by Eggdrop (for example, an extended ban that matches if a user is on a channel. If the extban is a valid flag but cannot be matched by Eggdrop, it is automatically stored as sticky. Because it cannot be matched, it will be kept set on the channel despite any dynamic-ban channel status set.
+
+If a user or server sets an extended ban directly on the channel and it contains a banmask that Eggdrop can match against, Eggdrop tracks it as a normal channel banlist entry, subject to normal channel banlist handling, including removal after ban-time when +dynamicbans is enabled (unless it corresponds to a sticky internal ban).
+
+The only extended bans that can be enforced with a kick via +enforcebans are the value of ACCOUNTEXTBAN, and U. These extended ban flags are eligible for Eggdrop’s local kick/enforcement behavior; other matchable extbans are set and tracked like bans but Eggdrop does lacks the ability to know if the user violates them and cannot kick users itself.

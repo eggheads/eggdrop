@@ -57,7 +57,6 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   char extbanflag = 0;
   int extban_enabled = 1;
-  const char *value, *comma, *types;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -140,15 +139,14 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       who[UHOSTMAX - 4] = 0;
     if (is_extban_mask(who)) {
       strlcpy(s, who, sizeof s);
-      /* If its an extban, check if it needs to be set as a sticky ban */
+      /* If its an extban, check if it is supported by the server */
       if (extban_parse(s, &extbanflag, NULL)) {
-        value = servermod_isupport_get("EXTBAN");
-        if (value && value[0]) {
-          comma = strchr(value, ',');
-          types = comma ? comma + 1 : value;
-          extban_enabled = strchr(types, extbanflag) ? 1 : 0;
-        } else {
-          extban_enabled = 0;
+        extban_enabled = extban_flag_supported(extbanflag);
+        if (!extban_is_matchable(s) && par[0] != '*') {
+          dprintf(idx, "Extban type '%c' cannot be matched by Eggdrop"
+                       ", so it is forced to be sticky.\n", extbanflag);
+          sticky = 1;
+
         }
       }
     } else {
@@ -194,7 +192,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         if (!extbanflag || extban_enabled)
           (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         else
-          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
       }
     } else {
@@ -216,7 +214,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
           for (chan = chanset; chan != NULL; chan = chan->next)
             (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         } else
-          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
       }
     }
@@ -1628,7 +1626,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
             len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, 
+            egg_snprintf(answers + len, (sizeof answers) - len,
                 (len == 0) ? "%s" : " %s", list[0]);        /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid mode.\n",

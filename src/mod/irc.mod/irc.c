@@ -624,7 +624,6 @@ static void check_expired_chanstuff()
             if (now - b->timer > 60 * chan->ban_time &&
                 !u_sticky_mask(chan->bans, b->mask) &&
                 !u_sticky_mask(global_bans, b->mask) &&
-                !extban_is_unenforceable(b->mask) &&
                 expired_mask(chan, b->who)) {
               putlog(LOG_MODES, chan->dname,
                      "(%s) Channel ban on %s expired.", chan->dname, b->mask);
@@ -704,12 +703,13 @@ static void check_expired_chanstuff()
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
 
       key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-      if (key[0])
+      if (key[0]) {
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
-      else
+      } else {
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
+      }
     }
   }
 }

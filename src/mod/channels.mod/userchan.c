@@ -241,30 +241,24 @@ static int u_match_mask(maskrec *rec, char *mask)
     }
   }
 
-  /* Loop through all ban records, see if user matches based on mask or
-   * flag (extban).
-   */
   accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+
   for (; rec; rec = rec->next) {
-    /* Am I an extban? */
     if (extban_parse(rec->mask, &type, &arg)) {
-      if (!m || !m->nick[0] || !m->account[0]) {
+      if (!m || !m->nick[0] || !m->account[0])
         continue;
-      }
       if (accountflag && (type == accountflag[0])) {
-        if (!rfc_casecmp(m->account, arg)) {
+        if (!rfc_casecmp(m->account, arg))
           return 1;
-        }
       } else if (type == 'U') {
-        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask)) {
+        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask))
           return 1;
-        }
       }
       continue;
     }
-
-    if (match_addr(rec->mask, mask))
+    if (match_addr(rec->mask, mask)) {
       return 1;
+    }
   }
   return 0;
 }
@@ -456,6 +450,22 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
   }
 }
 
+/* Takes mask in the full $a:mask format */
+static int extban_is_matchable(const char *mask)
+{
+  char extflag;
+  const char *extarg, *acc;
+
+  if (!extban_parse(mask, &extflag, &extarg))
+    return 0;
+
+  acc = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (acc && acc[0] && extflag == acc[0])
+    return 1;
+
+  return strchr(MATCHABLE_EXTBANS, extflag) ? 1 : 0;
+}
+
 /* Note: If first char of note is '*' it's a sticky ban.
  */
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
@@ -467,6 +477,8 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 
   if (is_extban_mask(ban)) {
     strlcpy(host, ban, sizeof host);
+    if (!extban_is_matchable(host))
+      flags |= MASKREC_STICKY;
   } else {
     /* Choke check: fix broken bans (must have '!' and '@') */
     fix_broken_mask(host, ban, sizeof host);

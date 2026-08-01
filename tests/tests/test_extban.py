@@ -578,3 +578,87 @@ def test_partyline_pls_ban_extban_works_without_server_mod(
     # Nothing stored from the +extban attempt.
     assert bridge.eval_ok("isban a:foo") == "0"
     assert bridge.eval_ok("isban ~a:foo") == "0"
+
+# ---------- dynamic ban-time expiry for channel banlist masks ----------
+
+
+@pytest.mark.timeout(90)
+def test_dynamic_ban_time_expiry_removes_normal_and_extban_channel_modes(
+    eggdrop_config,
+    mock_ircd: MockIrcd,
+    request: pytest.FixtureRequest,
+) -> None:
+    """`+dynamicbans` expires normal and extended channel ban modes alike.
+
+    This drives server-side +b modes rather than internal userfile bans so the
+    assertions cover the channel banlist cleanup path in irc.mod. `ban-time` is
+    set negative to make the masks eligible on the next minutely hook without a
+    multi-minute sleep; the dynamicbans gate is still the real one.
+    """
+    eggdrop_config.render(
+        channels=[
+            {"name": "#dyn", "chanmode": "+nt"},
+            {"name": "#static", "chanmode": "+nt"},
+        ]
+    )
+    request.getfixturevalue("eggdrop_proc")
+    tcl_bridge: BridgeClient = request.getfixturevalue("tcl_bridge")
+
+    drive_registration(
+        mock_ircd,
+        isupport_tokens=["EXTBAN=$,aUq", "ACCOUNTEXTBAN=a"],
+    )
+    dyn_chan = drive_join_with_names(mock_ircd, "@TestBot")
+    static_chan = drive_join_with_names(mock_ircd, "@TestBot")
+    assert dyn_chan == "#dyn"
+    assert static_chan == "#static"
+
+    tcl_bridge.eval_ok(f'channel set "{dyn_chan}" +dynamicbans ban-time -1')
+    tcl_bridge.eval_ok(f'channel set "{static_chan}" -dynamicbans ban-time -1')
+    assert tcl_bridge.eval_ok(f'channel get "{dyn_chan}" dynamicbans') == "1"
+    assert tcl_bridge.eval_ok(f'channel get "{static_chan}" dynamicbans') == "0"
+
+    dynamic_masks = ["*!*@dynamic.example", "$a:geo"]
+    static_masks = ["*!*@static.example", "$a:staticgeo"]
+
+    for mask in dynamic_masks:
+        mock_ircd.send(f":Oper!oper@mock MODE {dyn_chan} +b {mask}")
+    for mask in static_masks:
+        mock_ircd.send(f":Oper!oper@mock MODE {static_chan} +b {mask}")
+
+    for mask in dynamic_masks:
+        wait_for(
+            lambda mask=mask: tcl_bridge.eval_ok(
+                f'ischanban "{dyn_chan}" "{mask}"'
+            ) == "1",
+            timeout=5.0,
+            description=f"{mask} to appear on {dyn_chan}",
+        )
+    for mask in static_masks:
+        wait_for(
+            lambda mask=mask: tcl_bridge.eval_ok(
+                f'ischanban "{static_chan}" "{mask}"'
+            ) == "1",
+            timeout=5.0,
+            description=f"{mask} to appear on {static_chan}",
+        )
+
+    removed_dynamic: set[str] = set()
+
+    def saw_dynamic_removal(line: str) -> bool:
+        if line.startswith(f"MODE {dyn_chan} ") and "-b" in line:
+            for mask in dynamic_masks:
+                if mask in line:
+                    removed_dynamic.add(mask)
+        return len(removed_dynamic) == len(dynamic_masks)
+
+    mock_ircd.drain_until(saw_dynamic_removal, timeout=70.0)
+    assert removed_dynamic == set(dynamic_masks)
+
+    with pytest.raises(MockIrcdError):
+        mock_ircd.drain_until(
+            lambda line: line.startswith(f"MODE {static_chan} ")
+            and "-b" in line
+            and any(mask in line for mask in static_masks),
+            timeout=2.0,
+        )
