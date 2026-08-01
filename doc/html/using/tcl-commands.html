@@ -2799,6 +2799,13 @@ will be used. Types 30-39 set the host to ‘*’.</p>
 <div><p>Value: a string containing the value of ACCOUNTEXTBAN provided by the 005 connection message. This is the raw value and, depending on the IRC server formatting, could be in multiple formats such as “a”, or “a,account”.</p>
 <p>Module: channel</p>
 </div></blockquote>
+<section id="extban-flags">
+<h4>extban-flags<a class="headerlink" href="#extban-flags" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><p>Value: a string containing the allowed extban flag characters advertised by EXTBAN in the 005 connection message. If EXTBAN advertises a prefix, such as “$,aUq”, the prefix is omitted and this variable contains only the flags, such as “aUq”.</p>
+<p>Module: channel</p>
+</div></blockquote>
+</section>
 </section>
 </section>
 <section id="binds">
@@ -3645,7 +3652,7 @@ so a bind would have to use “\*” or {*} for a mask argument</p></td>
         <div class="right">
           
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2025, Eggheads.
+    &#169; Copyright 2026, Eggheads.
       Last updated on Aug 01, 2026.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
