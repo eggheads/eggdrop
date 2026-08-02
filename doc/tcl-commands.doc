@@ -3743,7 +3743,6 @@ the Tcl proc, and an explanation.
 
       sighup            - called on a kill -HUP <pid>
       sigterm           - called on a kill -TERM <pid>
-      sigill            - called on a kill -ILL <pid>
       sigquit           - called on a kill -QUIT <pid>
       save              - called when the userfile is saved
       rehash            - called just after a rehash
