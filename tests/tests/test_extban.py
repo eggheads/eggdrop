@@ -6,17 +6,21 @@ IRCd directly and (when the bot's outgoing MODE is the thing under test)
 flushes the mode buffer with `flushmode` to avoid waiting on the periodic
 HOOK_IDLE flush.
 
-What this PR introduced (and these tests cover):
+What the extban normalization (38614e90) introduced (and these tests cover):
 
-- Tcl `account-extban` global, populated from ISUPPORT ACCOUNTEXTBAN.
+- Tcl `account-extban` and `extban-flags` globals, populated from
+  ISUPPORT ACCOUNTEXTBAN / EXTBAN.
 - `.+extban <flag> <value>` partyline command. Constructs the mask using
   the EXTBAN-advertised prefix, refuses while disconnected.
-- `u_addban` no longer auto-sticky-fies extban masks at storage time
-  (option-1 swap: enforceability decided at runtime via
-  `extban_is_unenforceable`, never persisted).
-- `check_this_ban` / `recheck_bans` / `check_expired_chanstuff` treat
-  unenforceable extbans (q:, c:, ...) as if sticky for set-and-keep
-  purposes, even on `+dynamicbans` channels.
+- `u_addban` auto-stickies extbans Eggdrop cannot match locally. A flag
+  is matchable if it is in MATCHABLE_EXTBANS (channels.h) or equals the
+  ISUPPORT ACCOUNTEXTBAN letter — the latter is only known while
+  connected, so account extbans stored while disconnected are sticky.
+- Sticky is the sole keep-mechanism: `check_this_ban` / `recheck_bans`
+  push sticky records even on `+dynamicbans` channels (`check_this_ban`
+  re-derives stickiness from the stored record, so Tcl newchanban gets
+  the same push as .+ban), and `check_expired_chanstuff` expires
+  non-sticky channel bans after ban-time, extban or not.
 - `u_addban` skips the bot-self-ban check on extban masks (they don't
   have the nick!user@host shape that match would target).
 """
@@ -32,7 +36,7 @@ from support.irc_helpers import (
     drive_registration,
     wait_for_isupport,
 )
-from support.mock_ircd import MockIrcd
+from support.mock_ircd import MockIrcd, MockIrcdError
 from support.userfile_helpers import format_userfile_ban
 from support.waiters import wait_for
 
@@ -69,22 +73,25 @@ def test_account_extban_tcl_var_populated_from_isupport(
     assert tcl_bridge.eval_ok("set ::account-extban") == "a"
 
 
-# ---------- u_addban: no auto-sticky on extban storage ----------
+# ---------- u_addban: auto-sticky classification at storage ----------
 
 
-def test_newban_extban_does_not_auto_sticky(
+def test_newban_account_extban_auto_sticky_while_disconnected(
     tcl_bridge: BridgeClient,
 ) -> None:
-    """`newban a:foo` stores the ban without `MASKREC_STICKY`.
+    """`newban a:foo` before any 005 stores the ban with `MASKREC_STICKY`.
 
-    Before commit 9269ae64, u_addban set MASKREC_STICKY for any extban
-    whose flag wasn't in the hardcoded enforceable set. With the
-    option-1 swap, that decision moved to enforcement time
-    (`extban_is_unenforceable`), so the userfile flags now reflect the
-    user's literal intent.
+    Behaviour change (38614e90, extban normalization): this test used to
+    assert the option-1 contract (flags reflect the user's literal
+    intent, never auto-stickied). Now u_addban stickies any extban that
+    is not locally matchable, and the account letter is deliberately NOT
+    in MATCHABLE_EXTBANS (channels.h) — it only becomes matchable via
+    ISUPPORT ACCOUNTEXTBAN while connected. Disconnected, `a:foo`
+    classifies as unmatchable and is stored sticky (conservative
+    over-hold; see u_addban in userchan.c).
     """
     tcl_bridge.eval_ok("newban a:foo testuser comment")
-    assert tcl_bridge.eval_ok("isbansticky a:foo") == "0"
+    assert tcl_bridge.eval_ok("isbansticky a:foo") == "1"
     assert tcl_bridge.eval_ok("isban a:foo") == "1"
 
 
@@ -96,14 +103,28 @@ def test_newban_extban_with_explicit_sticky_option_is_sticky(
     assert tcl_bridge.eval_ok("isbansticky a:foo") == "1"
 
 
-def test_newban_unenforceable_extban_q_not_auto_sticky(
+def test_newban_matchable_extban_q_not_auto_sticky(
     tcl_bridge: BridgeClient,
 ) -> None:
-    """`q:` (mute extban) is unenforceable from the eggdrop side, but the
-    sticky bit still isn't persisted. Enforceability is a runtime decision."""
+    """`q:` (mute extban) is in MATCHABLE_EXTBANS, so no auto-sticky —
+    Eggdrop can match its hostmask argument locally even though it cannot
+    enforce a mute by kicking. Matchable-but-unenforceable extbans follow
+    normal dynamic-ban rules."""
     tcl_bridge.eval_ok("newban q:badactor testuser comment")
     assert tcl_bridge.eval_ok("isbansticky q:badactor") == "0"
     assert tcl_bridge.eval_ok("isban q:badactor") == "1"
+
+
+def test_newban_unmatchable_extban_j_auto_sticky(
+    tcl_bridge: BridgeClient,
+) -> None:
+    """`j:` is not in MATCHABLE_EXTBANS and not an account letter, so
+    u_addban stores it sticky regardless of connection state — sticky is
+    the mechanism that keeps unmatchable extbans set on `+dynamicbans`
+    channels (38614e90)."""
+    tcl_bridge.eval_ok("newban j:#badchan testuser comment")
+    assert tcl_bridge.eval_ok("isbansticky j:#badchan") == "1"
+    assert tcl_bridge.eval_ok("isban j:#badchan") == "1"
 
 
 # ---------- u_addban: bot-self-ban check skipped for extbans ----------
@@ -199,15 +220,20 @@ def test_partyline_pls_extban_constructs_unprefixed_mask(
 # ---------- check_this_ban / recheck_bans: unenforceable extban set on +dynamicbans ----------
 
 
-def test_unenforceable_extban_queued_as_plus_b_on_dynamicbans_channel(
+def test_matchable_extban_not_queued_as_plus_b_on_dynamicbans_channel(
     eggdrop_proc: EggdropProc,
     mock_ircd: MockIrcd,
     tcl_bridge: BridgeClient,
 ) -> None:
-    """A non-enforceable extban (`q:`) must still be set on the channel
-    even with `+dynamicbans`, because eggdrop has no other way to enforce
-    a server-side mute. The condition in check_this_ban includes
-    `extban_is_unenforceable(banmask)` for exactly this case.
+    """A locally matchable extban (`q:` is in MATCHABLE_EXTBANS) follows
+    normal dynamic-ban rules: with `+dynamicbans` and no matching member
+    present, no +b is pushed at add time.
+
+    Behaviour change (38614e90, extban normalization): this test used to
+    assert the opposite — unenforceable extbans were pushed regardless of
+    `+dynamicbans` via `extban_is_unenforceable` in check_this_ban. That
+    escape is gone; only sticky records are pushed, and q: is matchable
+    so it is not auto-stickied.
     """
     # 'q' must appear in the EXTBAN types list, otherwise check_this_ban
     # short-circuits at `!extban_flag_supported('q')` before add_mode.
@@ -216,21 +242,55 @@ def test_unenforceable_extban_queued_as_plus_b_on_dynamicbans_channel(
     chan = drive_join_with_names(mock_ircd, "@TestBot")
     wait_for_isupport(tcl_bridge, "EXTBAN", extban)
 
-    # Confirm preconditions for the +b add_mode path:
-    # - dynamicbans is on (otherwise the path under test never gates)
-    # - bot is op (HALFOP_CANTDOMODE('b') would short-circuit otherwise)
     assert tcl_bridge.eval_ok(f'channel get "{chan}" dynamicbans') == "1"
     assert tcl_bridge.eval_ok(f'isop TestBot "{chan}"') == "1"
 
     tcl_bridge.eval_ok(f'newchanban "{chan}" q:badmouth testuser comment')
+    assert tcl_bridge.eval_ok(f'isbansticky q:badmouth "{chan}"') == "0"
     # Force-flush the mode buffer instead of waiting on HOOK_IDLE.
     tcl_bridge.eval_ok(f'flushmode "{chan}"')
 
-    # The bot should send a MODE for chan that includes our extban as the +b
-    # arg. The mode letters can be batched with chanmode protection (e.g.
+    # No MODE carrying the mask may reach the IRCd; drain_until timing out
+    # (MockIrcdError) is the pass condition.
+    with pytest.raises(MockIrcdError):
+        mock_ircd.drain_until(
+            lambda line: line.startswith(f"MODE {chan} ") and "q:badmouth" in line,
+            timeout=2.0,
+        )
+
+
+def test_unmatchable_extban_queued_as_plus_b_on_dynamicbans_channel(
+    eggdrop_proc: EggdropProc,
+    mock_ircd: MockIrcd,
+    tcl_bridge: BridgeClient,
+) -> None:
+    """An unmatchable extban (`j:` — advertised in EXTBAN, not in
+    MATCHABLE_EXTBANS) is auto-stickied at storage and pushed as +b
+    despite `+dynamicbans`.
+
+    This also covers the record-flag lookup in check_this_ban (chan.c):
+    Tcl newchanban passes sticky=0, so the push only happens because
+    check_this_ban re-derives stickiness from the stored record.
+    """
+    # 'j' must appear in the EXTBAN types list, otherwise check_this_ban
+    # short-circuits at `!extban_flag_supported('j')` before add_mode.
+    extban = "~,acjmqrUz"
+    drive_registration(mock_ircd, isupport_tokens=[f"EXTBAN={extban}"])
+    chan = drive_join_with_names(mock_ircd, "@TestBot")
+    wait_for_isupport(tcl_bridge, "EXTBAN", extban)
+
+    assert tcl_bridge.eval_ok(f'channel get "{chan}" dynamicbans') == "1"
+    assert tcl_bridge.eval_ok(f'isop TestBot "{chan}"') == "1"
+
+    tcl_bridge.eval_ok(f'newchanban "{chan}" j:#badchan testuser comment')
+    assert tcl_bridge.eval_ok(f'isbansticky j:#badchan "{chan}"') == "1"
+    # Force-flush the mode buffer instead of waiting on HOOK_IDLE.
+    tcl_bridge.eval_ok(f'flushmode "{chan}"')
+
+    # The mode letters can be batched with chanmode protection (e.g.
     # "+tnb") so we just look for the unambiguous mask payload on a MODE line.
     mock_ircd.drain_until(
-        lambda line: line.startswith(f"MODE {chan} ") and "q:badmouth" in line,
+        lambda line: line.startswith(f"MODE {chan} ") and "j:#badchan" in line,
         timeout=5.0,
     )
 
@@ -260,8 +320,6 @@ def test_enforceable_account_extban_not_queued_on_dynamicbans_channel_without_ma
     # No MODE +b should reach the IRCd within a reasonable window.
     # Use a short drain that *requires* a +b ... a:nooneactual to assert non-presence:
     # if the predicate never matches and we get a MockIrcdError on timeout, we win.
-    from support.mock_ircd import MockIrcdError
-
     with pytest.raises(MockIrcdError):
         mock_ircd.drain_until(
             lambda line: line.startswith(f"MODE {chan} ") and "a:nooneactual" in line,
@@ -479,7 +537,8 @@ def test_partyline_pls_ban_extban_works_when_not_yet_connected(
     """`.+ban a:foo` works even before 005 has been received — `.+ban`
     has no connection gate (only `.+extban` does, since only `+extban`
     needs the prefix). The "extban not enabled" warning fires (because
-    EXTBAN ISUPPORT is unknown) but the ban is still stored.
+    EXTBAN ISUPPORT is unknown) but the ban is still stored — sticky,
+    since the account letter is unknowable while disconnected.
     """
     # Deliberately: NO drive_registration() — bot is pre-welcome.
     snapshot = len(eggdrop_proc.stdout_text())
@@ -491,13 +550,17 @@ def test_partyline_pls_ban_extban_works_when_not_yet_connected(
         description="partyline .+ban (extban form) to register while disconnected",
     )
 
-    # Storage: not auto-stickified (regression for option-1 swap).
-    assert tcl_bridge.eval_ok("isbansticky a:disconnectedacct") == "0"
+    # Behaviour change (38614e90, extban normalization): previously
+    # asserted "0" (option-1: no auto-sticky). ACCOUNTEXTBAN is unknown
+    # while disconnected and 'a' is not in MATCHABLE_EXTBANS, so the ban
+    # classifies as unmatchable and u_addban stores it sticky.
+    assert tcl_bridge.eval_ok("isbansticky a:disconnectedacct") == "1"
 
-    # And the user got the EXTBAN-not-enabled feedback. The message text
-    # comes from EXTBAN_NOT_ENABLED1/2/3 in the language file; we look for
-    # a stable substring rather than the full template.
+    # The user is told about the forced sticky, and got the
+    # EXTBAN-not-enabled feedback (message text from EXTBAN_NOT_ENABLED1/2/3
+    # in the language file; we look for stable substrings, not templates).
     new_output = eggdrop_proc.stdout_text()[snapshot:]
+    assert "cannot be matched by Eggdrop" in new_output, new_output
     assert "extban is not enabled on this server" in new_output, new_output
 
 
@@ -556,14 +619,18 @@ def test_partyline_pls_ban_extban_works_without_server_mod(
     # Sanity: server.mod is genuinely not loaded.
     assert bridge.eval_ok("expr {[catch {set ::server-online}] != 0}") == "1"
 
-    # `.+ban` with an extban mask: stored, no errors.
+    # `.+ban` with an extban mask: stored, no errors. Behaviour change
+    # (38614e90, extban normalization): previously asserted "0" — with no
+    # server.mod there is no ACCOUNTEXTBAN, 'a' is not in
+    # MATCHABLE_EXTBANS, so the extban classifies as unmatchable and
+    # u_addban stores it sticky.
     proc.send_partyline(".+ban a:noservermod why")
     wait_for(
         lambda: bridge.eval_ok("isban a:noservermod") == "1",
         timeout=5.0,
         description=".+ban (extban form) to register without server.mod",
     )
-    assert bridge.eval_ok("isbansticky a:noservermod") == "0"
+    assert bridge.eval_ok("isbansticky a:noservermod") == "1"
 
     # `.+extban`: refused. The thunk returns NULL → no EXTBAN known →
     # gated by the same check that fires when disconnected.
@@ -626,10 +693,12 @@ def test_dynamic_ban_time_expiry_removes_normal_and_extban_channel_modes(
     for mask in static_masks:
         mock_ircd.send(f":Oper!oper@mock MODE {static_chan} +b {mask}")
 
+    # ischanban is <ban> <channel>; braces keep Tcl from substituting the
+    # `$a` in the extban masks.
     for mask in dynamic_masks:
         wait_for(
             lambda mask=mask: tcl_bridge.eval_ok(
-                f'ischanban "{dyn_chan}" "{mask}"'
+                f'ischanban {{{mask}}} {{{dyn_chan}}}'
             ) == "1",
             timeout=5.0,
             description=f"{mask} to appear on {dyn_chan}",
@@ -637,7 +706,7 @@ def test_dynamic_ban_time_expiry_removes_normal_and_extban_channel_modes(
     for mask in static_masks:
         wait_for(
             lambda mask=mask: tcl_bridge.eval_ok(
-                f'ischanban "{static_chan}" "{mask}"'
+                f'ischanban {{{mask}}} {{{static_chan}}}'
             ) == "1",
             timeout=5.0,
             description=f"{mask} to appear on {static_chan}",
