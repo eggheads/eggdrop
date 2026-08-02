@@ -401,16 +401,31 @@ static void got_alarm(int z)
   /* -Never reached- */
 }
 
-/* Got ILL signal -- log context and continue
+/* Got ILL signal -- log context and crash. Returning from a SIGILL
+ * handler would re-execute the faulting instruction, triggering the
+ * signal over and over in an endless loop, so die with a core dump
+ * like SIGBUS/SIGSEGV instead.
  */
 static void got_ill(int z)
 {
-  check_tcl_signal("sigill");
-#ifdef DEBUG_CONTEXT
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
-  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  putlog(LOG_MISC, "*", "* Last bind (may not be related): %s", last_bind_called);
-#endif
+  struct sigaction sv;
+  sigset_t set;
+
+  write_debug();
+  fatal("ILLEGAL INSTRUCTION -- CRASHING!", 1);
+  /* SA_RESETHAND should already have restored the default action, but
+   * that cannot be relied upon on every platform (e.g. macOS keeps the
+   * handler installed), so restore it explicitly, unblock the signal
+   * and re-raise it to die with a core dump.
+   */
+  sv.sa_handler = SIG_DFL;
+  sigemptyset(&sv.sa_mask);
+  sv.sa_flags = 0;
+  sigaction(SIGILL, &sv, NULL);
+  sigemptyset(&set);
+  sigaddset(&set, SIGILL);
+  sigprocmask(SIG_UNBLOCK, &set, NULL);
+  kill(getpid(), SIGILL);
 }
 
 #ifdef DEBUG_ASSERT
@@ -1010,6 +1025,8 @@ int main(int arg_c, char **arg_v)
   sigaction(SIGBUS, &sv, NULL);
   sv.sa_handler = got_segv;
   sigaction(SIGSEGV, &sv, NULL);
+  sv.sa_handler = got_ill;
+  sigaction(SIGILL, &sv, NULL);
 #ifdef SA_RESETHAND
   sv.sa_flags = 0;
 #endif
@@ -1023,8 +1040,6 @@ int main(int arg_c, char **arg_v)
   sigaction(SIGQUIT, &sv, NULL);
   sv.sa_handler = SIG_IGN;
   sigaction(SIGPIPE, &sv, NULL);
-  sv.sa_handler = got_ill;
-  sigaction(SIGILL, &sv, NULL);
   sv.sa_handler = got_alarm;
   sigaction(SIGALRM, &sv, NULL);
   // Added for python.mod because the _signal handler otherwise overwrites it
