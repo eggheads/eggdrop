@@ -39,18 +39,19 @@ See also: deluser, +host, -host, +user, -user
    #hiya, 0 members, mode +:" instead. Next is a list of the users on the
    channel, with each entry looking like this:
 
-      <D|Ares>  NICKNAME  HANDLE     JOIN  IDLE  USER@HOST
-      <D|Ares> @Wcc       Wcc        ---  N      Wcc@blah.atlaga.adelphia.net
+       NICKNAME HANDLE ACCOUNT JOIN   F IDLE         USER@HOST
+      @Wcc      Wcc    *       00:42  N              Wcc@example.org
 
    The "@Wcc" means that the user's nickname is Wcc and that he is a chanop.
    The second "Wcc" is the user's handle. Sometimes this will differ from the
    nickname a person is using. The time displayed is the time the user joined
    the channel. The next field is the user's status flag. These are the same
    as the flags listed in %b.help whois%b. Global flags are uppercase. Only
-   the 'highest' flag is displayed.
+   the 'highest' flag is displayed. The last two fields are the user's idle
+   time (if more than 3 minutes), and the user@host they are connecting from.
 
-   The last two fields are the user's idle time, and the user@host they are
-   connecting from
+   IDLE could display "(away)" as last away status known to the bot. It could
+   be out of sync, if not tracked via away-notify capability or otherwise.
 
 See also: console, whois%{m|m}, status%{-}
 %{help=deluser}%{+m|m}
