@@ -2381,6 +2381,46 @@ utimer <seconds> <tcl-command> [count [timerName]]
 
   Module: core
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+timerexistsname <timerName>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: Checks if a named minutely timer exists.
+
+  Returns: 
+  - "1" if the timer exists
+  - "0" if the timer doesn't exist
+  
+  Examples:
+  ```tcl
+  # Check timer existence
+  if {[timerexistsname "mytimer"]} {
+      putlog "Timer 'mytimer' exists"
+  }
+  ```
+  
+  Module: core
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+utimerexistsname <timerName>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Description: Checks if a named secondly timer (utimer) exists.
+
+  Returns: 
+  - "1" if the utimer exists
+  - "0" if the utimer doesn't exist
+
+  Examples:
+  ```tcl
+  # Check utimer existence
+  if {![utimerexistsname "myutimer"]} {
+      utimer 30 [list do_something] 0 "myutimer"
+  }
+  ```
+  
+  Module: core
+
 ^^^^^^
 timers
 ^^^^^^
