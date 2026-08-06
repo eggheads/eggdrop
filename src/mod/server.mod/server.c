@@ -60,7 +60,7 @@ static time_t lastpingcheck;    /* set when i unidle myself, cleared when
 static time_t server_online;    /* server connection time */
 static time_t server_cycle_wait;        /* seconds to wait before
                                          * re-beginning the server list */
-static char botrealname[81];    /* realname of bot */
+static char botrealname[REALNAMELEN]; /* realname of bot */
 static int server_timeout;      /* server timeout for connecting */
 static struct server_list *serverlist;  /* old-style queue, still used by
                                          * server list */
@@ -105,6 +105,7 @@ static int monitor005 = 0;      /* Monitor */
 static int max_monitor = 0;     /* Maximum # of monitored nicks, from server */
 static int monitor732 = 0;      /* Monitor */
 static struct monitor_list *monitor = NULL;
+static int namelen005 = 0;      /* Maximum len of realname */
 
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
@@ -1717,10 +1718,20 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
+static char *traced_realname(ClientData cdata, Tcl_Interp *irp,
+                             EGG_CONST char *name1,
+                             EGG_CONST char *name2, int flags)
+{
+  printf("DEBUG: traced_realname() namelen005 = %i\n", namelen005);
+  if (namelen005 && ((flags & TCL_TRACE_WRITES) || (flags & TCL_TRACE_UNSETS)))
+    dprintf(DP_SERVER, "SETNAME %s\n", botrealname);
+  return NULL;
+}
+
 static tcl_strings my_tcl_strings[] = {
   {"botnick",             NULL,           0,          STR_PROTECT},
   {"altnick",             altnick,        NICKMAX,              0},
-  {"realname",            botrealname,    80,                   0},
+  {"realname",            botrealname,    REALNAMEMAX,          0},
   {"init-server",         initserver,     120,                  0},
   {"connect-server",      connectserver,  120,                  0},
   {"stackable-commands",  stackablecmds,  510,                  0},
@@ -2277,6 +2288,9 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick-len",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_nicklen, NULL);
+  Tcl_UntraceVar(interp, "realname",
+                 TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_realname, NULL);
   tcl_untraceserver("servers", NULL);
   empty_msgq();
   del_hook(HOOK_SECONDLY, (Function) server_secondly);
@@ -2464,6 +2478,9 @@ char *server_start(Function *global_funcs)
   Tcl_TraceVar(interp, "nick-len",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_nicklen, NULL);
+  Tcl_TraceVar(interp, "realname",
+               TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_realname, NULL);
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_rawt = add_bind_table("rawt", HT_STACKABLE, server_rawt);
