@@ -8335,12 +8335,6 @@ then :
   printf "%s\n" "#define HAVE_STRLCPY 1" >>confdefs.h
 
 fi
-ac_fn_c_check_func "$LINENO" "vsnprintf" "ac_cv_func_vsnprintf"
-if test "x$ac_cv_func_vsnprintf" = xyes
-then :
-  printf "%s\n" "#define HAVE_VSNPRINTF 1" >>confdefs.h
-
-fi
 
 
 
