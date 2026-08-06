@@ -418,13 +418,24 @@ static char *compress_close()
   rem_help_reference("compress.help");
   rem_tcl_commands(my_tcl_cmds);
   rem_tcl_ints(my_tcl_ints);
-  uff_deltable(compress_uff_table);
+
+  if (module_find("share", 2, 5))
+    uff_deltable(compress_uff_table);
 
   module_undepend(MODULE_NAME);
   return NULL;
 }
 
 EXPORT_SCOPE char *compress_start();
+
+static void compress_start_share() {
+  module_entry *me = module_find("share", 2, 5);
+  if (me) {
+    share_funcs = me->funcs;
+    uff_addtable(compress_uff_table);
+  }
+  debug0("added compression mod funcs to share mod");
+}
 
 static Function compress_table[] = {
   /* 0 - 3 */
@@ -439,6 +450,7 @@ static Function compress_table[] = {
   (Function) uncompress_file,
   /* 8 - 11 */
   (Function) is_compressedfile,
+  (Function) compress_start_share,
 };
 
 char *compress_start(Function *global_funcs)
@@ -450,19 +462,14 @@ char *compress_start(Function *global_funcs)
   share_compressed = 0;
   compress_level = 9;
 
-  module_register(MODULE_NAME, compress_table, 1, 2);
+  module_register(MODULE_NAME, compress_table, 1, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
 
-  share_funcs = module_depend(MODULE_NAME, "share", 2, 3);
-  if (!share_funcs) {
-    module_undepend(MODULE_NAME);
-    return "This module requires share module 2.3 or later.";
-  }
+  compress_start_share();
 
-  uff_addtable(compress_uff_table);
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_help_reference("compress.help");

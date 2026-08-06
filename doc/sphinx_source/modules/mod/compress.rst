@@ -1,4 +1,4 @@
-Last revised: May 27, 2004
+Last revised: Nov 10, 2022
 
 .. _compress:
 
@@ -6,11 +6,9 @@ Last revised: May 27, 2004
 Compress Module
 ===============
 
-This module provides support for file compression. It can be used
-to compress files via Tcl or to transfer the userfile compressed during the
-share process, saving bandwidth.
-
-This module requires: share
+This module provides support for file compression. It can be used to compress
+files via Tcl or, with share module loaded, to transfer the userfile compressed
+during the share process, saving bandwidth.
 
 Put this line into your Eggdrop configuration file to load the compress
 module::
