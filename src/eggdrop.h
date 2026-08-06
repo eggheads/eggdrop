@@ -496,15 +496,15 @@ struct dupwait_info {
 #define STRIP_ALL       0x000FF    /* remove every damn thing!           */
 
 /* For dcc bot links. */
-#define STAT_PINGED  0x00001    /* waiting for ping to return            */
-#define STAT_SHARE   0x00002    /* sharing user data with the bot        */
-#define STAT_CALLED  0x00004    /* this bot called me                    */
-#define STAT_OFFERED 0x00008    /* offered her the user file             */
-#define STAT_SENDING 0x00010    /* in the process of sending a user list */
-#define STAT_GETTING 0x00020    /* in the process of getting a user list */
-#define STAT_WARNED  0x00040    /* warned him about unleaflike behavior  */
-#define STAT_LEAF    0x00080    /* this bot is a leaf only               */
-#define STAT_LINKING 0x00100    /* the bot is currently going through
+#define STAT_PINGED     0x00001 /* waiting for ping to return            */
+#define STAT_SHARE      0x00002 /* sharing user data with the bot        */
+#define STAT_CALLED     0x00004 /* this bot called me                    */
+#define STAT_OFFERED    0x00008 /* offered her the user file             */
+#define STAT_SENDING    0x00010 /* in the process of sending a user list */
+#define STAT_GETTING    0x00020 /* in the process of getting a user list */
+#define STAT_WARNED     0x00040 /* warned him about unleaflike behavior  */
+#define STAT_LEAF       0x00080 /* this bot is a leaf only               */
+#define STAT_LINKING    0x00100 /* the bot is currently going through
                                  * the linking stage                     */
 #define STAT_AGGRESSIVE 0x00200 /* aggressively sharing with this bot    */
 

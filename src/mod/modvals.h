@@ -92,6 +92,9 @@
 #define NOTES_CMD_NOTE            4
 /* Console */
 #define CONSOLE_DOSTORE           4
+/* Encryption2 */
+#define ENCRYTION2_SEND_SETTINGS 6
+#define ENCRYTION2_RECV_SETTINGS 7
 
 #ifdef MOD_USE_SHL
 #  include <dl.h>
