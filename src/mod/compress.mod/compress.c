@@ -320,7 +320,7 @@ static int compress_file(char *filename, int mode_num)
    * if the compression routine succeeded.
    */
   if (ret == COMPF_SUCCESS)
-    movefile(temp_fn, filename);
+    ret = movefile(temp_fn, filename) ? COMPF_ERROR : COMPF_SUCCESS;
 
   nfree(temp_fn);
   return ret;
@@ -346,7 +346,7 @@ static int uncompress_file(char *filename)
    * if the uncompression routine succeeded.
    */
   if (ret == COMPF_SUCCESS)
-    movefile(temp_fn, filename);
+    ret = movefile(temp_fn, filename) ? COMPF_ERROR : COMPF_SUCCESS;
 
   nfree(temp_fn);
   return ret;
