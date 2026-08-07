@@ -93,7 +93,7 @@ bind <arguments>
 
 An important difference to note is that Eggdrop Python has its own ``bind`` command implemented. You will generally want to create binds using the Python ``bind`` command and not import bind from eggdrop.tcl because a Python bind will call a Python function, whereas using the Tcl bind will call a Tcl function (not one from the script you are writing).
 
-The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, but here each argument is passed individually. For example, a bind that would look like ``bind pub * !foo myproc`` in Tcl is written as ``bind("pub", "*", "!foo", myproc)``. For more information on Eggsrop bind argument syntax please see :ref:`bind_types`. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc.
+The python version of the bind command is used to create a bind that triggers a python function. The python bind takes the same arguments as the Tcl binds, but here each argument is passed individually. For example, a bind that would look like ``bind pub * !foo myproc`` in Tcl is written as ``bind("pub", "*", "!foo", myproc)``. For more information on Eggdrop bind argument syntax please see :ref:`Bind Types <bind_types>`. The eggdrop.tcl.bind command should not be used as it will attempt to call a Tcl proc.
 
 The ``bind`` command returns a PythonBind object that has an ``unbind`` method::
 
