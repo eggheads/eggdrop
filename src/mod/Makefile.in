@@ -117,7 +117,7 @@ distclean:
 		fi; \
 	done
 
-install: install-help install-language install-scripts
+install: install-help install-language install-scripts install-text
 
 install-help:
 	@echo "Copying module help files." && \
@@ -177,6 +177,16 @@ install-scripts:
 				if test ! -f "$(DEST)/scripts/`basename "$$s"`"; then \
 					$(INSTALL_DATA) $$s $(DEST)/scripts/; \
 				fi; \
+			done; \
+		fi; \
+	done;
+
+install-text:
+	@echo "Copying module text files." && \
+	for i in $(mods); do \
+		if test ! "x`echo $(srcdir)/$$i/text/*`" = "x$(srcdir)/$$i/text/*"; then \
+			for h in $(srcdir)/$$i/text/*; do \
+				$(INSTALL_DATA) $$h $(DEST)/text/; \
 			done; \
 		fi; \
 	done;
