@@ -1216,7 +1216,7 @@ static int tcl_tlsstatus STDVAR
     return TCL_ERROR;
   }
   j = findsock(dcc[i].sock);
-  if (!j || !dcc[i].ssl || !td->socklist[j].ssl) {
+  if ((j < 0) || !dcc[i].ssl || !td->socklist[j].ssl) {
     Tcl_AppendResult(irp, "not a TLS connection", NULL);
     return TCL_ERROR;
   }
