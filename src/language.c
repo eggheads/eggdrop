@@ -82,7 +82,20 @@ typedef struct lang_t {
   struct lang_t *next;
 } lang_tab;
 
-static lang_tab *langtab[64];
+// ECS like datastruct for fast cache friendly vectorizable binary search
+struct entry {
+    uint32_t id;     // msg id
+    uint32_t off;    // offset into msgs.msg
+};
+struct lang_msgs {
+  struct entry *e;   // array of entries sorted by e.id
+  char* msg;         // array of msgs
+  uint32_t e_used;
+  uint32_t e_size;
+  uint32_t msg_used;
+  uint32_t msg_size;
+} msgs;
+
 static lang_sec *langsection = NULL;
 static lang_pri *langpriority = NULL;
 
@@ -160,30 +173,60 @@ static int del_lang(char *lang)
   return 0;
 }
 
+static int bsearch_compare(const void *a, const void *b)
+{
+  const uint32_t *id = a;
+  const struct entry *e = b;
+
+  return (*id - e->id);
+}
+
 static int add_message(int lidx, char *ltext)
 {
-  lang_tab *l = langtab[lidx & 63];
+  struct entry *e = bsearch(&lidx, msgs.e, msgs.e_used, sizeof(msgs.e[0]), bsearch_compare);
+  int old_size, add_size, i;
+  size_t ltext_size = strlen(ltext) + 1;
 
-  while (l) {
-    if (l->idx && (l->idx == lidx)) {
-      nfree(l->text);
-      l->text = nmalloc(strlen(ltext) + 1);
-      strcpy(l->text, ltext);
-      return 1;
+  if (e) {
+    old_size = strlen(msgs.msg + e->off) + 1;
+    if (ltext_size != old_size) {
+      add_size = ltext_size - old_size;
+
+      // add_size can be posive or negative
+      // the following code handles both cases equally
+      if ((msgs.msg_used + add_size) > msgs.msg_size) {
+        // resize msgs.msg
+        msgs.msg_size += 1024;
+        msgs.msg = nrealloc(msgs.msg, msgs.msg_size);
+      }
+      memmove(msgs.msg + e->off + ltext_size,
+              msgs.msg + e->off + old_size,
+              msgs.msg_used - e->off - old_size);
+      msgs.msg_used += add_size;
+      // update offsets
+      for (i = 0; i < msgs.e_used; i++)
+        if (msgs.e[i].off > e->off)
+          msgs.e[i].off += add_size;
+
     }
-    if (!l->next)
-      break;
-    l = l->next;
+    memcpy(msgs.msg + e->off, ltext, ltext_size);
+    return 1;
   }
-  if (l) {
-    l->next = nmalloc(sizeof(lang_tab));
-    l = l->next;
-  } else
-    l = langtab[lidx & 63] = nmalloc(sizeof(lang_tab));
-  l->idx = lidx;
-  l->text = nmalloc(strlen(ltext) + 1);
-  strcpy(l->text, ltext);
-  l->next = 0;
+  if (msgs.e_used == msgs.e_size) {
+    // resize e
+    msgs.e_size += 1024;
+    msgs.e = nrealloc(msgs.e, msgs.e_size * sizeof(msgs.e[0]));
+  }
+  e = &msgs.e[msgs.e_used];
+  e->id = lidx;
+  e->off = msgs.msg_used;
+  if ((msgs.msg_used += ltext_size) > msgs.msg_size) {
+    // resize msgs.msg
+    msgs.msg_size += 1024;
+    msgs.msg = nrealloc(msgs.msg, msgs.msg_size);
+  }
+  memcpy(msgs.msg + e->off, ltext, ltext_size);
+  msgs.e_used++;
   return 0;
 }
 
@@ -203,6 +246,13 @@ static void recheck_lang_sections(void)
       nfree(langfile);
     }
   }
+}
+static int qsort_compare(const void *p1, const void *p2)
+{
+  const struct entry *left = (const struct entry *)p1;
+  const struct entry *right = (const struct entry *)p2;
+
+  return ((left->id > right->id) - (left->id < right->id));
 }
 
 /* Parse a language file
@@ -293,7 +343,13 @@ static void read_lang(char *langfile)
   }
   nfree(ltext);
   fclose(FLANG);
-
+  // shrink message index and message buffer
+  msgs.e = nrealloc(msgs.e, msgs.e_used * sizeof(msgs.e[0]));
+  msgs.e_size = msgs.e_used;
+  msgs.msg = nrealloc(msgs.msg, msgs.msg_used);
+  msgs.msg_size = msgs.msg_used;
+  // sort message entries by message id
+  qsort(msgs.e, msgs.e_used, sizeof(msgs.e[0]), qsort_compare);
   debug3("LANG: %d messages of %d lines loaded from %s", ltexts, lline,
          langfile);
   debug2("LANG: %d adds, %d updates to message table", ladd, lupdate);
@@ -534,7 +590,6 @@ static int cmd_relang(struct userrec *u, int idx, char *par)
 
 static int cmd_languagedump(struct userrec *u, int idx, char *par)
 {
-  lang_tab *l;
   char ltext2[512];
   unsigned int idx2;
   int i;
@@ -551,38 +606,30 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
     return 0;
   }
   dprintf(idx, " LANGIDX TEXT\n");
-  for (i = 0; i < 64; i++)
-    for (l = langtab[i]; l; l = l->next)
-      dprintf(idx, "0x%x   %s\n", l->idx, l->text);
+  for (i = 0; i < msgs.e_used; i++)
+    dprintf(idx, "0x%x   %s\n", msgs.e[i].id, msgs.msg + msgs.e[i].off);
   return 0;
 }
 
-static char text[512];
 char *get_language(int idx)
 {
-  lang_tab *l;
+  struct entry *e;
+  static char text[512];
 
   if (!idx)
     return "MSG-0-";
-  for (l = langtab[idx & 63]; l; l = l->next)
-    if (idx == l->idx)
-      return l->text;
+  if ((e = bsearch(&idx, msgs.e, msgs.e_used, sizeof(msgs.e[0]), bsearch_compare)))
+    return msgs.msg + e->off;
   egg_snprintf(text, sizeof text, "MSG%03X", idx);
   return text;
 }
 
 int expmem_language()
 {
-  lang_tab *l;
   lang_sec *ls;
   lang_pri *lp;
-  int i, size = 0;
+  int size = sizeof msgs + msgs.e_size * sizeof(msgs.e[0]) + msgs.msg_size;
 
-  for (i = 0; i < 64; i++)
-    for (l = langtab[i]; l; l = l->next) {
-      size += sizeof(lang_tab);
-      size += (strlen(l->text) + 1);
-    }
   for (ls = langsection; ls; ls = ls->next) {
     size += sizeof(lang_sec);
     if (ls->section)
@@ -602,30 +649,13 @@ int expmem_language()
  */
 static int cmd_languagestatus(struct userrec *u, int idx, char *par)
 {
-  int ltexts = 0;
-  int i, c, maxdepth = 0, used = 0, empty = 0;
-  lang_tab *l;
   lang_sec *ls = langsection;
   lang_pri *lp = langpriority;
 
   putlog(LOG_CMDS, "*", "#%s# lstat %s", dcc[idx].nick, par);
-  for (i = 0; i < 64; i++) {
-    c = 0;
-    for (l = langtab[i]; l; l = l->next)
-      c++;
-    if (c > maxdepth)
-      maxdepth = c;
-    if (c)
-      used++;
-    else
-      empty++;
-    ltexts += c;
-  }
   dprintf(idx, "Language code report:\n");
   dprintf(idx, "   Table size   : %d bytes\n", expmem_language());
-  dprintf(idx, "   Text messages: %d\n", ltexts);
-  dprintf(idx, "   %d used, %d unused, maxdepth %d, avg %f\n",
-          used, empty, maxdepth, (float) ltexts / 64.0);
+  dprintf(idx, "   Text messages: %u\n", msgs.e_used);
   if (lp) {
     int c = 0;
 
@@ -748,6 +778,11 @@ void init_language(int flag)
   char *deflang;
 
   if (flag) {
+    // init message index and message buffer
+    msgs.e_size = 1024;
+    msgs.e = nmalloc(msgs.e_size * sizeof(msgs.e[0]));
+    msgs.msg_size = 1024;
+    msgs.msg = nmalloc(msgs.msg_size);
     /* The default language is always BASELANG as language files are
      * guaranteed to exist in that language.
      */
