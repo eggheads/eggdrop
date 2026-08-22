@@ -196,7 +196,7 @@ static int add_message(int lidx, char *ltext)
       // the following code handles both cases equally
       if ((msgs.msg_used + add_size) > msgs.msg_size) {
         // resize msgs.msg
-        msgs.msg_size += 1024;
+        msgs.msg_size += MAX(1024, add_size);
         msgs.msg = nrealloc(msgs.msg, msgs.msg_size);
       }
       memmove(msgs.msg + e->off + ltext_size,
@@ -222,7 +222,7 @@ static int add_message(int lidx, char *ltext)
   e->off = msgs.msg_used;
   if ((msgs.msg_used += ltext_size) > msgs.msg_size) {
     // resize msgs.msg
-    msgs.msg_size += 1024;
+    msgs.msg_size += MAX(1024, ltext_size);
     msgs.msg = nrealloc(msgs.msg, msgs.msg_size);
   }
   memcpy(msgs.msg + e->off, ltext, ltext_size);
