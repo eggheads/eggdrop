@@ -1672,8 +1672,10 @@ int set_user(struct user_entry_type *et, struct userrec *u, void *d)
   struct user_entry *e;
   int r;
 
-  if (!u || !et)
+  if (!u || !et) {
+    debug2("warning: set_user(%s, %s)\n", et ? et->name : "NULL", u ? u->handle : "NULL");
     return 0;
+  }
 
   if (!(e = find_user_entry(et, u))) {
     e = user_malloc(sizeof(struct user_entry));
