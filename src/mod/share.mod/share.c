@@ -1473,8 +1473,10 @@ static void shareout_mod(struct chanset_t *chan, const char *format, ...)
     va_start(va, format);
 
     strcpy(s, "s ");
-    if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
-      s[2 + (l = 509)] = 0;
+    if ((l = vsnprintf(s + 2, 509, format, va)) >= 509) {
+      debug0("shareout_mod(): truncated to 509 bytes");
+      l = 509;
+    }
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type->flags & DCT_BOT) &&
           (dcc[i].status & STAT_SHARE) &&
