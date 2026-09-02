@@ -1673,7 +1673,7 @@ int set_user(struct user_entry_type *et, struct userrec *u, void *d)
   int r;
 
   if (!u || !et) {
-    debug2("warning: set_user(%s, %s)\n", et ? et->name : "NULL", u ? u->handle : "NULL");
+    debug2("warning: set_user(%s, %s)", et ? et->name : "NULL", u ? u->handle : "NULL");
     return 0;
   }
 
