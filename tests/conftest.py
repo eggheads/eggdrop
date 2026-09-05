@@ -183,6 +183,8 @@ def eggdrop_proc(
             "EGGDROP_TEST": "1",
             "EGGDROP_TEST_PORT_FILE": str(port_file),
             "EGG_LANGDIR": str(REPO_ROOT / "language"),
+            "GCOV_PREFIX": str(tmp_eggdir / "gcov"),
+            "GCOV_PREFIX_STRIP": str(len(REPO_ROOT.parts) -1),
         },
         terminal=terminal,
     )
@@ -240,3 +242,43 @@ def pytest_runtest_makereport(
     outcome = yield
     rep = outcome.get_result()
     setattr(item, f"rep_{rep.when}", rep)
+
+# ---------------------------------------------------------------------------
+# Report enrichment
+#
+# pytest's "log output" section only captures Python `logging` records, and
+# this harness emits none -- everything of interest happens in the eggdrop
+# subprocess. These hooks pull the bot's own logfile (and its stdout) into
+# the report so a failure can be diagnosed without re-running by hand.
+#
+# Set EGGDROP_ATTACH_LOGS=always to attach on passing tests too; the default
+# is failures only, since a full run would otherwise produce a very large
+# HTML report.
+# ---------------------------------------------------------------------------
+
+import os
+
+import pytest
+
+
+def _read_tail(path, limit=400):
+    """Return the last `limit` lines of a file, or a short note if unreadable."""
+    try:
+        with open(path, "r", errors="replace") as fh:
+            lines = fh.readlines()
+    except OSError as exc:
+        return f"({path}: {exc})"
+    if len(lines) > limit:
+        lines = [f"... {len(lines) - limit} earlier lines omitted ...\n"] + lines[-limit:]
+    return "".join(lines) or "(empty)"
+
+def _read_tail(path, limit=400):
+    """Return the last `limit` lines of a file, or a short note if unreadable."""
+    try:
+        with open(path, "r", errors="replace") as fh:
+            lines = fh.readlines()
+    except OSError as exc:
+        return f"({path}: {exc})"
+    if len(lines) > limit:
+        lines = [f"... {len(lines) - limit} earlier lines omitted ...\n"] + lines[-limit:]
+    return "".join(lines) or "(empty)"

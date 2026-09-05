@@ -505,7 +505,7 @@ AC_DEFUN([EGG_ENABLE_COVERAGE],
 
   if test "$enable_coverage" = yes; then
     AC_MSG_NOTICE([enabling gcov coverage instrumentation: --coverage -fPIC -O0 -ggdb3])
-    CFLAGS="$CFLAGS --coverage -fPIC -O0 -ggdb3"
+    CFLAGS="$CFLAGS --coverage -fprofile-update=atomic -fPIC -O0 -ggdb3"
     LDFLAGS="$LDFLAGS --coverage"
   fi
 ])
