@@ -1108,7 +1108,11 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
         "\r\n%s", strlen(body),
+          #ifdef EGG_PATCH
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+          #else
+          stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER,
+          #endif
           body);
       response = nmalloc(j + 1);
       sprintf(response,
@@ -1117,7 +1121,11 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
         "\r\n%s", strlen(body),
+          #ifdef EGG_PATCH
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+          #else
+          stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER,
+          #endif
           body);
       if (write(sock, response, j) < 0) /* tputs() cannot be used here */
         putlog(LOG_MISC, "*", "TLS: error: write(sock %i): %s", sock, strerror(errno));

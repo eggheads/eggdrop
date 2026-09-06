@@ -70,7 +70,11 @@ static void put_404(int idx) {
     "Server: %s\r\n"
     "\r\n"
     "404 Not Found",
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   response = nmalloc(i + 1);
   sprintf(response,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
@@ -79,7 +83,11 @@ static void put_404(int idx) {
     "Server: %s\r\n"
     "\r\n"
     "404 Not Found",
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   tputs(dcc[idx].sock, response, i);
   nfree(response);
   killsock(dcc[idx].sock);
@@ -137,7 +145,11 @@ static void put_file(int idx, int file_cache_index) {
     "Server: %s\r\n"
     "\r\n",
     (intmax_t) sb.st_size, f->content_type,
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   response = nmalloc(i + sb.st_size);
   sprintf(response,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
@@ -146,7 +158,11 @@ static void put_file(int idx, int file_cache_index) {
     "Server: %s\r\n"
     "\r\n",
     (intmax_t) sb.st_size, f->content_type,
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   memcpy(response + i, f->data, sb.st_size);
   tputs(dcc[idx].sock, response, i + sb.st_size);
   nfree(response);
