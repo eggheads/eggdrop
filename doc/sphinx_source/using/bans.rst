@@ -1,5 +1,4 @@
 Bans, Invites and Exempts
-Last revised: March 07, 2002
 
 ==========================
 Bans, Invites, and Exempts
