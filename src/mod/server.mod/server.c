@@ -131,9 +131,11 @@ static void free_server(struct server_list *);
 static int away_notify = 0;
 static int invite_notify = 0;
 static int message_tags = 0;
+static int batch = 0;
 
 static char cap_request[CAPMAX - 9];
 
+#include "batch.c"
 #include "isupport.c"
 #include "tclisupport.c"
 #include "servmsg.c"
@@ -1768,6 +1770,7 @@ static tcl_ints my_tcl_ints[] = {
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
+  {"batch",             &batch,                     0},
   {"extended-join",     &extended_join,             0},
   {"account-notify",    &account_notify,            0},
   {"account-tag",       &account_tag,               0},
@@ -2364,7 +2367,8 @@ static Function server_table[] = {
   (Function) encode_msgtags,
   /* 52 - 55 */
   (Function) & H_monitor,
-  (Function) isupport_get_prefixchars
+  (Function) isupport_get_prefixchars,
+  (Function) batch_get_current
 };
 
 char *server_start(Function *global_funcs)

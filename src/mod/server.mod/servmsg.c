@@ -1090,6 +1090,7 @@ static void disconnect_server(int idx)
   while (cap != NULL) {
     del_capability(cap->name);
   }
+  batch_free_all();
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1227,6 +1228,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   char *from, *code, *msgptr;
   char rawmsg[RECVLINEMAX+7];
   int ret;
+  batch_t *saved_batch;
   Tcl_Obj *tagdict = Tcl_NewDictObj();
 
   Tcl_IncrRefCount(tagdict);
@@ -1263,6 +1265,11 @@ static void server_activity(int idx, char *tagmsg, int len)
     from = newsplit(&msgptr);
   }
   code = newsplit(&msgptr);
+
+  /* Make the batch context of this line visible to handlers duration */
+  saved_batch = current_batch;
+  current_batch = batch_from_tagdict(tagdict);
+
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
     putlog(LOG_RAW, "*", "[@] %s", rawmsg);
@@ -1275,6 +1282,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   if (!ret) {
     check_tcl_raw(from, code, msgptr);
   }
+  current_batch = saved_batch;
   Tcl_DecrRefCount(tagdict);
 }
 
@@ -1454,6 +1462,11 @@ static int del_capability(char *name) {
       prev = curr;
     }
   }
+  /* Remove any remaining/hanging batch commands */
+  if (!strcasecmp(name, "batch")) {
+    batch_free_all();
+  }
+
   putlog(LOG_SERV, "*", "CAP: %s not found, can't remove", name);
   return -1;
 }
@@ -1580,6 +1593,9 @@ static int gotcap(char *from, char *msg) {
           add_req(current->name);
       } else if (!strcmp(current->name, "message-tags")) {
         if ((message_tags) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "batch")) {
+        if ((batch) && (!current->enabled))
           add_req(current->name);
       }
       /* Add any custom capes the user listed */
@@ -1905,6 +1921,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
+  {"BATCH",        "",   (IntFunc) gotbatch,        NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
