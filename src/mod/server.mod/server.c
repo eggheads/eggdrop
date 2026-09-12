@@ -135,9 +135,9 @@ static int batch = 0;
 
 static char cap_request[CAPMAX - 9];
 
-#include "batch.c"
 #include "isupport.c"
 #include "tclisupport.c"
+#include "batch.c"
 #include "servmsg.c"
 #include "sasl.c"
 

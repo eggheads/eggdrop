@@ -23,6 +23,7 @@
  */
 
 static int batchcount = 0;
+static unsigned long batchseq = 0;      /* Tracks 'oldest' non-closed session for expiration          */
 static batch_t *batchlist = NULL;       /* List of batches the server has opened but not yet closed.  */
 static batch_t *current_batch = NULL;   /* The batch that the line currently being dispatched belongs */
                                         /* to, or NULL if that line carried no batch tag.             */
@@ -93,6 +94,14 @@ static void batch_free_one(batch_t *b)
   }
 }
 
+/* Was sequence number a assigned before b?
+ * Optimized for comparing after a sequence wrap.
+ */
+static int batch_seq_older(unsigned long a, unsigned long b)
+{
+  return (a - b) > (ULONG_MAX / 2);
+}
+
 /* Is maybe an ancestor of b, or b itself? */
 static int batch_is_ancestor(const batch_t *maybe, const batch_t *b)
 {
@@ -103,20 +112,18 @@ static int batch_is_ancestor(const batch_t *maybe, const batch_t *b)
   return 0;
 }
 
-/* The batch open the longest, ignoring protect and everything it is nested
- * inside. Evicting a batch cascades to its children, so an ancestor of the
- * batch we are about to open must be excluded, or the new record would be
- * left with a parent pointer into freed memory.
- */
+/* Find the batch open the longest based on sequence */
 static batch_t *batch_oldest(const batch_t *protect)
 {
   batch_t *b, *oldest = NULL;
 
   for (b = batchlist; b; b = b->next) {
-    if (batch_is_ancestor(b, protect))
+    if (batch_is_ancestor(b, protect)) {
       continue;
-    if (!oldest || b->started < oldest->started)
+    }
+    if (!oldest || batch_seq_older(b->seq, oldest->seq)) {
       oldest = b;
+    }
   }
   return oldest;
 }
@@ -153,6 +160,7 @@ static batch_t *batch_start(const char *reftag, const char *type,
   if (args)
     strlcpy(b->args, args, sizeof b->args);
   b->parent = parent;
+  b->seq = batchseq++;
   b->started = now;
   b->next = batchlist;
   batchlist = b;

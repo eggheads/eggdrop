@@ -158,6 +158,7 @@ typedef struct batch_list {
   char type[BATCHTYPEMAX + 1];       /* Batch type                   */
   char args[BATCHARGSMAX + 1];       /* Raw remainder of the BATCH + line   */
   struct batch_list *parent;         /* Enclosing batch, or NULL            */
+  unsigned long seq;                 /* Insertion order, for eviction       */
   time_t started;
   struct batch_list *next;
 } batch_t;
