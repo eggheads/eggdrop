@@ -111,6 +111,8 @@
 #define H_monitor (*(p_tcl_bind_list *)(server_funcs[52]))
 #define isupport_get_prefixchars ((const char *(*)(void))server_funcs[53])
 #define batch_get_current ((batch_t *(*)(void))(server_funcs[54]))
+#define H_batch (*(p_tcl_bind_list *)(server_funcs[55]))
+/* 56 - 59 */
 
 
 #endif /* MAKING_SERVER */

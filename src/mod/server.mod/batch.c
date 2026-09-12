@@ -28,7 +28,19 @@ static batch_t *batchlist = NULL;       /* List of batches the server has opened
 static batch_t *current_batch = NULL;   /* The batch that the line currently being dispatched belongs */
                                         /* to, or NULL if that line carried no batch tag.             */
 
-static void batch_end(batch_t *b);
+static void batch_end(batch_t *b, const char *event);
+
+static void check_tcl_batch(batch_t *b, const char *event)
+{ 
+  Tcl_SetVar(interp, "_batch1", b->reftag, 0);
+  Tcl_SetVar(interp, "_batch2", b->type, 0);
+  Tcl_SetVar(interp, "_batch3", b->args, 0);
+  Tcl_SetVar(interp, "_batch4", (char *) event, 0);
+  Tcl_SetVar(interp, "_batch5", b->parent ? b->parent->reftag : "", 0);
+  check_tcl_bind(H_batch, b->type, 0,
+                 " $_batch1 $_batch2 $_batch3 $_batch4 $_batch5",
+                 MATCH_MASK | BIND_STACKABLE);
+} 
 
 static int batch_valid_reftag(const char *reftag)
 {
@@ -64,21 +76,23 @@ static batch_t *batch_get_current(void)
 /* Free every open batch, good for disconnections/capability removal */
 static void batch_free_all(void)
 {
-  batch_t *b, *next;
-
-  for (b = batchlist; b; b = next) {
+  batch_t *b, *next, *expired = batchlist;
+  batchlist = NULL;
+  current_batch = NULL;
+  batchcount = 0;
+  for (b = expired; b; b = b->next) {
+    check_tcl_batch(b, "discard");
+  }
+  for (b = expired; b; b = next) {
     next = b->next;
     putlog(LOG_DEBUG, "*", "BATCH: discarding unterminated batch %s (type %s)",
            b->reftag, b->type);
     nfree(b);
   }
-  batchlist = NULL;
-  current_batch = NULL;
-  batchcount = 0;
 }
 
 /* Unlink and free a single batch record, without touching its children */
-static void batch_free_one(batch_t *b)
+static void batch_unlink(batch_t *b)
 {
   batch_t **prev;
 
@@ -88,7 +102,6 @@ static void batch_free_one(batch_t *b)
     if (*prev == b) {
       *prev = b->next;
       batchcount--;
-      nfree(b);
       return;
     }
   }
@@ -151,7 +164,7 @@ static batch_t *batch_start(const char *reftag, const char *type,
     putlog(LOG_DEBUG, "*", "BATCH: at the %d open batch limit, discarding "
            "oldest batch %s (type %s) to make room for %s", BATCHMAX,
            old->reftag, old->type, reftag);
-    batch_end(old);
+    batch_end(old, "discard");
   }
   b = nmalloc(sizeof *b);
   memset(b, 0, sizeof *b);
@@ -168,18 +181,7 @@ static batch_t *batch_start(const char *reftag, const char *type,
   return b;
 }
 
-/* Close a batch and free it, along with anything nested inside it.
- *
- * A nested batch cannot outlive its parent: its end line would have to carry
- * a tag naming the parent, and the spec forbids referring to a batch after it
- * has ended, so once the parent closes no legal line can ever close the
- * child. Those records are unreachable, so they go now rather than sitting in
- * the list until we disconnect.
- *
- * The scan restarts after each removal because freeing a child also frees its
- * own descendants, which can invalidate a saved next pointer.
- */
-static void batch_end(batch_t *b)
+static void batch_detach(batch_t *b, batch_t **head)
 {
   batch_t *cur;
   int found;
@@ -188,16 +190,38 @@ static void batch_end(batch_t *b)
     found = 0;
     for (cur = batchlist; cur; cur = cur->next) {
       if (cur->parent == b) {
-        putlog(LOG_DEBUG, "*", "BATCH: discarding nested batch %s, its parent "
-               "%s closed first", cur->reftag, b->reftag);
-        batch_end(cur);
+        batch_detach(cur, head);
         found = 1;
         break;
       }
     }
   } while (found);
-  batch_free_one(b);
+  batch_unlink(b);
+  b->next = *head;
+  *head = b;
 }
+
+/* Close a batch and free it, along with anything nested inside it. */
+static void batch_end(batch_t *b, const char *event)
+{
+  batch_t *doomed = NULL, *cur, *next;
+
+  batch_detach(b, &doomed);
+  for (cur = doomed; cur; cur = cur->next) {
+    if (cur == b) {
+      check_tcl_batch(cur, event);
+    } else {
+      putlog(LOG_DEBUG, "*", "BATCH: discarding nested batch %s, its parent "
+             "%s closed first", cur->reftag, cur->parent->reftag);
+      check_tcl_batch(cur, "discard");
+    }
+  }
+  for (cur = doomed; cur; cur = next) {
+    next = cur->next;
+    nfree(cur);
+  }
+}
+
 
 /* Resolve the batch tag on an incoming line to an open batch record. Returns
  * NULL if the line carried no batch tag, or if it named a batch we have no
@@ -263,10 +287,12 @@ static int gotbatch(char *from, char *msg)
       return 0;
     }
     b = batch_start(reftag, type, msg, current_batch);
-    if (b)
+    if (b) {
       putlog(LOG_DEBUG, "*", "BATCH: opened %s (type %s)%s%s", b->reftag,
              b->type, b->parent ? ", nested in " : "",
              b->parent ? b->parent->reftag : "");
+      check_tcl_batch(b, "start");
+    }
   } else if (prefix == '-') {
     b = batch_find(reftag);
     if (!b) {
@@ -282,7 +308,7 @@ static int gotbatch(char *from, char *msg)
       putlog(LOG_DEBUG, "*", "BATCH: %s closed batch %s from a different batch "
              "context than it was opened in", from, reftag);
     putlog(LOG_DEBUG, "*", "BATCH: closed %s (type %s)", b->reftag, b->type);
-    batch_end(b);
+    batch_end(b, "end");
   } else {
     putlog(LOG_DEBUG, "*", "BATCH: %s sent a BATCH with an unrecognized prefix "
            "'%c'", from, prefix);
