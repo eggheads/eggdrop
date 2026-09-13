@@ -45,28 +45,20 @@ putserv <text> [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putserv "PRIVMSG #lamest :Hello from LamestBot!"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-puthelp:
 
@@ -86,28 +78,20 @@ puthelp <text> [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         puthelp "PRIVMSG #lamest :Hello, Foobar!"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putquick:
 
@@ -127,28 +111,20 @@ putquick <text> [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putquick "NOTICE Foobar :This message uses the quick queue."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putnow:
 
@@ -166,28 +142,20 @@ putnow <text> [-oneline]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putnow "PING :irc.example.net"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putkick:
 
@@ -201,28 +169,20 @@ putkick <channel> <nick,nick,...> [reason]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putkick "#lamest" Foobar "Example kick reason"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putlog:
 
@@ -236,28 +196,20 @@ putlog <text>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putlog "LamestBot loaded the example script."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putcmdlog:
 
@@ -271,28 +223,20 @@ putcmdlog <text>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putcmdlog "Foobar used an example command."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putxferlog:
 
@@ -306,28 +250,20 @@ putxferlog <text>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putxferlog "Example file transfer completed."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putloglev:
 
@@ -341,28 +277,20 @@ putloglev <flag(s)> <channel> <text>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putloglev o "#lamest" "Example log message."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dumpfile:
 
@@ -376,28 +304,20 @@ dumpfile <nick> <filename>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         dumpfile Foobar help.txt
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-queuesize:
 
@@ -412,28 +332,20 @@ queuesize [queue]
   Returns
      the number of messages in all queues. If a queue is specified, only the size of this queue is returned. Valid queues are: mode, server, help.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set queued [queuesize server]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-clearqueue:
 
@@ -447,28 +359,20 @@ clearqueue <queue>
   Returns
      the number of deleted lines from the specified queue.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set removed [clearqueue help]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-cap:
 
@@ -482,28 +386,20 @@ cap <ls/values/req/enabled/raw> [arg]
   Returns
      a list of CAP capabilities for the ``enabled`` and ``ls`` sub-commands; a dict of capability/value pairs for the ``values`` command or a list if ``values`` if followed by an argument; otherwise nothing.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set capabilities [cap ls]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-tagmsg:
 
@@ -518,29 +414,21 @@ tagmsg <tags> <target>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set tags [dict create +example value]
         tagmsg $tags "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-server-add:
 
@@ -554,28 +442,20 @@ server add <ip/host> [[+]port [password]]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Add a server
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         server add irc.example.net +6697
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-server-remove:
 
@@ -589,28 +469,20 @@ server remove <ip/host> [[+]port]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Remove a server
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         server remove irc.example.net +6697
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-server-list:
 
@@ -624,20 +496,14 @@ server list
   Returns
      A list of lists in the format ``{{hostname} {port} {password}}``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -659,29 +525,21 @@ countusers
   Returns
      number of users in the bot's database
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set usercount [countusers]
         putlog "LamestBot has $usercount users."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-validuser:
 
@@ -696,20 +554,14 @@ validuser <handle>
   Returns
      ``1`` if a user by that name exists; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -717,9 +569,7 @@ validuser <handle>
             putlog "The handle foobar exists."
         }
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-finduser:
 
@@ -733,28 +583,20 @@ finduser [-account] <value>
   Returns
      the handle found, or ``*`` if none
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set handle [finduser "Foobar!foobar@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-userlist:
 
@@ -769,28 +611,20 @@ userlist [flags]
   Returns
      a list of users on the bot. You can use the flag matching system here ([global]``{&/\|}``[chan]``{&/\|}``[bot]). '&' specifies ``and``; '|' specifies ``or``.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set users [userlist]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-passwdok:
 
@@ -804,28 +638,20 @@ passwdok <handle> <pass>
   Returns
      ``1`` if the password matches for that user; ``0`` otherwise. Or if we are checking against the password ``-``: ``1`` if the user has no password set; ``0`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set valid [passwdok foobar "example-password"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getuser:
 
@@ -870,28 +696,20 @@ getuser <handle> [entry-type] [extra info]
   Returns
      info specific to each entry-type
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set hosts [getuser foobar HOSTS]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setuser:
 
@@ -941,28 +759,20 @@ setuser <handle> <entry-type> [extra info]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setuser foobar INFO "Example user information"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chhandle:
 
@@ -976,28 +786,20 @@ chhandle <old-handle> <new-handle>
   Returns
      ``1`` on success; ``0`` if the new handle is invalid or already used, or if the user can't be found
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set changed [chhandle foobar foobar2]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chattr:
 
@@ -1012,28 +814,20 @@ chattr <handle> [changes [channel]]
   Returns
      new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. ``*`` is returned if the specified user does not exist.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set flags [chattr foobar +o "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-botattr:
 
@@ -1047,20 +841,14 @@ botattr <handle> [changes [channel]]
   Returns
      new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. ``*`` is returned if the specified bot does not exist.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -1068,9 +856,7 @@ botattr <handle> [changes [channel]]
 
 .. _matchattr:
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchattr:
 
@@ -1088,20 +874,14 @@ matchattr <handle> <flags> [channel]
   Returns
      ``1`` if the specified user has the flags matching the provided mask; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Check user flags
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -1109,9 +889,7 @@ matchattr <handle> <flags> [channel]
             putlog "foobar has the requested flags."
         }
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-adduser:
 
@@ -1125,28 +903,20 @@ adduser <handle> [hostmask]
   Returns
      ``1`` if successful; ``0`` if the handle already exists
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set added [adduser foobar "Foobar!foobar@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-addbot:
 
@@ -1167,28 +937,20 @@ NOTE 2: In the deprecated formats, an additional botport and/or userport given a
   Returns
      ``1`` if successful; ``0`` if the bot already exists or a port is invalid
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set added [addbot OtherBot 127.0.0.1]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-deluser:
 
@@ -1202,28 +964,20 @@ deluser <handle>
   Returns
      ``1`` if successful, ``0`` if no such user exists
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set deleted [deluser foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-delhost:
 
@@ -1237,28 +991,20 @@ delhost <handle> <hostmask>
   Returns
      ``1`` on success; ``0`` if the hostmask (or user) doesn't exist
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [delhost foobar "Foobar!foobar@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-addchanrec:
 
@@ -1272,28 +1018,20 @@ addchanrec <handle> <channel>
   Returns
      ``1`` on success; ``0`` if the user or channel does not exist
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set added [addchanrec foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-delchanrec:
 
@@ -1307,28 +1045,20 @@ delchanrec <handle> <channel>
   Returns
      ``1`` on success; ``0`` if the user or channel does not exist
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set deleted [delchanrec foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-haschanrec:
 
@@ -1343,28 +1073,20 @@ haschanrec <handle> <channel>
   Returns
      ``1`` if the given handle has a chanrec for the specified channel; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set has_record [haschanrec foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getchaninfo:
 
@@ -1379,28 +1101,20 @@ getchaninfo <handle> <channel>
   Returns
      info line for a specific channel (behaves just like 'getinfo')
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set info [getchaninfo foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setchaninfo:
 
@@ -1414,28 +1128,20 @@ setchaninfo <handle> <channel> <info>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setchaninfo foobar "#lamest" "Example channel information"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newchanban:
 
@@ -1461,28 +1167,20 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Add a channel ban
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newchanban "#lamest" "*!*@127.0.0.1" foobar "Example text"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newban:
 
@@ -1507,28 +1205,20 @@ newban <ban> <creator> <comment> [lifetime] [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newban "*!*@127.0.0.1" foobar "Example text"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newchanexempt:
 
@@ -1553,28 +1243,20 @@ newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newchanexempt "#lamest" "*!*@127.0.0.1" foobar "Example text"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newexempt:
 
@@ -1599,28 +1281,20 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newexempt "*!*@127.0.0.1" foobar "Example text"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newchaninvite:
 
@@ -1645,28 +1319,20 @@ newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newchaninvite "#lamest" "*!*@127.0.0.1" foobar "Example text"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newinvite:
 
@@ -1691,28 +1357,20 @@ newinvite <invite> <creator> <comment> [lifetime] [options]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newinvite "*!*@127.0.0.1" foobar "Example text"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-stickban:
 
@@ -1726,28 +1384,20 @@ stickban <banmask> [channel]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [stickban "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unstickban:
 
@@ -1761,28 +1411,20 @@ unstickban <banmask> [channel]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [unstickban "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-stickexempt:
 
@@ -1796,28 +1438,20 @@ stickexempt <exemptmask> [channel]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [stickexempt "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unstickexempt:
 
@@ -1831,28 +1465,20 @@ unstickexempt <exemptmask> [channel]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [unstickexempt "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-stickinvite:
 
@@ -1866,28 +1492,20 @@ stickinvite <invitemask> [channel]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [stickinvite "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unstickinvite:
 
@@ -1901,28 +1519,20 @@ unstickinvite <invitemask> [channel]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [unstickinvite "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killchanban:
 
@@ -1936,28 +1546,20 @@ killchanban <channel> <ban>
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [killchanban "#lamest" "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killban:
 
@@ -1971,28 +1573,20 @@ killban <ban>
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [killban "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killchanexempt:
 
@@ -2006,28 +1600,20 @@ killchanexempt <channel> <exempt>
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [killchanexempt "#lamest" "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killexempt:
 
@@ -2041,28 +1627,20 @@ killexempt <exempt>
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [killexempt "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killchaninvite:
 
@@ -2076,28 +1654,20 @@ killchaninvite <channel> <invite>
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [killchaninvite "#lamest" "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killinvite:
 
@@ -2111,28 +1681,20 @@ killinvite <invite>
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [killinvite "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ischanjuped:
 
@@ -2146,28 +1708,20 @@ ischanjuped <channel>
   Returns
      ``1`` if the channel is juped, and the bot is unable to join; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set juped [ischanjuped "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isban:
 
@@ -2181,28 +1735,20 @@ isban <ban> [channel [-channel]]
   Returns
      ``1`` if the specified ban is in the global ban list; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isban "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ispermban:
 
@@ -2216,28 +1762,20 @@ ispermban <ban> [channel [-channel]]
   Returns
      ``1`` if the specified ban is in the global ban list AND is marked as permanent; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [ispermban "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isexempt:
 
@@ -2251,28 +1789,20 @@ isexempt <exempt> [channel [-channel]]
   Returns
      ``1`` if the specified exempt is in the global exempt list; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isexempt "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ispermexempt:
 
@@ -2286,28 +1816,20 @@ ispermexempt <exempt> [channel [-channel]]
   Returns
      ``1`` if the specified exempt is in the global exempt list AND is marked as permanent; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [ispermexempt "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isinvite:
 
@@ -2321,28 +1843,20 @@ isinvite <invite> [channel [-channel]]
   Returns
      ``1`` if the specified invite is in the global invite list; ``0`` otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isinvite "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isperminvite:
 
@@ -2356,28 +1870,20 @@ isperminvite <invite> [channel [-channel]]
   Returns
      ``1`` if the specified invite is in the global invite list AND is marked as permanent; ``0`` otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isperminvite "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isbansticky:
 
@@ -2391,28 +1897,20 @@ isbansticky <ban> [channel [-channel]]
   Returns
      ``1`` if the specified ban is marked as sticky in the global ban list; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isbansticky "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isexemptsticky:
 
@@ -2426,28 +1924,20 @@ isexemptsticky <exempt> [channel [-channel]]
   Returns
      ``1`` if the specified exempt is marked as sticky in the global exempt list; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isexemptsticky "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isinvitesticky:
 
@@ -2461,28 +1951,20 @@ isinvitesticky <invite> [channel [-channel]]
   Returns
      ``1`` if the specified invite is marked as sticky in the global invite list; ``0`` otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [isinvitesticky "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchban:
 
@@ -2496,28 +1978,20 @@ matchban <nick!user@host> [channel]
   Returns
      ``1`` if the specified nick!user\@host matches a ban in the global ban list; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set banned [matchban "Foobar!foobar@127.0.0.1" "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchexempt:
 
@@ -2531,28 +2005,20 @@ matchexempt <nick!user@host> [channel]
   Returns
      ``1`` if the specified nick!user\@host matches an exempt in the global exempt list; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set exempt [matchexempt "Foobar!foobar@127.0.0.1" "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchinvite:
 
@@ -2567,28 +2033,20 @@ matchinvite <nick!user@host> [channel]
      ``1`` if the specified nick!user\@host matches an invite in the global invite list; ``0`` otherwise. If a channel is specified, that
      channel's invite list is checked as well.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set invited [matchinvite "Foobar!foobar@127.0.0.1" "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-banlist:
 
@@ -2602,28 +2060,20 @@ banlist [channel]
   Returns
      a list of global bans, or, if a channel is specified, a list of channel-specific bans. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set bans [banlist "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-exemptlist:
 
@@ -2637,28 +2087,20 @@ exemptlist [channel]
   Returns
      a list of global exempts, or, if a channel is specified, a list of channel-specific exempts. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set exempts [exemptlist "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-invitelist:
 
@@ -2672,28 +2114,20 @@ invitelist [channel]
   Returns
      a list of global invites, or, if a channel is specified, a list of channel-specific invites. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, last time active, and creator. The three timestamps are in unixtime format.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set invites [invitelist "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-newignore:
 
@@ -2707,28 +2141,20 @@ newignore <hostmask> <creator> <comment> [lifetime]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         newignore "*!*@127.0.0.1" foobar "Example ignore" 60
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killignore:
 
@@ -2742,28 +2168,20 @@ killignore <hostmask>
   Returns
      ``1`` if successful; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set removed [killignore "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ignorelist:
 
@@ -2777,28 +2195,20 @@ ignorelist
   Returns
      a list of ignores. Each entry is a sublist containing: hostmask, comment, expiration timestamp, time added, and creator. The timestamps are in unixtime format.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set ignores [ignorelist]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isignore:
 
@@ -2812,28 +2222,20 @@ isignore <hostmask>
   Returns
      ``1`` if the ignore is in the list; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set ignored [isignore "*!*@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-save:
 
@@ -2847,28 +2249,20 @@ save
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         save
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-reload:
 
@@ -2882,28 +2276,20 @@ reload
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         reload
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-backup:
 
@@ -2917,28 +2303,20 @@ backup
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         backup
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getting-users:
 
@@ -2952,20 +2330,14 @@ getting-users
   Returns
      ``1`` if the bot is currently downloading a userfile from a sharebot (and hence, user records are about to drastically change); ``0`` if not
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -2986,28 +2358,20 @@ channel add <name> [option-list]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Add a channel
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         channel add "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-channel-set:
 
@@ -3021,28 +2385,20 @@ channel set <name> <options...>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Change a channel setting
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         channel set "#lamest" +autoop
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-channel-info:
 
@@ -3057,28 +2413,20 @@ channel info <name>
   Returns
      a list of info about the specified channel's settings.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Inspect channel settings
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set info [channel info "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-channel-get:
 
@@ -3093,28 +2441,20 @@ channel get <name> [setting]
   Returns
      The value of the setting you specify. For flags, a value of ``0`` means it is disabled (-), and non-zero means enabled (+). If no setting is specified, a flat list of all available settings and their values will be returned.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Read a channel setting
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set autoop [channel get "#lamest" autoop]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-channel-remove:
 
@@ -3128,28 +2468,20 @@ channel remove <name>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         channel remove "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-savechannels:
 
@@ -3163,28 +2495,20 @@ savechannels
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         savechannels
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-loadchannels:
 
@@ -3198,28 +2522,20 @@ loadchannels
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         loadchannels
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-channels:
 
@@ -3234,28 +2550,20 @@ channels
   Returns
      a list of the channels the bot has a channel record for
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set channel_list [channels]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-channame2dname:
 
@@ -3272,28 +2580,20 @@ channame2dname <channel-name>
   See also
      :ref:`chandname2name <tcl-chandname2name>`
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set dname [channame2dname "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chandname2name:
 
@@ -3310,28 +2610,20 @@ chandname2name <channel-dname>
   See also
      :ref:`channame2dname <tcl-channame2dname>`
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set channel_name [chandname2name "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isbotnick:
 
@@ -3346,28 +2638,20 @@ isbotnick <nick>
   Returns
      ``1`` if the nick matches the botnick; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set is_bot [isbotnick LamestBot]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-botisop:
 
@@ -3381,28 +2665,20 @@ botisop [channel]
   Returns
      ``1`` if the bot has ops on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set opped [botisop "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-botishalfop:
 
@@ -3416,28 +2692,20 @@ botishalfop [channel]
   Returns
      ``1`` if the bot has halfops on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set halfopped [botishalfop "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-botisvoice:
 
@@ -3451,28 +2719,20 @@ botisvoice [channel]
   Returns
      ``1`` if the bot has a voice on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set voiced [botisvoice "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-botonchan:
 
@@ -3486,28 +2746,20 @@ botonchan [channel]
   Returns
      ``1`` if the bot is on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set present [botonchan "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isop:
 
@@ -3521,28 +2773,20 @@ isop <nickname> [channel]
   Returns
      ``1`` if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has ops; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set opped [isop Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ishalfop:
 
@@ -3556,28 +2800,20 @@ ishalfop <nickname> [channel]
   Returns
      ``1`` if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has halfops; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set halfopped [ishalfop Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-wasop:
 
@@ -3591,28 +2827,20 @@ wasop <nickname> <channel>
   Returns
      ``1`` if someone that just got opped/deopped in the chan had op before the modechange; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set previously_opped [wasop Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-washalfop:
 
@@ -3626,28 +2854,20 @@ washalfop <nickname> <channel>
   Returns
      ``1`` if someone that just got halfopped/dehalfopped in the chan had halfop before the modechange; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set previously_halfopped [washalfop Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isvoice:
 
@@ -3661,28 +2881,20 @@ isvoice <nickname> [channel]
   Returns
      ``1`` if someone by that nickname is on the channel (or any channel if no channel is specified) and has voice (+v); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set voiced [isvoice Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isidentified:
 
@@ -3696,28 +2908,20 @@ isidentified <nickname> [channel]
   Returns
      ``1`` if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); ``0`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set identified [isidentified Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isaway:
 
@@ -3731,28 +2935,20 @@ isaway <nickname> [channel]
   Returns
      ``1`` if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; ``0`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set away [isaway Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isircbot:
 
@@ -3766,28 +2962,20 @@ isircbot <nickname> [channel]
   Returns
      ``1`` if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; ``0`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set is_bot [isircbot Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-onchan:
 
@@ -3800,28 +2988,20 @@ onchan <nickname> [channel]
   Returns
      ``1`` if someone by that nickname is on the specified channel (or any channel if none is specified); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set present [onchan Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-monitor:
 
@@ -3835,28 +3015,20 @@ monitor <add/delete/list/online/offline/status/clear> [nickname]
   Returns
      The ``add`` sub-command returns a ``1`` if the nick was successfully added, a ``0`` if the nick is already in the monitor list, and a ``2`` if the nick could not be added. The ``delete`` sub-command returns a ``1`` if the nick is removed, or an error if the nick is not found. The ``status`` sub-command returns a ``1`` if ``nickname`` is online or a ``0`` if ``nickname`` is offline. The ``clear`` command removes all nicknames from the list the server is monitoring.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set added [monitor add Foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-accounttracking:
 
@@ -3870,28 +3042,20 @@ accounttracking
   Returns
      a ``1`` if all three functionalities are present, a ``0`` if one or more are missing.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [accounttracking]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getaccount:
 
@@ -3907,28 +3071,20 @@ getaccount <nickname> [channel]
 
      NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set account [getaccount Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-nick2hand:
 
@@ -3942,28 +3098,20 @@ nick2hand <nickname> [channel]
   Returns
      the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, ``""`` is returned. If the nick is found but does not have a handle, ``*`` is returned. If no channel is specified, all channels are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set handle [nick2hand Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-account2nicks:
 
@@ -3977,28 +3125,20 @@ account2nicks <account> [channel]
   Returns
      a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; ``""`` is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set nicks [account2nicks foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-hand2nick:
 
@@ -4012,28 +3152,20 @@ hand2nick <handle> [channel]
   Returns
      nickname of the first person on the specified channel (if one is specified) whose nick!user\@host matches the given handle; ``""`` is returned if no match is found. If no channel is specified, all channels are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set nick [hand2nick foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-hand2nicks:
 
@@ -4047,28 +3179,20 @@ hand2nicks <handle> [channel]
   Returns
      a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; ``""`` is returned if no match is found. If no channel is specified, all channels are checked.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set nicks [hand2nicks foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-handonchan:
 
@@ -4082,28 +3206,20 @@ handonchan <handle> [channel]
   Returns
      ``1`` if the the nick!user\@host for someone on the channel (or any channel if no channel name is specified) matches for the handle given; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set present [handonchan foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ischanban:
 
@@ -4117,28 +3233,20 @@ ischanban <ban> <channel>
   Returns
      ``1`` if the specified ban is on the given channel's ban list (not the bot's banlist for the channel)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [ischanban "*!*@127.0.0.1" "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ischanexempt:
 
@@ -4152,28 +3260,20 @@ ischanexempt <exempt> <channel>
   Returns
      ``1`` if the specified exempt is on the given channel's exempt list (not the bot's exemptlist for the channel)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [ischanexempt "*!*@127.0.0.1" "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ischaninvite:
 
@@ -4187,28 +3287,20 @@ ischaninvite <invite> <channel>
   Returns
      ``1`` if the specified invite is on the given channel's invite list (not the bot's invitelist for the channel)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [ischaninvite "*!*@127.0.0.1" "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chanbans:
 
@@ -4222,28 +3314,20 @@ chanbans <channel>
   Returns
      a list of the current bans on the channel. Each element is a sublist of the form ``{<ban> <bywho> <age>}``. age is seconds from the bot's point of view
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set bans [chanbans "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chanexempts:
 
@@ -4257,28 +3341,20 @@ chanexempts <channel>
   Returns
      a list of the current exempts on the channel. Each element is a sublist of the form ``{<exempts> <bywho> <age>}``. age is seconds from the bot's point of view
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set exempts [chanexempts "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chaninvites:
 
@@ -4292,28 +3368,20 @@ chaninvites <channel>
   Returns
      a list of the current invites on the channel. Each element is a sublist of the form ``{<invites> <bywho> <age>}``. age is seconds from the bot's point of view
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set invites [chaninvites "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetbans:
 
@@ -4327,28 +3395,20 @@ resetbans <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         resetbans "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetexempts:
 
@@ -4362,28 +3422,20 @@ resetexempts <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         resetexempts "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetinvites:
 
@@ -4397,28 +3449,20 @@ resetinvites <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         resetinvites "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetchanidle:
 
@@ -4432,28 +3476,20 @@ resetchanidle [nick] <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         resetchanidle Foobar "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetchanjoin:
 
@@ -4467,28 +3503,20 @@ resetchanjoin [nick] <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         resetchanjoin Foobar "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetchan:
 
@@ -4519,28 +3547,20 @@ resetchan <channel> [flags]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         resetchan "#lamest" w
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-refreshchan:
 
@@ -4573,28 +3593,20 @@ refreshchan <channel> [flags]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         refreshchan "#lamest" w
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getchanhost:
 
@@ -4608,28 +3620,20 @@ getchanhost <nickname> [channel]
   Returns
      user\@host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), ``""`` is returned.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set host [getchanhost Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getchanjoin:
 
@@ -4643,28 +3647,20 @@ getchanjoin <nickname> <channel>
   Returns
      timestamp (unixtime format) of when the specified nickname joined the channel if available, ``0`` otherwise. Note that after a channel reset this information will be lost, even if previously available.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set joined [getchanjoin Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-onchansplit:
 
@@ -4678,28 +3674,20 @@ onchansplit <nick> [channel]
   Returns
      ``1`` if that nick is split from the channel (or any channel if no channel is specified); ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set split [onchansplit Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chanlist:
 
@@ -4715,28 +3703,20 @@ chanlist <channel> [flags][<&|>chanflags]
 
      Please note that if you're executing chanlist after a part or sign bind, the gone user will still be listed, so you can check for wasop, isop, etc.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set nicks [chanlist "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getchanidle:
 
@@ -4750,28 +3730,20 @@ getchanidle <nickname> <channel>
   Returns
      number of minutes that person has been idle; ``-1`` if the specified user isn't on the channel
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set idle [getchanidle Foobar "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getchanmode:
 
@@ -4785,28 +3757,20 @@ getchanmode <channel>
   Returns
      string of the type ``+ntik key`` for the channel specified
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set modes [getchanmode "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-jump:
 
@@ -4820,28 +3784,20 @@ jump [server [[+]port [password]]]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         jump irc.example.net +6697
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-pushmode:
 
@@ -4855,28 +3811,20 @@ pushmode <channel> <mode> [arg]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         pushmode "#lamest" +o Foobar
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-flushmode:
 
@@ -4890,28 +3838,20 @@ flushmode <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         flushmode "#lamest"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-topic:
 
@@ -4925,28 +3865,20 @@ topic <channel>
   Returns
      string containing the current topic of the specified channel
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set current_topic [topic "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-validchan:
 
@@ -4960,28 +3892,20 @@ validchan <channel>
   Returns
      ``1`` if the channel exists, ``0`` if not
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set known [validchan "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isdynamic:
 
@@ -4995,28 +3919,20 @@ isdynamic <channel>
   Returns
      ``1`` if the channel is a dynamic channel; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set dynamic [isdynamic "#lamest"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setudef:
 
@@ -5030,28 +3946,20 @@ setudef <flag/int/str> <name>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setudef flag example-setting
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-renudef:
 
@@ -5065,28 +3973,20 @@ renudef <flag/int/str> <oldname> <newname>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         renudef flag example-setting renamed-setting
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-deludef:
 
@@ -5100,28 +4000,20 @@ deludef <flag/int/str> <name>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         deludef flag example-setting
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getudefs:
 
@@ -5135,28 +4027,20 @@ getudefs [flag/int/str]
   Returns
      a list of user defined channel settings of the given type, or all of them if no type is given.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set flags [getudefs flag]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-chansettype:
 
@@ -5170,28 +4054,20 @@ chansettype <setting>
   Returns
      The type of the setting you specify. The possible types are ``flag``, ``int``, ``str``, ``pair``. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set type [chansettype autoop]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isupport-get:
 
@@ -5206,28 +4082,20 @@ isupport get [key]
   Returns
      string or dict, see description above
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set chantypes [isupport get CHANTYPES]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-isupport-isset:
 
@@ -5241,20 +4109,14 @@ isupport isset <key>
   Returns
      ``0`` or ``1``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -5277,28 +4139,20 @@ putdcc <idx> <text> [-raw]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putdcc 0 "Hello, foobar."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putidx:
 
@@ -5312,28 +4166,20 @@ putidx <idx> <text> -[raw]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putidx 0 "Hello, foobar."
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dccbroadcast:
 
@@ -5347,28 +4193,20 @@ dccbroadcast <message>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         dccbroadcast "Example botnet announcement"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dccputchan:
 
@@ -5382,28 +4220,20 @@ dccputchan <channel> <message>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         dccputchan 0 "Hello from LamestBot"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-boot:
 
@@ -5417,28 +4247,20 @@ boot <user@bot> [reason]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         boot foobar@LamestBot "Requested disconnect"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dccsimul:
 
@@ -5452,28 +4274,20 @@ dccsimul <idx> <text>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         dccsimul 0 ".who"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-hand2idx:
 
@@ -5487,28 +4301,20 @@ hand2idx <handle>
   Returns
      the idx (a number greater than or equal to zero) for the user given if the user is on the party line in chat mode (even if she is currently on a channel or in chat off), the file area, or in the control of a script. ``-1`` is returned if no idx is found. If the user is on multiple times, the oldest idx is returned.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set idx [hand2idx foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-idx2hand:
 
@@ -5522,28 +4328,20 @@ idx2hand <idx>
   Returns
      handle of the user with the given idx
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set handle [idx2hand 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-valididx:
 
@@ -5557,28 +4355,20 @@ valididx <idx>
   Returns
      ``1`` if the idx currently exists; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set valid [valididx 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getchan:
 
@@ -5592,28 +4382,20 @@ getchan <idx>
   Returns
      the current party line channel for a user on the party line; ``0`` indicates he's on the group party line, ``-1`` means he has chat off, and a value from ``1`` to ``99999`` is a private channel
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set partyline_channel [getchan 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setchan:
 
@@ -5627,28 +4409,20 @@ setchan <idx> <channel>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setchan 0 0
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-console:
 
@@ -5662,28 +4436,20 @@ console <idx> [channel] [console-modes]
   Returns
      a list containing the user's (new) channel view and (new) console modes, or nothing if that user isn't currently on the partyline
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set settings [console 0 "#lamest" +mp]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-resetconsole:
 
@@ -5697,28 +4463,20 @@ resetconsole <idx>
   Returns
      a list containing the user's channel view and (new) console modes, or nothing if that user isn't currently on the partyline
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set settings [resetconsole 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-echo:
 
@@ -5732,28 +4490,20 @@ echo <idx> [status]
   Returns
      new value of echo for that user (or the current value, if status was omitted)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set echo_enabled [echo 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-strip:
 
@@ -5792,28 +4542,20 @@ strip <idx> [+/-strip-flags]
   Returns
      new strip-flags for the specified user (or the current flags, if strip-flags was omitted)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set strip_flags [strip 0 +c]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-page:
 
@@ -5839,28 +4581,20 @@ page <idx> [number]
 
      status was omitted)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set page_lines [page 0 20]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putbot:
 
@@ -5874,28 +4608,20 @@ putbot <bot-nick> <message>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putbot OtherBot "Hello from LamestBot"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-putallbots:
 
@@ -5909,28 +4635,20 @@ putallbots <message>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         putallbots "example-message Hello"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killdcc:
 
@@ -5944,28 +4662,20 @@ killdcc <idx>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         killdcc 0
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-bots:
 
@@ -5979,28 +4689,20 @@ bots
   Returns
      list of the bots currently connected to the botnet
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set linked_bots [bots]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-botlist:
 
@@ -6029,28 +4731,20 @@ botlist
         * - ``sharing``
           - a ``+`` if the bot is a sharebot; ``-`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set botnet [botlist]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-islinked:
 
@@ -6064,28 +4758,20 @@ islinked <bot>
   Returns
      ``1`` if the bot is currently linked; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set linked [islinked OtherBot]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dccused:
 
@@ -6099,28 +4785,20 @@ dccused
   Returns
      number of dcc connections currently in use
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set connections [dccused]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dcclist:
 
@@ -6137,28 +4815,20 @@ dcclist [type]
 
      The types are: ``chat``, ``bot``, ``files``, ``file_receiving``, ``file_sending``, ``file_send_pending``, ``script``, ``socket`` (these are connections that have not yet been put under 'control'), ``telnet``, and ``server``. The timestamp is in unixtime format.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set connections [dcclist chat]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-socklist:
 
@@ -6204,20 +4874,16 @@ socklist [type]
 
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set sockets [socklist]
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
  Module: core
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-whom:
 
@@ -6231,28 +4897,20 @@ whom <chan>
   Returns
      list of people on the botnet who are on that channel. ``0`` is the default party line. Each item in the list is a sublist with six elements: ``nickname``, ``bot``, ``hostname``, ``access flag`` ('-', '@', '+', or '*'), minutes idle, and away message (blank if the user is not away). If you specify ``*`` for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set users [whom 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getdccidle:
 
@@ -6266,28 +4924,20 @@ getdccidle <idx>
   Returns
      number of seconds the dcc chat/file system/script user has been idle
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set idle_seconds [getdccidle 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getdccaway:
 
@@ -6301,28 +4951,20 @@ getdccaway <idx>
   Returns
      away message for a dcc chat user (or ``""`` if the user is not set away)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set away_message [getdccaway 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setdccaway:
 
@@ -6336,28 +4978,20 @@ setdccaway <idx> <message>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setdccaway 0 "Away for a moment"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-connect:
 
@@ -6371,28 +5005,20 @@ connect <host> <[+]port>
   Returns
      idx of the new connection
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set idx [connect 127.0.0.1 9000]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-listen:
 
@@ -6433,28 +5059,20 @@ listen [ip] <port> <type> [options [flag]]
 
        **Returns:** nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set port [listen 127.0.0.1 3333 users]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dccdumpfile:
 
@@ -6468,20 +5086,14 @@ dccdumpfile <idx> <filename>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -6504,28 +5116,20 @@ notes <user> [numberlist]
 
            ``{<from> <timestamp> <note text>}``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``notes``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set note_count [notes foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-erasenotes:
 
@@ -6539,28 +5143,20 @@ erasenotes <user> <numberlist>
   Returns
      ``-1`` if no such user, ``-2`` if notefile failure, ``0`` if no such note, or number of erased notes.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``notes``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set erased [erasenotes foobar "1-3"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-listnotes:
 
@@ -6574,28 +5170,20 @@ listnotes <user> <numberlist>
   Returns
      ``-1`` if no such user, ``-2`` if notefile failure, ``0`` if no such note, list of existing notes.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``notes``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set notes [listnotes foobar "1-3"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-storenote:
 
@@ -6609,20 +5197,14 @@ storenote <from> <to> <msg> <idx>
   Returns
      ``0`` on success; non-``0`` on failure
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``notes``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -6643,28 +5225,20 @@ assoc <chan> [name]
   Returns
      current name for that channel, if any
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``assoc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set name [assoc 1 lamest]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killassoc:
 
@@ -6678,20 +5252,14 @@ killassoc <chan>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``assoc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -6715,28 +5283,20 @@ compressfile [-level <level>] <src-file> [target-file]
   See also
      :ref:`uncompressfile <tcl-uncompressfile>`, :ref:`iscompressed <tcl-iscompressed>`
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``compress``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Compress a file
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         compressfile -level 6 example.txt example.txt.gz
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-uncompressfile:
 
@@ -6753,28 +5313,20 @@ uncompressfile <src-file> [target-file]
   See also
      :ref:`compressfile <tcl-compressfile>`, :ref:`iscompressed <tcl-iscompressed>`
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``compress``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Uncompress a file
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         uncompressfile example.txt.gz example.txt
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-iscompressed:
 
@@ -6788,20 +5340,14 @@ iscompressed <filename>
   Returns
      ``1`` if it is, ``0`` if it isn't, and ``2`` if some kind of error prevented the checks from succeeding.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``compress``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -6822,28 +5368,20 @@ setpwd <idx> <dir>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setpwd 0 /
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getpwd:
 
@@ -6857,28 +5395,20 @@ getpwd <idx>
   Returns
      the current directory of a file system user
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set directory [getpwd 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getfiles:
 
@@ -6891,28 +5421,20 @@ getfiles <dir>
   Returns
      a list of files in the directory given; the directory is relative to dcc-path
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set files [getfiles /]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getdirs:
 
@@ -6926,28 +5448,20 @@ getdirs <dir>
   Returns
      a list of subdirectories in the directory given; the directory is relative to dcc-path
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set directories [getdirs /]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dccsend:
 
@@ -6980,28 +5494,20 @@ dccsend <filename> <ircnick>
         * - ``5``
           - the file could not be opened or temporary file could not be created
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [dccsend example.txt Foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-filesend:
 
@@ -7015,28 +5521,20 @@ filesend <idx> <filename> [ircnick]
   Returns
      ``0`` on failure; ``1`` on success (either an immediate send or a queued send)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [filesend 0 example.txt Foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-fileresend:
 
@@ -7050,28 +5548,20 @@ fileresend <idx> <filename> [ircnick]
   Returns
      ``0`` on failure; ``1`` on success (either an immediate send or a queued send)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [fileresend 0 example.txt Foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setdesc:
 
@@ -7085,28 +5575,20 @@ setdesc <dir> <file> <desc>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setdesc / example.txt "Example file"
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getdesc:
 
@@ -7120,28 +5602,20 @@ getdesc <dir> <file>
   Returns
      the description for a file in the file system, if one exists
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set description [getdesc / example.txt]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setowner:
 
@@ -7155,28 +5629,20 @@ setowner <dir> <file> <handle>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setowner / example.txt foobar
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getowner:
 
@@ -7190,28 +5656,20 @@ getowner <dir> <file>
   Returns
      the owner of a file in the file system
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set owner [getowner / example.txt]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setlink:
 
@@ -7225,28 +5683,20 @@ setlink <dir> <file> <link>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         setlink / example.txt OtherBot:/example.txt
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getlink:
 
@@ -7260,28 +5710,20 @@ getlink <dir> <file>
   Returns
      the link for a linked file, if it exists
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set link [getlink / example.txt]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getfileq:
 
@@ -7295,28 +5737,20 @@ getfileq <handle>
   Returns
      list of files queued by someone; each item in the list will be a sublist with two elements: nickname the file is being sent to and the filename
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set queued_files [getfileq foobar]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getfilesendtime:
 
@@ -7341,28 +5775,20 @@ getfilesendtime <idx>
         * - ``-2``
           - the idx matches an entry which is not a file transfer
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [getfilesendtime 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-mkdir:
 
@@ -7390,28 +5816,20 @@ mkdir <directory> [<required-flags> [channel]]
         * - ``-3``
           - could not open filedb
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [mkdir /examples]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-rmdir:
 
@@ -7425,28 +5843,20 @@ rmdir <directory>
   Returns
      ``0`` on success; ``1`` on failure
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [rmdir /examples]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-mv:
 
@@ -7475,28 +5885,20 @@ mv <file> <destination>
         * - ``-4``
           - no matches found
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set moved [mv /incoming/example.txt /files/example.txt]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-cp:
 
@@ -7525,28 +5927,20 @@ cp <file> <destination>
         * - ``-4``
           - no matches found
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set copied [cp /incoming/example.txt /files/example.txt]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-getflags:
 
@@ -7560,28 +5954,20 @@ getflags <dir>
   Returns
      the flags required to access a directory
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set required_flags [getflags /]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-setflags:
 
@@ -7595,20 +5981,14 @@ setflags <dir> [<flags> [channel]]
   Returns
      ``0`` on success; ``-1`` or ``-3`` on failure
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -7630,28 +6010,20 @@ encpass2 <pass>
   Returns
      a hash in the format of ``$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>`` where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``pbkdf2``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set hash [encpass2 "example-password"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-pbkdf2:
 
@@ -7665,20 +6037,14 @@ pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
   Returns
      a derived key from the provided ``pass`` string using ``salt`` and ``rounds`` count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``pbkdf2``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -7699,28 +6065,20 @@ bind <type> <flags> <keyword/mask> [proc-name]
   Returns
      name of the command that was added, or (if proc-name was omitted), a list of the current bindings for this command
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         bind pub - !hello example_hello
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unbind:
 
@@ -7734,28 +6092,20 @@ unbind <type> <flags> <keyword/mask> <proc-name>
   Returns
      name of the command that was removed
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         unbind pub - !hello example_hello
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-binds:
 
@@ -7770,28 +6120,20 @@ binds [type/mask]
      a list of Tcl binds, each item in the list is a sublist of five elements:
            ``{<type> <flags> <name> <hits> <proc>}``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set public_binds [binds pub]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-logfile:
 
@@ -7850,28 +6192,20 @@ logfile [<modes> <channel> <filename>]
   Returns
      filename of logfile created, or, if no logfile is specified, a list of logfiles such as: ``{mco * eggdrop.log}`` ``{jp #lamest lame.log}``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set logfiles [logfile]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-maskhost:
 
@@ -7920,28 +6254,20 @@ maskhost <nick!user@host> [masktype]
      Same is valid for types 20-29, but instead of '?', the '\*' wildcard
      will be used. Types 30-39 set the host to '\*'.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set mask [maskhost "Foobar!foobar@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-timer:
 
@@ -7955,28 +6281,20 @@ timer <minutes> <tcl-command> [count [timerName]]
   Returns
      a ``timerName``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Schedule a timer
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set id [timer 5 {putlog "Example timer fired."}]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-utimer:
 
@@ -7990,28 +6308,20 @@ utimer <seconds> <tcl-command> [count [timerName]]
   Returns
      a ``timerName``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Schedule a short timer
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set id [utimer 30 {putlog "Example timer fired."}]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-timers:
 
@@ -8025,28 +6335,20 @@ timers
   Returns
      a list of active minutely timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set active_timers [timers]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-utimers:
 
@@ -8060,28 +6362,20 @@ utimers
   Returns
      a list of active secondly timers, with each timer sub-list containing the number of seconds left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set active_timers [utimers]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killtimer:
 
@@ -8095,29 +6389,21 @@ killtimer <timerName>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set timer_id [timer 5 {putlog "Example timer fired."}]
         killtimer $timer_id
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-killutimer:
 
@@ -8131,29 +6417,21 @@ killutimer <timerName>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set timer_id [utimer 30 {putlog "Example timer fired."}]
         killutimer $timer_id
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unixtime:
 
@@ -8168,28 +6446,20 @@ unixtime
   Returns
      a long integer which represents the number of seconds that have passed since 00:00 Jan 1, 1970 (GMT).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set now [unixtime]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-duration:
 
@@ -8203,28 +6473,20 @@ duration <seconds>
   Returns
      the number of seconds converted into years, weeks, days, hours, minutes, and seconds. 804600 seconds is turned into 1 week 2 days 7 hours 30 minutes.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set readable [duration 3600]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-strftime:
 
@@ -8238,28 +6500,20 @@ strftime <formatstring> [time]
   Returns
      a formatted string of time using standard strftime format. If time is specified, the value of the specified time is used. Otherwise, the current time is used. Note: The implementation of strftime varies from platform to platform, so the user should only use POSIX-compliant format specifiers to ensure fully portable code.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set date [strftime "%Y-%m-%d"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-ctime:
 
@@ -8273,28 +6527,20 @@ ctime <unixtime>
   Returns
      a formatted date/time string based on the current locale settings from the unixtime string given; for example ``Fri Aug 3 11:34:55 1973``
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set date [ctime [unixtime]]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-myip:
 
@@ -8308,28 +6554,20 @@ myip
   Returns
      a long number representing the bot's IP address, as it might appear in (for example) a DCC request
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [myip]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-rand:
 
@@ -8343,28 +6581,20 @@ rand <limit>
   Returns
      a random integer between ``0`` and ``limit-1``. Limit must be greater than ``0`` and equal to or less than ``RAND_MAX``, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set value [rand 100]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-control:
 
@@ -8378,28 +6608,20 @@ control <idx> <command>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         control 0 example_proc
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-sendnote:
 
@@ -8431,28 +6653,20 @@ sendnote <from> <to[@bot]> <message>
         * - ``5``
           - the note was stored because the user is away
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [sendnote foobar foobar "Example note"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-link:
 
@@ -8466,28 +6680,20 @@ link [via-bot] <bot>
   Returns
      ``1`` if the link will be attempted; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Link a bot
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set started [link OtherBot]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unlink:
 
@@ -8501,28 +6707,20 @@ unlink <bot> [comment]
   Returns
      ``1`` on success; ``0`` otherwise
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set removed [unlink OtherBot "Maintenance"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-encrypt:
 
@@ -8536,28 +6734,20 @@ encrypt <key> <string>
   Returns
      encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either ``ecb:`` or ``cbc:``, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``encryption``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [encrypt "example-password" "Example text"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-decrypt:
 
@@ -8571,29 +6761,21 @@ decrypt <key> <encrypted-base64-string>
   Returns
      decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with ``ecb:`` or ``cbc:`` or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``encryption``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Encrypt and decrypt text
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set encrypted [encrypt "example-password" "Example text"]
         set plain [decrypt "example-password" $encrypted]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-encpass:
 
@@ -8607,28 +6789,20 @@ encpass <password>
   Returns
      encrypted string (using the currently loaded encryption module)
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``encryption``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set encrypted [encpass "example-password"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-die:
 
@@ -8642,28 +6816,20 @@ die [reason]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         die
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unames:
 
@@ -8677,28 +6843,20 @@ unames
   Returns
      the current operating system the bot is using
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [unames]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-dnslookup:
 
@@ -8718,20 +6876,14 @@ dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argN]]
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Resolve a hostname
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -8740,9 +6892,7 @@ dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argN]]
         }
         dnslookup irc.example.net example_dns_result
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-md5:
 
@@ -8756,28 +6906,20 @@ md5 <string>
   Returns
      the 128 bit MD5 message-digest of the specified string
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set digest [md5 "example text"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-callevent:
 
@@ -8791,28 +6933,20 @@ callevent <event>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         callevent example-event
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-traffic:
 
@@ -8826,28 +6960,20 @@ traffic
   Returns
      a list of sublists containing information about the bot's traffic usage in bytes. Each sublist contains five elements: ``type``, ``in-traffic today``, ``in-traffic total``, ``out-traffic today``, ``out-traffic total`` (in that order).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set usage [traffic]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-modules:
 
@@ -8860,28 +6986,20 @@ modules
   Returns
      a list of sublists containing information about the bot's currently loaded modules. Each sublist contains three elements: ``module``, ``version``, and ``dependencies``. Each dependency is also a sublist containing the module name and version.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set loaded_modules [modules]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-loadmodule:
 
@@ -8895,28 +7013,20 @@ loadmodule <module>
   Returns
      ``Already loaded.`` if the module is already loaded, ``""`` if successful, or the reason the module couldn't be loaded.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [loadmodule notes]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unloadmodule:
 
@@ -8930,28 +7040,20 @@ unloadmodule <module>
   Returns
      ``No such module`` if the module is not loaded, ``""`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set result [unloadmodule notes]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-loadhelp:
 
@@ -8965,28 +7067,20 @@ loadhelp <helpfile-name>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         loadhelp example.help
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-unloadhelp:
 
@@ -9000,28 +7094,20 @@ unloadhelp <helpfile-name>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         unloadhelp example.help
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-reloadhelp:
 
@@ -9035,28 +7121,20 @@ reloadhelp
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         reloadhelp
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-restart:
 
@@ -9070,28 +7148,20 @@ restart
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         restart
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-rehash:
 
@@ -9105,28 +7175,20 @@ rehash
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         rehash
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-stripcodes:
 
@@ -9165,28 +7227,20 @@ stripcodes <strip-flags> <string>
   Returns
      the stripped string.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set clean [stripcodes c "Example text"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchaddr:
 
@@ -9200,28 +7254,20 @@ matchaddr <hostmask> <address>
   Returns
      ``1`` if the address matches the hostmask, ``0`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set matched [matchaddr "*!*@127.0.0.1" "Foobar!foobar@127.0.0.1"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchcidr:
 
@@ -9236,28 +7282,20 @@ matchcidr <block> <address> <prefix>
   Returns
      ``1`` if the address matches the block prefix, ``0`` otherwise.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set matched [matchcidr 127.0.0.0 127.0.0.1 8]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-matchstr:
 
@@ -9271,28 +7309,20 @@ matchstr <pattern> <string>
   Returns
      ``1`` if the pattern matches the string, ``0`` if it doesn't.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set matched [matchstr "Foo*" "Foobar"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-rfcequal:
 
@@ -9306,28 +7336,20 @@ rfcequal <string1> <string2>
   Returns
      ``1`` if equal, ``0`` if not.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set equal [rfcequal "Foobar" "foobar"]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-status:
 
@@ -9356,28 +7378,20 @@ status [type]
   Returns
      the requested information type or all information if type isn't specified. The format is a flat list of name-value pairs.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set cpu_info [status cpu]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-istls:
 
@@ -9391,28 +7405,20 @@ istls <idx>
   Returns
      ``1`` if the idx is a TLS connection, ``0`` if it's plaintext.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         set secure [istls 0]
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-starttls:
 
@@ -9426,28 +7432,20 @@ starttls <idx>
   Returns
      nothing
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — Start TLS on a connection
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
         starttls 0
 
-.. raw:: html
-
-   <hr style="border: 0; border-top: 1px solid #dddddd; margin: 1.5rem 0;">
+----
 
 .. _tcl-tlsstatus:
 
@@ -9461,20 +7459,14 @@ tlsstatus <idx>
   Returns
      a flat list of name-value pairs
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -9747,20 +7739,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Used for ``/msg`` commands. The first word of the user's msg is the command, and everything else becomes the text argument.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — MSG trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -9788,20 +7774,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Used for partyline commands; the command is the first word and everything else is the text argument. The idx is valid until the user disconnects. After that, it may be reused, so be careful about storing an idx for long periods of time.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — DCC trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -9829,20 +7809,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      The same as DCC, except this is triggered if the user is in the file area instead of the party line.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``filesys``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — FIL trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -9870,20 +7844,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Used for commands given on a channel. The first word becomes the command and everything else is the text argument.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — PUB trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -9911,20 +7879,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Matches the entire line of text from a ``/msg`` with the mask. This is useful for binding Tcl procs to words or phrases spoken anywhere within a line of text. If the proc returns ``1``, Eggdrop will not log the message that triggered this bind. MSGM binds are processed before MSG binds. If the exclusive-binds setting is enabled, MSG binds will not be triggered by text that a MSGM bind has already handled.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — MSGM trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -9953,20 +7915,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Just like MSGM, except it's triggered by things said on a channel instead of things ``/msg``'d to the bot. The mask is matched against the channel name followed by the text and can contain wildcards. If the proc returns ``1``, Eggdrop will not log the message that triggered this bind. PUBM binds are processed before PUB binds. If the exclusive-binds setting is enabled, PUB binds will not be triggered by text that a PUBM bind has already handled.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — PUBM trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10004,20 +7960,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
      for compatibility.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — NOTC trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10046,20 +7996,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered by someone joining the channel. The mask in the bind is matched against ``#channel nick!user\@host`` and can contain wildcards.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — JOIN trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10093,20 +8037,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
      for compatibility.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — PART trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10134,20 +8072,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered by a signoff, or possibly by someone who got netsplit and never returned. The signoff message is the last argument to the proc. Wildcards can be used in the mask, which is matched against ``#channel nick!user\@host``. If a ``*`` is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per signoff, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with SIGN as the keyword.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — SIGN trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10175,20 +8107,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered by a topic change. mask can contain wildcards and is matched against ``#channel <new topic>``.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — TOPC trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10216,20 +8142,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when someone is kicked off the channel. The mask is matched against ``#channel target reason`` where the target is the nickname of the person who got kicked (can contain wildcards). The proc is called with the nick, user\@host, and handle of the kicker, plus the channel, the nickname of the person who was kicked, and the reason.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — KICK trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10257,20 +8177,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when someone changes nicknames. The mask is matched against ``#channel newnick`` and can contain wildcards. Channel is ``*`` if the user isn't on a channel (usually the bot not yet in a channel). If a ``*`` is used for the channel in the mask, this bind is triggered once for every channel that the user is in the bot with; in other words if the bot is in two channels with the target user, the bind will be triggered twice. To trigger a proc only once per nick change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with NICK as the keyword.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — NICK trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10318,20 +8232,14 @@ The following is a list of bind types and how they work. Below each bind type is
                 }
                 proc mode_proc {nick uhost hand chan mode} { ... }
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — MODE trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10358,20 +8266,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Dest will be a nickname (the bot's nickname, obviously) or channel name. keyword is the ctcp command (which can contain wildcards), and text may be empty. If the proc returns ``0``, the bot will attempt its own processing of the ctcp command.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CTCP trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10400,20 +8302,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Just like ctcp, but this is triggered for a ctcp-reply (ctcp embedded in a notice instead of a privmsg).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CTCR trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10443,20 +8339,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      The mask can contain wildcards and is matched against the keyword, which is either a numeric, like ``368``, or a keyword, such as ``PRIVMSG``. ``from`` will be the server name or the source nick!ident@host (depending on the keyword); flags are ignored. If the proc returns ``1``, Eggdrop will not process the line any further (this could cause unexpected behavior in some cases), although RAWT binds are processed before RAW binds (and thus, a RAW bind cannot block a RAWT bind).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — RAW trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10485,20 +8375,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered by a message coming from another bot in the botnet. The first word is the command and the rest becomes the text argument; flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — BOT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10526,20 +8410,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      When someone first enters the party-line area of the bot via dcc chat or telnet, this is triggered before they are connected to a chat channel (so, yes, you can change the channel in a ``chon`` proc). mask is matched against the handle and supports wildcards. This is NOT triggered when someone returns from the file area, etc.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHON trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10567,20 +8445,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when someone leaves the party line to disconnect from the bot. mask is matched against the handle and can contain wildcards. Note that the connection may have already been dropped by the user, so don't send output to the idx.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHOF trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10608,20 +8480,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      After a user has successfully downloaded a file from the bot, this binding is triggered. mask is matched against the handle of the user that initiated the transfer and supports wildcards. nick is the actual recipient (on IRC) of the file. The path is relative to the dcc directory (unless the file transfer was started by a script call to ``dccsend``, in which case the path is the exact path given in the call to ``dccsend``).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — SENT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10649,20 +8515,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered after a user uploads a file successfully. mask is matched against the user's handle. nick is the IRC nickname that the file transfer originated from. The path is where the file ended up, relative to the dcc directory (usually this is your incoming dir).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — RCVD trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10692,20 +8552,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
      NOTE: If a BOT says something on the botnet, the BCST bind is invoked instead.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHAT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10733,20 +8587,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a bot links into the botnet. botname is the botnetnick of the bot that just linked in; via is the bot it linked through. The mask is checked against the botnetnick of the bot that linked and supports wildcards. flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — LINK trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10774,20 +8622,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a bot disconnects from the botnet for whatever reason. Just like the link bind, flags are ignored; mask is matched against the botnetnick of the bot that unlinked. Wildcards are supported in mask.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — DISC trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10815,20 +8657,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when someone gets netsplit on the channel. Be aware that this may be a false alarm (it's easy to fake a netsplit signoff message on some networks); mask may contain wildcards and is matched against ``#channel nick!user\@host``. Anyone who is SPLT will trigger a REJN or SIGN within the next wait-split (defined in the config file) seconds.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — SPLT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10856,20 +8692,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Someone who was split has rejoined. mask can contain wildcards, and is matched against ``#channel nick!user\@host``.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — REJN trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10897,20 +8727,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Party line and file system users have their text sent through filt before being processed. ``mask`` is a text mask that can contain wildcards and is used for matching text sent on the partyline. If the proc returns a blank string, the partyline texr is continued to be parsed as-is. Otherwise, the bot will instead use the text returned from the proc for continued parsing.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — FILT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10939,20 +8763,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      This bind is triggered on certain events, like when the bot needs operator status or the key for a channel. The types are: op, unban, invite, limit, and key; the mask is matched against ``#channel type`` and can contain wildcards. flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — NEED trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -10980,20 +8798,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Any floods detected through the flood control settings (like ``flood-ctcp``) are sent here before processing. If the proc returns ``1``, no further action is taken on the flood; if the proc returns ``0``, the bot will do its normal ``punishment`` for the flood. The flood types are: pub, msg, join, or ctcp (and can be masked to ``*`` for the bind); flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — FLUD trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11022,20 +8834,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Incoming notes (either from the party line, someone on IRC, or someone on another bot on the botnet) are checked against these binds before being processed. The mask is matched against the receiving handle and supports wildcards. If the proc returns ``1``, Eggdrop will not process the note any further. Flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — NOTE trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11064,20 +8870,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      When someone does an action on the botnet, it invokes this binding. flags are ignored; the mask is matched against the text of the action and can support wildcards.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — ACT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11105,20 +8905,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      When the bot receives a wallops, it invokes this binding. flags are ignored; the mask is matched against the text of the wallops msg. Note that RFC shows the server name as a source of the message, whereas many IRCds send the nick!user\@host of the actual sender, thus, Eggdrop will not parse it at all, but simply pass it to bind in its original form. If the proc returns ``1``,           Eggdrop will not log the message that triggered this bind.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — WALL trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11148,20 +8942,14 @@ The following is a list of bind types and how they work. Below each bind type is
       
      It is also invoked when a BOT (not a person, as with the CHAT bind) ``says`` something on a channel. In this case, the ``channel`` argument will be a valid channel, and not ``-1``.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — BCST trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11189,20 +8977,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      When someone joins a botnet channel, it invokes this binding. The mask is matched against the channel and can contain wildcards. flag is one of: * (owner), + (master), @ (op), or % (botnet master). Flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHJN trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11230,20 +9012,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      When someone parts a botnet channel, it invokes this binding. The mask is matched against the channel and can contain wildcards. Flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHPT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11271,20 +9047,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Allows you to schedule procedure calls at certain times. mask matches 5 space separated integers of the form: "minute hour day month year". The month var starts at 00 (Jan) and ends at 11 (Dec). Minute, hour, day, month have a zero padding so they are exactly two characters long; year is four characters. Flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — TIME trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11312,20 +9082,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggers when a user goes away or comes back on the botnet. text is the reason that has been specified (text is ``""`` when returning). mask is matched against the botnet-nick of the bot the user is connected to and supports wildcards. flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — AWAY trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11353,20 +9117,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggers when a module is loaded. mask is matched against the name of the loaded module and supports wildcards; flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — LOAD trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11395,20 +9153,14 @@ The following is a list of bind types and how they work. Below each bind type is
      Triggers when a module is unloaded. mask is matched against the name of the unloaded module and supports wildcards;.
      flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — UNLD trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11436,20 +9188,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered whenever a local user's handle is changed (in the userfile). mask is matched against the user's old handle and can contain wildcards; flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — NKCH trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11498,20 +9244,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
      Note that Tcl scripts can trigger arbitrary events, including ones that are not pre-defined or used by Eggdrop.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — EVNT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11539,20 +9279,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a DCC SEND transfer gets lost, such as when the connection is terminated before all data was successfully sent/received. This is typically caused by a user abort.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — LOST trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11580,20 +9314,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a DCC SEND transfer times out. This may either happen because the DCC connection was not accepted or because the data transfer stalled for some reason.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``transfer``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — TOUT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11621,20 +9349,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered whenever output is sent to the server. Normally the event will occur twice for each line sent: once before entering a server queue and once after the message is actually sent. This allows for more flexible logging of server output and introduces the ability to cancel the message. Mask is matched against "queue status", where status is either ``queued`` or ``sent``. Queues are: mode, server, help, noqueue. noqueue is only used by the putnow Tcl command.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — OUT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11663,20 +9385,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Similar to bind TIME, but the mask is evaluated as a cron expression, e.g. ``16/2 */2 5-15 7,8,9 4``. It can contain up to five fields: minute, hour, day, month, weekday; delimited by whitespace. Week days are represented as 0-6, where Sunday can be either 0 or 7. Symbolic names are not supported. The bind will be triggered if the mask matches all of the fields, except that if both day and weekday are not ``*``, only one of them is required to match. If any number of fields are omitted at the end, the match will proceed as if they were ``*``. All cron operators are supported. Please refer to the crontab manual for their meanings. Flags are ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CRON trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11704,20 +9420,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered whenever a message is sent to a log. The mask is matched against "channel text". The level argument to the proc will contain the level(s) the message is sent to, or ``*`` if the message is sent to all log levels at once. If the message wasn't sent to a specific channel, channel will be set to ``*``.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — LOG trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11745,20 +9455,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered for TCP connections when an SSL/TLS handshake has completed and the connection is secured. The mask is matched against the idx of the connection.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — TLS trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11786,20 +9490,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when Eggdrop is about to die. The mask is matched against the shutdown reason. The bind won't be triggered if the bot crashes or is being terminated by SIGKILL.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``core``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — DIE trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11827,20 +9525,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when Eggdrop receives an AWAY message for a user from an IRC server, ONLY if the away-notify capability is enabled via CAP (the server must support this capability; see the ``cap`` Tcl command for more information on requesting capabilities). "Normal" away messages (301 messages) will not trigger this bind; for those you should instead use a RAWT bind. The mask for the bind is in the format ``#channel nick!user@hostname`` (* to catch all nicknames). nick is the nickname of the user that triggered the bind, user is the nick!user@host of the user, handle is the handle of the user on the bot (- if the user is not added to the bot), channel is the channel the user was found on, and msg is the contents of the away message, if any. If a ``*`` is used for the channel in the mask, this bind is triggered once for every channel that the user is in with the bot. To trigger a proc only once per away change, regardless of the number of channels the Eggdrop and user share, use the RAWT bind with AWAY as the keyword.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — IRCAWAY trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11868,20 +9560,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when Eggdrop receives an INVITE message. The mask for the bind is in the format ``#channel nickname``, where nickname (not a hostmask) is that of the invitee. For the proc, nick is the nickname of the person sending the invite request, user@host is the user@host of the person sending the invite, channel is the channel the invitee is being invited to, and invitee is the target (nickname only) of the invite. The invitee argument was added to support the IRCv3 invite-notify capability, where Eggdrop may be able to see invite messages for other people that are not the Eggdrop.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — INVT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11909,20 +9595,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Similar to the RAW bind, but allows an extra field for the IRCv3 message-tags capability. The mask can contain wildcards and is matched against the keyword which is either a numeric, like ``368``, or a keyword, such as ``PRIVMSG`` or ``TAGMSG``. from will be the server name or the source nick!ident@host (depending on the keyword); flags are ignored. tags is a dictionary (flat key/value list) of the message tags with ``""`` for empty values (e.g. "account eggdrop realname LamestBot"). If the proc returns ``1``, Eggdrop will not process the line any further, including processing by a RAW bind (this could cause unexpected behavior in some cases). As of 1.9.0, it is recommended to use the RAWT bind instead of the RAW bind.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — RAWT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11952,20 +9632,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
      NOTE: The three required IRC components for account tracking are the WHOX feature, the extended-join IRCv3 capability, and the account-notify IRCv3 capability. If only some of the three features are available, Eggdrop provides best-effort account tracking but this bind could be triggered late or never on account changes. Please see ``doc/ACCOUNTS`` for additional information.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — ACCOUNT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -11993,20 +9667,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when the value of an ISUPPORT key changes. The mask is matched against the ISUPPORT key. If the value is not set, isset is ``0`` and the value is the empty string. Because the empty string is a valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all ISUPPORT values are reset to default, but $::server will be empty, so that case can be caught and ignored.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``server``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — ISUPPORT trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -12034,20 +9702,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a server sends a MONITOR status change of a target either coming online or disconnecting (not all servers support MONITOR). flags are ignored, nick is the nickname of the intended MONITOR target and can be used with wildcards. For the proc, nick is the nickname connecting or disconnecting, and online is ``0`` if the nickname disconnected, or ``1`` if the nickname connected.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — MONITOR trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -12075,20 +9737,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a server sends an IRCv3 CHGHOST message to change a user's hostmask. The new host is matched against mask in the form of ``#channel nick!user@host`` and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed, the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``irc``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHGHOST trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
@@ -12116,20 +9772,14 @@ The following is a list of bind types and how they work. Below each bind type is
   Description
      Triggered when a channel setting is set via the partyline. flags is ignored, mask is the name of channel setting (not including any +/- prefix) and can contain wildcards. The proc will be called with the channel that the setting was set on, the text name of the setting that was changed, and the value it was set to (0/1 for -/+, string, or X:Y formatted value).
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
 
   Module
      ``channels``
 
 
-  .. raw:: html
-
-     <div style="height: 0.6rem;"></div>
-
   .. admonition:: Example — CHANSET trigger
      :collapsible: closed
+     :class: tcl-example
 
      .. code-block:: tcl
 
