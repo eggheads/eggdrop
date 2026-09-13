@@ -1010,9 +1010,7 @@ char *filesys_start(Function *global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
-            sizeof(struct user_entry_type) - sizeof(char *));
-
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO, sizeof(void *) * 12);
   USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
