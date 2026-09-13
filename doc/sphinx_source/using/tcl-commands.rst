@@ -13,8 +13,9 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.10.2. Most scripts written for the
-1.6, 1.8, 1.9, and 1.10 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
+This list is accurate for Eggdrop v1.10.2. Most scripts written for the v1.3, v1.4,
+1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
+Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
 Output Commands
 ---------------
@@ -257,7 +258,7 @@ cap <ls/values/req/enabled/raw> [arg]
 
   Description: Displays CAP status or sends a raw CAP command to the server. "ls" will list the capabilities Eggdrop is internally tracking as supported by the server. "values" will list all capabilities and their associated CAP 302 values (if any) as a key/value pair, and "values" with a capability name as arg will list the values associated for the capability. "enabled" will list the capabilities Eggdrop is internally tracking as negotiated with the server. "req" will request the capabilities listed in "arg" from the server. "raw" will send a raw CAP command to the server. The arg field is a single argument, and should be submitted as a single string. For example, to request capabilities foo and bar, you would use [cap req "foo bar"], and for example purposes, sending the same request as a raw command would be [cap raw "REQ :foo bar"].
 
-  Returns: a list of CAP capabilities for the "enabled" and "ls" sub-commands; a dict of capability/value pairs for the "values" command or a list if "values" if followed by an argument; otherwise nothing.
+  Returns: a list of CAP capabilities for the ``enabled`` and ``ls`` sub-commands; a dict of capability/value pairs for the ``values`` command or a list if ``values`` if followed by an argument; otherwise nothing.
 
   .. admonition:: Example
      :collapsible: closed
@@ -331,7 +332,7 @@ server list
 
   Description: Lists all servers currently added to the bots internal server list.
 
-  Returns: A list of lists in the format {{hostname} {port} {password}}
+  Returns: A list of lists in the format ``{{hostname} {port} {password}}``
 
   .. admonition:: Example
      :collapsible: closed
@@ -373,7 +374,7 @@ validuser <handle>
   Description: Checks whether a user with the specified handle exists in the bot's user database.
 
 
-  Returns: 1 if a user by that name exists; 0 otherwise
+  Returns: ``1`` if a user by that name exists; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -393,7 +394,7 @@ finduser [-account] <value>
 
   Description: Finds the internal user record which most closely matches the given value. When used with the -account flag, value is a services account name, otherwise by default value is a string in the hostmask format of nick!user\@host.
 
-  Returns: the handle found, or "*" if none
+  Returns: the handle found, or ``*`` if none
 
   .. admonition:: Example
      :collapsible: closed
@@ -412,7 +413,7 @@ userlist [flags]
   Description: Returns users from the bot's user database, optionally filtered by a flag mask.
 
 
-  Returns: a list of users on the bot. You can use the flag matching system here ([global]{&/\|}[chan]{&/\|}[bot]). '&' specifies "and"; '|' specifies "or".
+  Returns: a list of users on the bot. You can use the flag matching system here ([global]``{&/\|}``[chan]``{&/\|}``[bot]). '&' specifies ``and``; '|' specifies ``or``.
 
   .. admonition:: Example
      :collapsible: closed
@@ -430,7 +431,7 @@ passwdok <handle> <pass>
 
   Description: Checks the password given against the user's password. Check against the password "-" to find out if a user has no password set.
 
-  Returns: 1 if the password matches for that user; 0 otherwise. Or if we are checking against the password "-": 1 if the user has no password set; 0 otherwise.
+  Returns: ``1`` if the password matches for that user; ``0`` otherwise. Or if we are checking against the password ``-``: ``1`` if the user has no password set; ``0`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -448,29 +449,34 @@ getuser <handle> [entry-type] [extra info]
 
   Description: An interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
-  +----------+-------------------------------------------------------------------------------------+
-  | ACCOUNT  | returns the list of service accounts associated with the user                       |
-  +----------+-------------------------------------------------------------------------------------+
-  | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
-  +----------+-------------------------------------------------------------------------------------+
-  | BOTADDR  | returns a list containing the bot's address, bot listen port, and user listen port  |
-  +----------+-------------------------------------------------------------------------------------+
-  | HOSTS    | returns a list of hosts for the user                                                |
-  +----------+-------------------------------------------------------------------------------------+
-  | LASTON   | returns a list containing the unixtime last seen and the last seen place.           |
-  |          | LASTON #channel returns the time last seen time for the channel or 0 if no info     |
-  |          | exists.                                                                             |
-  +----------+-------------------------------------------------------------------------------------+
-  | INFO     | returns the user's global info line                                                 |
-  +----------+-------------------------------------------------------------------------------------+
-  | XTRA     | returns the user's XTRA info                                                        |
-  +----------+-------------------------------------------------------------------------------------+
-  | COMMENT  | returns the master-visible only comment for the user                                |
-  +----------+-------------------------------------------------------------------------------------+
-  | HANDLE   | returns the user's handle as it is saved in the userfile                            |
-  +----------+-------------------------------------------------------------------------------------+
-  | PASS     | returns the user's encrypted password                                               |
-  +----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``entry-type``
+       - Description
+     * - ``ACCOUNT``
+       - returns the list of service accounts associated with the user
+     * - ``BOTFL``
+       - returns the current bot-specific flags for the user (bot-only)
+     * - ``BOTADDR``
+       - returns a list containing the bot's address, bot listen port, and user listen port
+     * - ``HOSTS``
+       - returns a list of hosts for the user
+     * - ``LASTON``
+       - returns a list containing the unixtime last seen and the last seen place.
+         LASTON #channel returns the time last seen time for the channel or 0 if no info
+         exists.
+     * - ``INFO``
+       - returns the user's global info line
+     * - ``XTRA``
+       - returns the user's XTRA info
+     * - ``COMMENT``
+       - returns the master-visible only comment for the user
+     * - ``HANDLE``
+       - returns the user's handle as it is saved in the userfile
+     * - ``PASS``
+       - returns the user's encrypted password
 
   For additional custom user fields, to include the deprecated "EMAIL" and "URL" fields, reference scripts/userinfo.tcl.
 
@@ -492,38 +498,41 @@ setuser <handle> <entry-type> [extra info]
 
   Description: This is the counterpart of getuser. It lets you set the various values. Other then the ones listed below, the entry-types are the same as getuser's.
 
-  +---------+---------------------------------------------------------------------------------------+
-  | Type    | Extra Info                                                                            |
-  +=========+=======================================================================================+
-  | ACCOUNT | [account]                                                                             |
-  |         | If no value is specified, all accounts for the user will be cleared. Otherwise, only  |
-  |         | a single account will be added to the account list                                    |
-  +---------+---------------------------------------------------------------------------------------+
-  | PASS    | <password>                                                                            |
-  |         |   Password string (Empty value will clear the password)                               |
-  +---------+---------------------------------------------------------------------------------------+
-  | BOTADDR | <address> [bot listen port] [user listen port]                                        |
-  |         |   Sets address, bot listen port and user listen port. If no listen ports are          |
-  |         |   specified, only the bot address is updated. If only the bot listen port is          |
-  |         |   specified, both the bot and user listen ports are set to the bot listen port.       |
-  +---------+---------------------------------------------------------------------------------------+
-  | HOSTS   | [hostmask]                                                                            |
-  |         |   If no value is specified, all hosts for the user will be cleared. Otherwise, only   |
-  |         |   *1* hostmask is added :P                                                            |
-  +---------+---------------------------------------------------------------------------------------+
-  | LASTON  | This setting has 3 forms.                                                             |
-  |         |                                                                                       |
-  |         | <unixtime> <place>                                                                    |
-  |         |   sets global LASTON time. Standard values used by Eggdrop for <place> are partyline, |
-  |         |   linked, unlinked, filearea, <#channel>, and <@remotebotname>, but can be set to     |
-  |         |   anything.                                                                           |
-  |         |                                                                                       |
-  |         | <unixtime>                                                                            |
-  |         |   sets global LASTON time (leaving the place field empty)                             |
-  |         |                                                                                       |
-  |         | <unixtime> <channel>                                                                  |
-  |         |   sets a user's LASTON time for a channel (if it is a valid channel)                  |
-  +---------+---------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 9 91
+     :header-rows: 1
+
+     * - ``entry-type``
+       - Description
+     * - ``ACCOUNT``
+       - [account]
+         If no value is specified, all accounts for the user will be cleared. Otherwise, only
+         a single account will be added to the account list
+     * - ``PASS``
+       - ``<password>``
+         Password string (Empty value will clear the password)
+     * - ``BOTADDR``
+       - ``<address>`` [bot listen port] [user listen port]
+         Sets address, bot listen port and user listen port. If no listen ports are
+         specified, only the bot address is updated. If only the bot listen port is
+         specified, both the bot and user listen ports are set to the bot listen port.
+     * - ``HOSTS``
+       - [hostmask]
+         If no value is specified, all hosts for the user will be cleared. Otherwise, only
+         *1* hostmask is added :P
+     * - ``LASTON``
+       - This setting has 3 forms.
+
+         ``<unixtime>`` ``<place>``
+         sets global LASTON time. Standard values used by Eggdrop for ``<place>`` are partyline,
+         linked, unlinked, filearea, <#channel>, and <@remotebotname>, but can be set to
+         anything.
+
+         ``<unixtime>``
+         sets global LASTON time (leaving the place field empty)
+
+         ``<unixtime>`` ``<channel>``
+         sets a user's LASTON time for a channel (if it is a valid channel)
 
   Returns: nothing
 
@@ -543,7 +552,7 @@ chhandle <old-handle> <new-handle>
 
   Description: Changes a user's handle.
 
-  Returns: 1 on success; 0 if the new handle is invalid or already used, or if the user can't be found
+  Returns: ``1`` on success; ``0`` if the new handle is invalid or already used, or if the user can't be found
 
   .. admonition:: Example
      :collapsible: closed
@@ -562,7 +571,7 @@ chattr <handle> [changes [channel]]
   Description: Changes the attributes for a user record, if you include any.
   Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are specified in the format of \|<changes> <channel>, the channel-specific flags for that channel are altered. You can now use the +o|-o #channel format here too.
 
-  Returns: new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. "*" is returned if the specified user does not exist.
+  Returns: new flags for the user (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. ``*`` is returned if the specified user does not exist.
 
   .. admonition:: Example
      :collapsible: closed
@@ -580,7 +589,7 @@ botattr <handle> [changes [channel]]
 
   Description: Similar to chattr except this modifies bot flags rather than normal user attributes.
 
-  Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. "*" is returned if the specified bot does not exist.
+  Returns: new flags for the bot (if you made no changes, the current flags are returned). If a channel was specified, the global AND the channel-specific flags for that channel are returned in the format of globalflags|channelflags. ``*`` is returned if the specified bot does not exist.
 
   .. admonition:: Example
      :collapsible: closed
@@ -604,7 +613,7 @@ matchattr <handle> <flags> [channel]
 
   Either | or & can be used as a separator between global, channel, and bot flags, but only one separator can be used per flag section. A '+' is used to check if a user has the subsequent flags, and a '-' is used to check if a user does NOT have the subsequent flags. Please see `Flag Masks`_ for additional information on flag usage.
 
-  Returns: 1 if the specified user has the flags matching the provided mask; 0 otherwise
+  Returns: ``1`` if the specified user has the flags matching the provided mask; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -624,7 +633,7 @@ adduser <handle> [hostmask]
 
   Description: Creates a new user entry with the handle and hostmask given (with no password and the default flags).
 
-  Returns: 1 if successful; 0 if the handle already exists
+  Returns: ``1`` if successful; ``0`` if the handle already exists
 
   .. admonition:: Example
      :collapsible: closed
@@ -648,7 +657,7 @@ addbot <handle> <address> [botport [userport]]
 NOTE 1: The []s around the ipv6address argument are literal []s, not optional arguments.
 NOTE 2: In the deprecated formats, an additional botport and/or userport given as follow-on arguments are ignored.
 
-  Returns: 1 if successful; 0 if the bot already exists or a port is invalid
+  Returns: ``1`` if successful; ``0`` if the bot already exists or a port is invalid
 
   .. admonition:: Example
      :collapsible: closed
@@ -666,7 +675,7 @@ deluser <handle>
 
   Description: Attempts to erase the user record for a handle.
 
-  Returns: 1 if successful, 0 if no such user exists
+  Returns: ``1`` if successful, ``0`` if no such user exists
 
   .. admonition:: Example
      :collapsible: closed
@@ -684,7 +693,7 @@ delhost <handle> <hostmask>
 
   Description: Deletes a hostmask from a user's host list.
 
-  Returns: 1 on success; 0 if the hostmask (or user) doesn't exist
+  Returns: ``1`` on success; ``0`` if the hostmask (or user) doesn't exist
 
   .. admonition:: Example
      :collapsible: closed
@@ -702,7 +711,7 @@ addchanrec <handle> <channel>
 
   Description: Adds a channel record for a user.
 
-  Returns: 1 on success; 0 if the user or channel does not exist
+  Returns: ``1`` on success; ``0`` if the user or channel does not exist
 
   .. admonition:: Example
      :collapsible: closed
@@ -720,7 +729,7 @@ delchanrec <handle> <channel>
 
   Description: Removes a channel record for a user. This includes all associated channel flags.
 
-  Returns: 1 on success; 0 if the user or channel does not exist
+  Returns: ``1`` on success; ``0`` if the user or channel does not exist
 
   .. admonition:: Example
      :collapsible: closed
@@ -739,7 +748,7 @@ haschanrec <handle> <channel>
   Description: Checks whether a user has a channel record for the specified channel.
 
 
-  Returns: 1 if the given handle has a chanrec for the specified channel; 0 otherwise
+  Returns: ``1`` if the given handle has a chanrec for the specified channel; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -796,9 +805,14 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
 
   Options:
 
-  +-----------+-------------------------------------------------------------------------------------+
-  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
-  +-----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``options``
+       - Description
+     * - ``sticky``
+       - forces the ban to be always active on a channel, even with dynamicbans on
 
 
   Returns: nothing
@@ -821,9 +835,14 @@ newban <ban> <creator> <comment> [lifetime] [options]
 
   Options:
 
-  +-----------+-------------------------------------------------------------------------------------+
-  | sticky    | forces the ban to be always active on a channel, even with dynamicbans on           |
-  +-----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``options``
+       - Description
+     * - ``sticky``
+       - forces the ban to be always active on a channel, even with dynamicbans on
 
   Returns: nothing
 
@@ -845,9 +864,14 @@ newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
 
   Options:
 
-  +-----------+-------------------------------------------------------------------------------------+
-  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
-  +-----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``options``
+       - Description
+     * - ``sticky``
+       - forces the exempt to be always active on a channel, even with dynamicexempts on
 
   Returns: nothing
 
@@ -869,9 +893,14 @@ newexempt <exempt> <creator> <comment> [lifetime] [options]
 
   Options:
 
-  +-----------+-------------------------------------------------------------------------------------+
-  | sticky    | forces the exempt to be always active on a channel, even with dynamicexempts on     |
-  +-----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``options``
+       - Description
+     * - ``sticky``
+       - forces the exempt to be always active on a channel, even with dynamicexempts on
 
   Returns: nothing
 
@@ -893,9 +922,14 @@ newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
 
   Options:
 
-  +-----------+-------------------------------------------------------------------------------------+
-  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
-  +-----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``options``
+       - Description
+     * - ``sticky``
+       - forces the invite to be always active on a channel, even with dynamicinvites on
 
   Returns: nothing
 
@@ -917,9 +951,14 @@ newinvite <invite> <creator> <comment> [lifetime] [options]
 
   Options:
 
-  +-----------+-------------------------------------------------------------------------------------+
-  | sticky    | forces the invite to be always active on a channel, even with dynamicinvites on     |
-  +-----------+-------------------------------------------------------------------------------------+
+  .. list-table::
+     :widths: 11 89
+     :header-rows: 1
+
+     * - ``options``
+       - Description
+     * - ``sticky``
+       - forces the invite to be always active on a channel, even with dynamicinvites on
 
   Returns: nothing
 
@@ -939,7 +978,7 @@ stickban <banmask> [channel]
 
   Description: Makes a ban sticky, or, if a channel is specified, then it is set sticky on that channel only.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -957,7 +996,7 @@ unstickban <banmask> [channel]
 
   Description: Makes a ban no longer sticky, or, if a channel is specified, then it is unstuck on that channel only.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -975,7 +1014,7 @@ stickexempt <exemptmask> [channel]
 
   Description: Makes an exempt sticky, or, if a channel is specified, then it is set sticky on that channel only.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -993,7 +1032,7 @@ unstickexempt <exemptmask> [channel]
 
   Description: Makes an exempt no longer sticky, or, if a channel is specified, then it is unstuck on that channel only.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1010,7 +1049,7 @@ stickinvite <invitemask> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: Makes an invite sticky, or, if a channel is specified, then it is set sticky on that channel only.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1028,7 +1067,7 @@ unstickinvite <invitemask> [channel]
 
   Description: Makes an invite no longer sticky, or, if a channel is specified, then it is unstuck on that channel only.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1046,7 +1085,7 @@ killchanban <channel> <ban>
 
   Description: Removes a ban from the ban list for a channel.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1064,7 +1103,7 @@ killban <ban>
 
   Description: Removes a ban from the global ban list.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1082,7 +1121,7 @@ killchanexempt <channel> <exempt>
 
   Description: Removes an exempt from the exempt list for a channel.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1100,7 +1139,7 @@ killexempt <exempt>
 
   Description: Removes an exempt from the global exempt list.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1118,7 +1157,7 @@ killchaninvite <channel> <invite>
 
   Description: Removes an invite from the invite list for a channel.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1136,7 +1175,7 @@ killinvite <invite>
 
   Description: Removes an invite from the global invite list.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1154,7 +1193,7 @@ ischanjuped <channel>
 
   Description: Returns 1 if the channel is juped, and the bot is unable to join; 0 otherwise.
 
-  Returns: 1 if the channel is juped, and the bot is unable to join; 0 otherwise
+  Returns: ``1`` if the channel is juped, and the bot is unable to join; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1172,7 +1211,7 @@ isban <ban> [channel [-channel]]
 
   Description: Returns 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
-  Returns: 1 if the specified ban is in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
+  Returns: ``1`` if the specified ban is in the global ban list; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1190,7 +1229,7 @@ ispermban <ban> [channel [-channel]]
 
   Description: Returns 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
-  Returns: 1 if the specified ban is in the global ban list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
+  Returns: ``1`` if the specified ban is in the global ban list AND is marked as permanent; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1208,7 +1247,7 @@ isexempt <exempt> [channel [-channel]]
 
   Description: Returns 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
-  Returns: 1 if the specified exempt is in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
+  Returns: ``1`` if the specified exempt is in the global exempt list; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1226,7 +1265,7 @@ ispermexempt <exempt> [channel [-channel]]
 
   Description: Returns 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
-  Returns: 1 if the specified exempt is in the global exempt list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
+  Returns: ``1`` if the specified exempt is in the global exempt list AND is marked as permanent; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1244,7 +1283,7 @@ isinvite <invite> [channel [-channel]]
 
   Description: Returns 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
-  Returns: 1 if the specified invite is in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+  Returns: ``1`` if the specified invite is in the global invite list; ``0`` otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1262,7 +1301,7 @@ isperminvite <invite> [channel [-channel]]
 
   Description: Returns 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
-  Returns: 1 if the specified invite is in the global invite list AND is marked as permanent; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+  Returns: ``1`` if the specified invite is in the global invite list AND is marked as permanent; ``0`` otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1280,7 +1319,7 @@ isbansticky <ban> [channel [-channel]]
 
   Description: Returns 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
-  Returns: 1 if the specified ban is marked as sticky in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
+  Returns: ``1`` if the specified ban is marked as sticky in the global ban list; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel bans are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1298,7 +1337,7 @@ isexemptsticky <exempt> [channel [-channel]]
 
   Description: Returns 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
-  Returns: 1 if the specified exempt is marked as sticky in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
+  Returns: ``1`` if the specified exempt is marked as sticky in the global exempt list; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel exempts are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1316,7 +1355,7 @@ isinvitesticky <invite> [channel [-channel]]
 
   Description: Returns 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
-  Returns: 1 if the specified invite is marked as sticky in the global invite list; 0 otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
+  Returns: ``1`` if the specified invite is marked as sticky in the global invite list; ``0`` otherwise. If a channel is specified, that channel's invite list is checked as well. If the -channel flag is used at the end of the command, \*only\* the channel invites are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1334,7 +1373,7 @@ matchban <nick!user@host> [channel]
 
   Description: Returns 1 if the specified nick!user\@host matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
 
-  Returns: 1 if the specified nick!user\@host matches a ban in the global ban list; 0 otherwise. If a channel is specified, that channel's ban list is checked as well.
+  Returns: ``1`` if the specified nick!user\@host matches a ban in the global ban list; ``0`` otherwise. If a channel is specified, that channel's ban list is checked as well.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1352,7 +1391,7 @@ matchexempt <nick!user@host> [channel]
 
   Description: Returns 1 if the specified nick!user\@host matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
 
-  Returns: 1 if the specified nick!user\@host matches an exempt in the global exempt list; 0 otherwise. If a channel is specified, that channel's exempt list is checked as well.
+  Returns: ``1`` if the specified nick!user\@host matches an exempt in the global exempt list; ``0`` otherwise. If a channel is specified, that channel's exempt list is checked as well.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1370,7 +1409,7 @@ matchinvite <nick!user@host> [channel]
 
   Description: Returns 1 if the specified nick!user\@host matches an invite in the global invite list; 0 otherwise. If a channel is specified, that.
 
-  Returns: 1 if the specified nick!user\@host matches an invite in the global invite list; 0 otherwise. If a channel is specified, that
+  Returns: ``1`` if the specified nick!user\@host matches an invite in the global invite list; ``0`` otherwise. If a channel is specified, that
   channel's invite list is checked as well.
 
   .. admonition:: Example
@@ -1459,7 +1498,7 @@ killignore <hostmask>
 ^^^^^^^^^^^^^^^^^^^^^
   Description: Removes an entry from the ignore list.
 
-  Returns: 1 if successful; 0 otherwise
+  Returns: ``1`` if successful; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1495,7 +1534,7 @@ isignore <hostmask>
 
   Description: Returns 1 if the ignore is in the list; 0 otherwise.
 
-  Returns: 1 if the ignore is in the list; 0 otherwise
+  Returns: ``1`` if the ignore is in the list; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1566,7 +1605,7 @@ getting-users
 
   Description: Returns 1 if the bot is currently downloading a userfile from a sharebot (and hence, user records are about to drastically change); 0 if not.
 
-  Returns: 1 if the bot is currently downloading a userfile from a sharebot (and hence, user records are about to drastically change); 0 if not
+  Returns: ``1`` if the bot is currently downloading a userfile from a sharebot (and hence, user records are about to drastically change); ``0`` if not
 
   .. admonition:: Example
      :collapsible: closed
@@ -1643,7 +1682,7 @@ channel get <name> [setting]
   Description: Returns a channel setting, or all channel settings when no setting is specified.
 
 
-  Returns: The value of the setting you specify. For flags, a value of 0 means it is disabled (-), and non-zero means enabled (+). If no setting is specified, a flat list of all available settings and their values will be returned.
+  Returns: The value of the setting you specify. For flags, a value of ``0`` means it is disabled (-), and non-zero means enabled (+). If no setting is specified, a flat list of all available settings and their values will be returned.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1772,7 +1811,7 @@ isbotnick <nick>
   Description: Checks whether the specified nickname is the bot's current nickname.
 
 
-  Returns: 1 if the nick matches the botnick; 0 otherwise
+  Returns: ``1`` if the nick matches the botnick; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1790,7 +1829,7 @@ botisop [channel]
 
   Description: Returns 1 if the bot has ops on the specified channel (or any channel if no channel is specified); 0 otherwise.
 
-  Returns: 1 if the bot has ops on the specified channel (or any channel if no channel is specified); 0 otherwise
+  Returns: ``1`` if the bot has ops on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1808,7 +1847,7 @@ botishalfop [channel]
 
   Description: Returns 1 if the bot has halfops on the specified channel (or any channel if no channel is specified); 0 otherwise.
 
-  Returns: 1 if the bot has halfops on the specified channel (or any channel if no channel is specified); 0 otherwise
+  Returns: ``1`` if the bot has halfops on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1826,7 +1865,7 @@ botisvoice [channel]
 
   Description: Returns 1 if the bot has a voice on the specified channel (or any channel if no channel is specified); 0 otherwise.
 
-  Returns: 1 if the bot has a voice on the specified channel (or any channel if no channel is specified); 0 otherwise
+  Returns: ``1`` if the bot has a voice on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1844,7 +1883,7 @@ botonchan [channel]
 
   Description: Returns 1 if the bot is on the specified channel (or any channel if no channel is specified); 0 otherwise.
 
-  Returns: 1 if the bot is on the specified channel (or any channel if no channel is specified); 0 otherwise
+  Returns: ``1`` if the bot is on the specified channel (or any channel if no channel is specified); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1862,7 +1901,7 @@ isop <nickname> [channel]
 
   Description: Returns 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has ops; 0 otherwise.
 
-  Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has ops; 0 otherwise
+  Returns: ``1`` if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has ops; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1880,7 +1919,7 @@ ishalfop <nickname> [channel]
 
   Description: Returns 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has halfops; 0 otherwise.
 
-  Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has halfops; 0 otherwise
+  Returns: ``1`` if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and has halfops; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1898,7 +1937,7 @@ wasop <nickname> <channel>
 
   Description: Returns 1 if someone that just got opped/deopped in the chan had op before the modechange; 0 otherwise.
 
-  Returns: 1 if someone that just got opped/deopped in the chan had op before the modechange; 0 otherwise
+  Returns: ``1`` if someone that just got opped/deopped in the chan had op before the modechange; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1916,7 +1955,7 @@ washalfop <nickname> <channel>
 
   Description: Returns 1 if someone that just got halfopped/dehalfopped in the chan had halfop before the modechange; 0 otherwise.
 
-  Returns: 1 if someone that just got halfopped/dehalfopped in the chan had halfop before the modechange; 0 otherwise
+  Returns: ``1`` if someone that just got halfopped/dehalfopped in the chan had halfop before the modechange; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1934,7 +1973,7 @@ isvoice <nickname> [channel]
 
   Description: Returns 1 if someone by that nickname is on the channel (or any channel if no channel is specified) and has voice (+v); 0 otherwise.
 
-  Returns: 1 if someone by that nickname is on the channel (or any channel if no channel is specified) and has voice (+v); 0 otherwise
+  Returns: ``1`` if someone by that nickname is on the channel (or any channel if no channel is specified) and has voice (+v); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -1952,7 +1991,7 @@ isidentified <nickname> [channel]
 
   Description: Determine if a user is identified to irc services. WARNING: this may not be accurate depending on the server and configuration. For accurate results, the server must support (and Eggdrop must have enabled via CAP) the account-notify and extended-join capabilities, and the server must understand WHOX requests (also known as raw 354 responses).
 
-  Returns: 1 if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); 0 otherwise.
+  Returns: ``1`` if someone by the specified nickname is on the channel (or any channel if no channel name is specified) and is logged in); ``0`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1970,7 +2009,7 @@ isaway <nickname> [channel]
 
   Description: Determine if a user is marked as 'away' on a server. IMPORTANT: this command is only "mostly" reliable on its own when the IRCv3 away-notify capability is available and negotiated with the IRC server (if you didn't add this to your config file, it likely isn't enabled- you can confirm using the ``cap`` Tcl command). Additionally, there is no way for Eggdrop (or any client) to capture a user's away status when the user first joins a channel (they are assumed present by Eggdrop on join). To use this command without the away-notify capability negotiated, or to get a user's away status on join (via a JOIN bind), use ``refreshchan <channel> w`` on a channel the user is on, which will refresh the current away status stored by Eggdrop for all users on the channel.
 
-  Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; 0 otherwise.
+  Returns: ``1`` if Eggdrop is currently tracking someone by that nickname marked as 'away' (again, see disclaimer above) by an IRC server; ``0`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -1988,7 +2027,7 @@ isircbot <nickname> [channel]
 
   Description: Determine if a user has denoted themselves as a bot via an ircd-defined user flag (declared via BOT in a server's 005/ISUPPORT line). Due to server implementations, accurately monitoring this is incredibly fragile, as the flag can be added and removed by a user without any notification to other users. To ensure this status is current for use, it is recommended to use ``refreshchan <channel> w`` on a channel the user is on, which will refresh if the user is a bot or not for all users on the channel. If a server does not advertise BOT in its ISUPPORT line but still supports it (currently the case for unrealircd), you can manually set it by adding "BOT=B" (or whatever flag is used) to the isupport-default setting in your eggdrop.conf file.
 
-  Returns: 1 if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; 0 otherwise.
+  Returns: ``1`` if Eggdrop is currently tracking someone by that nickname marked as a bot by an IRC server; ``0`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2004,7 +2043,7 @@ onchan <nickname> [channel]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description: Returns 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise.
-  Returns: 1 if someone by that nickname is on the specified channel (or any channel if none is specified); 0 otherwise
+  Returns: ``1`` if someone by that nickname is on the specified channel (or any channel if none is specified); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -2021,7 +2060,7 @@ monitor <add/delete/list/online/offline/status/clear> [nickname]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   Description: Interacts with the list of nicknames Eggdrop has asked the IRC server to track. valid sub-commands are add, delete, list, online, offline, status, and clear. The 'add' command sends 'nickname' to the server to track. The 'delete' command removes 'nickname' from being tracked by the server (or returns an error if the nickname is not present). The 'list' command returns a list of all nicknames the IRC server is tracking on behalf of Eggdrop. The 'online' command returns a string of tracked nicknames that are currently online. The 'offline' command returns a list of tracked nicknames that are currently offline.
 
-  Returns: The 'add' sub-command returns a '1' if the nick was successfully added, a '0' if the nick is already in the monitor list, and a '2' if the nick could not be added. The 'delete' sub-command returns a '1' if the nick is removed, or an error if the nick is not found. The 'status' sub-command returns a '1' if 'nickname' is online or a 0 if 'nickname' is offline. The 'clear' command removes all nicknames from the list the server is monitoring.
+  Returns: The ``add`` sub-command returns a ``1`` if the nick was successfully added, a ``0`` if the nick is already in the monitor list, and a ``2`` if the nick could not be added. The ``delete`` sub-command returns a ``1`` if the nick is removed, or an error if the nick is not found. The ``status`` sub-command returns a ``1`` if ``nickname`` is online or a ``0`` if ``nickname`` is offline. The ``clear`` command removes all nicknames from the list the server is monitoring.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2039,7 +2078,7 @@ accounttracking
 
   Description: Checks to see if the three required functionalities to enable proper account tracking are available (and enabled) to Eggdrop. This checks if the extended-join and account-notify IRCv3 capabilities are currently enabled, and checks if the server supports WHOX (based on the type of server selected in the config file, or the use-354 variable being set to 1 when selecting an "Other" server).
 
-  Returns: a '1' if all three functionalities are present, a '0' if one or more are missing.
+  Returns: a ``1`` if all three functionalities are present, a ``0`` if one or more are missing.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2057,7 +2096,7 @@ getaccount <nickname> [channel]
 
   Description: Returns the services account name associated with nickname, "*" if the user is not logged into services, or "" if eggdrop does not know the account status of the user.
 
-  Returns: the services account name associated with nickname, "*" if the user is not logged into services, or "" if eggdrop does not know the account status of the user.
+  Returns: the services account name associated with nickname, ``*`` if the user is not logged into services, or ``""`` if eggdrop does not know the account status of the user.
 
   NOTE: the three required IRC components for account tracking are: the WHOX feature, the extended-join IRCv3 capability and the account-notify IRCv3 capability. if only some of the three feature are available, eggdrop provides best-effort account tracking. please see doc/ACCOUNTS for additional information.
 
@@ -2076,7 +2115,7 @@ nick2hand <nickname> [channel]
 
   Description: Returns the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned. If no channel is specified, all channels are checked.
 
-  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, "" is returned. If the nick is found but does not have a handle, "*" is returned. If no channel is specified, all channels are checked.
+  Returns: the handle of a nickname on a channel. If a channel is not specified, the bot will check all of its channels. If the nick is not found, ``""`` is returned. If the nick is found but does not have a handle, ``*`` is returned. If no channel is specified, all channels are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2094,7 +2133,7 @@ account2nicks <account> [channel]
 
   Description: Returns a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
-  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; "" is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nickname matches the given account; ``""`` is returned if no match is found. This command will only work if a server supports (and Eggdrop has enabled) the account-notify and extended-join capabilities, and the server understands WHOX requests (also known as raw 354 responses). If no channel is specified, all channels are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2112,7 +2151,7 @@ hand2nick <handle> [channel]
 
   Description: Returns nickname of the first person on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
 
-  Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
+  Returns: nickname of the first person on the specified channel (if one is specified) whose nick!user\@host matches the given handle; ``""`` is returned if no match is found. If no channel is specified, all channels are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2130,7 +2169,7 @@ hand2nicks <handle> [channel]
 
   Description: Returns a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
 
-  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; "" is returned if no match is found. If no channel is specified, all channels are checked.
+  Returns: a de-duplicated Tcl list of the nickname(s) on the specified channel (if one is specified) whose nick!user\@host matches the given handle; ``""`` is returned if no match is found. If no channel is specified, all channels are checked.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2148,7 +2187,7 @@ handonchan <handle> [channel]
 
   Description: Returns 1 if the the nick!user\@host for someone on the channel (or any channel if no channel name is specified) matches for the handle given; 0 otherwise.
 
-  Returns: 1 if the the nick!user\@host for someone on the channel (or any channel if no channel name is specified) matches for the handle given; 0 otherwise
+  Returns: ``1`` if the the nick!user\@host for someone on the channel (or any channel if no channel name is specified) matches for the handle given; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -2166,7 +2205,7 @@ ischanban <ban> <channel>
 
   Description: Returns 1 if the specified ban is on the given channel's ban list (not the bot's banlist for the channel).
 
-  Returns: 1 if the specified ban is on the given channel's ban list (not the bot's banlist for the channel)
+  Returns: ``1`` if the specified ban is on the given channel's ban list (not the bot's banlist for the channel)
 
   .. admonition:: Example
      :collapsible: closed
@@ -2184,7 +2223,7 @@ ischanexempt <exempt> <channel>
 
   Description: Returns 1 if the specified exempt is on the given channel's exempt list (not the bot's exemptlist for the channel).
 
-  Returns: 1 if the specified exempt is on the given channel's exempt list (not the bot's exemptlist for the channel)
+  Returns: ``1`` if the specified exempt is on the given channel's exempt list (not the bot's exemptlist for the channel)
 
   .. admonition:: Example
      :collapsible: closed
@@ -2202,7 +2241,7 @@ ischaninvite <invite> <channel>
 
   Description: Returns 1 if the specified invite is on the given channel's invite list (not the bot's invitelist for the channel).
 
-  Returns: 1 if the specified invite is on the given channel's invite list (not the bot's invitelist for the channel)
+  Returns: ``1`` if the specified invite is on the given channel's invite list (not the bot's invitelist for the channel)
 
   .. admonition:: Example
      :collapsible: closed
@@ -2220,7 +2259,7 @@ chanbans <channel>
 
   Description: Returns a list of the current bans on the channel. Each element is a sublist of the form {<ban> <bywho> <age>}. age is seconds from the bot's point of view.
 
-  Returns: a list of the current bans on the channel. Each element is a sublist of the form {<ban> <bywho> <age>}. age is seconds from the bot's point of view
+  Returns: a list of the current bans on the channel. Each element is a sublist of the form ``{<ban> <bywho> <age>}``. age is seconds from the bot's point of view
 
   .. admonition:: Example
      :collapsible: closed
@@ -2238,7 +2277,7 @@ chanexempts <channel>
 
   Description: Returns a list of the current exempts on the channel. Each element is a sublist of the form {<exempts> <bywho> <age>}. age is seconds from the bot's point of view.
 
-  Returns: a list of the current exempts on the channel. Each element is a sublist of the form {<exempts> <bywho> <age>}. age is seconds from the bot's point of view
+  Returns: a list of the current exempts on the channel. Each element is a sublist of the form ``{<exempts> <bywho> <age>}``. age is seconds from the bot's point of view
 
   .. admonition:: Example
      :collapsible: closed
@@ -2256,7 +2295,7 @@ chaninvites <channel>
 
   Description: Returns a list of the current invites on the channel. Each element is a sublist of the form {<invites> <bywho> <age>}. age is seconds from the bot's point of view.
 
-  Returns: a list of the current invites on the channel. Each element is a sublist of the form {<invites> <bywho> <age>}. age is seconds from the bot's point of view
+  Returns: a list of the current invites on the channel. Each element is a sublist of the form ``{<invites> <bywho> <age>}``. age is seconds from the bot's point of view
 
   .. admonition:: Example
      :collapsible: closed
@@ -2363,17 +2402,22 @@ resetchan <channel> [flags]
 
   Description: Clears the channel info Eggdrop is currently storing for a channel, then rereads the channel info from the server. Useful if Eggdrop gets into a bad state on a server with respect to a channel userlist, for example. If flags are specified, only the required information will be reset, according to the given flags. Available flags:
 
-  +-----+------------------------------+
-  | b   | channel bans                 |
-  +-----+------------------------------+
-  | e   | channel exempts              |
-  +-----+------------------------------+
-  | I   | channel invites              |
-  +-----+------------------------------+
-  | m   | channel modes                |
-  +-----+------------------------------+
-  | w   | memberlist (who & away info) |
-  +-----+------------------------------+
+  .. list-table::
+     :widths: 14 86
+     :header-rows: 1
+
+     * - ``flags``
+       - Description
+     * - ``b``
+       - channel bans
+     * - ``e``
+       - channel exempts
+     * - ``I``
+       - channel invites
+     * - ``m``
+       - channel modes
+     * - ``w``
+       - memberlist (who & away info)
 
   Returns: nothing
 
@@ -2393,19 +2437,24 @@ refreshchan <channel> [flags]
 
   Description: An alternative to resetchan, refresh rereads the channel info from the server without first clearing out the previously stored information. Useful for updating a user's away status without resetting their idle time, for example. If flags are specified, only the required information will be refreshed, according to the given flags. Available flags:
 
-  +-----+------------------------------+
-  | b   | channel bans                 |
-  +-----+------------------------------+
-  | e   | channel exempts              |
-  +-----+------------------------------+
-  | I   | channel invites              |
-  +-----+------------------------------+
-  | m   | channel modes                |
-  +-----+------------------------------+
-  | t   | channel topic                |
-  +-----+------------------------------+
-  | w   | memberlist (who & away info) |
-  +-----+------------------------------+
+  .. list-table::
+     :widths: 14 86
+     :header-rows: 1
+
+     * - ``flags``
+       - Description
+     * - ``b``
+       - channel bans
+     * - ``e``
+       - channel exempts
+     * - ``I``
+       - channel invites
+     * - ``m``
+       - channel modes
+     * - ``t``
+       - channel topic
+     * - ``w``
+       - memberlist (who & away info)
 
   Returns: nothing
 
@@ -2425,7 +2474,7 @@ getchanhost <nickname> [channel]
 
   Description: Returns user\@host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), "" is returned.
 
-  Returns: user\@host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), "" is returned.
+  Returns: user\@host of the specified nickname (the nickname is not included in the returned host). If a channel is not specified, bot will check all of its channels. If the nickname is not on the channel(s), ``""`` is returned.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2443,7 +2492,7 @@ getchanjoin <nickname> <channel>
 
   Description: Returns timestamp (unixtime format) of when the specified nickname joined the channel if available, 0 otherwise. Note that after a channel reset this information will be lost, even if previously available.
 
-  Returns: timestamp (unixtime format) of when the specified nickname joined the channel if available, 0 otherwise. Note that after a channel reset this information will be lost, even if previously available.
+  Returns: timestamp (unixtime format) of when the specified nickname joined the channel if available, ``0`` otherwise. Note that after a channel reset this information will be lost, even if previously available.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2461,7 +2510,7 @@ onchansplit <nick> [channel]
 
   Description: Returns 1 if that nick is split from the channel (or any channel if no channel is specified); 0 otherwise.
 
-  Returns: 1 if that nick is split from the channel (or any channel if no channel is specified); 0 otherwise
+  Returns: ``1`` if that nick is split from the channel (or any channel if no channel is specified); ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -2499,7 +2548,7 @@ getchanidle <nickname> <channel>
 
   Description: Returns number of minutes that person has been idle; -1 if the specified user isn't on the channel.
 
-  Returns: number of minutes that person has been idle; -1 if the specified user isn't on the channel
+  Returns: number of minutes that person has been idle; ``-1`` if the specified user isn't on the channel
 
   .. admonition:: Example
      :collapsible: closed
@@ -2517,7 +2566,7 @@ getchanmode <channel>
 
   Description: Returns string of the type "+ntik key" for the channel specified.
 
-  Returns: string of the type "+ntik key" for the channel specified
+  Returns: string of the type ``+ntik key`` for the channel specified
 
   .. admonition:: Example
      :collapsible: closed
@@ -2607,7 +2656,7 @@ validchan <channel>
 
   Description: Checks if the bot has a channel record for the specified channel. Note that this does not necessarily mean that the bot is ON the channel.
 
-  Returns: 1 if the channel exists, 0 if not
+  Returns: ``1`` if the channel exists, ``0`` if not
 
   .. admonition:: Example
      :collapsible: closed
@@ -2625,7 +2674,7 @@ isdynamic <channel>
 
   Description: Returns 1 if the channel is a dynamic channel; 0 otherwise.
 
-  Returns: 1 if the channel is a dynamic channel; 0 otherwise
+  Returns: ``1`` if the channel is a dynamic channel; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -2715,7 +2764,7 @@ chansettype <setting>
 
   Description: Returns the type of the setting you specify. The possible types are flag, int, str, pair. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.
 
-  Returns: The type of the setting you specify. The possible types are flag, int, str, pair. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.
+  Returns: The type of the setting you specify. The possible types are ``flag``, ``int``, ``str``, ``pair``. A flag type references a channel flag setting that can be set to either + or -. An int type is a channel  setting that is set to a number, such as ban-time. A str type is a  channel setting that stores a string, such as need-op. A pair type is a setting that holds a value couple, such as the flood settings.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2753,7 +2802,7 @@ isupport isset <key>
 
   Description: Returns 0/1 depending on whether the key has a value.
 
-  Returns: 0 or 1
+  Returns: ``0`` or ``1``
 
   .. admonition:: Example
      :collapsible: closed
@@ -2884,7 +2933,7 @@ hand2idx <handle>
 
   Description: Returns the idx (a number greater than or equal to zero) for the user given if the user is on the party line in chat mode (even if she is currently on a channel or in chat off), the file area, or in the control of a script. -1 is returned if no idx is found. If the user is on multiple times, the oldest idx is returned.
 
-  Returns: the idx (a number greater than or equal to zero) for the user given if the user is on the party line in chat mode (even if she is currently on a channel or in chat off), the file area, or in the control of a script. -1 is returned if no idx is found. If the user is on multiple times, the oldest idx is returned.
+  Returns: the idx (a number greater than or equal to zero) for the user given if the user is on the party line in chat mode (even if she is currently on a channel or in chat off), the file area, or in the control of a script. ``-1`` is returned if no idx is found. If the user is on multiple times, the oldest idx is returned.
 
   .. admonition:: Example
      :collapsible: closed
@@ -2920,7 +2969,7 @@ valididx <idx>
 
   Description: Returns 1 if the idx currently exists; 0 otherwise.
 
-  Returns: 1 if the idx currently exists; 0 otherwise
+  Returns: ``1`` if the idx currently exists; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -2938,7 +2987,7 @@ getchan <idx>
 
   Description: Returns the current party line channel for a user on the party line; "0" indicates he's on the group party line, "-1" means he has chat off, and a value from 1 to 99999 is a private channel.
 
-  Returns: the current party line channel for a user on the party line; "0" indicates he's on the group party line, "-1" means he has chat off, and a value from 1 to 99999 is a private channel
+  Returns: the current party line channel for a user on the party line; ``0`` indicates he's on the group party line, ``-1`` means he has chat off, and a value from ``1`` to ``99999`` is a private channel
 
   .. admonition:: Example
      :collapsible: closed
@@ -3027,25 +3076,30 @@ strip <idx> [+/-strip-flags]
 
   Description: Modifies the strip-flags for a user. The supported strip-flags are:
 
-  +------+-------------------------------------------------------------+
-  | c    | remove all color codes                                      |
-  +------+-------------------------------------------------------------+
-  | b    | remove all boldface codes                                   |
-  +------+-------------------------------------------------------------+
-  | r    | remove all reverse video codes                              |
-  +------+-------------------------------------------------------------+
-  | u    | remove all underline codes                                  |
-  +------+-------------------------------------------------------------+
-  | a    | remove all ANSI codes                                       |
-  +------+-------------------------------------------------------------+
-  | g    | remove all ctrl-g (bell) codes                              |
-  +------+-------------------------------------------------------------+
-  | o    | remove all ordinary codes (ctrl+o, terminates bold/color/..)|
-  +------+-------------------------------------------------------------+
-  | i    | remove all italics codes                                    |
-  +------+-------------------------------------------------------------+
-  | \*   | remove all of the above                                     |
-  +------+-------------------------------------------------------------+
+  .. list-table::
+     :widths: 9 91
+     :header-rows: 1
+
+     * - ``strip-flags``
+       - Description
+     * - ``c``
+       - remove all color codes
+     * - ``b``
+       - remove all boldface codes
+     * - ``r``
+       - remove all reverse video codes
+     * - ``u``
+       - remove all underline codes
+     * - ``a``
+       - remove all ANSI codes
+     * - ``g``
+       - remove all ctrl-g (bell) codes
+     * - ``o``
+       - remove all ordinary codes (ctrl+o, terminates bold/color/..)
+     * - ``i``
+       - remove all italics codes
+     * - ``\*``
+       - remove all of the above
 
   Returns: new strip-flags for the specified user (or the current flags, if strip-flags was omitted)
 
@@ -3167,17 +3221,22 @@ botlist
 
   Description: Returns a list of bots currently on the botnet. Each item in the list is a sublist with four elements: bot, uplink, version, and sharing status:
 
-  Returns: a list of bots currently on the botnet. Each item in the list is a sublist with four elements: bot, uplink, version, and sharing status:
+  Returns: a list of bots currently on the botnet. Each item in the list is a sublist with four elements: ``bot``, ``uplink``, ``version``, and ``sharing status``:
 
-  +----------+-----------------------------------------------+
-  | bot      | the bot's botnetnick                          |
-  +----------+-----------------------------------------------+
-  | uplink   | the bot the bot is connected to               |
-  +----------+-----------------------------------------------+
-  | version  | it's current numeric version                  |
-  +----------+-----------------------------------------------+
-  | sharing  | a "+" if the bot is a sharebot; "-" otherwise |
-  +----------+-----------------------------------------------+
+  .. list-table::
+     :widths: 18 82
+     :header-rows: 1
+
+     * - Element
+       - Description
+     * - ``bot``
+       - the bot's botnetnick
+     * - ``uplink``
+       - the bot the bot is connected to
+     * - ``version``
+       - it's current numeric version
+     * - ``sharing``
+       - a ``+`` if the bot is a sharebot; ``-`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -3195,7 +3254,7 @@ islinked <bot>
 
   Description: Returns 1 if the bot is currently linked; 0 otherwise.
 
-  Returns: 1 if the bot is currently linked; 0 otherwise
+  Returns: ``1`` if the bot is currently linked; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -3232,9 +3291,9 @@ dcclist [type]
   Description: Returns a list of active connections, each item in the list is a sublist containing seven elements:
 
   Returns: a list of active connections, each item in the list is a sublist containing seven elements:
-  {<idx> <handle> <hostname> <[+]port> <type> {<other>} <timestamp>}.
+  ``{<idx> <handle> <hostname> <[+]port> <type> {<other>} <timestamp>}``.
 
-  The types are: chat, bot, files, file_receiving, file_sending, file_send_pending, script, socket (these are connections that have not yet been put under 'control'), telnet, and server. The timestamp is in unixtime format.
+  The types are: ``chat``, ``bot``, ``files``, ``file_receiving``, ``file_sending``, ``file_send_pending``, ``script``, ``socket`` (these are connections that have not yet been put under 'control'), ``telnet``, and ``server``. The timestamp is in unixtime format.
 
   .. admonition:: Example
      :collapsible: closed
@@ -3254,30 +3313,35 @@ socklist [type]
 
   Returns: a list of active connections, each item in the list is a sublist containing eight elements (in dict-readable format). The order of items returned should not be considered static or permanent, so it is recommended to access the items as key/value pairs with the dict command, as opposed to something like lindex, to extract values. The possible keys returned are:
 
-  +----------+--------------------------------------------------------+
-  | idx      | integer value assigned to Eggdrop connections          |
-  +----------+--------------------------------------------------------+
-  | handle   | possible values are (telnet), (bots), (users),         |
-  |          | (script) for a listening socket, or the handle of the  |
-  |          | connected user for an established connection           |
-  +----------+--------------------------------------------------------+
-  | host     | the hostname of the connection, if it is known;        |
-  |          | otherwise a *                                          |
-  +----------+--------------------------------------------------------+
-  | ip       | the ip of the connection                               |
-  +----------+--------------------------------------------------------+
-  | port     | the port number associated with the connection (local  |
-  |          | port for listening connections, remote port for server |
-  |          | connections.                                           |
-  +----------+--------------------------------------------------------+
-  | secure   | 1 if SSL/TLS is used for the connect; 0 otherwise      |
-  +----------+--------------------------------------------------------+
-  | type     | the type of connection (TELNET, CHAT, SERVER, etc)     |
-  +----------+--------------------------------------------------------+
-  | info     | extra information associated with the connection       |
-  +----------+--------------------------------------------------------+
-  | time     | timestamp of when the socket was established           |
-  +----------+--------------------------------------------------------+
+  .. list-table::
+     :widths: 15 85
+     :header-rows: 1
+
+     * - Key
+       - Description
+     * - ``idx``
+       - integer value assigned to Eggdrop connections
+     * - ``handle``
+       - possible values are (telnet), (bots), (users),
+         (script) for a listening socket, or the handle of the
+         connected user for an established connection
+     * - ``host``
+       - the hostname of the connection, if it is known;
+         otherwise a *
+     * - ``ip``
+       - the ip of the connection
+     * - ``port``
+       - the port number associated with the connection (local
+         port for listening connections, remote port for server
+         connections.
+     * - ``secure``
+       - 1 if SSL/TLS is used for the connect; 0 otherwise
+     * - ``type``
+       - the type of connection (TELNET, CHAT, SERVER, etc)
+     * - ``info``
+       - extra information associated with the connection
+     * - ``time``
+       - timestamp of when the socket was established
 
   .. admonition:: Example
      :collapsible: closed
@@ -3295,7 +3359,7 @@ whom <chan>
 
   Description: Returns list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag ('-', '@', '+', or '*'), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.
 
-  Returns: list of people on the botnet who are on that channel. 0 is the default party line. Each item in the list is a sublist with six elements: nickname, bot, hostname, access flag ('-', '@', '+', or '*'), minutes idle, and away message (blank if the user is not away). If you specify * for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.
+  Returns: list of people on the botnet who are on that channel. ``0`` is the default party line. Each item in the list is a sublist with six elements: ``nickname``, ``bot``, ``hostname``, ``access flag`` ('-', '@', '+', or '*'), minutes idle, and away message (blank if the user is not away). If you specify ``*`` for channel, every user on the botnet is returned with an extra argument indicating the channel the user is on.
 
   .. admonition:: Example
      :collapsible: closed
@@ -3331,7 +3395,7 @@ getdccaway <idx>
 
   Description: Returns away message for a dcc chat user (or "" if the user is not set away).
 
-  Returns: away message for a dcc chat user (or "" if the user is not set away)
+  Returns: away message for a dcc chat user (or ``""`` if the user is not set away)
 
   .. admonition:: Example
      :collapsible: closed
@@ -3452,9 +3516,9 @@ notes <user> [numberlist]
 
   Description: Returns -1 if no such user, -2 if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of:
 
-  Returns: -1 if no such user, -2 if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of::
+  Returns: ``-1`` if no such user, ``-2`` if notefile failure. If a numberlist is not specified, the number of notes stored for the user is returned. Otherwise, a list of sublists containing information about notes stored for the user is returned. Each sublist is in the format of::
 
-        {<from> <timestamp> <note text>}
+        ``{<from> <timestamp> <note text>}``
 
   .. admonition:: Example
      :collapsible: closed
@@ -3472,7 +3536,7 @@ erasenotes <user> <numberlist>
 
   Description: Erases some or all stored notes for a user. Use '-' to erase all notes.
 
-  Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, or number of erased notes.
+  Returns: ``-1`` if no such user, ``-2`` if notefile failure, ``0`` if no such note, or number of erased notes.
 
   .. admonition:: Example
      :collapsible: closed
@@ -3490,7 +3554,7 @@ listnotes <user> <numberlist>
 
   Description: Lists existing notes according to the numberlist (ex: "2-4;8;16-").
 
-  Returns: -1 if no such user, -2 if notefile failure, 0 if no such note, list of existing notes.
+  Returns: ``-1`` if no such user, ``-2`` if notefile failure, ``0`` if no such note, list of existing notes.
 
   .. admonition:: Example
      :collapsible: closed
@@ -3508,7 +3572,7 @@ storenote <from> <to> <msg> <idx>
 
   Description: Stores a note for later reading, notifies idx of any results (use idx -1 for no notify).
 
-  Returns: 0 on success; non-0 on failure
+  Returns: ``0`` on success; non-``0`` on failure
 
   .. admonition:: Example
      :collapsible: closed
@@ -3606,7 +3670,7 @@ iscompressed <filename>
 
   Description: Determines whether <filename> is gzip compressed. .
 
-  Returns: 1 if it is, 0 if it isn't, and 2 if some kind of error prevented the checks from succeeding.
+  Returns: ``1`` if it is, ``0`` if it isn't, and ``2`` if some kind of error prevented the checks from succeeding.
 
   .. admonition:: Example
      :collapsible: closed
@@ -3700,20 +3764,25 @@ dccsend <filename> <ircnick>
 
   Returns:
 
-  +-------+---------------------------------------------------------------------+
-  | 0     | success                                                             |
-  +-------+---------------------------------------------------------------------+
-  | 1     | the dcc table is full (too many connections)                        |
-  +-------+---------------------------------------------------------------------+
-  | 2     | can't open a socket for the transfer                                |
-  +-------+---------------------------------------------------------------------+
-  | 3     | the file doesn't exist                                              |
-  +-------+---------------------------------------------------------------------+
-  | 4     | the file was queued for later transfer, which means that person has |
-  |       | too many file transfers going right now                             |
-  +-------+---------------------------------------------------------------------+
-  | 5     | the file could not be opened or temporary file could not be created |
-  +-------+---------------------------------------------------------------------+
+  .. list-table::
+     :widths: 9 91
+     :header-rows: 1
+
+     * - Return value
+       - Description
+     * - ``0``
+       - success
+     * - ``1``
+       - the dcc table is full (too many connections)
+     * - ``2``
+       - can't open a socket for the transfer
+     * - ``3``
+       - the file doesn't exist
+     * - ``4``
+       - the file was queued for later transfer, which means that person has
+         too many file transfers going right now
+     * - ``5``
+       - the file could not be opened or temporary file could not be created
 
   .. admonition:: Example
      :collapsible: closed
@@ -3731,7 +3800,7 @@ filesend <idx> <filename> [ircnick]
 
   Description: Like dccsend, except it operates for a current filesystem user, and the filename is assumed to be a relative path from that user's current directory.
 
-  Returns: 0 on failure; 1 on success (either an immediate send or a queued send)
+  Returns: ``0`` on failure; ``1`` on success (either an immediate send or a queued send)
 
   .. admonition:: Example
      :collapsible: closed
@@ -3749,7 +3818,7 @@ fileresend <idx> <filename> [ircnick]
 
   Description: Functions like filesend, only that it sends a DCC RESEND instead of a DCC SEND, which allows people to resume aborted file transfers if their client supports that protocol. ircII/BitchX/etc. support it; mIRC does not.
 
-  Returns: 0 on failure; 1 on success (either an immediate send or a queued send)
+  Returns: ``0`` on failure; ``1`` on success (either an immediate send or a queued send)
 
   .. admonition:: Example
      :collapsible: closed
@@ -3895,11 +3964,16 @@ getfilesendtime <idx>
 
   Returns: the unixtime value from when a file transfer started, or a negative number:
 
-  +-----+------------------------------------------------------+
-  | -1  | no matching transfer with the specified idx was found|
-  +-----+------------------------------------------------------+
-  | -2  | the idx matches an entry which is not a file transfer|
-  +-----+------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - Return value
+       - Description
+     * - ``-1``
+       - no matching transfer with the specified idx was found
+     * - ``-2``
+       - the idx matches an entry which is not a file transfer
 
   .. admonition:: Example
      :collapsible: closed
@@ -3919,15 +3993,20 @@ mkdir <directory> [<required-flags> [channel]]
 
   Returns:
 
-  +-----+------------------------------------------------------+
-  | 0   | success                                              |
-  +-----+------------------------------------------------------+
-  | 1   | can't create directory                               |
-  +-----+------------------------------------------------------+
-  | 2   | directory exists but is not a directory              |
-  +-----+------------------------------------------------------+
-  | -3  | could not open filedb                                |
-  +-----+------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - Return value
+       - Description
+     * - ``0``
+       - success
+     * - ``1``
+       - can't create directory
+     * - ``2``
+       - directory exists but is not a directory
+     * - ``-3``
+       - could not open filedb
 
   .. admonition:: Example
      :collapsible: closed
@@ -3945,7 +4024,7 @@ rmdir <directory>
 
   Description: Removes a directory from the file system.
 
-  Returns: 0 on success; 1 on failure
+  Returns: ``0`` on success; ``1`` on failure
 
   .. admonition:: Example
      :collapsible: closed
@@ -3965,15 +4044,20 @@ mv <file> <destination>
 
   Returns: If the command was successful, the number of files moved will be returned. Otherwise, a negative number will be returned:
 
-  +-----+------------------------------------------------------+
-  | -1  | invalid source file                                  |
-  +-----+------------------------------------------------------+
-  | -2  | invalid destination                                  |
-  +-----+------------------------------------------------------+
-  | -3  | destination file exists                              |
-  +-----+------------------------------------------------------+
-  | -4  | no matches found                                     |
-  +-----+------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - Return value
+       - Description
+     * - ``-1``
+       - invalid source file
+     * - ``-2``
+       - invalid destination
+     * - ``-3``
+       - destination file exists
+     * - ``-4``
+       - no matches found
 
   .. admonition:: Example
      :collapsible: closed
@@ -3993,15 +4077,20 @@ cp <file> <destination>
 
   Returns: If the command was successful, the number of files copied will be returned. Otherwise, a negative number will be returned:
 
-  +-----+------------------------------------------------------+
-  | -1  | invalid source file                                  |
-  +-----+------------------------------------------------------+
-  | -2  | invalid destination                                  |
-  +-----+------------------------------------------------------+
-  | -3  | destination file exists                              |
-  +-----+------------------------------------------------------+
-  | -4  | no matches found                                     |
-  +-----+------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - Return value
+       - Description
+     * - ``-1``
+       - invalid source file
+     * - ``-2``
+       - invalid destination
+     * - ``-3``
+       - destination file exists
+     * - ``-4``
+       - no matches found
 
   .. admonition:: Example
      :collapsible: closed
@@ -4036,7 +4125,7 @@ setflags <dir> [<flags> [channel]]
 
   Description: Sets the flags required to access a directory.
 
-  Returns: 0 on success; -1 or -3 on failure
+  Returns: ``0`` on success; ``-1`` or ``-3`` on failure
 
   .. admonition:: Example
      :collapsible: closed
@@ -4058,7 +4147,7 @@ encpass2 <pass>
   Description: Returns a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
 
 
-  Returns: a hash in the format of "$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>" where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
+  Returns: a hash in the format of ``$pbkdf2-<digest>$rounds=<rounds>$<salt>$<hash>`` where digest is the digest set in the config variable pbkdf2-method, rounds is the number of rounds set in the config variable pbkdf2-rounds, salt is the base64 salt used to generate the hash, and hash is the generated base64 hash.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4076,7 +4165,7 @@ pbkdf2 [-bin] <pass> <salt> <rounds> <digest>
 
   Description: Returns a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
 
-  Returns: a derived key from the provided "pass" string using "salt" and "rounds" count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
+  Returns: a derived key from the provided ``pass`` string using ``salt`` and ``rounds`` count as specified in RFC 2898 as a hexadecimal string. Using the optional -bin flag will return the result as binary data.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4134,7 +4223,7 @@ binds [type/mask]
   Description: By default, lists Tcl binds registered with the Eggdrop. You can specify 'all' to view all binds, 'tcl' to view Tcl binds, and 'python' to view Python binds. Alternately, you can specify a bind type (pub, msg, etc) to view all binds that match that type of bind, or a mask that is matched against the command associated with the bind.
 
   Returns: a list of Tcl binds, each item in the list is a sublist of five elements:
-        {<type> <flags> <name> <hits> <proc>}
+        ``{<type> <flags> <name> <hits> <proc>}``
 
   .. admonition:: Example
      :collapsible: closed
@@ -4154,45 +4243,50 @@ logfile [<modes> <channel> <filename>]
 
   Logfile flags:
 
-  +-----+---------------------------------------------------------------------+
-  | b   | information about bot linking and userfile sharing                  |
-  +-----+---------------------------------------------------------------------+
-  | c   | commands                                                            |
-  +-----+---------------------------------------------------------------------+
-  | d   | misc debug information                                              |
-  +-----+---------------------------------------------------------------------+
-  | g   | raw outgoing share traffic                                          |
-  +-----+---------------------------------------------------------------------+
-  | h   | raw incoming share traffic                                          |
-  +-----+---------------------------------------------------------------------+
-  | j   | joins, parts, quits, topic changes, and netsplits on the channel    |
-  +-----+---------------------------------------------------------------------+
-  | k   | kicks, bans, and mode changes on the channel                        |
-  +-----+---------------------------------------------------------------------+
-  | l   | linked bot messages                                                 |
-  +-----+---------------------------------------------------------------------+
-  | m   | private msgs, notices and ctcps to the bot                          |
-  +-----+---------------------------------------------------------------------+
-  | o   | misc info, errors, etc (IMPORTANT STUFF)                            |
-  +-----+---------------------------------------------------------------------+
-  | p   | public text on the channel                                          |
-  +-----+---------------------------------------------------------------------+
-  | r   | raw incoming server traffic                                         |
-  +-----+---------------------------------------------------------------------+
-  | s   | server connects, disconnects, and notices                           |
-  +-----+---------------------------------------------------------------------+
-  | t   | raw incoming botnet traffic                                         |
-  +-----+---------------------------------------------------------------------+
-  | u   | raw outgoing botnet traffic                                         |
-  +-----+---------------------------------------------------------------------+
-  | v   | raw outgoing server traffic                                         |
-  +-----+---------------------------------------------------------------------+
-  | w   | wallops (make sure the bot sets +w in init-server)                  |
-  +-----+---------------------------------------------------------------------+
-  | x   | file transfers and file-area commands                               |
-  +-----+---------------------------------------------------------------------+
+  .. list-table::
+     :widths: 7 93
+     :header-rows: 1
 
-  Returns: filename of logfile created, or, if no logfile is specified, a list of logfiles such as: {mco * eggdrop.log} {jp #lamest lame.log}
+     * - ``modes``
+       - Description
+     * - ``b``
+       - information about bot linking and userfile sharing
+     * - ``c``
+       - commands
+     * - ``d``
+       - misc debug information
+     * - ``g``
+       - raw outgoing share traffic
+     * - ``h``
+       - raw incoming share traffic
+     * - ``j``
+       - joins, parts, quits, topic changes, and netsplits on the channel
+     * - ``k``
+       - kicks, bans, and mode changes on the channel
+     * - ``l``
+       - linked bot messages
+     * - ``m``
+       - private msgs, notices and ctcps to the bot
+     * - ``o``
+       - misc info, errors, etc (IMPORTANT STUFF)
+     * - ``p``
+       - public text on the channel
+     * - ``r``
+       - raw incoming server traffic
+     * - ``s``
+       - server connects, disconnects, and notices
+     * - ``t``
+       - raw incoming botnet traffic
+     * - ``u``
+       - raw outgoing botnet traffic
+     * - ``v``
+       - raw outgoing server traffic
+     * - ``w``
+       - wallops (make sure the bot sets +w in init-server)
+     * - ``x``
+       - file transfers and file-area commands
+
+  Returns: filename of logfile created, or, if no logfile is specified, a list of logfiles such as: ``{mco * eggdrop.log}`` ``{jp #lamest lame.log}``
 
   .. admonition:: Example
      :collapsible: closed
@@ -4214,27 +4308,32 @@ maskhost <nick!user@host> [masktype]
 
   Available types are:
 
-  +-----+------------------------------------------------------+
-  | 0   | \*!user\@host                                        |
-  +-----+------------------------------------------------------+
-  | 1   | \*!*user\@host                                       |
-  +-----+------------------------------------------------------+
-  | 2   | \*!*\@host                                           |
-  +-----+------------------------------------------------------+
-  | 3   | \*!*user\@*.host                                     |
-  +-----+------------------------------------------------------+
-  | 4   | \*!*\@*.host                                         |
-  +-----+------------------------------------------------------+
-  | 5   | nick!user\@host                                      |
-  +-----+------------------------------------------------------+
-  | 6   | nick!*user\@host                                     |
-  +-----+------------------------------------------------------+
-  | 7   | nick!*\@host                                         |
-  +-----+------------------------------------------------------+
-  | 8   | nick!*user\@*.host                                   |
-  +-----+------------------------------------------------------+
-  | 9   | nick!*\@*.host                                       |
-  +-----+------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - ``masktype``
+       - Description
+     * - ``0``
+       - \*!user\@host
+     * - ``1``
+       - \*!*user\@host
+     * - ``2``
+       - \*!*\@host
+     * - ``3``
+       - \*!*user\@*.host
+     * - ``4``
+       - \*!*\@*.host
+     * - ``5``
+       - nick!user\@host
+     * - ``6``
+       - nick!*user\@host
+     * - ``7``
+       - nick!*\@host
+     * - ``8``
+       - nick!*user\@*.host
+     * - ``9``
+       - nick!*\@*.host
 
   You can also specify types from 10 to 19 which correspond to types
   0 to 9, but instead of using a * wildcard to replace portions of the
@@ -4258,7 +4357,7 @@ timer <minutes> <tcl-command> [count [timerName]]
 
   Description: Executes the given Tcl command after a certain number of minutes have passed, at the top of the minute (ie, if a timer is started at 10:03:34 with 1 minute specified, it will execute at 10:04:00. If a timer is started at 10:06:34 with 2 minutes specified, it will execute at 10:08:00). If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the timer will repeat until it's removed with killtimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If no timerName is specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
-  Returns: a timerName
+  Returns: a ``timerName``
 
   .. admonition:: Example
      :collapsible: closed
@@ -4276,7 +4375,7 @@ utimer <seconds> <tcl-command> [count [timerName]]
 
   Description: Executes the given Tcl command after a certain number of seconds have passed. If count is specified, the command will be executed count times with the given interval in between. If you specify a count of 0, the utimer will repeat until it's removed with killutimer or until the bot is restarted. If timerName is specified, it will become the unique identifier for the timer. If timerName is not specified, Eggdrop will assign a timerName in the format of "timer<integer>".
 
-  Returns: a timerName
+  Returns: a ``timerName``
 
   .. admonition:: Example
      :collapsible: closed
@@ -4422,7 +4521,7 @@ ctime <unixtime>
 
   Description: Returns a formatted date/time string based on the current locale settings from the unixtime string given; for example "Fri Aug 3 11:34:55 1973".
 
-  Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example "Fri Aug 3 11:34:55 1973"
+  Returns: a formatted date/time string based on the current locale settings from the unixtime string given; for example ``Fri Aug 3 11:34:55 1973``
 
   .. admonition:: Example
      :collapsible: closed
@@ -4458,7 +4557,7 @@ rand <limit>
 
   Description: Returns a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
 
-  Returns: a random integer between 0 and limit-1. Limit must be greater than 0 and equal to or less than RAND_MAX, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
+  Returns: a random integer between ``0`` and ``limit-1``. Limit must be greater than ``0`` and equal to or less than ``RAND_MAX``, which is generally 2147483647. The underlying pseudo-random number generator is not cryptographically secure.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4496,19 +4595,24 @@ sendnote <from> <to[@bot]> <message>
 
   Returns:
 
-  +-----+----------------------------------------------------------+
-  | 0   | the send failed                                          |
-  +-----+----------------------------------------------------------+
-  | 1   | the note was delivered locally or sent to another bot    |
-  +-----+----------------------------------------------------------+
-  | 2   | the note was stored locally                              |
-  +-----+----------------------------------------------------------+
-  | 3   | the user's notebox is too full to store a note           |
-  +-----+----------------------------------------------------------+
-  | 4   | a Tcl binding caught the note                            |
-  +-----+----------------------------------------------------------+
-  | 5   | the note was stored because the user is away             |
-  +-----+----------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - Return value
+       - Description
+     * - ``0``
+       - the send failed
+     * - ``1``
+       - the note was delivered locally or sent to another bot
+     * - ``2``
+       - the note was stored locally
+     * - ``3``
+       - the user's notebox is too full to store a note
+     * - ``4``
+       - a Tcl binding caught the note
+     * - ``5``
+       - the note was stored because the user is away
 
   .. admonition:: Example
      :collapsible: closed
@@ -4526,7 +4630,7 @@ link [via-bot] <bot>
 
   Description: Attempts to link to another bot directly. If you specify a via-bot, it tells the via-bot to attempt the link.
 
-  Returns: 1 if the link will be attempted; 0 otherwise
+  Returns: ``1`` if the link will be attempted; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -4544,7 +4648,7 @@ unlink <bot> [comment]
 
   Description: Attempts to unlink a bot from the botnet. If you specify a comment, it will appear with the unlink message on the botnet.
 
-  Returns: 1 on success; 0 otherwise
+  Returns: ``1`` on success; ``0`` otherwise
 
   .. admonition:: Example
      :collapsible: closed
@@ -4562,7 +4666,7 @@ encrypt <key> <string>
 
   Description: Returns encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
-  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either "ecb:" or "cbc:", or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
+  Returns: encrypted string (using the currently loaded encryption module), encoded into ASCII using base-64. As of v1.8.4, the default blowfish encryption module can use either the older ECB mode (currently used by default for compatibility reasons), or the more recent and more-secure CBC mode. You can explicitly request which encryption mode to use by prefixing the encryption key with either ``ecb:`` or ``cbc:``, or by using the blowfish-use-mode setting in the config file. Note: the default encryption mode for this function is planned to transition from ECB to CBC in v1.9.0.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4580,7 +4684,7 @@ decrypt <key> <encrypted-base64-string>
 
   Description: Returns decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with "ecb:" or "cbc:" or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).
 
-  Returns: decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with "ecb:" or "cbc:" or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).
+  Returns: decrypted string (using the currently loaded encryption module). If the default blowfish encryption module is used, this automatically picks the right decryption mode. You may still prefix the key with ``ecb:`` or ``cbc:`` or use the blowfish-use-mode setting in the config file (see the encrypt command for more detailed information).
 
   .. admonition:: Example
      :collapsible: closed
@@ -4716,7 +4820,7 @@ traffic
 
   Description: Returns a list of sublists containing information about the bot's traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).
 
-  Returns: a list of sublists containing information about the bot's traffic usage in bytes. Each sublist contains five elements: type, in-traffic today, in-traffic total, out-traffic today, out-traffic total (in that order).
+  Returns: a list of sublists containing information about the bot's traffic usage in bytes. Each sublist contains five elements: ``type``, ``in-traffic today``, ``in-traffic total``, ``out-traffic today``, ``out-traffic total`` (in that order).
 
   .. admonition:: Example
      :collapsible: closed
@@ -4733,7 +4837,7 @@ modules
 ^^^^^^^
 
   Description: Returns a list of sublists containing information about the bot's currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.
-  Returns: a list of sublists containing information about the bot's currently loaded modules. Each sublist contains three elements: module, version, and dependencies. Each dependency is also a sublist containing the module name and version.
+  Returns: a list of sublists containing information about the bot's currently loaded modules. Each sublist contains three elements: ``module``, ``version``, and ``dependencies``. Each dependency is also a sublist containing the module name and version.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4751,7 +4855,7 @@ loadmodule <module>
 
   Description: Attempts to load the specified module.
 
-  Returns: "Already loaded." if the module is already loaded, "" if successful, or the reason the module couldn't be loaded.
+  Returns: ``Already loaded.`` if the module is already loaded, ``""`` if successful, or the reason the module couldn't be loaded.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4769,7 +4873,7 @@ unloadmodule <module>
 
   Description: Attempts to unload the specified module.
 
-  Returns: "No such module" if the module is not loaded, "" otherwise.
+  Returns: ``No such module`` if the module is not loaded, ``""`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4877,25 +4981,30 @@ stripcodes <strip-flags> <string>
 
   Description: Strips specified control characters from the string given. strip-flags can be any combination of the following:
 
-  +-----+-------------------------------------------------------------+
-  | c   | remove all color codes                                      |
-  +-----+-------------------------------------------------------------+
-  | b   | remove all boldface codes                                   |
-  +-----+-------------------------------------------------------------+
-  | r   | remove all reverse video codes                              |
-  +-----+-------------------------------------------------------------+
-  | u   | remove all underline codes                                  |
-  +-----+-------------------------------------------------------------+
-  | a   | remove all ANSI codes                                       |
-  +-----+-------------------------------------------------------------+
-  | g   | remove all ctrl-g (bell) codes                              |
-  +-----+-------------------------------------------------------------+
-  | o   | remove all ordinary codes (ctrl+o, terminates bold/color/..)|
-  +-----+-------------------------------------------------------------+
-  | i   | remove all italics codes                                    |
-  +-----+-------------------------------------------------------------+
-  | \*  | remove all of the above                                     |
-  +-----+-------------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - ``strip-flags``
+       - Description
+     * - ``c``
+       - remove all color codes
+     * - ``b``
+       - remove all boldface codes
+     * - ``r``
+       - remove all reverse video codes
+     * - ``u``
+       - remove all underline codes
+     * - ``a``
+       - remove all ANSI codes
+     * - ``g``
+       - remove all ctrl-g (bell) codes
+     * - ``o``
+       - remove all ordinary codes (ctrl+o, terminates bold/color/..)
+     * - ``i``
+       - remove all italics codes
+     * - ``\*``
+       - remove all of the above
 
   Returns: the stripped string.
 
@@ -4915,7 +5024,7 @@ matchaddr <hostmask> <address>
 
   Description: Checks if the address matches the hostmask given. The address should be in the form nick!user\@host.
 
-  Returns: 1 if the address matches the hostmask, 0 otherwise.
+  Returns: ``1`` if the address matches the hostmask, ``0`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4934,7 +5043,7 @@ matchcidr <block> <address> <prefix>
   Description: Performs a cidr match on the specified ip addresses. IPv6 is supported, if enabled at compile time.
 
 
-  Returns: 1 if the address matches the block prefix, 0 otherwise.
+  Returns: ``1`` if the address matches the block prefix, ``0`` otherwise.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4952,7 +5061,7 @@ matchstr <pattern> <string>
 
   Description: Checks if pattern matches string. Only two wildcards are supported: '*' and '?'. Matching is case-insensitive. This command is intended as a simplified alternative to Tcl's string match.
 
-  Returns: 1 if the pattern matches the string, 0 if it doesn't.
+  Returns: ``1`` if the pattern matches the string, ``0`` if it doesn't.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4970,7 +5079,7 @@ rfcequal <string1> <string2>
 
   Description: Checks if two strings are equal. Case is ignored, and this uses RFC1459 matching {}|~ == []\^, depending on the rfc_compliant setting.
 
-  Returns: 1 if equal, 0 if not.
+  Returns: ``1`` if equal, ``0`` if not.
 
   .. admonition:: Example
      :collapsible: closed
@@ -4988,15 +5097,20 @@ status [type]
 
   Description: Provides eggdrop status information similar to the .status command in partyline. The available types of information are:
 
-  +------+---------------------------------------------------------------------+
-  | cpu  | total cpu time spent by eggdrop                                     |
-  +------+---------------------------------------------------------------------+
-  | mem  | dynamically allocated memory excluding the Tcl interpreter          |
-  +------+---------------------------------------------------------------------+
-  | cache| user entries cache hits (in %)                                      |
-  +------+---------------------------------------------------------------------+
-  | ipv6 | shows whether IPv6 support was compiled in                          |
-  +------+---------------------------------------------------------------------+
+  .. list-table::
+     :widths: 8 92
+     :header-rows: 1
+
+     * - ``type``
+       - Description
+     * - ``cpu``
+       - total cpu time spent by eggdrop
+     * - ``mem``
+       - dynamically allocated memory excluding the Tcl interpreter
+     * - ``cache``
+       - user entries cache hits (in %)
+     * - ``ipv6``
+       - shows whether IPv6 support was compiled in
 
   Returns: the requested information type or all information if type isn't specified. The format is a flat list of name-value pairs.
 
@@ -5016,7 +5130,7 @@ istls <idx>
 
   Description: Checks if a connection is encrypted or cleartext. This command is available on TLS-enabled bots only.
 
-  Returns: 1 if the idx is a TLS connection, 0 if it's plaintext.
+  Returns: ``1`` if the idx is a TLS connection, ``0`` if it's plaintext.
 
   .. admonition:: Example
      :collapsible: closed
@@ -5112,15 +5226,20 @@ numversion*
 ^^^^^^^^^^^
   Value: the current numeric bot version (for example: "1.10.21"). Numerical version is in the format of "MNNRRPP", where:
 
-  +------+---------------------------------------+
-  | M    | major release number                  |
-  +------+---------------------------------------+
-  | NN   | minor release number                  |
-  +------+---------------------------------------+
-  | RR   | sub-release number                    |
-  +------+---------------------------------------+
-  | PP   | patch level for that sub-release      |
-  +------+---------------------------------------+
+  .. list-table::
+     :widths: 13 87
+     :header-rows: 1
+
+     * - MNNRRPP component
+       - Description
+     * - ``M``
+       - major release number
+     * - ``NN``
+       - minor release number
+     * - ``RR``
+       - sub-release number
+     * - ``PP``
+       - patch level for that sub-release
 
   Module: core
 
@@ -5223,37 +5342,40 @@ You will commonly see flag masks for global flags written "ov"; this is the same
 
 Some additional examples:
 
-+----------------+-----------------------------------------------------------------------------------------------------+
-| Flag Mask      | Action                                                                                              |
-+================+=====================================================================================================+
-| m, +m, m|*     | Checks if the user has the m global flag                                                            |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| +mn            | Checks if the user has the m OR n global flag                                                       |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| \\|+mn         | Checks if the user has the m OR n channel flag                                                      |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| \\|+mn #lamest | Checks if the user has the m OR n channel flag for #lamest                                          |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| &+mn           | Checks if the user has the m AND n channel flag                                                     |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| &mn #lamest    | Checks if the user has the m AND n channel flag for #lamest                                         |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| \\|+o #lamest  | Checks if the user has the o channel flag for #lamest                                               |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| +o|+n #lamest  | Checks if the user has the o global flag OR the n channel flag for #lamest                          |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| +m&+v #lamest  | Checks if the user has the m global flag AND the v channel flag for #lamest                         |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| -m             | Checks if the user does not have the m global flag                                                  |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| \\|-n #lamest  | Checks if the user does not have the n channel flag for #lamest                                     |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| +m|-n #lamest  | Checks if the user has the global m flag OR does not have a channel n flag for #lamest              |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| -n&-m #lamest  | Checks if the user does not have the global n flag AND does not have the channel m flag for #lamest |
-+----------------+-----------------------------------------------------------------------------------------------------+
-| ||+b           | Checks if the user has the bot flag b                                                               |
-+----------------+-----------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 14 86
+   :header-rows: 1
+
+   * - Flag Mask
+     - Description
+   * - ``m``, ``+m``, ``m|*``
+     - Checks if the user has the m global flag
+   * - ``+mn``
+     - Checks if the user has the m OR n global flag
+   * - ``\\|+mn``
+     - Checks if the user has the m OR n channel flag
+   * - \\|+mn #lamest
+     - Checks if the user has the m OR n channel flag for #lamest
+   * - ``&+mn``
+     - Checks if the user has the m AND n channel flag
+   * - ``&mn #lamest``
+     - Checks if the user has the m AND n channel flag for #lamest
+   * - \\|+o #lamest
+     - Checks if the user has the o channel flag for #lamest
+   * - ``+o|+n #lamest``
+     - Checks if the user has the o global flag OR the n channel flag for #lamest
+   * - ``+m&+v #lamest``
+     - Checks if the user has the m global flag AND the v channel flag for #lamest
+   * - ``-m``
+     - Checks if the user does not have the m global flag
+   * - \\|-n #lamest
+     - Checks if the user does not have the n channel flag for #lamest
+   * - ``+m|-n #lamest``
+     - Checks if the user has the global m flag OR does not have a channel n flag for #lamest
+   * - ``-n&-m #lamest``
+     - Checks if the user does not have the global n flag AND does not have the channel m flag for #lamest
+   * - ``||+b``
+     - Checks if the user has the bot flag b
 
 As a side note, Tcl scripts historically have used a '-' to skip processing of a flag type (Example: -\|o). It is unknown where and why this practice started, but as a style tip, Eggdrop developers recommend using a '\*' to skip processing, so as not to confuse a single "-" meaning "skip processing" with a preceding "-ov" which means "not these flags".
 
@@ -5630,6 +5752,24 @@ The following is a list of bind types and how they work. Below each bind type is
   Description: Mode changes are broken down into their component parts before being sent here, so the <mode-change> will always be a single mode, such as "+m" or "-o". target will show the argument of the mode change (for o/v/b/e/I) or "" if the set mode does not take an argument. The bot's automatic response to a mode change will happen AFTER all matching Tcl procs are called. The mask will be matched against '#channel +/-modes' and can contain wildcards.
 
   If it is a server mode, nick will be "", user\@host is the server name, and handle is \*.
+ 
+  Note that "target" was added in 1.3.17 and that this will break Tcl scripts that were written for pre-1.3.17 Eggdrop that use the mode binding. Also, due to a typo, mode binds were broken completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are not triggered at all in 1.3.17.
+
+  One easy example (from guppy) of how to support the "target" parameter in 1.3.18 and later and still remain compatible with older Eggdrop versions is:
+
+  Old script looks as follows::
+
+             bind mode - * mode_proc
+             proc mode_proc {nick uhost hand chan mode} { ... }
+
+  To make it work with 1.3.18+ and stay compatible with older bots, do::
+
+             bind mode - * mode_proc_fix
+             proc mode_proc_fix {nick uhost hand chan mode {target ""}} {
+               if {$target != ""} {append mode " $target"}
+               mode_proc $nick $uhost $hand $chan $mode
+             }
+             proc mode_proc {nick uhost hand chan mode} { ... }
 
   .. admonition:: Example
      :collapsible: closed
