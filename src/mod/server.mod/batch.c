@@ -262,7 +262,7 @@ static int gotbatch(char *from, char *msg)
   char prefix;
   batch_t *b;
 
-  // Check for malformed states. Probably need to add more handling later
+  /* Check for malformed states. Probably need to add more handling later */
   reftag = newsplit(&msg);
   if (!*reftag) {
     putlog(LOG_DEBUG, "*", "BATCH: %s sent a BATCH with no reference tag", from);
@@ -285,6 +285,9 @@ static int gotbatch(char *from, char *msg)
       putlog(LOG_DEBUG, "*", "BATCH: %s opened batch %s with no type", from,
              reftag);
       return 0;
+    }
+    if (*msg == ':') {
+      msg++;
     }
     b = batch_start(reftag, type, msg, current_batch);
     if (b) {
