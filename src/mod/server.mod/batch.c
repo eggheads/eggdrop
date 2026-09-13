@@ -34,7 +34,7 @@ static Tcl_Obj *current_tagdict = NULL; /* Message tags on the line currently be
 static void batch_end(batch_t *b, const char *event);
 
 static void check_tcl_batch(batch_t *b, const char *event)
-{ 
+{
   Tcl_SetVar(interp, "_batch1", b->reftag, 0);
   Tcl_SetVar(interp, "_batch2", b->type, 0);
   Tcl_SetVar(interp, "_batch3", (char *) event, 0);
@@ -44,7 +44,7 @@ static void check_tcl_batch(batch_t *b, const char *event)
   check_tcl_bind(H_batch, b->type, 0,
                  " $_batch1 $_batch2 $_batch3 $_batch4 $_batch5 $_batch6",
                  MATCH_MASK | BIND_STACKABLE);
-} 
+}
 
 static int batch_valid_reftag(const char *reftag)
 {

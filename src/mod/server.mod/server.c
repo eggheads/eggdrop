@@ -132,6 +132,7 @@ static int away_notify = 0;
 static int invite_notify = 0;
 static int message_tags = 0;
 static int batch = 0;
+static int labeled_response = 0;
 
 static char cap_request[CAPMAX - 9];
 
