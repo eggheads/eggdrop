@@ -8362,7 +8362,7 @@ The following is a list of bind types and how they work. Below each bind type is
      .. code-block:: text
 
         Foobar sends PRIVMSG LamestBot :hello world
-        <LamestBot> From is Foobar!foobar@127.0.0.1, keyword is PRIVMSG, text is LamestBot :hello world
+        <LamestBot> From is foobar@127.0.0.1, keyword is PRIVMSG, text is LamestBot :hello world
 
 .. _bind-bot:
 
@@ -9547,7 +9547,7 @@ The following is a list of bind types and how they work. Below each bind type is
      .. code-block:: text
 
         Foobar sets an away message of "Lunch" while on #lamest
-        <LamestBot> Nick is Foobar, user is Foobar!foobar@127.0.0.1, handle is foobar, channel is #lamest, message is Lunch
+        <LamestBot> Nick is Foobar, user is foobar@127.0.0.1, handle is foobar, channel is #lamest, message is Lunch
 
 .. _bind-invt:
 
@@ -9616,8 +9616,8 @@ The following is a list of bind types and how they work. Below each bind type is
 
      .. code-block:: text
 
-        @account=foobar :Foobar!foobar@127.0.0.1 PRIVMSG #lamest :Hello!
-        <LamestBot> From is Foobar!foobar@127.0.0.1, keyword is PRIVMSG, text is #lamest :Hello!, tags are account foobar
+        @account=foobar :foobar@127.0.0.1 PRIVMSG #lamest :Hello!
+        <LamestBot> From is foobar@127.0.0.1, keyword is PRIVMSG, text is #lamest :Hello!, tags are account foobar
 
 .. _bind-account:
 
@@ -9654,7 +9654,7 @@ The following is a list of bind types and how they work. Below each bind type is
      .. code-block:: text
 
         Foobar identifies to services as foobar while on #lamest
-        <LamestBot> Nick is Foobar, user is Foobar!foobar@127.0.0.1, handle is foobar, channel is #lamest, account is foobar
+        <LamestBot> Nick is Foobar, user is foobar@127.0.0.1, handle is foobar, channel is #lamest, account is foobar
 
 .. _bind-isupport:
 
