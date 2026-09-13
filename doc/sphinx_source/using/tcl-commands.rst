@@ -9796,3 +9796,88 @@ The following is a list of bind types and how they work. Below each bind type is
         <foobar> .chanset #lamest +autoop
         <LamestBot> Channel is #lamest, setting is autoop, value is 1
 
+^^^^^^^^^^^^^
+Return Values
+^^^^^^^^^^^^^
+
+Several bind types pay attention to the value returned by the Tcl proc using
+``return <value>``. Unless otherwise noted, these binds generally expect
+``0`` or ``1``, and an empty return is interpreted as ``0``. If a proc omits
+an explicit ``return`` statement, Tcl returns the result of the last command
+executed, which may cause unintended bind behavior.
+
+The following bind types use their proc's return value:
+
+#. ``MSG`` — Return ``1`` to make Eggdrop log the command as:
+
+   .. code-block:: text
+
+      (nick!user@host) !handle! command
+
+#. ``DCC`` — Return ``1`` to make Eggdrop log the command as:
+
+   .. code-block:: text
+
+      #handle# command
+
+#. ``FIL`` — Return ``1`` to make Eggdrop log the command as:
+
+   .. code-block:: text
+
+      #handle# files: command
+
+#. ``PUB`` — Return ``1`` to make Eggdrop log the command as:
+
+   .. code-block:: text
+
+      <<nick>> !handle! command
+
+#. ``CTCP`` — Return ``1`` to ask the bot not to process the CTCP command on
+   its own. Otherwise, it may send its own response to the CTCP, including an
+   error response for an unrecognized CTCP command.
+
+#. ``FILT`` — Return ``""`` to indicate the text has been processed and should
+   be ignored by the bot. Otherwise, the bot treats the returned text normally.
+
+#. ``FLUD`` — Return ``1`` to ask the bot not to take action on the flood.
+   Otherwise, it performs its normal flood punishment.
+
+#. ``RAW`` — Return ``1`` to ask the bot not to process the server text. This
+   can cause Eggdrop to miss events it would normally act on.
+
+#. ``CHON`` — Return ``1`` to ask the bot not to process the partyline join
+   event.
+
+#. ``CHOF`` — Return ``1`` to ask the bot not to process the partyline part
+   event.
+
+#. ``WALL`` — Return ``1`` to make Eggdrop not log the message that triggered
+   this bind.
+
+#. ``NOTE`` — Return ``1`` to make Eggdrop stop processing the note. This
+   includes stacked note bindings that would otherwise run afterward, as well
+   as Eggdrop's built-in note handling routines.
+
+#. ``MSGM`` — Return ``1`` to make Eggdrop not log the message that triggered
+   this bind.
+
+#. ``PUBM`` — Return ``1`` to make Eggdrop not log the message that triggered
+   this bind.
+
+#. ``NOTC`` — Return ``1`` to make Eggdrop not log the message that triggered
+   this bind.
+
+#. ``OUT`` — Return ``1`` to make Eggdrop drop the message instead of sending
+   it. This is only meaningful for messages whose status is ``queued``.
+
+#. ``EVNT`` — Return ``1`` to make Eggdrop skip its default action for the
+   event. This is used for signal-type events and ignored for other events.
+
+#. ``TLS`` — Return ``1`` to disable verbose SSL information for the
+   handshake.
+
+#. ``RAWT`` — Return ``1`` to ask the bot not to process the server text.
+   This can cause Eggdrop to miss events it would normally act on.
+
+#. ``CHANSET`` — Return ``1`` to prevent the channel setting from being
+   changed.
