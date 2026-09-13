@@ -1449,6 +1449,10 @@ static void free_capability(struct capability *z) {
 static int del_capability(char *name) {
   struct capability *curr, *prev;
 
+  /* If batch, remove any remaining/hanging batch sessions */
+  if (!strcasecmp(name, "batch")) {
+    batch_free_all();
+  }
   for (prev = NULL, curr = cap; curr; curr = prev ? prev->next : cap) {
     if (!strcasecmp(name, curr->name)) {
       if (prev) {
@@ -1462,11 +1466,6 @@ static int del_capability(char *name) {
       prev = curr;
     }
   }
-  /* Remove any remaining/hanging batch commands */
-  if (!strcasecmp(name, "batch")) {
-    batch_free_all();
-  }
-
   putlog(LOG_SERV, "*", "CAP: %s not found, can't remove", name);
   return -1;
 }

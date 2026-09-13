@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "server.h"
+
 static int batchcount = 0;
 static unsigned long batchseq = 0;      /* Tracks 'oldest' non-closed session for expiration          */
 static batch_t *batchlist = NULL;       /* List of batches the server has opened but not yet closed.  */
