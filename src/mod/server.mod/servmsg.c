@@ -1229,6 +1229,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   char rawmsg[RECVLINEMAX+7];
   int ret;
   batch_t *saved_batch;
+  Tcl_Obj *saved_tagdict;
   Tcl_Obj *tagdict = Tcl_NewDictObj();
 
   Tcl_IncrRefCount(tagdict);
@@ -1268,7 +1269,9 @@ static void server_activity(int idx, char *tagmsg, int len)
 
   /* Make the batch context of this line visible to handlers duration */
   saved_batch = current_batch;
+  saved_tagdict = current_tagdict;
   current_batch = batch_from_tagdict(tagdict);
+  current_tagdict = tagdict;
 
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
@@ -1283,6 +1286,7 @@ static void server_activity(int idx, char *tagmsg, int len)
     check_tcl_raw(from, code, msgptr);
   }
   current_batch = saved_batch;
+  current_tagdict = saved_tagdict;
   Tcl_DecrRefCount(tagdict);
 }
 

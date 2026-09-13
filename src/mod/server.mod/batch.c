@@ -25,10 +25,11 @@
 #include "server.h"
 
 static int batchcount = 0;
-static unsigned long batchseq = 0;      /* Tracks 'oldest' non-closed session for expiration          */
-static batch_t *batchlist = NULL;       /* List of batches the server has opened but not yet closed.  */
-static batch_t *current_batch = NULL;   /* The batch that the line currently being dispatched belongs */
-                                        /* to, or NULL if that line carried no batch tag.             */
+static unsigned long batchseq = 0;      /* Tracks 'oldest' non-closed session for expiration            */
+static batch_t *batchlist = NULL;       /* List of batches the server has opened but not yet closed.    */
+static batch_t *current_batch = NULL;   /* The batch that the line currently being dispatched belongs   */
+                                        /* to, or NULL if that line carried no batch tag.               */
+static Tcl_Obj *current_tagdict = NULL; /* Message tags on the line currently being dispatched, or NULL */
 
 static void batch_end(batch_t *b, const char *event);
 
@@ -39,8 +40,9 @@ static void check_tcl_batch(batch_t *b, const char *event)
   Tcl_SetVar(interp, "_batch3", (char *) event, 0);
   Tcl_SetVar(interp, "_batch4", b->parent ? b->parent->reftag : "", 0);
   Tcl_SetVar(interp, "_batch5", b->args, 0);
+  Tcl_SetVar(interp, "_batch6", b->tags, 0);
   check_tcl_bind(H_batch, b->type, 0,
-                 " $_batch1 $_batch2 $_batch3 $_batch4 $_batch5",
+                 " $_batch1 $_batch2 $_batch3 $_batch4 $_batch5 $_batch6",
                  MATCH_MASK | BIND_STACKABLE);
 } 
 
@@ -172,8 +174,12 @@ static batch_t *batch_start(const char *reftag, const char *type,
   memset(b, 0, sizeof *b);
   strlcpy(b->reftag, reftag, sizeof b->reftag);
   strlcpy(b->type, type, sizeof b->type);
-  if (args)
+  if (args) {
     strlcpy(b->args, args, sizeof b->args);
+  }
+  if (current_tagdict) {
+    strlcpy(b->tags, Tcl_GetString(current_tagdict), sizeof b->tags);
+  }
   b->parent = parent;
   b->seq = batchseq++;
   b->started = now;

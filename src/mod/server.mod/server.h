@@ -36,6 +36,7 @@
 #define BATCHTYPEMAX     128    /* Max length of a batch type              */
 #define BATCHARGSMAX     512    /* Max length of stored batch arguments     */
 #define BATCHMAX         32     /* Max concurrently open batches            */
+#define BATCHTAGSMAX     512    /* Max length of stored BATCH + message tags */
 
 
 
@@ -159,6 +160,7 @@ typedef struct batch_list {
   char reftag[BATCHREFMAX + 1];      /* Case-sensitive identifier   */
   char type[BATCHTYPEMAX + 1];       /* Batch type                   */
   char args[BATCHARGSMAX + 1];       /* Raw remainder of the BATCH + line   */
+  char tags[BATCHTAGSMAX + 1];       /* Message tags on the BATCH + line    */
   struct batch_list *parent;         /* Enclosing batch, or NULL            */
   unsigned long seq;                 /* Insertion order, for eviction       */
   time_t started;
