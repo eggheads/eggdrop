@@ -189,21 +189,29 @@ static batch_t *batch_start(const char *reftag, const char *type,
   return b;
 }
 
+/* Find first open batch nested inside b, or NULL if it has no children */
+static batch_t *batch_first_child(const batch_t *b)
+{
+  batch_t *cur;
+
+  for (cur = batchlist; cur; cur = cur->next) {
+    if (cur->parent == b) {
+      return cur;
+    }
+  }
+  return NULL;
+}
+
+/* Move b, and everything nested inside it, off the open list and onto head.
+ * The caller will own a self-contained list whose parent pointers are all still valid.
+ */
 static void batch_detach(batch_t *b, batch_t **head)
 {
   batch_t *cur;
-  int found;
 
-  do {
-    found = 0;
-    for (cur = batchlist; cur; cur = cur->next) {
-      if (cur->parent == b) {
-        batch_detach(cur, head);
-        found = 1;
-        break;
-      }
-    }
-  } while (found);
+  while ((cur = batch_first_child(b)) != NULL) {
+    batch_detach(cur, head);
+  }
   batch_unlink(b);
   b->next = *head;
   *head = b;
