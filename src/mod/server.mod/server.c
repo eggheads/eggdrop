@@ -108,7 +108,7 @@ static struct monitor_list *monitor = NULL;
 
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_monitor;
+                       H_ctcp, H_out, H_rawt, H_monitor, H_batch;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -131,11 +131,13 @@ static void free_server(struct server_list *);
 static int away_notify = 0;
 static int invite_notify = 0;
 static int message_tags = 0;
+static int batch = 0;
 
 static char cap_request[CAPMAX - 9];
 
 #include "isupport.c"
 #include "tclisupport.c"
+#include "batch.c"
 #include "servmsg.c"
 #include "sasl.c"
 
@@ -1427,6 +1429,18 @@ static int server_out STDVAR
   return TCL_OK;
 }
 
+static int batch_5char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(6, 6, " reference type params event parent");
+
+  CHECKVALIDITY(batch_5char);
+  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
+  return TCL_OK;
+}
+
+
 static int monitor_2char STDVAR
 {
   Function F = (Function) cd;
@@ -1768,6 +1782,7 @@ static tcl_ints my_tcl_ints[] = {
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
+  {"batch",             &batch,                     0},
   {"extended-join",     &extended_join,             0},
   {"account-notify",    &account_notify,            0},
   {"account-tag",       &account_tag,               0},
@@ -2251,6 +2266,7 @@ static char *server_close()
   del_bind_table(H_ctcr);
   del_bind_table(H_ctcp);
   del_bind_table(H_out);
+  del_bind_table(H_batch);
   del_bind_table(H_monitor);
   rem_tcl_coups(my_tcl_coups);
   rem_tcl_strings(my_tcl_strings);
@@ -2364,7 +2380,9 @@ static Function server_table[] = {
   (Function) encode_msgtags,
   /* 52 - 55 */
   (Function) & H_monitor,
-  (Function) isupport_get_prefixchars
+  (Function) isupport_get_prefixchars,
+  (Function) batch_get_current,
+  (Function) & H_batch
 };
 
 char *server_start(Function *global_funcs)
@@ -2432,7 +2450,7 @@ char *server_start(Function *global_funcs)
 #endif
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 5);
+  module_register(MODULE_NAME, server_table, 1, 6);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
@@ -2475,6 +2493,7 @@ char *server_start(Function *global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
   H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
+  H_batch = add_bind_table("batch", HT_STACKABLE, batch_5char);
   isupport_init();
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_rawt, my_rawt_binds);
