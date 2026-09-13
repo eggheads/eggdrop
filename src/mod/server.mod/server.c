@@ -2450,7 +2450,7 @@ char *server_start(Function *global_funcs)
 #endif
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 5);
+  module_register(MODULE_NAME, server_table, 1, 6);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
