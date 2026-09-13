@@ -1600,6 +1600,10 @@ static int gotcap(char *from, char *msg) {
       } else if (!strcmp(current->name, "batch")) {
         if ((batch) && (!current->enabled))
           add_req(current->name);
+      } else if (!strcmp(current->name, "labeled-response")) {
+        if (labeled_response && !current->enabled) {
+          add_req(current->name);
+        }
       }
       /* Add any custom capes the user listed */
       strlcpy(cape, cap_request, sizeof cape);
