@@ -1433,7 +1433,7 @@ static int batch_5char STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(6, 6, " reference type params event parent");
+  BADARGS(6, 6, " reference type event parent args");
 
   CHECKVALIDITY(batch_5char);
   F(argv[1], argv[2], argv[3], argv[4], argv[5]);

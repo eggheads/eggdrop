@@ -36,9 +36,9 @@ static void check_tcl_batch(batch_t *b, const char *event)
 { 
   Tcl_SetVar(interp, "_batch1", b->reftag, 0);
   Tcl_SetVar(interp, "_batch2", b->type, 0);
-  Tcl_SetVar(interp, "_batch3", b->args, 0);
-  Tcl_SetVar(interp, "_batch4", (char *) event, 0);
-  Tcl_SetVar(interp, "_batch5", b->parent ? b->parent->reftag : "", 0);
+  Tcl_SetVar(interp, "_batch3", (char *) event, 0);
+  Tcl_SetVar(interp, "_batch4", b->parent ? b->parent->reftag : "", 0);
+  Tcl_SetVar(interp, "_batch5", b->args, 0);
   check_tcl_bind(H_batch, b->type, 0,
                  " $_batch1 $_batch2 $_batch3 $_batch4 $_batch5",
                  MATCH_MASK | BIND_STACKABLE);
