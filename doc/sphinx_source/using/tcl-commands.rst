@@ -9796,6 +9796,36 @@ The following is a list of bind types and how they work. Below each bind type is
         <foobar> .chanset #lamest +autoop
         <LamestBot> Channel is #lamest, setting is autoop, value is 1
 
+.. _wildcards:
+
+Match Characters
+----------------
+
+Many bind types allow special match characters in their mask arguments. The
+following characters have special meaning:
+
+.. list-table::
+   :widths: 15 85
+   :header-rows: 1
+
+   * - Match character
+     - Description
+   * - ``?``
+     - Matches any single character.
+   * - ``*``
+     - Matches zero or more characters of any type.
+   * - ``%``
+     - Matches zero or more non-space characters and can be used to match a
+       single word. This character works only in binds, not in regular
+       matching.
+   * - ``~``
+     - Matches one or more space characters and can be used for whitespace
+       between words. This character works only in binds, not in regular
+       matching.
+   * - ``\*``
+     - Matches a literal ``*``. Tcl also requires escaping, so a bind mask
+       must use ``"\\*"`` or ``{\*}``.
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
