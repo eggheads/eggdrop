@@ -5000,10 +5000,10 @@ connect <host> <[+]port>
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
   Description
-     Makes an outgoing connection attempt and creates a dcc entry for it. A ``control`` command should be used immediately after a successful ``connect`` so no input is lost. If the port is prefixed with a plus sign, SSL encrypted connection will be attempted.
+     Makes a non-blocking outgoing connection attempt and creates a DCC entry for it. The returned idx identifies that DCC entry; it does **not** mean the remote TCP connection has completed successfully. A ``control`` command should be attached to the new idx immediately so input and connection-status events are not missed. If hostname resolution succeeds but the subsequent connection attempt fails, the failure is delivered asynchronously to the control callback as an EOF. If the port is prefixed with a plus sign, an SSL-encrypted connection will be attempted.
 
   Returns
-     idx of the new connection
+     idx of the new DCC entry after the connection attempt is started. The returned idx is not confirmation that the remote connection has been established.
 
 
   Module
