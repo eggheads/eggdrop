@@ -1270,7 +1270,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   /* Make the batch context of this line visible to handlers duration */
   saved_batch = current_batch;
   saved_tagdict = current_tagdict;
-  current_batch = batch_from_tagdict(tagdict);
+  current_batch = batch_from_tagdict(tagdict); /* This is the batch record for the batch ref in msgtag */
   current_tagdict = tagdict;
 
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
