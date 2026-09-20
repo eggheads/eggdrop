@@ -264,6 +264,9 @@ static batch_t *batch_from_tagdict(Tcl_Obj *tagdict)
 
   if (!tagdict)
     return NULL;
+  /* Don't bother if the table is empty */
+  if (!batchlist)
+    return NULL;
   key = Tcl_NewStringObj("batch", -1);
   Tcl_IncrRefCount(key);
   if ((Tcl_DictObjGet(interp, tagdict, key, &value) != TCL_OK) || !value) {
