@@ -1282,7 +1282,7 @@ static void server_activity(int idx, char *tagmsg, int len)
   /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
   strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
   ret = check_tcl_rawt(from, code, msgptr, rawmsg);
-  if (!ret) {
+  if (!ret && !batch_suppress(code)) {
     check_tcl_raw(from, code, msgptr);
   }
   current_batch = saved_batch;

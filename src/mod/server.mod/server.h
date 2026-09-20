@@ -157,12 +157,13 @@ typedef struct monitor_list {
  * are permitted to interleave.
  */
 typedef struct batch_list {
-  char reftag[BATCHREFMAX + 1];      /* Case-sensitive identifier   */
-  char type[BATCHTYPEMAX + 1];       /* Batch type                   */
-  char args[BATCHARGSMAX + 1];       /* Raw remainder of the BATCH + line   */
-  char tags[BATCHTAGSMAX + 1];       /* Message tags on the BATCH + line    */
-  struct batch_list *parent;         /* Enclosing batch, or NULL            */
-  unsigned long seq;                 /* Insertion order, for eviction       */
+  char reftag[BATCHREFMAX + 1];      /* Case-sensitive identifier            */
+  char type[BATCHTYPEMAX + 1];       /* Batch type                           */
+  char args[BATCHARGSMAX + 1];       /* Raw remainder of the BATCH + line    */
+  char tags[BATCHTAGSMAX + 1];       /* Message tags on the BATCH + line     */
+  struct batch_list *parent;         /* Enclosing batch, or NULL             */
+  int suppress;                      /* Don't process binds for this session */
+  unsigned long seq;                 /* Insertion order, for eviction        */
   time_t started;
   struct batch_list *next;
 } batch_t;

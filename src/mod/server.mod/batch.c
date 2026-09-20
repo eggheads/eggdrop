@@ -33,17 +33,27 @@ static Tcl_Obj *current_tagdict = NULL; /* Message tags on the line currently be
 
 static void batch_end(batch_t *b, const char *event);
 
-static void check_tcl_batch(batch_t *b, const char *event)
+static int check_tcl_batch(batch_t *b, const char *event)
 {
+  int x;
   Tcl_SetVar(interp, "_batch1", b->reftag, 0);
   Tcl_SetVar(interp, "_batch2", b->type, 0);
   Tcl_SetVar(interp, "_batch3", (char *) event, 0);
   Tcl_SetVar(interp, "_batch4", b->parent ? b->parent->reftag : "", 0);
   Tcl_SetVar(interp, "_batch5", b->args, 0);
   Tcl_SetVar(interp, "_batch6", b->tags, 0);
-  check_tcl_bind(H_batch, b->type, 0,
+  x = check_tcl_bind(H_batch, b->type, 0,
                  " $_batch1 $_batch2 $_batch3 $_batch4 $_batch5 $_batch6",
-                 MATCH_MASK | BIND_STACKABLE);
+                 MATCH_MASK | BIND_STACKABLE | BIND_STACKRET);
+  return (x == BIND_EXEC_LOG);
+}
+
+/* Should we not process this batch session through other Eggdrop binds?
+ * Useful, for example, to not trigger pub binds when processing chathistory
+ */
+static int batch_suppress(const char *code)
+{
+ return current_batch && current_batch->suppress && strcasecmp(code, "BATCH");
 }
 
 static int batch_valid_reftag(const char *reftag)
@@ -181,6 +191,9 @@ static batch_t *batch_start(const char *reftag, const char *type,
     strlcpy(b->tags, Tcl_GetString(current_tagdict), sizeof b->tags);
   }
   b->parent = parent;
+  if (parent) {
+    b->suppress = parent->suppress;
+  }
   b->seq = batchseq++;
   b->started = now;
   b->next = batchlist;
@@ -310,7 +323,14 @@ static int gotbatch(char *from, char *msg)
       putlog(LOG_DEBUG, "*", "BATCH: opened %s (type %s)%s%s", b->reftag,
              b->type, b->parent ? ", nested in " : "",
              b->parent ? b->parent->reftag : "");
-      check_tcl_batch(b, "start");
+      /* Suppress session if parent session is suppressed */
+      if (check_tcl_batch(b, "start")) {
+        b->suppress = 1;
+      }
+      if (b->suppress) {
+        putlog(LOG_DEBUG, "*", "BATCH: %s is suppressed, lines will not trigger "
+               "binds", b->reftag);
+      }
     }
   } else if (prefix == '-') {
     b = batch_find(reftag);
