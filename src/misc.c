@@ -355,7 +355,8 @@ char *join_str_array(char **argv, int argc, char *delim, char *outbuf, size_t ou
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  char *p, *u = 0, *h = 0, *ss;
+  const char *p, *u = 0, *h = 0;
+  char *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
