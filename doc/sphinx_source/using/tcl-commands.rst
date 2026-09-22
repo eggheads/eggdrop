@@ -1106,6 +1106,13 @@ monitor <add/delete/list/online/offline/status/clear> [nickname]
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+getbatch <reference>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Description: provides information about a current IRCv3 batch session.
+
+  Returns: a dict of the information Eggdrop is tracking for an open batch session, containing the keys ```reftag type args parent suppress started seq```, where reftag is the case-sensitive batch session reference tag, type is the batch type, tags is a nested dict of the message tags that were associated with the BATCH command, parent is the reference tag for a parent batch session, suppress is 1 if a batch bind is suppressing further bind processing of this batch session and 0 if not, started is a timestamp of when the batch was opened, seq is an internally-tracked sequence number used for tracking batch message ordering, and args is everything after the ```BATCH +``` portion of the command.
+
 ^^^^^^^^^^^^^^^
 accounttracking
 ^^^^^^^^^^^^^^^
