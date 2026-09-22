@@ -92,7 +92,7 @@ config:
 	echo ""
 
 clean:
-	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ *.gcda *.gcno static.h mod.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \
@@ -105,7 +105,7 @@ clean:
 	done
 
 distclean:
-	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ *.gcda *.gcno static.h mod.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \

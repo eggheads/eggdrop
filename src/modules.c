@@ -39,15 +39,6 @@
 #    include <mach-o/dyld.h>
 #    define DYLDFLAGS NSLINKMODULE_OPTION_BINDNOW|NSLINKMODULE_OPTION_PRIVATE|NSLINKMODULE_OPTION_RETURN_ON_ERROR
 #  endif
-#  ifdef MOD_USE_RLD
-#    ifdef HAVE_MACH_O_RLD_H
-#      include <mach-o/rld.h>
-#    else
-#      ifdef HAVE_RLD_H
-#        indluce <rld.h>
-#      endif
-#    endif
-#  endif
 #  ifdef MOD_USE_LOADER
 #    include <loader.h>
 #  endif
@@ -171,9 +162,9 @@ int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
-void (*webui_dcc_telnet_hostresolved) (int, int) = 0;
-size_t (*webui_frame) (char **, char *, size_t) = 0;
-void (*webui_unframe) (int, char *, int *) = 0;
+void (*webui_dcc_telnet_hostresolved) (int, int) = (void (*)(int, int)) null_func;
+size_t (*webui_frame) (char **, char *, size_t) = (size_t (*)(char **, char * ,size_t)) null_func;
+void (*webui_unframe) (int, char *, int *) = (void (*)(int, char *, int *)) null_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -632,7 +623,10 @@ Function global_table[] = {
   (Function) dcc_telnet_hostresolved2,
   (Function) findsock,
 /* 328 - 331 */
-  (Function) & stealth_telnets    /* int                                 */
+  (Function) & stealth_telnets,   /* int                                 */
+  (Function) parse_irc,
+  (Function) join_str_array,
+  (Function) splitcn
 };
 
 void init_modules(void)
@@ -721,9 +715,6 @@ const char *module_load(char *name)
   NSModule hand;
   NSSymbol sym;
 #  endif
-#  ifdef MOD_USE_RLD
-  long ret;
-#  endif
 #  ifdef MOD_USE_LOADER
   ldr_module_t hand;
 #  endif
@@ -781,17 +772,6 @@ const char *module_load(char *name)
     NSUnLinkModule(hand, NSUNLINKMODULE_OPTION_NONE);
     return MOD_NOSTARTDEF;
   }
-#  endif /* MOD_USE_DYLD */
-
-#  ifdef MOD_USE_RLD
-  ret = rld_load(NULL, (struct mach_header **) 0, workbuf, (const char *) 0);
-  if (!ret)
-    return "Can't load module.";
-  sprintf(workbuf, "_%s_start", name);
-  ret = rld_lookup(NULL, workbuf, &f)
-  if (!ret || f == NULL)
-    return MOD_NOSTARTDEF;
-  /* There isn't a reliable way to unload at this point... just keep it loaded. */
 #  endif /* MOD_USE_DYLD */
 
 #  ifdef MOD_USE_LOADER

@@ -538,9 +538,6 @@ static int gotauthenticate(char *from, char *msg)
   char error_msg[1050]; /* snprintf() truncation should be tolerable */
   int server_msg_plain_len;
 #endif
-  #ifndef MAX
-  #define MAX(a,b) (((a)>(b))?(a):(b))
-  #endif
   char client_msg_b64[((MAX((sizeof client_msg_plain), 400) + 2) / 3) << 2] = "";
 
   fixcolon(msg); /* Because Inspircd does its own thing */

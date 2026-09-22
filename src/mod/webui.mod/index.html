@@ -32,7 +32,9 @@ avoid off-topic discussions)
       const input = document.getElementById("input");
       const ws = new WebSocket(
         (location.protocol === "https:" ? "wss:" : "ws:") +
+          "//" +
           location.host +
+          location.pathname.replace(/\/$/, "") +
           "/w",
       );
       let echo = true;

@@ -136,21 +136,19 @@ static X509 *ssl_getcert(int sock)
  * Return value: ptr to the hexadecimal representation of the fingerprint or
  * NULL in case of error.
  */
-static char *ssl_getfp_from_cert(X509 *cert)
+static char *ssl_getfp_from_cert(X509 *cert, const EVP_MD *type)
 {
   char *p;
   unsigned int i;
-  static char fp[SHA_DIGEST_LENGTH * 3];
-  unsigned char md[SHA_DIGEST_LENGTH];
+  static char fp[EVP_MAX_MD_SIZE * 3];
+  unsigned char md[EVP_MAX_MD_SIZE];
 
-  if (!X509_digest(cert, EVP_sha1(), md, &i)) {
+  if (!X509_digest(cert, type, md, &i)) {
     putlog(LOG_MISC, "*", "ERROR: TLS: ssl_getfp_from_cert(): X509_digest()");
-    X509_free(cert);
     return NULL;
   }
   if (!(p = OPENSSL_buf2hexstr(md, i))) {
     putlog(LOG_MISC, "*", "ERROR: TLS: ssl_getfp_from_cert(): OPENSSL_buf2hexstr()");
-    X509_free(cert);
     return NULL;
   }
   strlcpy(fp, p, sizeof fp);
@@ -173,15 +171,17 @@ char *ssl_getfp(int sock)
 
   if (!(cert = ssl_getcert(sock)))
     return NULL;
-  fp = ssl_getfp_from_cert(cert);
+  fp = ssl_getfp_from_cert(cert, EVP_sha1());
 #if OPENSSL_VERSION_NUMBER < 0x30000000L /* 3.0.0 */
   X509_free(cert);
 #endif
   return fp;
 }
 
+// FIXME: Assumption is fingerprint stays the same if path doesn't change
 void verify_cert_expiry(int idx) {
   X509 *x509;
+  static char last_tls_certfile[sizeof tls_certfile];
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
   x509 = SSL_CTX_get0_certificate(ssl_ctx); /* The returned pointer must not be freed by the caller. */
 #else
@@ -191,7 +191,18 @@ void verify_cert_expiry(int idx) {
   x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
 #endif
   if (x509) {
+    if (strcmp(tls_certfile, last_tls_certfile)) {
+      const char *fp = ssl_getfp_from_cert(x509, EVP_sha256());
+      putlog(LOG_MISC, "*", "Certificate loaded: %s (sha256 fingerprint %s)",
+             tls_certfile, fp ? fp : "(error getting fp)");
+      strlcpy(last_tls_certfile, tls_certfile, sizeof last_tls_certfile);
+    }
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+    int e;
+    if (!X509_check_certificate_times(NULL, x509, &e) && (e == X509_V_ERR_CERT_HAS_EXPIRED)) {
+#else
     if (X509_cmp_current_time(X509_get_notAfter(x509)) < 0) {
+#endif
       if (idx) {
         dprintf(idx, "WARNING: SSL/TLS certificate %s expired\n", tls_certfile);
         dprintf(idx, "You can generate new certificates by running 'make sslcert' from the source directory\n\n");
@@ -259,23 +270,6 @@ int ssl_init()
           tls_certfile, ERR_error_string(ERR_get_error(), NULL));
       fatal("Unable to load TLS certificate (ssl-certificate config setting)!", 0);
     }
-
-    /* TODO: sha256 fingerprint
-     *       print this fingerprint to every user / every partyline login
-     *       maybe only print it when webui is enabled
-     *       compatibility to older openssl is possible, similar to #1411
-     *       this functionality could be sepped into a side-PR
-     *       or functionality of #1411 can be reused once merged
-     *
-     *       for now, just disable the fingerprint for openssl < 1.0.2
-     */
-#if OPENSSL_VERSION_NUMBER >= 0x10002000L /* 1.0.2 */
-    // TODO: ssl_getfp_from_cert() must not free the cert from SSL_CTX_get0_certificate()
-    putlog(LOG_MISC, "*", "Certificate loaded: %s (sha1 fingerprint %s)",
-           tls_certfile,
-           ssl_getfp_from_cert(SSL_CTX_get0_certificate(ssl_ctx)));
-#endif
-
     verify_cert_expiry(0);
     if (SSL_CTX_use_PrivateKey_file(ssl_ctx, tls_keyfile, SSL_FILETYPE_PEM) != 1) {
       putlog(LOG_MISC, "*", "ERROR: TLS: unable to load private key from %s: %s",
@@ -456,7 +450,13 @@ const char *ssl_getuid(int sock)
 {
   int idx;
   X509 *cert;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+  const
+#endif
   X509_NAME *subj;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+  const
+#endif
   ASN1_STRING *name;
 
   if (!(cert = ssl_getcert(sock)))
@@ -563,6 +563,9 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
     }
     sk_GENERAL_NAME_free(altname);
   } else { /* no subjectAltName, try to match against the subject CNs */
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+    const
+#endif
     X509_NAME *subj; /* certificate subject */
 
     /* the following is just for information */
@@ -583,6 +586,9 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
       match = 0;
     } else { /* we have a subject name, look at it */
       int pos = -1;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+      const
+#endif
       ASN1_STRING *name;
 
       /* Look for commonName attributes in the subject name */
@@ -616,7 +622,11 @@ static int ssl_verifycn(X509 *cert, ssl_appdata *data)
  *
  * You need to nfree() the returned pointer.
  */
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+static char *ssl_printname(const X509_NAME *name)
+#else
 static char *ssl_printname(X509_NAME *name)
+#endif
 {
   long len;
   char *data, *buf;
@@ -727,6 +737,9 @@ static char *ssl_printnum(ASN1_INTEGER *i)
 static void ssl_showcert(X509 *cert, const int loglev)
 {
   char *buf, *from, *to;
+#if OPENSSL_VERSION_NUMBER >= 0x40000000L /* 4.0.0 */
+  const
+#endif
   X509_NAME *name;
   unsigned int len;
   unsigned char md[EVP_MAX_MD_SIZE];
@@ -926,9 +939,17 @@ static void ssl_info(const SSL *ssl, int where, int ret)
           !strcmp(SSL_alert_desc_string(ret), "RO"))
         putlog(LOG_MISC, "*", "TLS: Long TLSCiphertext field received, connection failed. Is this really a TLS port?");
     } else {
-      /* Ignore close notify warnings */
-      debug1("TLS: Received close notify during %s",
-             (where & SSL_CB_READ) ? "read" : "write");
+      /* Ignore close notify warnings and stop writing to sock */
+      sock = SSL_get_fd(ssl);
+      debug2("TLS: Received close notify during %s sock %i",
+             (where & SSL_CB_READ) ? "read" : "write", sock);
+      if (where & SSL_CB_WRITE) {
+        int i = findsock(sock);
+        if (i >= 0 && (threaddata()->socklist[i].flags & SOCK_WEBUI)) {
+          int idx = findidx(sock);
+          lostdcc_deferred(idx);
+        }
+      }
     }
   } else if (where & SSL_CB_EXIT) {
     /* SSL_CB_EXIT may point to soft error for non-blocking! */
@@ -1073,7 +1094,8 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
     return 0;
   }
   if ((err = ERR_peek_error())) {
-    if (ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
+    if ((td->socklist[i].flags & SOCK_WEBUI) &&
+        ERR_GET_LIB(ERR_peek_error()) == ERR_LIB_SSL &&
         ERR_GET_REASON(err) == SSL_R_HTTP_REQUEST) {
       /* We dont have access to real port, host or dcc information here */
       putlog(LOG_MISC, "*", "TLS: error: HTTP request received on an SSL port");
@@ -1081,25 +1103,32 @@ int ssl_handshake(int sock, int flags, int verify, int loglevel, char *host,
       char *response;
       char *body = "Error: HTTP request received on an SSL port, please try HTTPS";
       j = snprintf(NULL, 0,
-        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "HTTP/1.1 400 \r\n" /* textual phrase is OPTIONAL */
         "Content-Length: %zu\r\n"
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
         "\r\n%s", strlen(body),
+          #ifdef EGG_PATCH
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+          #else
+          stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER,
+          #endif
           body);
       response = nmalloc(j + 1);
       sprintf(response,
-        "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
+        "HTTP/1.1 400 \r\n" /* textual phrase is OPTIONAL */
         "Content-Length: %zu\r\n"
         "Content-Type: text/plain; charset=utf-8\r\n"
         "Server: %s\r\n"
         "\r\n%s", strlen(body),
+          #ifdef EGG_PATCH
           stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH,
+          #else
+          stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER,
+          #endif
           body);
       if (write(sock, response, j) < 0) /* tputs() cannot be used here */
         putlog(LOG_MISC, "*", "TLS: error: write(sock %i): %s", sock, strerror(errno));
-      // TODO: after reading of remaining bytes / ssl shutdown ?
       nfree(response);
     } else {
       putlog(data->loglevel, "*",

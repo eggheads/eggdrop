@@ -107,6 +107,11 @@ static int tcl_logfile STDVAR
           logs[i].f = NULL;
         }
         logs[i].flags = 0;
+        if (logs[i].szlast != NULL) {
+          nfree(logs[i].szlast);
+          logs[i].szlast = NULL;
+          logs[i].szlast_len = 0;
+        }
       } else {
         logs[i].chname = nmalloc(strlen(argv[2]) + 1);
         strcpy(logs[i].chname, argv[2]);

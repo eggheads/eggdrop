@@ -81,7 +81,7 @@ static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
+static int ctcp_CLIENTINFO(char *nick, char *uhost, char *handle,
                            char *object, char *keyword, char *msg)
 {
   char *p = NULL;

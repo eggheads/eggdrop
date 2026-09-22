@@ -94,7 +94,7 @@
 #define extended_join (*(int *)(server_funcs[44]))
 #define account_notify (*(int *)(server_funcs[45]))
 #define H_isupport (*(p_tcl_bind_list *)(server_funcs[46]))
-#define isupport_get ((struct isupport *(*)(const char *, size_t))(server_funcs[47]))
+#define isupport_get ((const char *(*)(const char *, size_t))(server_funcs[47]))
 /* 48 - 51 */
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
 /* #define check_tcl_account NULL */

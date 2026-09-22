@@ -19,6 +19,9 @@
 0x106,Kanva bannit
 0x109,Käytä komentoa '.bans all' nähdäksesi kokonais listan
 0x10a,Ei pitkiä banneja
+0x10b,The 
+0x10c, extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the 
+0x10d, flag enabled.
 
 # EXEMPTIT_
 0x114,Globaaliset exemptit

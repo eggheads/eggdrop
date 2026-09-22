@@ -25,6 +25,7 @@
  */
 
 #include "main.h"
+#include <errno.h>
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
@@ -755,7 +756,9 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   #define FROMLEN 40
   int status, i, iaway, sock;
-  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[81], ssf[20 + 1 + sizeof botf];
+  long lval;
+  // ss = long->string = 19 digits + 1 sign + 1 NULL = 21 bytes
+  char *p, botf[FROMLEN + 1 + HANDLEN + 1], ss[21], ssf[20 + 1 + sizeof botf], *endptr;
   struct userrec *u;
 
   /* Notes have a length limit. Note + PRIVMSG header + nick + date must
@@ -812,12 +815,28 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
 
   /* Might be form "sock:nick" */
-  splitc(ss, to, ':');
+  splitcn(ss, to, ':', sizeof ss);
   rmspace(ss);
-  if (!ss[0])
+  if (!ss[0]) {
     sock = -1;
-  else
-    sock = atoi(ss);
+  } else {
+    errno = 0;
+    lval = strtol(ss, &endptr, 10);
+    if (*endptr) {
+      if (idx >= 0)
+        dprintf(idx, "add_note(): sock not a number\n");
+
+      return NOTE_ERROR;
+    }
+    if ((errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) ||
+        (lval > INT_MAX || lval < INT_MIN)) {
+      if (idx >= 0)
+        dprintf(idx, "add_note(): sock out of range\n");
+
+      return NOTE_ERROR;
+    }
+    sock = lval;
+  }
 
   /* Don't process if there's a note binding for it */
   if (idx != -2) {            /* Notes from bots don't trigger it */

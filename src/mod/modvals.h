@@ -80,6 +80,7 @@
 #define SERVER_BOTNAME            4
 #define SERVER_BOTUSERHOST        5
 #define SERVER_NICKLEN           37
+#define SERVER_GET_ISUPPORT      47
 /* IRC */
 #define IRC_RECHECK_CHANNEL       15
 #define IRC_RECHECK_CHANNEL_MODES 17

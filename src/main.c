@@ -163,8 +163,10 @@ void fatal(const char *s, int recoverable)
 
   putlog(LOG_MISC, "*", "* %s", s);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].sock >= 0)
+    if (dcc[i].sock >= 0) {
       killsock(dcc[i].sock);
+      dcc[i].sock = -1;
+    }
 #ifdef TLS
   ssl_cleanup();
 #endif
@@ -766,23 +768,23 @@ static void mainloop(int toplevel)
           /* Traffic stats */
           if (dcc[idx].type->name) {
             if (!strncmp(dcc[idx].type->name, "BOT", 3))
-              itraffic_bn_today += strlen(buf) + 1;
+              itraffic_bn_today += i + 1;
             else if (!strcmp(dcc[idx].type->name, "SERVER"))
-              itraffic_irc_today += strlen(buf) + 1;
+              itraffic_irc_today += i + 1;
             else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
-              itraffic_dcc_today += strlen(buf) + 1;
+              itraffic_dcc_today += i + 1;
             else if (!strncmp(dcc[idx].type->name, "WEBUI", 5))
               itraffic_dcc_today += i;
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
-              itraffic_dcc_today += strlen(buf) + 1;
+              itraffic_dcc_today += i + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else if (!strcmp(dcc[idx].type->name, "FORK_SEND"))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else if (!strncmp(dcc[idx].type->name, "GET", 3))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else
-              itraffic_unknown_today += strlen(buf) + 1;
+              itraffic_unknown_today += i + 1;
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
@@ -1064,9 +1066,8 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
 #ifdef EGG_TDNS
-  /* initialize dns_thread_head before chanprog() */
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
+  /* initialize attr and dns_thread_head before chanprog() */
+  init_tdns();
 #endif
   ctime_r(&now, s);
   s[24] = 0;
