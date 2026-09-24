@@ -2329,7 +2329,7 @@ void dcc_ident(int idx, char *buf, int len)
   lostdcc(idx);
 }
 
-void eof_timeout_dcc_ident(int idx, const char *s)
+static void eof_timeout_dcc_ident(int idx, const char *s)
 {
   char buf[7 + UHOSTLEN]; /* telnet@ */
   int i;
