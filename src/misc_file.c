@@ -170,7 +170,7 @@ int fcopyfile(FILE *oldfile, char *newpath)
     }
   }
 
-  if (fsync(fo) < 0);
+  if (fsync(fo) < 0)
     putlog(LOG_MISC, "*", "fcopyfile(): Error synchronising changes to file %s: %s", newpath, strerror(errno));
   close(fo);
 
