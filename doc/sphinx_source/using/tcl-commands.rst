@@ -3487,7 +3487,6 @@ The following is a list of bind types and how they work. Below each bind type is
 
           sighup            - called on a kill -HUP <pid>
           sigterm           - called on a kill -TERM <pid>
-          sigill            - called on a kill -ILL <pid>
           sigquit           - called on a kill -QUIT <pid>
           save              - called when the userfile is saved
           rehash            - called just after a rehash
