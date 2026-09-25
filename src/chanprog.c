@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@ extern log_t *logs;
 extern Tcl_Interp *interp;
 extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
             moddir[], notify_new[], configfile[];
-extern time_t now, online_since;
+extern time_t now, online_since, now2_last;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
            noshare, ignore_time, max_socks;
@@ -297,7 +297,11 @@ void tell_verbose_status(int idx)
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
                "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
+  #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+          OpenSSL_version(OPENSSL_VERSION), MISC_HEADERVERSION);
+  #else
           SSLeay_version(SSLEAY_VERSION), MISC_HEADERVERSION);
+  #endif
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
@@ -312,6 +316,14 @@ void tell_verbose_status(int idx)
                "Threaded DNS core is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+  int j = 0;
+  size_t k = max_logs * sizeof(log_t);
+  for (int i = 0; i < max_logs; i++) {
+    if (logs[i].filename)
+      j++;
+    k += logs[i].szlast_len;
+  }
+  dprintf(idx, "Log table: %d/%d %zu bytes\n", j, max_logs, k);
 }
 
 /* Show all internal state variables
@@ -396,6 +408,10 @@ void chanprog()
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
 
+  /* call localtime() to update timezone and reset misc.c:putlog() time cache */
+  localtime(&now);
+  now2_last = 0;
+
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
       if (logs[i].filename != NULL) {
@@ -405,6 +421,11 @@ void chanprog()
       if (logs[i].chname != NULL) {
         nfree(logs[i].chname);
         logs[i].chname = NULL;
+      }
+      if (logs[i].szlast != NULL) {
+        nfree(logs[i].szlast);
+        logs[i].szlast = NULL;
+        logs[i].szlast_len = 0;
       }
       if (logs[i].f != NULL) {
         fclose(logs[i].f);
@@ -678,7 +699,7 @@ void add_hq_user()
     dcc[term_z].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
                               USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
                               USER_PARTY | USER_BOTMAST | USER_UNSHARED |
-                              USER_VOICE | USER_XFER;
+                              USER_VOICE | USER_XFER | USER_HIGHLITE;
     /* Add to permowner list if there's place */
     if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
       strcat(owner, " " EGG_BG_HANDLE);

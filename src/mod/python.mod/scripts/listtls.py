@@ -5,7 +5,7 @@
 from eggdrop import bind, parse_tcl_list, parse_tcl_dict
 
 # Load any Tcl commands you want to use from the eggdrop.tcl module.
-from eggdrop.tcl import putmsg, putlog, socklist
+from eggdrop.tcl import putmsg, socklist
 
 # This is a proc that calls the putmsg Tcl command. Note that, slightly different than Tcl,
 # each argument is separated by a comma instead of just a space

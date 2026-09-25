@@ -1,9 +1,294 @@
 
-Eggdrop Changes (Last Updated 2024-10-13):
+Eggdrop Changes (Last Updated 2026-05-23):
 __________________________________________
 
-Eggdrop v1.10.0:
+Eggdrop v1.10.2rc1:
 
+  2026-05-23 * Add bug-detect logic for #202
+                 [Found by: Arkadietz / Patch by: michaelortmann]
+             * Refactor net.c:safe_write()
+                 [Found by: tuvok81 / Patch by: thommey, and, michaelortmann]
+             * webui.mod bug fixes
+             * Update version strings to 1.10.2
+             * Roll webui version requirement
+             * NEWS
+  2026-05-17 * Fix ident lookup bugs introduced by webui
+                 [Found by: Geo / Patch by: thommey]
+  2026-05-16 * Add testing framework
+             * Add -venv option to autobotchk
+                 [Found by: DiMTRX / Patch by: thommez]
+  2026-05-11 * Fix webui.mod make error/macOS portability
+                 [Found by: barracuda156 / Patch by: michaelortmann]
+             * Crash fix add_note()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix more ident lookup bugs
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-05-10 * Crash fix paging
+                 [Found by: https: / Patch by: https:]
+             * Fix tdns leak
+                 [Found by: https: / Patch by: https:]
+             * Update core.german.lang. Again.
+  2026-05-03 * Add extban support #1880
+                 [Patch by: Geo]
+             * Fix memory leak in server.mod monitor_add() (#1901)
+                 [Patch by: michaelortmann]
+             * Update TLS partyline connection docs
+             * Fix and update timezone default and doc
+                 [Found by: thommey, and, dchmelik / Patch by: https:]
+  2026-05-02 * Adjust default isupport chanmode string to what eggdrop supports
+             * Fix isupport bug where default values were not set when disconnected
+             * New IRC parser and str array join function
+             * Add isupport mode parsing code and debug info
+             * Use +e/+I info to set use_exempts/use_invites
+             * Adjust irc.mod/gotmode() to use new mode info
+             * Adjust got324 to use new mode info as well
+  2026-04-27 * Clean compile warnigs for new openssl 4.0.0
+                 [Patch by: michaelortmann]
+             * Fix dead link
+                 [Patch by: michaelortmann]
+             * Fix log for writing to nonexistent socket
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-04-26 * Add test workflow
+  2026-04-25 * Fix type for tcl9+
+                 [Found by: skydrome / Patch by: michaelortmann]
+  2026-04-19 * Make .share filename unique
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix traffic counter for transfer.mod "in"
+                 [Found by: https: / Patch by: https:]
+             * Fix gotkick(): unset chan.status CHAN_ACTIVE
+                 [Found by: https: / Patch by: https:]
+             * Tcl_Eval() -> Tcl_EvalObjv()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix and enhance memory usage regarding log table
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-04-18 * Add location.pathname to webui
+                 [Found by: PeGaSuS / Patch by: PeGaSuS]
+             * Add help for python.mod partyline command
+             * Add option for systemd unit naming
+             * Fix memory leak in filesys.mod
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-03-15 * Fix configure.ac, followup PR 1827 (#1887)
+             * Simplify autoconf quoting for sed patterns #1888
+  2026-03-14 * Fix nullpointer
+                 [Found by: Harekiet / Patch by: https:]
+             * Add python module to eggdrop-basic.conf
+                 [Found by: ZarTek-Creole / Patch by: ZarTek-Creole]
+             * Fix illegal free in webui
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix user@host (#1867)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Enhance tdns node lock
+                 [Found by: github.com / Patch by: github.com]
+             * Fix text processing
+                 [Found by: https: / Patch by: https:]
+             * Fix pointer in dcc table
+                 [Found by: https: / Patch by: https:]
+             * Fix compat/base64, python mod cflags portability
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix writing to tls socket
+                 [Found by: https: / Patch by: https:]
+             * Remove unused UTC and includes
+                 [Found by: https: / Patch by: https:]
+  2026-01-18 * Fix client_msg_plain_len initialization
+             * Fix off-by-2 truncation
+             * Enhance error logging for prefer-ipv6 issues
+             * Announce truncation of Eggdrop settings
+             * Update ax_check_compile_flag.m4 from upstream
+  2025-12-24 * Sleep less (#1777)
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * UTF8 workaround memory optimization
+                 [Found by: mortmann / Patch by: thommey]
+             * Fix add_note()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Trigger event handlers when syncing channel
+                 [Found by: wilkowy / Patch by: michaelortmann]
+             * Fix debug mem accounting for tcl.c
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix user_entry_find()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Additional enhancements for webui mod
+  2025-12-14 * Add WebUI module
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2025-12-13 * Update cmds1.help
+                 [Found by: bastelratte]
+             * Update core.german.lang
+                 [Found by: bastelratte]
+  2025-12-07 * Fix gotmode() regression
+                 [Found by: https: / Patch by: https:]
+  2025-12-06 * update var type
+                 [Found by: https: / Patch by: https:]
+  2025-12-03 * Update core.german.lang
+                 [Found by: bastelratte]
+  2025-11-30 * Fix possible file descriptor leak in share_ufsend
+             * Update configure/make
+             * Cleanup ssl_cleanup() proto
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * fix chattr argument order in firststeps
+                 [Found by: @koitsu]
+             * Remove newline on outgoing botnet message
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update AUTHORS and THANKS
+  2025-11-29 * Enhance TLS error logging
+                 [Found by: https: / Patch by: https:]
+  2025-11-28 * Enhance tls error logging
+                 [Found by: https: / Patch by: https:]
+  2025-11-27 * snprintf() updates
+             * Fix type mismatch
+             * Update new OpenSSL ASN1_UTCTIME_print() func
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Make 2 functions static
+             * Fix -Wformat compiler warning
+             * snprintf updates
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2025-10-23 * Fix #1834 - fix control flow (#1835)
+                 [Found by: https: / Patch by: https:]
+             * Fix server mod set net-type help
+                 [Found by: https: / Patch by: https:]
+             * Update code/comment about check_botnet_pings()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * strlcpy cleanup
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix incorrect ident mod error message
+                 [Found by: tuvok81 / Patch by: michaelortmann]
+
+Eggdrop v1.10.1 (2025-08-15):
+
+  2025-08-15 * Fix python compile error message
+             * Fix docs install path
+             * Update Versions
+             * Eggdrop v1.10.1 *STABLE*
+
+Eggdrop v1.10.1rc1 (2025-06-28):
+
+  2025-06-28 * Fix python.mod make error
+                 [Found by: ek / Patch by: michaelortmann]
+             * Update version strings to 1.10.1
+             * Generate docs with 1.10.1 version
+             * Eggdrop v1.10.1 Release Candidate 1
+  2025-06-16 * Delete orphaned html files
+  2025-06-15 * Do not add channels with invalid options
+                 [Found by: fred0r / Patch by: michaelortmann]
+             * Cleanup #includes
+  2025-06-14 * Remove case sensitivity in bind replacement
+                 [Found by: Jinx / Patch by: Geo]
+             * Update NEWS for 1.10.1
+             * Fix trailing whitespaces
+                 [Patch by: michaelortmann]
+             * Fix uptime mod status report indention
+                 [Patch by: michaelortmann]
+             * Fix .tcl server add/remove arg parsing
+                 [Found by: DasBrain / Patch by: michaelortmann]
+             * Fix telnet mode / esc codes for stdout
+                 [Patch by: michaelortmann]
+  2025-06-10 * Update copyright
+  2025-06-04 * Fix read_lang() when encountering malformed lang files
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Check return value for bot_away()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2025-06-03 * Add python script tutorial
+             * Add SSL 3.4, 3.5 to compile actions
+             * Add Tcl 9.0.1 to actions
+  2025-05-27 * Fix gotnotice bad termination
+                 [Found by: skydrome / Patch by: @michaelmortmann]
+             * Fix use after free in tcl_call_stringproc_cd
+                 [Found by: @kkwpsi / Patch by: @michaelortmann]
+             * Corrects utimers bug
+                 [Found by: TehPeGaSuS / Patch by: CrazyCat]
+             * Add chanset bind
+                 [Patch by: Geo]
+             * Warn user of expired TLS cert
+                 [Patch by: michaelortmann]
+             * Keep var const
+                 [Patch by: michaelortmann]
+  2025-05-26 * Fix strcpy-param-overlap
+                 [Found by: crazycatdevs / Patch by: michaelortmann]
+  2025-05-25 * Corrected utimers doc
+                 [Found by: CrazyCat / Patch by: CrazyCat]
+             * fix lang file commenting
+                 [Found by: @Lord255]
+             * Update formatting errors in docs
+                 [Found by: @michaelortmann / Patch by: Geo]
+             * Require owner perms for python (#1798)
+                 [Found by: thommey / Patch by: Geo]
+             * strncpy() -> strlcpy()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2025-03-26 * Add "Writing channel file..." to lang file
+                 [Patch by: MeNearly]
+  2025-03-23 * Log account changes as join, not mode
+                 [Found by: DasBrain / Patch by: DasBrain]
+             * remove colon from accounts, modes (#1786)
+                 [Found by: @Robby-, tydel / Patch by: Geo]
+             * Limit buffer to 512 bytes
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix leak for openssl > 3.0, openssl deprecations
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2025-03-15 * Update char encoding for core.french.lang
+                 [Found by: MeNearly / Patch by: MeNearly]
+  2025-03-08 * Update userfile tutorial formatting and implement venv
+             * Documentation clarification, typos
+  2025-02-24 * Change localtime() -> localtime_r()
+                 [Found by: Arno / Patch by: michaelortmann]
+  2025-02-23 * Add SASL SCRAM option
+                 [Patch by: michaelortmann]
+             * Fix server name/pass len handling on jump
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix format specifiers for time_t / difftime
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Wait for ssl handshake to finish before writing to socket
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Select non-blocking sock for write instead of read
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update Cygwin INSTALL Requirements
+  2025-02-19 * Fix mem leak
+                 [Found by: @Robby-, Mystery-X / Patch by: thommey, and, michaelortmann]
+  2025-02-02 * Fix "echo off" issues
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Add -std=gnu99, if available, to CFLAGS
+                 [Found by: robert-scheck / Patch by: michaelortmann]
+  2025-01-20 * Fix pbkdf2 mod make error
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix unload crash of irc mod
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix function types
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix ident.mod corner case
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix heap-use-after-free
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix u_int8_t -> uint8_t
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix memory leak
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix got353() for userhost-in-names
+                 [Found by: Robby, and, michaelortmann / Patch by: michaelortmann]
+  2024-12-01 * Fix crash looking up departed channel member
+                 [Found by: BigBadWouf / Patch by: michaelortmann]
+             * Fix bind log interpreter results
+                 [Found by: DasBrain / Patch by: DasBrain]
+             * Fix crash when restarting with python.mod loaded
+                 [Found by: aleksandrov89 / Patch by: michaelortmann]
+             * Fix compiler warning for make static
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Correct mod-path variable
+                 [Found by: CrazyCat / Patch by: CrazyCat]
+             * Fix python thread
+                 [Found by: Empus / Patch by: thommey, and, michaelortmann]
+             * Add .clangd to .gitignore
+             * Fix format-truncation warning
+                 [Found by: Geo / Patch by: michaelortmann]
+  2024-10-14 * Update docs
+  2024-10-13 * Fix sphinx formatting error in python doc
+             * Update Version release date
+             * Fix release version grep
+  2024-10-10 * Create FUNDING.yml
+             * Update FUNDING.yml
+             * Update FUNDING.yml
+
+Eggdrop v1.10.0 (2024-10-14):
+
+  2024-10-14 * Update docs
+             * Fix release version grep
+             * Update patchlevel in docs
   2024-10-13 * Update FEATURES
              * Update Github-actions Tcl9.0 to release
              * Problem matcher for compiler warnings (#1694)

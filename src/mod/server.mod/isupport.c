@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <ctype.h>
-#include <string.h>
-#include <strings.h>
 #include "src/mod/module.h"
 #include "server.h"
 
@@ -34,7 +31,7 @@ typedef struct isupport {
 
 static isupport_t *isupport_list;
 static p_tcl_bind_list H_isupport;
-static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ov)@+ CHANMODES=b,k,l,imnpst MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+";
+static const char isupport_default[4096] = "CASEMAPPING=rfc1459 CHANNELLEN=80 NICKLEN=9 CHANTYPES=#& PREFIX=(ohv)@%+ CHANMODES=beI,k,l,imnpstcCMRrDuNdTaq MODES=3 MAXCHANNELS=10 TOPICLEN=250 KICKLEN=250 STATUSMSG=@+";
 
 static int hexdigit2dec[128] = {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   0 -   9 */
@@ -103,7 +100,7 @@ static int keycmp(const char *key1, const char *key2, size_t key2len) {
     - truncate into allowed range if outside allowed range?
     - default value to use if outside allowed range
  */
-int isupport_parseint(char *key, char *value, int min, int max, int truncate, int defaultvalue, int *dst)
+int isupport_parseint(const char *key, const char *value, int min, int max, int truncate, int defaultvalue, int *dst)
 {
   long result;
   char *tmp;
@@ -421,7 +418,7 @@ void isupport_clear_values(int cleardefaultvalues) {
 void isupport_preconnect(void) {
   const char *def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
 
-  if (!def)
+  if (!def || !*def)
     def = isupport_default;
   isupport_parse(def, isupport_setdefault);
 }

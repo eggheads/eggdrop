@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -220,9 +220,46 @@ static int u_equals_mask(maskrec *u, char *mask)
 
 static int u_match_mask(maskrec *rec, char *mask)
 {
-  for (; rec; rec = rec->next)
-    if (match_addr(rec->mask, mask))
+  char type, nick[NICKLEN];
+  char *bang;
+  const char *arg, *accountflag;
+  memberlist *m = NULL;
+
+  if (mask && mask[0]) {
+    bang = strchr(mask, '!');
+    if (bang) {
+      size_t nicklen = (size_t)(bang - mask);
+
+      if (nicklen >= sizeof nick) {
+        nicklen = sizeof nick - 1;
+      }
+      memcpy(nick, mask, nicklen);
+      nick[nicklen] = 0;
+      if (nick[0]) {
+        m = find_member_from_nick(nick);
+      }
+    }
+  }
+
+  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+
+  for (; rec; rec = rec->next) {
+    if (extban_parse(rec->mask, &type, &arg)) {
+      if (!m || !m->nick[0] || !m->account[0])
+        continue;
+      if (accountflag && (type == accountflag[0])) {
+        if (!rfc_casecmp(m->account, arg))
+          return 1;
+      } else if (type == 'U') {
+        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask))
+          return 1;
+      }
+      continue;
+    }
+    if (match_addr(rec->mask, mask)) {
       return 1;
+    }
+  }
   return 0;
 }
 
@@ -413,6 +450,22 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
   }
 }
 
+/* Takes mask in the full $a:mask format */
+static int extban_is_matchable(const char *mask)
+{
+  char extflag;
+  const char *extarg, *acc;
+
+  if (!extban_parse(mask, &extflag, &extarg))
+    return 0;
+
+  acc = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (acc && acc[0] && extflag == acc[0])
+    return 1;
+
+  return strchr(MATCHABLE_EXTBANS, extflag) ? 1 : 0;
+}
+
 /* Note: If first char of note is '*' it's a sticky ban.
  */
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
@@ -422,15 +475,20 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  /* Choke check: fix broken bans (must have '!' and '@') */
-  fix_broken_mask(host, ban, sizeof host);
-
-  if ((me = module_find("server", 0, 0)) && me->funcs) {
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-    if (match_addr(host, s)) {
-      putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
-      return 0;
+  if (is_extban_mask(ban)) {
+    strlcpy(host, ban, sizeof host);
+    if (!extban_is_matchable(host))
+      flags |= MASKREC_STICKY;
+  } else {
+    /* Choke check: fix broken bans (must have '!' and '@') */
+    fix_broken_mask(host, ban, sizeof host);
+    if ((me = module_find("server", 0, 0)) && me->funcs) {
+      simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
+                     me->funcs[SERVER_BOTUSERHOST]);
+      if (match_addr(host, s)) {
+        putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
+        return 0;
+      }
     }
   }
   if (expire_time == now)
@@ -1046,7 +1104,7 @@ static int write_bans(FILE *f, int idx)
     expire = b->expire;
     added = b->added;
     if (!mask ||
-        fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+        fprintf(f, "- %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                 (b->flags & MASKREC_PERM) ? "+" : "", expire,
                 (b->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) b->lastactive, b->user ? b->user : botnetnick,
@@ -1073,7 +1131,7 @@ static int write_bans(FILE *f, int idx)
           expire = b->expire;
           added = b->added;
           if (!mask ||
-              fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+              fprintf(f, "- %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                       (b->flags & MASKREC_PERM) ? "+" : "", expire,
                       (b->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) b->lastactive, b->user ? b->user : botnetnick,
@@ -1106,7 +1164,7 @@ static int write_exempts(FILE *f, int idx)
     expire = e->expire;
     added = e->added;
     if (!mask ||
-        fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
+        fprintf(f, "%s %s:%s%ld%s:+%ld:%ld:%s:%s\n", "%", mask,
                 (e->flags & MASKREC_PERM) ? "+" : "", expire,
                 (e->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) e->lastactive, e->user ? e->user : botnetnick,
@@ -1133,7 +1191,7 @@ static int write_exempts(FILE *f, int idx)
           expire = e->expire;
           added = e->added;
           if (!mask ||
-              fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
+              fprintf(f, "%s %s:%s%ld%s:+%ld:%ld:%s:%s\n", "%", mask,
                       (e->flags & MASKREC_PERM) ? "+" : "", expire,
                       (e->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) e->lastactive, e->user ? e->user : botnetnick,
@@ -1166,7 +1224,7 @@ static int write_invites(FILE *f, int idx)
     expire = ir->expire;
     added = ir->added;
     if (!mask ||
-        fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+        fprintf(f, "@ %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                 (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                 (ir->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) ir->lastactive, ir->user ? ir->user : botnetnick,
@@ -1193,7 +1251,7 @@ static int write_invites(FILE *f, int idx)
           expire = ir->expire;
           added = ir->added;
           if (!mask ||
-              fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+              fprintf(f, "@ %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                       (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                       (ir->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) ir->lastactive, ir->user ? ir->user : botnetnick,

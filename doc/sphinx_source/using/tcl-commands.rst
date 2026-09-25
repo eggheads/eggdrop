@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.10.0. Most scripts written for the v1.3, v1.4,
+This list is accurate for Eggdrop v1.10.2. Most scripts written for the v1.3, v1.4,
 1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
 Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
@@ -261,7 +261,7 @@ getuser <handle> [entry-type] [extra info]
   Description: an interface to the new generic userfile support. Without an entry-type, it returns a flat key/value list (dict) of all set entries. Valid entry types are:
 
   +----------+-------------------------------------------------------------------------------------+
-  | ACCOUNT  | returns thee a list of servivce accounts associated with the user                   |
+  | ACCOUNT  | returns the list of service accounts associated with the user                       |
   +----------+-------------------------------------------------------------------------------------+
   | BOTFL    | returns the current bot-specific flags for the user (bot-only)                      |
   +----------+-------------------------------------------------------------------------------------+
@@ -1650,6 +1650,28 @@ strip <idx> [+/-strip-flags]
 
   Module: core
 
+^^^^^^^^^^^^^^^^^^^
+page <idx> [number]
+^^^^^^^^^^^^^^^^^^^
+
+  Description: This allows you to slow down the number of lines the bot sends
+
+  to a user at once via the partyline. When enabled, any commands that send
+
+  greater than the specified number of lines will stop when that number is
+
+  reached and wait for the user to type another command (or press enter) to
+
+  continue. If the user has too many pending lines, he may be booted off the
+
+  bot.
+
+  Returns: new value of page lines for that user (or the current value, if
+
+  status was omitted)
+
+  Module: core
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 putbot <bot-nick> <message>
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2375,7 +2397,7 @@ utimers
 
   Description: lists all active secondly timers.
 
-  Returns: a list of active secondly timers, with each timer sub-list containing the number of minutes left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
+  Returns: a list of active secondly timers, with each timer sub-list containing the number of seconds left until activation, the command that will be executed, the timerName, and the remaining number of repeats.
 
   Module: core
 
@@ -2823,14 +2845,14 @@ serveraddress
 ^^^^^^^
 version
 ^^^^^^^
-  Value: current bot version "1.1.2+pl1 1010201"; first item is the text version, to include a patch string if present, and second item is a numerical version
+  Value: current bot version "1.1.2+pl1.10.2201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module: core
 
 ^^^^^^^^^^^
 numversion*
 ^^^^^^^^^^^
-  Value: the current numeric bot version (for example: "1010201"). Numerical version is in the format of "MNNRRPP", where:
+  Value: the current numeric bot version (for example: "1.10.21"). Numerical version is in the format of "MNNRRPP", where:
 
   +------+---------------------------------------+
   | M    | major release number                  |
@@ -2899,6 +2921,20 @@ language
   Value: a string containing the language with the highest priority for use by Eggdrop. This commonly reflects what is added with addlang in the config file
 
   Module: core
+
+^^^^^^^^^^^^^^
+account-extban
+^^^^^^^^^^^^^^
+  Value: a string containing the value of ACCOUNTEXTBAN provided by the 005 connection message. This is the raw value and, depending on the IRC server formatting, could be in multiple formats such as "a", or "a,account".
+
+  Module: channel
+
+extban-flags
+^^^^^^^^^^^^
+  Value: a string containing the allowed extban flag characters advertised by EXTBAN in the 005 connection message. If EXTBAN advertises a prefix, such as "$,aUq", the prefix is omitted and this variable contains only the flags, such as "aUq".
+
+  Module: channel
+
 
 Binds
 -----
@@ -3606,6 +3642,14 @@ The following is a list of bind types and how they work. Below each bind type is
 
   Description: triggered when a server sends an IRCv3 spec CHGHOST message to change a user's hostmask. The new host is matched against mask in the form of "#channel nick!user\@host" and can contain wildcards. The specified proc will be called with the nick of the user whose hostmask changed; the hostmask the affected user had before the change, the handle of the affected user (or * if no handle is present), the channel the user was on when the bind triggered, and the new hostmask of the affected user. This bind will trigger once for each channel the user is on.
 
+(57) CHANSET
+
+  bind chanset <flags> <mask> <proc>
+
+  procname <chan> <setting> <value>
+
+  Description: triggered when a channel setting is set via the partyline. flags is ignored, mask is the name of channel setting (not including any +/- prefix) and can contain wildcards. The proc will be called with the channel that the setting was set on, the text name of the setting that was changed, and the value it was set to (0/1 for -/+, string, or X:Y formatted value).
+
 ^^^^^^^^^^^^^
 Return Values
 ^^^^^^^^^^^^^
@@ -3659,6 +3703,8 @@ Here's a list of the bindings that use the return value from procs they trigger:
 (18) TLS   Return 1 to disable verbose ssl information for the handshake.
 
 (19) RAWT  Return 1 to ask the bot not to process the server text. This can affet the bot's performance by causing it to miss things that it would normally act on -- you have been warned. Again.
+
+(20) CHANSET Return 1 to prevent the channel setting from being changed.
 
 Control Procedures
 ------------------
@@ -3778,4 +3824,4 @@ are the four special characters:
 |     | so a bind would have to use "\\*" or {\*} for a mask argument            |
 +-----+--------------------------------------------------------------------------+
 
-  Copyright (C) 1999 - 2024 Eggheads Development Team
+  Copyright (C) 1999 - 2025 Eggheads Development Team

@@ -10,7 +10,12 @@ Now that your bot is online, you'll want to join the partyline to further use th
   OR go to IRC and type:  /msg BotNick hello
   This will make the bot recognize you as the master.
 
-You can either telnet to the bot, or connect to the bot using DCC Chat. To telnet, you'll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command::
+You can either connect to the bot via telnet (unencrypted), connect to the bot using DCC Chat (unencrypted), connect to the bot using SCHAT (encrypted), or use TLS-compatible socket client (encrypted). 
+
+Telnet
+^^^^^^
+
+To telnet, you'll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command::
 
   telnet <IP of bot> <listen port>
 
@@ -20,8 +25,22 @@ You can find the IP and port the bot is listening on by a) remembering what you 
 
 This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.
 
+DCC Chat
+^^^^^^^^
 
-If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
+To use a DCC chat connection in your IRC client, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. 
+
+SCHAT
+^^^^^
+
+SCHAT (Secure Chat) is a sub-protocol of Secure Direct Client-to-Client (SDCC) that enables encrypted TLS sessions between two users. KVIrc and AdiIRC are examples of IRC clients that support the SCHAT protocol. If TLS is configured for your Eggdrop, you can connect via ``/ctcp bot schat``.
+
+Direct TLS
+^^^^^^^^^^
+
+To use a client such as openssl to wrap your connection with TLS, please read the `TLS docs <https://docs.eggheads.org/using/tls.html#keys-certificates-and-authentication>`_ regarding partyline connection. There are also other clients that can connect to the partyline with TLS, like `pefero <https://codeberg.org/mortmann/pefero>`_, maintained by Eggdrop contributor mortmann.
+
+If one of those methods does not work for you, try another. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
 
 Common first steps
 ------------------
@@ -56,11 +75,11 @@ Assign Permission Flags
 
 To assign an access level to a user, first read ``.help whois`` for a listing of possible access levels and their corresponding flags. Then, assign the desired flag to the user with::
 
-  .chattr <+flag> <handle>
+  .chattr <handle> <+flag>
 
 So to grant a user the voice flag, you would do::
 
-  .chattr +v handle
+  .chattr handle +v
 
 It is important to note that, when on the partyline, you want to use the handle of the user, not their current nickname.
 
@@ -80,10 +99,10 @@ which will enforce the s, n, and t flags on a channel.
 Automatically restarting an Eggdrop
 -----------------------------------
 
-A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it. 
+A common question asked by users is, how can I configure Eggdrop to automatically restart should it die, such as after a reboot? Historically, Eggdrop relied on the host's crontab system to run a script (called botchk) every ten minutes to see if the eggdrop is running. If the eggdrop is not running, the script will restart the bot, with an optional email sent to the user informing them of the action. Newer Linux systems come with systemd, which can provide better real-time monitoring of processes such as Eggdrop. You probably want to use systemd if your system has it.
 
-Crontab Method (Old)
-^^^^^^^^^^^^^^^^^^^^
+Crontab Method
+^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
@@ -103,8 +122,8 @@ By default, it should create an entry that looks similar to::
 
 This will run the generated botchk script every ten minutes and restart your Eggdrop if it is not running during the check. Also note that if you run autobotchk from the scripts directory, you'll have to manually specify your config file location with the -dir option. To remove a crontab entry, use ``crontab -e`` to open the crontab file in your system's default editor and remove the crontab line.
 
-Systemd Method (Newer Systems)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Systemd Method (Newer Linux Systems)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Enter the directory you installed your Eggdrop to. Most commonly, this is ~/eggdrop (also known as /home/<username>/eggdrop).
 
@@ -173,3 +192,7 @@ You will need to determine your public key fingerprint by using::
 Then, ensure you have those keys loaded in the ssl-privatekey and ssl-certificate settings in the config file. Finally, to add this certificate to your NickServ account, type::
 
     /msg NickServ cert add <fingerprint string from above goes here>
+
+* **SCRAM-SHA-256**: To use this method, set sasl-mechanism to 3.
+
+* **SCRAM-SHA-512**: To use this method, set sasl-mechanism to 4.
