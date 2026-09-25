@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -582,6 +582,10 @@ static int tcl_server STDVAR {
 
   BADARGS(2, 5, " subcommand ?host ?port? ?password?");
   if (!strcmp(argv[1], "add")) {
+    if (argc < 3) {
+      Tcl_SetResult(irp, "wrong # args: should be \"server add host ?port ?password??\"", TCL_STATIC);
+      return TCL_ERROR;
+    }
     ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
     if (!ret) {
       server = Tcl_NewListObj(0, NULL);
@@ -599,6 +603,10 @@ static int tcl_server STDVAR {
       Tcl_SetObjResult(irp, server);
     }
   } else if (!strcmp(argv[1], "remove")) {
+    if (argc < 3) {
+      Tcl_SetResult(irp, "wrong # args: should be \"server remove host ?port?\"", TCL_STATIC);
+      return TCL_ERROR;
+    }
     ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
   } else if (!strcmp(argv[1], "list")) {
     Tcl_Obj *servers = Tcl_NewListObj(0, NULL);

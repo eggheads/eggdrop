@@ -23,7 +23,7 @@ depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/server.c -MT ../server.o > .depend
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~ *.gcda *.gcno
 
 distclean: clean
 
@@ -40,5 +40,5 @@ distclean: clean
  .././server.mod/server.h .././server.mod/isupport.c \
  .././server.mod/tclisupport.c .././server.mod/servmsg.c \
  .././server.mod/../irc.mod/irc.h \
- .././server.mod/../channels.mod/channels.h .././server.mod/cmdsserv.c \
- .././server.mod/tclserv.c
+ .././server.mod/../channels.mod/channels.h .././server.mod/sasl.c \
+ .././server.mod/cmdsserv.c .././server.mod/tclserv.c

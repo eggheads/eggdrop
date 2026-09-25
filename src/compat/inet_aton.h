@@ -3,7 +3,7 @@
  *   prototypes for inet_aton.c
  */
 /*
- * Copyright (C) 2000 - 2024 Eggheads Development Team
+ * Copyright (C) 2000 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,6 @@
 #define _EGG_COMPAT_INET_ATON_H
 
 #include "src/main.h"
-#ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-#endif
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
 #ifndef HAVE_INET_ATON

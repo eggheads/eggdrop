@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,6 +64,10 @@ static int rfc_compliant = 1;   /* Value depends on net-type. */
 static int include_lk = 1;      /* For correct calculation in real_add_mode. */
 
 static char opchars[8];         /* the chars in a /who reply meaning op */
+
+static Tcl_Obj *tcl_account;
+
+static mode_info_t modecharinfo[256];
 
 #include "chan.c"
 #include "mode.c"
@@ -292,9 +296,16 @@ static void refresh_who_chan(char *channame)
 static void newmask(masklist *m, char *s, char *who)
 {
   for (; m && m->mask[0] && rfc_casecmp(m->mask, s); m = m->next);
+  if (!m) {
+    putlog(LOG_MISC, "*", "BUG!! newmask(): m == NULL.\n"
+                          "   This is a known bug we haven't fixed yet. If this\n"
+                          "   bot is the newest eggdrop version available and you\n"
+                          "   know a *reliable* way to reproduce the bug, please\n"
+                          "   contact us - we need your help!\n");
+    return;
+  }
   if (m->mask[0])
     return;                     /* Already existent mask */
-
   m->next = (masklist *) channel_malloc(sizeof(masklist));
   m->next->next = NULL;
   m->next->mask = (char *) channel_malloc(1);
@@ -692,12 +703,13 @@ static void check_expired_chanstuff()
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
 
       key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-      if (key[0])
+      if (key[0]) {
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
-      else
+      } else {
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
+      }
     }
   }
 }
@@ -1116,6 +1128,29 @@ static void tell_account_tracking_status(int idx, int details)
   }
 }
 
+static void tell_modeparsing_type(int idx, mode_type_t type)
+{
+  dprintf(idx, "    %s modes: %s", MODE_TYPE_STR(type), type == MODETYPE_PREFIX ? "" : "+");
+  for (int i = 0; i < 256; i++) {
+    if (modecharinfo[i].type == type) {
+      dprintf(idx, "%c", i);
+      if (type == MODETYPE_PREFIX) {
+        dprintf(idx, "(%c) ", modecharinfo[i].prefix);
+      }
+    }
+  }
+  dprintf(idx, "\n");
+}
+
+static void tell_modeparsing(int idx)
+{
+  tell_modeparsing_type(idx, MODETYPE_FLAG);
+  tell_modeparsing_type(idx, MODETYPE_LIMIT);
+  tell_modeparsing_type(idx, MODETYPE_KEY);
+  tell_modeparsing_type(idx, MODETYPE_LIST);
+  tell_modeparsing_type(idx, MODETYPE_PREFIX);
+}
+
 static void irc_report(int idx, int details)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
@@ -1155,6 +1190,9 @@ static void irc_report(int idx, int details)
     dprintf(idx, "    %s\n", q);
   }
   tell_account_tracking_status(idx, details);
+  if (details) {
+    tell_modeparsing(idx);
+  }
 }
 
 /* Many networks either support max_bans/invite/exempts/ *or*
@@ -1168,9 +1206,6 @@ static void do_nettype()
   case NETT_HYBRID_EFNET:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 100;
     max_exempts = 100;
     max_invites = 100;
@@ -1181,9 +1216,6 @@ static void do_nettype()
   case NETT_LIBERA:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 1;
-    use_exempts = 1;
-    use_invites = 1;
     max_exempts = 100;
     max_invites = 100;
     max_bans = 100;
@@ -1194,9 +1226,6 @@ static void do_nettype()
   case NETT_FREENODE:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 1;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 100;
     max_exempts = 100;
     max_invites = 100;
@@ -1207,9 +1236,6 @@ static void do_nettype()
   case NETT_IRCNET:
     kick_method = 4;
     modesperline = 3;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 64;
     max_exempts = 64;
     max_invites = 64;
@@ -1220,9 +1246,6 @@ static void do_nettype()
   case NETT_UNDERNET:
     kick_method = 1;
     modesperline = 6;
-    use_354 = 1;
-    use_exempts = 0;
-    use_invites = 0;
     max_bans = 100;
     max_exempts = 0;
     max_invites = 0;
@@ -1233,9 +1256,6 @@ static void do_nettype()
   case NETT_DALNET:
     kick_method = 4;
     modesperline = 6;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 200;
     max_exempts = 100;
     max_invites = 100;
@@ -1246,9 +1266,6 @@ static void do_nettype()
   case NETT_QUAKENET:
     kick_method = 1;
     modesperline = 6;
-    use_354 = 1;
-    use_exempts = 0;
-    use_invites = 0;
     max_bans = 45;
     max_exempts = 0;
     max_invites = 0;
@@ -1259,9 +1276,6 @@ static void do_nettype()
   case NETT_RIZON:
     kick_method = 1;
     modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 250;
     max_exempts = 250;
     max_invites = 250;
@@ -1274,9 +1288,6 @@ static void do_nettype()
     twitch = 1;
     kick_method = 1;
     modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
     max_bans = 100;
     max_exempts = 100;
     max_invites = 100;
@@ -1347,6 +1358,7 @@ static char *irc_close()
   rem_builtins(H_msg, C_msg);
   rem_builtins(H_raw, irc_raw);
   rem_builtins(H_rawt, irc_rawt);
+  Tcl_DecrRefCount(tcl_account);
   rem_builtins(H_isupport, irc_isupport_binds);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
@@ -1455,6 +1467,8 @@ char *irc_start(Function *global_funcs)
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+  tcl_account = Tcl_NewStringObj("account", -1);
+  Tcl_IncrRefCount(tcl_account);
   add_builtins(H_rawt, irc_rawt);
   add_builtins(H_isupport, irc_isupport_binds);
   add_tcl_commands(tclchan_cmds);

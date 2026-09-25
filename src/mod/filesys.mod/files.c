@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -146,7 +146,7 @@ static void cmd_optimize(int idx, char *par)
  */
 static int resolve_dir(char *current, char *change, char **real, int idx)
 {
-  char *elem = NULL, *s = NULL, *new = NULL, *work = NULL, *p = NULL;
+  char *elem = NULL, *s = NULL, *new = NULL, work[PATH_MAX], *p = NULL;
   FILE *fdb = NULL;
   DIR *dir = NULL;
   filedb_entry *fdbe = NULL;
@@ -169,9 +169,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   p = strchr(new, '/');
   while (p) {
     *p = 0;
-    p++;
-    malloc_strcpy(elem, new);
-    strcpy(new, p);
+    malloc_strcpy_nocheck(elem, new);
+    memmove(new, p + 1, strlen(p + 1) + 1);
     if (!elem[0] || !strcmp(elem, ".")) {
       p = strchr(new, '/');
       continue;
@@ -183,6 +182,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         if (!(*real)[0]) {
           my_free(elem);
           my_free(new);
+          my_free(s);
           malloc_strcpy(*real, current);
           return 0;
         }
@@ -196,6 +196,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         /* Non-existent starting point! */
         my_free(elem);
         my_free(new);
+        my_free(s);
         malloc_strcpy(*real, current);
         return 0;
       }
@@ -242,19 +243,23 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           s = nrealloc(s, strlen(s) + 2);
           strcat(s, "/");
       }
-      work = nmalloc(strlen(s) + strlen(elem) + 1);
-      sprintf(work, "%s%s", s, elem);
-      malloc_strcpy(*real, work);
+      if (snprintf(work, PATH_MAX, "%s%s", s, elem) >= PATH_MAX) {
+        /* path too long */
+        free_fdbe(&fdbe);
+        my_free(elem);
+        my_free(new);
+        my_free(s);
+        malloc_strcpy(*real, current);
+        return 0;
+      }
+      malloc_strcpy_nocheck(*real, work);
       s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
       sprintf(s, "%s%s", dccdir, *real);
     }
     p = strchr(new, '/');
   }
   my_free(new);
-  if (elem)
-    my_free(elem);
-  if (work)
-    my_free(work);
+  my_free(elem);
   /* Sanity check: does this dir exist? */
   s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
   sprintf(s, "%s%s", dccdir, *real);
@@ -445,8 +450,8 @@ static void cmd_reget_get(int idx, char *par, int resend)
   p = strrchr(what, '/');
   if (p != NULL) {
     *p = 0;
-    malloc_strcpy(s, what);
-    strcpy(what, p + 1);
+    malloc_strcpy_nocheck(s, what);
+    memmove(what, p + 1, strlen(p + 1) + 1);
     if (!resolve_dir(dcc[idx].u.file->dir, s, &destdir, idx)) {
       my_free(destdir);
       my_free(s);
@@ -806,8 +811,8 @@ static void cmd_desc(int idx, char *par)
   /* Replace | with linefeeds, limit 5 lines */
   lin = 0;
   q = desc;
-  while ((*q <= 32) && (*q))
-    strcpy(q, &q[1]);           /* Zapf leading spaces */
+  while ((*q <= 32) && (*q)) /* Zapf leading spaces */
+    memmove(q, q + 1, strlen(q));
   p = strchr(q, '|');
   while (p != NULL) {
     /* Check length */
@@ -827,8 +832,8 @@ static void cmd_desc(int idx, char *par)
     *p = '\n';
     q = p + 1;
     lin++;
-    while ((*q <= 32) && (*q))
-      strcpy(q, &q[1]);
+    while ((*q <= 32) && (*q)) /* Zapf leading spaces */
+      memmove(q, q + 1, strlen(q));
     if (lin == 5) {
       *p = 0;
       p = NULL;
@@ -1111,8 +1116,8 @@ static void cmd_mv_cp(int idx, char *par, int copy)
   p = strrchr(fn, '/');
   if (p != NULL) {
     *p = 0;
-    malloc_strcpy(s, fn);
-    strcpy(fn, p + 1);
+    malloc_strcpy_nocheck(s, fn);
+    memmove(fn, p + 1, strlen(p + 1) + 1);
     if (!resolve_dir(dcc[idx].u.file->dir, s, &oldpath, idx)) {
       dprintf(idx, "%s", FILES_ILLSOURCE);
       my_free(s);
