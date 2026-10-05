@@ -681,6 +681,70 @@ static int tcl_getchanmode STDVAR
   return TCL_OK;
 }
 
+static int tcl_splitmode STDVAR
+{
+  char *buf, *rest, *chg, mode[3] = {'+', 0, 0};
+  const char *arg;
+  Tcl_Obj *changes, *pair[2];
+  int result = TCL_ERROR;
+
+  BADARGS(2, 2, " modes");
+
+  /* Split IRC words on a copy: argv belongs to Tcl. The mode table is
+   * seeded by ISUPPORT replay even before connecting. */
+  buf = nmalloc(strlen(argv[1]) + 1);
+  strcpy(buf, argv[1]);
+  rest = buf;
+  chg = newsplit(&rest);
+  changes = Tcl_NewListObj(0, NULL);
+  Tcl_IncrRefCount(changes);
+
+  for (; *chg; chg++) {
+    if (*chg == '+' || *chg == '-') {
+      mode[0] = *chg;
+      continue;
+    }
+    mode[1] = *chg;
+    if (MODE_TYPE(*chg) == MODETYPE_INVALID) {
+      Tcl_AppendResult(irp, "unknown mode: ", mode, NULL);
+      goto done;
+    }
+    arg = "";
+    if ((mode[0] == '+' && MODE_HAS_SET_ARG(*chg)) ||
+        (mode[0] == '-' && MODE_HAS_UNSET_ARG(*chg))) {
+      while (*rest == ' ')
+        rest++;
+      /* A colon introduces the final IRC argument, which may contain
+       * spaces. Consume lazily to avoid parse_irc's fixed token limit. */
+      if (*rest == ':') {
+        arg = rest + 1;
+        rest += strlen(rest);
+      } else
+        arg = newsplit(&rest);
+      if (!arg[0]) {
+        Tcl_AppendResult(irp, "missing argument for mode ", mode, NULL);
+        goto done;
+      }
+    }
+    pair[0] = Tcl_NewStringObj(mode, 2);
+    pair[1] = Tcl_NewStringObj(arg, -1);
+    Tcl_ListObjAppendElement(irp, changes, Tcl_NewListObj(2, pair));
+  }
+  while (*rest == ' ')
+    rest++;
+  if (*rest) {
+    Tcl_AppendResult(irp, "excess mode arguments", NULL);
+    goto done;
+  }
+  Tcl_SetObjResult(irp, changes);
+  result = TCL_OK;
+
+done:
+  Tcl_DecrRefCount(changes);
+  nfree(buf);
+  return result;
+}
+
 static int tcl_getchanmodes STDVAR
 {
   struct chanset_t *chan;
@@ -1288,6 +1352,7 @@ static tcl_cmds tclchan_cmds[] = {
   {"hand2nick",      tcl_hand2nick},
   {"nick2hand",      tcl_nick2hand},
   {"getchanmode",    tcl_getchanmode},
+  {"splitmode",      tcl_splitmode},
   {"getchanmodes",   tcl_getchanmodes},
   {"chanmodelist",   tcl_chanmodelist},
   {"getchanjoin",    tcl_getchanjoin},

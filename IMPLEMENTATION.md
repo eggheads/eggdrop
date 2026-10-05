@@ -589,6 +589,15 @@ Implements D-ISU2..5.
 
 Implements D-TCL1; closes the loop for assertions deferred from steps 4–5.
 
+- [x] Additional Tcl parser (D-TCL4): `splitmode <modes>` in tclirc.c,
+      returning nested Tcl lists from ISUPPORT-derived mode types; errors
+      on unknown modes and missing/surplus arguments. Document and test
+      ordering, sign changes, all mode types, Tcl quoting, defaults before
+      connect, and live ISUPPORT changes.
+- [ ] After step 9, verify `splitmode` against the latest stored 005 from
+      the userfile before connecting, and document that offline fallback
+      in `tcl-commands.rst`. The command already reads the seeded mode
+      table; this checkout does not yet implement D-ISU2 persistence.
 - [ ] Complete in tclirc.c (names final per ARCHITECTURE.md):
       `chanmodeinfo <mode-or-prefixchar>` (dict: type/prefix/rank),
       `isprefix`/`wasprefix`/`isprefixatleast <mode-or-prefixchar> <nick>

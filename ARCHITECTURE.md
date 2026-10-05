@@ -372,6 +372,13 @@ review changed an earlier call, only the final decision is recorded here.
   verbatim (`nt` remains valid for `default-chanmode`/old chanfiles).
   With D-ISU2 the early window shrinks (defaults/persisted seed the table),
   so verbatim deferral only matters for still-unknown letters.
+- **D-TCL4: `splitmode <modes>` exposes mode parsing to Tcl.** Return an
+  ordered list of `{signed-mode argument}` pairs, with an empty argument
+  for modes that take none. Use Tcl list construction APIs and the same
+  ISUPPORT-derived mode types as inbound MODE parsing. Unknown modes and
+  missing/surplus arguments raise Tcl errors. Before connect, use the
+  seeded mode table, including the latest userfile ISUPPORT once D-ISU2
+  persistence is implemented.
 
 ### Out of scope / unchanged
 

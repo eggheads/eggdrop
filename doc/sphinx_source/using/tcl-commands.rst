@@ -1359,6 +1359,34 @@ getchanmode <channel>
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^
+splitmode <modes>
+^^^^^^^^^^^^^^^^^
+
+  Description: splits a channel mode string into a list of two-element lists,
+  each containing a signed mode and its argument. Modes without an argument
+  have an empty string as their second element. The order and repeated modes
+  are preserved. Pass the mode word and its space-separated arguments as one
+  Tcl argument, without the channel name. A missing initial sign means ``+``.
+  IRC trailing-parameter syntax (a leading ``:``) is supported; Tcl quoting
+  inside the mode string is not interpreted.
+
+  Argument handling follows the effective ISUPPORT ``CHANMODES`` and
+  ``PREFIX`` values. Flag modes take no argument; list, key and prefix modes
+  take an argument with either sign; limit-type modes take one only with
+  ``+``. An unknown mode, missing required argument or surplus argument
+  raises a Tcl error. Before connecting, parsing uses the ISUPPORT defaults;
+  server-specific modes may be unknown until their definitions are available.
+
+  For example, with ``CHANMODES=beI,k,lj,imnpstcC``::
+
+    splitmode "+nkcCj key 5:10"
+    # Returns: {+n {}} {+k key} {+c {}} {+C {}} {+j 5:10}
+
+  Returns: a list of mode/argument pairs, or an empty list for an empty string
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 jump [server [[+]port [password]]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
