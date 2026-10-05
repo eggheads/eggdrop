@@ -1473,7 +1473,7 @@ static void shareout_mod(struct chanset_t *chan, const char *format, ...)
     va_start(va, format);
 
     strcpy(s, "s ");
-    if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
+    if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
       s[2 + (l = 509)] = 0;
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type->flags & DCT_BOT) &&
@@ -1503,7 +1503,7 @@ static void shareout_but(struct chanset_t *chan, int x, const char *format, ...)
   va_start(va, format);
 
   strcpy(s, "s ");
-  if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
+  if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
     s[2 + (l = 509)] = 0;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_BOT) && (i != x) &&
