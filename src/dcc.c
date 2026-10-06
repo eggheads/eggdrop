@@ -626,7 +626,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
-  ret = strcmp(digest_string, remote_digest);
+  ret = crypto_verify(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
 
