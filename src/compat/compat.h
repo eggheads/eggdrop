@@ -24,7 +24,6 @@
 #define _EGG_COMPAT_COMPAT_H
 
 #include "base64.h"
-#include "inet_aton.h"
 #include "snprintf.h"
 #include "explicit_bzero.h"
 #include "strlcpy.h"

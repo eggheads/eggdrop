@@ -509,7 +509,7 @@ Function global_table[] = {
   (Function) sock_has_data,
   (Function) bots_in_subtree,
   (Function) users_in_subtree,
-  (Function) egg_inet_aton,
+  (Function) 0,                   /* was egg_inet_aton -- use inet_pton() instead */
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) vsnprintf,           /* was egg_vsnprintf -- use vsnprintf instead */
