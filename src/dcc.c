@@ -248,7 +248,7 @@ static void bot_version(int idx, char *par)
   addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver, 0);
 #endif
   check_tcl_link(dcc[idx].nick, botnetnick);
-  egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
+  snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
   dprintf(idx, "el\n");
 }
@@ -258,7 +258,7 @@ void failed_link(int idx)
   char s[NICKLEN + 18], s1[512];
 
   if (dcc[idx].u.bot->linker[0]) {
-    egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
+    snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
     strcpy(s1, dcc[idx].u.bot->linker);
     add_note(s1, botnetnick, s, -2, 0);
   }
@@ -295,7 +295,7 @@ static void cont_link(int idx, char *buf, int i)
       if (i > 0) {
         bots = bots_in_subtree(findbot(dcc[idx].nick));
         users = users_in_subtree(findbot(dcc[idx].nick));
-        egg_snprintf(x, sizeof x,
+        snprintf(x, sizeof x,
                      "Unlinked %s (restructure) (lost %d bot%s and %d user%s)",
                      dcc[i].nick, bots, (bots != 1) ? "s" : "",
                      users, (users != 1) ? "s" : "");
@@ -524,7 +524,7 @@ static void eof_dcc_bot(int idx)
 
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
-  egg_snprintf(x, sizeof x,
+  snprintf(x, sizeof x,
                "Lost bot: %s (lost %d bot%s and %d user%s)",
                dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
                (users != 1) ? "s" : "");
@@ -1527,7 +1527,7 @@ static void timeout_dupwait(int idx)
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
-    egg_snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
     dprintf(idx, "error Already connected.\n");
     putlog(LOG_BOTS, "*", DCC_DUPLICATE, x);
     killsock(dcc[idx].sock);
@@ -2392,7 +2392,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     return;
   }
   strlcpy(dcc[i].host, host, UHOSTLEN);
-  egg_snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
+  snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
     int ok = 1;

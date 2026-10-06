@@ -178,7 +178,7 @@ static int tcl_hand2idx STDVAR
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
         !strcasecmp(argv[1], dcc[i].nick)) {
-      egg_snprintf(s, sizeof s, "%ld", dcc[i].sock);
+      snprintf(s, sizeof s, "%ld", dcc[i].sock);
       Tcl_AppendResult(irp, s, NULL);
       return TCL_OK;
     }
@@ -201,9 +201,9 @@ static int tcl_getchan STDVAR
   }
 
   if (dcc[idx].type == &DCC_SCRIPT)
-    egg_snprintf(s, sizeof s, "%d", dcc[idx].u.script->u.chat->channel);
+    snprintf(s, sizeof s, "%d", dcc[idx].u.script->u.chat->channel);
   else
-    egg_snprintf(s, sizeof s, "%d", dcc[idx].u.chat->channel);
+    snprintf(s, sizeof s, "%d", dcc[idx].u.chat->channel);
 
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -462,7 +462,7 @@ static int tcl_page STDVAR
     }
   }
   if (dcc[i].status & STAT_PAGE) {
-    egg_snprintf(x, sizeof x, "%d", dcc[i].u.chat->max_line);
+    snprintf(x, sizeof x, "%d", dcc[i].u.chat->max_line);
     Tcl_AppendResult(irp, x, NULL);
   } else
     Tcl_AppendResult(irp, "0", NULL);
@@ -675,8 +675,8 @@ static void build_sock_list(Tcl_Interp *irp, Tcl_Obj *masterlist, char *idxstr,
   Tcl_Obj *thelist;
   char securestr[2], portstr[6];
 
-  egg_snprintf(securestr, sizeof securestr, "%d", secure);
-  egg_snprintf(portstr, sizeof portstr, "%d", port);
+  snprintf(securestr, sizeof securestr, "%d", secure);
+  snprintf(portstr, sizeof portstr, "%d", port);
   thelist = Tcl_NewListObj(0, NULL);
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(val[0], -1));
   Tcl_ListObjAppendElement(irp, thelist, Tcl_NewStringObj(idxstr, -1));
@@ -717,19 +717,19 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 || ((argc == 2) && (dcc[i].type &&
         !strcasecmp(dcc[i].type->name, type)))) {
-      egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
+      snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       snprintf(timestamp, sizeof timestamp, "%" PRId64, (int64_t) dcc[i].timeval);
       if (dcc[i].type && dcc[i].type->display)
         dcc[i].type->display(i, other);
       else {
-        egg_snprintf(other, sizeof other, "?:%lX  !! ERROR !!",
+        snprintf(other, sizeof other, "?:%lX  !! ERROR !!",
                      (long) dcc[i].type);
         break;
       }
 #ifdef TLS
-      egg_snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
+      snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
 #else
-      egg_snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
+      snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
 #endif
       /* If this came from dcclist... */
       if (!src) {
@@ -821,7 +821,7 @@ static int tcl_whom STDVAR
         list[4] = idle;
         list[5] = dcc[i].u.chat->away ? dcc[i].u.chat->away : "";
         if (chan == -1) {
-          egg_snprintf(work, sizeof work, "%d", dcc[i].u.chat->channel);
+          snprintf(work, sizeof work, "%d", dcc[i].u.chat->channel);
           list[6] = work;
         }
         p = Tcl_Merge((chan == -1) ? 7 : 6, list);
@@ -844,7 +844,7 @@ static int tcl_whom STDVAR
       list[4] = idle;
       list[5] = party[i].status & PLSTAT_AWAY ? party[i].away : "";
       if (chan == -1) {
-        egg_snprintf(work, sizeof work, "%d", party[i].chan);
+        snprintf(work, sizeof work, "%d", party[i].chan);
         list[6] = work;
       }
       p = Tcl_Merge((chan == -1) ? 7 : 6, list);
@@ -861,7 +861,7 @@ static int tcl_dccused STDVAR
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%d", dcc_total);
+  snprintf(s, sizeof s, "%d", dcc_total);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -880,7 +880,7 @@ static int tcl_getdccidle STDVAR
   }
   x = (now - dcc[idx].timeval);
 
-  egg_snprintf(s, sizeof s, "%d", x);
+  snprintf(s, sizeof s, "%d", x);
   Tcl_AppendElement(irp, s);
   return TCL_OK;
 }
@@ -942,7 +942,7 @@ static int tcl_link STDVAR
   } else
     x = botlink("", -2, bot);
 
-  egg_snprintf(bot, sizeof bot, "%d", x);
+  snprintf(bot, sizeof bot, "%d", x);
   Tcl_AppendResult(irp, bot, NULL);
   return TCL_OK;
 }
@@ -965,7 +965,7 @@ static int tcl_unlink STDVAR
     else
       botnet_send_unlink(i, botnetnick, lastbot(bot), bot, argv[2]);
   }
-  egg_snprintf(bot, sizeof bot, "%d", x);
+  snprintf(bot, sizeof bot, "%d", x);
 
   Tcl_AppendResult(irp, bot, NULL);
   return TCL_OK;
@@ -1017,7 +1017,7 @@ static int tcl_connect STDVAR
 #endif
   strcpy(dcc[i].nick, "*");
   strlcpy(dcc[i].host, argv[1], UHOSTMAX);
-  egg_snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", sock);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -1214,7 +1214,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       dcc[idx].status = LSTN_PUBLIC;
     }
     strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
-    egg_snprintf(s, sizeof s, "%d", port);
+    snprintf(s, sizeof s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
   }
@@ -1231,7 +1231,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
     strcpy(dcc[idx].host, "*");
-  egg_snprintf(s, sizeof s, "%d", port);
+  snprintf(s, sizeof s, "%d", port);
   Tcl_AppendResult(irp, s, NULL);
   if (!pmap) {
     pmap = nmalloc(sizeof(struct portmap));
