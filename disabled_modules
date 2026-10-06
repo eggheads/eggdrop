@@ -5,6 +5,7 @@
 #   -  Lines which start with a '#' character are ignored.
 #   -  Every module name needs to be on its own line
 
+webui
 # Woobie only serves as an example for module programming. No need to
 # compile it for normal bots ...
 woobie

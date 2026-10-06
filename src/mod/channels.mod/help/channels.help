@@ -5,9 +5,21 @@
    in effect for every channel if no channel is specified. Prefixing a comment
    with '@' will make it only visible within the bot, and not used as the ban
    reason. Prefixing the comment with '*' will make the ban sticky. Ban time
-   has to be expressed in years, days, hours and/or minutes.
+   has to be expressed in years, days, hours and/or minutes. Extended ban
+   (extban) hostmasks can be set as well.
 
 See also: bans, -ban, stick, unstick
+%{help=+extban}%{+lo|lo}
+###  %b+extban%b <flag> <value> [channel] [%%<XyXdXhXm>] [comment]
+   Wrapper command for .+ban to add a channel extban using allowed ISUPPORT
+   EXTBAN values and prefixes. Extbans should still be removed using the .-ban
+   command. Extban masks are created as [prefix]<flag>:<value>. Not all extbans
+   (notice blocking, ctcp blocking, etc) can be enforced by Eggdrop. These
+   non-enforceable extbans are set on-channel and managed as sticky bans.
+   Currently only extban flags (not long names) are supported. This command
+   can only be used while connected to a server.
+
+See also: +ban, -ban, bans
 %{help=+exempt}%{+lo|lo}
 ###  %b+exempt%b <hostmask> [channel] [%%<XyXdXhXm>] [comment]
    Adds an exempt to the list of exempts stored on the bot, with optional
@@ -264,7 +276,7 @@ See also: stick, bans, exempts, invites, -ban, -exempt, -invite
       %binfo%b
 
    For channel ops or halfops:
-      %b+ban         -ban         bans         stick%b
+      %b+ban         +extban      -ban         bans         stick%b
       %b+exempt      -exempt      exempts      unstick%b
       %b+invite      -invite      invites%b
 
@@ -286,7 +298,7 @@ See also: stick, bans, exempts, invites, -ban, -exempt, -invite
       %binfo%b
 %{+ol|ol}
    For channel ops or halfops:
-      %b+ban         -ban         bans         stick%b
+      %b+ban         +extban      -ban         bans         stick%b
       %b+exempt      -exempt      exempts      unstick%b
       %b+invite      -invite      invites%b
 %{+m|m}

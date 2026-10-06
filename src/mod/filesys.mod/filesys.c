@@ -674,7 +674,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       }
       dcc[i].port = atoi(prt);
       (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-      dcc[i].u.dns->ip = &dcc[i].sockname;
       dcc[i].sock = -1;
 #ifdef TLS
       dcc[i].ssl = ssl;
@@ -707,7 +706,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 static char *mktempfile(char *filename)
 {
   char rands[8], *tempname, *fn = filename;
-  int l;
+  size_t l;
 
   make_rand_str(rands, sizeof rands - 1);
   l = strlen(filename);
@@ -1011,9 +1010,7 @@ char *filesys_start(Function *global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
-            sizeof(struct user_entry_type) - sizeof(char *));
-
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO, sizeof(void *) * 12);
   USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;

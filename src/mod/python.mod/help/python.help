@@ -1,0 +1,18 @@
+%{help=python}%{+n}
+###  %bpython%b <code>
+   Executes the given Python code on the partyline. The code is run in the
+   global Python interpreter context and can access the eggdrop module.
+   Expression results are displayed, and errors are shown with a traceback.
+%{help=python module}%{+n}
+###  %bpython module%b
+   This module provides an embedded Python interpreter for extending Eggdrop
+   with Python scripts.
+
+   The following partyline commands are provided by the python module:
+
+   For global owners:
+      %bpython%b
+%{help=all}%{+n}
+###  %bpython module%b commands
+   For global owners:
+      %bpython%b

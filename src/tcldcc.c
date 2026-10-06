@@ -1100,7 +1100,7 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
       if (((ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET)) ||
          ((!ipv4) && (dcc[idx].sockname.addr.sa.sa_family != AF_INET6))) {
         found = 0;
-        break;
+        continue;
       }
 #endif
 
@@ -1225,6 +1225,8 @@ static int setlisten(Tcl_Interp *irp, char *ip, char *portp, char *type, char *m
     strcpy(dcc[idx].nick, "(users)");
   else if (!strcmp(type, "all"))
     strcpy(dcc[idx].nick, "(telnet)");
+  else if (!strcmp(type, "webui"))
+    strcpy(dcc[idx].nick, "(webui)");
   if (maskproc[0])
     strlcpy(dcc[idx].host, maskproc, UHOSTMAX);
   else
@@ -1310,9 +1312,9 @@ static int tcl_listen STDVAR
   }
   if ((strcmp(argv[i], "bots")) && (strcmp(argv[i], "users"))
         && (strcmp(argv[i], "all")) && (strcmp(argv[i], "off"))
-        && (strcmp(argv[i], "script"))) {
+        && (strcmp(argv[i], "script")) && (strcmp(argv[i], "webui"))) {
     Tcl_AppendResult(irp, "invalid listen type: must be one of ",
-          "bots, users, all, off, script", NULL);
+          "bots, users, all, off, script, webui", NULL);
     return TCL_ERROR;
   }
   strlcpy(type, argv[i], sizeof(type));
@@ -1353,8 +1355,7 @@ static int tcl_boot STDVAR
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
-    splitc(whonick, who, '@');
-    whonick[HANDLEN] = 0;
+    splitcn(whonick, who, '@', sizeof whonick);
     if (!strcasecmp(who, botnetnick))
       strlcpy(who, whonick, sizeof who);
     else if (remote_boots > 0) {

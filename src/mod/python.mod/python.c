@@ -159,6 +159,7 @@ char *python_start(Function *global_funcs)
   /* Add command table to bind list */
   add_builtins(H_dcc, mydcc);
   add_tcl_commands(my_tcl_cmds);
+  add_help_reference("python.help");
   add_hook(HOOK_PRE_SELECT, (Function)python_gil_unlock);
   add_hook(HOOK_POST_SELECT, (Function)python_gil_lock);
   return NULL;

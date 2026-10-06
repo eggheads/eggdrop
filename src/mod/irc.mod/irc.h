@@ -33,6 +33,31 @@
 #define REVENGE_KICK 1          /* Kicked victim        */
 #define REVENGE_DEOP 2          /* Took op              */
 
+/* Order and values are relied upon, do not change */
+/* 1-4 are from CHANMODE=b,k,l,mprst and 5 is from PREFIX=(ov)@+ */
+typedef enum mode_type {
+  MODETYPE_INVALID = 0, // invalid, must be 0 for init
+  MODETYPE_FLAG = 1,    // no params
+  MODETYPE_LIMIT = 2,   // param on set only
+  MODETYPE_KEY = 3,     // param always
+  MODETYPE_LIST = 4,    // param always
+  MODETYPE_PREFIX = 5   // param always
+} mode_type_t;
+
+#define MODE_TYPE_NAMES ((const char *[]){[MODETYPE_FLAG] = "Flag", [MODETYPE_LIST] = "List", [MODETYPE_KEY] = "Key", [MODETYPE_LIMIT] = "Limit", [MODETYPE_PREFIX] = "Prefix"})
+
+#define MODE_TYPE(c) (modecharinfo[(unsigned char)(c)].type)
+#define MODE_TYPE_STR(t) ((MODE_TYPE_NAMES)[(t)])
+
+#define MODE_HAS_SET_ARG(c) (MODE_TYPE((c)) >= MODETYPE_LIMIT)
+#define MODE_HAS_UNSET_ARG(c) (MODE_TYPE((c)) >= MODETYPE_KEY)
+#define MODE_PREFIX(c) (modecharinfo[(unsigned char)(c)].prefix)
+
+typedef struct mode_info {
+  mode_type_t type;
+  char prefix;
+} mode_info_t;
+
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
 static void check_tcl_kick(char *, char *, struct userrec *, char *, char *, char *);

@@ -162,8 +162,9 @@ see also: default-port
    This read-only variable returns the current server of the bot.
 %{help=set net-type}%{+n}
 ###  %bset net-type%b
-   Define the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
-   3 = DALnet, 4 = EFnet +e/+I/max-bans 20 Hybrid, 5 = Others.
+   What is your network? Possible allowed values are Efnet, IRCnet, Undernet,
+   DALnet, Libera, freenode, Quakenet, Rizon, Other. If the network you use is
+   not listed, using "Other" is a good sane choice.
 %{help=set ssl-verify-server}%{+n}
 ###  %bset ssl-verify-server%b
    Control certificate verification for servers

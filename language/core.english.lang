@@ -19,6 +19,9 @@
 0x106,Channel bans for
 0x109,Use '.bans all' to see the total list
 0x10a,No longer banning
+0x10b,The 
+0x10c, extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the 
+0x10d, flag enabled.
 
 # EXEMPTS_
 0x114,Global exempts

@@ -36,10 +36,10 @@ extern log_t *logs;
 extern Tcl_Interp *interp;
 extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
             moddir[], notify_new[], configfile[];
-extern time_t now, online_since;
+extern time_t now, online_since, now2_last;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
-           noshare, ignore_time, max_socks;
+           noshare, ignore_time, max_socks, dcc_total;
 #ifdef TLS
 extern SSL_CTX *ssl_ctx;
 #endif
@@ -316,6 +316,14 @@ void tell_verbose_status(int idx)
                "Threaded DNS core is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+  int j = 0;
+  size_t k = max_logs * sizeof(log_t);
+  for (int i = 0; i < max_logs; i++) {
+    if (logs[i].filename)
+      j++;
+    k += logs[i].szlast_len;
+  }
+  dprintf(idx, "Log table: %d/%d %zu bytes\n", j, max_logs, k);
 }
 
 /* Show all internal state variables
@@ -400,6 +408,10 @@ void chanprog()
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
 
+  /* call localtime() to update timezone and reset misc.c:putlog() time cache */
+  localtime(&now);
+  now2_last = 0;
+
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
       if (logs[i].filename != NULL) {
@@ -409,6 +421,11 @@ void chanprog()
       if (logs[i].chname != NULL) {
         nfree(logs[i].chname);
         logs[i].chname = NULL;
+      }
+      if (logs[i].szlast != NULL) {
+        nfree(logs[i].szlast);
+        logs[i].szlast = NULL;
+        logs[i].szlast_len = 0;
       }
       if (logs[i].f != NULL) {
         fclose(logs[i].f);
@@ -473,6 +490,15 @@ void reload()
     fatal(MISC_MISSINGUSERF, 0);
   reaffirm_owners();
   add_hq_user();
+
+  /* boot users not in userfile
+   * like when handle was changed before .reload
+   * dcc[idx].user is NULL for such users
+   */
+  for (int i = 0; i < dcc_total; i++)
+    if (!dcc[i].user && dcc[i].type->flags & DCT_CHAT)
+      do_boot(i, "-RELOAD", "user not in reloaded userfile");
+
   check_tcl_event("userfile-loaded");
   call_hook(HOOK_READ_USERFILE);
 }

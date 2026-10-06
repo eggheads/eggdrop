@@ -384,7 +384,6 @@ struct userrec *get_user_by_host(char *host)
   struct userrec *u, *ret = NULL;
   struct list_type *q;
   int cnt, i;
-  char host2[UHOSTLEN];
 
   if (host == NULL)
     return NULL;
@@ -393,7 +392,6 @@ struct userrec *get_user_by_host(char *host)
     return NULL;
   cnt = 0;
   cache_miss++;
-  strlcpy(host2, host, sizeof host2);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {

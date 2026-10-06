@@ -32,7 +32,7 @@ clean:
 install:
 	@if test ! -d $(DEST)/scripts; then \
 		echo "Creating 'scripts' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/scripts >/dev/null; \
+		$(MKDIR_P) $(DEST)/scripts >/dev/null; \
 		echo "Copying scripts."; \
 		for i in $(DOCS); do \
 			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
@@ -46,7 +46,7 @@ install:
 		if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 			if test ! -d $(DEST)/help; then \
 				echo "Creating 'help' subdirectory."; \
-				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
+				$(MKDIR_P) $(DEST)/help >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/*.help; do \
 				$(INSTALL_DATA) $$i $(DEST)/help/; \
@@ -55,7 +55,7 @@ install:
 		if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 			if test ! -d $(DEST)/help/msg; then \
 				echo "Creating 'help/msg' subdirectory."; \
-				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
+				$(MKDIR_P) $(DEST)/help/msg >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/msg/*.help; do \
 				$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
@@ -64,7 +64,7 @@ install:
 		if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 			if test ! -d $(DEST)/help/set; then \
 				echo "Creating 'help/set' subdirectory."; \
-				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
+				$(MKDIR_P) $(DEST)/help/set >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/set/*.help; do \
 				$(INSTALL_DATA) $$i $(DEST)/help/set/; \

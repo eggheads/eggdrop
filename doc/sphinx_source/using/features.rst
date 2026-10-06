@@ -37,7 +37,7 @@ Eggdrop Features
     * A file system where users can upload and download files in an
       environment that looks and acts (for the most part) like a typical
       UNIX system. It also has the ability to mark files and directories
-      as hidden -- unaccessible to people without certain user flags.
+      as hidden -- inaccessible to people without certain user flags.
 
     * Console mode: you can view each channel through dcc chat or telnet,
       selectively looking at mode changes, joins and parts, channel talk,

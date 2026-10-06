@@ -23,7 +23,7 @@ depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/pbkdf2.c -MT ../pbkdf2.o > .depend
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~ *.gcda *.gcno
 
 distclean: clean
 

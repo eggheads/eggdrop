@@ -1,0 +1,29 @@
+{#- Userfile template.
+
+   Tests inject pre-formatted ban-record lines via:
+     userfile_ban_lines       — list of strings, written under `*ban - -`.
+     userfile_chan_ban_lines  — dict of chan-name -> list of strings,
+                                each written under `::<chan-name> bans`.
+
+   Build the strings in Python with `support.userfile_helpers.format_userfile_ban`.
+
+   The `*ban - -` section header is what `write_bans` (channels.mod/userchan.c)
+   emits and what the parser needs — `newsplit` (src/misc.c:255) splits on
+   literal ' ' only, so `*ban\n` keeps the trailing newline glued to the
+   token and `rfc_casecmp("*ban\n", "*ban")` fails to match.
+-#}
+#4v: eggdrop test harness -- {{ botnet_nick }} -- generated
+{{ owner_handle }} - {{ owner_flags }}
+- {{ owner_hostmask }}
+{% if userfile_ban_lines -%}
+*ban - -
+{% for line in userfile_ban_lines -%}
+{{ line }}
+{% endfor -%}
+{% endif -%}
+{% for chan_name, lines in userfile_chan_ban_lines.items() -%}
+::{{ chan_name }} bans
+{% for line in lines -%}
+{{ line }}
+{% endfor -%}
+{% endfor -%}

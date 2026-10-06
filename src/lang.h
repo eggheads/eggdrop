@@ -263,6 +263,9 @@
 #define BANS_BYCHANNEL          get_language(0x106)
 #define BANS_USEBANSALL         get_language(0x109)
 #define BANS_NOLONGER           get_language(0x10a)
+#define EXTBAN_NOT_ENABLED1     get_language(0x10b)
+#define EXTBAN_NOT_ENABLED2     get_language(0x10c)
+#define EXTBAN_NOT_ENABLED3     get_language(0x10d)
 
 /* Messages used when listing with '.exempts' */
 #define EXEMPTS_GLOBAL          get_language(0x114)
