@@ -360,14 +360,14 @@ static char *get_bot_pass(struct userrec *u) {
       if (!pass) {
         pass = pass2;
         if (encrypt_pass) {
-	  /* get_user() returns a pointer of struct user_entry
+          /* get_user() returns a pointer of struct user_entry
            * and set_user()->pass2_set() could free() and realloc it
-	   * so fetch it again with get_user()
-	   */
+           * so fetch it again with get_user()
+           */
           set_user(&USERENTRY_PASS, u, pass);
           pass = get_user(&USERENTRY_PASS2, u);
-	}
-      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        }
+      } else if (crypto_verify(pass2, pass) && encrypt_pass2)
         pass = pass2;
     } else if (pass && encrypt_pass2)
         set_user(&USERENTRY_PASS2, u, pass);
@@ -626,7 +626,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
-  ret = strcmp(digest_string, remote_digest);
+  ret = crypto_verify(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
 
