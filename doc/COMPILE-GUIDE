@@ -180,6 +180,8 @@ Last revised: Feb 3, 2025
              tar -zxf openssl-3.3.1.tar.gz
              cd openssl-3.3.1
              ./config
+               If you dont need docs and apps you can save storage and speed this up using instead:
+                 ./config no-docs no-apps
              make
              make install
 
@@ -217,19 +219,18 @@ Last revised: Feb 3, 2025
         9. Create a 'lib' directory and copy needed libraries using the
            following commands. This assumes that you installed your Eggdrop in
            'C:\eggdrop'. If you chose a different installation path, replace
-           'C:/eggdrop' in the following steps with your installation
+           'C:\eggdrop' in the following steps with your installation
            directory, replacing all '\'s with '/'s.
 
              cp /bin/cygwin1.dll 'C:/eggdrop'
-             cp /usr/local/bin/libtcl8.6.dll 'C:/eggdrop'
-             cp /usr/local/bin/tclpip84.dll 'C:/eggdrop'
+             cp /bin/cyggcc_s-seh-1.dll 'C:/eggdrop'
+             cp /bin/libtcl8.6.dll 'C:/eggdrop'
 
              cp /bin/cygcrypto-3.dll 'C:/eggdrop' (if compiled with ssl)
              cp /bin/cygssl-3.dll 'C:/eggdrop' (if compiled with ssl)
 
              mkdir C:/eggdrop/lib
-             cp -r /usr/local/lib/tcl 'C:/eggdrop/lib'
-             cp -r /usr/local/lib/tcl8.6 'C:/eggdrop/lib'
+             cp -r /lib/tcl8.6 'C:/eggdrop/lib'
 
              cp /bin/cygz.dll 'C:/eggdrop' (if you selected compress.mod)
 
