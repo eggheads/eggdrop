@@ -205,7 +205,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     dprintf(idx, "I can't help you now because halfops cannot kick ops.\n");
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
@@ -714,11 +714,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# (%s) channel", dcc[idx].nick, chan->dname);
   strlcpy(s, getchanmode(chan), sizeof s);
   if (channel_pending(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
+    snprintf(s1, sizeof s1, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
   else if (channel_active(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_CHANNEL, chan->dname);
+    snprintf(s1, sizeof s1, "%s %s", IRC_CHANNEL, chan->dname);
   else
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_DESIRINGCHAN, chan->dname);
+    snprintf(s1, sizeof s1, "%s %s", IRC_DESIRINGCHAN, chan->dname);
   dprintf(idx, "%s, %d member%s, mode %s:\n", s1, chan->channel.members,
           chan->channel.members == 1 ? "" : "s", s);
   if (chan->channel.topic)
@@ -1000,7 +1000,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
   if (u) {
     dprintf(idx, "%s is already known as %s.\n", nick, u->handle);
