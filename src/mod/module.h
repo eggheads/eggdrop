@@ -59,11 +59,6 @@
 #undef ContextNote
 #undef Assert
 
-/* Compatibility functions. */
-#ifdef egg_inet_aton
-#  undef egg_inet_aton
-#endif
-
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE  __declspec(dllexport)
 #else
@@ -416,7 +411,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define sock_has_data ((int(*)(int, int))global[248])
 #define bots_in_subtree ((int (*)(tand_t *))global[249])
 #define users_in_subtree ((int (*)(tand_t *))global[250])
-#define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
+/* was egg_inet_aton -- use inet_pton() instead */
 /* 252 - 255 */
 /* was egg_snprintf() -- use snprintf() instead */
 /* was egg_vsnprintf() -- use vsnprintf() instead */
