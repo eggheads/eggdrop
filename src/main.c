@@ -25,7 +25,7 @@
  */
 /*
  * The author (Robey Pointer) can be reached at:  robey@netcom.com
- * NOTE: Robey is no long working on this code, there is a discussion
+ * NOTE: Robey is no longer working on this code, there is a discussion
  * list available at eggheads@eggheads.org.
  */
 

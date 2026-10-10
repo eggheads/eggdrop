@@ -159,7 +159,7 @@ Command Line
 Auto-starting Eggdrop
 ---------------------
 
-Systems go down from time to time, taking your Eggdrop along with it. You may not be not around to restart it manually, so you can instead use features of the operating system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script that can create either a systemd or crontab entry. The systemd option will monitor your Eggdrop and a) start it when the machine boots and b) restart the Eggdrop if it crashes for any reason. The (older) crontab option will check (by default) every 10 minutes to see if your Eggdrop is still running, and attempt to restart it if it is not.
+Systems go down from time to time, taking your Eggdrop along with it. You may not be around to restart it manually, so you can instead use features of the operating system to automatically restart Eggdrop should it quit for any reason. Eggdrop comes with an autobotchk shell script that can create either a systemd or crontab entry. The systemd option will monitor your Eggdrop and a) start it when the machine boots and b) restart the Eggdrop if it crashes for any reason. The (older) crontab option will check (by default) every 10 minutes to see if your Eggdrop is still running, and attempt to restart it if it is not.
 
     To auto-generate a systemd job, from the Eggdrop install directory, simply run::
 
