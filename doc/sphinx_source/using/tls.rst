@@ -1,3 +1,5 @@
+.. _tls:
+
 TLS support
 Last revised: Mar 1, 2025
 

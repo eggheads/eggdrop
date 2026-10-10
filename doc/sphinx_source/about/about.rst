@@ -1,6 +1,3 @@
-About Eggdrop
-Last revised: July 27, 2010
-
 =============
 About Eggdrop
 =============
@@ -38,10 +35,10 @@ About Eggdrop
   for information on setting up a botnet.
 
   Eggdrop is always being improved and adjusted because there are bugs to
-  be fixed and features to be added (if the users demand  them, and they
-  make actually sense). In fact, it existed for several years as v0.7 -
-  v0.9 before finally going 1.0. This version of Eggdrop is part of the
-  1.9 tree. A valiant effort has been made to chase down and destroy bugs.
+  be fixed and features to be added (if the users demand them, and they
+  make actually sense). In fact, it existed for several years as v0.7 - v0.9
+  before finally going 1.0. This version of Eggdrop is part of the
+  1.10 tree. A valiant effort has been made to chase down and destroy bugs.
 
   To use Eggdrop, you need:
 
@@ -50,8 +47,8 @@ About Eggdrop
     * A pretty good knowledge of IRC and Unix, including how to compile
       programs, how to read, and what DCC chat is, at absolute minimum.
 
-    * About 5-7 MB of disk space. The Eggdrop tarball is about 5.4 MB
-      unpacked.
+    * About 8 MB of disk space for the installed Eggdrop. The Eggdrop
+      tarball is about 10 MB unpacked.
 
     * Tcl -- Eggdrop cannot compile without Tcl installed on your shell.
 
