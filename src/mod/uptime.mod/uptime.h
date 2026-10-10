@@ -23,8 +23,8 @@
 #ifndef _EGG_MOD_UPTIME_UPTIME_H
 #define _EGG_MOD_UPTIME_UPTIME_H
 
-static const int uptime_type = 2;
-static const int uptime_port = 9969;
-static const char *uptime_host = "uptime.eggheads.org";
+#define UPTIME_TYPE 2
+#define UPTIME_HOST "uptime.eggheads.org"
+#define UPTIME_PORT "9969"
 
 #endif /* _EGG_MOD_UPTIME_UPTIME_H */
