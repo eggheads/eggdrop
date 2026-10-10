@@ -528,6 +528,9 @@ static void dcc_get(int idx, char *buf, int len)
       if (me && me->funcs[SHARE_DUMP_RESYNC])
         ((me->funcs)[SHARE_DUMP_RESYNC]) (y);
       xnick[0] = 0;
+      me = module_find("encryption2", 0, 0);
+      if (me && me->funcs[ENCRYTION2_SEND_SETTINGS])
+        ((me->funcs)[ENCRYTION2_SEND_SETTINGS]) (y);
     } else {
       module_entry *fs = module_find("filesys", 0, 0);
       struct userrec *u = get_user_by_handle(userlist, dcc[idx].u.xfer->from);
@@ -1213,7 +1216,7 @@ char *transfer_start(Function *global_funcs)
   global = global_funcs;
 
   fileq = NULL;
-  module_register(MODULE_NAME, transfer_table, 2, 4);
+  module_register(MODULE_NAME, transfer_table, 2, 5);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
