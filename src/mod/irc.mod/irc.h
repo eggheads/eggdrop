@@ -52,11 +52,42 @@ typedef enum mode_type {
 #define MODE_HAS_SET_ARG(c) (MODE_TYPE((c)) >= MODETYPE_LIMIT)
 #define MODE_HAS_UNSET_ARG(c) (MODE_TYPE((c)) >= MODETYPE_KEY)
 #define MODE_PREFIX(c) (modecharinfo[(unsigned char)(c)].prefix)
+#define MODE_RANK(c) (modecharinfo[(unsigned char)(c)].rank)
+
+/* Highest number of prefix modes a member can hold, bounding the per-member
+ * prefix bitsets (bit 1<<rank). Prefix modes ranked at or beyond this keep a
+ * full modecharinfo entry (parsing/bind/rank stay correct) but get no
+ * per-member tracking. */
+#define MAX_PREFIX_MODES 8
+/* mode_info_t.rank sentinel for non-prefix (or untracked) modes. */
+#define PREFIX_RANK_NONE 0xFF
 
 typedef struct mode_info {
-  mode_type_t type;
-  char prefix;
+  uint8_t type;         /* mode_type_t value                                */
+  uint8_t rank;         /* PREFIX position, 0 = highest; PREFIX_RANK_NONE
+                           for non-prefix modes. Doubles as the bit index
+                           into per-member prefix bitsets when
+                           rank < MAX_PREFIX_MODES. */
+  char prefix;          /* prefix char for MODETYPE_PREFIX, else 0          */
 } mode_info_t;
+
+/* The 62 channel mode letters that get a per-channel bitset slot, in
+ * bitset/render order (see D-CHM5). Indexing this string is the inverse of
+ * mode_to_index() and is what getchanmode() renders from. */
+#define MODE_INDEX_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+/* Bit index for a channel mode letter in the per-channel mode bitset:
+ * a-z -> 0-25, A-Z -> 26-51, 0-9 -> 52-61, anything else (incl. '\0') -> -1.
+ * A table lookup rather than letter arithmetic, because C only guarantees
+ * the decimal digits are contiguous in the execution charset (C99 5.2.1),
+ * not the letters. Pure function of the letter (independent of
+ * modecharinfo). */
+static inline int mode_to_index(char c)
+{
+  const char *p = c ? strchr(MODE_INDEX_CHARS, c) : NULL;
+
+  return p ? (int) (p - MODE_INDEX_CHARS) : -1;
+}
 
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
@@ -77,10 +108,29 @@ static int check_tcl_chghost(char *, char *, char *, struct userrec *, char *, c
 static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
+static int can_set_mode(struct chanset_t *, char);
+static void chanmode_set(struct chanset_t *, char, const char *);
+static void chanmode_unset(struct chanset_t *, char);
+static int chanmode_isset(struct chanset_t *, char);
+static const char *chanmode_getarg(struct chanset_t *, char);
+static void chanmode_clear(struct chanset_t *);
+static int chanmode_legacy_flag_bit(char);
+static int chanmode_pls_protected(struct chanset_t *, char);
+static int chanmode_mns_protected(struct chanset_t *, char);
+static int reparse_channel_modes(struct chanset_t *, Tcl_Interp *, int);
+static int chanmode_standing_type(char);
+static void chanmode_list_add(struct chanset_t *, char, const char *,
+                              const char *);
+static void chanmode_list_remove(struct chanset_t *, char, const char *);
+static chanmode_masklist *chanmode_list_masks(struct chanset_t *, char);
+static int chanmodes_known(struct chanset_t *);
+static void chanmodes_set_known(struct chanset_t *, int);
 static int any_ops(struct chanset_t *);
 static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
+static int mode_queue_line_limit(void);
 static void flush_mode(struct chanset_t *, int);
+static void recheck_channel_modes(struct chanset_t *);
 static void set_delay(struct chanset_t *, char *);
 static void refresh_who_chan(char *);
 
@@ -103,11 +153,6 @@ static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
                              char *);
 static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
-static void got_op(struct chanset_t *chan, char *nick, char *from, char *who,
-                   struct userrec *opu, struct flag_record *opper);
-static void got_halfop(struct chanset_t *chan, char *nick, char *from,
-                       char *who, struct userrec *opu,
-                       struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static int gotmode(char *, char *);

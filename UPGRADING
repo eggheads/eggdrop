@@ -88,6 +88,31 @@ Tcl Commands
 A lot of backwards-compatible additions and changes have been made to
 Tcl commands. Please look at doc/tcl-commands.doc to see them.
 
+The "isupport" bind is now also replayed -- fired once for every
+currently-known key with its current value -- whenever a module that
+consumes isupport is (re)loaded, in addition to firing on value changes.
+This ensures consumers loaded after the values arrived (and modules
+reloaded mid-connection) see the current state. Bound procs must be
+idempotent: receiving the value already in effect must be harmless.
+
+Eggdrop now requests the IRCv3 multi-prefix capability by default when the
+server advertises it. This makes NAMES replies include all prefix symbols
+(e.g. @+) instead of only the highest one. Scripts using raw 353/NAMES binds
+should be prepared for stacked prefixes. To keep the old CAP negotiation
+behavior, set "multi-prefix" to 0 in the server module config.
+
+The irc module's "opchars" setting is deprecated and ignored. Prefix status
+is derived from ISUPPORT PREFIX; "isop"/"botisop" now mean literal +o, not
+owner/admin prefixes configured through opchars.
+
+The irc module's internal outbound mode queue has been replaced with an
+ISUPPORT-aware queue. Source modules must no longer read or write the removed
+struct chanset_t queue fields "pls", "mns", "key", "rmkey", "limit", "bytes",
+"compat", or "cmode[]"; the MODES_PER_LINE_MAX macro has also been removed.
+Use add_mode() to queue outbound channel modes. The "modes-per-line" setting
+and server MODES token may now be honored up to 32 entries per line, subject
+to IRC line-length splitting.
+
 Documentation
 
 Documentation has been updated to reflect new and removed commands and

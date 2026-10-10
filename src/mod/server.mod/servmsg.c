@@ -41,7 +41,7 @@ static int monitor_add(char * nick, int send);
 static int monitor_del (char *nick);
 static int monitor_show(Tcl_Obj *mlist, int mode, char *nick);
 static void monitor_clear();
-int account_notify = 1, extended_join = 1, account_tag = 0;
+int account_notify = 1, extended_join = 1, account_tag = 0, multi_prefix = 1;
 
 extern int sasl;
 extern int sasl_authenticate_initial(const struct cap_values *);
@@ -395,7 +395,8 @@ static int got001(char *from, char *msg)
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan)) {
 
-        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        key = chan->channel.key[0] ? chan->channel.key :
+              (char *) chanmode_prot_arg(chan, 'k');
         if (key[0])
           dprintf(DP_SERVER, "JOIN %s %s\n",
                   chan->name[0] ? chan->name : chan->dname, key);
@@ -438,7 +439,8 @@ static int got442(char *from, char *msg)
       (me->funcs[CHANNEL_CLEAR]) (chan, CHAN_RESETALL);
     chan->status &= ~CHAN_ACTIVE;
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    key = chan->channel.key[0] ? chan->channel.key :
+          (char *) chanmode_prot_arg(chan, 'k');
     if (key[0])
       dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, key);
     else
@@ -1574,6 +1576,9 @@ static int gotcap(char *from, char *msg) {
           add_req(current->name);
       } else if (!strcmp(current->name, "extended-join")) {
         if ((extended_join) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "multi-prefix")) {
+        if ((multi_prefix) && (!current->enabled))
           add_req(current->name);
       } else if (!strcmp(current->name, "invite-notify")) {
         if ((invite_notify) && (!current->enabled))

@@ -1396,7 +1396,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
   else {
     dprintf(idx, "Settings for %s channel %s:\n",
             channel_static(chan) ? "static" : "dynamic", chan->dname);
-    get_mode_protect(chan, work);
+    get_mode_protect(chan, work, sizeof work);
     dprintf(idx, "Protect modes (chanmode): %s\n", work[0] ? work : "None");
     if (chan->idle_kick)
       dprintf(idx, "Idle Kick after (idle-kick): %d\n", chan->idle_kick);

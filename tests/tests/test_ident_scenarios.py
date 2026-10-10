@@ -37,6 +37,13 @@ from support.eggdrop_proc import EggdropProc  # noqa: F401  (fixture name)
 from support.identd import IdentServer
 from support.waiters import wait_for
 
+# These tests share the process-global ident port (127.0.0.1:1113 under
+# EGGDROP_TEST) — both as a listener (IdentServer) and as the bot's hardcoded
+# connect target. Under `pytest -n` they must not overlap, so pin the whole
+# module to one xdist worker (requires `--dist loadgroup`, set in pyproject).
+pytestmark = pytest.mark.xdist_group("identd")
+
+
 # Owner record matches whatever reverse-DNS returns for 127.0.0.1
 # (`localhost`, `127.0.0.1`, or anything in /etc/hosts) so `protect-telnet`
 # accepts the inbound connection regardless of the resolver. The user has

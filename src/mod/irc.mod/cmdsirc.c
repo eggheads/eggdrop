@@ -180,7 +180,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not on %s right now!\n", chan->dname);
     return;
   }
-  if (HALFOP_CANTDOMODE('b')) {
+  if (!can_set_mode(chan, 'b')) {
     dprintf(idx, "I can't help you now because I'm not a channel op or halfop "
             "on %s, or halfops cannot set bans.\n", chan->dname);
     return;
@@ -279,7 +279,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (HALFOP_CANTDOMODE('o')) {
+  if (!can_set_mode(chan, 'o')) {
     dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
             "%s, or halfops cannot set +o modes.\n", chan->dname);
     return;
@@ -327,7 +327,7 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (HALFOP_CANTDOMODE('o')) {
+  if (!can_set_mode(chan, 'o')) {
     dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
             "%s, or halfops cannot set -o modes.\n", chan->dname);
     return;
@@ -393,7 +393,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (HALFOP_CANTDOMODE('h')) {
+  if (!can_set_mode(chan, 'h')) {
     dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
             "%s, or halfops cannot set +h modes.\n", chan->dname);
     return;
@@ -455,7 +455,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (HALFOP_CANTDOMODE('h')) {
+  if (!can_set_mode(chan, 'h')) {
     dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
             "%s, or halfops cannot set -h modes.\n", chan->dname);
     return;
@@ -533,7 +533,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (HALFOP_CANTDOMODE('v')) {
+  if (!can_set_mode(chan, 'v')) {
     dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
             "%s, or halfops cannot set +v modes.\n", chan->dname);
     return;
@@ -584,7 +584,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     return;
   }
 
-  if (HALFOP_CANTDOMODE('v')) {
+  if (!can_set_mode(chan, 'v')) {
     dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
             "%s, or halfops cannot set -v modes.\n", chan->dname);
     return;
