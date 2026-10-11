@@ -20,6 +20,7 @@ addopts = "-ra -q --strict-markers --timeout=60 --tb=short"
 markers = [
     "slow: end-to-end tests that exercise reconnect/timeouts",
     "partyline: spawns eggdrop with -nt so stdin is the HQ partyline",
+    "raw_cap: mock_ircd does not auto-answer CAP, so outbound CAP lines are queued",
 ]
 # pytest sweeps it on session exit.
 tmp_path_retention_policy = "all"

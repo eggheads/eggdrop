@@ -133,8 +133,13 @@ class EggdropConfig:
 
 
 @pytest.fixture
-def mock_ircd() -> Iterator[MockIrcd]:
-    ircd = MockIrcd().start()
+def mock_ircd(request: pytest.FixtureRequest) -> Iterator[MockIrcd]:
+    # `@pytest.mark.raw_cap` turns off the IRCd's CAP auto-responder. With
+    # auto_cap on (the default) `_on_client` answers every CAP line and
+    # never queues it, so a test inspecting the bot's *outbound* CAP
+    # traffic would only ever see NICK and USER.
+    auto_cap = request.node.get_closest_marker("raw_cap") is None
+    ircd = MockIrcd(auto_cap=auto_cap).start()
     try:
         yield ircd
     finally:
@@ -175,17 +180,29 @@ def eggdrop_proc(
         pytest.skip(f"eggdrop binary not found at {EGGDROP_BIN}")
     port_file = tmp_eggdir / "bridge.port"
     terminal = request.node.get_closest_marker("partyline") is not None
+    env = {
+        "EGGDROP_TEST": "1",
+        "EGGDROP_TEST_PORT_FILE": str(port_file),
+        "EGG_LANGDIR": str(REPO_ROOT / "language"),
+    }
+    # Opt-in per-test coverage output. Every test spawns its own bot, and
+    # without redirection they all merge into the same .gcda files;
+    # concurrent merges corrupt them (negative counters, discarded files,
+    # impossible >100% rates). Redirecting fixes that but moves the data
+    # out of the build tree, so a plain `lcov --capture --directory .`
+    # then finds .gcno with no .gcda beside them.
+    #
+    # Only coverage.sh (which merges the per-test trees afterwards) sets
+    # EGGDROP_GCOV_PREFIX, so the default path is unchanged and anything
+    # capturing from the build tree keeps working.
+    if os.environ.get("EGGDROP_GCOV_PREFIX"):
+        env["GCOV_PREFIX"] = str(tmp_eggdir / "gcov")
+        env["GCOV_PREFIX_STRIP"] = str(len(REPO_ROOT.parts) - 1)
     proc = EggdropProc(
         binary=EGGDROP_BIN,
         config_path=eggdrop_config.config_path,
         cwd=tmp_eggdir,
-        env={
-            "EGGDROP_TEST": "1",
-            "EGGDROP_TEST_PORT_FILE": str(port_file),
-            "EGG_LANGDIR": str(REPO_ROOT / "language"),
-            "GCOV_PREFIX": str(tmp_eggdir / "gcov"),
-            "GCOV_PREFIX_STRIP": str(len(REPO_ROOT.parts) -1),
-        },
+        env=env,
         terminal=terminal,
     )
     proc.start()

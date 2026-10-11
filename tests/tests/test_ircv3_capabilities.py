@@ -55,6 +55,7 @@ def alive(eggdrop_proc, tcl_bridge: BridgeClient) -> None:
 # ---------- CAP negotiation ----------
 
 
+@pytest.mark.raw_cap
 def test_bot_sends_cap_ls_before_registering(
     eggdrop_proc, mock_ircd: MockIrcd
 ) -> None:
@@ -64,6 +65,10 @@ def test_bot_sends_cap_ls_before_registering(
     CAP LS first so the server delays registration until CAP END.
     Eggdrop sends it unconditionally at connect (servmsg.c:2090), before
     PASS, NICK and USER, regardless of which capabilities are wanted.
+
+    `raw_cap` is required: with the IRCd's CAP auto-responder on, CAP
+    lines are answered inside `_on_client` and never reach the receive
+    queue, so the drain below would only ever see NICK and USER.
     """
     mock_ircd.wait_for_connect()
     # Drain the whole registration burst and look for CAP within it, rather
@@ -77,6 +82,7 @@ def test_bot_sends_cap_ls_before_registering(
     assert cap[0].upper().startswith("CAP LS"), cap
 
 
+@pytest.mark.raw_cap
 def test_cap_ls_advertises_version_302(
     eggdrop_proc, mock_ircd: MockIrcd
 ) -> None:
@@ -84,6 +90,8 @@ def test_cap_ls_advertises_version_302(
 
     Capability Negotiation spec: `CAP LS 302` signals support for
     key=value capabilities and for the CAP NEW / CAP DEL notifications.
+
+    Needs `raw_cap` for the same reason as the test above.
     """
     mock_ircd.wait_for_connect()
     lines = mock_ircd.drain_until(

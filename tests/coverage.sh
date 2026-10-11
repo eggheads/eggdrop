@@ -20,7 +20,10 @@
 #
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# This script lives in tests/, but every path below (configure, make,
+# src/, the tests/ subdir itself) is relative to the repository root, so
+# resolve the parent of the script's own directory.
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BASETEMP="${BASETEMP:-/tmp/eggcov}"
 OUTDIR="${OUTDIR:-$REPO_ROOT/coverage-html}"
 INFO="$REPO_ROOT/coverage.info"
@@ -35,8 +38,14 @@ say "Checking prerequisites"
 for t in gcc make lcov genhtml gcov rsync uv; do
   command -v "$t" >/dev/null || die "$t not found"
 done
-grep -q "GCOV_PREFIX" tests/conftest.py \
-  || die "tests/conftest.py has no GCOV_PREFIX -- see the patch in the notes below"
+grep -q "EGGDROP_GCOV_PREFIX" tests/conftest.py \
+  || die "tests/conftest.py does not honour EGGDROP_GCOV_PREFIX"
+
+# Opt into per-test .gcda directories. conftest.py only sets GCOV_PREFIX
+# for spawned bots when this is present, so the default build-tree layout
+# (and anything capturing from it) is untouched when this script is not
+# the one running the suite.
+export EGGDROP_GCOV_PREFIX=1
 
 # ---------------------------------------------------- 1. clean instrumented build
 say "Clean build with coverage instrumentation"
@@ -55,8 +64,13 @@ say "Build OK -- $(find . -name '*.gcno' | wc -l) notes files"
 
 # ------------------------------------------------------------- 2. run the suite
 say "Running test suite (writing coverage to $BASETEMP)"
+# ~613 tests, each spawning a bot with its own sockets: the default
+# 1024-descriptor limit runs out partway through and the tail of the run
+# errors with "Too many open files".
+ulimit -n 8192 2>/dev/null || echo "WARNING: could not raise the fd limit"
+
 ( cd tests && uv sync --quiet && \
-  uv run pytest --basetemp="$BASETEMP" -v\
+  uv run pytest --basetemp="$BASETEMP" -v \
       --html=report.html --self-contained-html "$@" || true )
 
 GCDA_COUNT=$(find "$BASETEMP" -name '*.gcda' | wc -l)
