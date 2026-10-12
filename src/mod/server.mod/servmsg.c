@@ -1863,7 +1863,8 @@ static int server_isupport(char *key, char *isset_str, char *value)
   } else if (!strcmp(key, "MONITOR")) {
     monitor005 = isset;
     isupport_parseint(key, isset ? value : NULL, 1, 500, 1, 0, &max_monitor);
-  }
+  } else if (!strcmp(key, "NAMELEN"))
+    isupport_parseint(key, isset ? value : NULL, 0, REALNAMEMAX, 1, 50, &namelen005);
   return 0;
 }
 
