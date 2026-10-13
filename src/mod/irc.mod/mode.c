@@ -749,7 +749,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
                     char *ch, struct userrec *u)
 {
-  char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
+  char me[UHOSTLEN], s[UHOSTLEN], s1[NICKLEN + UHOSTLEN];
   memberlist *m;
   struct userrec *targ;
 

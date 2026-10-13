@@ -161,8 +161,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       else
         strlcpy(s, who, sizeof s);
       if ((me = module_find("server", 0, 0)) && me->funcs) {
-        snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
-                     me->funcs[SERVER_BOTUSERHOST]);
+        snprintf(s1, sizeof s1, "%s!%s", (char *) me->funcs[SERVER_BOTNAME],
+                 (char *) me->funcs[SERVER_BOTUSERHOST]);
         if (match_addr(s, s1)) {
           dprintf(idx, "I'm not going to ban myself.\n");
           putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);

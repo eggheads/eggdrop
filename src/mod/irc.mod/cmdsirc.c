@@ -162,7 +162,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   char *chname, *nick, *s1;
   memberlist *m;
   char bantype = 0;
-  char s[UHOSTLEN];
+  char s[NICKLEN + UHOSTLEN];
 
   if (!par[0]) {
     dprintf(idx, "Usage: kickban [channel] [-|@]<nick> [reason]\n");
@@ -953,7 +953,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   char *nick, *hand;
   struct chanset_t *chan;
   memberlist *m = NULL;
-  char s[UHOSTLEN], s1[UHOSTLEN];
+  char s[NICKLEN + UHOSTLEN], s1[UHOSTLEN];
   int atr = u ? u->flags : 0;
   int statichost = 0;
   char *p1 = s1;
