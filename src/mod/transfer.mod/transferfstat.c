@@ -56,7 +56,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
 
   fs = e->u.extra;
   l->extra = user_malloc(41);
-  egg_snprintf(l->extra, 41, "%09u %09u %09u %09u", fs->uploads, fs->upload_ks,
+  snprintf(l->extra, 41, "%09u %09u %09u %09u", fs->uploads, fs->upload_ks,
                fs->dnloads, fs->dnload_ks);
   l->next = NULL;
   e->u.list = l;
@@ -116,15 +116,15 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 static int fstat_tcl_format(char *d, size_t max, struct filesys_stats *fs, char *arg)
 {
   if (!arg)
-    egg_snprintf(d, max, "%u %u %u %u", fs->uploads, fs->upload_ks,
+    snprintf(d, max, "%u %u %u %u", fs->uploads, fs->upload_ks,
                  fs->dnloads, fs->dnload_ks);
   else
     switch (arg[0]) {
     case 'u':
-      egg_snprintf(d, max, "%u %u", fs->uploads, fs->upload_ks);
+      snprintf(d, max, "%u %u", fs->uploads, fs->upload_ks);
       break;
     case 'd':
-      egg_snprintf(d, max, "%u %u", fs->dnloads, fs->dnload_ks);
+      snprintf(d, max, "%u %u", fs->dnloads, fs->dnload_ks);
       break;
     }
 
