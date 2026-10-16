@@ -315,6 +315,7 @@ depends on `eggdrop_proc` which depends on `eggdrop_config` and
 | --- | --- |
 | `@pytest.mark.partyline` | `eggdrop_proc` spawns with `-nt`; HQ partyline available on stdin |
 | `@pytest.mark.slow` | Tag for end-to-end / reconnect / timeout-driven tests |
+| `@pytest.mark.raw_cap` | `mock_ircd` is built with `auto_cap=False`, so the bot's outbound CAP lines reach the recv queue instead of being auto-answered |
 
 ## Customising a test's eggdrop.conf
 
@@ -474,6 +475,11 @@ Request: `<escaped command>\n`. Response: `OK <escaped result>\n` or
 ## Environment knobs
 
 - `EGGDROP_BIN` — absolute path to the eggdrop binary. Default: `<repo>/eggdrop`.
+- `EGGDROP_GCOV_PREFIX` — when set, each spawned bot writes its `.gcda`
+  into its own tmpdir (`GCOV_PREFIX`) instead of the build tree. Set by
+  `coverage.sh` and by the CI workflow, both of which merge the per-test
+  trees before capturing. Unset by default so a plain `lcov --capture
+  --directory .` still works.
 - `EGGDROP_SRC` — absolute path to the eggdrop source tree (for `mod-path`,
   `help-path`, `EGG_LANGDIR`). Default: parent of `tests/`.
 
