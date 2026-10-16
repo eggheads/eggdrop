@@ -4050,6 +4050,17 @@ the Tcl proc, and an explanation.
   the setting that was changed, and the value it was set to (0/1 for
   -/+, string, or X:Y formatted value).
 
+(58) BATCH (stackable)
+
+bind batch <flags> <type> <proc>
+
+procname <reftag> <type> <event> <parent> <args> <tags>
+
+Description: triggered when a server opens, closes, or Eggdrop discards an IRCv3 batch. flags are ignored, type is the batch type and can be used with wildcards. For the proc, reftag is the reference tag identifying the batch and is case-sensitive, type is the batch type such as 'netsplit' or 'chathistory'. Event can be 'start' (when the server opens the batch), 'end' (when the server closes it), or 'discard' (Eggdrop drops when its parent batch closes first or ages out after not being closed by the server). parent is the reference tag of the enclosing batch if this batch is nested inside another, otherwise it is empty. args is the remainder of the BATCH line following the type, and tags is a Tcl dict of the message tags present on the line that opened the batch (or empty if there were none).
+
+Module: server
+
+
 Return Values
 
 Several bindings pay attention to the value you return from the
