@@ -28,18 +28,14 @@
 /* Valid channel prefixes. */
 #define CHANMETA "#&!+"
 
-/* Modes the bot cannot set as halfop. You can add +b, +e, and +I to this to
- * prevent them from being set as halfop. */
-#define NOHALFOPS_MODES "ahoq"
-
-/* Only send modes as op (b, e, and I excluded)? */
+/* Only allow non-rank-0 bots to send modes as literal op (b/e/I excluded)? */
 #undef NO_HALFOP_CHANMODES
 
-/* Hard limit of modes per line. */
-#define MODES_PER_LINE_MAX 6
+/* Hard limit of queued outbound modes per channel. */
+#define MODEQUEUE_MAX 32
 
-#define HALFOP_CANTDOMODE(_a) (!me_op(chan) && (!me_halfop(chan) || (strchr(NOHALFOPS_MODES, _a) != NULL)))
-#define HALFOP_CANDOMODE(_a)  (me_op(chan) || (me_halfop(chan) && (strchr(NOHALFOPS_MODES, _a) == NULL)))
+/* The 62 mode letters that get bitset slots in generic channel mode stores. */
+#define CHANMODE_INDEX_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 typedef struct memstruct {
   char nick[NICKLEN];
@@ -53,6 +49,11 @@ typedef struct memstruct {
   struct userrec *user; /* cached user lookup */
   int tried_getuser; /* negative user lookup cache */
   struct memstruct *next;
+  /* arbmodes: may change - use accessors */
+  uint8_t prefixmodes; /* bit (1<<rank) per held prefix mode */
+  uint8_t wasprefix;   /* held before split / for bind mode  */
+  uint8_t sentplus;    /* +mode already queued               */
+  uint8_t sentminus;   /* -mode already queued               */
 } memberlist;
 
 #define CHANOP       0x00001 /* channel +o                                   */
@@ -106,6 +107,25 @@ typedef struct maskstruct {
   struct maskstruct *next;
 } masklist;
 
+typedef struct chanmode_maskstruct {
+  char *mask;
+  char *who;
+  time_t timer;
+  struct chanmode_maskstruct *next;
+} chanmode_masklist;
+
+typedef struct chanmode_liststruct {
+  char mode;
+  chanmode_masklist *masks;
+  struct chanmode_liststruct *next;
+} chanmode_list;
+
+typedef struct modequeue_entry {
+  char sign;
+  char modechar;
+  char *arg;
+} modequeue_entry;
+
 /* Used for temporary bans, exempts and invites */
 typedef struct maskrec {
   struct maskrec *next;
@@ -133,6 +153,10 @@ struct chan_t {
   unsigned int mode;
   int maxmembers;
   int members;
+  /* arbmodes: may change - use accessors */
+  uint64_t modeflags; /* bit mode_to_index(c) set = mode c active */
+  char *modeargs[62]; /* arg for set arg-taking modes, else NULL  */
+  chanmode_list *modelists; /* non-b/e/I LIST modes */
 };
 
 #define CHANINV    0x0001  /* i                        */
@@ -197,22 +221,60 @@ struct chanset_t {
   int mode_mns_prot;     /* modes to reject                   */
   int limit_prot;        /* desired limit                     */
   char key_prot[121];    /* desired password                  */
-  char pls[21];          /* positive mode changes             */
-  char mns[21];          /* negative mode changes             */
-  char *key;             /* new key to set                    */
-  char *rmkey;           /* old key to remove                 */
-  int limit;             /* new limit to set                  */
-  int bytes;             /* total bytes so far                */
-  int compat;            /* prevents mixing of old/new modes  */
-  struct {
-    char *op;
-    int type;
-  } cmode[MODES_PER_LINE_MAX];
+  modequeue_entry modequeue[MODEQUEUE_MAX]; /* queued outbound modes */
   char floodwho[FLOOD_CHAN_MAX][256]; /* can be nick or host */
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];
   char deopd[NICKLEN];   /* last user deopped                 */
+  /* arbmodes: may change - use accessors */
+  uint64_t mode_pls_prot_generic; /* desired + modes             */
+  uint64_t mode_mns_prot_generic; /* desired - modes             */
+  char *mode_prot_args[62];       /* desired + mode arguments    */
+  char *chanmode_verbatim;        /* configured chanmode string  */
 };
+
+static inline int chanmode_prot_index(char mode)
+{
+  const char *p;
+
+  for (p = CHANMODE_INDEX_CHARS; *p; p++)
+    if (*p == mode)
+      return (int) (p - CHANMODE_INDEX_CHARS);
+  return -1;
+}
+
+static inline uint64_t chanmode_prot_bit(char mode)
+{
+  int idx = chanmode_prot_index(mode);
+
+  return idx < 0 ? 0 : ((uint64_t) 1 << idx);
+}
+
+static inline int chanmode_pls_prot_isset(const struct chanset_t *chan,
+                                          char mode)
+{
+  uint64_t bit = chanmode_prot_bit(mode);
+
+  return bit && (chan->mode_pls_prot_generic & bit);
+}
+
+static inline int chanmode_mns_prot_isset(const struct chanset_t *chan,
+                                          char mode)
+{
+  uint64_t bit = chanmode_prot_bit(mode);
+
+  return bit && (chan->mode_mns_prot_generic & bit);
+}
+
+static inline const char *chanmode_prot_arg(const struct chanset_t *chan,
+                                            char mode)
+{
+  int idx = chanmode_prot_index(mode);
+
+  if (idx < 0 || !chanmode_pls_prot_isset(chan, mode))
+    return "";
+  return chan->mode_prot_args[idx] ? chan->mode_prot_args[idx] : "";
+}
 
 #define CHAN_ENFORCEBANS    0x0001     /* +enforcebans    */
 #define CHAN_DYNAMICBANS    0x0002     /* +dynamicbans    */

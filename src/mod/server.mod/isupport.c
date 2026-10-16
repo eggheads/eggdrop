@@ -407,14 +407,23 @@ void isupport_clear_values(int cleardefaultvalues) {
   }
 }
 
-/* moved out of isupport_init because the following problem:
- * loadmodule irc (wants isupport binds)
- * -> loadmodule server
- * -> isupport_init (create H_isupport and do server.mod binds)
- * -> parse defaults and call binds -- but irc binds cannot be added before H_isupport exists
- * then irc.mod adds isupport binds, but those will not be called for the default values unless they change
- * this is not necessary before each connect, just before the very first one to trigger default binds
- */
+/* Re-fire the isupport bind table for every record with an effective
+ * value (server value, else default). isupport binds fire only when a
+ * value *changes*, so a consumer that adds its binds after the values
+ * already arrived -- irc.mod at module load, a Tcl script, or any module
+ * reloaded mid-connection -- would otherwise never see them and would run
+ * on stale compiled defaults. Such a consumer calls this from its _start
+ * right after adding its binds. isupport binds must therefore be
+ * idempotent: they may be re-fired with unchanged values. */
+void isupport_replay(void) {
+  for (struct isupport *data = isupport_list; data; data = data->next)
+    check_tcl_isupport(data, data->key, isupport_get_from_record(data));
+}
+
+/* Re-applies the isupport-default Tcl variable (the compiled defaults are
+ * already parsed eagerly in isupport_init). Run before each connect so a
+ * runtime change to isupport-default takes effect; fires binds only on a
+ * value change, as isupport_setdefault returns early when unchanged. */
 void isupport_preconnect(void) {
   const char *def = Tcl_GetVar(interp, "isupport-default", TCL_GLOBAL_ONLY);
 
@@ -430,6 +439,13 @@ void isupport_init(void) {
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_isupport, NULL);
   add_tcl_objcommands(my_tcl_objcmds);
+  /* Parse the compiled defaults eagerly so every isupport record exists
+   * from module load, not just after the first connect. This used to be
+   * deferred to isupport_preconnect() because irc.mod's binds are added
+   * after H_isupport is created and would miss the default values;
+   * isupport_replay() now closes that gap for any consumer, so the
+   * records can (and should) exist as early as possible. */
+  isupport_parse(isupport_default, isupport_setdefault);
 }
 
 void isupport_fini(void) {

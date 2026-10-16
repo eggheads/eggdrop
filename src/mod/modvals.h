@@ -88,6 +88,7 @@
 #define IRC_CHECK_THIS_BAN        20
 #define IRC_CHECK_THIS_USER       21
 #define IRC_RESET_CHAN_INFO       25
+#define IRC_REPARSE_CHANNEL_MODES 31
 /* Notes */
 #define NOTES_CMD_NOTE            4
 /* Console */

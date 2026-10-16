@@ -9,13 +9,18 @@ dependencies = []
 dev = [
     "pytest>=8",
     "pytest-timeout>=2.3",
+    "pytest-xdist>=3.6",
     "jinja2>=3.1",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-ra -q --strict-markers --timeout=60 --tb=short"
+# Run in parallel by default. `--dist loadgroup` keeps tests tagged with the
+# same `xdist_group` on one worker (see test_ident_scenarios.py, which shares
+# the fixed identd port 1113). Override the worker count with `-n0` (serial)
+# or `-n <N>` for debugging.
+addopts = "-ra -q --strict-markers --timeout=60 --tb=short -n auto --dist loadgroup"
 markers = [
     "slow: end-to-end tests that exercise reconnect/timeouts",
     "partyline: spawns eggdrop with -nt so stdin is the HQ partyline",

@@ -825,11 +825,11 @@ static int tcl_newinvite STDVAR
 
 static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 {
-  char a[121], b[121], s[121];
+  char a[121], b[121], s[512];
   EGG_CONST char *args[2];
   struct udef_struct *ul;
 
-  get_mode_protect(chan, s);
+  get_mode_protect(chan, s, sizeof s);
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->idle_kick);
   Tcl_AppendElement(irp, s);
@@ -1011,13 +1011,13 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 
 static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
 {
-  char s[121], *str;
+  char s[512], *str;
   EGG_CONST char **argv = NULL;
   Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   /* String values first */
-  get_mode_protect(chan, s);
+  get_mode_protect(chan, s, sizeof s);
   APPEND_KEYVAL("chanmode", s);
   APPEND_KEYVAL("need-op", chan->need_op);
   APPEND_KEYVAL("need-invite", chan->need_invite);
@@ -1131,13 +1131,13 @@ static int tcl_channel_getlist(Tcl_Interp *irp, struct chanset_t *chan)
 static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
                            char *setting)
 {
-  char s[121], *str = NULL;
+  char s[512], *str = NULL;
   EGG_CONST char **argv = NULL;
   Tcl_Size argc = 0;
   struct udef_struct *ul;
 
   if (!strcmp(setting, "chanmode"))
-    get_mode_protect(chan, s);
+    get_mode_protect(chan, s, sizeof s);
   else if (!strcmp(setting, "need-op"))
     strlcpy(s, chan->need_op, sizeof s);
   else if (!strcmp(setting, "need-invite"))
@@ -1312,8 +1312,10 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
   int i, x = 0, found, old_status = chan->status,
       old_mode_mns_prot = chan->mode_mns_prot,
       old_mode_pls_prot = chan->mode_pls_prot;
+  uint64_t old_mode_mns_prot_generic = chan->mode_mns_prot_generic,
+           old_mode_pls_prot_generic = chan->mode_pls_prot_generic;
+  int mode_protect_changed = 0;
   struct udef_struct *ul;
-  char s[121];
   char *endptr;
   module_entry *me;
 
@@ -1407,8 +1409,9 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           Tcl_AppendResult(irp, "channel chanmode needs argument", NULL);
         return TCL_ERROR;
       }
-      strlcpy(s, item[i], sizeof s);
-      set_mode_protect(chan, s);
+      if (set_mode_protect(chan, item[i], irp) != TCL_OK)
+        return TCL_ERROR;
+      mode_protect_changed = 1;
     } else if (!strcmp(item[i], "idle-kick")) {
       i++;
       if (i >= items) {
@@ -1735,7 +1738,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           !(chan->status & (CHAN_ACTIVE | CHAN_PEND))) {
         char *key;
 
-        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        key = chan->channel.key[0] ? chan->channel.key :
+              (char *) chanmode_prot_arg(chan, 'k');
         if (key[0])
           dprintf(DP_SERVER, "JOIN %s %s\n",
                   chan->name[0] ? chan->name : chan->dname, key);
@@ -1749,8 +1753,11 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
                                        CHAN_AUTOHALFOP)) {
       if ((me = module_find("irc", 0, 0)))
         (me->funcs[IRC_RECHECK_CHANNEL]) (chan, 1);
-    } else if (old_mode_pls_prot != chan->mode_pls_prot ||
-             old_mode_mns_prot != chan->mode_mns_prot)
+    } else if (mode_protect_changed ||
+             old_mode_pls_prot != chan->mode_pls_prot ||
+             old_mode_mns_prot != chan->mode_mns_prot ||
+             old_mode_pls_prot_generic != chan->mode_pls_prot_generic ||
+             old_mode_mns_prot_generic != chan->mode_mns_prot_generic)
       if ((me = module_find("irc", 1, 2)))
         (me->funcs[IRC_RECHECK_CHANNEL_MODES]) (chan);
   }
@@ -2035,6 +2042,47 @@ static void init_masklist(masklist *m)
   m->next = NULL;
 }
 
+static void clear_channel_mode_store(struct chanset_t *chan)
+{
+  int i;
+  chanmode_list *ml, *ml_next;
+  chanmode_masklist *mask, *mask_next;
+
+  for (i = 0; i < (int) (sizeof chan->channel.modeargs /
+      sizeof chan->channel.modeargs[0]); i++) {
+    if (chan->channel.modeargs[i])
+      nfree(chan->channel.modeargs[i]);
+    chan->channel.modeargs[i] = NULL;
+  }
+  for (ml = chan->channel.modelists; ml; ml = ml_next) {
+    ml_next = ml->next;
+    for (mask = ml->masks; mask; mask = mask_next) {
+      mask_next = mask->next;
+      if (mask->mask)
+        nfree(mask->mask);
+      if (mask->who)
+        nfree(mask->who);
+      nfree(mask);
+    }
+    nfree(ml);
+  }
+  chan->channel.modelists = NULL;
+  chan->channel.modeflags = 0;
+}
+
+static void clear_channel_mode_queue(struct chanset_t *chan)
+{
+  int i;
+
+  for (i = 0; i < MODEQUEUE_MAX; i++) {
+    if (chan->modequeue[i].arg)
+      nfree(chan->modequeue[i].arg);
+    chan->modequeue[i].arg = NULL;
+    chan->modequeue[i].sign = 0;
+    chan->modequeue[i].modechar = 0;
+  }
+}
+
 /* Initialize out the channel record.
  */
 static void init_channel(struct chanset_t *chan, int reset)
@@ -2054,6 +2102,7 @@ static void init_channel(struct chanset_t *chan, int reset)
   }
 
   if (flags & CHAN_RESETMODES) {
+    clear_channel_mode_store(chan);
     chan->channel.mode = 0;
     chan->channel.maxmembers = 0;
     if (chan->channel.key) {
@@ -2123,6 +2172,10 @@ static void clear_channel(struct chanset_t *chan, int reset)
   }
   if ((flags & CHAN_RESETTOPIC) && chan->channel.topic)
     nfree(chan->channel.topic);
+  if (flags & CHAN_RESETMODES)
+    clear_channel_mode_queue(chan);
+  if (!reset && (flags & CHAN_RESETMODES))
+    clear_channel_mode_store(chan);
   if (reset)
     init_channel(chan, reset);
 }
@@ -2213,8 +2266,10 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   Tcl_Free((char *) item);
   if (ret == TCL_OK) {
     if (join && !channel_inactive(chan) && module_find("irc", 0, 0)) {
-      if (chan->key_prot[0])
-        dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+      const char *key = chanmode_prot_arg(chan, 'k');
+
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, key);
       else
         dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
     }

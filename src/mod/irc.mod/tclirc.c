@@ -681,6 +681,126 @@ static int tcl_getchanmode STDVAR
   return TCL_OK;
 }
 
+static int tcl_splitmode STDVAR
+{
+  char *buf, *rest, *chg, mode[3] = {'+', 0, 0};
+  const char *arg;
+  Tcl_Obj *changes, *pair[2];
+  int result = TCL_ERROR;
+
+  BADARGS(2, 2, " modes");
+
+  /* Split IRC words on a copy: argv belongs to Tcl. The mode table is
+   * seeded by ISUPPORT replay even before connecting. */
+  buf = nmalloc(strlen(argv[1]) + 1);
+  strcpy(buf, argv[1]);
+  rest = buf;
+  chg = newsplit(&rest);
+  changes = Tcl_NewListObj(0, NULL);
+  Tcl_IncrRefCount(changes);
+
+  for (; *chg; chg++) {
+    if (*chg == '+' || *chg == '-') {
+      mode[0] = *chg;
+      continue;
+    }
+    mode[1] = *chg;
+    if (MODE_TYPE(*chg) == MODETYPE_INVALID) {
+      Tcl_AppendResult(irp, "unknown mode: ", mode, NULL);
+      goto done;
+    }
+    arg = "";
+    if ((mode[0] == '+' && MODE_HAS_SET_ARG(*chg)) ||
+        (mode[0] == '-' && MODE_HAS_UNSET_ARG(*chg))) {
+      while (*rest == ' ')
+        rest++;
+      /* A colon introduces the final IRC argument, which may contain
+       * spaces. Consume lazily to avoid parse_irc's fixed token limit. */
+      if (*rest == ':') {
+        arg = rest + 1;
+        rest += strlen(rest);
+      } else
+        arg = newsplit(&rest);
+      if (!arg[0]) {
+        Tcl_AppendResult(irp, "missing argument for mode ", mode, NULL);
+        goto done;
+      }
+    }
+    pair[0] = Tcl_NewStringObj(mode, 2);
+    pair[1] = Tcl_NewStringObj(arg, -1);
+    Tcl_ListObjAppendElement(irp, changes, Tcl_NewListObj(2, pair));
+  }
+  while (*rest == ' ')
+    rest++;
+  if (*rest) {
+    Tcl_AppendResult(irp, "excess mode arguments", NULL);
+    goto done;
+  }
+  Tcl_SetObjResult(irp, changes);
+  result = TCL_OK;
+
+done:
+  Tcl_DecrRefCount(changes);
+  nfree(buf);
+  return result;
+}
+
+static int tcl_getchanmodes STDVAR
+{
+  struct chanset_t *chan;
+  const char *p;
+  char mode[2];
+
+  BADARGS(2, 2, " channel");
+
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  mode[1] = 0;
+  for (p = MODE_INDEX_CHARS; *p; p++) {
+    int type = MODE_TYPE(*p);
+
+    if (type == MODETYPE_INVALID || type == MODETYPE_LIST ||
+        type == MODETYPE_PREFIX || !chanmode_isset(chan, *p))
+      continue;
+    mode[0] = *p;
+    Tcl_AppendElement(irp, mode);
+    Tcl_AppendElement(irp, chanmode_getarg(chan, *p) ?
+                      chanmode_getarg(chan, *p) : "");
+  }
+  return TCL_OK;
+}
+
+static int tcl_chanmodelist STDVAR
+{
+  struct chanset_t *chan;
+  chanmode_masklist *mask;
+  char mode;
+
+  BADARGS(3, 3, " channel mode");
+
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  if (!argv[2][0] || argv[2][1]) {
+    Tcl_AppendResult(irp, "mode must be one character", NULL);
+    return TCL_ERROR;
+  }
+  mode = argv[2][0];
+  if (MODE_TYPE(mode) != MODETYPE_LIST || mode == 'b' || mode == 'e' ||
+      mode == 'I') {
+    Tcl_AppendResult(irp, "not a generic list mode: ", argv[2], NULL);
+    return TCL_ERROR;
+  }
+  for (mask = chanmode_list_masks(chan, mode); mask; mask = mask->next)
+    Tcl_AppendElement(irp, mask->mask);
+  return TCL_OK;
+}
+
 static int tcl_getchanjoin STDVAR
 {
   struct chanset_t *chan;
@@ -756,6 +876,8 @@ static int tcl_pushmode STDVAR
 {
   struct chanset_t *chan;
   char plus, mode;
+  char err[128];
+  size_t mod_len;
 
   BADARGS(3, 4, " channel mode ?arg?");
 
@@ -765,16 +887,27 @@ static int tcl_pushmode STDVAR
     return TCL_ERROR;
   }
   plus = argv[2][0];
+  mod_len = strlen(argv[2]);
 
-  mode = argv[2][1];
   if ((plus != '+') && (plus != '-')) {
+    if (mod_len != 1) {
+      Tcl_AppendResult(irp, "mode must be one character", NULL);
+      return TCL_ERROR;
+    }
     mode = plus;
     plus = '+';
+  } else {
+    if (mod_len != 2) {
+      Tcl_AppendResult(irp, "mode must be one character", NULL);
+      return TCL_ERROR;
+    }
+    mode = argv[2][1];
   }
-  if (argc == 4)
-    add_mode(chan, plus, mode, argv[3]);
-  else
-    add_mode(chan, plus, mode, "");
+  if (queue_mode_change(chan, plus, mode, argc == 4 ? argv[3] : "",
+      argc == 4, err, sizeof err) < 0) {
+    Tcl_AppendResult(irp, err, NULL);
+    return TCL_ERROR;
+  }
   return TCL_OK;
 }
 
@@ -1219,6 +1352,9 @@ static tcl_cmds tclchan_cmds[] = {
   {"hand2nick",      tcl_hand2nick},
   {"nick2hand",      tcl_nick2hand},
   {"getchanmode",    tcl_getchanmode},
+  {"splitmode",      tcl_splitmode},
+  {"getchanmodes",   tcl_getchanmodes},
+  {"chanmodelist",   tcl_chanmodelist},
   {"getchanjoin",    tcl_getchanjoin},
   {"flushmode",      tcl_flushmode},
   {"pushmode",       tcl_pushmode},

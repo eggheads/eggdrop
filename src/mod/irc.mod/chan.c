@@ -42,6 +42,804 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky);
  */
 #define CHANNEL_ID_LEN 5
 
+static void init_mode_info_array(mode_info_t modes[256])
+{
+  int i;
+
+  for (i = 0; i < 256; i++) {
+    modes[i].type = MODETYPE_INVALID;
+    modes[i].rank = PREFIX_RANK_NONE;
+    modes[i].prefix = '\0';
+  }
+}
+
+static void init_modecharinfo(void)
+{
+  init_mode_info_array(modecharinfo);
+}
+
+static void clear_mode_info(mode_info_t *mode)
+{
+  mode->type = MODETYPE_INVALID;
+  mode->rank = PREFIX_RANK_NONE;
+  mode->prefix = '\0';
+}
+
+/* Return the channel mode letter for a prefix char (e.g. '@' -> 'o'), or 0
+ * if no current PREFIX entry uses that char. */
+static inline char mode_by_prefixchar(char prefixchar)
+{
+  int i;
+
+  for (i = 0; i < 256; i++)
+    if (modecharinfo[i].type == MODETYPE_PREFIX &&
+        modecharinfo[i].prefix == prefixchar)
+      return (char) i;
+  return 0;
+}
+
+static char prefix_mode_from_token(char c)
+{
+  if (mode_to_index(c) >= 0)
+    return c;
+  return mode_by_prefixchar(c);
+}
+
+/* modeflags uses slots 0..61 for a-zA-Z0-9. Keep state bits above that. */
+#define CHANMODE_KNOWN ((uint64_t) 1 << 63)
+
+static int chanmode_standing_type(char mode)
+{
+  int type = MODE_TYPE(mode);
+
+  if (mode_to_index(mode) < 0)
+    return 0;
+  if (type == MODETYPE_FLAG || type == MODETYPE_LIMIT || type == MODETYPE_KEY)
+    return type;
+  return 0;
+}
+
+static uint64_t chanmode_bit(char mode)
+{
+  int idx = mode_to_index(mode);
+
+  return idx < 0 ? 0 : ((uint64_t) 1 << idx);
+}
+
+static int chanmode_legacy_flag_bit(char mode)
+{
+  if (MODE_TYPE(mode) != MODETYPE_FLAG)
+    return 0;
+
+  switch (mode) {
+  case 'i':
+    return CHANINV;
+  case 'p':
+    return CHANPRIV;
+  case 's':
+    return CHANSEC;
+  case 'm':
+    return CHANMODER;
+  case 'c':
+    return CHANNOCLR;
+  case 'C':
+    return CHANNOCTCP;
+  case 'R':
+    return CHANREGON;
+  case 'M':
+    return CHANMODREG;
+  case 'r':
+    return CHANLONLY;
+  case 'D':
+    return CHANDELJN;
+  case 'u':
+    return CHANSTRIP;
+  case 'N':
+    return CHANNONOTC;
+  case 'T':
+    return CHANNOAMSG;
+  case 'd':
+    return CHANINVIS;
+  case 't':
+    return CHANTOPIC;
+  case 'n':
+    return CHANNOMSG;
+  case 'a':
+    return CHANANON;
+  case 'q':
+    return CHANQUIET;
+  default:
+    return 0;
+  }
+}
+
+static int chanmode_pls_protected(struct chanset_t *chan, char mode)
+{
+  return chanmode_pls_prot_isset(chan, mode);
+}
+
+static int chanmode_mns_protected(struct chanset_t *chan, char mode)
+{
+  return chanmode_mns_prot_isset(chan, mode);
+}
+
+static void chanmode_prot_set_arg(struct chanset_t *chan, char mode,
+                                  const char *arg)
+{
+  int idx = mode_to_index(mode);
+
+  if (idx < 0)
+    return;
+  if (chan->mode_prot_args[idx])
+    nfree(chan->mode_prot_args[idx]);
+  chan->mode_prot_args[idx] = NULL;
+  if (arg) {
+    chan->mode_prot_args[idx] = (char *) channel_malloc(strlen(arg) + 1);
+    strcpy(chan->mode_prot_args[idx], arg);
+  }
+}
+
+static void chanmode_prot_clear(struct chanset_t *chan)
+{
+  int i;
+
+  chan->mode_mns_prot = chan->mode_pls_prot = 0;
+  chan->mode_pls_prot_generic = chan->mode_mns_prot_generic = 0;
+  chan->limit_prot = 0;
+  chan->key_prot[0] = 0;
+  for (i = 0; i < (int) (sizeof chan->mode_prot_args /
+      sizeof chan->mode_prot_args[0]); i++) {
+    if (chan->mode_prot_args[i])
+      nfree(chan->mode_prot_args[i]);
+    chan->mode_prot_args[i] = NULL;
+  }
+}
+
+static int chanmode_prot_legacy_bit(char mode)
+{
+  if (mode == 'k' && MODE_TYPE(mode) == MODETYPE_KEY)
+    return CHANKEY;
+  if (mode == 'l' && MODE_TYPE(mode) == MODETYPE_LIMIT)
+    return CHANLIMIT;
+  return chanmode_legacy_flag_bit(mode);
+}
+
+static void chanmode_prot_set(struct chanset_t *chan, int plus, char mode,
+                              const char *arg)
+{
+  uint64_t bit = chanmode_bit(mode);
+  int legacy = chanmode_prot_legacy_bit(mode);
+
+  if (!bit)
+    return;
+  if (plus) {
+    chan->mode_pls_prot_generic |= bit;
+    chan->mode_mns_prot_generic &= ~bit;
+    chanmode_prot_set_arg(chan, mode, arg);
+    if (legacy) {
+      chan->mode_pls_prot |= legacy;
+      chan->mode_mns_prot &= ~legacy;
+    }
+    if (mode == 'k' && MODE_TYPE(mode) == MODETYPE_KEY) {
+      chan->key_prot[0] = 0;
+      if (arg && arg[0])
+        strlcpy(chan->key_prot, arg, sizeof chan->key_prot);
+    } else if (mode == 'l' && MODE_TYPE(mode) == MODETYPE_LIMIT) {
+      chan->limit_prot = arg && arg[0] ? atoi(arg) : 0;
+    }
+  } else {
+    chan->mode_pls_prot_generic &= ~bit;
+    chan->mode_mns_prot_generic |= bit;
+    chanmode_prot_set_arg(chan, mode, NULL);
+    if (legacy) {
+      chan->mode_pls_prot &= ~legacy;
+      chan->mode_mns_prot |= legacy;
+    }
+    if (mode == 'k' && MODE_TYPE(mode) == MODETYPE_KEY)
+      chan->key_prot[0] = 0;
+    else if (mode == 'l' && MODE_TYPE(mode) == MODETYPE_LIMIT)
+      chan->limit_prot = 0;
+  }
+}
+
+static int chanmode_prot_allow_ps(void)
+{
+  const char *value = Tcl_GetVar(interp, "allow-ps", TCL_GLOBAL_ONLY);
+
+  return value && atoi(value);
+}
+
+static void chanmode_prot_apply_policy(struct chanset_t *chan)
+{
+  if (chanmode_pls_protected(chan, 's') && !chanmode_prot_allow_ps()) {
+    chan->mode_pls_prot &= ~CHANPRIV;
+    chan->mode_pls_prot_generic &= ~chanmode_bit('p');
+    chanmode_prot_set_arg(chan, 'p', NULL);
+  }
+}
+
+static void chanmode_prot_warn(struct chanset_t *chan, char mode,
+                               const char *why)
+{
+  putlog(LOG_MISC, chan->dname[0] ? chan->dname : "*",
+         "Warning: chanmode for %s contains mode +%c: %s",
+         chan->dname[0] ? chan->dname : "(unknown)", mode, why);
+}
+
+static char *chanmode_prot_next_arg(char **cursor, struct chanset_t *chan,
+                                    char mode, int warn)
+{
+  char *arg = newsplit(cursor);
+
+  if (!arg[0] && warn)
+    chanmode_prot_warn(chan, mode, "missing argument, ignoring");
+  return arg;
+}
+
+static int token_is_mode_word(const char *token)
+{
+  const char *p;
+  int saw_letter = 0;
+
+  if (!token[0])
+    return 0;
+  for (p = token; *p; p++) {
+    if (*p == '+' || *p == '-')
+      continue;
+    if (!isalnum((unsigned char) *p))
+      return 0;
+    saw_letter = 1;
+  }
+  return saw_letter;
+}
+
+static int reparse_channel_modes(struct chanset_t *chan, Tcl_Interp *irp,
+                                 int warn)
+{
+  char *copy, *cursor, *word, *p;
+  int plus = 1;
+
+  (void) irp;
+  chanmode_prot_clear(chan);
+  if (!chan->chanmode_verbatim || !chan->chanmode_verbatim[0])
+    return TCL_OK;
+  copy = (char *) channel_malloc(strlen(chan->chanmode_verbatim) + 1);
+  strcpy(copy, chan->chanmode_verbatim);
+  cursor = copy;
+  for (word = newsplit(&cursor); word[0]; word = newsplit(&cursor)) {
+    if (!token_is_mode_word(word)) {
+      if (warn && (word[0] == '+' || word[0] == '-'))
+        putlog(LOG_MISC, chan->dname, "Warning: invalid chanmode token for "
+               "%s: %s", chan->dname, word);
+      continue;
+    }
+    for (p = word; *p; p++) {
+      int type;
+      char mode = *p, *arg = "";
+
+      if (mode == '+') {
+        plus = 1;
+        continue;
+      } else if (mode == '-') {
+        plus = 0;
+        continue;
+      }
+      type = MODE_TYPE(mode);
+      if (type == MODETYPE_INVALID) {
+        if (warn)
+          chanmode_prot_warn(chan, mode,
+                             "unknown to current ISUPPORT, deferring");
+        continue;
+      }
+      if (type == MODETYPE_LIST || type == MODETYPE_PREFIX) {
+        if (MODE_HAS_SET_ARG(mode) || MODE_HAS_UNSET_ARG(mode))
+          arg = chanmode_prot_next_arg(&cursor, chan, mode, warn);
+        if (warn)
+          chanmode_prot_warn(chan, mode,
+                             type == MODETYPE_LIST ?
+                             "list modes are not enforceable, ignoring" :
+                             "prefix modes are not enforceable, ignoring");
+        (void) arg;
+        continue;
+      }
+      if (type == MODETYPE_FLAG) {
+        chanmode_prot_set(chan, plus, mode, NULL);
+      } else if (type == MODETYPE_KEY || type == MODETYPE_LIMIT) {
+        if (plus) {
+          arg = chanmode_prot_next_arg(&cursor, chan, mode, warn);
+          if (!arg[0])
+            continue;
+          chanmode_prot_set(chan, plus, mode, arg);
+        } else {
+          chanmode_prot_set(chan, plus, mode, NULL);
+        }
+      }
+    }
+  }
+  nfree(copy);
+  chanmode_prot_apply_policy(chan);
+  return TCL_OK;
+}
+
+static void reparse_all_channel_modes(void)
+{
+  struct chanset_t *chan;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    reparse_channel_modes(chan, NULL, 1);
+    if (channel_active(chan))
+      recheck_channel_modes(chan);
+  }
+}
+
+static void chanmode_set_arg(struct chanset_t *chan, int idx, const char *arg)
+{
+  if (chan->channel.modeargs[idx])
+    nfree(chan->channel.modeargs[idx]);
+  chan->channel.modeargs[idx] = NULL;
+  if (arg) {
+    chan->channel.modeargs[idx] = (char *) channel_malloc(strlen(arg) + 1);
+    strcpy(chan->channel.modeargs[idx], arg);
+  }
+}
+
+static void chanmode_set(struct chanset_t *chan, char mode, const char *arg)
+{
+  int idx = mode_to_index(mode), type = chanmode_standing_type(mode);
+  int legacy;
+
+  if (idx < 0 || !type)
+    return;
+
+  chan->channel.modeflags |= chanmode_bit(mode);
+  if (type == MODETYPE_FLAG) {
+    chanmode_set_arg(chan, idx, NULL);
+    legacy = chanmode_legacy_flag_bit(mode);
+    if (legacy)
+      chan->channel.mode |= legacy;
+  } else {
+    chanmode_set_arg(chan, idx, arg ? arg : "");
+    if (type == MODETYPE_KEY && mode == 'k') {
+      chan->channel.mode |= CHANKEY;
+      set_key(chan, (char *) (arg ? arg : ""));
+    } else if (type == MODETYPE_LIMIT && mode == 'l') {
+      chan->channel.maxmembers = arg && arg[0] ? atoi(arg) : 0;
+    }
+  }
+}
+
+static void chanmode_unset(struct chanset_t *chan, char mode)
+{
+  int idx = mode_to_index(mode), type = chanmode_standing_type(mode);
+  int legacy;
+
+  if (idx < 0)
+    return;
+
+  chan->channel.modeflags &= ~chanmode_bit(mode);
+  chanmode_set_arg(chan, idx, NULL);
+  if (type == MODETYPE_FLAG) {
+    legacy = chanmode_legacy_flag_bit(mode);
+    if (legacy)
+      chan->channel.mode &= ~legacy;
+  } else if (type == MODETYPE_KEY && mode == 'k') {
+    chan->channel.mode &= ~CHANKEY;
+    set_key(chan, NULL);
+  } else if (type == MODETYPE_LIMIT && mode == 'l') {
+    chan->channel.maxmembers = 0;
+  }
+}
+
+static int chanmode_isset(struct chanset_t *chan, char mode)
+{
+  uint64_t bit = chanmode_bit(mode);
+
+  return bit && (chan->channel.modeflags & bit);
+}
+
+static const char *chanmode_getarg(struct chanset_t *chan, char mode)
+{
+  int idx = mode_to_index(mode);
+
+  if (idx < 0 || !chanmode_isset(chan, mode))
+    return NULL;
+  return chan->channel.modeargs[idx];
+}
+
+static void chanmode_list_clear(struct chanset_t *chan)
+{
+  chanmode_list *list, *list_next;
+  chanmode_masklist *entry, *entry_next;
+
+  for (list = chan->channel.modelists; list; list = list_next) {
+    list_next = list->next;
+    for (entry = list->masks; entry; entry = entry_next) {
+      entry_next = entry->next;
+      if (entry->mask)
+        nfree(entry->mask);
+      if (entry->who)
+        nfree(entry->who);
+      nfree(entry);
+    }
+    nfree(list);
+  }
+  chan->channel.modelists = NULL;
+}
+
+static void chanmode_clear_standing(struct chanset_t *chan)
+{
+  int i;
+
+  for (i = 0; i < (int) (sizeof chan->channel.modeargs /
+      sizeof chan->channel.modeargs[0]); i++) {
+    if (chan->channel.modeargs[i])
+      nfree(chan->channel.modeargs[i]);
+    chan->channel.modeargs[i] = NULL;
+  }
+  chan->channel.modeflags = 0;
+  chan->channel.mode = 0;
+  chan->channel.maxmembers = 0;
+  set_key(chan, NULL);
+}
+
+static void chanmode_clear(struct chanset_t *chan)
+{
+  chanmode_clear_standing(chan);
+  chanmode_list_clear(chan);
+}
+
+static chanmode_list *chanmode_list_find(struct chanset_t *chan, char mode,
+                                         int create)
+{
+  chanmode_list *list, *last = NULL;
+
+  if (!chan || mode_to_index(mode) < 0 || MODE_TYPE(mode) != MODETYPE_LIST)
+    return NULL;
+  for (list = chan->channel.modelists; list; list = list->next) {
+    if (list->mode == mode)
+      return list;
+    last = list;
+  }
+  if (!create)
+    return NULL;
+  list = (chanmode_list *) channel_malloc(sizeof *list);
+  list->mode = mode;
+  list->masks = NULL;
+  list->next = NULL;
+  if (last)
+    last->next = list;
+  else
+    chan->channel.modelists = list;
+  return list;
+}
+
+static char *chanmode_list_strdup(const char *s)
+{
+  char *copy = (char *) channel_malloc(strlen(s) + 1);
+
+  strcpy(copy, s);
+  return copy;
+}
+
+static void chanmode_list_add(struct chanset_t *chan, char mode,
+                              const char *mask, const char *who)
+{
+  chanmode_list *list;
+  chanmode_masklist *entry;
+
+  if (!mask)
+    return;
+  list = chanmode_list_find(chan, mode, 1);
+  if (!list)
+    return;
+  for (entry = list->masks; entry; entry = entry->next) {
+    if (!rfc_casecmp(entry->mask, mask)) {
+      if (entry->who)
+        nfree(entry->who);
+      entry->who = chanmode_list_strdup(who ? who : "");
+      entry->timer = now;
+      return;
+    }
+  }
+  entry = (chanmode_masklist *) channel_malloc(sizeof *entry);
+  entry->mask = chanmode_list_strdup(mask);
+  entry->who = chanmode_list_strdup(who ? who : "");
+  entry->timer = now;
+  entry->next = list->masks;
+  list->masks = entry;
+}
+
+static void chanmode_list_remove(struct chanset_t *chan, char mode,
+                                 const char *mask)
+{
+  chanmode_list *list;
+  chanmode_masklist *entry, *prev = NULL;
+
+  if (!mask)
+    return;
+  list = chanmode_list_find(chan, mode, 0);
+  if (!list)
+    return;
+  for (entry = list->masks; entry; prev = entry, entry = entry->next) {
+    if (!rfc_casecmp(entry->mask, mask)) {
+      if (prev)
+        prev->next = entry->next;
+      else
+        list->masks = entry->next;
+      if (entry->mask)
+        nfree(entry->mask);
+      if (entry->who)
+        nfree(entry->who);
+      nfree(entry);
+      return;
+    }
+  }
+}
+
+static chanmode_masklist *chanmode_list_masks(struct chanset_t *chan, char mode)
+{
+  chanmode_list *list = chanmode_list_find(chan, mode, 0);
+
+  return list ? list->masks : NULL;
+}
+
+static int chanmodes_known(struct chanset_t *chan)
+{
+  return (chan->channel.modeflags & CHANMODE_KNOWN) != 0;
+}
+
+static void chanmodes_set_known(struct chanset_t *chan, int known)
+{
+  if (known)
+    chan->channel.modeflags |= CHANMODE_KNOWN;
+  else
+    chan->channel.modeflags &= ~CHANMODE_KNOWN;
+}
+
+static uint8_t prefix_bit(char c)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t rank;
+
+  if (!mode || MODE_TYPE(mode) != MODETYPE_PREFIX)
+    return 0;
+  rank = MODE_RANK(mode);
+  if (rank >= MAX_PREFIX_MODES)
+    return 0;
+  return (uint8_t) (1u << rank);
+}
+
+static void member_mirror_current_prefix(memberlist *m, char mode, int set)
+{
+  unsigned long flag = 0;
+
+  if (mode == 'o')
+    flag = CHANOP;
+  else if (mode == 'h')
+    flag = CHANHALFOP;
+  else if (mode == 'v')
+    flag = CHANVOICE;
+  if (!flag)
+    return;
+  if (set)
+    m->flags |= flag;
+  else
+    m->flags &= ~flag;
+}
+
+static void member_mirror_wasprefix(memberlist *m, char mode, int set)
+{
+  unsigned long flag = 0;
+
+  if (mode == 'o')
+    flag = WASOP;
+  else if (mode == 'h')
+    flag = WASHALFOP;
+  if (!flag)
+    return;
+  if (set)
+    m->flags |= flag;
+  else
+    m->flags &= ~flag;
+}
+
+static void member_mirror_sentprefix(memberlist *m, char mode, int plus,
+                                     int set)
+{
+  unsigned long flag = 0;
+
+  if (mode == 'o')
+    flag = plus ? SENTOP : SENTDEOP;
+  else if (mode == 'h')
+    flag = plus ? SENTHALFOP : SENTDEHALFOP;
+  else if (mode == 'v')
+    flag = plus ? SENTVOICE : SENTDEVOICE;
+  if (!flag)
+    return;
+  if (set)
+    m->flags |= flag;
+  else
+    m->flags &= ~flag;
+}
+
+static int member_has_prefixmode(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->prefixmodes & bit);
+}
+
+static int member_had_prefixmode(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->wasprefix & bit);
+}
+
+static inline int member_has_prefixmode_atleast(memberlist *m, char c)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t rank;
+
+  if (!m || !mode || MODE_TYPE(mode) != MODETYPE_PREFIX)
+    return 0;
+  rank = MODE_RANK(mode);
+  if (rank >= MAX_PREFIX_MODES)
+    return 0;
+  return (m->prefixmodes & (uint8_t) ((1u << (rank + 1)) - 1)) != 0;
+}
+
+static uint8_t member_best_prefix_rank(memberlist *m)
+{
+  uint8_t rank;
+
+  if (!m)
+    return PREFIX_RANK_NONE;
+  for (rank = 0; rank < MAX_PREFIX_MODES; rank++)
+    if (m->prefixmodes & (uint8_t) (1u << rank))
+      return rank;
+  return PREFIX_RANK_NONE;
+}
+
+static int can_set_mode(struct chanset_t *chan, char mode)
+{
+  memberlist *me;
+  uint8_t myrank, targetrank;
+
+  if (!chan)
+    return 0;
+  me = ismember(chan, botname);
+  myrank = member_best_prefix_rank(me);
+  if (myrank == PREFIX_RANK_NONE)
+    return 0;
+  if (myrank == 0)
+    return 1;
+
+#ifdef NO_HALFOP_CHANMODES
+  if (!member_has_prefixmode(me, 'o'))
+    return 0;
+#endif
+
+  if (MODE_TYPE(mode) == MODETYPE_PREFIX) {
+    targetrank = MODE_RANK(mode);
+
+    if (mode == 'o' && member_has_prefixmode(me, 'o'))
+      return 1;
+    return targetrank != PREFIX_RANK_NONE && targetrank > myrank;
+  }
+  return member_has_prefixmode(me, 'o') || member_has_prefixmode(me, 'h');
+}
+
+static void member_set_prefixmode(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->prefixmodes |= bit;
+  else
+    m->prefixmodes &= ~bit;
+  member_mirror_current_prefix(m, mode, set);
+}
+
+static void member_set_wasprefixmode(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->wasprefix |= bit;
+  else
+    m->wasprefix &= ~bit;
+  member_mirror_wasprefix(m, mode, set);
+}
+
+static int member_prefix_sentplus(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->sentplus & bit);
+}
+
+static int member_prefix_sentminus(memberlist *m, char c)
+{
+  uint8_t bit = prefix_bit(c);
+
+  return m && bit && (m->sentminus & bit);
+}
+
+static void member_set_prefix_sentplus(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->sentplus |= bit;
+  else
+    m->sentplus &= ~bit;
+  member_mirror_sentprefix(m, mode, 1, set);
+}
+
+static void member_set_prefix_sentminus(memberlist *m, char c, int set)
+{
+  char mode = prefix_mode_from_token(c);
+  uint8_t bit = prefix_bit(c);
+
+  if (!m || !mode || !bit)
+    return;
+  if (set)
+    m->sentminus |= bit;
+  else
+    m->sentminus &= ~bit;
+  member_mirror_sentprefix(m, mode, 0, set);
+}
+
+static void member_clear_prefix_state(memberlist *m)
+{
+  m->prefixmodes = 0;
+  m->wasprefix = 0;
+  m->sentplus = 0;
+  m->sentminus = 0;
+  m->flags &= ~(CHANOP | CHANHALFOP | CHANVOICE | WASOP | WASHALFOP |
+                SENTOP | SENTDEOP | SENTHALFOP | SENTDEHALFOP |
+                SENTVOICE | SENTDEVOICE | FAKEOP | FAKEHALFOP);
+}
+
+static void resync_members_for_prefix_change(void)
+{
+  struct chanset_t *chan;
+  memberlist *m;
+
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      member_clear_prefix_state(m);
+    if (channel_active(chan))
+      reset_chan_info(chan, CHAN_RESETWHO, 1);
+  }
+}
+
+static void strip_member_prefix_chars(char **nick)
+{
+  int stripped;
+
+  do {
+    stripped = 0;
+    if ((*nick)[0] && mode_by_prefixchar((*nick)[0])) {
+      (*nick)++;
+      stripped = 1;
+    } else if ((*nick)[0] == '@' || (*nick)[0] == '%' || (*nick)[0] == '+') {
+      (*nick)++;
+      stripped = 1;
+    }
+  } while (stripped);
+}
+
 
 /* Returns a pointer to a new channel member structure.
  */
@@ -50,12 +848,10 @@ static memberlist *newmember(struct chanset_t *chan)
   memberlist *x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next);
+  memset(x, 0, sizeof *x);
   x->next = (memberlist *) channel_malloc(sizeof(memberlist));
+  memset(x->next, 0, sizeof *x->next);
   x->next->next = NULL;
-  x->next->nick[0] = 0;
-  x->next->split = 0L;
-  x->next->last = 0L;
-  x->next->delay = 0L;
   chan->channel.members++;
   return x;
 }
@@ -196,55 +992,41 @@ static void setaccount(char *nick, char *account)
  */
 static char *getchanmode(struct chanset_t *chan)
 {
-  static char s[121];
-  int atr, i;
+  static char s[512];
+  const char *p;
+  size_t len = 1;
 
   s[0] = '+';
-  i = 1;
-  atr = chan->channel.mode;
-  if (atr & CHANINV)
-    s[i++] = 'i';
-  if (atr & CHANPRIV)
-    s[i++] = 'p';
-  if (atr & CHANSEC)
-    s[i++] = 's';
-  if (atr & CHANMODER)
-    s[i++] = 'm';
-  if (atr & CHANNOCLR)
-    s[i++] = 'c';
-  if (atr & CHANNOCTCP)
-    s[i++] = 'C';
-  if (atr & CHANREGON)
-    s[i++] = 'R';
-  if (atr & CHANTOPIC)
-    s[i++] = 't';
-  if (atr & CHANMODREG)
-    s[i++] = 'M';
-  if (atr & CHANLONLY)
-    s[i++] = 'r';
-  if (atr & CHANDELJN)
-    s[i++] = 'D';
-  if (atr & CHANSTRIP)
-    s[i++] = 'u';
-  if (atr & CHANNONOTC)
-    s[i++] = 'N';
-  if (atr & CHANNOAMSG)
-    s[i++] = 'T';
-  if (atr & CHANINVIS)
-    s[i++] = 'd';
-  if (atr & CHANNOMSG)
-    s[i++] = 'n';
-  if (atr & CHANANON)
-    s[i++] = 'a';
-  if (atr & CHANKEY)
-    s[i++] = 'k';
-  if (chan->channel.maxmembers != 0)
-    s[i++] = 'l';
-  s[i] = 0;
-  if (chan->channel.key[0])
-    i += sprintf(s + i, " %s", chan->channel.key);
-  if (chan->channel.maxmembers != 0)
-    sprintf(s + i, " %d", chan->channel.maxmembers);
+  s[1] = 0;
+  for (p = MODE_INDEX_CHARS; *p; p++) {
+    int type = MODE_TYPE(*p);
+
+    if (type == MODETYPE_INVALID || type == MODETYPE_LIST ||
+        type == MODETYPE_PREFIX || !chanmode_isset(chan, *p))
+      continue;
+    if (len + 1 < sizeof s) {
+      s[len++] = *p;
+      s[len] = 0;
+    }
+  }
+  for (p = MODE_INDEX_CHARS; *p && len < sizeof s; p++) {
+    int type = MODE_TYPE(*p);
+    const char *arg;
+    int wrote;
+
+    if ((type != MODETYPE_KEY && type != MODETYPE_LIMIT) ||
+        !chanmode_isset(chan, *p))
+      continue;
+    arg = chanmode_getarg(chan, *p);
+    wrote = egg_snprintf(s + len, sizeof s - len, " %s", arg ? arg : "");
+    if (wrote < 0)
+      break;
+    if ((size_t) wrote >= sizeof s - len) {
+      s[sizeof s - 1] = 0;
+      break;
+    }
+    len += (size_t) wrote;
+  }
   return s;
 }
 
@@ -627,7 +1409,7 @@ static void enforce_bans(struct chanset_t *chan)
   char me[UHOSTLEN];
   masklist *b;
 
-  if (HALFOP_CANTDOMODE('b'))
+  if (!can_set_mode(chan, 'b'))
     return;
 
   simple_sprintf(me, "%s!%s", botname, botuserhost);
@@ -721,10 +1503,7 @@ static void recheck_invites(struct chanset_t *chan)
 static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
                        maskrec *global_masks, char mode)
 {
-  if (!me_op(chan) && (!me_halfop(chan) ||
-      (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
-      (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+  if (!can_set_mode(chan, mode))
     return;
 
   /* Remove masks we didn't put there */
@@ -755,7 +1534,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   char user[NICKMAX+UHOSTLEN+1], extflag;
   const char *extarg;
 
-  if (HALFOP_CANTDOMODE('b')) {
+  if (!can_set_mode(chan, 'b')) {
     return;
   }
 
@@ -781,96 +1560,50 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   }
 }
 
+static void recheck_channel_mode(struct chanset_t *chan, char mode)
+{
+  int type = chanmode_standing_type(mode);
+  int pls = chanmode_pls_protected(chan, mode);
+  int mns = chanmode_mns_protected(chan, mode);
+  const char *desired, *current;
+
+  if (!type || (!pls && !mns))
+    return;
+  if (type == MODETYPE_FLAG) {
+    if (pls && !chanmode_isset(chan, mode))
+      add_mode(chan, '+', mode, "");
+    else if (mns && chanmode_isset(chan, mode))
+      add_mode(chan, '-', mode, "");
+  } else if (type == MODETYPE_KEY) {
+    current = chanmode_getarg(chan, mode);
+    desired = chanmode_prot_arg(chan, mode);
+    if (pls && (!chanmode_isset(chan, mode) ||
+        rfc_casecmp(current ? current : "", desired))) {
+      if (chanmode_isset(chan, mode))
+        add_mode(chan, '-', mode, (char *) (current ? current : ""));
+      add_mode(chan, '+', mode, (char *) desired);
+    } else if (mns && chanmode_isset(chan, mode)) {
+      add_mode(chan, '-', mode, (char *) (current ? current : ""));
+    }
+  } else if (type == MODETYPE_LIMIT) {
+    current = chanmode_getarg(chan, mode);
+    desired = chanmode_prot_arg(chan, mode);
+    if (pls && (!chanmode_isset(chan, mode) ||
+        strcmp(current ? current : "", desired)))
+      add_mode(chan, '+', mode, (char *) desired);
+    else if (mns && chanmode_isset(chan, mode))
+      add_mode(chan, '-', mode, "");
+  }
+}
+
 static void recheck_channel_modes(struct chanset_t *chan)
 {
-  int cur = chan->channel.mode, mns = chan->mode_mns_prot,
-      pls = chan->mode_pls_prot;
+  const char *mode;
 
-  if (!(chan->status & CHAN_ASKEDMODES)) {
-    if (pls & CHANINV && !(cur & CHANINV))
-      add_mode(chan, '+', 'i', "");
-    else if (mns & CHANINV && cur & CHANINV)
-      add_mode(chan, '-', 'i', "");
-    if (pls & CHANPRIV && !(cur & CHANPRIV))
-      add_mode(chan, '+', 'p', "");
-    else if (mns & CHANPRIV && cur & CHANPRIV)
-      add_mode(chan, '-', 'p', "");
-    if (pls & CHANSEC && !(cur & CHANSEC))
-      add_mode(chan, '+', 's', "");
-    else if (mns & CHANSEC && cur & CHANSEC)
-      add_mode(chan, '-', 's', "");
-    if (pls & CHANMODER && !(cur & CHANMODER))
-      add_mode(chan, '+', 'm', "");
-    else if (mns & CHANMODER && cur & CHANMODER)
-      add_mode(chan, '-', 'm', "");
-    if (pls & CHANNOCLR && !(cur & CHANNOCLR))
-      add_mode(chan, '+', 'c', "");
-    else if (mns & CHANNOCLR && cur & CHANNOCLR)
-      add_mode(chan, '-', 'c', "");
-    if (pls & CHANNOCTCP && !(cur & CHANNOCTCP))
-      add_mode(chan, '+', 'C', "");
-    else if (mns & CHANNOCTCP && cur & CHANNOCTCP)
-      add_mode(chan, '-', 'C', "");
-    if (pls & CHANREGON && !(cur & CHANREGON))
-      add_mode(chan, '+', 'R', "");
-    else if (mns & CHANREGON && cur & CHANREGON)
-      add_mode(chan, '-', 'R', "");
-    if (pls & CHANMODREG && !(cur & CHANMODREG))
-      add_mode(chan, '+', 'M', "");
-    else if (mns & CHANMODREG && cur & CHANMODREG)
-      add_mode(chan, '-', 'M', "");
-    if (pls & CHANLONLY && !(cur & CHANLONLY))
-      add_mode(chan, '+', 'r', "");
-    else if (mns & CHANLONLY && cur & CHANLONLY)
-      add_mode(chan, '-', 'r', "");
-    if (pls & CHANDELJN && !(cur & CHANDELJN))
-      add_mode(chan, '+', 'D', "");
-    else if (mns & CHANDELJN && cur & CHANDELJN)
-      add_mode(chan, '-', 'D', "");
-    if (pls & CHANSTRIP && !(cur & CHANSTRIP))
-      add_mode(chan, '+', 'u', "");
-    else if (mns & CHANSTRIP && cur & CHANSTRIP)
-      add_mode(chan, '-', 'u', "");
-    if (pls & CHANNONOTC && !(cur & CHANNONOTC))
-      add_mode(chan, '+', 'N', "");
-    else if (mns & CHANNONOTC && cur & CHANNONOTC)
-      add_mode(chan, '-', 'N', "");
-    if (pls & CHANNOAMSG && !(cur & CHANNOAMSG))
-      add_mode(chan, '+', 'T', "");
-    else if (mns & CHANNOAMSG && cur & CHANNOAMSG)
-      add_mode(chan, '-', 'T', "");
-    if (pls & CHANTOPIC && !(cur & CHANTOPIC))
-      add_mode(chan, '+', 't', "");
-    else if (mns & CHANTOPIC && cur & CHANTOPIC)
-      add_mode(chan, '-', 't', "");
-    if (pls & CHANNOMSG && !(cur & CHANNOMSG))
-      add_mode(chan, '+', 'n', "");
-    else if ((mns & CHANNOMSG) && (cur & CHANNOMSG))
-      add_mode(chan, '-', 'n', "");
-    if ((pls & CHANANON) && !(cur & CHANANON))
-      add_mode(chan, '+', 'a', "");
-    else if ((mns & CHANANON) && (cur & CHANANON))
-      add_mode(chan, '-', 'a', "");
-    if ((pls & CHANQUIET) && !(cur & CHANQUIET))
-      add_mode(chan, '+', 'q', "");
-    else if ((mns & CHANQUIET) && (cur & CHANQUIET))
-      add_mode(chan, '-', 'q', "");
-    if ((chan->limit_prot != 0) && (chan->channel.maxmembers == 0)) {
-      char s[21];
-
-      sprintf(s, "%d", chan->limit_prot);
-      add_mode(chan, '+', 'l', s);
-    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers != 0))
-      add_mode(chan, '-', 'l', "");
-    if (chan->key_prot[0]) {
-      if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
-        if (chan->channel.key[0])
-          add_mode(chan, '-', 'k', chan->channel.key);
-        add_mode(chan, '+', 'k', chan->key_prot);
-      }
-    } else if ((mns & CHANKEY) && (chan->channel.key[0]))
-      add_mode(chan, '-', 'k', chan->channel.key);
-  }
+  if (!chanmodes_known(chan) || (chan->status & CHAN_ASKEDMODES))
+    return;
+  for (mode = MODE_INDEX_CHARS; *mode; mode++)
+    recheck_channel_mode(chan, *mode);
 }
 
 static void check_this_member(struct chanset_t *chan, char *nick,
@@ -880,15 +1613,15 @@ static void check_this_member(struct chanset_t *chan, char *nick,
   char s[NICKMAX+UHOSTLEN+1], *p;
 
   m = ismember(chan, nick);
-  if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
+  if (!m || match_my_nick(nick) ||
+      (!can_set_mode(chan, 'b') && !can_set_mode(chan, 'e') &&
+      !can_set_mode(chan, 'I') && !can_set_mode(chan, 'o') &&
+      !can_set_mode(chan, 'h') && !can_set_mode(chan, 'v')))
     return;
 
-#ifdef NO_HALFOP_CHANMODES
-  if (me_op(chan)) {
-#else
-  if (me_op(chan) || me_halfop(chan)) {
-#endif
-    if (HALFOP_CANDOMODE('o')) {
+  if (can_set_mode(chan, 'o') || can_set_mode(chan, 'h') ||
+      can_set_mode(chan, 'v')) {
+    if (can_set_mode(chan, 'o')) {
       if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
           !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
           !(glob_op(*fr) && !chan_deop(*fr))))) && !chan_stopcheck(m)) {
@@ -903,12 +1636,12 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
         else {
           set_delay(chan, m->nick);
-          m->flags |= SENTOP;
+          member_set_prefix_sentplus(m, 'o', 1);
         }
       }
     }
 
-    if (HALFOP_CANDOMODE('h')) {
+    if (can_set_mode(chan, 'h')) {
       if (chan_hashalfop(m) && ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
           !chan_halfop(*fr)) || (channel_bitch(chan) && (!chan_halfop(*fr) &&
           !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))) && !chan_stopcheck(m))
@@ -923,12 +1656,12 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
         else {
           set_delay(chan, m->nick);
-          m->flags |= SENTHALFOP;
+          member_set_prefix_sentplus(m, 'h', 1);
         }
       }
     }
 
-    if (HALFOP_CANDOMODE('v')) {
+    if (can_set_mode(chan, 'v')) {
       if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
           !chan_voice(*fr))) && !chan_stopcheck(m))
         add_mode(chan, '-', 'v', m->nick);
@@ -941,24 +1674,24 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
         else {
           set_delay(chan, m->nick);
-          m->flags |= SENTVOICE;
+          member_set_prefix_sentplus(m, 'v', 1);
         }
       }
     }
   }
 
   if (!chan_stopcheck(m)) {
-    if (!me_op(chan) && (!me_halfop(chan) ||
-        (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
-        (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
-        (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+    if (!can_set_mode(chan, 'b') && !can_set_mode(chan, 'e') &&
+        !can_set_mode(chan, 'I'))
       return;
 
     sprintf(s, "%s!%s", m->nick, m->userhost);
-    if (use_invites && (u_match_mask(global_invites, s) ||
+    if (use_invites && can_set_mode(chan, 'I') &&
+        (u_match_mask(global_invites, s) ||
         u_match_mask(chan->invites, s)))
       refresh_invite(chan, s);
-    if (!(use_exempts && (u_match_mask(global_exempts, s) ||
+    if (can_set_mode(chan, 'b') && !(use_exempts &&
+        (u_match_mask(global_exempts, s) ||
         u_match_mask(chan->exempts, s)))) {
       if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
         refresh_ban_kick(chan, s, m->nick);
@@ -1017,7 +1750,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       stop_reset = 1;
     /* Perhaps we were halfop and tried to halfop/kick the user earlier but
      * the server rejected the request, so let's try again. */
-    m->flags &= ~(SENTHALFOP | SENTKICK);
+    member_set_prefix_sentplus(m, 'h', 0);
+    m->flags &= ~SENTKICK;
     check_this_member(chan, m->nick, &fr);
   }
   /* Most IRCDs nowadays require +h/+o for getting e/I lists,
@@ -1058,8 +1792,9 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
  */
 static int got324(char *from, char *origmsg)
 {
-  int i = 1, ok = 0, nextarg = 3;
+  int ok = 0, nextarg = 3, sign = '+';
   char *chname, *chg, *arg, buf[511];
+  const char *key_arg;
   struct parsed_irc msg;
   struct chanset_t *chan;
 
@@ -1078,82 +1813,62 @@ static int got324(char *from, char *origmsg)
   if (chan->status & CHAN_ASKEDMODES)
     ok = 1;
   chan->status &= ~CHAN_ASKEDMODES;
-  chan->channel.mode = 0;
-  while (chg[i] != 0) {
+  chanmode_clear_standing(chan);
+  while (*chg) {
+    int mode_type;
+
     arg = NULL;
-    if (MODE_HAS_SET_ARG(chg[i])) {
+    switch (*chg) {
+    case '+':
+      sign = '+';
+      chg++;
+      continue;
+    case '-':
+      sign = '-';
+      chg++;
+      continue;
+    }
+    if ((sign == '+' && MODE_HAS_SET_ARG(*chg)) ||
+        (sign == '-' && MODE_HAS_UNSET_ARG(*chg))) {
       if (nextarg < (int) msg.argc) {
         arg = msg.argv[nextarg++];
       } else {
-        putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for +%c", origmsg, chg[i]);
+        putlog(LOG_MISC, "*",
+               "Error parsing modes in '%s', not enough arguments for %c%c",
+               origmsg, sign, *chg);
       }
     }
-    /* hardcoded assumptions in the existing old select code, SANITY CHECK */
-    if (strchr("kl", chg[i]) && !arg) {
-      arg = "";
-      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has a parameter but isupport says no", origmsg, chg[i]);
+    mode_type = MODE_TYPE(*chg);
+    switch (mode_type) {
+    case MODETYPE_FLAG:
+    case MODETYPE_KEY:
+    case MODETYPE_LIMIT:
+      if (sign == '+')
+        chanmode_set(chan, *chg, arg);
+      else
+        chanmode_unset(chan, *chg);
+      if (*chg == 'k' && sign == '+') {
+        key_arg = chanmode_getarg(chan, 'k');
+        if (chanmode_isset(chan, 'k') && (!key_arg || !key_arg[0] ||
+            !strcmp("*", key_arg)))
+          /* Undernet use to show a blank channel key if one was set when
+           * you first joined a channel; however, this has been replaced by
+           * an asterisk and this has been agreed upon by other major IRC
+           * networks so we'll check for an asterisk here as well
+           * (guppy 22Dec2001) */
+          chan->status |= CHAN_ASKEDMODES;
+      }
+      break;
+    case MODETYPE_LIST:
+    case MODETYPE_PREFIX:
+    case MODETYPE_INVALID:
+    default:
+      break;
     }
-    if (strchr("ipsmcCRMrDuNTdtnaq", chg[i]) && arg) {
-      putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change +%c has no parameter but isupport says yes, ignoring", origmsg, chg[i]);
-      i++;
-      continue;
-    }
-    if (chg[i] == 'i')
-      chan->channel.mode |= CHANINV;
-    if (chg[i] == 'p')
-      chan->channel.mode |= CHANPRIV;
-    if (chg[i] == 's')
-      chan->channel.mode |= CHANSEC;
-    if (chg[i] == 'm')
-      chan->channel.mode |= CHANMODER;
-    if (chg[i] == 'c')
-      chan->channel.mode |= CHANNOCLR;
-    if (chg[i] == 'C')
-      chan->channel.mode |= CHANNOCTCP;
-    if (chg[i] == 'R')
-      chan->channel.mode |= CHANREGON;
-    if (chg[i] == 'M')
-      chan->channel.mode |= CHANMODREG;
-    if (chg[i] == 'r')
-      chan->channel.mode |= CHANLONLY;
-    if (chg[i] == 'D')
-      chan->channel.mode |= CHANDELJN;
-    if (chg[i] == 'u')
-      chan->channel.mode |= CHANSTRIP;
-    if (chg[i] == 'N')
-      chan->channel.mode |= CHANNONOTC;
-    if (chg[i] == 'T')
-      chan->channel.mode |= CHANNOAMSG;
-    if (chg[i] == 'd')
-      chan->channel.mode |= CHANINVIS;
-    if (chg[i] == 't')
-      chan->channel.mode |= CHANTOPIC;
-    if (chg[i] == 'n')
-      chan->channel.mode |= CHANNOMSG;
-    if (chg[i] == 'a')
-      chan->channel.mode |= CHANANON;
-    if (chg[i] == 'q')
-      chan->channel.mode |= CHANQUIET;
-    if (chg[i] == 'k') {
-      chan->channel.mode |= CHANKEY;
-      if (*arg)
-        set_key(chan, arg);
-      if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
-          !strcmp("*", chan->channel.key)))
-        /* Undernet use to show a blank channel key if one was set when
-         * you first joined a channel; however, this has been replaced by
-         * an asterisk and this has been agreed upon by other major IRC
-         * networks so we'll check for an asterisk here as well
-         * (guppy 22Dec2001) */
-        chan->status |= CHAN_ASKEDMODES;
-    }
-    if (chg[i] == 'l') {
-      if (*arg)
-        chan->channel.maxmembers = atoi(arg);
-    }
-    i++;
+    chg++;
   }
-  if (ok)
+  chanmodes_set_known(chan, 1);
+  if (ok || channel_active(chan))
     recheck_channel_modes(chan);
   return 0;
 }
@@ -1183,18 +1898,17 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
   }
   m->flags |= WHO_SYNCED;
-  if (strpbrk(flags, opchars) != NULL)
-    m->flags |= (CHANOP | WASOP);
-  else
-    m->flags &= ~(CHANOP | WASOP);
-  if (strchr(flags, '%') != NULL)
-    m->flags |= (CHANHALFOP | WASHALFOP);
-  else
-    m->flags &= ~(CHANHALFOP | WASHALFOP);
-  if (strchr(flags, '+') != NULL)
-    m->flags |= CHANVOICE;
-  else
-    m->flags &= ~CHANVOICE;
+  m->prefixmodes = 0;
+  m->wasprefix = 0;
+  m->flags &= ~(CHANOP | CHANHALFOP | CHANVOICE | WASOP | WASHALFOP);
+  for (const char *flagp = flags; *flagp; flagp++) {
+    char mode = mode_by_prefixchar(*flagp);
+
+    if (mode) {
+      member_set_prefixmode(m, mode, 1);
+      member_set_wasprefixmode(m, mode, 1);
+    }
+  }
   if (strchr(flags, 'G') != NULL)
     m->flags |= IRCAWAY;
   else
@@ -1238,6 +1952,7 @@ static int got352(char *from, char *msg)
     host = newsplit(&msg);      /* Grab the host */
     newsplit(&msg);             /* Skip the server */
     nick = newsplit(&msg);      /* Grab the nick */
+    strip_member_prefix_chars(&nick);
     flags = newsplit(&msg);     /* Grab the flags */
     got352or4(chan, user, host, nick, flags, NULL);
   }
@@ -1300,6 +2015,7 @@ static int got354(char *from, char *msg)
           host = nick;
           nick = newsplit(&msg);
         }
+        strip_member_prefix_chars(&nick);
         flags = newsplit(&msg);     /* Grab the flags */
         account = newsplit(&msg);   /* Grab the account name */
         fixcolon(account);
@@ -1357,13 +2073,10 @@ static int gotchghost(char *from, char *msg) {
 static int got353(char *from, char *msg)
 {
   struct capability *current;
-  char prefixchars[64];
   char *nameptr, *chname, *uhost, *nick, *p, *host = NULL;
   struct chanset_t *chan = NULL;
-  int i;
 
   if ((current = find_capability("userhost-in-names")) && current->enabled) {
-    strlcpy(prefixchars, isupport_get_prefixchars(), sizeof prefixchars);
     newsplit(&msg);
     newsplit(&msg); /* Get rid of =, @, or * symbol */
     chname = newsplit(&msg);
@@ -1376,14 +2089,7 @@ static int got353(char *from, char *msg)
       fixcolon(uhost);
       nick = splitnick(&uhost);
       /* Strip @, +, etc chars prefixed to nicks in NAMES */
-      for (i = 0; prefixchars[i]; i++) {
-        if(nick[0] == prefixchars[i]) {
-          nick=nick+1;
-        }
-      }
-      if ((nick[0] == '+') || (nick[0] == '%')) {
-        nick=nick+1;
-      }
+      strip_member_prefix_chars(&nick);
       p = strchr(uhost, '@');
       if (p) {
         *p = 0;
@@ -1454,7 +2160,8 @@ static int got315(char *from, char *msg)
       chan->status &= ~CHAN_ACTIVE;
     }
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    key = chan->channel.key[0] ? chan->channel.key :
+          (char *) chanmode_prot_arg(chan, 'k');
     if (key[0])
       dprintf(DP_SERVER, "JOIN %s %s\n",
               chan->name[0] ? chan->name : chan->dname, key);
@@ -1833,12 +2540,11 @@ static int got475(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_BADCHANKEY, chan->dname);
     if (chan->channel.key[0]) {
-      nfree(chan->channel.key);
-      chan->channel.key = (char *) channel_malloc(1);
-      chan->channel.key[0] = 0;
+      chanmode_unset(chan, 'k');
 
-      if (chan->key_prot[0])
-        dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+      if (chanmode_prot_arg(chan, 'k')[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname,
+                chanmode_prot_arg(chan, 'k'));
       else
         dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
     } else {
@@ -1890,7 +2596,8 @@ static int gotinvite(char *from, char *msg)
     dprintf(DP_HELP, "NOTICE %s :I'm already here.\n", nick);
   else if (chan && !channel_inactive(chan)) {
 
-    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    key = chan->channel.key[0] ? chan->channel.key :
+          (char *) chanmode_prot_arg(chan, 'k');
     if (key[0])
       dprintf(DP_SERVER, "JOIN %s %s\n",
               chan->name[0] ? chan->name : chan->dname, key);
@@ -2018,14 +2725,14 @@ static void set_delay(struct chanset_t *chan, char *nick)
       if (m2->delay && !(m2->flags & FULL_DELAY)) {
         m2->delay = a_delay;
 
-        if (count + 1 >= modesperline)
+        if (count + 1 >= mode_queue_line_limit())
           m2->flags |= FULL_DELAY;
 
       }
     }
   }
 
-  if (count + 1 >= modesperline)
+  if (count + 1 >= mode_queue_line_limit())
     m->flags |= FULL_DELAY;
 
   m->delay = a_delay;
@@ -2150,7 +2857,12 @@ static int gotjoin(char *from, char *channame)
         m->split = 0;
         m->last = now;
         m->delay = 0L;
-        m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
+        m->wasprefix = m->prefixmodes;
+        m->prefixmodes = 0;
+        m->sentplus = 0;
+        m->sentminus = 0;
+        m->flags = (member_had_prefixmode(m, 'o') ? WASOP : 0) |
+                   (member_had_prefixmode(m, 'h') ? WASHALFOP : 0);
         m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
@@ -2248,17 +2960,19 @@ static int gotjoin(char *from, char *channame)
           set_handle_laston(chan->dname, u, now);
         }
       }
-      if (me_op(chan) || me_halfop(chan)) {
+      if (can_set_mode(chan, 'b') || can_set_mode(chan, 'I') ||
+          can_set_mode(chan, 'o') || can_set_mode(chan, 'h') ||
+          can_set_mode(chan, 'v')) {
         /* Check for and reset exempts and invites.
          *
          * This will require further checking to account for when to use the
          * various modes.
          */
-        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'I') == NULL)) &&
+        if (can_set_mode(chan, 'I') &&
             (u_match_mask(global_invites, from) ||
             u_match_mask(chan->invites, from)))
           refresh_invite(chan, from);
-        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'b') == NULL)) &&
+        if (can_set_mode(chan, 'b') &&
             (!use_exempts || (!u_match_mask(global_exempts, from) &&
             !u_match_mask(chan->exempts, from)))) {
           if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
@@ -2287,19 +3001,16 @@ static int gotjoin(char *from, char *channame)
             m->flags |= SENTKICK;
           }
         }
-#ifdef NO_HALFOP_CHANMODES
-        if (me_op(chan)) {
-#endif
-        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'o') == NULL)) &&
+        if (can_set_mode(chan, 'o') &&
             (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
             (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
           if (!chan->aop_min)
             add_mode(chan, '+', 'o', nick);
           else {
             set_delay(chan, nick);
-            m->flags |= SENTOP;
+            member_set_prefix_sentplus(m, 'o', 1);
           }
-        } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'h') == NULL)) &&
+        } else if (can_set_mode(chan, 'h') &&
                    (chan_halfop(fr) || (glob_halfop(fr) &&
                    !chan_dehalfop(fr))) && (channel_autohalfop(chan) ||
                    glob_autohalfop(fr) || chan_autohalfop(fr))) {
@@ -2307,9 +3018,9 @@ static int gotjoin(char *from, char *channame)
             add_mode(chan, '+', 'h', nick);
           else {
             set_delay(chan, nick);
-            m->flags |= SENTHALFOP;
+            member_set_prefix_sentplus(m, 'h', 1);
           }
-        } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'v') == NULL)) &&
+        } else if (can_set_mode(chan, 'v') &&
                    ((channel_autovoice(chan) && (chan_voice(fr) ||
                    (glob_voice(fr) && !chan_quiet(fr)))) ||
                    ((glob_gvoice(fr) || chan_gvoice(fr)) &&
@@ -2318,12 +3029,9 @@ static int gotjoin(char *from, char *channame)
             add_mode(chan, '+', 'v', nick);
           else {
             set_delay(chan, nick);
-            m->flags |= SENTVOICE;
+            member_set_prefix_sentplus(m, 'v', 1);
           }
         }
-#ifdef NO_HALFOP_CHANMODES
-        }
-#endif
       }
     }
   }
@@ -2393,7 +3101,8 @@ static int gotpart(char *from, char *msg)
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan)) {
 
-        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        key = chan->channel.key[0] ? chan->channel.key :
+              (char *) chanmode_prot_arg(chan, 'k');
         if (key[0])
           dprintf(DP_SERVER, "JOIN %s %s\n",
                   chan->name[0] ? chan->name : chan->dname, key);
@@ -2430,7 +3139,8 @@ static int gotkick(char *from, char *origmsg)
     if (channel_pending(chan)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      key = chan->channel.key[0] ? chan->channel.key :
+            (char *) chanmode_prot_arg(chan, 'k');
       if (key[0])
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
@@ -2483,7 +3193,8 @@ static int gotkick(char *from, char *origmsg)
     if (match_my_nick(nick) && !channel_inactive(chan)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
 
-      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      key = chan->channel.key[0] ? chan->channel.key :
+            (char *) chanmode_prot_arg(chan, 'k');
       if (key[0])
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
@@ -2548,11 +3259,11 @@ static int gotnick(char *from, char *msg)
         continue;
       }
       /* don't fill the serverqueue with modes or kicks in a nickflood */
-      if (chan_sentkick(m) || chan_sentdeop(m) || chan_sentop(m) ||
-          chan_sentdehalfop(m) || chan_senthalfop(m) || chan_sentdevoice(m) ||
-          chan_sentvoice(m))
+      if (chan_sentkick(m) || m->sentplus || m->sentminus)
         m->flags |= STOPCHECK;
       /* Any pending kick or mode to the old nick is lost. */
+      m->sentplus = 0;
+      m->sentminus = 0;
       m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTDEHALFOP | SENTHALFOP |
                     SENTVOICE | SENTDEVOICE);
       /* nick-ban or nick is +k or something? */
@@ -2945,15 +3656,27 @@ static int parse_maxlist(const char *value)
 // then delete all non-existing modes of that type only
 static void update_chanmodes(mode_info_t *modes, int is_prefix)
 {
-  for (int i = 0; i < 256; i++) {
+  int i, prefix_changed = 0;
+  mode_info_t old_prefixes[256];
+
+  if (is_prefix) {
+    init_mode_info_array(old_prefixes);
+    for (i = 0; i < 256; i++)
+      if (modecharinfo[i].type == MODETYPE_PREFIX)
+        old_prefixes[i] = modecharinfo[i];
+    prefix_changed = memcmp(old_prefixes, modes, sizeof old_prefixes) != 0;
+  }
+
+  for (i = 0; i < 256; i++) {
     if (modes[i].type) {
       // is in the new mode info, must overwrite even if type changed
       modecharinfo[i] = modes[i]; // struct copy
     } else if (modecharinfo[i].type) {
       // was in the old mode info but not in the new mode info -> delete
       // but respect if its type has already changed
-      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) || (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
-        memset(&modecharinfo[i], 0, sizeof modecharinfo[i]);
+      if ((modecharinfo[i].type == MODETYPE_PREFIX && is_prefix) ||
+          (modecharinfo[i].type != MODETYPE_PREFIX && !is_prefix)) {
+        clear_mode_info(&modecharinfo[i]);
       }
     }
   }
@@ -2961,6 +3684,8 @@ static void update_chanmodes(mode_info_t *modes, int is_prefix)
     // assume that if +e/+I are list-type modes that they are exempts and invites
     use_exempts = (MODE_TYPE('e') == MODETYPE_LIST);
     use_invites = (MODE_TYPE('I') == MODETYPE_LIST);
+  } else if (prefix_changed) {
+    resync_members_for_prefix_change();
   }
 }
 
@@ -2971,13 +3696,14 @@ static int process_chanmodes(char *value)
   mode_type_t modetype = MODETYPE_LIST;
   mode_info_t modes[256];
 
-  memset(&modes, 0, sizeof modes);
+  init_mode_info_array(modes);
 
   while (*value) {
     // parse all modes until ','
     while (*value && isalnum((unsigned char)*value)) {
       modes[(unsigned char)*value].type = modetype;
       modes[(unsigned char)*value].prefix = '\0';
+      modes[(unsigned char)*value].rank = PREFIX_RANK_NONE;
       debug2("Learned mode type: +%c type %s", *value, MODE_TYPE_STR(modetype));
       value++;
     }
@@ -3010,8 +3736,9 @@ static int process_prefix(const char *value)
 {
   const char *prefix = value;
   mode_info_t modes[256];
+  uint8_t rank = 0;
 
-  memset(&modes, 0, sizeof modes);
+  init_mode_info_array(modes);
 
   if (*value++ != '(') {
     return -1;
@@ -3030,7 +3757,17 @@ static int process_prefix(const char *value)
     }
     modes[(unsigned char)*value].type = MODETYPE_PREFIX;
     modes[(unsigned char)*value].prefix = *prefix;
+    /* Rank is the position in the PREFIX token, 0 = highest. Prefix modes
+     * ranked at or beyond MAX_PREFIX_MODES are still parsed correctly but
+     * cannot be tracked per member (the bitset is only that wide). */
+    modes[(unsigned char)*value].rank = rank;
+    if (rank == MAX_PREFIX_MODES)
+      putlog(LOG_MISC, "*", "Warning: isupport PREFIX has more than %d prefix "
+             "modes; per-member tracking disabled for prefix mode +%c and beyond",
+             MAX_PREFIX_MODES, *value);
     debug3("Learned mode type: +%c type %s, prefixchar %c", *value, MODE_TYPE_STR(MODETYPE_PREFIX), *prefix);
+    if (rank < PREFIX_RANK_NONE)
+      rank++;
     value++;
     prefix++;
   }
@@ -3045,11 +3782,14 @@ static int process_prefix(const char *value)
 static int irc_isupport(char *key, char *isset_str, char *value)
 {
   int isset = !strcmp(isset_str, "1");
+  int reparse = 0;
 
   if (!strcmp(key, "WHOX")) {
     use_354 = isset;
   } else if (!strcmp(key, "MODES")) {
-    isupport_parseint(key, isset ? value : NULL, 3, 64, 1, 3, &modesperline);
+    /* Clamp to the fixed outbound queue capacity. */
+    isupport_parseint(key, isset ? value : NULL, 3, MODEQUEUE_MAX, 1, 3,
+                      &modesperline);
   } else if (!strcmp(key, "MAXLIST")) {
     parse_maxlist(isset ? value : NULL);
   } else if (!strcmp(key, "MAXEXCEPTS")) {
@@ -3070,6 +3810,8 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
     if (process_chanmodes(value)) {
       putlog(LOG_MISC, "*", "Error: isupport unable to parse CHANMODES=%s, ignoring", isset ? value : "(unset)");
+    } else {
+      reparse = 1;
     }
   } else if (!strcmp(key, "PREFIX")) {
     if (!isset) {
@@ -3077,8 +3819,12 @@ static int irc_isupport(char *key, char *isset_str, char *value)
     }
     if (process_prefix(value)) {
       putlog(LOG_MISC, "*", "Error: isupport unable to parse PREFIX=%s, ignoring", isset ? value : "(unset)");
+    } else {
+      reparse = 1;
     }
   }
+  if (reparse)
+    reparse_all_channel_modes();
   return 0;
 }
 

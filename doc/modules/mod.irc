@@ -87,8 +87,8 @@ There are also some variables you can set in your config file:
 
   set mode-buf-length 200
 
-      Set this to the maximum number of bytes to send in the arguments
-      of modes sent to the server. Most servers default this to 200.
+      Compatibility setting. Outbound MODE lines are split automatically
+      using Eggdrop's IRC line-length budget.
 
   unbind msg - hello *msg:hello
   bind msg - myword *msg:hello
@@ -148,15 +148,15 @@ Use the following settings only if you set 'net-type' to IRCnet!
       Some networks allow you to stack lots of channel modes into one
       line. They're all guaranteed to support at least 3, so that's the
       default. If you know your network supports more, you may want to
-      adjust this. This setting is limited to 6, although if you want to
-      use a higher value, you can modify this by changing the value of
-      MODES_PER_LINE_MAX in src/chan.h and recompiling the bot.
+      adjust this. The server's MODES token can also update it. This setting
+      is limited to 32, and Eggdrop may split earlier to stay within IRC line
+      length limits.
 
   set include-lk 1
 
-      Some networks don't include the +l limit and +k or -k key modes in
-      the modes-per-line (see above) limitation. Set include-lk to 0 for
-      these networks.
+      Compatibility setting. +l and +k/-k are queued as ordinary modes and
+      are counted by the same modes-per-line and line-length limits as other
+      modes.
 
   set use-354 0
 

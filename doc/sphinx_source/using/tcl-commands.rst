@@ -1359,6 +1359,34 @@ getchanmode <channel>
 
   Module: irc
 
+^^^^^^^^^^^^^^^^^
+splitmode <modes>
+^^^^^^^^^^^^^^^^^
+
+  Description: splits a channel mode string into a list of two-element lists,
+  each containing a signed mode and its argument. Modes without an argument
+  have an empty string as their second element. The order and repeated modes
+  are preserved. Pass the mode word and its space-separated arguments as one
+  Tcl argument, without the channel name. A missing initial sign means ``+``.
+  IRC trailing-parameter syntax (a leading ``:``) is supported; Tcl quoting
+  inside the mode string is not interpreted.
+
+  Argument handling follows the effective ISUPPORT ``CHANMODES`` and
+  ``PREFIX`` values. Flag modes take no argument; list, key and prefix modes
+  take an argument with either sign; limit-type modes take one only with
+  ``+``. An unknown mode, missing required argument or surplus argument
+  raises a Tcl error. Before connecting, parsing uses the ISUPPORT defaults;
+  server-specific modes may be unknown until their definitions are available.
+
+  For example, with ``CHANMODES=beI,k,lj,imnpstcC``::
+
+    splitmode "+nkcCj key 5:10"
+    # Returns: {+n {}} {+k key} {+c {}} {+C {}} {+j 5:10}
+
+  Returns: a list of mode/argument pairs, or an empty list for an empty string
+
+  Module: irc
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 jump [server [[+]port [password]]]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3621,6 +3649,8 @@ The following is a list of bind types and how they work. Below each bind type is
   procname <key> <isset> <value>
  
   Description: triggered when the value of an isupport key changes. The mask is matched against the isupport key. If the value is not set, isset is 0 and the value is the empty string. Because the empty string is valid value, use isset to distinguish empty string values from a key being unset. The bind is called before the change is processed, so [isupport isset]/[isupport get] return the old value. A return value other than 0 makes Eggdrop ignore the change and revert to the old value. After a disconnect from the server, all isupport values are reset to default, but $::server will be empty, so that case can be caught and ignored.
+
+  Note: this bind fires on value *changes* only, so a proc bound after values were already received would otherwise never see them. To close that gap the bind is also replayed -- fired once for every currently-known key with its current value -- whenever a module that consumes isupport is (re)loaded. Procs must therefore be idempotent: receiving a value identical to the one already in effect must be harmless. The replay uses the same arguments as a normal change, so $::server may be non-empty during it.
 
   Module: server
 
