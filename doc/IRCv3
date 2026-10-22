@@ -42,12 +42,14 @@ The following capabilities are supported by Eggdrop:
   -   account-notify
   -   account-tag
   -   away-notify
+  -   batch
   -   BOT 005 mode
   -   cap-notify
   -   chghost
   -   echo-message
   -   extended-join
   -   invite-notify
+  -   labeled-response
   -   message-tags
   -   Monitor
   -   server-time
