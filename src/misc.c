@@ -355,7 +355,8 @@ char *join_str_array(char **argv, int argc, char *delim, char *outbuf, size_t ou
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  char *p, *u = 0, *h = 0, *ss;
+  const char *p, *u = 0, *h = 0;
+  char *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
@@ -584,7 +585,7 @@ void putlog (int type, char *chname, const char *format, ...)
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
-  egg_vsnprintf(out, LOGLINEMAX - tsl, format, va);
+  vsnprintf(out, LOGLINEMAX - tsl, format, va);
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
@@ -1302,6 +1303,13 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
 
   if (f)
     lines = display_tellhelp(idx, file, f, flags);
+  else if (!strstr(file, " module")) {
+    char file_module[1024];
+    snprintf(file_module, sizeof file_module, "%s module", file);
+    f = resolve_help(HELP_DCC | fl, file_module);
+    if (f)
+      lines = display_tellhelp(idx, file_module, f, flags);
+  }
   if (!lines && !(fl & HELP_TEXT))
     dprintf(idx, "%s\n", IRC_NOHELP2);
 }

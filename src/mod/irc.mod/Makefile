@@ -34,9 +34,9 @@ distclean: clean
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/base64.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h .././irc.mod/irc.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/explicit_bzero.h \
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h .././irc.mod/irc.h \
  ../../../src/mod/server.mod/server.h \
  ../../../src/mod/channels.mod/channels.h .././irc.mod/chan.c \
  .././irc.mod/mode.c .././irc.mod/cmdsirc.c .././irc.mod/msgcmds.c \

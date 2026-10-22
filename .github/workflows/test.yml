@@ -17,7 +17,7 @@ jobs:
       - name: Install build + coverage deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential autoconf tcl-dev libssl-dev lcov
+          sudo apt-get install -y build-essential autoconf tcl-dev libssl-dev lcov rsync
 
       - name: Configure + build eggdrop (--enable-coverage, debug)
         run: |
@@ -37,7 +37,14 @@ jobs:
 
       - name: Run pytest (populates .gcda, writes junit XML)
         working-directory: tests
-        run: uv run --no-managed-python pytest --junitxml=results.xml -v
+        env:
+          # Give each spawned bot its own .gcda tree. Without this they all
+          # merge into the same files and concurrent merges corrupt them.
+          # The capture step below merges the per-test trees back together.
+          EGGDROP_GCOV_PREFIX: 1
+        run: |
+          ulimit -n 8192
+          uv run --no-managed-python pytest --junitxml=results.xml -v
 
       - name: Publish test report
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
@@ -61,16 +68,39 @@ jobs:
       - name: Capture coverage with lcov
         if: success()
         run: |
-          lcov --capture --directory . --output-file coverage.info \
-               --rc lcov_branch_coverage=1 \
-               --ignore-errors source,unused
+          # GCOV_PREFIX put each test's .gcda under its own tmpdir, so
+          # merge them into one tree before capturing. The .gcno notes
+          # stay in the build tree and have to be copied in beside the
+          # data, which is what lcov expects to find.
+          MERGED=/tmp/eggcov-merged
+          rm -rf "$MERGED"
+          first=1
+          for d in /tmp/pytest-of-runner/pytest-current/*/gcov; do
+            [ -d "$d/src" ] || continue
+            if [ $first = 1 ]; then
+              cp -a "$d" "$MERGED"; first=0
+            else
+              gcov-tool merge "$MERGED" "$d" -o "$MERGED.new" \
+                && rm -rf "$MERGED" && mv "$MERGED.new" "$MERGED"
+            fi
+          done
+          [ -d "$MERGED/src" ] || { echo "no coverage data found"; exit 1; }
+          rsync -a --include='*/' --include='*.gcno' --exclude='*' \
+                src/ "$MERGED/src/"
+
+          # Branch coverage is omitted deliberately: GCC's branch counters
+          # lose updates on eggdrop's threaded DNS paths even with
+          # -fprofile-update=atomic, and geninfo then rejects the run over
+          # negative counts. Line coverage is sound.
+          lcov --capture --directory "$MERGED" --output-file coverage.info \
+               --ignore-errors source,unused,empty,negative
           lcov --remove coverage.info '/usr/*' --output-file coverage.info \
-               --ignore-errors unused
+               --ignore-errors unused,empty
           lcov --summary coverage.info | tee coverage-summary.txt
 
       - name: Generate HTML report
         if: success()
-        run: genhtml coverage.info --output-directory coverage-html --branch-coverage
+        run: genhtml coverage.info --output-directory coverage-html
 
       - name: Write job summary
         if: success()
