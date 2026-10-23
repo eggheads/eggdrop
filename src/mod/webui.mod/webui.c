@@ -70,7 +70,11 @@ static void put_404(int idx) {
     "Server: %s\r\n"
     "\r\n"
     "404 Not Found",
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   response = nmalloc(i + 1);
   sprintf(response,
     "HTTP/1.1 404 \r\n" /* textual phrase is OPTIONAL */
@@ -79,7 +83,11 @@ static void put_404(int idx) {
     "Server: %s\r\n"
     "\r\n"
     "404 Not Found",
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   tputs(dcc[idx].sock, response, i);
   nfree(response);
   killsock(dcc[idx].sock);
@@ -91,12 +99,12 @@ static void put_404(int idx) {
 struct file_cache_struct {
   char filename[27];
   char content_type[25];
-  struct timespec st_mtim;
+  time_t mtime;
   char *data;
 } file_cache[3] = {
-  {"webui/apple-touch-icon.png", "image/png",                { .tv_sec = -1, .tv_nsec = -1 }, NULL},
-  {"webui/favicon.ico",          "image/x-icon",             { .tv_sec = -1, .tv_nsec = -1 }, NULL},
-  {"webui/index.html",           "text/html; charset=utf-8", { .tv_sec = -1, .tv_nsec = -1 }, NULL}
+  {"webui/apple-touch-icon.png", "image/png",                -1, NULL},
+  {"webui/favicon.ico",          "image/x-icon",             -1, NULL},
+  {"webui/index.html",           "text/html; charset=utf-8", -1, NULL}
 };
 
 static void put_file(int idx, int file_cache_index) {
@@ -109,8 +117,7 @@ static void put_file(int idx, int file_cache_index) {
     putlog(LOG_MISC, "*", "WEBUI error: fstat(%s): %s", f->filename, strerror(errno));
     return;
   }
-  if ((f->st_mtim.tv_sec != sb.st_mtim.tv_sec) ||
-      (f->st_mtim.tv_nsec != sb.st_mtim.tv_nsec)) {
+  if (f->mtime != sb.st_mtime) {
     if ((fd = open(f->filename, O_RDONLY)) < 0) {
       putlog(LOG_MISC, "*", "WEBUI error: open(%s): %s", f->filename, strerror(errno));
       put_404(idx);
@@ -129,8 +136,7 @@ static void put_file(int idx, int file_cache_index) {
       put_404(idx);
       return;
     }
-    f->st_mtim.tv_sec = sb.st_mtim.tv_sec;
-    f->st_mtim.tv_nsec = sb.st_mtim.tv_nsec;
+    f->mtime = sb.st_mtime;
   }
   i = snprintf(NULL, 0,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
@@ -139,7 +145,11 @@ static void put_file(int idx, int file_cache_index) {
     "Server: %s\r\n"
     "\r\n",
     (intmax_t) sb.st_size, f->content_type,
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   response = nmalloc(i + sb.st_size);
   sprintf(response,
     "HTTP/1.1 200 \r\n" /* textual phrase is OPTIONAL */
@@ -148,7 +158,11 @@ static void put_file(int idx, int file_cache_index) {
     "Server: %s\r\n"
     "\r\n",
     (intmax_t) sb.st_size, f->content_type,
-    stealth_telnets ? "nginx/1.28.1" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #ifdef EGG_PATCH
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER "+" EGG_PATCH);
+    #else
+    stealth_telnets ? "nginx/1.28.0" : "Eggdrop/" EGG_STRINGVER);
+    #endif
   memcpy(response + i, f->data, sb.st_size);
   tputs(dcc[idx].sock, response, i + sb.st_size);
   nfree(response);
@@ -552,9 +566,9 @@ char *webui_start(Function *global_funcs)
 #ifdef TLS
   global = global_funcs;
   module_register(MODULE_NAME, webui_table, 0, 10);
-  if (!module_depend(MODULE_NAME, "eggdrop", 110, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 110, 2)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.10.0 or later.";
+    return "This module requires Eggdrop 1.10.2 or later.";
   }
   add_hook(HOOK_DCC_TELNET_HOSTRESOLVED, (Function) webui_dcc_telnet_hostresolved);
   add_hook(HOOK_WEBUI_FRAME, (Function) webui_frame);

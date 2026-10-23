@@ -22,7 +22,21 @@
 
 static struct flag_record user = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+int extban_parse(const char *mask, char *type, const char **arg);
 
+/* Placeholder code if we only want to allow advertised extbans to be set
+static int is_extban_flag_advertised(char flag)
+{
+  const char *value, *comma, *types;
+
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0])
+    return 0;
+  comma = strchr(value, ',');
+  types = comma ? comma + 1 : value;
+  return strchr(types, flag) ? 1 : 0;
+}
+*/
 
 /* RFC 1035/2812- hostmasks can't be longer than 63 characters */
 static void truncate_mask_hostname(char *s) {
@@ -41,6 +55,8 @@ static void truncate_mask_hostname(char *s) {
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
+  char extbanflag = 0;
+  int extban_enabled = 1;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -121,26 +137,40 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       par[MASKREASON_MAX] = 0;
     if (strlen(who) > UHOSTMAX - 4)
       who[UHOSTMAX - 4] = 0;
-    /* Fix missing ! or @ BEFORE checking against myself */
-    if (!strchr(who, '!')) {
-      if (!strchr(who, '@'))
-        egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick ban */
-      else
-        egg_snprintf(s, sizeof s, "*!%s", who);
-    } else if (!strchr(who, '@'))
-      egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
-    else
+    if (is_extban_mask(who)) {
       strlcpy(s, who, sizeof s);
-    if ((me = module_find("server", 0, 0)) && me->funcs) {
-      egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-      if (match_addr(s, s1)) {
-        dprintf(idx, "I'm not going to ban myself.\n");
-        putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);
-        return;
+      /* If its an extban, check if it is supported by the server */
+      if (extban_parse(s, &extbanflag, NULL)) {
+        extban_enabled = extban_flag_supported(extbanflag);
+        if (!extban_is_matchable(s) && par[0] != '*') {
+          dprintf(idx, "Extban type '%c' cannot be matched by Eggdrop"
+                       ", so it is forced to be sticky.\n", extbanflag);
+          sticky = 1;
+
+        }
       }
+    } else {
+      /* Fix missing ! or @ BEFORE checking against myself */
+      if (!strchr(who, '!')) {
+        if (!strchr(who, '@'))
+          egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick ban */
+        else
+          egg_snprintf(s, sizeof s, "*!%s", who);
+      } else if (!strchr(who, '@'))
+        egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
+      else
+        strlcpy(s, who, sizeof s);
+      if ((me = module_find("server", 0, 0)) && me->funcs) {
+        egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
+                     me->funcs[SERVER_BOTUSERHOST]);
+        if (match_addr(s, s1)) {
+          dprintf(idx, "I'm not going to ban myself.\n");
+          putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);
+          return;
+        }
+      }
+      truncate_mask_hostname(s);
     }
-    truncate_mask_hostname(s);
     if (chan) {
       u_addban(chan, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
@@ -158,8 +188,13 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       /* Avoid unnesessary modes if you got +dynamicbans, and there is
        * no reason to set mode if irc.mod aint loaded. (dw 001120)
        */
-      if ((me = module_find("irc", 0, 0)))
-        (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+      if ((me = module_find("irc", 0, 0))) {
+        if (!extbanflag || extban_enabled)
+          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+        else
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+                                    extbanflag, EXTBAN_NOT_ENABLED3);
+      }
     } else {
       u_addban(NULL, s, dcc[idx].nick, par,
                expire_time ? now + expire_time : 0, 0);
@@ -174,11 +209,68 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
                s, par);
         dprintf(idx, "New ban: %s (%s)\n", s, par);
       }
-      if ((me = module_find("irc", 0, 0)))
-        for (chan = chanset; chan != NULL; chan = chan->next)
-          (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+      if ((me = module_find("irc", 0, 0))) {
+        if (!extbanflag || extban_enabled) {
+          for (chan = chanset; chan != NULL; chan = chan->next)
+            (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
+        } else
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+                                    extbanflag, EXTBAN_NOT_ENABLED3);
+      }
     }
   }
+}
+
+
+static void cmd_pls_extban(struct userrec *u, int idx, char *par)
+{
+  char *flagstr, *arg;
+  char extban[UHOSTLEN], forwarded[LOGLINEMAX];
+  char flag;
+  char prefix = '\0';
+  const char *value;
+
+/* Mostly for not knowing what is allowed and the extban prefix while not
+ * connected, we disable the command if we don't know what it is
+ */
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0]) {
+    dprintf(idx, "You must be connected to a server with EXTBAN support to use +extban.\n");
+    return;
+  }
+
+  flagstr = newsplit(&par);
+  if (!flagstr[0] || flagstr[1]) {
+    dprintf(idx, "Usage: +extban <flag> <value> [channel] [%%<XyXdXhXm>] [reason]\n");
+    return;
+  }
+
+  flag = flagstr[0];
+/* Placeholder code if we want to only allow advertised extbans to be set
+  if (!is_extban_flag_advertised(flag)) {
+    dprintf(idx, "The %c extban is not enabled on this server.\n", flag);
+    return;
+  }
+ */
+  arg = newsplit(&par);
+  if (!arg[0]) {
+    dprintf(idx, "Usage: +extban <flag> <value> [channel] [%%<XyXdXhXm>] [reason]\n");
+    return;
+  }
+  if (!isalnum(flag)) {
+    dprintf(idx, "Invalid value, letters and numbers only");
+    return;
+  }
+
+  get_extban_prefix(&prefix);
+  if (prefix)
+    egg_snprintf(extban, sizeof extban, "%c%c:%s", prefix, flag, arg);
+  else
+    egg_snprintf(extban, sizeof extban, "%c:%s", flag, arg);
+
+  egg_snprintf(forwarded, sizeof forwarded, "%s%s%s", extban,
+               par[0] ? " " : "", par);
+  cmd_pls_ban(u, idx, forwarded);
 }
 
 static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
@@ -430,7 +522,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 
 static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 {
-  int console = 0, i = 0, j;
+  int console = 0, i, j;
   struct chanset_t *chan = NULL;
   char s[UHOSTLEN], *ban, *chname, *mask;
   masklist *b;
@@ -950,7 +1042,7 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
 
 static void cmd_stick_yn(int idx, char *par, int yn)
 {
-  int i = 0, j;
+  int i, j;
   struct chanset_t *chan, *achan;
   char *stick_type, s[UHOSTLEN], chname[CHANNELLEN + 1];
   module_entry *me;
@@ -1534,7 +1626,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
             len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, 
+            egg_snprintf(answers + len, (sizeof answers) - len,
                 (len == 0) ? "%s" : " %s", list[0]);        /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid mode.\n",
@@ -1624,6 +1716,7 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
  */
 static cmd_t C_dcc_irc[] = {
   {"+ban",     "ol|ol", (IntFunc) cmd_pls_ban,    NULL},
+  {"+extban",  "ol|ol", (IntFunc) cmd_pls_extban, NULL},
   {"+exempt",  "ol|ol", (IntFunc) cmd_pls_exempt, NULL},
   {"+invite",  "ol|ol", (IntFunc) cmd_pls_invite, NULL},
   {"+chan",    "n",     (IntFunc) cmd_pls_chan,   NULL},

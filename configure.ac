@@ -1,7 +1,7 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
 AC_PREREQ([2.71])
-AC_INIT([Eggdrop],[1.10.1],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
+AC_INIT([Eggdrop],[1.10.2],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2025 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
@@ -83,6 +83,9 @@ AC_CHECK_PROG(UNAME,uname,uname)
 # Do this *before* EGG_CHECK_OS
 EGG_ENABLE_STRIP
 
+# Optional: build with gcov instrumentation for the test suite.
+EGG_ENABLE_COVERAGE
+
 
 # Checks for system libraries.
 EGG_CHECK_LIBS
@@ -118,7 +121,7 @@ AX_TYPE_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock_gettime dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton memset_s snprintf strlcpy vsnprintf])
+AC_CHECK_FUNCS([clock_gettime dprintf explicit_bzero memset_explicit explicit_memset getrandom memset_s snprintf strlcpy])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP

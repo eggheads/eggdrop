@@ -95,7 +95,7 @@
 
 /* This allows us to make things a lot less messy in modules.c. */
 #ifndef STATIC
-#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_RLD) && !defined(MOD_USE_LOADER))
+#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_LOADER))
 #    include "Error: You can't compile with module support on this system (try make static)."
 #  else
 #    ifdef MOD_USE_DL
@@ -104,7 +104,6 @@
 #      endif
 #      undef MOD_USE_SHL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_SHL
@@ -113,7 +112,6 @@
 #      endif
 #      undef MOD_USE_DL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_DYLD
@@ -122,16 +120,6 @@
 #      endif
 #      undef MOD_USE_DL
 #      undef MOD_USE_SHL
-#      undef MOD_USE_RLD
-#      undef MOD_USE_LOADER
-#    endif
-#    ifdef MOD_USE_RLD
-#      ifndef HAVE_RLD_LOAD
-#        include "Error: We have detected that rld_load() should be used to load modules on this OS; but it was not found. Please use 'make static'."
-#      endif
-#      undef MOD_USE_DL
-#      undef MOD_USE_SHL
-#      undef MOD_USE_DYLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_LOADER
@@ -141,7 +129,6 @@
 #      undef MOD_USE_DL
 #      undef MOD_USE_SHL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #    endif
 #  endif
 #endif
@@ -266,11 +253,13 @@ typedef uint32_t IP;
 
 /* The following functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
+#define egg_inet_aton(src, dst) inet_pton(AF_INET, src, dst)
 #define egg_memcpy memcpy
 #define egg_memset memset
 #define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
 #define egg_strncasecmp strncasecmp
+#define egg_vsnprintf vsnprintf
 #define my_memcpy memcpy
 
 /***********************************************************************/
@@ -288,6 +277,7 @@ typedef int (*IntFunc) ();
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 typedef struct {
   int family;
@@ -495,6 +485,7 @@ struct dupwait_info {
 #define STAT_PAGE    0x00080    /* page output to the user              */
 #define STAT_SERV    0x00100    /* this is a server connection          */
 #define STAT_WS      0x00200    /* webui websocket                      */
+#define STAT_LOSTDCC 0x00400    /* closed by remote, call lostdcc()     */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -607,7 +598,8 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
-#define SOCK_WS         0x1000  /* webui websocket                      */
+#define SOCK_WEBUI      0x1000  /* webui websocket pre-upgrade          */
+#define SOCK_WS         0x2000  /* webui websocket after framed upgrade */
 
 /* Flags to sock_has_data
  */
@@ -746,6 +738,12 @@ enum {
 #ifndef MAX
   #define MAX(a,b) (((a)>(b))?(a):(b))
 #endif
+
+#define MAX_IRC_TOKENS 64 // TODO: does this make sense?
+typedef struct parsed_irc {
+  size_t argc;
+  char *argv[MAX_IRC_TOKENS];
+} parsed_irc_t;
 
 #ifdef EGG_TDNS
 #include <pthread.h>

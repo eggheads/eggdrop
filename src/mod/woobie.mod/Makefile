@@ -23,7 +23,7 @@ depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/woobie.c -MT ../woobie.o > .depend
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~ *.gcda *.gcno
 
 distclean: clean
 
@@ -33,7 +33,6 @@ distclean: clean
  ../../../src/eggdrop.h ../../../src/compat/in6.h ../../../src/flags.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/base64.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/explicit_bzero.h \
- ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h
+ ../../../src/compat/base64.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h

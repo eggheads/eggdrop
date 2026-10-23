@@ -163,8 +163,10 @@ void fatal(const char *s, int recoverable)
 
   putlog(LOG_MISC, "*", "* %s", s);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].sock >= 0)
+    if (dcc[i].sock >= 0) {
       killsock(dcc[i].sock);
+      dcc[i].sock = -1;
+    }
 #ifdef TLS
   ssl_cleanup();
 #endif
@@ -552,10 +554,10 @@ static void core_secondly()
   uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
+  check_expired_dcc();
   cnt++;
   if (cnt >= 10) {              /* Every 10 seconds */
     cnt = 0;
-    check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
       if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
@@ -1064,9 +1066,8 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
 #ifdef EGG_TDNS
-  /* initialize dns_thread_head before chanprog() */
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
+  /* initialize attr and dns_thread_head before chanprog() */
+  init_tdns();
 #endif
   ctime_r(&now, s);
   s[24] = 0;
