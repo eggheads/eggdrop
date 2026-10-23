@@ -283,25 +283,19 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (const char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
+      if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
+        putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
       if (st->str == botnetnick) {
-        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
-          putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
         botnet_change(st->str);
       } else if (st->str == logfile_suffix) {
-        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
-          putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
         logsuffix_change(st->str);
       } else if (st->str == firewall) {
-        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
-          putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
         splitc(firewall, st->str, ':');
         if (!firewall[0])
           strcpy(firewall, st->str);
         else
           firewallport = atoi(st->str);
-      } else
-        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
-          putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
+      }
       if ((st->flags) && (s[0])) {
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
