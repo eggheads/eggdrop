@@ -258,7 +258,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
                         EGG_CONST char *name1,
                         EGG_CONST char *name2, int flags)
 {
-  char *s;
+  const char *s;
   strinfo *st = (strinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
@@ -281,30 +281,24 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
     }
-    s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
+    s = (const char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
       if (st->str == botnetnick) {
-        if (strlen(s) > abs(st->max)) {
+        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
           putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
-          s[abs(st->max)] = 0;
-        }
-        botnet_change(s);
+        botnet_change(st->str);
       } else if (st->str == logfile_suffix) {
-        if (strlen(s) > abs(st->max)) {
+        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
           putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
-          s[abs(st->max)] = 0;
-        }
-        logsuffix_change(s);
+        logsuffix_change(st->str);
       } else if (st->str == firewall) {
-        if (strlen(s) > abs(st->max)) {
+        if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
           putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
-          s[abs(st->max)] = 0;
-        }
-        splitc(firewall, s, ':');
+        splitc(firewall, st->str, ':');
         if (!firewall[0])
-          strcpy(firewall, s);
+          strcpy(firewall, st->str);
         else
-          firewallport = atoi(s);
+          firewallport = atoi(st->str);
       } else
         if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
           putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
