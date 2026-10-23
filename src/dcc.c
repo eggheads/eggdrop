@@ -25,6 +25,7 @@
 
 #include "main.h"
 #include <errno.h>
+#include "modules.h"
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
@@ -359,14 +360,14 @@ static char *get_bot_pass(struct userrec *u) {
       if (!pass) {
         pass = pass2;
         if (encrypt_pass) {
-	  /* get_user() returns a pointer of struct user_entry
+          /* get_user() returns a pointer of struct user_entry
            * and set_user()->pass2_set() could free() and realloc it
-	   * so fetch it again with get_user()
-	   */
+           * so fetch it again with get_user()
+           */
           set_user(&USERENTRY_PASS, u, pass);
           pass = get_user(&USERENTRY_PASS2, u);
-	}
-      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        }
+      } else if (crypto_verify(pass2, pass) && encrypt_pass2)
         pass = pass2;
     } else if (pass && encrypt_pass2)
         set_user(&USERENTRY_PASS2, u, pass);
@@ -625,7 +626,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
-  ret = strcmp(digest_string, remote_digest);
+  ret = crypto_verify(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
 
@@ -918,8 +919,10 @@ static void append_line(int idx, char *line)
   struct msgq *p, *q;
   struct chat_info *c = (dcc[idx].type == &DCC_CHAT) ? dcc[idx].u.chat :
                         dcc[idx].u.file->chat;
+  module_entry *me;
+  char line_r[LOGLINELEN];
 
-  if (c->current_lines > 1000) {
+  if (c->current_lines > 2000) {
     /* They're probably trying to fill up the bot nuke the sods :) */
     for (p = c->buffer; p; p = q) {
       q = p->next;
@@ -927,8 +930,16 @@ static void append_line(int idx, char *line)
       nfree(p);
     }
     c->buffer = 0;
+
+    /* Turn paging off to avoid infinite loop */
     dcc[idx].status &= ~STAT_PAGE;
-    do_boot(idx, botnetnick, "too many pages - sendq full");
+    if ((me = module_find("console", 1, 1))) {
+      Function *func = me->funcs;
+      (func[CONSOLE_DOSTORE]) (idx);
+    }
+    debug0("dcc.c: append_line(): Paging turned off.");
+
+    do_boot(idx, botnetnick, "more than 1000 page lines - sendq full");
     return;
   }
   if ((c->line_count < c->max_line) && (c->buffer == NULL)) {
@@ -940,13 +951,17 @@ static void append_line(int idx, char *line)
       q = NULL;
     else
       for (q = c->buffer; q->next; q = q->next);
+    /* get_data_ptr() -> n_malloc() could destroy line, so copy line to line_r
+     * to make append_line() reentrant
+     */
+    if (strlcpy(line_r, line, sizeof line_r) >= l)
+      l = strlen(line_r);
 
     p = get_data_ptr(sizeof(struct msgq));
-
     p->len = l;
     p->msg = get_data_ptr(l + 1);
     p->next = NULL;
-    strcpy(p->msg, line);
+    strlcpy(p->msg, line_r, l + 1);
     if (q == NULL)
       c->buffer = p;
     else
@@ -1269,7 +1284,10 @@ static void dcc_telnet(int idx, char *buf, int i)
     return;
   }
   /* Buffer data received on this socket. */
-  sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
+  if (!strcmp(dcc[idx].nick, "(webui)"))
+    sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER | SOCK_WEBUI);
+  else
+    sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
   if (port < 1024) {
     putlog(LOG_BOTS, "*", DCC_BADSRC, iptostr(&dcc[i].sockname.addr.sa), port);
@@ -1320,15 +1338,23 @@ static void dcc_telnet(int idx, char *buf, int i)
  */
 void dcc_telnet_hostresolved2(int i, int idx) {
   int sock, j;
+  char userhost[7 + UHOSTLEN]; /* telnet@ */
+  /* Read EGGDROP_TEST once on first call; lets the integration test
+   * harness redirect the ident lookup to an unprivileged port. */
+  static int ident_target_port = 0;
+  if (!ident_target_port)
+    ident_target_port = getenv("EGGDROP_TEST") ? 1113 : 113;
+
+  snprintf(userhost, sizeof userhost, "telnet@%s", dcc[i].host);
+  changeover_dcc(i, &DCC_IDENTWAIT, 0);
 
   /* Skip ident lookup if disabled */
   if (identtimeout <= 0) {
     dcc[i].u.ident_sock = dcc[idx].sock;
-    dcc_telnet_got_ident(i, dcc[idx].host);
+    dcc_telnet_got_ident(i, userhost);
     return;
   }
 
-  changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
   sock = -1;
@@ -1347,23 +1373,21 @@ void dcc_telnet_hostresolved2(int i, int idx) {
       setsnport(name, 0);
       if (bind(dcc[j].sock, &name.addr.sa, name.addrlen) < 0)
         debug2("dcc: dcc_telnet_hostresolved(): bind() socket %ld error %s", dcc[j].sock, strerror(errno));
-      setsnport(dcc[j].sockname, 113);
-      if (connect(dcc[j].sock, &dcc[j].sockname.addr.sa,
-          dcc[j].sockname.addrlen) < 0 && (errno != EINPROGRESS)) {
+      setsnport(dcc[j].sockname, ident_target_port);
+      if ((sock = connect_nonblock(dcc[j].sock, &dcc[j].sockname, 0)) < 0) {
+        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
         killsock(dcc[j].sock);
         lostdcc(j);
-        putlog(LOG_MISC, "*", DCC_IDENTFAIL, dcc[i].host, strerror(errno));
-        j = 0;
+        j = -1;
       }
-      sock = dcc[j].sock;
     }
   }
   if (j < 0) {
-    dcc_telnet_got_ident(i, dcc[idx].host);
+    dcc_telnet_got_ident(i, userhost);
     return;
   }
   dcc[j].sock = sock;
-  dcc[j].port = 113;
+  dcc[j].port = ident_target_port;
   dcc[j].addr = dcc[i].addr;
   strcpy(dcc[j].host, dcc[i].host);
   strcpy(dcc[j].nick, "*");
@@ -2305,9 +2329,9 @@ void dcc_ident(int idx, char *buf, int len)
   lostdcc(idx);
 }
 
-void eof_timeout_dcc_ident(int idx, const char *s)
+static void eof_timeout_dcc_ident(int idx, const char *s)
 {
-  char buf[7 + UHOSTLEN];
+  char buf[7 + UHOSTLEN]; /* telnet@ */
   int i;
 
   for (i = 0; i < dcc_total; i++)

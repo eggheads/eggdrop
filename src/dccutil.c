@@ -155,7 +155,7 @@ void dprintf(int idx, const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(buf, LOGLINEMAX-1, format, va);
+  vsnprintf(buf, LOGLINEMAX-1, format, va);
   va_end(va);
   /* We can not use the return value vsnprintf() to determine where
    * to null terminate. The C99 standard specifies that vsnprintf()
@@ -223,7 +223,7 @@ void chatout(const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -248,7 +248,7 @@ void chanout_but(int x, int chan, const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -353,6 +353,18 @@ void lostdcc(int n)
   dcc[n].type = &DCC_LOST;
 }
 
+/* Mark an entry as lost, to be reaped in the mainloop asynchronously.
+ * Avoids reentrancy issues
+ */
+void lostdcc_deferred(int n)
+{
+  /* sanity check */
+  if (n < 0 || n >= max_dcc) {
+    return;
+  }
+  dcc[n].status |= STAT_LOSTDCC;
+}
+
 /* Remove entry from dcc list. Think twice before using this function,
  * because it invalidates any variables that point to a specific dcc
  * entry!
@@ -368,7 +380,7 @@ void removedcc(int n)
     nfree(dcc[n].u.other);
   dcc_total--;
   if (n < dcc_total)
-    memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
+    dcc[n] = dcc[dcc_total];
   else
     egg_bzero(&dcc[n], sizeof(struct dcc_t));   /* drummer */
 }
@@ -385,6 +397,12 @@ void dcc_remove_lost(void)
       dcc[i].sock = -1;
       removedcc(i);
       i--;
+    } else if (dcc[i].status & STAT_LOSTDCC) {
+      /* intentionally after DCC_LOST cleanup,
+       * so it doesn't clean immediately
+       */
+      dcc[i].status &= ~STAT_LOSTDCC;
+      lostdcc(i);
     }
   }
 }

@@ -25,7 +25,7 @@ depend:
 	$(CC) $(CFLAGS) -MM $(srcdir)/compress.c -MT ../compress.o > .depend
 
 clean:
-	@rm -f .depend *.o *.$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~ *.gcda *.gcno
 
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status
@@ -38,8 +38,7 @@ distclean: clean
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/base64.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../../../src/mod/share.mod/share.h .././compress.mod/compress.h \
- .././compress.mod/tclcompress.c
+ ../../../src/compat/snprintf.h ../../../src/compat/explicit_bzero.h \
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h ../../../src/mod/share.mod/share.h \
+ .././compress.mod/compress.h .././compress.mod/tclcompress.c

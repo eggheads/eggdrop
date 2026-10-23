@@ -60,12 +60,6 @@
 #undef Assert
 
 /* Compatibility functions. */
-#ifdef egg_inet_aton
-#  undef egg_inet_aton
-#endif
-#ifdef egg_vsnprintf
-#  undef egg_vsnprintf
-#endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
 #endif
@@ -422,10 +416,10 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define sock_has_data ((int(*)(int, int))global[248])
 #define bots_in_subtree ((int (*)(tand_t *))global[249])
 #define users_in_subtree ((int (*)(tand_t *))global[250])
-#define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
+/* was egg_inet_aton -- use inet_pton() instead */
 /* 252 - 255 */
 #define egg_snprintf (global[252])
-#define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
+/* was egg_vsnprintf() -- use vsnprintf() instead */
 /* was egg_memset() -- use memset() instead */
 /* was egg_strcasecmp() -- use strcasecmp() instead */
 /* 256 - 259 */
@@ -532,7 +526,9 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define findsock ((int(*)(int))global[327])
 /* 328 - 331 */
 #define stealth_telnets (*(int *)(global[328]))
-
+#define parse_irc ((parsed_irc_t (*)(char *))global[329])
+#define join_str_array ((char *(*)(char **, int, char *, char *, size_t))global[330])
+#define splitcn ((void (*)(char *, char *, char, size_t))global[331])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

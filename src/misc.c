@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
+#include "src/eggdrop.h"
 #include "tandem.h"
 #include "modules.h"
 
@@ -46,7 +47,7 @@ extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
-extern Tcl_Interp *interp;
+time_t now2_last = 0; /* cache expensive localtime() */
 
 char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
 char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
@@ -181,6 +182,8 @@ int my_strcpy(char *a, const char *b)
 }
 
 /* Split first word off of rest and put it in first
+ *
+ * Please use splitcn() instead
  */
 void splitc(char *first, char *rest, char divider)
 {
@@ -198,14 +201,11 @@ void splitc(char *first, char *rest, char divider)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
-/*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
- * terminating null).
+/* As above, but lets you specify the 'max' number of bytes
  *
  * Example of use:
  *
- * char buf[HANDLEN + 1];
- *
- * splitcn(buf, input, "@", HANDLEN);
+ * splitcn(buf, input, '@', sizeof buf);
  *
  * <Cybah>
  */
@@ -269,6 +269,60 @@ char *newsplit(char **rest)
   return r;
 }
 
+// WARNING: modifies original text
+// Split IRC text into words (without the "from" component, which could also start with ':')
+// - replace all ' ' with \0, splitting into words
+// - if a word starts with ':' it is the last word, it can contain spaces
+// - return argc/argv structure (pointers into original text)
+struct parsed_irc parse_irc(char *text)
+{
+  struct parsed_irc result = {.argc = 0};
+
+  while (*text) {
+    while (*text == ' ') {
+      *text++ = '\0';
+    }
+    if (!*text) {
+      break;
+    }
+    if (result.argc == MAX_IRC_TOKENS - 1) {
+      putlog(LOG_MISC, "*", "parse_irc() error: too many tokens, PLEASE REPORT THIS BUG");
+      result.argv[result.argc++] = text;
+      break;
+    } else if (*text == ':') {
+      *text++ = '\0';
+      result.argv[result.argc++] = text;
+      break;
+    } else {
+      result.argv[result.argc++] = text;
+      while (*text && *text != ' ') {
+        text++;
+      }
+    }
+  }
+
+  return result;
+}
+
+char *join_str_array(char **argv, int argc, char *delim, char *outbuf, size_t outbufsiz)
+{
+  size_t written = 0;
+
+  if (!argc) {
+    outbuf[0] = '\0';
+    return outbuf;
+  }
+
+  for (int i = 0; i < argc; i++) {
+    written += snprintf(outbuf + written, outbufsiz - written, "%s%s", argv[i], i == argc - 1 ? "" : delim);
+    if (written >= outbufsiz) {
+      written = outbufsiz - 1;
+      break;
+    }
+  }
+  return outbuf;
+}
+
 /* maskhost(), modified to support custom mask types, as defined
  * by mIRC.
  * Does not require a proper hostmask in 's'. Accepts any strings,
@@ -301,7 +355,8 @@ char *newsplit(char **rest)
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  char *p, *u = 0, *h = 0, *ss;
+  const char *p, *u = 0, *h = 0;
+  char *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
@@ -507,7 +562,6 @@ void putlog (int type, char *chname, const char *format, ...)
   char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
-  static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm t;
 
   if (now2 != now2_last) {
@@ -531,7 +585,7 @@ void putlog (int type, char *chname, const char *format, ...)
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
-  egg_vsnprintf(out, LOGLINEMAX - tsl, format, va);
+  vsnprintf(out, LOGLINEMAX - tsl, format, va);
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
@@ -1249,6 +1303,13 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
 
   if (f)
     lines = display_tellhelp(idx, file, f, flags);
+  else if (!strstr(file, " module")) {
+    char file_module[1024];
+    snprintf(file_module, sizeof file_module, "%s module", file);
+    f = resolve_help(HELP_DCC | fl, file_module);
+    if (f)
+      lines = display_tellhelp(idx, file_module, f, flags);
+  }
   if (!lines && !(fl & HELP_TEXT))
     dprintf(idx, "%s\n", IRC_NOHELP2);
 }

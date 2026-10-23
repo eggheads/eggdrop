@@ -29,7 +29,7 @@ depend:
 	$(CC) -I../.. -I../../src -DMAKING_DEPEND -DHAVE_CONFIG_H -MM *.c > .depend
 
 clean:
-	@rm -f .depend *.o *~
+	@rm -f .depend *.o *~ *.gcda *.gcno
 
 md5: $(OBJS)
 
@@ -45,5 +45,5 @@ md5c.o: md5c.c md5.h ../../src/main.h ../../config.h ../../eggint.h \
  ../../src/flags.h ../../src/proto.h ../../src/misc_file.h \
  ../../src/cmdt.h ../../src/tclegg.h ../../src/tclhash.h ../../src/chan.h \
  ../../src/users.h ../../src/compat/compat.h ../../src/compat/base64.h \
- ../../src/compat/inet_aton.h ../../src/compat/snprintf.h \
- ../../src/compat/explicit_bzero.h ../../src/compat/strlcpy.h
+ ../../src/compat/snprintf.h ../../src/compat/explicit_bzero.h \
+ ../../src/compat/strlcpy.h

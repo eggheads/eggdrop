@@ -105,6 +105,9 @@ if {$argc == 0} {
   puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"
   puts "Options:"
   puts "--------"
+  puts " general options:"
+  puts "  -venv    (path to Python virtual environment to activate)"
+  puts ""
   puts " systemd options:"
   puts "  -systemd (install systemd job instead of cron)"
   puts "  -unitname <name> (specify systemd unit name, implies -systemd)"
@@ -151,6 +154,7 @@ set dir [pwd]
 set delay 10
 set email 1
 set systemd 0
+set venv ""
 catch {exec which kill} kill
 
 # If you renamed your eggdrop binary, you should change this variable
@@ -175,6 +179,20 @@ while {[set opt [newsplit argv]] != ""} {
       set systemd_unitname $unitname_arg
       # -unitname implies -systemd
       set systemd 1
+    }
+    "-venv" {
+      set venv [newsplit argv]
+      if {[string match -* $venv] || $venv eq ""} {
+        puts "*** ERROR: you did not supply a venv path"
+        puts ""
+        exit
+      }
+      set venv [file normalize $venv]
+      if {![file isfile [file join $venv bin activate]]} {
+        puts "*** ERROR: $venv does not appear to be a valid Python virtual environment"
+        puts ""
+        exit
+      }
     }
     "-time" -
     "-1" { set delay 1 }
@@ -342,7 +360,11 @@ if {$systemd} {
   puts $fd ""
   puts $fd "\[Service\]"
   puts $fd "WorkingDirectory=${dir}"
-  puts $fd "ExecStart=${dir}/eggdrop ${config}"
+  if {$venv ne ""} {
+    puts $fd "ExecStart=/bin/sh -c '. [file join ${venv} bin activate] && exec ${dir}/eggdrop ${config}'"
+  } else {
+    puts $fd "ExecStart=${dir}/eggdrop ${config}"
+  }
   puts $fd "ExecReload=${kill} -s HUP \$MAINPID"
   puts $fd "Type=forking"
   puts $fd "Restart=on-abnormal"
@@ -404,7 +426,12 @@ pidfile=\"$pidfile\"
 ########## you probably don't need to change anything below here ##########
 
 cd \$botdir
-
+"
+ if {$venv ne ""} {
+  puts $fd "# activate Python virtual environment
+. '[file join ${venv} bin activate]'"
+ }
+ puts $fd "
 # is there a pid file?
 if test -r \$pidfile
 then
