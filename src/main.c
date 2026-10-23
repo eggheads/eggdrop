@@ -121,9 +121,10 @@ int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
 char version[128];   /* Version info (long form)  */
 char ver[41];        /* Version info (short form) */
 
-volatile sig_atomic_t do_restart = 0; /* .restart has been called, restart ASAP */
-int resolve_timeout = RES_TIMEOUT;    /* Hostname/address lookup timeout        */
-char quit_msg[1024];                  /* Quit message                           */
+volatile sig_atomic_t do_restart = 0;    /* .restart has been called, restart ASAP */
+static volatile sig_atomic_t do_die = 0; /* SIGTERM/SIGINT received, die ASAP      */
+int resolve_timeout = RES_TIMEOUT;       /* Hostname/address lookup timeout        */
+char quit_msg[1024];                     /* Quit message                           */
 
 /* Moved here for n flag warning, put back in do_arg if removed */
 unsigned char cliflags = 0;
@@ -365,12 +366,18 @@ static void got_fpe(int z)
 
 static void got_term(int z)
 {
-  /* Now we die by default on sigterm, but scripts have the chance to
-   * catch the event themselves and cancel shutdown by returning 1
+  /* Shutting down mid-mainloop from a signal handler is not safe (the
+   * signal can arrive while the heap or the user list is in an
+   * inconsistent state), so just flag it and let mainloop() do the work.
    */
-  if (check_tcl_signal("sigterm"))
-    return;
-  kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
+  if (do_die) {
+    /* Second signal while the first is still pending or shutdown is
+     * already in progress: the bot is probably hung, so die immediately
+     * without cleanup.
+     */
+    _exit(1);
+  }
+  do_die = 1;
 }
 
 static void got_quit(int z)
@@ -729,6 +736,20 @@ static void mainloop(int toplevel)
    * calls to periodic_timers
    */
   now = time(NULL);
+
+  /* SIGTERM or SIGINT was received. We die by default, but scripts have
+   * the chance to catch the event themselves and cancel shutdown by
+   * returning 1.
+   */
+  if (do_die) {
+    /* Leave do_die set while shutting down, so a repeated signal still
+     * forces an immediate exit if the sigterm bind or the cleanup hangs.
+     */
+    if (check_tcl_signal("sigterm"))
+      do_die = 0;
+    else
+      kill_bot("ACK, I've been terminated!", "TERMINATE SIGNAL -- SIGNING OFF");
+  }
 
   /* If we want to restart, we have to unwind to the toplevel.
    * Tcl will Panic if we kill the interp with Tcl_Eval in progress.
