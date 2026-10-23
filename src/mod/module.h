@@ -59,11 +59,6 @@
 #undef ContextNote
 #undef Assert
 
-/* Compatibility functions. */
-#ifdef egg_snprintf
-#  undef egg_snprintf
-#endif
-
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE  __declspec(dllexport)
 #else
@@ -418,7 +413,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define users_in_subtree ((int (*)(tand_t *))global[250])
 /* was egg_inet_aton -- use inet_pton() instead */
 /* 252 - 255 */
-#define egg_snprintf (global[252])
+/* was egg_snprintf() -- use snprintf() instead */
 /* was egg_vsnprintf() -- use vsnprintf() instead */
 /* was egg_memset() -- use memset() instead */
 /* was egg_strcasecmp() -- use strcasecmp() instead */
