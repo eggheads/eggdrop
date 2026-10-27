@@ -477,6 +477,17 @@ static void bot_endlink(int idx, char *par)
   dcc[idx].status &= ~STAT_LINKING;
 }
 
+static void bot_encryption2(int idx, char *par)
+{
+  if (dcc[idx].status & STAT_AGGRESSIVE) {
+    module_entry *me = module_find("encryption2", 0, 0);
+    if (me && me->funcs[ENCRYTION2_RECV_SETTINGS])
+      ((me->funcs)[ENCRYTION2_RECV_SETTINGS]) (par);
+  } else
+    putlog(LOG_BOTS, "*", "Received new encryption2 settings from %s, but she "
+           "is not agressive sharing with me, ignored.", dcc[idx].nick);
+}
+
 /* info? <from@bot>   -> send priv
  */
 static void bot_infoq(int idx, char *par)
@@ -1561,6 +1572,7 @@ botcmd_t C_bot[] =
   {"ct",         (IntFunc) bot_chat},
   {"e",          (IntFunc) bot_error},
   {"el",         (IntFunc) bot_endlink},
+  {"en",         (IntFunc) bot_encryption2},
 #ifndef NO_OLD_BOTNET
   {"error",      (IntFunc) bot_error},
 #endif
