@@ -875,7 +875,43 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
            * specified because we want to trigger all binds in a stack.
            */
 
+          if (!strncmp(tc->func_name, "*python:", strlen("*python:"))) {
+            const uint8_t* b = (const uint8_t*) match;
+	    int utf8_error = 0;
+            while (*b) {
+              if (!(*b & 0x80))
+                b++;
+              else if ((*b & 0xe0) == 0xc0) {
+                if (b[1] == 0) {
+                  utf8_error = 1;
+                  break;
+                }
+                b += 2;
+              } else if ((*b & 0xf0) == 0xe0) {
+                if (b[1] == 0 || b[2] == 0) {
+                  utf8_error = 1;
+                  break;
+                }
+                b += 3;
+              } else if ((*b & 0xf8) == 0xf0) {
+                if (b[1] == 0 || b[2] == 0 || b[3] == 0) {
+                  utf8_error = 1;
+                  break;
+                }
+                b += 4;
+              } else {
+                utf8_error = 1;
+                break;
+              }
+            }
+            if (utf8_error) {
+              putlog(LOG_MISC, "*", "bogus utf8, python bind \"%s\" not triggered\n", tc->func_name);
+              continue;
+            }
+          }
+
           tc->hits++;
+
           x = trigger_bind(tc->func_name, param, tm->mask);
 
           if (match_type & BIND_ALTER_ARGS) {
