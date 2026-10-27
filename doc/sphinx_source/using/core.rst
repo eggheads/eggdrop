@@ -493,7 +493,7 @@ support.
     are required on the server side. Must be in PEM format.
     If you don't have one, you can create it using the following command::
 
-      openssl req -new -key eggdrop.key -x509 -out eggdrop.crt -days 365
+      openssl req -new -key eggdrop.key -x509 -out eggdrop.crt -days 200
 
     This is required for SSL hubs/listen ports, secure file transfer and
     /ctcp botnick schat
