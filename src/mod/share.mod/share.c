@@ -1473,8 +1473,8 @@ static void shareout_mod(struct chanset_t *chan, const char *format, ...)
     va_start(va, format);
 
     strcpy(s, "s ");
-    if ((l = vsnprintf(s + 2, 509, format, va)) >= 509) {
-      debug0("shareout_mod(): truncated to 508 bytes");
+    if ((l = vsnprintf(s + 2, 509, format, va)) > 508) {
+      debug0("shareout_mod(): truncated to 507 bytes");
       // Keep \n when truncating
       s[509] = '\n';
       l = 508;
@@ -1507,8 +1507,8 @@ static void shareout_but(struct chanset_t *chan, int x, const char *format, ...)
   va_start(va, format);
 
   strcpy(s, "s ");
-  if ((l = vsnprintf(s + 2, 509, format, va)) >= 509) {
-    debug0("shareout_buf(): truncated to 508 bytes");
+  if ((l = vsnprintf(s + 2, 509, format, va)) > 508) {
+    debug0("shareout_buf(): truncated to 507 bytes");
     // Keep \n when truncating
     s[509] = '\n';
     l = 508;
