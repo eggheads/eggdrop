@@ -100,6 +100,13 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 	AC_MSG_CHECKING([for Tcl configuration])
 	AC_CACHE_VAL(ac_cv_c_tclconfig,[
 
+	    # Eggdrop: with --with-tcl8, the automatic searches below skip a
+	    # tclConfig.sh that is not Tcl 8 (an explicit --with-tcl is always used)
+	    egg_tcl8_ok() {
+		test x"${with_tcl8}" = xyes || return 0
+		(. "[$]1/tclConfig.sh" >/dev/null 2>&1; test x"${TCL_MAJOR_VERSION}" = x8)
+	    }
+
 	    # First check to see if --with-tcl was specified.
 	    if test x"${with_tclconfig}" != x ; then
 		case "${with_tclconfig}" in
@@ -132,11 +139,11 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -dr ../../../tcl[[8-9]].[[0-9]] 2>/dev/null` \
 			`ls -dr ../../../tcl[[8-9]].[[0-9]]* 2>/dev/null` ; do
 		    if test "${TEA_PLATFORM}" = "windows" \
-			    -a -f "$i/win/tclConfig.sh" ; then
+			    -a -f "$i/win/tclConfig.sh" && egg_tcl8_ok "$i/win" ; then
 			ac_cv_c_tclconfig="`(cd $i/win; pwd)`"
 			break
 		    fi
-		    if test -f "$i/unix/tclConfig.sh" ; then
+		    if test -f "$i/unix/tclConfig.sh" && egg_tcl8_ok "$i/unix" ; then
 			ac_cv_c_tclconfig="`(cd $i/unix; pwd)`"
 			break
 		    fi
@@ -153,7 +160,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -d /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tcl.framework 2>/dev/null` \
 			`ls -d /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks 2>/dev/null` \
 			; do
-		    if test -f "$i/Tcl.framework/tclConfig.sh" ; then
+		    if test -f "$i/Tcl.framework/tclConfig.sh" && egg_tcl8_ok "$i/Tcl.framework" ; then
 			ac_cv_c_tclconfig="`(cd $i/Tcl.framework; pwd)`"
 			break
 		    fi
@@ -166,7 +173,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 		for i in `ls -d C:/Tcl/lib 2>/dev/null` \
 			`ls -d C:/Progra~1/Tcl/lib 2>/dev/null` \
 			; do
-		    if test -f "$i/tclConfig.sh" ; then
+		    if test -f "$i/tclConfig.sh" && egg_tcl8_ok "$i" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
 			break
 		    fi
@@ -197,9 +204,7 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -d /usr/local/lib/tcl/tcl8.6 2>/dev/null` \
 			`ls -d /usr/local/lib/tcl/tcl8.5 2>/dev/null` \
 			; do
-		    # Eggdrop: with --with-tcl8, skip a tclConfig.sh that is not Tcl 8
-		    if test -f "$i/tclConfig.sh" && (test x"${with_tcl8}" = x || \
-			    (. "$i/tclConfig.sh" >/dev/null 2>&1; test x"${TCL_MAJOR_VERSION}" = x8)) ; then
+		    if test -f "$i/tclConfig.sh" && egg_tcl8_ok "$i" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
 			break
 		    fi
@@ -214,11 +219,11 @@ AC_DEFUN([TEA_PATH_TCLCONFIG], [
 			`ls -dr ${srcdir}/../tcl[[8-9]].[[0-9]] 2>/dev/null` \
 			`ls -dr ${srcdir}/../tcl[[8-9]].[[0-9]]* 2>/dev/null` ; do
 		    if test "${TEA_PLATFORM}" = "windows" \
-			    -a -f "$i/win/tclConfig.sh" ; then
+			    -a -f "$i/win/tclConfig.sh" && egg_tcl8_ok "$i/win" ; then
 			ac_cv_c_tclconfig="`(cd $i/win; pwd)`"
 			break
 		    fi
-		    if test -f "$i/unix/tclConfig.sh" ; then
+		    if test -f "$i/unix/tclConfig.sh" && egg_tcl8_ok "$i/unix" ; then
 			ac_cv_c_tclconfig="`(cd $i/unix; pwd)`"
 			break
 		    fi
