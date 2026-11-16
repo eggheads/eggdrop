@@ -1043,9 +1043,7 @@ AC_DEFUN([EGG_TCL_TCLCONFIG],
     egg_tcl_changed="yes"
     TEA_INIT("3.10")
     TEA_PATH_TCLCONFIG
-    TEA_LOAD_TCLCONFIG
-    TEA_TCL_LINK_LIBS
-    # Overwrite TCL_LIBS again, which TCL_LOAD_TCLCONFIG unfortunately overwrites from tclConfig.sh
+    # Load the tclConfig.sh found by TEA_PATH_TCLCONFIG
     # Also, use the Tcl linker idea to be compatible with their ldflags
     if test -r ${TCL_BIN_DIR}/tclConfig.sh; then
       . ${TCL_BIN_DIR}/tclConfig.sh
