@@ -6,30 +6,164 @@ We use Prettier as a code formatter to keep the code style consistent (and to
 avoid off-topic discussions)
 -->
 <!doctype html>
-<html lang="en" style="height: 100%">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, interactive-widget=resizes-content"
+    />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#282828" />
     <title>Eggdrop</title>
+    <!--gruvbox colors-->
+    <style>
+      :root {
+        --accent: #83a598;
+        --bg: #282828;
+        --bg-soft: #3c3836;
+        --border: #504945;
+        --fg: #ebdbb2;
+        --fg-dim: #928374;
+      }
+
+      html {
+        height: 100%;
+        overflow: hidden;
+        /* Stop iOS inflating text in landscape. */
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        background-color: var(--bg);
+        color: var(--fg);
+        display: grid;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        grid-template-rows: 1fr auto;
+        height: 100%;
+        margin: 0px;
+        overflow: hidden;
+      }
+
+      /* Dynamic viewport units so the iOS URL bar does not clip the input
+         row. The script narrows this further while the keyboard is open. */
+      @supports (height: 100dvh) {
+        body {
+          height: 100dvh;
+        }
+      }
+
+      #out {
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 0px;
+        /* Let the 1fr row shrink instead of pushing #row off-screen. */
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        /* Keep rubber-banding and pull-to-refresh out of the terminal. */
+        overscroll-behavior: contain;
+        padding: 8px 10px;
+        /* The opt-in state: wrap rather than scroll sideways, breaking
+           long hostmasks and IPv6 addresses that have no spaces to wrap on. */
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      /* Toggled off to pan sideways through column-aligned output such
+         as .dccstat, .status and .bots. */
+      #out.nowrap {
+        overflow-wrap: normal;
+        overflow-x: auto;
+        white-space: pre;
+        word-break: normal;
+      }
+
+      #row {
+        background-color: var(--bg-soft);
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
+        padding: 8px 10px;
+        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+      }
+
+      #input {
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        box-sizing: border-box;
+        color: var(--fg);
+        flex: 1 1 auto;
+        font-family: inherit;
+        /* 16px keeps iOS from zooming the page in on focus. */
+        font-size: 16px;
+        min-width: 0;
+        padding: 10px;
+      }
+
+      #input:focus {
+        border-color: var(--accent);
+        outline: none;
+      }
+
+      #wrap {
+        appearance: none;
+        -webkit-appearance: none;
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--fg-dim);
+        cursor: pointer;
+        flex: 0 0 auto;
+        font-family: inherit;
+        font-size: 13px;
+        /* 44px keeps it a comfortable thumb target. */
+        min-height: 44px;
+        padding: 0px 12px;
+        touch-action: manipulation;
+      }
+
+      #wrap[aria-pressed="true"] {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+    </style>
   </head>
-  <!--gruvbox colors-->
-  <body
-    style="
-      background-color: #282828;
-      color: #ebdbb2;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      height: 100%;
-      margin: 0px;
-    "
-  >
-    <pre id="out" style="overflow: auto"></pre>
-    <input id="input" type="text" autofocus style="width: 100%" />
+  <body>
+    <pre id="out" class="nowrap"></pre>
+    <form id="row">
+      <input
+        id="input"
+        type="text"
+        autofocus
+        aria-label="Command input"
+        autocapitalize="off"
+        autocomplete="off"
+        autocorrect="off"
+        enterkeyhint="send"
+        spellcheck="false"
+      />
+      <button
+        id="wrap"
+        type="button"
+        aria-pressed="false"
+        title="Toggle line wrapping"
+      >
+        wrap
+      </button>
+    </form>
     <script>
       "use strict";
       const WS_ECHO_ON = "\x01";
       const WS_ECHO_OFF = "\x02";
+      // Within this many px of the bottom still counts as following the tail.
+      const PIN_SLOP = 32;
       const input = document.getElementById("input");
+      const row = document.getElementById("row");
+      const wrapButton = document.getElementById("wrap");
+      const WRAP_KEY = "eggdrop-webui-wrap";
       const ws = new WebSocket(
         (location.protocol === "https:" ? "wss:" : "ws:") +
           "//" +
@@ -40,31 +174,46 @@ avoid off-topic discussions)
       let echo = true;
       const out = document.getElementById("out");
       let sendCount = 0;
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          ws.send(input.value);
-          if (echo) {
-            out.append(input.value + "\n");
-            out.scrollTop = out.scrollHeight;
-          }
-          input.value = "";
-          if (sendCount++ == 0) {
-            input.type = "password";
-            echo = false;
-          }
+      const isPinned = () =>
+        out.scrollHeight - out.scrollTop - out.clientHeight <= PIN_SLOP;
+      const scrollToBottom = () => {
+        out.scrollTop = out.scrollHeight;
+      };
+      // Keep the tail in view, but do not yank the view if the user has
+      // scrolled up to read back.
+      const appendPinned = (write) => {
+        const pinned = isPinned();
+        write();
+        if (pinned) {
+          scrollToBottom();
+        }
+      };
+      row.addEventListener("submit", (event) => {
+        event.preventDefault();
+        ws.send(input.value);
+        if (echo) {
+          out.append(input.value + "\n");
+        }
+        input.value = "";
+        // You just ran something, so always jump to the tail.
+        scrollToBottom();
+        if (sendCount++ == 0) {
+          input.type = "password";
+          echo = false;
         }
       });
       ws.addEventListener("close", (event) => {
         input.remove();
         out.append("Connection closed by foreign host.");
-        out.scrollTop = out.scrollHeight;
+        scrollToBottom();
       });
       ws.addEventListener("message", (event) => {
-        out.insertAdjacentHTML(
-          "beforeend",
-          event.data.replace(/[\x01-\x02]/g, ""),
-        );
-        out.scrollTop = out.scrollHeight;
+        appendPinned(() => {
+          out.insertAdjacentHTML(
+            "beforeend",
+            event.data.replace(/[\x01-\x02]/g, ""),
+          );
+        });
         if (event.data.includes(WS_ECHO_ON)) {
           input.type = "text";
           echo = true;
@@ -73,6 +222,55 @@ avoid off-topic discussions)
           echo = false;
         }
       });
+      const setWrap = (on) => {
+        out.classList.toggle("nowrap", !on);
+        wrapButton.setAttribute("aria-pressed", on ? "true" : "false");
+        if (!on) {
+          out.scrollLeft = 0;
+        }
+      };
+      // Default off: column-aligned output stays aligned, pan to read it.
+      // Storage throws when site data is blocked, so fall back to that default.
+      let wrapOn = false;
+      try {
+        wrapOn = localStorage.getItem(WRAP_KEY) === "on";
+      } catch (error) {
+        wrapOn = false;
+      }
+      setWrap(wrapOn);
+      // Keep the tap from blurring the input and dropping the keyboard.
+      wrapButton.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+      });
+      wrapButton.addEventListener("click", () => {
+        const pinned = isPinned();
+        wrapOn = !wrapOn;
+        setWrap(wrapOn);
+        try {
+          localStorage.setItem(WRAP_KEY, wrapOn ? "on" : "off");
+        } catch (error) {
+          // The preference just will not survive a reload.
+        }
+        if (pinned) {
+          scrollToBottom();
+        }
+      });
+      // The soft keyboard shrinks the visual viewport but not the layout
+      // viewport, which would otherwise hide the input row behind it.
+      const viewport = window.visualViewport;
+      if (viewport) {
+        const fitViewport = () => {
+          const pinned = isPinned();
+          document.body.style.height = Math.round(viewport.height) + "px";
+          // iOS may have scrolled the layout viewport to reveal the input.
+          window.scrollTo(0, 0);
+          if (pinned) {
+            scrollToBottom();
+          }
+        };
+        viewport.addEventListener("resize", fitViewport);
+        fitViewport();
+      }
     </script>
   </body>
 </html>
