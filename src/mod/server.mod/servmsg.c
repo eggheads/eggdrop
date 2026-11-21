@@ -1090,6 +1090,7 @@ static void disconnect_server(int idx)
   while (cap != NULL) {
     del_capability(cap->name);
   }
+  batch_free_all();
   server_online = 0;
   if (realservername)
     nfree(realservername);
@@ -1227,6 +1228,8 @@ static void server_activity(int idx, char *tagmsg, int len)
   char *from, *code, *msgptr;
   char rawmsg[RECVLINEMAX+7];
   int ret;
+  batch_t *saved_batch;
+  Tcl_Obj *saved_tagdict;
   Tcl_Obj *tagdict = Tcl_NewDictObj();
 
   Tcl_IncrRefCount(tagdict);
@@ -1263,6 +1266,13 @@ static void server_activity(int idx, char *tagmsg, int len)
     from = newsplit(&msgptr);
   }
   code = newsplit(&msgptr);
+
+  /* Make the batch context of this line visible to handlers duration */
+  saved_batch = current_batch;
+  saved_tagdict = current_tagdict;
+  current_batch = batch_from_tagdict(tagdict); /* This is the batch record for the batch ref in msgtag */
+  current_tagdict = tagdict;
+
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
       !match_ignore(from))) {
     putlog(LOG_RAW, "*", "[@] %s", rawmsg);
@@ -1272,9 +1282,11 @@ static void server_activity(int idx, char *tagmsg, int len)
   /* Tcl_GetString() must not be modified, so we have to copy because string C API is not const char* */
   strlcpy(rawmsg, Tcl_GetString(tagdict), sizeof rawmsg);
   ret = check_tcl_rawt(from, code, msgptr, rawmsg);
-  if (!ret) {
+  if (!ret && !batch_suppress(code)) {
     check_tcl_raw(from, code, msgptr);
   }
+  current_batch = saved_batch;
+  current_tagdict = saved_tagdict;
   Tcl_DecrRefCount(tagdict);
 }
 
@@ -1441,6 +1453,10 @@ static void free_capability(struct capability *z) {
 static int del_capability(char *name) {
   struct capability *curr, *prev;
 
+  /* If batch, remove any remaining/hanging batch sessions */
+  if (!strcasecmp(name, "batch")) {
+    batch_free_all();
+  }
   for (prev = NULL, curr = cap; curr; curr = prev ? prev->next : cap) {
     if (!strcasecmp(name, curr->name)) {
       if (prev) {
@@ -1581,6 +1597,13 @@ static int gotcap(char *from, char *msg) {
       } else if (!strcmp(current->name, "message-tags")) {
         if ((message_tags) && (!current->enabled))
           add_req(current->name);
+      } else if (!strcmp(current->name, "batch")) {
+        if ((batch) && (!current->enabled))
+          add_req(current->name);
+      } else if (!strcmp(current->name, "labeled-response")) {
+        if (labeled_response && !current->enabled) {
+          add_req(current->name);
+        }
       }
       /* Add any custom capes the user listed */
       strlcpy(cape, cap_request, sizeof cape);
@@ -1905,6 +1928,7 @@ static cmd_t my_raw_binds[] = {
   {"KICK",         "",   (IntFunc) gotkick,         NULL},
   {"CAP",          "",   (IntFunc) gotcap,          NULL},
   {"SETNAME",      "",   (IntFunc) gotsetname,      NULL},
+  {"BATCH",        "",   (IntFunc) gotbatch,        NULL},
   {NULL,           NULL, NULL,                      NULL}
 };
 
