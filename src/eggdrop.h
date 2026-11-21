@@ -256,6 +256,7 @@ typedef uint32_t IP;
 #define egg_inet_aton(src, dst) inet_pton(AF_INET, src, dst)
 #define egg_memcpy memcpy
 #define egg_memset memset
+#define egg_snprintf snprintf
 #define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
 #define egg_strncasecmp strncasecmp
