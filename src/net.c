@@ -571,6 +571,7 @@ int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
       }
       if (res != 0) {
         debug1("net: getsockopt error %d", res);
+        errno = res;
         return -1;
       }
       return s; /* async success! */
