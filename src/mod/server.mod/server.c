@@ -1784,6 +1784,7 @@ static tcl_ints my_tcl_ints[] = {
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
   {"batch",             &batch,                     0},
+  {"labeled-response",  &labeled_response,          0},
   {"extended-join",     &extended_join,             0},
   {"account-notify",    &account_notify,            0},
   {"account-tag",       &account_tag,               0},
