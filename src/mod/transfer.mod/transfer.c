@@ -436,7 +436,10 @@ static void dcc_get(int idx, char *buf, int len)
    * This is either a 4 bit ack or the 8 bit reget packet.
    */
   if (w < 4 || (w < 8 && dcc[idx].u.xfer->type == XFER_RESEND_PEND)) {
-    memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
+    char *dst = dcc[idx].u.xfer->type == XFER_RESEND_PEND ?
+                dcc[idx].u.xfer->reget_buf : dcc[idx].u.xfer->buf;
+
+    memcpy(&dst[dcc[idx].u.xfer->sofar], buf, len);
     dcc[idx].u.xfer->sofar += len;
     return;
     /* Waiting for the 8 bit reget packet? */
@@ -445,8 +448,8 @@ static void dcc_get(int idx, char *buf, int len)
     if (w == 8) {
       transfer_reget reget_data;
 
-      memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
+      memcpy(&reget_data, dcc[idx].u.xfer->reget_buf, dcc[idx].u.xfer->sofar);
+      memcpy((char *) &reget_data + dcc[idx].u.xfer->sofar, buf, len);
       handle_resend_packet(idx, &reget_data);
       cmp = dcc[idx].u.xfer->offset;
     } else

@@ -16,7 +16,7 @@ are helpful in debugging and testing your code.
 
 First, read through the script. Very few commands are listed here intentionally,
 but as you want to develop more advanced scripts, you will definitely want to
-get familiar with the `core Tcl language commands <https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/using/tcl-commands.html>`_
+get familiar with the `core Tcl language commands <https://www.tcl-lang.org/man/tcl9.1/TclCmd/index.html>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/using/tcl-commands.html>`_
 
 If you have the .tcl command enabled, you can load a script by typing
 '.tcl source script/file.tcl' to load it. Otherwise, add it to your config

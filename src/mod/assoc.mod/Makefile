@@ -34,6 +34,6 @@ distclean: clean
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
  ../../../src/compat/compat.h ../../../src/compat/base64.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/explicit_bzero.h ../../../src/compat/strlcpy.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h .././assoc.mod/assoc.h
+ ../../../src/compat/snprintf.h ../../../src/compat/explicit_bzero.h \
+ ../../../src/compat/strlcpy.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h .././assoc.mod/assoc.h

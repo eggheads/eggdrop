@@ -133,8 +133,13 @@ class EggdropConfig:
 
 
 @pytest.fixture
-def mock_ircd() -> Iterator[MockIrcd]:
-    ircd = MockIrcd().start()
+def mock_ircd(request: pytest.FixtureRequest) -> Iterator[MockIrcd]:
+    # `@pytest.mark.raw_cap` turns off the IRCd's CAP auto-responder. With
+    # auto_cap on (the default) `_on_client` answers every CAP line and
+    # never queues it, so a test inspecting the bot's *outbound* CAP
+    # traffic would only ever see NICK and USER.
+    auto_cap = request.node.get_closest_marker("raw_cap") is None
+    ircd = MockIrcd(auto_cap=auto_cap).start()
     try:
         yield ircd
     finally:
@@ -175,15 +180,29 @@ def eggdrop_proc(
         pytest.skip(f"eggdrop binary not found at {EGGDROP_BIN}")
     port_file = tmp_eggdir / "bridge.port"
     terminal = request.node.get_closest_marker("partyline") is not None
+    env = {
+        "EGGDROP_TEST": "1",
+        "EGGDROP_TEST_PORT_FILE": str(port_file),
+        "EGG_LANGDIR": str(REPO_ROOT / "language"),
+    }
+    # Opt-in per-test coverage output. Every test spawns its own bot, and
+    # without redirection they all merge into the same .gcda files;
+    # concurrent merges corrupt them (negative counters, discarded files,
+    # impossible >100% rates). Redirecting fixes that but moves the data
+    # out of the build tree, so a plain `lcov --capture --directory .`
+    # then finds .gcno with no .gcda beside them.
+    #
+    # Only coverage.sh (which merges the per-test trees afterwards) sets
+    # EGGDROP_GCOV_PREFIX, so the default path is unchanged and anything
+    # capturing from the build tree keeps working.
+    if os.environ.get("EGGDROP_GCOV_PREFIX"):
+        env["GCOV_PREFIX"] = str(tmp_eggdir / "gcov")
+        env["GCOV_PREFIX_STRIP"] = str(len(REPO_ROOT.parts) - 1)
     proc = EggdropProc(
         binary=EGGDROP_BIN,
         config_path=eggdrop_config.config_path,
         cwd=tmp_eggdir,
-        env={
-            "EGGDROP_TEST": "1",
-            "EGGDROP_TEST_PORT_FILE": str(port_file),
-            "EGG_LANGDIR": str(REPO_ROOT / "language"),
-        },
+        env=env,
         terminal=terminal,
     )
     proc.start()
@@ -240,3 +259,43 @@ def pytest_runtest_makereport(
     outcome = yield
     rep = outcome.get_result()
     setattr(item, f"rep_{rep.when}", rep)
+
+# ---------------------------------------------------------------------------
+# Report enrichment
+#
+# pytest's "log output" section only captures Python `logging` records, and
+# this harness emits none -- everything of interest happens in the eggdrop
+# subprocess. These hooks pull the bot's own logfile (and its stdout) into
+# the report so a failure can be diagnosed without re-running by hand.
+#
+# Set EGGDROP_ATTACH_LOGS=always to attach on passing tests too; the default
+# is failures only, since a full run would otherwise produce a very large
+# HTML report.
+# ---------------------------------------------------------------------------
+
+import os
+
+import pytest
+
+
+def _read_tail(path, limit=400):
+    """Return the last `limit` lines of a file, or a short note if unreadable."""
+    try:
+        with open(path, "r", errors="replace") as fh:
+            lines = fh.readlines()
+    except OSError as exc:
+        return f"({path}: {exc})"
+    if len(lines) > limit:
+        lines = [f"... {len(lines) - limit} earlier lines omitted ...\n"] + lines[-limit:]
+    return "".join(lines) or "(empty)"
+
+def _read_tail(path, limit=400):
+    """Return the last `limit` lines of a file, or a short note if unreadable."""
+    try:
+        with open(path, "r", errors="replace") as fh:
+            lines = fh.readlines()
+    except OSError as exc:
+        return f"({path}: {exc})"
+    if len(lines) > limit:
+        lines = [f"... {len(lines) - limit} earlier lines omitted ...\n"] + lines[-limit:]
+    return "".join(lines) or "(empty)"

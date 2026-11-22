@@ -66,6 +66,7 @@ def drive_join_with_names(
     nick: str = "TestBot",
     server: str = "mock.test",
     member_accounts: dict[str, str] | None = None,
+    symbol: str = "=",
 ) -> str:
     """Drive a realistic post-registration channel JOIN to completion.
 
@@ -85,6 +86,11 @@ def drive_join_with_names(
 
     `member_accounts` maps member nick → account name; nicks not in the dict
     get "*". Only consulted on the WHOX path; ignored for plain WHO.
+
+    `symbol` is the channel visibility flag in the 353 reply -- "=" public,
+    "*" private, "@" secret (RFC 2812 section 5.1, RPL_NAMREPLY). It
+    defaults to "=" because that is what almost every server sends, but
+    tests exercising the other two need to vary it.
     Returns the channel name. Quiesces when no new lines arrive for ~300 ms
     or after a 5 s hard cap.
     """
@@ -93,7 +99,7 @@ def drive_join_with_names(
     )[-1]
     chan = join_line.split()[1]
     mock_ircd.send(f":{nick}!u@h JOIN :{chan}")
-    mock_ircd.send(f":{server} 353 {nick} = {chan} :{members_with_prefix}")
+    mock_ircd.send(f":{server} 353 {nick} {symbol} {chan} :{members_with_prefix}")
     mock_ircd.send(f":{server} 366 {nick} {chan} :End of /NAMES list.")
 
     members: list[tuple[str, str]] = [

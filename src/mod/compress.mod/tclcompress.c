@@ -67,7 +67,7 @@ static int tcl_compress_file STDVAR
   else
     result = compress_file(fn_src, mode_num);
 
-  if (result)
+  if (result == COMPF_SUCCESS)
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -85,7 +85,7 @@ static int tcl_uncompress_file STDVAR
   else
     result = uncompress_to_file(argv[1], argv[2]);
 
-  if (result)
+  if (result == COMPF_SUCCESS)
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);

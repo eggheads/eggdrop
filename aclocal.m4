@@ -505,7 +505,7 @@ AC_DEFUN([EGG_ENABLE_COVERAGE],
 
   if test "$enable_coverage" = yes; then
     AC_MSG_NOTICE([enabling gcov coverage instrumentation: --coverage -fPIC -O0 -ggdb3])
-    CFLAGS="$CFLAGS --coverage -fPIC -O0 -ggdb3"
+    CFLAGS="$CFLAGS --coverage -fprofile-update=atomic -fPIC -O0 -ggdb3"
     LDFLAGS="$LDFLAGS --coverage"
   fi
 ])
@@ -661,6 +661,9 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     Minix)
+      WEIRD_OS="no"
+    ;;
+    GNU)
       WEIRD_OS="no"
     ;;
     *)
@@ -829,6 +832,10 @@ AC_DEFUN([EGG_CHECK_OS],
         ;;
       esac
       AC_DEFINE(BIND_8_COMPAT, 1, [Define if running on macOS with dns.mod.])
+    ;;
+    GNU)
+      SHLIB_CC="$CC -fPIC"
+      SHLIB_LD="$CC -shared -nostartfiles"
     ;;
     *)
       if test -r /cmds; then

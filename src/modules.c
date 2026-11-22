@@ -509,10 +509,10 @@ Function global_table[] = {
   (Function) sock_has_data,
   (Function) bots_in_subtree,
   (Function) users_in_subtree,
-  (Function) egg_inet_aton,
+  (Function) 0,                   /* was egg_inet_aton -- use inet_pton() instead */
   /* 252 - 255 */
   (Function) egg_snprintf,
-  (Function) egg_vsnprintf,
+  (Function) vsnprintf,           /* was egg_vsnprintf -- use vsnprintf instead */
   (Function) memset,              /* was egg_memset -- use memset() or egg_bzero() instead */
   (Function) strcasecmp,          /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
