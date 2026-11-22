@@ -27,6 +27,7 @@
 static int batchcount = 0;
 static unsigned long batchseq = 0;      /* Tracks 'oldest' non-closed session for expiration            */
 static batch_t *batchlist = NULL;       /* List of batches the server has opened but not yet closed.    */
+static unsigned long batchgen = 0;      /* Batch counter to prevent premature free by Tcl               */
 static batch_t *current_batch = NULL;   /* The batch that the line currently being dispatched belongs   */
                                         /* to, or NULL if that line carried no batch tag.               */
 static Tcl_Obj *current_tagdict = NULL; /* Message tags on the line currently being dispatched, or NULL */
@@ -91,6 +92,7 @@ static batch_t *batch_get_current(void)
 static void batch_free_all(void)
 {
   batch_t *b, *next, *expired = batchlist;
+  batchgen++;
   batchlist = NULL;
   current_batch = NULL;
   batchcount = 0;
@@ -162,6 +164,7 @@ static batch_t *batch_start(const char *reftag, const char *type,
                             const char *args, batch_t *parent)
 {
   batch_t *b;
+  unsigned long gen;
 
   /* Drop the stalest batch rather than refusing the new one, so a server that
    * leaks batches costs us one old record instead of the ability to track any
@@ -178,7 +181,14 @@ static batch_t *batch_start(const char *reftag, const char *type,
     putlog(LOG_DEBUG, "*", "BATCH: at the %d open batch limit, discarding "
            "oldest batch %s (type %s) to make room for %s", BATCHMAX,
            old->reftag, old->type, reftag);
+    gen = batchgen;
     batch_end(old, "discard");
+    if (gen != batchgen) {
+      putlog(LOG_DEBUG, "*", "BATCH: all open batches were discarded while "
+             "making room for %s, not opening it", reftag);
+      return NULL;
+    }
+
   }
   b = nmalloc(sizeof *b);
   memset(b, 0, sizeof *b);
@@ -292,6 +302,8 @@ static int gotbatch(char *from, char *msg)
 {
   char *reftag, *type;
   char prefix;
+  int suppress;
+  unsigned long gen;
   batch_t *b;
 
   /* Check for malformed states. Probably need to add more handling later */
@@ -326,8 +338,19 @@ static int gotbatch(char *from, char *msg)
       putlog(LOG_DEBUG, "*", "BATCH: opened %s (type %s)%s%s", b->reftag,
              b->type, b->parent ? ", nested in " : "",
              b->parent ? b->parent->reftag : "");
-      /* Suppress session if parent session is suppressed */
-      if (check_tcl_batch(b, "start")) {
+      gen = batchgen;
+      suppress = check_tcl_batch(b, "start");
+      /* Paranoia; The start bind freed every open batch, including b */
+      if (gen != batchgen) {
+        putlog(LOG_DEBUG, "*", "BATCH: all open batches were discarded while "
+               "opening %s", reftag);
+        return 0;
+      }
+      /* Suppress session if a start bind asked to. b->suppress is already set
+       * if the parent session is suppressed.
+       */
+      if (suppress) {
+
         b->suppress = 1;
       }
       if (b->suppress) {
