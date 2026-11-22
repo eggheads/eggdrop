@@ -2083,10 +2083,10 @@ static void start_sending_users(int idx)
 #ifdef TLS
     if (dcc[idx].ssl) {
       dcc[i].ssl = 1;
-      dprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+      dprintf(idx, "s us %s +%u %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     } else
 #endif
-    dprintf(idx, "s us %s %d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+    dprintf(idx, "s us %s %u %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.
      */
@@ -2103,18 +2103,18 @@ static void start_sending_users(int idx)
 
           /* Send hostmasks */
           for (t = get_user(&USERENTRY_HOSTS, u); t; t = t->next) {
-            egg_snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
+            snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
             q_tbuf(dcc[idx].nick, s2, NULL);
           }
           /* Send address */
           if (bi) {
 #ifdef TLS
-            egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
+            snprintf(s2, sizeof s2, "s c BOTADDR %s %s %s%d %s%d\n",
                          u->handle, bi->address, (bi->ssl & TLS_BOT) ? "+" : "",
                          bi->telnet_port, (bi->ssl & TLS_RELAY) ? "+" : "",
                          bi->relay_port);
 #else
-            egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
+            snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
                          bi->address, bi->telnet_port, bi->relay_port);
 #endif
             q_tbuf(dcc[idx].nick, s2, NULL);
@@ -2124,7 +2124,7 @@ static void start_sending_users(int idx)
 
           fr.udef_global = u->flags_udef;
           build_flags(s1, &fr, NULL);
-          egg_snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
+          snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
           q_tbuf(dcc[idx].nick, s2, NULL);
           for (ch = u->chanrec; ch; ch = ch->next) {
             if ((ch->flags & ~BOT_AGGRESSIVE) &&
@@ -2137,7 +2137,7 @@ static void start_sending_users(int idx)
                 fr.chan = ch->flags & ~BOT_AGGRESSIVE;
                 fr.udef_chan = ch->flags_udef;
                 build_flags(s1, &fr, NULL);
-                egg_snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
+                snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
                              ch->channel);
                 q_tbuf(dcc[idx].nick, s2, cst);
               }
