@@ -290,11 +290,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       } else if (st->str == logfile_suffix) {
         logsuffix_change(st->str);
       } else if (st->str == firewall) {
-        splitc(firewall, st->str, ':');
-        if (!firewall[0])
-          strcpy(firewall, st->str);
-        else
-          firewallport = atoi(st->str);
+        if (char *port = strchr(firewall, ':')) {
+          firewallport = atoi(port + 1);
+          *port = 0;
+        }
       }
       if ((st->flags) && (s[0])) {
         if (st->str[strlen(st->str) - 1] != '/')

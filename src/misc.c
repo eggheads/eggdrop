@@ -196,7 +196,7 @@ void splitc(char *first, char *rest, char divider)
   }
   *p = 0;
   if (first != NULL)
-    strcpy(first, rest);
+    memmove(first, rest, strlen(rest) + 1);
   if (first != rest)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
@@ -220,7 +220,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   }
   *p = 0;
   if (first != NULL)
-    strlcpy(first, rest, max);
+    memmove(first, rest, strlen(rest) + 1);
   if (first != rest)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
