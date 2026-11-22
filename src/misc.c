@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
-#include "src/eggdrop.h"
 #include "tandem.h"
 #include "modules.h"
 
