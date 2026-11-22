@@ -2588,6 +2588,7 @@ static int gotquit(char *from, char *msg)
   memberlist *m;
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
+  batch_t *b;
 
   strlcpy(from2, from, sizeof from2);
   nick = splitnick(&from);
@@ -2595,22 +2596,31 @@ static int gotquit(char *from, char *msg)
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
    *        Determine if signoff string matches "%.% %.%", and only one
    *        space.
+   * 
+   * 30 years later... If the server sent this QUIT inside an IRCv3 netsplit
+   * batch, it has told us outright that this is a split and there is nothing
+   * to guess at.
    */
-  p = strchr(msg, ' ');
-  if (p && (p == strrchr(msg, ' '))) {
-    char *z1, *z2;
+  b = batch_get_current();
+  if (b && !strcmp(b->type, "netsplit")) {
+    split = 1;
+  } else {
+    p = strchr(msg, ' ');
+    if (p && (p == strrchr(msg, ' '))) {
+      char *z1, *z2;
 
-    *p = 0;
-    z1 = strchr(p + 1, '.');
-    z2 = strchr(msg, '.');
-    if (z1 && z2 && (*(z1 + 1) != 0) && (z1 - 1 != p) &&
-        (z2 + 1 != p) && (z2 != msg)) {
-      /* Server split, or else it looked like it anyway (no harm in
-       * assuming)
-       */
-      split = 1;
-    } else
-      *p = ' ';
+      *p = 0;
+      z1 = strchr(p + 1, '.');
+      z2 = strchr(msg, '.');
+      if (z1 && z2 && (*(z1 + 1) != 0) && (z1 - 1 != p) &&
+          (z2 + 1 != p) && (z2 != msg)) {
+        /* Server split, or else it looked like it anyway (no harm in
+         * assuming)
+         */
+        split = 1;
+      } else
+        *p = ' ';
+    }
   }
   for (chan = chanset; chan; chan = chan->next) {
     oldchan = chan;
