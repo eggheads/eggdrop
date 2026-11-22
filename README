@@ -104,7 +104,7 @@ SYSTEM PRE-REQUISITES
   can often be installed via an OS package manager, usually called
   something similar to 'tcl-dev' for the package name. You can also
   download Tcl source from
-  https://www.tcl.tk/software/tcltk/download.html.
+  https://www.tcl-lang.org/software/tcltk/download.html.
 
   Eggdrop also requires openssl (and its development headers) in order
   to enable SSL/TLS protection of network data. The header files are
