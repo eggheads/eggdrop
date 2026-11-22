@@ -383,6 +383,8 @@ struct xfer_info {
   unsigned long block_pending;  /* bytes of this DCC block which weren't
                                  * sent yet.                               */
   time_t start_time;            /* Time when a xfer was started.           */
+  char reget_buf[8];            /* 8-byte reget packet; at the end of the
+                                 * struct to keep module compatibility     */
 };
 
 enum {                          /* transfer connection handling a ...   */
