@@ -258,14 +258,13 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
                         EGG_CONST char *name1,
                         EGG_CONST char *name2, int flags)
 {
-  const char *s;
+  const char *s; // do not modify this string
+  char s1[4096]; // instead copy it to s1 and modify s1
   strinfo *st = (strinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     if ((st->str == firewall) && (firewall[0])) {
-      char s1[127];
-
-      egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
+      snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
@@ -283,19 +282,26 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (const char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
-      if (strlcpy(st->str, s, abs(st->max) + 1) > abs(st->max))
-        putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
-      if (st->str == botnetnick) {
-        botnet_change(st->str);
-      } else if (st->str == logfile_suffix) {
-        logsuffix_change(st->str);
-      } else if (st->str == firewall) {
-        if (char *port = strchr(firewall, ':')) {
-          firewallport = atoi(port + 1);
-          *port = 0;
-        }
+      if (strlcpy(s1, s, sizeof s1) >= sizeof s1)
+        putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
+      if (strlen(s1) > abs(st->max)) {
+        putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
+        s1[abs(st->max)] = 0;
       }
-      if ((st->flags) && (s[0])) {
+      if (st->str == botnetnick)
+        botnet_change(s1);
+      else if (st->str == logfile_suffix)
+        logsuffix_change(s1);
+      else if (st->str == firewall) {
+        splitc(firewall, s1, ':');
+        if (!firewall[0]) {
+          strcpy(firewall, s1);
+          firewallport = 1080;
+        } else
+          firewallport = atoi(s1);
+      } else
+        strcpy(st->str, s1);
+      if ((st->flags) && (s1[0])) {
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
       }
