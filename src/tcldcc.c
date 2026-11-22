@@ -727,9 +727,9 @@ static void dccsocklist(Tcl_Interp *irp, int argc, char *type, int src) {
         break;
       }
 #ifdef TLS
-      snprintf(portstring, sizeof portstring, "%s%d", dcc[i].ssl ? "+" : "", dcc[i].port);
+      snprintf(portstring, sizeof portstring, "%s%u", dcc[i].ssl ? "+" : "", dcc[i].port);
 #else
-      snprintf(portstring, sizeof portstring, "%d", dcc[i].port);
+      snprintf(portstring, sizeof portstring, "%u", dcc[i].port);
 #endif
       /* If this came from dcclist... */
       if (!src) {

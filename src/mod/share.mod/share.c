@@ -2075,10 +2075,10 @@ static void start_sending_users(int idx)
 #ifdef TLS
     if (dcc[idx].ssl) {
       dcc[i].ssl = 1;
-      dprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+      dprintf(idx, "s us %s +%u %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     } else
 #endif
-    dprintf(idx, "s us %s %d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+    dprintf(idx, "s us %s %u %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.
      */
