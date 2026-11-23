@@ -282,6 +282,13 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (const char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
+      if (st->str == firewall) {
+        if (char *s2 = strchr(s, ':')) {
+          *s2++ = 0;
+          firewallport = atoi(s2);
+        } else
+          firewallport = 1080;
+      }
       if (strlcpy(s1, s, sizeof s1) >= sizeof s1)
         putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
       if (strlen(s1) > abs(st->max)) {
@@ -292,14 +299,9 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
         botnet_change(s1);
       else if (st->str == logfile_suffix)
         logsuffix_change(s1);
-      else if (st->str == firewall) {
-        splitc(firewall, s1, ':');
-        if (!firewall[0]) {
-          strcpy(firewall, s1);
-          firewallport = 1080;
-        } else
-          firewallport = atoi(s1);
-      } else
+      else if (st->str == firewall)
+        strcpy(firewall, s1);
+      else
         strcpy(st->str, s1);
       if ((st->flags) && (s1[0])) {
         if (st->str[strlen(st->str) - 1] != '/')
