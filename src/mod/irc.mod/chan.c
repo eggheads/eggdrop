@@ -167,7 +167,7 @@ static void setaccount(char *nick, char *account)
   for (chan = chanset; chan; chan = chan->next) {
     if ((m = ismember(chan, nick))) {
       if (rfc_casecmp(m->account, account)) {
-        char user[UHOSTLEN];
+        char user[UHOSTLEN + NICKLEN];
 
         /* account was known */
         if (m->account[0]) {
