@@ -1,5 +1,5 @@
 News
-Last revised: September 6, 2026
+Last revised: November 24, 2026 
      _________________________________________________________________
 
                                 What's new?
@@ -16,7 +16,46 @@ Last revised: September 6, 2026
 
      _________________________________________________________________
 
-Eggdrop v1.10.2rc1:
+Eggdrop v1.10.3rc1:
+
+ General changes:
+    - Added support for the IRCv3 batch and labeled-response capabilities
+    - As part of batch, updated netsplit/netjoin tracking (it works again!)
+    - Eggdrop now boots a connected partyline user if they changed their handle
+      and the userfile is reloaded via .reload
+    - Adjusted handling of the ident-timeout config setting to better honor the
+      actual value specified
+    - .help <module> now resovles the same as performing .help <module> module
+    - Lots of compile-time updates, including updating tcl.m4
+      from upstream, updating Tcl search locations, a make error on OpenBSD 8,
+      and adding support for GNU/Hurd
+    - The text files of a module are copied as part of the make install process
+    - Updated all links to the Tcl project- it is now tcl-lang.org; someone
+      else took over tcl.tk
+    - Updated the tcl-commands.doc format! Go check it out!
+    - Added a test suite! Still working to build this out...
+
+ Botnet changes:
+    - None
+
+ Tcl API changes:
+    - Updated the compressfile and uncompressfile Tcl commands to return a 1 or
+      0 based on the success of the command; standardized how success is handled
+
+ Module changes:
+    - Fixed an issue in transfer.mod where an unexpected connection after
+      resuming a filesend via DCC could cause a crash
+    - Fixed an issue in share.mod where a non-compliant long string ban could
+      cause a crash after sharing a userfile
+    - Fixed a file descriptor leak in share.mode
+
+ Eggdrop config changes:
+    - Added the option to enable the 'batch' and 'labeled-response' IRCv3
+      features
+
+     _________________________________________________________________
+
+Eggdrop v1.10.2:
 
  General changes:
     - Added the ability to implement extended bans
