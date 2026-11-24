@@ -42,12 +42,14 @@ The following capabilities are supported by Eggdrop:
   -   account-notify
   -   account-tag
   -   away-notify
+  -   batch
   -   BOT 005 mode
   -   cap-notify
   -   chghost
   -   echo-message
   -   extended-join
   -   invite-notify
+  -   labeled-response
   -   message-tags
   -   Monitor
   -   server-time
@@ -69,4 +71,4 @@ ERRATA
     functionality, it is suggested that this capability only be enabled
     on servers that disable WHO queries.
 
-Copyright (C) 2010 - 2024 Eggheads Development Team
+Copyright (C) 2010 - 2025 Eggheads Development Team

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +74,7 @@
 #endif
 
 #include <sys/types.h>
-#include "lush.h"
+
 #include "lang.h"
 #include "eggdrop.h"
 #include "flags.h"
@@ -115,10 +115,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
         else                                                            \
           (x) = newsplit(&(x));                                         \
 } while (0)
-
-#ifdef BORGCUBES
-#  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
-#endif /* BORGCUBES */
 
 /* Handle for the user that's used when starting eggdrop with -t */
 #define EGG_BG_HANDLE "-HQ"

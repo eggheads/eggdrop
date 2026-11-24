@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (c) 2018 - 2019 Michael Ortmann MIT License
- * Copyright (C) 2019 - 2024 Eggheads Development Team
+ * Copyright (C) 2019 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,11 +64,11 @@ static void ident_activity(int idx, char *buf, int len)
     putlog(LOG_MISC, "*", "Ident error: %s", strerror(errno));
     return;
   }
-  buf2[i - 1] = 0;
+  buf2[i] = 0;
   if (!(pos = strpbrk(buf2, "\r\n"))) {
     putlog(LOG_MISC, "*", "Ident error: could not read request.");
     return;
-  } 
+  }
   snprintf(pos, (sizeof buf2) - (pos - buf2), " : USERID : UNIX : %s\r\n", botname);
   count = strlen(buf2) + 1;
   if ((i = write(s, buf2, count)) != count) {
@@ -161,10 +161,8 @@ static void ident_oidentd()
       }
     }
     fclose(fd);
-  } else {
-    putlog(LOG_MISC, "*", "IDENT: oident.conf missing, or error opening "
-            "for reading");
-  }
+  } else if (errno != ENOENT)
+    putlog(LOG_MISC, "*", "IDENT error: fopen(%s): %s", path, strerror(errno));
   /* To minimize a known race condition, this code is called now */
   servidx = -1;
   for (i = 0; i < dcc_total; i++)

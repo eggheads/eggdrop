@@ -7,7 +7,7 @@
  * by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000 - 2024 Eggheads Development Team
+ * Copyright (C) 2000 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -237,7 +237,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   int len;
 
   adjust_mode_num(&mode_num);
-  egg_snprintf(mode, sizeof mode, "wb%d", mode_num);
+  snprintf(mode, sizeof mode, "wb%d", mode_num);
 
   if (!is_file(f_src)) {
     putlog(LOG_MISC, "*", "Failed to compress file `%s': not a file.", f_src);
@@ -320,7 +320,7 @@ static int compress_file(char *filename, int mode_num)
    * if the compression routine succeeded.
    */
   if (ret == COMPF_SUCCESS)
-    movefile(temp_fn, filename);
+    ret = movefile(temp_fn, filename) ? COMPF_ERROR : COMPF_SUCCESS;
 
   nfree(temp_fn);
   return ret;
@@ -346,7 +346,7 @@ static int uncompress_file(char *filename)
    * if the uncompression routine succeeded.
    */
   if (ret == COMPF_SUCCESS)
-    movefile(temp_fn, filename);
+    ret = movefile(temp_fn, filename) ? COMPF_ERROR : COMPF_SUCCESS;
 
   nfree(temp_fn);
   return ret;

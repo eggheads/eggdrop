@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -162,7 +162,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   char *chname, *nick, *s1;
   memberlist *m;
   char bantype = 0;
-  char s[UHOSTLEN];
+  char s[NICKLEN + UHOSTLEN];
 
   if (!par[0]) {
     dprintf(idx, "Usage: kickban [channel] [-|@]<nick> [reason]\n");
@@ -205,7 +205,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     dprintf(idx, "I can't help you now because halfops cannot kick ops.\n");
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
@@ -960,7 +960,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   char *nick, *hand;
   struct chanset_t *chan;
   memberlist *m = NULL;
-  char s[UHOSTLEN], s1[UHOSTLEN];
+  char s[NICKLEN + UHOSTLEN], s1[UHOSTLEN];
   int atr = u ? u->flags : 0;
   int statichost = 0;
   char *p1 = s1;
@@ -1007,7 +1007,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
   if (u) {
     dprintf(idx, "%s is already known as %s.\n", nick, u->handle);
