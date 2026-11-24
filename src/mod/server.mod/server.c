@@ -148,6 +148,7 @@ static char cap_request[CAPMAX - 9];
 static int maxqmsg;
 static struct msgq_head mq, hq, modeq;
 static int burst;
+static int burstrate;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
@@ -192,9 +193,9 @@ static void deq_msg()
   if (serv < 0)
     return;
 
-  /* Send up to 4 msgs to server if the *critical queue* has anything in it */
+  /* Send up to 5 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
-    while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
+    while (modeq.head && (burst < burstrate) && ((last_time - now) < MAXPENALTY)) {
       if (deq_kick(DP_MODE)) {
         burst++;
         continue;
@@ -222,8 +223,7 @@ static void deq_msg()
     return;
   }
 
-  /* Send something from the normal msg q even if we're slightly bursting */
-  if (burst > 1)
+  if (modeq.head || (!modeq.head && (burst >= burstrate)))
     return;
 
   if (mq.head) {
@@ -1788,6 +1788,7 @@ static tcl_ints my_tcl_ints[] = {
   {"extended-join",     &extended_join,             0},
   {"account-notify",    &account_notify,            0},
   {"account-tag",       &account_tag,               0},
+  {"burst-rate",        &burstrate,                 0},
   {NULL,                NULL,                       0}
 };
 
@@ -2450,6 +2451,7 @@ char *server_start(Function *global_funcs)
 #ifdef TLS
   tls_vfyserver = 0;
 #endif
+  burstrate = 5;
 
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 6);
