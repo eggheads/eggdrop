@@ -317,19 +317,7 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
 
   # Check for b64_ntop. If we have b64_ntop, we assume b64_pton as well.
   AC_CHECK_DECL([b64_ntop], [
-  AC_MSG_CHECKING(for b64_ntop)
-  AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-      #include <sys/types.h>
-      #include <netinet/in.h>
-      #include <resolv.h>
-    ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
-  ])
-  if test "x$found_b64_ntop" = xno; then
-    AC_MSG_RESULT(no)
-
-    AC_MSG_CHECKING(for b64_ntop with -lresolv)
-    OLD_LIBS="$LIBS"
-    LIBS="$LIBS -lresolv"
+    AC_MSG_CHECKING(for b64_ntop)
     AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <sys/types.h>
         #include <netinet/in.h>
@@ -337,30 +325,42 @@ AC_DEFUN([EGG_FUNC_B64_NTOP],
       ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
     ])
     if test "x$found_b64_ntop" = xno; then
-      LIBS="$OLD_LIBS"
       AC_MSG_RESULT(no)
 
-      AC_MSG_CHECKING(for b64_ntop with -lnetwork)
+      AC_MSG_CHECKING(for b64_ntop with -lresolv)
       OLD_LIBS="$LIBS"
-      LIBS="$LIBS -lnetwork"
+      LIBS="$LIBS -lresolv"
       AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-        #include <sys/types.h>
-        #include <netinet/in.h>
-        #include <resolv.h>
+          #include <sys/types.h>
+          #include <netinet/in.h>
+          #include <resolv.h>
         ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
       ])
       if test "x$found_b64_ntop" = xno; then
         LIBS="$OLD_LIBS"
         AC_MSG_RESULT(no)
+
+        AC_MSG_CHECKING(for b64_ntop with -lnetwork)
+        OLD_LIBS="$LIBS"
+        LIBS="$LIBS -lnetwork"
+        AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+          #include <sys/types.h>
+          #include <netinet/in.h>
+          #include <resolv.h>
+          ]], [[b64_ntop(NULL, 0, NULL, 0);]])],[found_b64_ntop=yes],[found_b64_ntop=no
+        ])
+        if test "x$found_b64_ntop" = xno; then
+          LIBS="$OLD_LIBS"
+          AC_MSG_RESULT(no)
+        fi
       fi
     fi
-  fi
-  ], [
-    found_b64_ntop=no
-  ], [[
-    #include <sys/types.h>
-    #include <netinet/in.h>
-    #include <resolv.h>
+    ], [
+      found_b64_ntop=no
+    ], [[
+      #include <sys/types.h>
+      #include <netinet/in.h>
+      #include <resolv.h>
   ]])
   if test "x$found_b64_ntop" = xyes; then
     AC_DEFINE([HAVE_BASE64], [1], [Define if b64_ntop exists.])
