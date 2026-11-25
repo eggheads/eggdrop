@@ -1209,7 +1209,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
   else {
     /* Hopefully it's a user-defined flag. */
     for (ul = udef; ul && ul->name; ul = ul->next) {
-      if (!strcmp(setting, ul->name))
+      if (!strcasecmp(setting, ul->name))
         break;
     }
     if (!ul || !ul->name) {
