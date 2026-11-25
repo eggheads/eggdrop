@@ -1,7 +1,7 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
 AC_PREREQ([2.71])
-AC_INIT([Eggdrop],[1.10.2],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
+AC_INIT([Eggdrop],[1.10.3],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2025 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
