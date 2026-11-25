@@ -105,7 +105,7 @@ typedef void (*chanout_butfunc)(int, int, const char *, ...) ATTRIBUTE_FORMAT(pr
 #define base64_to_int ((int (*) (char *))global[20])
 #define int_to_base64 ((char * (*) (int))global[21])
 #define int_to_base10 ((char * (*) (int))global[22])
-#define simple_sprintf ((int (*)())global[23])
+#define simple_sprintf ((int (*)(char *, const char *, ...))global[23])
 /* 24 - 27 */
 #define botnet_send_zapf ((void (*)(int, char *, char *, char *))global[24])
 #define botnet_send_zapf_broad ((void (*)(int, char *, char *, char *))global[25])
