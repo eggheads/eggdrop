@@ -1,8 +1,95 @@
 
-Eggdrop Changes (Last Updated 2026-05-23):
+Eggdrop Changes (Last Updated 2026-11-25):
 __________________________________________
 
-Eggdrop v1.10.2rc1:
+Eggdrop v1.10.3rc1:
+
+  2026-11-25 * Fix up new version generation
+             * Update version strings to 1.10.3
+             * Generate docs with 1.10.3 version
+  2026-11-24 * Fix aclocal.m4 check for musl b64
+                 [Found by: sbraz / Patch by: sbraz, and, michaelortmann]
+             * Cleanup
+                 [Patch by: michaelortmann]
+             * fix eggdrop.conf typo
+             * Make more functions static
+                 [Patch by: michaelortmann]
+             * Update NEWS
+  2026-11-22 * Fix incorrect buffer handling of fragmented DCC RESEND packets
+                 [Found by: Deus, Rex / Patch by: Deus, Rex, and, thommey]
+             * Detect Tcl9 under OpenBSD 8
+                 [Found by: @michaelortmann / Patch by: Geo]
+             * Remove compat snprintf()
+                 [Found by: vanosg / Patch by: michaelortmann]
+             * Update include ordering for openbsd 8.0 under sparc64
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Add IRCv3 batch/labeled-response support
+                 [Patch by: Geo]
+  2026-11-21 * Update Tcl website references with new links
+                 [Patch by: michaelortmann]
+             * whitespace cleanup
+  2026-11-15 * Fix vsnprintf truncation in shareout_mod()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-10-22 * Grow testing coverage
+                 [Patch by: Geo]
+             * Add GNU/Hurd support
+                 [Found by: @twolife / Patch by: @twolife]
+             * Add time-constant string comparisons
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update Tcl Documentation format
+                 [Patch by: Geo]
+  2026-10-12 * Improve module .help
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Update COMPILE-GUIDE for macOS/Cygwin
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix Tcl compress/uncompress error handling
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix file descriptor leak for tmpfile() in share.mod
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Clean up remparty()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Copy module text files
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-10-06 * inet_aton() -> inet_pton()
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-10-05 * Remove compat vsnprintf()
+                 [Found by: Geo / Patch by: michaelortmann]
+             * Honor check_expired_dcc() -timeout settings
+                 [Found by: https: / Patch by: https:]
+             * Fix const qualifier compiler warning
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * Fix USERENTRY_DCCDIR init
+                 [Found by: nicoulaa / Patch by: michaelortmann]
+             * Fix minor logic bug in tls.c
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+             * boot dangling users not in userfile on reload
+                 [Found by: michaelortmann / Patch by: michaelortmann]
+  2026-08-01 * Update docs
+
+Eggdrop v1.10.2 (2026-09-06):
+
+  2026-09-06 * Update docs
+             * Update docs to 1.10.2
+             * Update versions
+             * Fix webui version when no patchlevel present
+                 [Found by: Geo / Patch by: Geo]
+             * Eggdrop v1.10.2 *STABLE*
+
+Eggdrop v1.10.2rc2 (2026-08-01):
+
+  2026-08-01 * Python mod crash fix
+                 [Found by: pagzlol]
+             * Fix sphinx search for html docs
+                 [Found by: @twolife / Patch by: @twolife]
+             * Normalize Extban implementation
+                 [Found by: Robby / Patch by: Geo]
+             *
+                 [Patch by: michaelortmann]
+             * Fix victim lookup after op mode binds
+                 [Found by: tkimball83 / Patch by: tkimball83]
+             * Eggdrop v1.10.2 Release Candidate 2
+
+Eggdrop v1.10.2rc1 (2026-05-23):
 
   2026-05-23 * Add bug-detect logic for #202
                  [Found by: Arkadietz / Patch by: michaelortmann]
@@ -12,6 +99,8 @@ Eggdrop v1.10.2rc1:
              * Update version strings to 1.10.2
              * Roll webui version requirement
              * NEWS
+             * Add python script tutorial to doc tree
+             * Eggdrop v1.10.2 Release Candidate 1
   2026-05-17 * Fix ident lookup bugs introduced by webui
                  [Found by: Geo / Patch by: thommey]
   2026-05-16 * Add testing framework
