@@ -7552,7 +7552,7 @@ version
 ^^^^^^^
 
   Value
-     current bot version "1.1.2+pl1.10.2201"; first item is the text version, to include a patch string if present, and second item is a numerical version
+     current bot version "1.1.2+pl1 1010201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module
      ``core``
@@ -7562,7 +7562,7 @@ numversion*
 ^^^^^^^^^^^
 
   Value
-     the current numeric bot version (for example: "1.10.21"). Numerical version is in the format of "MNNRRPP", where:
+     the current numeric bot version (for example: "1010201"). Numerical version is in the format of "MNNRRPP", where:
 
      .. list-table::
         :widths: 13 87
