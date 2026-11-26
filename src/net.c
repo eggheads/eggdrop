@@ -570,7 +570,7 @@ int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
         return -4;
       }
       if (res != 0) {
-        debug1("net: getsockopt error %d", res);
+        debug2("net: getsockopt() socket %i error %s", s, strerror(res));
         return -1;
       }
       return s; /* async success! */
@@ -914,6 +914,8 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
   struct dns_thread_node *dtn, *dtn_prev;
   void *res;
 #endif
+  int res2;
+  socklen_t res2_len;
 
   maxfd_r = preparefdset(&fdr, slist, slistmax, tclonly, TCL_READABLE);
 #ifdef EGG_TDNS
@@ -970,6 +972,14 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #else
         else if (!(slist[i].flags & SOCK_STRONGCONN)) {
 #endif
+          res2_len = sizeof(res2);
+          getsockopt(slist[i].sock, SOL_SOCKET, SO_ERROR, &res2, &res2_len);
+          if ((res2 > 0) && (res2 != EINPROGRESS)) {
+            debug2("net: connect! sock %d error %s", slist[i].sock, strerror(res2));
+            s[0] = 0;
+            *len = slist[i].sock;
+            return -1;
+          }
           debug1("net: connect! sock %d", slist[i].sock);
           s[0] = 0;
           *len = 0;
@@ -1024,11 +1034,16 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                 * otherwise it will connect. */
           *len = slist[i].sock;
           slist[i].flags &= ~SOCK_CONNECT;
-          debug1("net: eof!(read) socket %d", slist[i].sock);
+          if (x < 0)
+            debug2("net: eof!(read) socket %d error %s", slist[i].sock, strerror(errno));
+          else
+            debug1("net: eof!(read) socket %d", slist[i].sock);
           return -1;
         } else {
-          debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
-                 strerror(errno));
+          if (x < 0)
+            debug2("net: EAGAIN socket %d error %s", slist[i].sock, strerror(errno));
+          else
+            debug1("net: EAGAIN socket %d", slist[i].sock);
           continue;           /* EAGAIN */
         }
       }
