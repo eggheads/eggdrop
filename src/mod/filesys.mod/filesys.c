@@ -729,7 +729,7 @@ static void filesys_dcc_send_hostresolved(int i)
   char *s1, *param, prt[6], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
-  snprintf(prt, sizeof prt, "%d", dcc[i].port);
+  snprintf(prt, sizeof prt, "%u", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, &dcc[i].sockname,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);
@@ -1010,9 +1010,7 @@ char *filesys_start(Function *global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
-            sizeof(struct user_entry_type) - sizeof(char *));
-
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO, sizeof(void *) * 12);
   USERENTRY_DCCDIR.got_share = 0;       /* We don't want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;

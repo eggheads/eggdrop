@@ -253,11 +253,14 @@ typedef uint32_t IP;
 
 /* The following functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
+#define egg_inet_aton(src, dst) inet_pton(AF_INET, src, dst)
 #define egg_memcpy memcpy
 #define egg_memset memset
+#define egg_snprintf snprintf
 #define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
 #define egg_strncasecmp strncasecmp
+#define egg_vsnprintf vsnprintf
 #define my_memcpy memcpy
 
 /***********************************************************************/
@@ -274,7 +277,17 @@ typedef int (*IntFunc) ();
 #endif
 
 #include <sys/socket.h>
-#include <netinet/in.h>
+
+#include <netinet/in.h> /* before resolv.h */
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+               * (dietlibc) */
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#ifndef HAVE_BASE64
+#  undef b64_ntop
+#  undef b64_pton
+#endif
+
+#include <arpa/inet.h>
 
 typedef struct {
   int family;
@@ -380,6 +393,8 @@ struct xfer_info {
   unsigned long block_pending;  /* bytes of this DCC block which weren't
                                  * sent yet.                               */
   time_t start_time;            /* Time when a xfer was started.           */
+  char reget_buf[8];            /* 8-byte reget packet; at the end of the
+                                 * struct to keep module compatibility     */
 };
 
 enum {                          /* transfer connection handling a ...   */

@@ -57,7 +57,6 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   char extbanflag = 0;
   int extban_enabled = 1;
-  const char *value, *comma, *types;
   long expire_foo;
   unsigned long expire_time = 0;
   int sticky = 0;
@@ -140,31 +139,30 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       who[UHOSTMAX - 4] = 0;
     if (is_extban_mask(who)) {
       strlcpy(s, who, sizeof s);
-      /* If its an extban, check if it needs to be set as a sticky ban */
+      /* If its an extban, check if it is supported by the server */
       if (extban_parse(s, &extbanflag, NULL)) {
-        value = servermod_isupport_get("EXTBAN");
-        if (value && value[0]) {
-          comma = strchr(value, ',');
-          types = comma ? comma + 1 : value;
-          extban_enabled = strchr(types, extbanflag) ? 1 : 0;
-        } else {
-          extban_enabled = 0;
+        extban_enabled = extban_flag_supported(extbanflag);
+        if (!extban_is_matchable(s) && par[0] != '*') {
+          dprintf(idx, "Extban type '%c' cannot be matched by Eggdrop"
+                       ", so it is forced to be sticky.\n", extbanflag);
+          sticky = 1;
+
         }
       }
     } else {
       /* Fix missing ! or @ BEFORE checking against myself */
       if (!strchr(who, '!')) {
         if (!strchr(who, '@'))
-          egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick ban */
+          snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick ban */
         else
-          egg_snprintf(s, sizeof s, "*!%s", who);
+          snprintf(s, sizeof s, "*!%s", who);
       } else if (!strchr(who, '@'))
-        egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
+        snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
       else
         strlcpy(s, who, sizeof s);
       if ((me = module_find("server", 0, 0)) && me->funcs) {
-        egg_snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
-                     me->funcs[SERVER_BOTUSERHOST]);
+        snprintf(s1, sizeof s1, "%s!%s", (char *) me->funcs[SERVER_BOTNAME],
+                 (char *) me->funcs[SERVER_BOTUSERHOST]);
         if (match_addr(s, s1)) {
           dprintf(idx, "I'm not going to ban myself.\n");
           putlog(LOG_CMDS, "*", "#%s# attempted +ban %s", dcc[idx].nick, s);
@@ -194,7 +192,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
         if (!extbanflag || extban_enabled)
           (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         else
-          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
       }
     } else {
@@ -216,7 +214,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
           for (chan = chanset; chan != NULL; chan = chan->next)
             (me->funcs[IRC_CHECK_THIS_BAN]) (chan, s, sticky);
         } else
-          dprintf(idx, "%s%c%s%c%s", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
+          dprintf(idx, "%s%c%s%c%s\n", EXTBAN_NOT_ENABLED1, extbanflag, EXTBAN_NOT_ENABLED2,
                                     extbanflag, EXTBAN_NOT_ENABLED3);
       }
     }
@@ -266,11 +264,11 @@ static void cmd_pls_extban(struct userrec *u, int idx, char *par)
 
   get_extban_prefix(&prefix);
   if (prefix)
-    egg_snprintf(extban, sizeof extban, "%c%c:%s", prefix, flag, arg);
+    snprintf(extban, sizeof extban, "%c%c:%s", prefix, flag, arg);
   else
-    egg_snprintf(extban, sizeof extban, "%c:%s", flag, arg);
+    snprintf(extban, sizeof extban, "%c:%s", flag, arg);
 
-  egg_snprintf(forwarded, sizeof forwarded, "%s%s%s", extban,
+  snprintf(forwarded, sizeof forwarded, "%s%s%s", extban,
                par[0] ? " " : "", par);
   cmd_pls_ban(u, idx, forwarded);
 }
@@ -356,11 +354,11 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     /* Fix missing ! or @ BEFORE checking against myself */
     if (!strchr(who, '!')) {
       if (!strchr(who, '@'))
-        egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick exempt */
+        snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick exempt */
       else
-        egg_snprintf(s, sizeof s, "*!%s", who);
+        snprintf(s, sizeof s, "*!%s", who);
     } else if (!strchr(who, '@'))
-      egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
+      snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
       strlcpy(s, who, sizeof s);
 
@@ -480,11 +478,11 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     /* Fix missing ! or @ BEFORE checking against myself */
     if (!strchr(who, '!')) {
       if (!strchr(who, '@'))
-        egg_snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick invite */
+        snprintf(s, sizeof s, "%s!*@*", who);       /* Lame nick invite */
       else
-        egg_snprintf(s, sizeof s, "*!%s", who);
+        snprintf(s, sizeof s, "*!%s", who);
     } else if (!strchr(who, '@'))
-      egg_snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
+      snprintf(s, sizeof s, "%s@*", who);   /* brain-dead? */
     else
       strlcpy(s, who, sizeof s);
 
@@ -583,10 +581,10 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   if (str_isdigit(ban)) {
     i = atoi(ban);
     /* subtract the number of global bans to get the number of the channel ban */
-    egg_snprintf(s, sizeof s, "%d", i);
+    snprintf(s, sizeof s, "%d", i);
     j = u_delban(0, s, 0);
     if (j < 0) {
-      egg_snprintf(s, sizeof s, "%d", -j);
+      snprintf(s, sizeof s, "%d", -j);
       j = u_delban(chan, s, 1);
       if (j > 0) {
         if (lastdeletedmask)
@@ -694,10 +692,10 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
   if (str_isdigit(exempt)) {
     i = atoi(exempt);
     /* subtract the number of global exempts to get the number of the channel exempt */
-    egg_snprintf(s, sizeof s, "%d", i);
+    snprintf(s, sizeof s, "%d", i);
     j = u_delexempt(0, s, 0);
     if (j < 0) {
-      egg_snprintf(s, sizeof s, "%d", -j);
+      snprintf(s, sizeof s, "%d", -j);
       j = u_delexempt(chan, s, 1);
       if (j > 0) {
         if (lastdeletedmask)
@@ -806,10 +804,10 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
   if (str_isdigit(invite)) {
     i = atoi(invite);
     /* subtract the number of global invites to get the number of the channel invite */
-    egg_snprintf(s, sizeof s, "%d", i);
+    snprintf(s, sizeof s, "%d", i);
     j = u_delinvite(0, s, 0);
     if (j < 0) {
-      egg_snprintf(s, sizeof s, "%d", -j);
+      snprintf(s, sizeof s, "%d", -j);
       j = u_delinvite(chan, s, 1);
       if (j > 0) {
         if (lastdeletedmask)
@@ -1091,7 +1089,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       /* subtract the number of global exempts to get the number of the channel exempt */
       j = u_setsticky_exempt(NULL, s, -1);
       if (j < 0)
-        egg_snprintf(s, sizeof s, "%d", -j);
+        snprintf(s, sizeof s, "%d", -j);
     }
     j = u_setsticky_exempt(chan, s, yn);
     if (j > 0) {
@@ -1129,7 +1127,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       /* subtract the number of global invites to get the number of the channel invite */
       j = u_setsticky_invite(NULL, s, -1);
       if (j < 0)
-        egg_snprintf(s, sizeof s, "%d", -j);
+        snprintf(s, sizeof s, "%d", -j);
     }
     j = u_setsticky_invite(chan, s, yn);
     if (j > 0) {
@@ -1164,7 +1162,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     /* subtract the number of global bans to get the number of the channel ban */
     j = u_setsticky_ban(NULL, s, -1);
     if (j < 0)
-      egg_snprintf(s, sizeof s, "%d", -j);
+      snprintf(s, sizeof s, "%d", -j);
   }
   j = u_setsticky_ban(chan, s, yn);
   if (j > 0) {
@@ -1495,7 +1493,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
         if (ii == 1)
           strlcpy(work, "    ", sizeof work);
         work_len = strlen(work);
-        egg_snprintf(work + work_len, sizeof(work) - work_len, " %c%s",
+        snprintf(work + work_len, sizeof(work) - work_len, " %c%s",
                      getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
         ii++;
         if (ii > 4) {
@@ -1517,7 +1515,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           dprintf(idx, "User defined channel settings:\n");
           tmp = 1;
         }
-        egg_snprintf(work + work_len, sizeof(work) - work_len, "%s: %" PRIdPTR "   ",
+        snprintf(work + work_len, sizeof(work) - work_len, "%s: %" PRIdPTR "   ",
                      ul->name, getudef(ul->values, chan->dname));
         ii++;
         if (ii > 4) {
@@ -1628,7 +1626,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
             strlcpy(value, list[0], 2);
             len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, 
+            snprintf(answers + len, (sizeof answers) - len,
                 (len == 0) ? "%s" : " %s", list[0]);        /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, invalid mode.\n",
@@ -1657,7 +1655,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
           irp = Tcl_CreateInterp();
           if (tcl_channel_modify(irp, chan, 2, list) == TCL_OK) {
             len = strlen(answers);
-            egg_snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
+            snprintf(answers + len, (sizeof answers) - len, "%s { %s }", list[0], parcpy); /* Concatenation */
           } else if (!all || !chan->next)
             dprintf(idx, "Error trying to set %s for %s, %s\n",
                     list[0], all ? "all channels" : chname, Tcl_GetStringResult(irp));

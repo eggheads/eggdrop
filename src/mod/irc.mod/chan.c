@@ -94,44 +94,6 @@ static void update_idle(char *chname, char *nick)
   }
 }
 
-static int extban_flag_supported(char flag)
-{
-  module_entry *me;
-  const char *value = NULL, *comma, *types;
-
-  me = module_find("server", 0, 0);
-  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
-    value = (const char *)isupport_get("EXTBAN", strlen("EXTBAN"));
-  }
-  if (!value || !value[0])
-    return 0;
-
-  comma = strchr(value, ',');
-  types = comma ? comma + 1 : value;
-  for (; *types; types++)
-    if (*types == flag)
-      return 1;
-  return 0;
-}
-
-/* True if mask is an extban whose flag eggdrop cannot enforce by kicking.
- * Decided at runtime from current ISUPPORT - never persisted to the userfile.
- */
-static int extban_is_unenforceable(const char *mask)
-{
-  char extflag;
-  const char *extarg, *acc;
-
-  if (!extban_parse(mask, &extflag, &extarg))
-    return 0;
-  if (extflag == 'U')
-    return 0;
-  acc = isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
-  if (acc && acc[0] && extflag == acc[0])
-    return 0;
-  return 1;
-}
-
 /* Document whether a ban matches a specific channel member.
  * banmask can be normal or extban, user is the traditional userhost.
  * Returns 1 if the ban mask matches the member, 0 if not.
@@ -142,7 +104,30 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   char type;
   const char *v = NULL, *arg = NULL;
 
-  /* Am I an extban? */
+  if (!extban_parse(banmask, &type, &arg))
+    return match_addr((char *) banmask, (char *) user);
+
+  me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
+    v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
+  }
+  /* Try account extban matching */
+  if (v && v[0] && type == v[0]) {
+    return m->account[0] && !rfc_casecmp(m->account, arg);
+  }
+  /* Locally matchable extbans match their argument as a usermask. */
+  if (strchr(MATCHABLE_EXTBANS, type)) {
+    return match_addr((char *) arg, (char *) user);
+  }
+  return 0;
+}
+
+static int banmask_enforces_member(const char *banmask, const char *user, memberlist *m)
+{
+  module_entry *me;
+  char type;
+  const char *v = NULL, *arg = NULL;
+
   if (!extban_parse(banmask, &type, &arg)) {
     return match_addr((char *) banmask, (char *) user);
   }
@@ -151,18 +136,16 @@ static int banmask_matches_member(const char *banmask, const char *user, memberl
   if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT]) {
     v = (const char *)isupport_get("ACCOUNTEXTBAN", strlen("ACCOUNTEXTBAN"));
   }
-  /* Try account extban matching */
   if (v && v[0] && type == v[0]) {
-    return !rfc_casecmp(m->account, arg);
+    return m->account[0] && !rfc_casecmp(m->account, arg);
   }
 
-  /* Try U (unregistered) extban matching */
-  if (type == 'U') {
-    return !strcmp(m->account, "*") && match_addr((char *) arg, (char *) user);
+  if (strchr(ENFORCEABLE_EXTBANS, type)) {
+    return match_addr((char *) arg, (char *) user);
   }
+
   return 0;
 }
-
 
 static int banmask_list_matches_member(maskrec *list, const char *user, memberlist *m)
 {
@@ -184,7 +167,7 @@ static void setaccount(char *nick, char *account)
   for (chan = chanset; chan; chan = chan->next) {
     if ((m = ismember(chan, nick))) {
       if (rfc_casecmp(m->account, account)) {
-        char user[UHOSTLEN];
+        char user[UHOSTLEN + NICKLEN];
 
         /* account was known */
         if (m->account[0]) {
@@ -197,7 +180,7 @@ static void setaccount(char *nick, char *account)
         }
         strlcpy(m->account, account, sizeof m->account);
 
-        egg_snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
+        snprintf(user, sizeof user, "%s!%s", m->nick, m->userhost);
         if (banmask_list_matches_member(global_bans, user, m) ||
                 banmask_list_matches_member(chan->bans, user, m)) {
           refresh_ban_kick(chan, user, m->nick);
@@ -451,7 +434,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
         char s[NICKLEN + UHOSTLEN];
 
         for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-          egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+          snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
           if (wild_match(h, s) && (m->joined >= chan->floodtime[which]) &&
               !chan_sentkick(m) && !match_my_nick(m->nick) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
@@ -521,7 +504,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(get_user_from_member(m), &fr, chan->dname);
     if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
-        banmask_matches_member(hostmask, s, m) && !chan_sentkick(m) &&
+        banmask_enforces_member(hostmask, s, m) && !chan_sentkick(m) &&
         !match_my_nick(m->nick) && !chan_issplit(m) &&
         !glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
         isexempted(chan, s)) || (u_match_mask(global_exempts, s) ||
@@ -567,6 +550,11 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       if (banmask_matches_member(b->mask, user, m)) {
         struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
         char c[512];            /* The ban comment.     */
+        if (!banmask_enforces_member(b->mask, user, m)) {
+          do_mask(chan, chan->channel.ban, b->mask, 'b');
+          b->lastactive = now;
+          return;
+        }
         get_user_flagrec(get_user_from_member(m), &fr,
                          chan->dname);
         if (!glob_friend(fr) && !chan_friend(fr)) {
@@ -575,7 +563,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
           do_mask(chan, chan->channel.ban, b->mask, 'b');
           b->lastactive = now;
           if (b->desc && b->desc[0] != '@')
-            egg_snprintf(c, sizeof c, "%s %s", IRC_PREBANNED, b->desc);
+            snprintf(c, sizeof c, "%s %s", IRC_PREBANNED, b->desc);
           else
             c[0] = 0;
           kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
@@ -667,11 +655,12 @@ static void recheck_bans(struct chanset_t *chan)
       char extflag;
       const char *extarg;
 
-      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag))
+      if (extban_parse(u->mask, &extflag, &extarg) && !extban_flag_supported(extflag)) {
         continue;
-      if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
-          (u->flags & MASKREC_STICKY) || extban_is_unenforceable(u->mask)))
+      }
+      if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) || (u->flags & MASKREC_STICKY))) {
         add_mode(chan, '+', 'b', u->mask);
+      }
     }
   }
 }
@@ -766,23 +755,30 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   char user[NICKMAX+UHOSTLEN+1], extflag;
   const char *extarg;
 
-  if (HALFOP_CANTDOMODE('b'))
+  if (HALFOP_CANTDOMODE('b')) {
     return;
+  }
 
-  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported(extflag))
+  if (extban_parse(banmask, &extflag, &extarg) && !extban_flag_supported(extflag)) {
     return;
+  }
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
     if (banmask_matches_member(banmask, user, m) &&
         !(use_exempts &&
           (u_match_mask(global_exempts, user) ||
-           u_match_mask(chan->exempts, user))))
+           u_match_mask(chan->exempts, user)))) {
       refresh_ban_kick(chan, user, m->nick);
+    }
   }
-  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky ||
-      extban_is_unenforceable(banmask)))
+  /* extbans overwrite sticky when not matchable, update local variable */
+  if (!sticky && (u_sticky_mask(chan->bans, banmask) || u_sticky_mask(global_bans, banmask))) {
+    sticky = 1;
+  }
+  if (!isbanned(chan, banmask) && (!channel_dynamicbans(chan) || sticky)) {
     add_mode(chan, '+', 'b', banmask);
+  }
 }
 
 static void recheck_channel_modes(struct chanset_t *chan)
@@ -2073,7 +2069,7 @@ static int gotjoin(char *from, char *channame)
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
       ch_dname = nmalloc(l_chname + 1);
       if (ch_dname) {
-        egg_snprintf(ch_dname, l_chname + 2, "!%s",
+        snprintf(ch_dname, l_chname + 2, "!%s",
                      chname + (CHANNEL_ID_LEN + 1));
         chan = findchan_by_dname(ch_dname);
         if (!chan) {
@@ -2270,7 +2266,7 @@ static int gotjoin(char *from, char *channame)
               (!use_exempts || !isexempted(chan, from)) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
-              if (banmask_matches_member(b->mask, from, m)) {
+              if (banmask_enforces_member(b->mask, from, m)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
                         IRC_YOUREBANNED);
                 m->flags |= SENTKICK;
@@ -2592,6 +2588,7 @@ static int gotquit(char *from, char *msg)
   memberlist *m;
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
+  batch_t *b;
 
   strlcpy(from2, from, sizeof from2);
   nick = splitnick(&from);
@@ -2599,22 +2596,31 @@ static int gotquit(char *from, char *msg)
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
    *        Determine if signoff string matches "%.% %.%", and only one
    *        space.
+   * 
+   * 30 years later... If the server sent this QUIT inside an IRCv3 netsplit
+   * batch, it has told us outright that this is a split and there is nothing
+   * to guess at.
    */
-  p = strchr(msg, ' ');
-  if (p && (p == strrchr(msg, ' '))) {
-    char *z1, *z2;
+  b = batch_get_current();
+  if (b && !strcmp(b->type, "netsplit")) {
+    split = 1;
+  } else {
+    p = strchr(msg, ' ');
+    if (p && (p == strrchr(msg, ' '))) {
+      char *z1, *z2;
 
-    *p = 0;
-    z1 = strchr(p + 1, '.');
-    z2 = strchr(msg, '.');
-    if (z1 && z2 && (*(z1 + 1) != 0) && (z1 - 1 != p) &&
-        (z2 + 1 != p) && (z2 != msg)) {
-      /* Server split, or else it looked like it anyway (no harm in
-       * assuming)
-       */
-      split = 1;
-    } else
-      *p = ' ';
+      *p = 0;
+      z1 = strchr(p + 1, '.');
+      z2 = strchr(msg, '.');
+      if (z1 && z2 && (*(z1 + 1) != 0) && (z1 - 1 != p) &&
+          (z2 + 1 != p) && (z2 != msg)) {
+        /* Server split, or else it looked like it anyway (no harm in
+         * assuming)
+         */
+        split = 1;
+      } else
+        *p = ' ';
+    }
   }
   for (chan = chanset; chan; chan = chan->next) {
     oldchan = chan;

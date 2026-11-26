@@ -248,7 +248,7 @@ static void bot_version(int idx, char *par)
   addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-', dcc[idx].u.bot->numver, 0);
 #endif
   check_tcl_link(dcc[idx].nick, botnetnick);
-  egg_snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
+  snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
   dprintf(idx, "el\n");
 }
@@ -258,7 +258,7 @@ void failed_link(int idx)
   char s[NICKLEN + 18], s1[512];
 
   if (dcc[idx].u.bot->linker[0]) {
-    egg_snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
+    snprintf(s, sizeof s, "Couldn't link to %s.", dcc[idx].nick);
     strcpy(s1, dcc[idx].u.bot->linker);
     add_note(s1, botnetnick, s, -2, 0);
   }
@@ -295,7 +295,7 @@ static void cont_link(int idx, char *buf, int i)
       if (i > 0) {
         bots = bots_in_subtree(findbot(dcc[idx].nick));
         users = users_in_subtree(findbot(dcc[idx].nick));
-        egg_snprintf(x, sizeof x,
+        snprintf(x, sizeof x,
                      "Unlinked %s (restructure) (lost %d bot%s and %d user%s)",
                      dcc[i].nick, bots, (bots != 1) ? "s" : "",
                      users, (users != 1) ? "s" : "");
@@ -360,14 +360,14 @@ static char *get_bot_pass(struct userrec *u) {
       if (!pass) {
         pass = pass2;
         if (encrypt_pass) {
-	  /* get_user() returns a pointer of struct user_entry
+          /* get_user() returns a pointer of struct user_entry
            * and set_user()->pass2_set() could free() and realloc it
-	   * so fetch it again with get_user()
-	   */
+           * so fetch it again with get_user()
+           */
           set_user(&USERENTRY_PASS, u, pass);
           pass = get_user(&USERENTRY_PASS2, u);
-	}
-      } else if (strcmp(pass2, pass) && encrypt_pass2)
+        }
+      } else if (crypto_verify(pass2, pass) && encrypt_pass2)
         pass = pass2;
     } else if (pass && encrypt_pass2)
         set_user(&USERENTRY_PASS2, u, pass);
@@ -524,7 +524,7 @@ static void eof_dcc_bot(int idx)
 
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
-  egg_snprintf(x, sizeof x,
+  snprintf(x, sizeof x,
                "Lost bot: %s (lost %d bot%s and %d user%s)",
                dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
                (users != 1) ? "s" : "");
@@ -626,7 +626,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
-  ret = strcmp(digest_string, remote_digest);
+  ret = crypto_verify(digest_string, remote_digest);
   explicit_bzero(digest_string, sizeof digest_string);
   explicit_bzero(digest, sizeof digest);
 
@@ -1483,10 +1483,10 @@ static void eof_dcc_telnet(int idx)
 static void display_telnet(int idx, char *buf)
 {
 #ifdef TLS
-  sprintf(buf, "lstn  %s%d%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
+  sprintf(buf, "lstn  %s%u%s", dcc[idx].ssl ? "+" : "", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
 #else
-  sprintf(buf, "lstn  %d%s", dcc[idx].port,
+  sprintf(buf, "lstn  %u%s", dcc[idx].port,
           (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
 #endif
 }
@@ -1527,7 +1527,7 @@ static void timeout_dupwait(int idx)
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
-    egg_snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
     dprintf(idx, "error Already connected.\n");
     putlog(LOG_BOTS, "*", DCC_DUPLICATE, x);
     killsock(dcc[idx].sock);
@@ -2329,7 +2329,7 @@ void dcc_ident(int idx, char *buf, int len)
   lostdcc(idx);
 }
 
-void eof_timeout_dcc_ident(int idx, const char *s)
+static void eof_timeout_dcc_ident(int idx, const char *s)
 {
   char buf[7 + UHOSTLEN]; /* telnet@ */
   int i;
@@ -2392,7 +2392,7 @@ static void dcc_telnet_got_ident(int i, char *host)
     return;
   }
   strlcpy(dcc[i].host, host, UHOSTLEN);
-  egg_snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
+  snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
     int ok = 1;

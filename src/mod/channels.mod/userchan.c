@@ -241,30 +241,24 @@ static int u_match_mask(maskrec *rec, char *mask)
     }
   }
 
-  /* Loop through all ban records, see if user matches based on mask or
-   * flag (extban).
-   */
   accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+
   for (; rec; rec = rec->next) {
-    /* Am I an extban? */
     if (extban_parse(rec->mask, &type, &arg)) {
-      if (!m || !m->nick[0] || !m->account[0]) {
+      if (!m || !m->nick[0] || !m->account[0])
         continue;
-      }
       if (accountflag && (type == accountflag[0])) {
-        if (!rfc_casecmp(m->account, arg)) {
+        if (!rfc_casecmp(m->account, arg))
           return 1;
-        }
       } else if (type == 'U') {
-        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask)) {
+        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask))
           return 1;
-        }
       }
       continue;
     }
-
-    if (match_addr(rec->mask, mask))
+    if (match_addr(rec->mask, mask)) {
       return 1;
+    }
   }
   return 0;
 }
@@ -446,14 +440,30 @@ static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
     strat = strchr(oldmask, '@');
     strbang = strchr(oldmask, '!');
     if (strbang == NULL && strat == NULL)
-      egg_snprintf(newmask, len, "%s!*@*", oldmask);
+      snprintf(newmask, len, "%s!*@*", oldmask);
     else if (strat == NULL)
-      egg_snprintf(newmask, len, "%s@*", oldmask);
+      snprintf(newmask, len, "%s@*", oldmask);
     else if (strbang == NULL)
-      egg_snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
+      snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
     else
       strlcpy(newmask, oldmask, len);
   }
+}
+
+/* Takes mask in the full $a:mask format */
+static int extban_is_matchable(const char *mask)
+{
+  char extflag;
+  const char *extarg, *acc;
+
+  if (!extban_parse(mask, &extflag, &extarg))
+    return 0;
+
+  acc = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (acc && acc[0] && extflag == acc[0])
+    return 1;
+
+  return strchr(MATCHABLE_EXTBANS, extflag) ? 1 : 0;
 }
 
 /* Note: If first char of note is '*' it's a sticky ban.
@@ -467,6 +477,8 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 
   if (is_extban_mask(ban)) {
     strlcpy(host, ban, sizeof host);
+    if (!extban_is_matchable(host))
+      flags |= MASKREC_STICKY;
   } else {
     /* Choke check: fix broken bans (must have '!' and '@') */
     fix_broken_mask(host, ban, sizeof host);
@@ -676,7 +688,7 @@ static void display_ban(int idx, int number, maskrec *ban,
     if (ban->added < ban->lastactive) {
       int len = strlen(dates);
       daysago(now, ban->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -720,7 +732,7 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     if (exempt->added < exempt->lastactive) {
       int len = strlen(dates);
       daysago(now, exempt->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -764,7 +776,7 @@ static void display_invite(int idx, int number, maskrec *invite,
     if (invite->added < invite->lastactive) {
       int len = strlen(dates);
       daysago(now, invite->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;

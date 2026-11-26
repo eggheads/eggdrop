@@ -31,6 +31,16 @@
 #define MASKREASON_MAX 307    /* Max length of ban/invite/exempt/etc reasons. */
 #define MASKREASON_LEN (MASKREASON_MAX + 1)
 
+/* Extban flags Eggdrop can enforce by kicking matching users.
+ * ACCOUNTEXTBAN is also enforceable and is checked dynamically.
+ */
+#define ENFORCEABLE_EXTBANS "U"
+
+/* Extban flags Eggdrop can match against nick!user@host masks for
+ * dynamic ban placement/removal without enforcing kicks.
+ */
+#define MATCHABLE_EXTBANS "UABCmNpqQT"
+
 /* Flags for reset_chan_info() */
 #define CHAN_RESETMODES   0x01
 #define CHAN_RESETWHO     0x02
@@ -119,6 +129,7 @@ static void remove_channel(struct chanset_t *);
 static intptr_t ngetudef(char *, char *);
 static int expired_mask(struct chanset_t *chan, char *who);
 static int check_tcl_chanset(const char *, const char *, const char *);
+static int extban_flag_supported(char flag);
 
 
 #else
@@ -181,6 +192,7 @@ static int check_tcl_chanset(const char *, const char *, const char *);
 /* 48 - 51 */
 #define global_invite_time (*(int *)(channels_funcs[48]))
 #define extban_parse ((int (*)(const char *, char *, const char **))channels_funcs[49])
+#define extban_flag_supported ((int (*)(char))channels_funcs[50])
 
 #endif /* MAKING_CHANNELS */
 

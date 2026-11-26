@@ -624,7 +624,6 @@ static void check_expired_chanstuff()
             if (now - b->timer > 60 * chan->ban_time &&
                 !u_sticky_mask(chan->bans, b->mask) &&
                 !u_sticky_mask(global_bans, b->mask) &&
-                !extban_is_unenforceable(b->mask) &&
                 expired_mask(chan, b->who)) {
               putlog(LOG_MODES, chan->dname,
                      "(%s) Channel ban on %s expired.", chan->dname, b->mask);
@@ -704,12 +703,13 @@ static void check_expired_chanstuff()
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
 
       key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
-      if (key[0])
+      if (key[0]) {
         dprintf(DP_SERVER, "JOIN %s %s\n",
                 chan->name[0] ? chan->name : chan->dname, key);
-      else
+      } else {
         dprintf(DP_SERVER, "JOIN %s\n",
                 chan->name[0] ? chan->name : chan->dname);
+      }
     }
   }
 }
@@ -1426,14 +1426,14 @@ char *irc_start(Function *global_funcs)
 
   global = global_funcs;
 
-  module_register(MODULE_NAME, irc_table, 1, 5);
+  module_register(MODULE_NAME, irc_table, 1, 6);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
   }
-  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 5))) {
+  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 6))) {
     module_undepend(MODULE_NAME);
-    return "This module requires server module 1.5 or later.";
+    return "This module requires server module 1.6 or later.";
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 1))) {
     module_undepend(MODULE_NAME);

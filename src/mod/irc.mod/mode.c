@@ -421,6 +421,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
@@ -515,6 +516,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
 
   strcpy(ch, chan->name);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
@@ -680,7 +682,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 {
   memberlist *m;
   char ch[sizeof chan->name];
-  char s[UHOSTLEN], s1[UHOSTLEN];
+  char s[UHOSTLEN];
   struct userrec *u;
   int had_halfop;
 
@@ -695,7 +697,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
   }
 
   strcpy(ch, chan->name);
-  simple_sprintf(s1, "%s!%s", nick, from);
+  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
@@ -747,12 +749,12 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
                     char *ch, struct userrec *u)
 {
-  char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
+  char me[UHOSTLEN], s[UHOSTLEN], s1[NICKLEN + UHOSTLEN];
   memberlist *m;
   struct userrec *targ;
 
-  egg_snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
-  egg_snprintf(s, sizeof s, "%s!%s", nick, from);
+  snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
+  snprintf(s, sizeof s, "%s!%s", nick, from);
   newban(chan, who, s);
   check_tcl_mode(nick, from, u, chan->dname, "+b", who);
   if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
@@ -773,7 +775,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
       return;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
+      snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
       if (match_addr(who, s1)) {
         targ = get_user_from_member(m);
         if (targ) {
@@ -798,7 +800,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
         if (match_addr(b->mask, who)) {
           if (b->desc && b->desc[0] != '@')
-            egg_snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
+            snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
           else
             resn[0] = 0;
         }
