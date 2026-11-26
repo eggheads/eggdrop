@@ -383,7 +383,9 @@ static int sasl_scram_step_1(char *restrict client_msg_plain,
       sasl_error(error_msg);
       return -1;
     }
-
+    /* servers SHOULD announce a hash iteration-count of at least 4096 */
+    if (iter < 4096)
+      debug1("AUTHENTICATE: warning: iteration count %i < 4096", iter);
     if (sasl_mechanism == SASL_MECHANISM_SCRAM_SHA_256)
       digest = EVP_sha256();
     else
