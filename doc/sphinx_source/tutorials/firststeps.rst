@@ -10,7 +10,12 @@ Now that your bot is online, you'll want to join the partyline to further use th
   OR go to IRC and type:  /msg BotNick hello
   This will make the bot recognize you as the master.
 
-You can either telnet to the bot, or connect to the bot using DCC Chat. To telnet, you'll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command::
+You can either connect to the bot via telnet (unencrypted), connect to the bot using DCC Chat (unencrypted), connect to the bot using SCHAT (encrypted), or use TLS-compatible socket client (encrypted). 
+
+Telnet
+^^^^^^
+
+To telnet, you'll either need a program like Putty (Windows), or you can do it from the command line of your shell using the telnet command::
 
   telnet <IP of bot> <listen port>
 
@@ -20,8 +25,22 @@ You can find the IP and port the bot is listening on by a) remembering what you 
 
 This tells you that the bot is listening on IP 2.4.6.9, port 3183. If you see 0.0.0.0 listed, that means Eggdrop is listening on all available IPs on that particular host.
 
+DCC Chat
+^^^^^^^^
 
-If you choose not to telnet to connect to the partyline, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. If one of those methods does not work for you, try the other. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
+To use a DCC chat connection in your IRC client, you can either ``/dcc chat BotNick`` or ``/ctcp BotNick chat``. 
+
+SCHAT
+^^^^^
+
+SCHAT (Secure Chat) is a sub-protocol of Secure Direct Client-to-Client (SDCC) that enables encrypted TLS sessions between two users. KVIrc and AdiIRC are examples of IRC clients that support the SCHAT protocol. If TLS is configured for your Eggdrop, you can connect via ``/ctcp bot schat``.
+
+Direct TLS
+^^^^^^^^^^
+
+To use a client such as openssl to wrap your connection with TLS, please read the `TLS docs <https://docs.eggheads.org/using/tls.html#keys-certificates-and-authentication>`_ regarding partyline connection. There are also other clients that can connect to the partyline with TLS, like `pefero <https://codeberg.org/mortmann/pefero>`_, maintained by Eggdrop contributor mortmann.
+
+If one of those methods does not work for you, try another. Once you're on the bot for the first time, type ``.help`` for a short list of available commands, or ``.help all`` for a more thorough list.
 
 Common first steps
 ------------------

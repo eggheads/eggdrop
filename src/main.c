@@ -49,7 +49,6 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <resolv.h>
 #include <setjmp.h>
 #include <signal.h>
 
@@ -164,8 +163,10 @@ void fatal(const char *s, int recoverable)
 
   putlog(LOG_MISC, "*", "* %s", s);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].sock >= 0)
+    if (dcc[i].sock >= 0) {
       killsock(dcc[i].sock);
+      dcc[i].sock = -1;
+    }
 #ifdef TLS
   ssl_cleanup();
 #endif
@@ -553,10 +554,10 @@ static void core_secondly()
   uint64_t drift_mins;
 
   do_check_timers(&utimer);     /* Secondly timers */
+  check_expired_dcc();
   cnt++;
   if (cnt >= 10) {              /* Every 10 seconds */
     cnt = 0;
-    check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
       if ((cliflags & CLI_N) && (cliflags & CLI_C)) {
@@ -628,7 +629,7 @@ static void core_secondly()
               fclose(logs[i].f);
               logs[i].f = NULL;
             }
-            egg_snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
+            snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
             unlink(s);
             movefile(logs[i].filename, s);
           }
@@ -767,23 +768,23 @@ static void mainloop(int toplevel)
           /* Traffic stats */
           if (dcc[idx].type->name) {
             if (!strncmp(dcc[idx].type->name, "BOT", 3))
-              itraffic_bn_today += strlen(buf) + 1;
+              itraffic_bn_today += i + 1;
             else if (!strcmp(dcc[idx].type->name, "SERVER"))
-              itraffic_irc_today += strlen(buf) + 1;
+              itraffic_irc_today += i + 1;
             else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
-              itraffic_dcc_today += strlen(buf) + 1;
+              itraffic_dcc_today += i + 1;
             else if (!strncmp(dcc[idx].type->name, "WEBUI", 5))
               itraffic_dcc_today += i;
             else if (!strncmp(dcc[idx].type->name, "FILES", 5))
-              itraffic_dcc_today += strlen(buf) + 1;
+              itraffic_dcc_today += i + 1;
             else if (!strcmp(dcc[idx].type->name, "SEND"))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else if (!strcmp(dcc[idx].type->name, "FORK_SEND"))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else if (!strncmp(dcc[idx].type->name, "GET", 3))
-              itraffic_trans_today += strlen(buf) + 1;
+              itraffic_trans_today += i;
             else
-              itraffic_unknown_today += strlen(buf) + 1;
+              itraffic_unknown_today += i + 1;
           }
           dcc[idx].type->activity(idx, buf, i);
         } else
@@ -977,14 +978,14 @@ int main(int arg_c, char **arg_v)
 
   /* Version info! */
 #ifdef EGG_PATCH
-  egg_snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
+  snprintf(egg_version, sizeof egg_version, "%s+%s %u", EGG_STRINGVER, EGG_PATCH, egg_numver);
+  snprintf(ver, sizeof ver, "eggdrop v%s+%s", EGG_STRINGVER, EGG_PATCH);
   strlcpy(version,
           "Eggdrop v" EGG_STRINGVER "+" EGG_PATCH " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
 #else
-  egg_snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
+  snprintf(egg_version, sizeof egg_version, "%s %u", EGG_STRINGVER, egg_numver);
+  snprintf(ver, sizeof ver, "eggdrop v%s", EGG_STRINGVER);
   strlcpy(version,
           "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
@@ -1065,9 +1066,8 @@ int main(int arg_c, char **arg_v)
   link_statics();
 #endif
 #ifdef EGG_TDNS
-  /* initialize dns_thread_head before chanprog() */
-  dns_thread_head = nmalloc(sizeof(struct dns_thread_node));
-  dns_thread_head->next = NULL;
+  /* initialize attr and dns_thread_head before chanprog() */
+  init_tdns();
 #endif
   ctime_r(&now, s);
   s[24] = 0;
@@ -1095,7 +1095,7 @@ int main(int arg_c, char **arg_v)
   cache_miss = 0;
   cache_hit = 0;
   if (!pid_file[0])
-    egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
+    snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");

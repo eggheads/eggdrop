@@ -146,7 +146,7 @@ static void cmd_optimize(int idx, char *par)
  */
 static int resolve_dir(char *current, char *change, char **real, int idx)
 {
-  char *elem = NULL, *s = NULL, *new = NULL, *work = NULL, *p = NULL;
+  char *elem = NULL, *s = NULL, *new = NULL, work[PATH_MAX], *p = NULL;
   FILE *fdb = NULL;
   DIR *dir = NULL;
   filedb_entry *fdbe = NULL;
@@ -182,6 +182,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         if (!(*real)[0]) {
           my_free(elem);
           my_free(new);
+          my_free(s);
           malloc_strcpy(*real, current);
           return 0;
         }
@@ -195,6 +196,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         /* Non-existent starting point! */
         my_free(elem);
         my_free(new);
+        my_free(s);
         malloc_strcpy(*real, current);
         return 0;
       }
@@ -241,19 +243,23 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           s = nrealloc(s, strlen(s) + 2);
           strcat(s, "/");
       }
-      work = nmalloc(strlen(s) + strlen(elem) + 1);
-      sprintf(work, "%s%s", s, elem);
-      malloc_strcpy(*real, work);
+      if (snprintf(work, PATH_MAX, "%s%s", s, elem) >= PATH_MAX) {
+        /* path too long */
+        free_fdbe(&fdbe);
+        my_free(elem);
+        my_free(new);
+        my_free(s);
+        malloc_strcpy(*real, current);
+        return 0;
+      }
+      malloc_strcpy_nocheck(*real, work);
       s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
       sprintf(s, "%s%s", dccdir, *real);
     }
     p = strchr(new, '/');
   }
   my_free(new);
-  if (elem)
-    my_free(elem);
-  if (work)
-    my_free(work);
+  my_free(elem);
   /* Sanity check: does this dir exist? */
   s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
   sprintf(s, "%s%s", dccdir, *real);

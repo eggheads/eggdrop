@@ -46,7 +46,7 @@ extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
 extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs;
 
 extern time_t now;
-extern Tcl_Interp *interp;
+time_t now2_last = 0; /* cache expensive localtime() */
 
 char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
 char log_ts[33] = "[%H:%M:%S]"; /* Timestamp format for logfile entries */
@@ -86,6 +86,8 @@ int expmem_misc()
     for (item = current->first; item; item = item->next)
       tot += sizeof(struct help_list_t) + strlen(item->name) + 1;
   }
+  for (int i = 0; i < max_logs; i++)
+    tot += logs[i].szlast_len;
   return tot + (max_logs * sizeof(log_t));
 }
 
@@ -95,20 +97,9 @@ void init_misc()
 
   if (max_logs < 1)
     max_logs = 1;
-  if (logs)
-    logs = nrealloc(logs, max_logs * sizeof(log_t));
-  else
-    logs = nmalloc(max_logs * sizeof(log_t));
-  for (; last < max_logs; last++) {
-    logs[last].filename = logs[last].chname = NULL;
-    logs[last].mask = 0;
-    logs[last].f = NULL;
-    /* Added by cybah  */
-    logs[last].szlast[0] = 0;
-    logs[last].repeats = 0;
-    /* Added by rtc  */
-    logs[last].flags = 0;
-  }
+  logs = nrealloc(logs, max_logs * sizeof(log_t));
+  memset(logs + last, 0, (max_logs - last) * sizeof(log_t));
+  last = max_logs;
 }
 
 
@@ -190,6 +181,8 @@ int my_strcpy(char *a, const char *b)
 }
 
 /* Split first word off of rest and put it in first
+ *
+ * Please use splitcn() instead
  */
 void splitc(char *first, char *rest, char divider)
 {
@@ -207,14 +200,11 @@ void splitc(char *first, char *rest, char divider)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
 
-/*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
- * terminating null).
+/* As above, but lets you specify the 'max' number of bytes
  *
  * Example of use:
  *
- * char buf[HANDLEN + 1];
- *
- * splitcn(buf, input, "@", HANDLEN);
+ * splitcn(buf, input, '@', sizeof buf);
  *
  * <Cybah>
  */
@@ -278,6 +268,60 @@ char *newsplit(char **rest)
   return r;
 }
 
+// WARNING: modifies original text
+// Split IRC text into words (without the "from" component, which could also start with ':')
+// - replace all ' ' with \0, splitting into words
+// - if a word starts with ':' it is the last word, it can contain spaces
+// - return argc/argv structure (pointers into original text)
+struct parsed_irc parse_irc(char *text)
+{
+  struct parsed_irc result = {.argc = 0};
+
+  while (*text) {
+    while (*text == ' ') {
+      *text++ = '\0';
+    }
+    if (!*text) {
+      break;
+    }
+    if (result.argc == MAX_IRC_TOKENS - 1) {
+      putlog(LOG_MISC, "*", "parse_irc() error: too many tokens, PLEASE REPORT THIS BUG");
+      result.argv[result.argc++] = text;
+      break;
+    } else if (*text == ':') {
+      *text++ = '\0';
+      result.argv[result.argc++] = text;
+      break;
+    } else {
+      result.argv[result.argc++] = text;
+      while (*text && *text != ' ') {
+        text++;
+      }
+    }
+  }
+
+  return result;
+}
+
+char *join_str_array(char **argv, int argc, char *delim, char *outbuf, size_t outbufsiz)
+{
+  size_t written = 0;
+
+  if (!argc) {
+    outbuf[0] = '\0';
+    return outbuf;
+  }
+
+  for (int i = 0; i < argc; i++) {
+    written += snprintf(outbuf + written, outbufsiz - written, "%s%s", argv[i], i == argc - 1 ? "" : delim);
+    if (written >= outbufsiz) {
+      written = outbufsiz - 1;
+      break;
+    }
+  }
+  return outbuf;
+}
+
 /* maskhost(), modified to support custom mask types, as defined
  * by mIRC.
  * Does not require a proper hostmask in 's'. Accepts any strings,
@@ -310,7 +354,8 @@ char *newsplit(char **rest)
 void maskaddr(const char *s, char *nw, int type)
 {
   int d = type % 5, num = 1;
-  char *p, *u = 0, *h = 0, *ss;
+  const char *p, *u = 0, *h = 0;
+  char *ss;
 
   /* Look for user and host.. */
   ss = (char *)s;
@@ -516,7 +561,6 @@ void putlog (int type, char *chname, const char *format, ...)
   char s[LOGLINELEN], path[PATH_MAX], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
-  static time_t now2_last = 0; /* cache expensive localtime() */
   static struct tm t;
 
   if (now2 != now2_last) {
@@ -540,7 +584,7 @@ void putlog (int type, char *chname, const char *format, ...)
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
-  egg_vsnprintf(out, LOGLINEMAX - tsl, format, va);
+  vsnprintf(out, LOGLINEMAX - tsl, format, va);
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
@@ -587,7 +631,7 @@ void putlog (int type, char *chname, const char *format, ...)
           /* Check if this is the same as the last line added to
            * the log. <cybah>
            */
-          if (!strcasecmp(out + tsl, logs[i].szlast))
+          if (logs[i].szlast && !strcasecmp(out + tsl, logs[i].szlast))
             /* It is a repeat, so increment repeats */
             logs[i].repeats++;
           else {
@@ -607,7 +651,18 @@ void putlog (int type, char *chname, const char *format, ...)
                */
             }
             fputs(out, logs[i].f);
-            strlcpy(logs[i].szlast, out + tsl, LOGLINEMAX);
+            size_t l = strlen(out + tsl) + 1;
+            if (l > logs[i].szlast_len) {
+              if (!logs[i].szlast_len) {
+                logs[i].szlast_len = MIN(MAX(l, 128), LOGLINELEN);
+                logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
+              } else if (logs[i].szlast_len < LOGLINELEN) {
+                logs[i].szlast_len = MIN(MAX(l, logs[i].szlast_len << 1), LOGLINELEN);
+                logs[i].szlast = nrealloc(logs[i].szlast, logs[i].szlast_len);
+              }
+            }
+            if (logs[i].szlast)
+              strlcpy(logs[i].szlast, out + tsl, logs[i].szlast_len);
           }
         }
       }
@@ -681,7 +736,7 @@ void check_logsize()
             logs[i].f = NULL;
           }
 
-          egg_snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
+          snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
           buf[1023] = 0;
           unlink(buf);
           movefile(logs[i].filename, buf);
@@ -1079,11 +1134,11 @@ void add_help_reference(char *file)
   current->next = help_list;
   current->first = NULL;
   help_list = current;
-  egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
+  snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
   scan_help_file(current, s, 0);
-  egg_snprintf(s, sizeof s, "%s%s", helpdir, file);
+  snprintf(s, sizeof s, "%s%s", helpdir, file);
   scan_help_file(current, s, 1);
-  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, file);
+  snprintf(s, sizeof s, "%sset/%s", helpdir, file);
   scan_help_file(current, s, 2);
 }
 
@@ -1157,14 +1212,14 @@ static FILE *resolve_help(int dcc, char *file)
       for (item = current->first; item; item = item->next)
         if (!strcmp(item->name, file)) {
           if (!item->type && !dcc) {
-            egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
+            snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
             if ((f = fopen(s, "r")))
               return f;
           } else if (dcc && item->type) {
             if (item->type == 1)
-              egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+              snprintf(s, sizeof s, "%s%s", helpdir, current->name);
             else
-              egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+              snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
             if ((f = fopen(s, "r")))
               return f;
           }
@@ -1247,6 +1302,13 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
 
   if (f)
     lines = display_tellhelp(idx, file, f, flags);
+  else if (!strstr(file, " module")) {
+    char file_module[1024];
+    snprintf(file_module, sizeof file_module, "%s module", file);
+    f = resolve_help(HELP_DCC | fl, file_module);
+    if (f)
+      lines = display_tellhelp(idx, file_module, f, flags);
+  }
   if (!lines && !(fl & HELP_TEXT))
     dprintf(idx, "%s\n", IRC_NOHELP2);
 }
@@ -1265,9 +1327,9 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
     for (item = current->first; item; item = item->next)
       if (wild_match(match, item->name) && item->type) {
         if (item->type == 1)
-          egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%s%s", helpdir, current->name);
         else
-          egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
         if ((f = fopen(s, "r")))
           display_tellhelp(idx, item->name, f, flags);
       }
@@ -1290,9 +1352,9 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
       if (!strcmp(match, item->name) && item->type) {
 
         if (item->type == 1)
-          egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%s%s", helpdir, current->name);
         else
-          egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+          snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
         if ((f = fopen(s, "r")))
           display_tellhelp(idx, item->name, f, flags);
       }

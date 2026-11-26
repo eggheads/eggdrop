@@ -1,4 +1,4 @@
-Last revised: August 29, 2023
+Last revised: October 2, 2025
 
 =====================
 Eggdrop Core Settings
@@ -38,21 +38,15 @@ You can change the basic Eggdrop appearance and behavior in this section.
     This setting is used only for info to share with others on your botnet.
     Set this to the IRC network your bot is connected to.
 
-  set timezone "EST"
-    This setting defines which timezone is your bot in. It's used for internal
-    routines as well as for logfile timestamping and scripting purposes.
-    The timezone string specifies the name of the timezone and must be three
-    or more alphabetic characters. For example, Central European Time(UTC+1)
-    should be "CET".
+  set timezone "America/New_York"
+    This setting defines which timezone your bot is in. It's used for internal
+    routines as well as for logfile timestamping and scripting purposes. It
+    must be three or more alphabetic characters. For example, timezone
+    "Europe/Berlin" automatically adjusts for standard time and daylight saving
+    time. See
+    https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 
-  set offset "5"
-    The offset setting specifies the time value to be added to the local
-    time to get Coordinated Universal Time (UTC aka GMT). The offset is
-    positive if the local timezone is west of the Prime Meridian and
-    negative if it is east. The value (in hours) must be between -23 and
-    23. For example, if the timezone is UTC+1, the offset is -1.
-
-  set env(TZ) "$timezone $offset" (disabled by default)
+  set env(TZ) "$timezone" (disabled by default)
     If you don't want to use the timezone setting for scripting purposes
     only, but instead everywhere possible, then use this setting.
 
