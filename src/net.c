@@ -533,13 +533,13 @@ static int get_port_from_addr(const sockname_t *addr)
 /* Check for O_NONBLOCK connect() EINPROGRESS could be ECONNREFUSED
  * eggdrop sockets are always O_NONBLOCK, see setsock()
  */
-int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
+int connect_nonblock(int sock, sockname_t *addr, int check_tcl_event_ident) {
   int rc, res, e;
   struct timeval tv;
   fd_set sockset;
   socklen_t res_len;
 
-  rc = connect(s, &addr->addr.sa, addr->addrlen);
+  rc = connect(sock, &addr->addr.sa, addr->addrlen);
   /* To minimize a proven race condition, call ident here (especially when
    * rc < 0 and errno == EINPROGRESS)
    */
@@ -557,15 +557,15 @@ int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
       tv.tv_usec = 500000; /* 0.5 second timeout, more than enough to detect
                             * ECONNREFUSED */
       FD_ZERO(&sockset);
-      FD_SET(s, &sockset);
-      select(s + 1, NULL, &sockset, NULL, &tv);
+      FD_SET(sock, &sockset);
+      select(sock + 1, NULL, &sockset, NULL, &tv);
       res_len = sizeof(res);
-      getsockopt(s, SOL_SOCKET, SO_ERROR, &res, &res_len);
+      getsockopt(sock, SOL_SOCKET, SO_ERROR, &res, &res_len);
       if (res == EINPROGRESS) /* Operation now in progress */
-        return s; /* This could probably fail somewhere */
+        return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug2("net: attempted socket connection refused: %s:%i",
-               iptostr(&addr->addr.sa), get_port_from_addr(addr));
+        debug3("net: sock %d attempted socket connection refused: %s:%i",
+               sock, iptostr(&addr->addr.sa), get_port_from_addr(addr));
         errno = res;
         return -4;
       }
@@ -573,12 +573,12 @@ int connect_nonblock(int s, sockname_t *addr, int check_tcl_event_ident) {
         debug1("net: getsockopt error %d", res);
         return -1;
       }
-      return s; /* async success! */
+      return sock; /* async success! */
     }
-    debug2("net: check_connect(): socket %i error %s", s, strerror(errno));
+    debug2("net: check_connect(): socket %i error %s", sock, strerror(errno));
     return -1;
   }
-  return s;
+  return sock;
 }
 
 /* Starts a connection attempt through a socket
@@ -598,11 +598,11 @@ int open_telnet_raw(int sock, sockname_t *addr)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock == sock) { /* Got idx from sock ? */
 #ifdef TLS
-      debug5("net: open_telnet_raw(): idx %i host %s ip %s port %i ssl %i",
-             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
+      debug6("net: open_telnet_raw(): sock %d idx %i host %s ip %s port %i ssl %i",
+             sock, i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port, dcc[i].ssl);
 #else
-      debug4("net: open_telnet_raw(): idx %i host %s ip %s port %i",
-             i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
+      debug5("net: open_telnet_raw(): sock %d idx %i host %s ip %s port %i",
+             sock, i, dcc[i].host, iptostr(&addr->addr.sa), dcc[i].port);
 #endif
       break;
     }
@@ -970,7 +970,7 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
 #else
         else if (!(slist[i].flags & SOCK_STRONGCONN)) {
 #endif
-          debug1("net: connect! sock %d", slist[i].sock);
+          debug1("net: sockread(): sock %d connect!", slist[i].sock);
           s[0] = 0;
           *len = 0;
           return i;
@@ -991,20 +991,21 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
           if (!x && (SSL_get_shutdown(slist[i].ssl) == SSL_RECEIVED_SHUTDOWN)) {
             *len = slist[i].sock;
             slist[i].flags &= ~SOCK_CONNECT;
-            debug1("net: SSL_read(): received shutdown sock %i", slist[i].sock);
+            debug1("net: SSL_read(): sock %d received shutdown", slist[i].sock);
             return -1;
           } else if (x < 0) {
             int err = SSL_get_error(slist[i].ssl, x);
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
               errno = EAGAIN;
             else if (err == SSL_ERROR_SYSCALL) {
-              debug0("net: sockread(): SSL_read() SSL_ERROR_SYSCALL");
+              debug1("net: sockread(): SSL_read(): sock %d SSL_ERROR_SYSCALL",
+                     slist[i].sock);
               putlog(LOG_MISC, "*", "NET: SSL read failed. Non-SSL connection?");
             }
             else {
               long err2 = ERR_get_error();
-              debug3("net: sockread(): SSL_read() error = %s (%i) (%li)",
-                     ERR_error_string(err2, 0), err, err2);
+              debug4("net: sockread(): SSL_read() sock %d error = %s (%i) (%li)",
+                    slist[i].sock, ERR_error_string(err2, 0), err, err2);
               if ((err == SSL_ERROR_SSL) &&
                   (ERR_GET_REASON(err2) == SSL_R_PEER_DID_NOT_RETURN_A_CERTIFICATE))
                 putlog(LOG_MISC, "*", "NET: SSL read failed. Peer did not return a certificate, which is mandatory due to ssl-verify settings.");
@@ -1024,11 +1025,11 @@ int sockread(char *s, int *len, sock_list *slist, int slistmax, int tclonly)
                                 * otherwise it will connect. */
           *len = slist[i].sock;
           slist[i].flags &= ~SOCK_CONNECT;
-          debug1("net: eof!(read) socket %d", slist[i].sock);
+          debug1("net: sockread(): sock %d eof!(read)", slist[i].sock);
           return -1;
         } else {
-          debug3("sockread EAGAIN: %d %d (%s)", slist[i].sock, errno,
-                 strerror(errno));
+          debug3("net: sockread(): sock %d EAGAIN: %d (%s)", slist[i].sock,
+                 errno, strerror(errno));
           continue;           /* EAGAIN */
         }
       }
@@ -1502,8 +1503,8 @@ void dequeue_sockets()
 #endif
         ) {
         /* This detects an EOF during writing */
-        debug3("net: eof!(write) socket %d (%s,%d)", socklist[i].sock,
-               strerror(errno), errno);
+        debug3("net: dequeue_sockets(): sock %d eof!(write) (%s,%d)",
+               socklist[i].sock, strerror(errno), errno);
         socklist[i].flags |= SOCK_EOFD;
       } else if (x == socklist[i].handler.sock.outbuflen) {
         /* If the whole buffer was sent, nuke it */
@@ -1521,8 +1522,8 @@ void dequeue_sockets()
         socklist[i].handler.sock.outbuflen -= x;
         nfree(p);
       } else {
-        debug3("dequeue_sockets(): errno = %d (%s) on %d", errno,
-               strerror(errno), socklist[i].sock);
+        debug3("net: dequeue_sockets(): sock %d errno = %d (%s)",
+               socklist[i].sock, errno, strerror(errno));
       }
       /* All queued data was sent. Call handler if one exists and the
        * dcc entry wants it.
