@@ -207,6 +207,9 @@ static int send_uptime(void)
   if (len < 0)
     putlog(LOG_DEBUG, "*", "send_uptime(): sendto(): %s", strerror(errno));
   nfree(mem);
+  if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
+             * 2553 and 3493. Avoid to be compatible with all OSes. */
+    freeaddrinfo(res0);
   return len;
 }
 
