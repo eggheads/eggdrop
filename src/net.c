@@ -564,7 +564,7 @@ int connect_nonblock(int sock, sockname_t *addr, int check_tcl_event_ident) {
       if (res == EINPROGRESS) /* Operation now in progress */
         return sock; /* This could probably fail somewhere */
       if (res == ECONNREFUSED) { /* Connection refused */
-        debug3("net: open_telnet_raw(): sock %d attempted socket connection refused: %s:%i",
+        debug3("net: sock %d attempted socket connection refused: %s:%i",
                sock, iptostr(&addr->addr.sa), get_port_from_addr(addr));
         errno = res;
         return -4;
