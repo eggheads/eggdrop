@@ -46,15 +46,16 @@
 
 #include "compress.h"
 
-#define BUFLEN 512
+#define BUFLEN 1024
 
 
 static Function *global = NULL, *share_funcs = NULL;
 
-static unsigned int compressed_files;   /* Number of files compressed.      */
-static unsigned int uncompressed_files; /* Number of files uncompressed.    */
-static unsigned int share_compressed;   /* Compress userfiles when sharing? */
-static unsigned int compress_level;     /* Default compression used.        */
+static unsigned int compressed_files;    /* Number of files compressed.      */
+static unsigned int uncompressed_files;  /* Number of files uncompressed.    */
+static unsigned int share_compressed;    /* Compress userfiles when sharing? */
+static unsigned int compress_level;      /* Default compression used.        */
+static unsigned int max_uncompress_size; /* Maximum file size for uncompress */
 
 
 static int uncompress_to_file(char *f_src, char *f_target);
@@ -127,7 +128,7 @@ static int is_compressedfile(char *filename)
 static int uncompress_to_file(char *f_src, char *f_target)
 {
   char buf[BUFLEN];
-  int len;
+  int len, uncompress_size = 0;
   FILE *fout;
   gzFile fin;
 
@@ -161,6 +162,14 @@ static int uncompress_to_file(char *f_src, char *f_target)
     }
     if (!len)
       break;
+    uncompress_size += len;
+    if (uncompress_size > max_uncompress_size) {
+      putlog(LOG_MISC, "*", "Failed to uncompress file `%s': bigger than max size %i.",
+             f_src, max_uncompress_size);
+      gzclose(fin);
+      fclose(fout);
+      return COMPF_ERROR;
+    }
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
       putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
              "failed: %s.", f_src, strerror(errno));
@@ -387,9 +396,10 @@ static uff_table_t compress_uff_table[] = {
  */
 
 static tcl_ints my_tcl_ints[] = {
-  {"share-compressed", (int *)&share_compressed, 0},
-  {"compress-level",     (int *)&compress_level, 0},
-  {NULL,                                   NULL, 0}
+  {"share-compressed",    (int *)&share_compressed,    0},
+  {"compress-level",      (int *)&compress_level,      0},
+  {"max-uncompress-size", (int *)&max_uncompress_size, 0},
+  {NULL,                  NULL,                        0}
 };
 
 static int compress_expmem(void)
@@ -449,8 +459,9 @@ char *compress_start(Function *global_funcs)
   uncompressed_files = 0;
   share_compressed = 0;
   compress_level = 9;
+  max_uncompress_size = 16777216;
 
-  module_register(MODULE_NAME, compress_table, 1, 2);
+  module_register(MODULE_NAME, compress_table, 1, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";

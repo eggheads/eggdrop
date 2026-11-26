@@ -1,4 +1,4 @@
-Last revised: May 27, 2004
+Last revised: June 20, 2026
 
 .. _compress:
 
@@ -26,6 +26,9 @@ There are also some variables you can set in your config file:
   set compress-level 9
     This is the default compression level used. These levels are the same
     as those used by GNU gzip.
+
+  set max-uncompress-size 16777216
+    Maximum size for output file for uncompress function in bytes.
 
 
 Copyright (C) 2000 - 2025 Eggheads Development Team
