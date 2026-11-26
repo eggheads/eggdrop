@@ -21,12 +21,9 @@
  */
 
 #include "main.h"
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include "stat.h"
-
 
 /* Copy a file from one place to another (possibly erasing old copy).
  *
