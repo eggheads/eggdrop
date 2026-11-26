@@ -30,7 +30,6 @@
 #define _EGG_PROTO_H
 
 #include "lush.h"
-#include "misc_file.h"
 
 #define dprintf dprintf_eggdrop
 
@@ -275,6 +274,13 @@ void maskaddr(const char *, char *, int);
 #define maskhost(a,b) maskaddr((a),(b),3)
 #define maskban(a,b)  maskaddr((a),(b),3)
 int crypto_verify(const char *, const char *);
+
+/* misc_file.c */
+int copyfile(char *, char *);
+int copyfilef(char *, FILE *);
+int fcopyfile(FILE *, char *);
+int movefile(char *, char *);
+int file_readable(char *);
 
 /* net.c */
 IP my_atoul(char *);
