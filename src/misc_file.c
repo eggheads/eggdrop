@@ -20,9 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "main.h"
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "main.h"
 #include "stat.h"
 
 /* Copy a file from one place to another (possibly erasing old copy).
