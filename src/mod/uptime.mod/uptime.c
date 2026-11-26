@@ -145,7 +145,7 @@ static int init_uptime(void)
 }
 
 
-static int send_uptime(void)
+static void send_uptime(void)
 {
   struct addrinfo hints, *res0;
   int error;
@@ -167,7 +167,13 @@ static int send_uptime(void)
     else
       putlog(LOG_MISC, "*", "send_uptime(): getaddrinfo(): error = %s",
              gai_strerror(error));
-    return -2;
+    return;
+  }
+  if (!res0) {
+      putlog(LOG_MISC, "*",
+             "send_uptime(): getaddrinfo(): no addrinfo for hostname:port '%s:%s'",
+             UPTIME_HOST, UPTIME_PORT);
+    return;
   }
 
   uptimecount++;
@@ -202,15 +208,13 @@ static int send_uptime(void)
   mem = (PackUp *) nmalloc(len);
   memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
+
   len = sendto(uptimesock, (void *) mem, len, 0, res0->ai_addr,
                res0->ai_addrlen);
   if (len < 0)
     putlog(LOG_DEBUG, "*", "send_uptime(): sendto(): %s", strerror(errno));
   nfree(mem);
-  if (res0) /* The behavior of freeadrinfo(NULL) is left unspecified by RFCs
-             * 2553 and 3493. Avoid to be compatible with all OSes. */
-    freeaddrinfo(res0);
-  return len;
+  freeaddrinfo(res0);
 }
 
 static void check_minutely()
