@@ -489,14 +489,9 @@ static void webui_unframe(int sock, char *buf, int *len)
   uint8_t *key, *payload;
   uint16_t status_code;
 
-  if (*len < 6) { /* TODO: better len check */
+  if (*len < 6)
+    goto bogus;
 
-    /* TODO: return error code ? */
-    putlog(LOG_MISC, "*", "WEBUI error: bogus WebSocket frame from sock %i", sock);
-    killsock(sock);
-    lostdcc(findanyidx(sock));
-    return;
-  }
   /* xor decrypt
    */
   key = (uint8_t *) buf;
@@ -504,9 +499,13 @@ static void webui_unframe(int sock, char *buf, int *len)
     key += 2;
     *len -= 6;
   } else if (key[1] == 0xfe) {
+    if (*len < 8)
+      goto bogus;
     key += 4;
     *len -= 8;
   } else {
+    if (*len < 14)
+      goto bogus;
     key += 10;
     *len -= 14;
   }
@@ -515,9 +514,19 @@ static void webui_unframe(int sock, char *buf, int *len)
     payload[i] = payload[i] ^ key[i % 4];
 
   if (buf[0] & 0x08) {
-    status_code = ntohs(*((uint16_t *) payload));
+    if (*len >= 2) {
+      uint16_t payload_aligned;
+      memcpy(&payload_aligned, payload, sizeof payload_aligned);
+      status_code = ntohs(payload_aligned);
+    } else if (*len == 0) {
+      status_code = 1005;
+    } else
+      goto bogus;
     putlog(LOG_MISC, "*", "WEBUI: connection closed by peer with status code %i%s sock %i",
-           status_code, status_code == 1001 ? " (Going Away)" : "", sock);
+           status_code,
+           status_code == 1001 ? " (Going Away)" :
+             status_code == 1005 ? " (No Status Rcvd)" : "",
+           sock);
     killsock(sock);
     lostdcc(findanyidx(sock));
     return;
@@ -528,6 +537,14 @@ static void webui_unframe(int sock, char *buf, int *len)
   /* so now we have to add \r\n here :/ */
   strcpy(buf + *len, "\r\n");
   *len+= 2;
+  return;
+
+bogus:
+  /* TODO: return error code ? */
+  putlog(LOG_MISC, "*", "WEBUI error: bogus WebSocket frame from sock %i", sock);
+  killsock(sock);
+  lostdcc(findanyidx(sock));
+  return;
 }
 
 static char *webui_close(void)
