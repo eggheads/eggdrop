@@ -489,12 +489,13 @@ static void webui_unframe(int sock, char *buf, int *len)
   uint8_t *key, *payload;
   uint16_t status_code;
 
+  if (*len < 6)
+    goto bogus;
+
   /* xor decrypt
    */
   key = (uint8_t *) buf;
   if (key[1] < 0xfe) {
-    if (*len < 6)
-      goto bogus;
     key += 2;
     *len -= 6;
   } else if (key[1] == 0xfe) {
