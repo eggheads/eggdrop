@@ -513,9 +513,12 @@ static void webui_unframe(int sock, char *buf, int *len)
     payload[i] = payload[i] ^ key[i % 4];
 
   if (buf[0] & 0x08) {
-    status_code = ntohs(*((uint16_t *) payload));
+    status_code = (*len >= 2) ? ntohs(*((uint16_t *) payload)) : 1005;
     putlog(LOG_MISC, "*", "WEBUI: connection closed by peer with status code %i%s sock %i",
-           status_code, status_code == 1001 ? " (Going Away)" : "", sock);
+           status_code,
+           status_code == 1001 ? " (Going Away)" :
+             status_code == 1005 ? " (No Status Rcvd)" : "",
+           sock);
     killsock(sock);
     lostdcc(findanyidx(sock));
     return;
