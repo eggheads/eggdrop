@@ -2596,7 +2596,7 @@ static int gotquit(char *from, char *msg)
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
    *        Determine if signoff string matches "%.% %.%", and only one
    *        space.
-   * 
+   *
    * 30 years later... If the server sent this QUIT inside an IRCv3 netsplit
    * batch, it has told us outright that this is a split and there is nothing
    * to guess at.
