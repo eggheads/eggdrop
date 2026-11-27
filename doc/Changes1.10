@@ -42,7 +42,7 @@ Eggdrop v1.10.2rc1:
              * Use +e/+I info to set use_exempts/use_invites
              * Adjust irc.mod/gotmode() to use new mode info
              * Adjust got324 to use new mode info as well
-  2026-04-27 * Clean compile warnigs for new openssl 4.0.0
+  2026-04-27 * Clean compile warnings for new openssl 4.0.0
                  [Patch by: michaelortmann]
              * Fix dead link
                  [Patch by: michaelortmann]
@@ -174,7 +174,7 @@ Eggdrop v1.10.1rc1 (2025-06-28):
              * Update NEWS for 1.10.1
              * Fix trailing whitespaces
                  [Patch by: michaelortmann]
-             * Fix uptime mod status report indention
+             * Fix uptime mod status report indentation
                  [Patch by: michaelortmann]
              * Fix .tcl server add/remove arg parsing
                  [Found by: DasBrain / Patch by: michaelortmann]
@@ -502,7 +502,7 @@ Eggdrop v1.10.0rc1 (2024-08-08):
              * Additional internals doc tweaks
   2024-01-18 * Switch autoscripts to GitHub
   2024-01-15 * change py init from Isolated to Python
-  2024-01-14 * Add Python intpreter to Eggdrop
+  2024-01-14 * Add Python interpreter to Eggdrop
                  [Patch by: Geo, thommey]
              * Update docs
              * Update copyright
