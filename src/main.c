@@ -52,11 +52,6 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#ifdef STOP_UAC                         /* OSF/1 complains a lot */
-#  include <sys/sysinfo.h>
-#  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
-#endif
-
 #include "version.h"
 #include "chan.h"
 #include "modules.h"
@@ -989,14 +984,6 @@ int main(int arg_c, char **arg_v)
   strlcpy(version,
           "Eggdrop v" EGG_STRINGVER " (C) 1997 Robey Pointer (C) 1999-2025 Eggheads Development Team",
           sizeof version);
-#endif
-
-/* For OSF/1 */
-#ifdef STOP_UAC
-  /* Don't print "unaligned access fixup" warning to the user */
-  nvpair[0] = SSIN_UACPROC;
-  nvpair[1] = UAC_NOPRINT;
-  setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
 #endif
 
   /* Set up error traps: */

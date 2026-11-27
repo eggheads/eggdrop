@@ -640,11 +640,6 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       # do nothing
       # QNX (recent versions at least) support dlopen().
     ;;
-    OSF1)
-      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
-        1.*) LOAD_METHOD="loader" ;;
-      esac
-    ;;
     SunOS)
         WEIRD_OS="no"
     ;;
@@ -791,27 +786,6 @@ AC_DEFUN([EGG_CHECK_OS],
     QNX)
       SHLIB_LD="ld -shared"
       AC_DEFINE(QNX_HACKS, 1, [Define if running under QNX.])
-    ;;
-    OSF1)
-      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
-        V*)
-          # Digital OSF uses an ancient version of gawk
-          if test "$AWK" = gawk; then
-            AWK="awk"
-          fi
-          SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
-          SHLIB_STRIP="touch"
-        ;;
-        1.0|1.1|1.2)
-          SHLIB_LD="ld -R -export $@:"
-        ;;
-        1.*)
-          SHLIB_CC="$CC -fpic"
-          SHLIB_LD="ld -shared"
-        ;;
-      esac
-      AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])
-      AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])
     ;;
     SunOS)
       if test -n "$GCC"; then
