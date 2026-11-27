@@ -8,7 +8,7 @@
  * /etc/hosts support added by Michael Ortmann
  */
 /*
- * Portions Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,12 @@
  * Released under the GPL, as above.
  */
 
+#include "src/mod/module.h"
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
-#undef answer /* before resolv.h because it could collide with src/mod/module.h
-                 (dietlibc) */
-#include <resolv.h>
 #include <errno.h>
 
 /* OpenBSD */
@@ -672,7 +671,7 @@ static struct resolve *findip(IP ip)
 
 static void ptrstring4(IP *ip, char *buf, size_t sz)
 {
-  egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
+  snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
            ((uint8_t *) ip)[3],
            ((uint8_t *) ip)[2],
            ((uint8_t *) ip)[1],

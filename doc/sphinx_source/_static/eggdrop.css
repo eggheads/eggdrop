@@ -12,13 +12,14 @@ div.document {
   width: 85em;
 }
 
+/* MMX's edit */
 div.header, div.content, div.footer {
-  width: 97vw;     /* unset to override agogo.css settings */
+  width: unset;		/* unset to override agogo.css settings */
 }
-
 div.content {
   display: flex;
 }
+/* END of MMX's edit */
 
 div.sidebar .caption {
   font-weight: bold;
@@ -63,4 +64,25 @@ div.document ul {
   list-style-type: circle;
 }
 
-div.cap
+/* Tcl command reference */
+
+/*
+ * Sphinx renders reStructuredText transitions (----) as <hr> elements.
+ * Override the theme's default rule completely so command separators stay
+ * intentionally subtle regardless of the inherited Agogo styling.
+ */
+div.body hr {
+  border: 0 !important;
+  border-top: 1px solid #dddddd !important;
+  background: transparent !important;
+  color: transparent !important;
+  height: 0 !important;
+  box-shadow: none !important;
+  margin: 1.5rem 0 !important;
+}
+
+/* Keep a small visual gap between Module metadata and collapsed examples. */
+div.body .admonition.tcl-example,
+div.body aside.admonition.tcl-example {
+  margin-top: 0.6rem;
+}

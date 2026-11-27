@@ -2,7 +2,7 @@
 #
 # newversion - prepares the tree for a new version number in git
 #
-# Copyright (C) 2004 - 2024 Eggheads Development Team
+# Copyright (C) 2004 - 2025 Eggheads Development Team
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -24,12 +24,10 @@
 # the same distribution terms that you use for the rest of that program.
 
 MOD_CONFIGURE_ACS="src/mod/compress.mod/configure.ac src/mod/dns.mod/configure.ac"
-DOCS="doc/sphinx_source/using/tcl-commands.rst \
-      doc/sphinx_source/using/text-sub.rst"
 
 fix_version_h() {
-	sed -ie 's:^#define EGG_NUMVER.*$:#define EGG_NUMVER '${NEW_NUMVERSION}':' src/version.h
-	sed -ie 's:^#define EGG_STRINGVER.*$:#define EGG_STRINGVER '\"${NEW_EGGVERSION}\"':' src/version.h
+	sed -i -e 's:^#define EGG_NUMVER.*$:#define EGG_NUMVER '${NEW_NUMVERSION}':' src/version.h
+	sed -i -e 's:^#define EGG_STRINGVER.*$:#define EGG_STRINGVER '\"${NEW_EGGVERSION}\"':' src/version.h
 }
 
 if test ! -f src/main.c; then
@@ -40,8 +38,11 @@ fi
 umask 022
 
 OLD_EGGVERSION=$(grep AC_INIT configure.ac| sed -e 's/AC_INIT(\[Eggdrop\],\[//g' -e 's/\],\[bugs@eggheads.org\].*//g')
-#NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
-NEW_EGGVERSION="1.10.0"
+NEW_EGGVERSION=$(echo $OLD_EGGVERSION | cut -d. -f1-2).$(($(echo $OLD_EGGVERSION | cut -d. -f3) + 1))
+#NEW_EGGVERSION="1.10.0"
+# Escape the dots so the old version only matches itself in sed patterns
+# (unescaped, 1.10.0 also matched "1 1010201" in tcl-commands.rst).
+OLD_EGGVERSION_RE=$(echo $OLD_EGGVERSION | sed 's/\./\\./g')
 NEW_NUMVERSION=$(($(grep '^#define EGG_NUMVER.*' src/version.h |cut -d " " -f 3|sed -e 's/..$/00/') + 100))
 #NEW_NUMVERSION="1090000"
 
@@ -92,16 +93,16 @@ echo " done."
 # Fix configure.ac's.
 echo -n "Fixing configure.ac files..."
 for i in $MOD_CONFIGURE_ACS configure.ac; do
-	sed 's:'${OLD_EGGVERSION}':'${NEW_EGGVERSION}':g' $i > ${i}_
+	sed 's:'${OLD_EGGVERSION_RE}':'${NEW_EGGVERSION}':g' $i > ${i}_
 	mv ${i}_ $i
 done
 echo " done."
 
 echo -n "Fixing docs..."
-sed -i 's:'${OLD_EGGVERSION}':'${NEW_EGGVERSION}':g' doc/sphinx_source/conf.py
-for i in $DOCS; do
-	sed -i 's:'${OLD_EGGVERSION}':'${NEW_EGGVERSION}':g' $i
-done
+sed -i 's:'${OLD_EGGVERSION_RE}':'${NEW_EGGVERSION}':g' doc/sphinx_source/conf.py
+# Only the "accurate for" line; the rest of the file has example versions
+# that must not change.
+sed -i 's:accurate for Eggdrop v'${OLD_EGGVERSION_RE}'\.:accurate for Eggdrop v'${NEW_EGGVERSION}'.:' doc/sphinx_source/using/tcl-commands.rst
 echo " done."
 
 git commit -am "Update version strings to ${NEW_EGGVERSION}" > /dev/null

@@ -16,11 +16,7 @@ See also: set ctcp-version, set ctcp-finger
    Specifies the response to send to a CTCP VERSION request.
 
    For example:
-      .set ctcp-version "Irssi 0.8.9"
-
-   Or
-      .set ctcp-version "xchat 2.0.7 Linux 2.6.5-1.358smp [i686/2.60GHz/SMP]"
-
+      .set ctcp-version "irssi v1.4.5 - running on Linux x86_64"
 
 See also: set ctcp-finger, set ctcp-userinfo
 %{help=set ctcp-mode}%{+n}

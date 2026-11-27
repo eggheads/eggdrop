@@ -2,7 +2,7 @@
  * base64.c -- provides b64_ntop() and b64_pton() if necessary
  */
 /*
- * Copyright (C) 2010 - 2024 Eggheads Development Team
+ * Copyright (C) 2010 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,7 +75,6 @@
 #include <arpa/nameser.h>
 
 #include <ctype.h>
-#include <resolv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
