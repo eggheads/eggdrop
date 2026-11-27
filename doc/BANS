@@ -77,8 +77,8 @@ Bans, Invites, and Exempts
 
 EXTENDED BANS (EXTBANS)
 
-As of version 1.10.2, Eggdrop incorportes extended ban support.
-Exteneded bans give new functionality to the traditional IRC ban through
+As of version 1.10.2, Eggdrop incorporates extended ban support.
+Extended bans give new functionality to the traditional IRC ban through
 the use of new prefix to the banmask. Eggdrop currently only supports
 single-character extended ban flags, not longform (ie "a", but not
 "account").
@@ -89,7 +89,7 @@ the EXTBAN flag the user provides. This is the preferred method of
 adding extbans to ensure they are functionally added to Eggdrop
 
 If you add an extended ban via .+ban instead of .+extban, Eggdrop
-assumes you know what you are doing and gives the user lattitude to set
+assumes you know what you are doing and gives the user latitude to set
 what they want. When an extban ban is added through Eggdrop with the
 .+ban command, Eggdrop identifies and parses the supplied mask as extban
 syntax before storing it. Eggdrop will then check whether the provided
