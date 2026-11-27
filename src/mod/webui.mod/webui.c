@@ -513,7 +513,14 @@ static void webui_unframe(int sock, char *buf, int *len)
     payload[i] = payload[i] ^ key[i % 4];
 
   if (buf[0] & 0x08) {
-    status_code = (*len >= 2) ? ntohs(*((uint16_t *) payload)) : 1005;
+    if (*len >= 2) {
+      uint16_t payload_aligned;
+      memcpy(&payload_aligned, payload, sizeof payload_aligned);
+      status_code = ntohs(payload_aligned);
+    } else if (*len == 0) {
+      status_code = 1005;
+    } else
+      goto bogus;
     putlog(LOG_MISC, "*", "WEBUI: connection closed by peer with status code %i%s sock %i",
            status_code,
            status_code == 1001 ? " (Going Away)" :
