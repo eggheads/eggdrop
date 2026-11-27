@@ -489,24 +489,22 @@ static void webui_unframe(int sock, char *buf, int *len)
   uint8_t *key, *payload;
   uint16_t status_code;
 
-  if (*len < 6) { /* TODO: better len check */
-
-    /* TODO: return error code ? */
-    putlog(LOG_MISC, "*", "WEBUI error: bogus WebSocket frame from sock %i", sock);
-    killsock(sock);
-    lostdcc(findanyidx(sock));
-    return;
-  }
   /* xor decrypt
    */
   key = (uint8_t *) buf;
   if (key[1] < 0xfe) {
+    if (*len < 6)
+      goto bogus;
     key += 2;
     *len -= 6;
   } else if (key[1] == 0xfe) {
+    if (*len < 8)
+      goto bogus;
     key += 4;
     *len -= 8;
   } else {
+    if (*len < 14)
+      goto bogus;
     key += 10;
     *len -= 14;
   }
@@ -528,6 +526,14 @@ static void webui_unframe(int sock, char *buf, int *len)
   /* so now we have to add \r\n here :/ */
   strcpy(buf + *len, "\r\n");
   *len+= 2;
+  return;
+
+bogus:
+  /* TODO: return error code ? */
+  putlog(LOG_MISC, "*", "WEBUI error: bogus WebSocket frame from sock %i", sock);
+  killsock(sock);
+  lostdcc(findanyidx(sock));
+  return;
 }
 
 static char *webui_close(void)
