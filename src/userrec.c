@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -384,7 +384,6 @@ struct userrec *get_user_by_host(char *host)
   struct userrec *u, *ret = NULL;
   struct list_type *q;
   int cnt, i;
-  char host2[UHOSTLEN];
 
   if (host == NULL)
     return NULL;
@@ -393,7 +392,6 @@ struct userrec *get_user_by_host(char *host)
     return NULL;
   cnt = 0;
   cache_miss++;
-  strlcpy(host2, host, sizeof host2);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
@@ -644,7 +642,7 @@ void write_userfile(int idx)
   if (userlist == NULL)
     return;                     /* No point in saving userfile */
 
-  egg_snprintf(new_userfile, sizeof new_userfile, "%s~new", userfile);
+  snprintf(new_userfile, sizeof new_userfile, "%s~new", userfile);
 
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
@@ -679,7 +677,7 @@ void backup_userfile(void)
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", "%s", USERF_BACKUP);
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
 
@@ -1001,7 +999,7 @@ struct userrec *get_user_by_nick(char *nick)
       if (!rfc_casecmp(nick, m->nick)) {
         char word[512];
 
-        egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
+        snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
         /* No need to check the return value ourself */
         return get_user_by_host(word);
       }

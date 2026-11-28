@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -167,7 +167,7 @@ int def_tcl_get(Tcl_Interp * interp, struct userrec *u,
   return TCL_OK;
 }
 
-int def_tcl_append(Tcl_Interp * interp, struct userrec *u,
+static int def_tcl_append(Tcl_Interp * interp, struct userrec *u,
                    struct user_entry *e)
 {
   Tcl_AppendElement(interp, e->u.string);
@@ -240,7 +240,7 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_append
 };
 
-int pass2_set(struct userrec *u, struct user_entry *e, void *new)
+static int pass2_set(struct userrec *u, struct user_entry *e, void *new)
 {
   if (e->u.extra) {
     explicit_bzero(e->u.extra, strlen(e->u.extra));
@@ -280,7 +280,7 @@ struct user_entry_type USERENTRY_PASS2 = {
   def_tcl_append
 };
 
-int pass_set(struct userrec *u, struct user_entry *e, void *buf)
+static int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char *pass = buf;
   unsigned char *p;
@@ -787,7 +787,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
         bi->ssl |= TLS_BOT;
         if (argc == 5) {
           bi->ssl |= TLS_RELAY;
-        } 
+        }
       } else {
         bi->ssl &= ~TLS_BOT;
         if (argc == 5) {
@@ -1373,7 +1373,7 @@ struct user_entry_type USERENTRY_HOSTS = {
 };
 
 #ifdef TLS
-int fprint_unpack(struct userrec *u, struct user_entry *e)
+static int fprint_unpack(struct userrec *u, struct user_entry *e)
 {
   char *tmp;
 
@@ -1385,7 +1385,7 @@ int fprint_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-int fprint_set(struct userrec *u, struct user_entry *e, void *buf)
+static int fprint_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char *fp = buf;
 
@@ -1647,8 +1647,7 @@ struct user_entry *find_user_entry(struct user_entry_type *et,
   struct user_entry **e, *t;
 
   for (e = &(u->entries); *e; e = &((*e)->next)) {
-    if (((*e)->type == et) ||
-        ((*e)->name && !strcasecmp((*e)->name, et->name))) {
+    if (((*e)->type == et) || ((*e)->type && !strcasecmp((*e)->type->name, et->name))) {
       t = *e;
       *e = t->next;
       t->next = u->entries;
@@ -1673,8 +1672,10 @@ int set_user(struct user_entry_type *et, struct userrec *u, void *d)
   struct user_entry *e;
   int r;
 
-  if (!u || !et)
+  if (!u || !et) {
+    debug2("warning: set_user(%s, %s)", et ? et->name : "NULL", u ? u->handle : "NULL");
     return 0;
+  }
 
   if (!(e = find_user_entry(et, u))) {
     e = user_malloc(sizeof(struct user_entry));

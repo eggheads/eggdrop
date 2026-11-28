@@ -15,4 +15,4 @@ module::
 
   loadmodule woobie
 
-Copyright (C) 2000 - 2024 Eggheads Development Team
+Copyright (C) 2000 - 2025 Eggheads Development Team

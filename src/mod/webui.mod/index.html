@@ -1,0 +1,78 @@
+<!--
+SPDX-License-Identifier: GPL-2.0-only
+Copyright (C) 2023 - 2025 Michael Ortmann MIT License
+Copyright (C) 2025 Eggheads Development Team
+We use Prettier as a code formatter to keep the code style consistent (and to
+avoid off-topic discussions)
+-->
+<!doctype html>
+<html lang="en" style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1" />
+    <title>Eggdrop</title>
+  </head>
+  <!--gruvbox colors-->
+  <body
+    style="
+      background-color: #282828;
+      color: #ebdbb2;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      height: 100%;
+      margin: 0px;
+    "
+  >
+    <pre id="out" style="overflow: auto"></pre>
+    <input id="input" type="text" autofocus style="width: 100%" />
+    <script>
+      "use strict";
+      const WS_ECHO_ON = "\x01";
+      const WS_ECHO_OFF = "\x02";
+      const input = document.getElementById("input");
+      const ws = new WebSocket(
+        (location.protocol === "https:" ? "wss:" : "ws:") +
+          "//" +
+          location.host +
+          location.pathname.replace(/\/$/, "") +
+          "/w",
+      );
+      let echo = true;
+      const out = document.getElementById("out");
+      let sendCount = 0;
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          ws.send(input.value);
+          if (echo) {
+            out.append(input.value + "\n");
+            out.scrollTop = out.scrollHeight;
+          }
+          input.value = "";
+          if (sendCount++ == 0) {
+            input.type = "password";
+            echo = false;
+          }
+        }
+      });
+      ws.addEventListener("close", (event) => {
+        input.remove();
+        out.append("Connection closed by foreign host.");
+        out.scrollTop = out.scrollHeight;
+      });
+      ws.addEventListener("message", (event) => {
+        out.insertAdjacentHTML(
+          "beforeend",
+          event.data.replace(/[\x01-\x02]/g, ""),
+        );
+        out.scrollTop = out.scrollHeight;
+        if (event.data.includes(WS_ECHO_ON)) {
+          input.type = "text";
+          echo = true;
+        } else if (event.data.includes(WS_ECHO_OFF)) {
+          input.type = "password";
+          echo = false;
+        }
+      });
+    </script>
+  </body>
+</html>

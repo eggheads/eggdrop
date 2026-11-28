@@ -4,12 +4,10 @@
  *
  * Written by Michael Ortmann
  *
- * Copyright (C) 2019 - 2024 Eggheads Development Team
+ * Copyright (C) 2019 - 2025 Eggheads Development Team
  */
 
-#undef answer /* before resolv.h because it could collide with src/mod/module.h
-               * (dietlibc) */
-#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#include "src/mod/module.h"
 
 /* RFC 5802 - printable ASCII characters excluding ','
  * printable = %x21-2B / %x2D-7E
@@ -173,7 +171,7 @@ static int sasl_plain(char *dst, size_t dstsize)
 }
 
 #ifdef TLS
-static int sasl_ecdsa_nist256p_challange_step_0(char *dst, size_t dstsize)
+static int sasl_ecdsa_nist256p_challenge_step_0(char *dst, size_t dstsize)
 {
   /* Don't use snprintf() due to \0 inside
    * and don't use stpcpy() for it is POSIX 2008
@@ -188,7 +186,7 @@ static int sasl_ecdsa_nist256p_challange_step_0(char *dst, size_t dstsize)
   return y + n;
 }
 
-static int sasl_ecdsa_nist256p_challange_step_1(
+static int sasl_ecdsa_nist256p_challenge_step_1(
   char *restrict client_msg_plain, char *restrict server_msg_plain,
   int server_msg_plain_len)
 {
@@ -283,7 +281,7 @@ static int sasl_ecdsa_nist256p_challange_step_1(
              "error = %s\n", ERR_error_string(ERR_get_error(), 0));
     sasl_error(error_msg);
     return -1;
-  } 
+  }
 #endif /* OPENSSL_VERSION_NUMBER >= 0x10000000L */
   return siglen;
 }
@@ -534,15 +532,12 @@ static void sasl_scram_step_2(char *restrict client_msg_plain,
 static int gotauthenticate(char *from, char *msg)
 {
   char client_msg_plain[1024];
-  int client_msg_plain_len;
+  int client_msg_plain_len = 0;
 #ifdef TLS
   char server_msg_plain[1024];
   char error_msg[1050]; /* snprintf() truncation should be tolerable */
   int server_msg_plain_len;
 #endif
-  #ifndef MAX
-  #define MAX(a,b) (((a)>(b))?(a):(b))
-  #endif
   char client_msg_b64[((MAX((sizeof client_msg_plain), 400) + 2) / 3) << 2] = "";
 
   fixcolon(msg); /* Because Inspircd does its own thing */
@@ -562,7 +557,7 @@ static int gotauthenticate(char *from, char *msg)
 #ifdef TLS
         break;
       case SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE:
-        client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_0(client_msg_plain, sizeof client_msg_plain);
+        client_msg_plain_len = sasl_ecdsa_nist256p_challenge_step_0(client_msg_plain, sizeof client_msg_plain);
         break;
       case SASL_MECHANISM_EXTERNAL:
         dprintf(DP_MODE, "AUTHENTICATE +\n");
@@ -588,7 +583,7 @@ static int gotauthenticate(char *from, char *msg)
       return 0;
     }
     if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-      if ((client_msg_plain_len = sasl_ecdsa_nist256p_challange_step_1(client_msg_plain, server_msg_plain, server_msg_plain_len)) < 0)
+      if ((client_msg_plain_len = sasl_ecdsa_nist256p_challenge_step_1(client_msg_plain, server_msg_plain, server_msg_plain_len)) < 0)
         return 0;
     }
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L /* 1.0.0 */

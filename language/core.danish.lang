@@ -19,6 +19,9 @@
 0x106,Kanal bans på
 0x109,Brug '.bans all' for at se den totale liste
 0x10a,Banner ikke længere
+0x10b,The
+0x10c, extban is not enabled on this server. Eggdrop will save this ban but only set it when on a server that has the 
+0x10d, flag enabled.
 
 # EXEMPTS_
 0x114,Globale exempts
@@ -270,6 +273,8 @@ Telnet botten og skriv 'NEW' som dit nick.\n
 0x90a,Mode skifte af ikke-chanop på %s!  Modsætter...
 0x90b,Misbruger desync
 0x90c,flood
+#0x90d - removed
+0x90e,Skrivning af kanalfil...
 
 0xa00,Ingen ignoreringer
 0xa01,Ignorerer lige nu

@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2024 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,14 @@
 #define RECVLINEMAX      TOTALTAGMAX + MSGMAX
 #define NEWSERVERMAX     256
 #define NEWSERVERPASSMAX 128
+#define BATCHREFCHARS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-"
+#define BATCHREFMAX      64     /* Max length of a batch reference tag      */
+#define BATCHTYPEMAX     128    /* Max length of a batch type              */
+#define BATCHARGSMAX     512    /* Max length of stored batch arguments     */
+#define BATCHMAX         32     /* Max concurrently open batches            */
+#define BATCHTAGSMAX     512    /* Max length of stored BATCH + message tags */
+
+
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
@@ -94,7 +102,7 @@
 #define extended_join (*(int *)(server_funcs[44]))
 #define account_notify (*(int *)(server_funcs[45]))
 #define H_isupport (*(p_tcl_bind_list *)(server_funcs[46]))
-#define isupport_get ((struct isupport *(*)(const char *, size_t))(server_funcs[47]))
+#define isupport_get ((const char *(*)(const char *, size_t))(server_funcs[47]))
 /* 48 - 51 */
 #define isupport_parseint ((int (*)(const char *, const char *, int, int, int, int, int *))(server_funcs[48]))
 /* #define check_tcl_account NULL */
@@ -103,6 +111,9 @@
 /* 52 - 55 */
 #define H_monitor (*(p_tcl_bind_list *)(server_funcs[52]))
 #define isupport_get_prefixchars ((const char *(*)(void))server_funcs[53])
+#define batch_get_current ((batch_t *(*)(void))(server_funcs[54]))
+#define H_batch (*(p_tcl_bind_list *)(server_funcs[55]))
+/* 56 - 59 */
 
 
 #endif /* MAKING_SERVER */
@@ -140,6 +151,24 @@ typedef struct monitor_list {
   int online;                 /* Flag if nickname is currently online     */
   struct monitor_list *next;  /* Linked list y'all                        */
 } monitor_list_t;
+
+/* An IRCv3 batch opened by the server and not yet closed. Nesting is tracked
+ * through parent rather than through position in the list because batches
+ * are permitted to interleave.
+ */
+typedef struct batch_list {
+  char reftag[BATCHREFMAX + 1];      /* Case-sensitive identifier            */
+  char type[BATCHTYPEMAX + 1];       /* Batch type                           */
+  char args[BATCHARGSMAX + 1];       /* Raw remainder of the BATCH + line    */
+  char tags[BATCHTAGSMAX + 1];       /* Message tags on the BATCH + line     */
+  struct batch_list *parent;         /* Enclosing batch, or NULL             */
+  int suppress;                      /* Don't process binds for this session */
+  unsigned long seq;                 /* Insertion order, for eviction        */
+  time_t started;
+  struct batch_list *next;
+} batch_t;
+
+
 
 /* Available net types. */
 enum {
