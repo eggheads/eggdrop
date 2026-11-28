@@ -1956,14 +1956,14 @@ static void print_host_ssl_port(char *str, size_t size, char *host, int port) {
 #ifdef IPV6
   if (inet_pton(AF_INET6, host, buf)) {
 #ifdef TLS
-    snprintf(str, size, "[%s]:%s%d", host, use_ssl ? "+" : "", port);
+    snprintf(str, size, "[%s]:%s%d", host, ssl ? "+" : "", port);
 #else
     snprintf(str, size, "[%s]:%d", host, port);
 #endif /* TLS */
   } else {
 #endif /* IPV6 */
 #ifdef TLS
-    snprintf(str, size, "%s:%s%d", host, use_ssl ? "+" : "", port);
+    snprintf(str, size, "%s:%s%d", host, ssl ? "+" : "", port);
 #else
     snprintf(str, size, "%s:%d", host, port);
 #endif
