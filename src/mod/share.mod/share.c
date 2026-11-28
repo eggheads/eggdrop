@@ -34,6 +34,7 @@
 #include "src/users.h"
 #include "transfer.mod/transfer.h"
 #include "channels.mod/channels.h"
+#include "compress.mod/compress.h"
 
 /* Minimum version I will share with. */
 static const int min_share = 1029900;
@@ -44,7 +45,8 @@ static const int min_exemptinvite = 1032800;
 /* Minimum version that supports userfile features. */
 static const int min_uffeature = 1050200;
 
-static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
+static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL,
+                *compress_funcs = NULL;
 
 static int private_global = 0;
 static int private_user = 0;
@@ -2234,6 +2236,7 @@ static cmd_t my_cmds[] = {
 
 static char *share_close()
 {
+  module_entry *me;
   int i;
   tandbuf *t, *tnext = NULL;
 
@@ -2266,6 +2269,12 @@ static char *share_close()
   rem_tcl_strings(my_strings);
   rem_builtins(H_dcc, my_cmds);
   rem_help_reference("share.help");
+
+  if ((me = module_find("compress", 1, 3))) {
+    compress_funcs = me->funcs;
+    compress_close_share();
+  }
+
   return NULL;
 }
 
@@ -2357,6 +2366,7 @@ static Function share_table[] = {
 
 char *share_start(Function *global_funcs)
 {
+  module_entry *me;
 
   global = global_funcs;
 
@@ -2386,6 +2396,12 @@ char *share_start(Function *global_funcs)
   add_builtins(H_dcc, my_cmds);
   uff_init();
   uff_addtable(internal_uff_table);
+
+  if ((me = module_find("compress", 1, 3))) {
+    compress_funcs = me->funcs;
+    compress_start_share();
+  }
+
   return NULL;
 }
 

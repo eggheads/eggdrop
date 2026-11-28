@@ -37,9 +37,9 @@ Modules included with Eggdrop
     or save channel specific userfile information.
 
 :ref:`compress`
-    This module provides support for file compression. This
-    allows the bot to transfer compressed user files and, therefore,
-    save a significant amount of bandwidth.
+    This module provides support for file compression. With the share module loaded
+    this allows the bot to transfer compressed user files and, therefore, save a
+    significant amount of bandwidth.
 
 :ref:`console`
     This module provides storage of console settings when you exit
