@@ -36,8 +36,8 @@ modification.
 
 Config file changes
 
-To migrate from a 1.8 to a Eggdrop, some changes are suggested to be
-made in your configuration file:
+To migrate from a 1.8 to a 1.10 Eggdrop, some changes are suggested to
+be made in your configuration file:
 
 -   Eggdrop has deprecated the blowfish module for password hashing in
     favor of the PBKDF2 module. This is a BIG change which, if done
@@ -65,15 +65,15 @@ made in your configuration file:
 Modules
 
 While most 3rd party modules that worked on older Eggdrop versions
-should still work with Eggdrop , many of them contain a version check
-that only allows them to run on 1.6.x bots. We have removed the version
-check from some of the more popular modules provide them at
+should still work with Eggdrop 1.10, many of them contain a version
+check that only allows them to run on 1.6.x bots. We have removed the
+version check from some of the more popular modules provide them at
 https://ftp.eggheads.org/pub/eggdrop/modules/1.10/
 
 Scripts
 
 All 3rd party Tcl scripts that worked with Eggdrop versions as early as
-v1.6 should still fully work with Eggdrop .
+v1.6 should still fully work with Eggdrop 1.10.
 
 Botnet
 

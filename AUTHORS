@@ -1,5 +1,4 @@
 Authors of Eggdrop
-Last revised: July 27, 2010
 
 ------------------------------------------------------------------------------
 
@@ -98,6 +97,9 @@ versions 1.3.24i-1.3.28, 1.4.x, 1.5.x, 1.6.x and 1.8.x.
 
 1.9:
   Cizzle, Geo, mortmann, thommey
+
+1.10
+  Geo, mortmann, thommey
 
 See also: THANKS, doc/Versions, doc/Changes
 

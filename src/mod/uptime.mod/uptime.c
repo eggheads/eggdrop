@@ -84,8 +84,8 @@ static int uptimecount;
 static unsigned long uptimeip;
 static char uptime_version[48] = "";
 
-void check_secondly(void);
-void check_minutely(void);
+static void check_secondly(void);
+static void check_minutely(void);
 
 static int uptime_expmem()
 {
@@ -228,7 +228,7 @@ static int send_uptime(void)
   return len;
 }
 
-void check_minutely()
+static void check_minutely()
 {
   minutes++;
   if (minutes >= next_minutes) {
@@ -238,7 +238,7 @@ void check_minutely()
   }
 }
 
-void check_secondly()
+static void check_secondly()
 {
   seconds++;
   if (seconds >= next_seconds) {  /* DING! */

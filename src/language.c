@@ -214,7 +214,7 @@ static void read_lang(char *langfile)
   char *ltext = NULL;
   char *ctmp, *ctmp1;
   int ltextsize = sizeof lbuf;
-  int lidx;
+  unsigned int lidx;
   int lnew = 1;
   int lline = 1;
   int lskip = 0;
@@ -251,7 +251,7 @@ static void read_lang(char *langfile)
       }
       if ((ctmp = strchr(lbuf, ',')))
         strcpy(ltext, ctmp + 1);
-      else 
+      else
         putlog(LOG_MISC, "*", "LANG: Malformed text line (missing ,) in %s at %d.",
                langfile, lline);
     } else {
@@ -536,7 +536,8 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
 {
   lang_tab *l;
   char ltext2[512];
-  int idx2, i;
+  unsigned int idx2;
+  int i;
 
   putlog(LOG_CMDS, "*", "#%s# ldump %s", dcc[idx].nick, par);
   if (par[0]) {
@@ -566,7 +567,7 @@ char *get_language(int idx)
   for (l = langtab[idx & 63]; l; l = l->next)
     if (idx == l->idx)
       return l->text;
-  egg_snprintf(text, sizeof text, "MSG%03X", idx);
+  snprintf(text, sizeof text, "MSG%03X", idx);
   return text;
 }
 
@@ -744,12 +745,9 @@ static tcl_cmds langtcls[] = {
 
 void init_language(int flag)
 {
-  int i;
   char *deflang;
 
   if (flag) {
-    for (i = 0; i < 32; i++)
-      langtab[i] = 0;
     /* The default language is always BASELANG as language files are
      * guaranteed to exist in that language.
      */

@@ -3,7 +3,7 @@ Enabling TLS Security on Eggdrop
 
 There are several ways TLS encryption can protect communication between your Eggdrop and the world. This guide will walk you through a few common scenarios and how to properly set up TLS protection.
 
-Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term "SSL" is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term "SSL" used to describe a secure connection method, to include with within Eggdrop's own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term "SSL" be sure to correct them, we're sure they will *definitely* appreciate it :)
+Sidenote: Despite SSL (Secure Socket Layer) encryption being deprecated and no longer secure, the term "SSL" is a bit of an anachronism and still commonly used interchangeably with TLS (Transport Layer Security). If you see the term "SSL" used to describe a secure connection method, including Eggdrop's own documentation and configuration files, it is probably safe to assume it is actually referring to the secure TLS protocol. If you talk to someone and they use the term "SSL" be sure to correct them, we're sure they will *definitely* appreciate it :)
 
 Pre-requisites
 --------------
@@ -45,7 +45,7 @@ If an Eggdrop is going to listen/accept connections on a TLS port (more on that 
 
 The wizard will walk you through generating a keypair and will, by default, install to ~/eggdrop (the install location can be changed by "make sslcert DEST=/path/to/eggdrop/install"
 
-In your config file, uncomment the "ssl-privatekey" and "ssl-certificate" settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop'd directory.
+In your config file, uncomment the "ssl-privatekey" and "ssl-certificate" settings. Eggdrop will look in the directory it is running from (~/eggdrop by default) for the files listed; add an absolute path if you installed them outside of Eggdrop's directory.
 
 Configuration File Preparation - Listening with TLS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -65,4 +65,4 @@ will use TLS to connect to 1.2.3.4 on port 5555 the next time a connection is at
 
 Additional Information
 ----------------------
-For additional information and a more thorough explanation of Eggdrop's TLS implementation, please read the `TLS docs <https://docs.egheads.org/using/tls.html>`_
+For additional information and a more thorough explanation of Eggdrop's TLS implementation, please read the `TLS docs <https://docs.eggheads.org/using/tls.html>`_.
