@@ -1,7 +1,7 @@
 /*
  * tcltransfer.c -- part of transfer.mod
  *
- * Copyright (C) 2003 - 2023 Eggheads Development Team
+ * Copyright (C) 2003 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,7 +51,7 @@ static int tcl_dccsend STDVAR
     return TCL_OK;
   }
   i = raw_dcc_send(argv[1], argv[2], "*");
-  egg_snprintf(s, sizeof s, "%d", i);
+  snprintf(s, sizeof s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -89,7 +89,7 @@ static int tcl_getfilesendtime STDVAR
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].sock == sock) {
       if (dcc[i].type == &DCC_SEND || dcc[i].type == &DCC_GET) {
-        egg_snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
+        snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
         Tcl_AppendResult(irp, s, NULL);
       } else
         Tcl_AppendResult(irp, "-2", NULL); /* Not a valid file transfer */

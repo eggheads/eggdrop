@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/resource.h>
 #include "main.h"
 
 extern Tcl_Interp *interp;
@@ -51,11 +50,16 @@ static int builtin_cron STDVAR;
 static int builtin_char STDVAR;
 static int builtin_chpt STDVAR;
 static int builtin_chjn STDVAR;
+static int builtin_evnt STDVAR;
 static int builtin_idxchar STDVAR;
 static int builtin_charidx STDVAR;
 static int builtin_chat STDVAR;
 static int builtin_dcc STDVAR;
 static int builtin_log STDVAR;
+
+#ifdef DEBUG_CONTEXT
+char last_bind_called[512] = "";
+#endif
 
 /* Allocate and initialise a chunk of memory.
  */
@@ -214,7 +218,6 @@ static cd_tcl_cmd cd_cmd_table[] = {
 void init_bind(void)
 {
   bind_table_list = NULL;
-  Context;
   add_cd_tcl_cmds(cd_cmd_table);
   H_unld = add_bind_table("unld", HT_STACKABLE, builtin_char);
   H_time = add_bind_table("time", HT_STACKABLE, builtin_5int);
@@ -235,14 +238,13 @@ void init_bind(void)
   H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
-  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
+  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_evnt);
   H_die = add_bind_table("die", HT_STACKABLE, builtin_char);
   H_log = add_bind_table("log", HT_STACKABLE, builtin_log);
 #ifdef TLS
   H_tls = add_bind_table("tls", HT_STACKABLE, builtin_idx);
 #endif
   add_builtins(H_dcc, C_dcc);
-  Context;
 }
 
 void kill_bind(void)
@@ -346,7 +348,7 @@ static void dump_bind_tables(Tcl_Interp *irp)
   }
 }
 
-static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                              const char *cmd, const char *proc)
 {
   tcl_bind_mask_t *tm;
@@ -378,7 +380,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
 /* Add command (remove old one if necessary)
  */
-static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
+int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
                            const char *cmd, const char *proc)
 {
   tcl_cmd_t *tc;
@@ -407,7 +409,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   for (tc = tm->first; tc; tc = tc->next) {
     if (tc->attributes & TC_DELETED)
       continue;
-    if (!strcasecmp(tc->func_name, proc)) {
+    if (!strcmp(tc->func_name, proc)) {
       tc->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tc->flags), NULL);
       return 1;
@@ -593,6 +595,21 @@ static int builtin_chjn STDVAR
   return TCL_OK;
 }
 
+static int builtin_evnt STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(2, 3, " event ?arg?");
+
+  CHECKVALIDITY(builtin_evnt);
+  if (argc==2) {
+    F(argv[1]);
+  } else {
+    F(argv[1], argv[2]);
+  }
+  return TCL_OK;
+}
+
 static int builtin_idxchar STDVAR
 {
   Function F = (Function) cd;
@@ -710,44 +727,28 @@ static int trigger_bind(const char *proc, const char *param, char *mask)
   int x;
   struct rusage ru1, ru2;
   int r = 0;
-#ifdef DEBUG_CONTEXT
-  #define FORMAT "Tcl proc: %s, param: %s"
-  char *buf;
 
-  /* We now try to debug the Tcl_VarEval() call below by remembering both
-   * the called proc name and it's parameters. This should render us a bit
-   * less helpless when we see context dumps.
-   */
-  Context;
-  /* reuse x */
-  x = snprintf(NULL, 0, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
-  buf = nmalloc(x + 1);
-  sprintf(buf, FORMAT, proc ? proc : "<null>", param ? param : "<null>");
-  ContextNote(buf);
-  nfree(buf);
-#endif /* DEBUG_CONTEXT */
 
   /* Set the lastbind variable before evaluating the proc so that the name
    * of the command that triggered the bind will be available to the proc.
    * This feature is used by scripts such as userinfo.tcl
    */
-  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "lastbind", mask, TCL_GLOBAL_ONLY);
 
   if(proc && proc[0] != '*') { /* proc[0] != '*' excludes internal binds */
+#ifdef DEBUG_CONTEXT
+    strlcpy(last_bind_called, proc, sizeof last_bind_called);
+#endif
     debug1("triggering bind %s", proc);
     r = getrusage(RUSAGE_SELF, &ru1);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
-  Context;
-  if (proc && proc[0] != '*' && !r) {
-    if (!getrusage(RUSAGE_SELF, &ru2)) {
-      debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
-             (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
-             (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
-             (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
-             (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
-    }
-  }
+  if (proc && proc[0] != '*' && !r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("triggered bind %s, user %.3fms sys %.3fms", proc,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -965,7 +966,7 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   char s[11];
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-  egg_snprintf(s, sizeof s, "%ld", dcc[idx].sock);
+  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_dcc1", (char *) dcc[idx].nick, 0);
   Tcl_SetVar(interp, "_dcc2", (char *) s, 0);
   Tcl_SetVar(interp, "_dcc3", (char *) args, 0);
@@ -1007,7 +1008,7 @@ void check_tcl_chonof(char *hand, int sock, tcl_bind_list_t *tl)
   touch_laston(u, "partyline", now);
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_chonof1", (char *) hand, 0);
-  egg_snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", sock);
   Tcl_SetVar(interp, "_chonof2", (char *) s, 0);
   check_tcl_bind(tl, hand, &fr, " $_chonof1 $_chonof2", MATCH_MASK |
                  BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
@@ -1018,7 +1019,7 @@ void check_tcl_chatactbcst(const char *from, int chan, const char *text,
 {
   char s[11];
 
-  egg_snprintf(s, sizeof s, "%d", chan);
+  snprintf(s, sizeof s, "%d", chan);
   Tcl_SetVar(interp, "_cab1", (char *) from, 0);
   Tcl_SetVar(interp, "_cab2", (char *) s, 0);
   Tcl_SetVar(interp, "_cab3", (char *) text, 0);
@@ -1060,7 +1061,7 @@ const char *check_tcl_filt(int idx, const char *text)
   int x;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  egg_snprintf(s, sizeof s, "%ld", dcc[idx].sock);
+  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   Tcl_SetVar(interp, "_filt1", (char *) s, 0);
   Tcl_SetVar(interp, "_filt2", (char *) text, 0);
@@ -1095,7 +1096,7 @@ void check_tcl_listen(const char *cmd, int idx)
   char s[11];
   int x;
 
-  egg_snprintf(s, sizeof s, "%d", idx);
+  snprintf(s, sizeof s, "%d", idx);
   Tcl_SetVar(interp, "_n", (char *) s, 0);
   x = Tcl_VarEval(interp, cmd, " $_n", NULL);
   if (x == TCL_ERROR)
@@ -1130,8 +1131,8 @@ void check_tcl_chjn(const char *bot, const char *nick, int chan,
   case '%':
     fr.global = USER_BOTMAST;
   }
-  egg_snprintf(s, sizeof s, "%d", chan);
-  egg_snprintf(u, sizeof u, "%d", sock);
+  snprintf(s, sizeof s, "%d", chan);
+  snprintf(u, sizeof u, "%d", sock);
   Tcl_SetVar(interp, "_chjn1", (char *) bot, 0);
   Tcl_SetVar(interp, "_chjn2", (char *) nick, 0);
   Tcl_SetVar(interp, "_chjn3", (char *) s, 0);
@@ -1147,8 +1148,8 @@ void check_tcl_chpt(const char *bot, const char *hand, int sock, int chan)
 {
   char u[11], v[11];
 
-  egg_snprintf(u, sizeof u, "%d", sock);
-  egg_snprintf(v, sizeof v, "%d", chan);
+  snprintf(u, sizeof u, "%d", sock);
+  snprintf(v, sizeof v, "%d", chan);
   Tcl_SetVar(interp, "_chpt1", (char *) bot, 0);
   Tcl_SetVar(interp, "_chpt2", (char *) hand, 0);
   Tcl_SetVar(interp, "_chpt3", (char *) u, 0);
@@ -1161,7 +1162,7 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
 {
   char u[11];
 
-  egg_snprintf(u, sizeof u, "%d", idx);
+  snprintf(u, sizeof u, "%d", idx);
   Tcl_SetVar(interp, "_away1", (char *) bot, 0);
   Tcl_SetVar(interp, "_away2", (char *) u, 0);
   Tcl_SetVar(interp, "_away3", msg ? (char *) msg : "", 0);
@@ -1175,30 +1176,30 @@ void check_tcl_time_and_cron(struct tm *tm)
    * time oversized to silence a gcc format-truncation warning */
   char y[24];
 
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
+  snprintf(y, sizeof y, "%02d", tm->tm_min);
   Tcl_SetVar(interp, "_time1", (char *) y, 0);
   Tcl_SetVar(interp, "_cron1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
+  snprintf(y, sizeof y, "%02d", tm->tm_hour);
   Tcl_SetVar(interp, "_time2", (char *) y, 0);
   Tcl_SetVar(interp, "_cron2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
+  snprintf(y, sizeof y, "%02d", tm->tm_mday);
   Tcl_SetVar(interp, "_time3", (char *) y, 0);
   Tcl_SetVar(interp, "_cron3", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
+  snprintf(y, sizeof y, "%02d", tm->tm_mon);
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
+  snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
   Tcl_SetVar(interp, "_time5", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
+  snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
                tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
   check_tcl_bind(H_time, y, 0,
                  " $_time1 $_time2 $_time3 $_time4 $_time5",
                  MATCH_MASK | BIND_STACKABLE);
 
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
+  snprintf(y, sizeof y, "%02d", tm->tm_mon + 1);
   Tcl_SetVar(interp, "_cron4", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_wday);
+  snprintf(y, sizeof y, "%02d", tm->tm_wday);
   Tcl_SetVar(interp, "_cron5", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
+  snprintf(y, sizeof y, "%02d %02d %02d %02d %02d", tm->tm_min, tm->tm_hour,
                tm->tm_mday, tm->tm_mon + 1, tm->tm_wday);
   check_tcl_bind(H_cron, y, 0,
                  " $_cron1 $_cron2 $_cron3 $_cron4 $_cron5",
@@ -1210,6 +1211,14 @@ void check_tcl_event(const char *event)
   Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
   check_tcl_bind(H_event, event, 0, " $::_event1",
                  MATCH_EXACT | BIND_STACKABLE);
+}
+
+void check_tcl_event_arg(const char *event, const char *arg)
+{
+    Tcl_SetVar(interp, "_event1", (char *) event, TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "_event2", (char *) arg, TCL_GLOBAL_ONLY);
+    check_tcl_bind(H_event, event, 0, " $::_event1 $::_event2",
+                   MATCH_EXACT | BIND_STACKABLE);
 }
 
 int check_tcl_signal(const char *event)
@@ -1231,13 +1240,19 @@ void check_tcl_die(char *reason)
 void check_tcl_log(int lv, char *chan, char *msg)
 {
   char mask[512];
+  Tcl_Obj* prev_result;
 
-  egg_snprintf(mask, sizeof mask, "%s %s", chan, msg);
+  /* We have to store the old result, as check_tcl_bind may override it */
+  prev_result = Tcl_GetObjResult(interp);
+  Tcl_IncrRefCount(prev_result);
+  snprintf(mask, sizeof mask, "%s %s", chan, msg);
   Tcl_SetVar(interp, "_log1", masktype(lv), TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log2", chan, TCL_GLOBAL_ONLY);
   Tcl_SetVar(interp, "_log3", msg, TCL_GLOBAL_ONLY);
   check_tcl_bind(H_log, mask, 0, " $::_log1 $::_log2 $::_log3",
                  MATCH_MASK | BIND_STACKABLE);
+  Tcl_SetObjResult(interp, prev_result);
+  Tcl_DecrRefCount(prev_result);
 }
 
 #ifdef TLS
@@ -1246,7 +1261,7 @@ int check_tcl_tls(int sock)
   int x;
   char s[11];
 
-  egg_snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", sock);
   Tcl_SetVar(interp, "_tls", s, 0);
   x = check_tcl_bind(H_tls, s, 0, " $_tls", MATCH_MASK | BIND_STACKABLE |
                      BIND_WANTRET);
@@ -1259,6 +1274,7 @@ void tell_binds(int idx, char *par)
   tcl_bind_list_t *tl, *tl_kind;
   tcl_bind_mask_t *tm;
   int fnd = 0, showall = 0, patmatc = 0, maxname = 0;
+  int ok = 0, showpy = 0, showtcl = 0;
   tcl_cmd_t *tc;
   char *name, *proc, *s, flg[100];
 
@@ -1279,7 +1295,13 @@ void tell_binds(int idx, char *par)
   if ((name && name[0] && !strcasecmp(name, "all")) ||
       (s && s[0] && !strcasecmp(s, "all")))
     showall = 1;
-  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
+  if ((name && name[0] && !strcasecmp(name, "tcl")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
+    showtcl = 1;
+  if ((name && name[0] && !strcasecmp(name, "python")) ||
+      (s && s[0] && !strcasecmp(s, "all")))
+    showpy = 1;
+  if (tl_kind == NULL && !showpy && !showtcl && name && name[0] && strcasecmp(name, "all"))
     patmatc = 1;
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
@@ -1301,7 +1323,6 @@ void tell_binds(int idx, char *par)
   dprintf(idx, "%s", MISC_CMDBINDS);
   dprintf(idx, "  %*s FLAGS    COMMAND              HITS BINDING (TCL)\n",
         maxname, "TYPE");
-
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {
     if (tl->flags & HT_DELETED)
@@ -1314,26 +1335,28 @@ void tell_binds(int idx, char *par)
           continue;
         proc = tc->func_name;
         build_flags(flg, &(tc->flags), NULL);
-        if (!strcmp(flg, "-|-")) {
-          flg[0] = '*';
-          flg[1] = '\0';
-        }
-        if (showall || proc[0] != '*') {
-          int ok = 0;
-
-          if (patmatc == 1) {
+        ok = 0;
+        if (showall) {
+          ok = 1;
+        } else if (patmatc || showpy || showtcl) {
+          if ((patmatc == 1) && (proc[0] != '*')) {
             if (wild_match_per(name, tl->name) ||
                 wild_match_per(name, tm->mask) ||
-                wild_match_per(name, tc->func_name))
+                wild_match_per(name, tc->func_name)) {
               ok = 1;
-          } else
+            }
+          } else if (showpy && !(strncasecmp(tc->func_name, "*python:", strlen("*python:")))) {
             ok = 1;
-
-          if (ok) {
-            dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
-                    tm->mask, tc->hits, tc->func_name);
-            fnd = 1;
+          } else if (showtcl && (strncasecmp(tc->func_name, "*", strlen("*")))) {
+            ok = 1;
           }
+        } else if (proc[0] != '*') {
+          ok = 1;
+        }
+        if (ok) {
+          dprintf(idx, "  %*s %-8s %-20s %4d %s\n", maxname, tl->name, flg,
+                  tm->mask, tc->hits, tc->func_name);
+          fnd = 1;
         }
       }
     }
@@ -1359,7 +1382,7 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
   table[0].callback = tl->func;
   table[1].name = NULL;
   for (i = 0; cc[i].name; i++) {
-    egg_snprintf(p, sizeof p, "*%s:%s", tl->name,
+    snprintf(p, sizeof p, "*%s:%s", tl->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
     l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
@@ -1377,7 +1400,7 @@ void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
   char p[1024], *l;
 
   for (i = 0; cc[i].name; i++) {
-    egg_snprintf(p, sizeof p, "*%s:%s", table->name,
+    snprintf(p, sizeof p, "*%s:%s", table->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
     l = nmalloc(Tcl_ScanElement(p, &k) + 1);
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);

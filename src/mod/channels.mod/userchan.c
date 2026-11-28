@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -220,9 +220,46 @@ static int u_equals_mask(maskrec *u, char *mask)
 
 static int u_match_mask(maskrec *rec, char *mask)
 {
-  for (; rec; rec = rec->next)
-    if (match_addr(rec->mask, mask))
+  char type, nick[NICKLEN];
+  char *bang;
+  const char *arg, *accountflag;
+  memberlist *m = NULL;
+
+  if (mask && mask[0]) {
+    bang = strchr(mask, '!');
+    if (bang) {
+      size_t nicklen = (size_t)(bang - mask);
+
+      if (nicklen >= sizeof nick) {
+        nicklen = sizeof nick - 1;
+      }
+      memcpy(nick, mask, nicklen);
+      nick[nicklen] = 0;
+      if (nick[0]) {
+        m = find_member_from_nick(nick);
+      }
+    }
+  }
+
+  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+
+  for (; rec; rec = rec->next) {
+    if (extban_parse(rec->mask, &type, &arg)) {
+      if (!m || !m->nick[0] || !m->account[0])
+        continue;
+      if (accountflag && (type == accountflag[0])) {
+        if (!rfc_casecmp(m->account, arg))
+          return 1;
+      } else if (type == 'U') {
+        if (!strcmp(m->account, "*") && match_addr((char *) arg, mask))
+          return 1;
+      }
+      continue;
+    }
+    if (match_addr(rec->mask, mask)) {
       return 1;
+    }
+  }
   return 0;
 }
 
@@ -394,7 +431,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 }
 
 /* Add a !* and/or @* if lacking in a usermask, copying to newmask */
-void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
+static void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
 {
   char *strat, *strbang;
 
@@ -403,14 +440,30 @@ void fix_broken_mask(char *newmask, const char *oldmask, size_t len)
     strat = strchr(oldmask, '@');
     strbang = strchr(oldmask, '!');
     if (strbang == NULL && strat == NULL)
-      egg_snprintf(newmask, len, "%s!*@*", oldmask);
+      snprintf(newmask, len, "%s!*@*", oldmask);
     else if (strat == NULL)
-      egg_snprintf(newmask, len, "%s@*", oldmask);
+      snprintf(newmask, len, "%s@*", oldmask);
     else if (strbang == NULL)
-      egg_snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
+      snprintf(newmask, len, "%.*s!*%s", (int)(strat - oldmask), oldmask, strat);
     else
       strlcpy(newmask, oldmask, len);
   }
+}
+
+/* Takes mask in the full $a:mask format */
+static int extban_is_matchable(const char *mask)
+{
+  char extflag;
+  const char *extarg, *acc;
+
+  if (!extban_parse(mask, &extflag, &extarg))
+    return 0;
+
+  acc = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (acc && acc[0] && extflag == acc[0])
+    return 1;
+
+  return strchr(MATCHABLE_EXTBANS, extflag) ? 1 : 0;
 }
 
 /* Note: If first char of note is '*' it's a sticky ban.
@@ -422,15 +475,20 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
-  /* Choke check: fix broken bans (must have '!' and '@') */
-  fix_broken_mask(host, ban, sizeof host);
-
-  if ((me = module_find("server", 0, 0)) && me->funcs) {
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-                   me->funcs[SERVER_BOTUSERHOST]);
-    if (match_addr(host, s)) {
-      putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
-      return 0;
+  if (is_extban_mask(ban)) {
+    strlcpy(host, ban, sizeof host);
+    if (!extban_is_matchable(host))
+      flags |= MASKREC_STICKY;
+  } else {
+    /* Choke check: fix broken bans (must have '!' and '@') */
+    fix_broken_mask(host, ban, sizeof host);
+    if ((me = module_find("server", 0, 0)) && me->funcs) {
+      simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
+                     me->funcs[SERVER_BOTUSERHOST]);
+      if (match_addr(host, s)) {
+        putlog(LOG_MISC, "*", "%s", IRC_IBANNEDME);
+        return 0;
+      }
     }
   }
   if (expire_time == now)
@@ -630,7 +688,7 @@ static void display_ban(int idx, int number, maskrec *ban,
     if (ban->added < ban->lastactive) {
       int len = strlen(dates);
       daysago(now, ban->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -674,7 +732,7 @@ static void display_exempt(int idx, int number, maskrec *exempt,
     if (exempt->added < exempt->lastactive) {
       int len = strlen(dates);
       daysago(now, exempt->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -718,7 +776,7 @@ static void display_invite(int idx, int number, maskrec *invite,
     if (invite->added < invite->lastactive) {
       int len = strlen(dates);
       daysago(now, invite->lastactive, s);
-      egg_snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
+      snprintf(dates + len, (sizeof dates) - len, ", %s %s", MODES_LASTUSED, s); /* Concatenation */
     }
   } else
     dates[0] = 0;
@@ -752,7 +810,7 @@ static void display_invite(int idx, int number, maskrec *invite,
 static void tell_bans(int idx, int show_inact, char *match)
 {
   int k = 1;
-  char *chname;
+  char *chname = NULL;
   struct chanset_t *chan = NULL;
   maskrec *u;
 
@@ -788,7 +846,16 @@ static void tell_bans(int idx, int show_inact, char *match)
     } else
       display_ban(idx, k++, u, chan, show_inact);
   }
-  if (chan) {
+  for (chan = chanset; chan; chan = chan->next) {
+    /* Show a channel's bans if:
+     * - the console is set to *
+     * - the console is set to this channel
+     * - we're matching a mask
+     * - this channel was specifically requested in .bans
+     */
+    if ( (!strcmp(dcc[idx].u.chat->con_chan, "*")) ||
+         (!strcmp(dcc[idx].u.chat->con_chan, chan->dname) && (!chname || match[0])) ||
+         (chname && !strcasecmp(chname, chan->dname)) ) {
     if (show_inact)
       dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
               BANS_BYCHANNEL, chan->dname, MODES_NOTACTIVE2, MODES_NOTBYBOT);
@@ -800,6 +867,9 @@ static void tell_bans(int idx, int show_inact, char *match)
         if ((match_addr(match, u->mask)) ||
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_ban(idx, k, u, chan, 1);
+        k++;
+      } else if (chname && !strcasecmp(chname, chan->dname)) {
+        display_ban(idx, k, u, chan, 0);
         k++;
       } else
         display_ban(idx, k++, u, chan, show_inact);
@@ -830,6 +900,7 @@ static void tell_bans(int idx, int show_inact, char *match)
           k++;
         }
       }
+    }
     }
   }
   if (k == 1)
@@ -1033,7 +1104,7 @@ static int write_bans(FILE *f, int idx)
     expire = b->expire;
     added = b->added;
     if (!mask ||
-        fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+        fprintf(f, "- %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                 (b->flags & MASKREC_PERM) ? "+" : "", expire,
                 (b->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) b->lastactive, b->user ? b->user : botnetnick,
@@ -1060,7 +1131,7 @@ static int write_bans(FILE *f, int idx)
           expire = b->expire;
           added = b->added;
           if (!mask ||
-              fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+              fprintf(f, "- %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                       (b->flags & MASKREC_PERM) ? "+" : "", expire,
                       (b->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) b->lastactive, b->user ? b->user : botnetnick,
@@ -1093,7 +1164,7 @@ static int write_exempts(FILE *f, int idx)
     expire = e->expire;
     added = e->added;
     if (!mask ||
-        fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
+        fprintf(f, "%s %s:%s%ld%s:+%ld:%ld:%s:%s\n", "%", mask,
                 (e->flags & MASKREC_PERM) ? "+" : "", expire,
                 (e->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) e->lastactive, e->user ? e->user : botnetnick,
@@ -1120,7 +1191,7 @@ static int write_exempts(FILE *f, int idx)
           expire = e->expire;
           added = e->added;
           if (!mask ||
-              fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
+              fprintf(f, "%s %s:%s%ld%s:+%ld:%ld:%s:%s\n", "%", mask,
                       (e->flags & MASKREC_PERM) ? "+" : "", expire,
                       (e->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) e->lastactive, e->user ? e->user : botnetnick,
@@ -1153,7 +1224,7 @@ static int write_invites(FILE *f, int idx)
     expire = ir->expire;
     added = ir->added;
     if (!mask ||
-        fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+        fprintf(f, "@ %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                 (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                 (ir->flags & MASKREC_STICKY) ? "*" : "", added,
                 (long) ir->lastactive, ir->user ? ir->user : botnetnick,
@@ -1180,7 +1251,7 @@ static int write_invites(FILE *f, int idx)
           expire = ir->expire;
           added = ir->added;
           if (!mask ||
-              fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
+              fprintf(f, "@ %s:%s%ld%s:+%ld:%ld:%s:%s\n", mask,
                       (ir->flags & MASKREC_PERM) ? "+" : "", expire,
                       (ir->flags & MASKREC_STICKY) ? "*" : "", added,
                       (long) ir->lastactive, ir->user ? ir->user : botnetnick,
@@ -1257,12 +1328,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
    * present in the channel and has op.
    */
 
-  if (m->user)
-    u = m->user;
-  else {
-    simple_sprintf(buf, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(buf);
-  }
+  u = get_user_from_member(m);
   /* Do not expire masks set by bots. */
   if (u && u->flags & USER_BOT)
     return 0;

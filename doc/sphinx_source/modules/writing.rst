@@ -41,8 +41,6 @@ Note: This is for a simple module of 1 source file.
 
     Note that stdio.h, string.h, stdlib.h, and sys/types.h are already included.
 
-    Note that stdio.h, string.h, stdlib.h, and sys/types.h are already included.
-
     ::
  
       Function *global;
@@ -58,7 +56,7 @@ should be static. This will drastically reduce the size of modules on
 decent systems.
 
 Throughout this step, MODULE refers to the module name. Note that
-  "MODULE_NAME" should literally be "MODULE_NAME".
+"MODULE_NAME" should literally be "MODULE_NAME".
 
 MODULE_start
 ^^^^^^^^^^^^
@@ -66,33 +64,33 @@ MODULE_start
 
   char *MODULE_start(Function *func_table)
 
-  This function is called when the module is first loaded. There are
-  several things that need to be done in this function
+This function is called when the module is first loaded. There are
+several things that need to be done in this function
 
 ::
 
   global = func_table;
 
-  This allows you to make calls to the global function table.
+This allows you to make calls to the global function table.
 
 ::
 
   module_register(MODULE_NAME, MODULE_table, MAJOR, MINOR);
 
-  This records details about the module for other modules and Eggdrop
-  itself to access. MAJOR and MINOR are ints, where MAJOR is the
-  module's major version number and MINOR is a minor version number.
-  MODULE_table is a function table (see below).
+This records details about the module for other modules and Eggdrop
+itself to access. MAJOR and MINOR are ints, where MAJOR is the
+module's major version number and MINOR is a minor version number.
+MODULE_table is a function table (see below).
 
 ::
 
   module_depend(MODULE_NAME, "another-module", MAJOR, MINOR);
   
-  This lets Eggdrop know that your module NEEDS "another-module" of
-  major version 'MAJOR' and at least minor version 'MINOR' to run,
-  and hence should try to load it if it's not already loaded. This
-  will return 1 on success, or 0 if it can't be done (at which stage
-  you should return an error).
+This lets Eggdrop know that your module NEEDS "another-module" of
+major version 'MAJOR' and at least minor version 'MINOR' to run,
+and hence should try to load it if it's not already loaded. This
+will return 1 on success, or 0 if it can't be done (at which stage
+you should return an error).
 
 Any other initialization stuff you desire should also be included in
 this function. See below for various things you can do.
@@ -116,9 +114,9 @@ MODULE_table
          you_want_to_export
   };
 
-  This is a table of functions which any other module can access. The
-  first 4 functions are FIXED. You MUST have them; they provide important
-  module information.
+This is a table of functions which any other module can access. The
+first 4 functions are FIXED. You MUST have them; they provide important
+module information.
 
 MODULE_close ()
 ^^^^^^^^^^^^^^^
@@ -126,20 +124,20 @@ MODULE_close ()
 
   static char *MODULE_close ()
 
-  This is called when the module is unloaded. Apart from tidying any
-  relevant data (I suggest you be thorough, we don't want any trailing
-  garbage from modules), you MUST do the following:
+This is called when the module is unloaded. Apart from tidying any
+relevant data (I suggest you be thorough, we don't want any trailing
+garbage from modules), you MUST do the following:
 
 ::
 
   module_undepend(MODULE_NAME);
 
-  This lets Eggdrop know your module no longer depends on any other
-  modules.
+This lets Eggdrop know your module no longer depends on any other
+modules.
 
-  Return a value. NULL implies success; any non-NULL STRING implies
-  that the module cannot be unloaded for some reason, and hence the
-  bot should not unload it (see the blowfish module for an example).
+Return a value. NULL implies success; any non-NULL STRING implies
+that the module cannot be unloaded for some reason, and hence the
+bot should not unload it (see the blowfish module for an example).
 
 MODULE_expmem
 ^^^^^^^^^^^^^
@@ -158,8 +156,8 @@ MODULE_report
 
   static void MODULE_report (int idx)
   
-  This should provide a relatively short report of the module's status
-  (for the module and status commands).
+This should provide a relatively short report of the module's status
+(for the module and status commands).
 
 These functions are available to modules. MANY more available functions
 can be found in src/mod/module.h.
@@ -167,64 +165,86 @@ can be found in src/mod/module.h.
 Additional functions
 ^^^^^^^^^^^^^^^^^^^^
 
+nmalloc
+"""""""
 ::
 
   void *nmalloc(int j);
 
-  This allocates j bytes of memory.
+This allocates j bytes of memory.
 
+nfree
+"""""
 ::
 
   void nfree(void *a);
 
-  This frees an nmalloc'd block of memory.
+This frees an nmalloc'd block of memory.
+
+Context
+"""""""
 
 ::
 
   Context;
 
-  Actually a macro -- records the current position in execution (for
-  debugging). Using Context is no longer recommended, because it uses
-  too many resources and a core file provides much more information.
+Actually a macro -- records the current position in execution (for
+debugging). Using Context is no longer recommended, because it uses
+too many resources and a core file provides much more information.
 
+dprintf
+"""""""
 ::
 
   void dprintf(int idx, char *format, ...)
 
-  This acts like a normal printf() function, but it outputs to
-  log/socket/idx.
+This acts like a normal printf() function, but it outputs to
+log/socket/idx. idx is a normal dcc idx, or if < 0 is a sock number.
 
-  idx is a normal dcc idx, or if < 0 is a sock number.
+  Other destinations::
 
-  Other destinations:
     DP_LOG    - send to log file
     DP_STDOUT - send to stdout
     DP_MODE   - send via mode queue to the server
     DP_SERVER - send via normal queue to the server
     DP_HELP   - send via help queue to server
 
+module_entry
+""""""""""""
 ::
 
   const module_entry *module_find(char *module_name, int major, int minor);
 
-    Searches for a loaded module (matching major, >= minor), and returns
-    info about it.
+Searches for a loaded module (matching major, >= minor), and returns
+info about it.
 
-    Members of module_entry:
-      char *name;      - module name
-      int major;       - real major version
-      int minor;       - real minor version
-      Function *funcs; - function table (see above)
+::
+
+  Members of module_entry:
+
+  char *name;      - module name
+  int major;       - real major version
+  int minor;       - real minor version
+  Function *funcs; - function table (see above)
+
+module_rename
+"""""""""""""
+::
 
   void module_rename(char *old_module_name, char *new_module_name)
 
-    This renames a module frim old_module_name to new_module_name.
+This renames a module from old_module_name to new_module_name.
+
+add_hook/del_hook
+"""""""""""""""""
+::
 
   void add_hook(int hook_num, Function *funcs)
   void del_hook(int hook_num, Function *funcs)
 
-   These are used for adding or removing hooks to/from Eggdrop code that
-   are triggered on various events. Valid hooks are:
+These are used for adding or removing hooks to/from Eggdrop code that
+are triggered on various events. Valid hooks are::
+
      HOOK_SECONDLY   - called every second
      HOOK_MINUTELY   - called every minute
      HOOK_5MINUTELY  - called every 5 minutes
@@ -241,77 +261,101 @@ Additional functions
      HOOK_LOADED        - called when Eggdrop is first loaded
      HOOK_DIE           - called when Eggdrop is about to die
 
+module_load/unload
+""""""""""""""""""
+::
+
   char *module_unload (char *module_name);
   char *module_load (char *module_name);
 
-    Tries to load or unload the specified module; returns 0 on success, or
-    an error message.
+Tries to load or unload the specified module; returns 0 on success, or
+an error message.
+
+add/rem_tcl_commands
+""""""""""""""""""""
+::
 
   void add_tcl_commands(tcl_cmds *tab);
   void rem_tcl_commands(tcl_cmds *tab);
 
-    Provides a quick way to create and remove a table of Tcl commands. The
-    table is in the form of:
+Provides a quick way to create and remove a table of Tcl commands. The
+table is in the form of::
 
       {char *func_name, Function *function_to_call}
 
-    Use { NULL, NULL } to indicate the end of the list.
+Use { NULL, NULL } to indicate the end of the list.
+
+add/rem_tcl_ints
+""""""""""""""""
+::
 
   void add_tcl_ints(tcl_ints *);
   void rem_tcl_ints(tcl_ints *);
 
-    Provides a quick way to create and remove a table of links from C
-    int variables to Tcl variables (add_tcl_ints checks to see if the Tcl
-    variable exists and copies it over the C one). The format of table is:
+Provides a quick way to create and remove a table of links from C
+int variables to Tcl variables (add_tcl_ints checks to see if the Tcl
+variable exists and copies it over the C one). The format of table is::
 
       {char *variable_name, int *variable, int readonly}
 
-    Use {NULL, NULL, 0} to indicate the end of the list.
+Use {NULL, NULL, 0} to indicate the end of the list.
+
+add/rem_tcl_strings
+"""""""""""""""""""
+::
 
   void add_tcl_strings(tcl_strings *);
   void rem_tcl_strings(tcl_strings *);
 
-    Provides a quick way to create and remove a table of links from C
-    string variables to Tcl variables (add_tcl_ints checks to see if the
-    Tcl variable exists and copies it over the C one). The format of table
-    is:
+Provides a quick way to create and remove a table of links from C
+string variables to Tcl variables (add_tcl_ints checks to see if the
+Tcl variable exists and copies it over the C one). The format of table
+is::
 
-      {char *variable_name, char *string, int length, int flags}
+  {char *variable_name, char *string, int length, int flags}
 
-    Use {NULL, NULL, 0, 0} to indicate the end of the list. Use 0 for
-    length if you want a const string. Use STR_DIR for flags if you want a
-    '/' constantly appended; use STR_PROTECT if you want the variable set
-    in the config file, but not during normal usage.
+Use {NULL, NULL, 0, 0} to indicate the end of the list. Use 0 for
+length if you want a const string. Use STR_DIR for flags if you want a
+'/' constantly appended; use STR_PROTECT if you want the variable set
+in the config file, but not during normal usage.
+
+add/rem_builtins
+""""""""""""""""
+::
 
   void add_builtins(p_tcl_hash_list table, cmd_t *cc);
   void rem_builtins(p_tcl_hash_list table, cmd_t *cc);
 
-    This adds binds to one of Eggdrop's bind tables. The format of the
-    table is:
+This adds binds to one of Eggdrop's bind tables. The format of the
+table is::
 
-      {char *command, char *flags, Function *function, char *displayname}
+  {char *command, char *flags, Function *function, char *displayname}
 
-    Use {NULL, NULL, NULL, NULL} to indicate the end of the list.
+Use {NULL, NULL, NULL, NULL} to indicate the end of the list.
 
-    This works EXACTLY like the Tcl 'bind' command. displayname is what Tcl
-    sees this function's proc name as (in .binds all).
+This works EXACTLY like the Tcl 'bind' command. displayname is what Tcl
+sees this function's proc name as (in .binds all).
 
-    function is called with exactly the same args as a Tcl binding is with
-    type conversion taken into account (e.g. idx's are ints). Return values
-    are much the same as Tcl bindings. Use int 0/1 for those which require
-    0/1, or char * for those which require a string (auch as filt). Return
-    nothing if no return value is required.
+function is called with exactly the same args as a Tcl binding is with
+type conversion taken into account (e.g. idx's are ints). Return values
+are much the same as Tcl bindings. Use int 0/1 for those which require
+0/1, or char * for those which require a string (auch as filt). Return
+nothing if no return value is required.
+
+putlog
+""""""
+::
 
   void putlog (int logmode, char *channel, char *format, ...)
 
-    Adds text to a logfile (determined by logmode and channel). This text
-    will also output to any users' consoles if they have the specified
-    console mode enabled.
+Adds text to a logfile (determined by logmode and channel). This text
+will also output to any users' consoles if they have the specified
+console mode enabled.
 
 What to do with a module?
 -------------------------
 
-   If you have written a module and feel that you wish to share it with the
-   rest of the Eggdrop community, find us in #eggdrop on Libera. Make sure you
-   have a nice descriptive text (modulename.desc) to describe it, and make sure
-   to mention in your text file which version Eggdrop the module is written for.
+If you have written a module and feel that you wish to share it with the
+rest of the Eggdrop community, find us in #eggdrop on Libera. Make sure you
+have a nice descriptive text (modulename.desc) to describe it, and make sure
+to mention in your text file which version Eggdrop the module is written for.

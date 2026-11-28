@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,9 +42,9 @@ static struct flag_record victim = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
  * channel still exists and will refresh the user and victim flag records,
  * in case users were also modified.
  */
-struct chanset_t *modebind_refresh(char *chname,
-                                   char *usrhost, struct flag_record *usr,
-                                   char *vcrhost, struct flag_record *vcr)
+static struct chanset_t *modebind_refresh(char *chname,
+                                          char *usrhost, struct flag_record *usr,
+                                          char *vcrhost, struct flag_record *vcr)
 {
   struct userrec *u;
   struct chanset_t *chan;
@@ -52,11 +52,11 @@ struct chanset_t *modebind_refresh(char *chname,
   if (!chname || !(chan = findchan(chname)))
     return NULL;
   if (usrhost) {
-    u = get_user_by_host(usrhost);
+    u = lookup_user_record(NULL, NULL, usrhost); // TODO: get account from somewhere
     get_user_flagrec(u, usr, chan->dname);
   }
   if (vcrhost) {
-    u = get_user_by_host(vcrhost);
+    u = lookup_user_record(NULL, NULL, vcrhost); // TODO: get account from somewhere
     get_user_flagrec(u, vcr, chan->dname);
   }
   return chan;
@@ -422,10 +422,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (!m->user)
-    u = get_user_by_host(s);
-  else
-    u = m->user;
+  u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
@@ -520,10 +517,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
 
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (!m->user)
-    u = get_user_by_host(s);
-  else
-    u = m->user;
+  u = get_user_from_member(m);
 
   get_user_flagrec(u, &victim, chan->dname);
   /* Flags need to be set correctly right from the beginning now, so that
@@ -612,7 +606,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
-  u = get_user_by_host(s);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
   had_halfop = chan_hasop(m);
@@ -688,7 +682,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 {
   memberlist *m;
   char ch[sizeof chan->name];
-  char s[UHOSTLEN], s1[UHOSTLEN];
+  char s[UHOSTLEN];
   struct userrec *u;
   int had_halfop;
 
@@ -704,8 +698,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 
   strcpy(ch, chan->name);
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-  simple_sprintf(s1, "%s!%s", nick, from);
-  u = get_user_by_host(s);
+  u = get_user_from_member(m);
   get_user_flagrec(u, &victim, chan->dname);
 
   had_halfop = chan_hasop(m);
@@ -756,12 +749,12 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
                     char *ch, struct userrec *u)
 {
-  char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
+  char me[UHOSTLEN], s[UHOSTLEN], s1[NICKLEN + UHOSTLEN];
   memberlist *m;
   struct userrec *targ;
 
-  egg_snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
-  egg_snprintf(s, sizeof s, "%s!%s", nick, from);
+  snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
+  snprintf(s, sizeof s, "%s!%s", nick, from);
   newban(chan, who, s);
   check_tcl_mode(nick, from, u, chan->dname, "+b", who);
   if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
@@ -782,9 +775,9 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
       return;
     }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
+      snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
       if (match_addr(who, s1)) {
-        targ = get_user_by_host(s1);
+        targ = get_user_from_member(m);
         if (targ) {
           get_user_flagrec(targ, &victim, chan->dname);
           if ((glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
@@ -807,7 +800,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
         if (match_addr(b->mask, who)) {
           if (b->desc && b->desc[0] != '@')
-            egg_snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
+            snprintf(resn, sizeof resn, "%s %s", IRC_PREBANNED, b->desc);
           else
             resn[0] = 0;
         }
@@ -999,38 +992,39 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
 
 static int gotmode(char *from, char *origmsg)
 {
-  char *nick, *ch, *op, *chg, *msg;
-  char s[UHOSTLEN], buf[511];
-  char ms2[3];
-  int z;
+  char *nick, *ch, *chg;
+  char s[UHOSTLEN], buf[511], joinbuf[512];
+  char ms2[3], *arg;
+  int nextarg;
+  struct parsed_irc msg;
   struct userrec *u;
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
-  msg = buf;
+  strlcpy(buf, origmsg, sizeof buf);
+  msg = parse_irc(buf);
   /* Usermode changes? */
-  if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
-    ch = newsplit(&msg);
-    chg = newsplit(&msg);
+  if (msg.argc > 1 && (strchr(CHANMETA, msg.argv[0][0]) != NULL)) {
+    ch = msg.argv[0];
+    chg = msg.argv[1];
+    nextarg = 2;
     reversing = 0;
     chan = findchan(ch);
     if (!chan) {
       putlog(LOG_MISC, "*", CHAN_FORCEJOIN, ch);
       dprintf(DP_SERVER, "PART %s\n", ch);
     } else if (channel_active(chan) || channel_pending(chan)) {
-      z = strlen(msg);
-      if (msg[--z] == ' ')      /* I hate cosmetic bugs :P -poptix */
-        msg[z] = 0;
       putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s", ch, chg,
-             msg, from);
-      u = get_user_by_host(from);
-      get_user_flagrec(u, &user, ch);
+             join_str_array(msg.argv + 2, msg.argc - 2, " ", joinbuf, sizeof joinbuf), from);
       nick = splitnick(&from);
       m = ismember(chan, nick);
-      if (m)
+      if (m) {
+        u = get_user_from_member(m);
+        get_user_flagrec(u, &user, ch);
         m->last = now;
+      } else {
+        u = NULL;
+      }
       if (m && channel_active(chan) && (me_op(chan) || (me_halfop(chan) &&
           !chan_hasop(m))) && !(glob_friend(user) || chan_friend(user) ||
           (channel_dontkickops(chan) && (chan_op(user) || (glob_op(user) &&
@@ -1051,8 +1045,24 @@ static int gotmode(char *from, char *origmsg)
       ms2[0] = '+';
       ms2[2] = 0;
       while ((ms2[1] = *chg)) {
+        arg = NULL;
         int todo = 0;
 
+        if (*chg != '+' && *chg != '-') {
+          if ((ms2[0] == '+' && MODE_HAS_SET_ARG(*chg)) || (ms2[0] == '-' && MODE_HAS_UNSET_ARG(*chg))) {
+            if (nextarg < msg.argc) {
+              arg = msg.argv[nextarg++];
+            } else {
+              putlog(LOG_MISC, "*", "Error parsing modes in '%s', not enough arguments for %c%c", origmsg, ms2[0], *chg);
+            }
+          }
+          /* hardcoded assumptions in the existing old select code, SANITY CHECK */
+          if (((ms2[0] == '+' && strchr("behIklov", *chg)) || (ms2[0] == '-' && strchr("behIkov", *chg))) && !arg) {
+              arg = "";
+              putlog(LOG_MISC, "*", "Error parsing modes in '%s', Eggdrop assumes mode change %c%c has a parameter but isupport says no", origmsg, ms2[0], *chg);
+          }
+          debug5("%s: split mode change '%s%s%s' by %s", ch, ms2, arg ? " " : "", arg ? arg : "", from);
+        }
         switch (*chg) {
         case '+':
           ms2[0] = '+';
@@ -1168,11 +1178,7 @@ static int gotmode(char *from, char *origmsg)
             }
             chan->channel.maxmembers = 0;
           } else {
-            op = newsplit(&msg);
-            fixcolon(op);
-            if (*op == '\0')
-              break;
-            chan->channel.maxmembers = atoi(op);
+            chan->channel.maxmembers = atoi(arg);
             check_tcl_mode(nick, from, u, chan->dname, ms2,
                            int_to_base10(chan->channel.maxmembers));
             /* The Tcl proc might have modified/removed the chan or user */
@@ -1197,19 +1203,14 @@ static int gotmode(char *from, char *origmsg)
             chan->channel.mode |= CHANKEY;
           else
             chan->channel.mode &= ~CHANKEY;
-          op = newsplit(&msg);
-          fixcolon(op);
-          if (*op == '\0') {
-            break;
-          }
-          check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+          check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
           /* The Tcl proc might have modified/removed the chan or user */
           if (!(chan = modebind_refresh(ch, from, &user, NULL, NULL)))
             return 0;
           if (ms2[0] == '+') {
-            set_key(chan, op);
+            set_key(chan, arg);
             if (channel_active(chan))
-              got_key(chan, nick, from, op);
+              got_key(chan, nick, from, arg);
           } else {
             if (channel_active(chan)) {
               if (reversing && chan->channel.key[0])
@@ -1222,53 +1223,46 @@ static int gotmode(char *from, char *origmsg)
           }
           break;
         case 'o':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_op(chan, nick, from, op, u, &user);
+            got_op(chan, nick, from, arg, u, &user);
           else
-            got_deop(chan, nick, from, op, u);
+            got_deop(chan, nick, from, arg, u);
           break;
         case 'h':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_halfop(chan, nick, from, op, u, &user);
+            got_halfop(chan, nick, from, arg, u, &user);
           else
-            got_dehalfop(chan, nick, from, op, u);
+            got_dehalfop(chan, nick, from, arg, u);
           break;
         case 'v':
-          op = newsplit(&msg);
-          fixcolon(op);
-          m = ismember(chan, op);
+          m = ismember(chan, arg);
           if (!m) {
             if (channel_pending(chan))
               break;
-            putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, op);
+            putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, arg);
             chan->status |= CHAN_PEND;
             refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-            get_user_flagrec(m->user ? m->user : get_user_by_host(s),
-                             &victim, chan->dname);
+            get_user_flagrec(get_user_from_member(m), &victim, chan->dname);
             if (ms2[0] == '+') {
               m->flags &= ~SENTVOICE;
               m->flags |= CHANVOICE;
-              check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+              check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
               if (!(chan = modebind_refresh(ch, from, &user, s, &victim)))
                 return 0;
               if (channel_active(chan) && !glob_master(user) &&
                   !chan_master(user) && !match_my_nick(nick)) {
                 if (chan_quiet(victim) ||
                     (glob_quiet(victim) && !chan_voice(victim)))
-                  add_mode(chan, '-', 'v', op);
+                  add_mode(chan, '-', 'v', arg);
                 else if (reversing)
-                  add_mode(chan, '-', 'v', op);
+                  add_mode(chan, '-', 'v', arg);
               }
             } else {
               m->flags &= ~SENTDEVOICE;
               m->flags &= ~CHANVOICE;
-              check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+              check_tcl_mode(nick, from, u, chan->dname, ms2, arg);
               if (!(chan = modebind_refresh(ch, from, &user, s, &victim)))
                 return 0;
               if (channel_active(chan) && !glob_master(user) &&
@@ -1277,36 +1271,30 @@ static int gotmode(char *from, char *origmsg)
                     (chan_voice(victim) || glob_voice(victim))) ||
                     (!chan_quiet(victim) && (glob_gvoice(victim) ||
                     chan_gvoice(victim))))
-                  add_mode(chan, '+', 'v', op);
+                  add_mode(chan, '+', 'v', arg);
                 else if (reversing)
-                  add_mode(chan, '+', 'v', op);
+                  add_mode(chan, '+', 'v', arg);
               }
             }
           }
           break;
         case 'b':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_ban(chan, nick, from, op, ch, u);
+            got_ban(chan, nick, from, arg, ch, u);
           else
-            got_unban(chan, nick, from, op, ch, u);
+            got_unban(chan, nick, from, arg, ch, u);
           break;
         case 'e':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_exempt(chan, nick, from, op, ch, u);
+            got_exempt(chan, nick, from, arg, ch, u);
           else
-            got_unexempt(chan, nick, from, op, ch, u);
+            got_unexempt(chan, nick, from, arg, ch, u);
           break;
         case 'I':
-          op = newsplit(&msg);
-          fixcolon(op);
           if (ms2[0] == '+')
-            got_invite(chan, nick, from, op, ch, u);
+            got_invite(chan, nick, from, arg, ch, u);
           else
-            got_uninvite(chan, nick, from, op, ch, u);
+            got_uninvite(chan, nick, from, arg, ch, u);
           break;
         }
         if (todo) {

@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +27,7 @@
  */
 
 #include "main.h"
-
-#include <sys/resource.h>
 #include <sys/utsname.h>
-
 #include "modules.h"
 
 extern struct dcc_t *dcc;
@@ -39,10 +36,10 @@ extern log_t *logs;
 extern Tcl_Interp *interp;
 extern char ver[], botnetnick[], firewall[], motdfile[], userfile[], helpdir[],
             moddir[], notify_new[], configfile[];
-extern time_t now, online_since;
+extern time_t now, online_since, now2_last;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
-           noshare, ignore_time, max_socks;
+           noshare, ignore_time, max_socks, dcc_total;
 #ifdef TLS
 extern SSL_CTX *ssl_ctx;
 #endif
@@ -116,48 +113,13 @@ struct chanset_t *findchan_by_dname(const char *name)
   return NULL;
 }
 
-
-/*
- *    "caching" functions
- */
-
-/* Shortcut for get_user_by_host -- might have user record in one
- * of the channel caches.
- */
-struct userrec *check_chanlist(const char *host)
-{
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
-
-  strlcpy(buf, host, sizeof buf);
-  uhost = buf;
-  nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-        return m->user;
-  return NULL;
-}
-
-/* Shortcut for get_user_by_handle -- might have user record in channels
- */
-struct userrec *check_chanlist_hand(const char *hand)
-{
-  struct chanset_t *chan;
-  memberlist *m;
-
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !strcasecmp(m->user->handle, hand))
-        return m->user;
-  return NULL;
-}
-
 /* Clear the user pointers in the chanlists.
  *
- * Necessary when a hostmask is added/removed, a user is added or a new
- * userfile is loaded.
+ * Necessary when:
+ * - a hostmask is added/removed
+ * - an account is added/removed
+ * - a user is added
+ * - new userfile is loaded
  */
 void clear_chanlist(void)
 {
@@ -173,8 +135,9 @@ void clear_chanlist(void)
 
 /* Clear the user pointer of a specific nick in the chanlists.
  *
- * Necessary when a hostmask is added/removed, a nick changes, etc.
- * Does not completely invalidate the channel cache like clear_chanlist().
+ * Necessary when:
+ * - their hostmask changed (chghost)
+ * - their account changed
  */
 void clear_chanlist_member(const char *nick)
 {
@@ -188,23 +151,6 @@ void clear_chanlist_member(const char *nick)
         m->tried_getuser = 0;
         break;
       }
-}
-
-/* If this user@host is in a channel, set it (it was null)
- */
-void set_chanlist(const char *host, struct userrec *rec)
-{
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
-
-  strlcpy(buf, host, sizeof buf);
-  uhost = buf;
-  nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
-        m->user = rec;
 }
 
 /* Calculate the memory we should be using
@@ -351,7 +297,11 @@ void tell_verbose_status(int idx)
   #elif !defined HAVE_EVP_PKEY_GET1_EC_KEY && !defined HAVE_OPENSSL_MD5
                "TLS library: %s (%s " OPENSSL_VERSION_TEXT ")\n             (no elliptic curve or MD5 support)\n",
   #endif
+  #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+          OpenSSL_version(OPENSSL_VERSION), MISC_HEADERVERSION);
+  #else
           SSLeay_version(SSLEAY_VERSION), MISC_HEADERVERSION);
+  #endif
 #else
   dprintf(idx, "TLS support is not available.\n");
 #endif
@@ -366,6 +316,14 @@ void tell_verbose_status(int idx)
                "Threaded DNS core is disabled.\n"
 #endif
                "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+  int j = 0;
+  size_t k = max_logs * sizeof(log_t);
+  for (int i = 0; i < max_logs; i++) {
+    if (logs[i].filename)
+      j++;
+    k += logs[i].szlast_len;
+  }
+  dprintf(idx, "Log table: %d/%d %zu bytes\n", j, max_logs, k);
 }
 
 /* Show all internal state variables
@@ -407,7 +365,7 @@ void tell_settings(int idx)
 
 void reaffirm_owners()
 {
-  char *p, *q, s[121];
+  char *p, *q, s[sizeof owner];
   struct userrec *u;
 
   /* Please stop breaking this function. */
@@ -450,6 +408,10 @@ void chanprog()
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
 
+  /* call localtime() to update timezone and reset misc.c:putlog() time cache */
+  localtime(&now);
+  now2_last = 0;
+
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
       if (logs[i].filename != NULL) {
@@ -459,6 +421,11 @@ void chanprog()
       if (logs[i].chname != NULL) {
         nfree(logs[i].chname);
         logs[i].chname = NULL;
+      }
+      if (logs[i].szlast != NULL) {
+        nfree(logs[i].szlast);
+        logs[i].szlast = NULL;
+        logs[i].szlast_len = 0;
       }
       if (logs[i].f != NULL) {
         fclose(logs[i].f);
@@ -523,6 +490,15 @@ void reload()
     fatal(MISC_MISSINGUSERF, 0);
   reaffirm_owners();
   add_hq_user();
+
+  /* boot users not in userfile
+   * like when handle was changed before .reload
+   * dcc[idx].user is NULL for such users
+   */
+  for (int i = 0; i < dcc_total; i++)
+    if (!dcc[i].user && dcc[i].type->flags & DCT_CHAT)
+      do_boot(i, "-RELOAD", "user not in reloaded userfile");
+
   check_tcl_event("userfile-loaded");
   call_hook(HOOK_READ_USERFILE);
 }
@@ -732,7 +708,7 @@ void add_hq_user()
     dcc[term_z].user->flags = USER_EXEMPT | USER_FRIEND | USER_JANITOR |
                               USER_HALFOP | USER_MASTER | USER_OWNER | USER_OP |
                               USER_PARTY | USER_BOTMAST | USER_UNSHARED |
-                              USER_VOICE | USER_XFER;
+                              USER_VOICE | USER_XFER | USER_HIGHLITE;
     /* Add to permowner list if there's place */
     if (strlen(owner) + sizeof EGG_BG_HANDLE < sizeof owner)
       strcat(owner, " " EGG_BG_HANDLE);

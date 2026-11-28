@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <time.h>
 
 static void cmd_servers(struct userrec *u, int idx, char *par)
 {
@@ -45,16 +44,16 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 /* Build server display line, section by section */
 #ifdef IPV6
       if (inet_pton(AF_INET6, x->name, buf) == 1) {
-        len += egg_snprintf(s, sizeof s, "  [%s]:", x->name);
+        len += snprintf(s, sizeof s, "  [%s]:", x->name);
       } else {
 #endif
-        len += egg_snprintf(s, sizeof s, "  %s:", x->name);
+        len += snprintf(s, sizeof s, "  %s:", x->name);
 #ifdef IPV6
       }
 #endif
 
 #ifdef TLS
-      len += egg_snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
+      len += snprintf(s+len, sizeof s - len, "%s", x->ssl ? "+" : "");
 #endif
       if (x->pass) {
         t = time(NULL);
@@ -85,7 +84,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 
 static void cmd_dump(struct userrec *u, int idx, char *par)
 {
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner == 2)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner == 2) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }

@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,11 +22,7 @@
  */
 
 #include "main.h"
-#include "users.h"
-#include "chan.h"
-#include "tandem.h"
 #include "modules.h"
-#include "string.h"
 
 extern Tcl_Interp *interp;
 extern struct userrec *userlist;

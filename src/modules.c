@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include <signal.h>
 #include "main.h"
 #include "modules.h"
@@ -38,15 +39,6 @@
 #    include <mach-o/dyld.h>
 #    define DYLDFLAGS NSLINKMODULE_OPTION_BINDNOW|NSLINKMODULE_OPTION_PRIVATE|NSLINKMODULE_OPTION_RETURN_ON_ERROR
 #  endif
-#  ifdef MOD_USE_RLD
-#    ifdef HAVE_MACH_O_RLD_H
-#      include <mach-o/rld.h>
-#    else
-#      ifdef HAVE_RLD_H
-#        indluce <rld.h>
-#      endif
-#    endif
-#  endif
 #  ifdef MOD_USE_LOADER
 #    include <loader.h>
 #  endif
@@ -60,15 +52,9 @@
 #    ifndef RTLD_NOW
 #      define RTLD_NOW 1
 #    endif
-#    ifdef RTLD_LAZY
-#      define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#    else
-#      define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#    endif
+#    define DLFLAGS RTLD_NOW|RTLD_GLOBAL
 #  endif /* MOD_USE_DL */
 #endif /* !STATIC */
-
-#define strncpyz strlcpy
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -82,8 +68,10 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            must_be_owner, raw_log, max_dcc, make_userfile, default_flags,
            require_p, share_greet, use_invites, use_exempts, password_timeout,
            force_expire, protect_readonly, reserved_port_min, reserved_port_max,
-           copy_to_tmp, quiet_reject;
+           quiet_reject, stealth_telnets;
 extern volatile sig_atomic_t do_restart;
+
+int copy_to_tmp = 1; /* TODO: remove from module API for eggdrop 2.0 */
 
 #ifdef IPV6
 extern int pref_af;
@@ -98,8 +86,9 @@ extern time_t now, online_since;
 extern tand_t *tandbot;
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
+extern const char *argv0;
 
-int cmd_die();
+
 int xtra_kill();
 int xtra_unpack();
 static int module_rename(char *name, char *newname);
@@ -173,6 +162,9 @@ int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
 void (*dns_hostbyip) (sockname_t *) = core_dns_hostbyip;
 void (*dns_ipbyhost) (char *) = core_dns_ipbyhost;
+void (*webui_dcc_telnet_hostresolved) (int, int) = (void (*)(int, int)) null_func;
+size_t (*webui_frame) (char **, char *, size_t) = (size_t (*)(char **, char * ,size_t)) null_func;
+void (*webui_unframe) (int, char *, int *) = (void (*)(int, char *, int *)) null_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -185,11 +177,7 @@ Function global_table[] = {
   /* 0 - 3 */
   (Function) mod_malloc,
   (Function) mod_free,
-#ifdef DEBUG_CONTEXT
-  (Function) eggContext,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,                   /* was eggContext()                    */
   (Function) module_rename,
   /* 4 - 7 */
   (Function) module_register,
@@ -302,7 +290,7 @@ Function global_table[] = {
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) 0,                   /* was egg_memcpy -- use memcpy() instead */
+  (Function) memcpy,              /* was egg_memcpy -- use memcpy() instead */
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -494,11 +482,7 @@ Function global_table[] = {
   (Function) mod_realloc,
   (Function) xtra_set,
   /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-  (Function) eggContextNote,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,                   /* was eggContextNote()                */
 #ifdef DEBUG_ASSERT
   (Function) eggAssert,
 #else
@@ -525,14 +509,14 @@ Function global_table[] = {
   (Function) sock_has_data,
   (Function) bots_in_subtree,
   (Function) users_in_subtree,
-  (Function) egg_inet_aton,
+  (Function) 0,                   /* was egg_inet_aton -- use inet_pton() instead */
   /* 252 - 255 */
-  (Function) egg_snprintf,
-  (Function) egg_vsnprintf,
-  (Function) 0,                   /* was egg_memset -- use memset() or egg_bzero() instead */
-  (Function) 0,                   /* was egg_strcasecmp -- use strcasecmp() instead */
+  (Function) snprintf,            /* was egg_snprintf -- use snprintf instead */
+  (Function) vsnprintf,           /* was egg_vsnprintf -- use vsnprintf instead */
+  (Function) memset,              /* was egg_memset -- use memset() or egg_bzero() instead */
+  (Function) strcasecmp,          /* was egg_strcasecmp -- use strcasecmp() instead */
   /* 256 - 259 */
-  (Function) 0,                   /* was egg_strncasecmp -- use strncasecmp() instead */
+  (Function) strncasecmp,         /* was egg_strncasecmp -- use strncasecmp() instead */
   (Function) is_file,
   (Function) & must_be_owner,     /* int                                 */
   (Function) & tandbot,           /* tand_t *                            */
@@ -600,7 +584,7 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz,
+  (Function) strlcpy,             /* was strncpyz() -- use strlcpy() instead */
 #ifndef HAVE_BASE64
   (Function) b64_ntop,
   (Function) b64_pton,
@@ -618,7 +602,7 @@ Function global_table[] = {
 #else
   (Function) 0,
 #endif
-/* 312 - 315 */    
+/* 312 - 315 */
   (Function) & USERENTRY_PASS2,   /* struct user_entry_type *            */
   (Function) crypto_verify,
   (Function) egg_uname,
@@ -626,7 +610,23 @@ Function global_table[] = {
 /* 316 - 319 */
   (Function) & USERENTRY_ACCOUNT, /* struct user_entry_type *            */
   (Function) get_user_by_account,
-  (Function) delhost_by_handle
+  (Function) delhost_by_handle,
+  (Function) check_tcl_event_arg,
+/* 320 - 323 */
+  (Function) bind_bind_entry,
+  (Function) unbind_bind_entry,
+  (Function) & argv0,
+  (Function) lookup_user_record,
+/* 324 - 327 */
+  (Function) find_member_from_nick,
+  (Function) get_user_from_member,
+  (Function) dcc_telnet_hostresolved2,
+  (Function) findsock,
+/* 328 - 331 */
+  (Function) & stealth_telnets,   /* int                                 */
+  (Function) parse_irc,
+  (Function) join_str_array,
+  (Function) splitcn
 };
 
 void init_modules(void)
@@ -704,7 +704,8 @@ const char *module_load(char *name)
 #endif
 
 #ifndef STATIC
-  char workbuf[1024];
+  size_t len;
+  char workbuf[PATH_MAX];
 #  ifdef MOD_USE_SHL
   shl_t hand;
 #  endif
@@ -713,9 +714,6 @@ const char *module_load(char *name)
   NSObjectFileImageReturnCode ret;
   NSModule hand;
   NSSymbol sym;
-#  endif
-#  ifdef MOD_USE_RLD
-  long ret;
 #  endif
 #  ifdef MOD_USE_LOADER
   ldr_module_t hand;
@@ -730,11 +728,14 @@ const char *module_load(char *name)
 
 #ifndef STATIC
   if (moddir[0] != '/') {
-    if (getcwd(workbuf, 1024) == NULL)
+    if (getcwd(workbuf, sizeof workbuf) == NULL) {
+      debug1("modules: getcwd(): %s\n", strerror(errno));
       return MOD_BADCWD;
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
+    }
+    len = strlen(workbuf);
+    snprintf(workbuf + len, (sizeof workbuf) - len, "/%s%s." EGG_MOD_EXT, moddir, name);
   } else {
-    sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
+    snprintf(workbuf, sizeof workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
   }
 
 #  ifdef MOD_USE_SHL
@@ -771,17 +772,6 @@ const char *module_load(char *name)
     NSUnLinkModule(hand, NSUNLINKMODULE_OPTION_NONE);
     return MOD_NOSTARTDEF;
   }
-#  endif /* MOD_USE_DYLD */
-
-#  ifdef MOD_USE_RLD
-  ret = rld_load(NULL, (struct mach_header **) 0, workbuf, (const char *) 0);
-  if (!ret)
-    return "Can't load module.";
-  sprintf(workbuf, "_%s_start", name);
-  ret = rld_lookup(NULL, workbuf, &f)
-  if (!ret || f == NULL)
-    return MOD_NOSTARTDEF;
-  /* There isn't a reliable way to unload at this point... just keep it loaded. */
 #  endif /* MOD_USE_DYLD */
 
 #  ifdef MOD_USE_LOADER
@@ -998,7 +988,7 @@ void *mod_malloc(int size, const char *modname, const char *filename, int line)
   char x[100], *p;
 
   p = strrchr(filename, '/');
-  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
+  snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   return n_malloc(size, x, line);
 #else
@@ -1013,7 +1003,7 @@ void *mod_realloc(void *ptr, int size, const char *modname,
   char x[100], *p;
 
   p = strrchr(filename, '/');
-  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
+  snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   return n_realloc(ptr, size, x, line);
 #else
@@ -1026,7 +1016,7 @@ void mod_free(void *ptr, const char *modname, const char *filename, int line)
   char x[100], *p;
 
   p = strrchr(filename, '/');
-  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
+  snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   n_free(ptr, x, line);
 }
@@ -1104,6 +1094,15 @@ void add_hook(int hook_num, Function func)
       if (dns_ipbyhost == core_dns_ipbyhost)
         dns_ipbyhost = (void (*)(char *)) func;
       break;
+    case HOOK_DCC_TELNET_HOSTRESOLVED:
+      webui_dcc_telnet_hostresolved = (void (*)(int, int)) func;
+      break;
+    case HOOK_WEBUI_FRAME:
+      webui_frame = (size_t (*)(char **, char *, size_t)) func;
+      break;
+    case HOOK_WEBUI_UNFRAME:
+      webui_unframe = (void (*)(int, char *, int *)) func;
+      break;
     }
 }
 
@@ -1173,6 +1172,18 @@ void del_hook(int hook_num, Function func)
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == (void (*)(char *)) func)
         dns_ipbyhost = core_dns_ipbyhost;
+      break;
+    case HOOK_DCC_TELNET_HOSTRESOLVED:
+      if (webui_dcc_telnet_hostresolved == (void (*)(int, int)) func)
+        webui_dcc_telnet_hostresolved = (void (*)(int, int)) null_func;
+      break;
+    case HOOK_WEBUI_FRAME:
+      if (webui_frame == (size_t (*)(char **, char *, size_t)) func)
+        webui_frame = (size_t (*)(char**, char *, size_t)) null_func;
+      break;
+    case HOOK_WEBUI_UNFRAME:
+      if (webui_unframe == (void (*)(int, char *, int *)) func)
+        webui_unframe = (void (*)(int, char *, int *)) null_func;
       break;
     }
 }

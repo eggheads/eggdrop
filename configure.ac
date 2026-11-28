@@ -1,20 +1,20 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 
-AC_PREREQ(2.61)
-AC_INIT([Eggdrop],[1.9.5],[bugs@eggheads.org])
-AC_COPYRIGHT([Copyright (C) 1999 - 2023 Eggheads Development Team])
+AC_PREREQ([2.71])
+AC_INIT([Eggdrop],[1.10.3],[bugs@eggheads.org],[eggdrop],[https://www.eggheads.org])
+AC_COPYRIGHT([Copyright (C) 1999 - 2025 Eggheads Development Team])
 AC_LANG([C])
 AC_REVISION([m4_esyscmd([misc/getcommit])])
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 AC_PRESERVE_HELP_ORDER
 
 dnl config.h stuff
 AH_TOP([/*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,18 +43,18 @@ EGG_SAVE_PARAMETERS
 # Check for a working C compiler
 AC_PROG_CC([gcc cc clang])
 EGG_CHECK_CC
-AC_PROG_CC_C99
 EGG_CHECK_CC_C99
 
 # These 3 need to be done before any AC_COMPILE_IFELSE()'s.
-AC_AIX
-AC_ISC_POSIX
-AC_MINIX
+AC_USE_SYSTEM_EXTENSIONS
+AC_SEARCH_LIBS([strerror],[cposix])
+AC_USE_SYSTEM_EXTENSIONS
 
 # Check C compiler characteristics.
 EGG_CHECK_ICC
 EGG_CHECK_CCPIPE
 EGG_CHECK_CCWALL
+AX_CHECK_COMPILE_FLAG([-std=gnu99], [CFLAGS="-std=gnu99 $CFLAGS"])
 
 
 # Check for executable extension.
@@ -65,6 +65,11 @@ EGG_EXEEXT
 AC_PROG_INSTALL
 AC_CHECK_PROGS(MAKE, make gmake)
 AC_PROG_MAKE_SET
+
+AC_PROG_MKDIR_P
+# Replace relative path with absolute path
+MKDIR_P=$(echo "$MKDIR_P" | sed "s|^./misc|${ac_pwd}/misc|")
+
 AC_PROG_RANLIB
 AC_PROG_LN_S
 EGG_PROG_HEAD_1
@@ -77,6 +82,9 @@ AC_CHECK_PROG(UNAME,uname,uname)
 # Check if we will strip the binary
 # Do this *before* EGG_CHECK_OS
 EGG_ENABLE_STRIP
+
+# Optional: build with gcov instrumentation for the test suite.
+EGG_ENABLE_COVERAGE
 
 
 # Checks for system libraries.
@@ -92,8 +100,8 @@ EGG_CHECK_OS
 # Checks for header files.
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/select.h sys/socket.h sys/time.h time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -113,7 +121,7 @@ AX_TYPE_SOCKLEN_T
 AX_CREATE_STDINT_H([eggint.h])
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([dprintf explicit_bzero memset_explicit explicit_memset getrandom inet_aton isascii memset_s random rand lrand48 snprintf strlcpy vsnprintf])
+AC_CHECK_FUNCS([clock_gettime dprintf explicit_bzero memset_explicit explicit_memset getrandom memset_s strlcpy])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_B64_NTOP
 AC_FUNC_MMAP
@@ -163,6 +171,9 @@ EGG_TLS_DETECT
 
 # Threaded DNS core
 EGG_TDNS_ENABLE
+
+# Check for Python
+EGG_PYTHON_WITHCONFIG
 
 
 # Substitute Makefile variables.

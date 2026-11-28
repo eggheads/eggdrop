@@ -3,43 +3,43 @@
 
 0xc000,  Siirrettu viestit: %.70s\n
 0xc001,Vaihdettu %d note%s %s %s.
-0xc002,Er‰‰ntyv‰t %d note%s
-0xc003,Ei paikalla; siirret‰‰n %s.\n
-0xc004,Viestit eiv‰t ole tuettu t‰ll‰ botilla.
-0xc005,Sori, t‰ll‰ k‰ytt‰j‰ll‰ on liian monta vieti‰ ennest‰‰n.
+0xc002,Er√§√§ntyv√§t %d note%s
+0xc003,Ei paikalla; siirret√§√§n %s.\n
+0xc004,Viestit eiv√§t ole tuettu t√§ll√§ botilla.
+0xc005,Sori, t√§ll√§ k√§ytt√§j√§ll√§ on liian monta vieti√§ ennest√§√§n.
 0xc006,Ei pysty luomaan viestitiedostoa. Anteeksi.
 0xc007,Viestitiedosto saavuttamaton!
 0xc008,Varastoitu viesti
-0xc009,Sinulle ei ole viestej‰
-0xc00a, -- ERƒƒNTYVƒT TƒNƒƒN
-0xc00b, -- ERƒƒNTYVƒT %d PƒIVƒNƒ%s
+0xc009,Sinulle ei ole viestej√§
+0xc00a, -- ER√Ñ√ÑNTYV√ÑT T√ÑN√Ñ√ÑN
+0xc00b, -- ER√Ñ√ÑNTYV√ÑT %d P√ÑIV√ÑN√Ñ%s
 0xc00c,Sinulla on seuraavat viesti(t) odottamassa
-0xc00d,Sinullea ei ole n‰in monta viesti‰
-0xc00e,K‰yt‰ '.notes read' lukeaksesi ne.
+0xc00d,Sinullea ei ole n√§in monta viesti√§
+0xc00e,K√§yt√§ '.notes read' lukeaksesi ne.
 0xc00f,Ei pysty muuttamaan viesti tiedostoa
 0xc010,Kaikki viestit poistettu
 0xc011,Poistettu
-0xc012,l‰ljell‰
-0xc013,'#' ehk‰ numerot ja/tai eritetty erilleen ';'.
-0xc014,T‰m‰ on botti. Et pysty j‰tt‰m‰‰n viestej‰ botille.
+0xc012,l√§ljell√§
+0xc013,'#' ehk√§ numerot ja/tai eritetty erilleen ';'.
+0xc014,T√§m√§ on botti. Et pysty j√§tt√§m√§√§n viestej√§ botille.
 0xc015,Ulkopuolinen viesti
 0xc016,Note toimitettu.
 0xc017,Listalla:
-0xc019,### Sinulla on %d viesti‰%s odottamassa.\n
+0xc019,### Sinulla on %d viesti√§%s odottamassa.\n
 0xc01b,Viestit on varastoitu.
-0xc01c,Sinun ei ole sallitty vaihtaa viestej‰ %s\n
-0xc01d,K‰ytt‰j‰ %s ei ole paikalla.\n
-0xc01e,Nyt huomioitavia viestej‰ %s\n
+0xc01c,Sinun ei ole sallitty vaihtaa viestej√§ %s\n
+0xc01d,K√§ytt√§j√§ %s ei ole paikalla.\n
+0xc01e,Nyt huomioitavia viestej√§ %s\n
 0xc01f,Valmiiksi ei huomioitu %s\n
-0xc020,Ei pitki‰ huomioitavia viestej‰ %s\n
-0xc021,Huomaa huomioitavat %s eiv‰t lˆydy listalta.\n
-0xc022,Ei esitt‰‰ huomioitavia viestej‰.\n
+0xc020,Ei pitki√§ huomioitavia viestej√§ %s\n
+0xc021,Huomaa huomioitavat %s eiv√§t l√∂ydy listalta.\n
+0xc022,Ei esitt√§√§ huomioitavia viestej√§.\n
 0xc023,Ei huomioitavaa %s:\n
-0xc024,Ei sellaista k‰ytt‰j‰‰.
+0xc024,Ei sellaista k√§ytt√§j√§√§.
 0xc025,Et pysty vaihtamaan viestien ohjausta botin omistajalle.\n
 0xc026,Pyyhitty viestit ohjautumaan %s\n
-0xc027,Sinun t‰ytyy hankkia botinnimi ohjaukseen.
+0xc027,Sinun t√§ytyy hankkia botinnimi ohjaukseen.
 0xc028,Viestien uudelleenohjaus vaihdettu %s %s\n
-0xc029,Function t‰ytyy olla yksi n‰ist‰ INDEX, READ, tai ERASE.
-0xc02a,K‰yt‰ komentoa '.notes read' lukeaksesi sen.
+0xc029,Function t√§ytyy olla yksi n√§ist√§ INDEX, READ, tai ERASE.
+0xc02a,K√§yt√§ komentoa '.notes read' lukeaksesi sen.
 0xc02b,NOTICE %s :Sinulla on %d note%s odottamassa.\n

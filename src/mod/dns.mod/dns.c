@@ -5,7 +5,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -144,7 +144,8 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
 {
   char buf[sizeof dns_servers], *p;
   unsigned short port;
-  int i, lc, code;
+  Tcl_Size i, lc;
+  int code;
   EGG_CONST char **list, *slist;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
@@ -152,7 +153,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
 
     Tcl_DStringInit(&ds);
     for (i = 0; i < myres.nscount; i++) {
-      egg_snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
+      snprintf(buf, sizeof buf, "%s:%d", iptostr((struct sockaddr *)
                &myres.nsaddr_list[i]), ntohs(myres.nsaddr_list[i].sin_port));
       Tcl_DStringAppendElement(&ds, buf);
     }
@@ -168,7 +169,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
     myres.nscount = 0;
     for (i = 0; i < lc; i++) {
       if (myres.nscount >= MAXNS) {
-        putlog(LOG_MISC, "*", "DNS: WARNING: %i dns-servers configured but "
+        putlog(LOG_MISC, "*", "DNS: WARNING: %" TCL_SIZE_MODIFIER "i dns-servers configured but "
                "kernel-defined limit is %i, ignoring extra servers\n", lc,
                MAXNS);
         break;
@@ -180,7 +181,7 @@ static char *dns_change(ClientData cdata, Tcl_Interp *irp,
       } else
         port = NAMESERVER_PORT; /* port 53 */
       /* Ignore invalid addresses */
-      if (egg_inet_aton(list[i], &myres.nsaddr_list[myres.nscount].sin_addr)) {
+      if (inet_pton(AF_INET, list[i], &myres.nsaddr_list[myres.nscount].sin_addr)) {
         myres.nsaddr_list[myres.nscount].sin_port = htons(port);
         myres.nsaddr_list[myres.nscount].sin_family = AF_INET;
         myres.nscount++;

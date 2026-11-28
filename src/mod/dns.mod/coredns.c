@@ -8,7 +8,7 @@
  * /etc/hosts support added by Michael Ortmann
  */
 /*
- * Portions Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Portions Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,12 @@
  * Released under the GPL, as above.
  */
 
+#include "src/mod/module.h"
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
-#undef answer /* before resolv.h because it could collide with src/mod/module.h
-                 (dietlibc) */
-#include <resolv.h>
 #include <errno.h>
 
 /* OpenBSD */
@@ -443,12 +442,12 @@ static void linkresolveip(struct resolve *addrp)
 }
 
 #ifdef IPV6
-static void linkresolveip6(struct resolve *addrp){
+static void linkresolveip6(struct resolve *addrp) {
   struct resolve *rp;
   unsigned long bashnum;
   bashnum = getip6bash(&addrp->sockname.addr.s6.sin6_addr);
   rp = ip6bash[bashnum];
-  if (rp){
+  if (rp) {
     while ((rp->nextip) &&
            (addrp->sockname.addr.s6.sin6_addr.s6_addr[15] >
             rp->nextip->sockname.addr.s6.sin6_addr.s6_addr[15]))
@@ -634,7 +633,7 @@ static struct resolve *findip6(struct in6_addr *ip6)
   unsigned long bashnum;
   bashnum = getip6bash(ip6);
   rp = ip6bash[bashnum];
-  if (rp){
+  if (rp) {
     while ((rp->nextip) && (ip6->s6_addr[15] >=
            (rp->nextip->sockname.addr.s6.sin6_addr.s6_addr[15])))
       rp = rp->nextip;
@@ -672,7 +671,7 @@ static struct resolve *findip(IP ip)
 
 static void ptrstring4(IP *ip, char *buf, size_t sz)
 {
-  egg_snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
+  snprintf(buf, sz, "%u.%u.%u.%u.in-addr.arpa",
            ((uint8_t *) ip)[3],
            ((uint8_t *) ip)[2],
            ((uint8_t *) ip)[1],

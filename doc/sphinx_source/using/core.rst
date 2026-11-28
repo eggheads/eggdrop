@@ -1,4 +1,4 @@
-Last revised: October 25, 2010
+Last revised: October 2, 2025
 
 =====================
 Eggdrop Core Settings
@@ -38,21 +38,15 @@ You can change the basic Eggdrop appearance and behavior in this section.
     This setting is used only for info to share with others on your botnet.
     Set this to the IRC network your bot is connected to.
 
-  set timezone "EST"
-    This setting defines which timezone is your bot in. It's used for internal
-    routines as well as for logfile timestamping and scripting purposes.
-    The timezone string specifies the name of the timezone and must be three
-    or more alphabetic characters. For example, Central European Time(UTC+1)
-    should be "CET".
+  set timezone "America/New_York"
+    This setting defines which timezone your bot is in. It's used for internal
+    routines as well as for logfile timestamping and scripting purposes. It
+    must be three or more alphabetic characters. For example, timezone
+    "Europe/Berlin" automatically adjusts for standard time and daylight saving
+    time. See
+    https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 
-  set offset "5"
-    The offset setting specifies the time value to be added to the local
-    time to get Coordinated Universal Time (UTC aka GMT). The offset is
-    positive if the local timezone is west of the Prime Meridian and
-    negative if it is east. The value (in hours) must be between -23 and
-    23. For example, if the timezone is UTC+1, the offset is -1.
-
-  set env(TZ) "$timezone $offset" (disabled by default)
+  set env(TZ) "$timezone" (disabled by default)
     If you don't want to use the timezone setting for scripting purposes
     only, but instead everywhere possible, then use this setting.
 
@@ -106,13 +100,6 @@ the logfile of the next day.
     This value is in kilobytes, so '550' would mean cycle logs when it
     reaches the size of 550 kilobytes. Note that this only works if you
     have keep-all-logs set to 0 (OFF).
-
-  set quick-logs 0
-    This could be good if you have had a problem with logfiles filling
-    your quota/hard disk or if you log +p and publish it to the web, and
-    you need more up-to-date info. Note that this setting might increase
-    the CPU usage of your bot (on the other hand it will decrease your RAM
-    usage).
 
   set raw-log 0
     This setting allows you the logging of raw incoming server traffic via
@@ -400,7 +387,7 @@ Advanced Settings
     you use a Sun "telnet passthru" firewall, prefix the host with a "!".
 
   set nat-ip "127.0.0.1"
-    If you have a NAT firewall (you box has an IP in one of the following
+    If you have a NAT firewall (your box has an IP in one of the following
     ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
     10.0.0.0-10.255.255.255 and your firewall transparently changes your
     address to a unique address for your box) or you have IP masquerading
@@ -596,7 +583,7 @@ Modules
 
 After the core settings, you should start loading modules. Modules are
 loaded by the command "loadmodule <module>". Eggdrop looks for modules
-in the directory you specified by the module-path setting in the files
+in the directory you specified by the mod-path setting in the files
 and directories section.
 
 Please note that for different configurations, different modules are needed.
@@ -617,7 +604,7 @@ Four examples:
   Limbo Bot:
     A limbo bot (serves as a botnet hub outside IRC) just needs the
     channels, console, dns, and maybe notes or share modules loaded. Of
-    course, blowfish needs to be loaded here, too.
+    course, an encryption module needs to be loaded here, too.
 
 Scripts
 -------
@@ -638,4 +625,4 @@ modules should be loaded and their variables should be set at this point.
       source scripts/alltools.tcl
       source scripts/action.fix.tcl
 
-Copyright (C) 2000 - 2023 Eggheads Development Team
+Copyright (C) 2000 - 2025 Eggheads Development Team

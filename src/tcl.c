@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,9 +86,7 @@ int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
 int quiet_reject = 1;
-int copy_to_tmp = 1;
 int max_socks = 100;
-int quick_logs = 0;
 int par_telnet_flood = 1;
 int quiet_save = 0;
 int strtot = 0;
@@ -155,7 +153,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
   coupletinfo *cp = (coupletinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    egg_snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
+    snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -185,9 +183,10 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
                         EGG_CONST char *name1,
                         EGG_CONST char *name2, int flags)
 {
-  char *s, s1[40];
+  char *s, s1[40], *endptr;
   long l;
   intinfo *ii = (intinfo *) cdata;
+  int p;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Special cases */
@@ -200,9 +199,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
     } else if ((int *) ii->var == &userfile_perm) {
-      egg_snprintf(s1, sizeof s1, "0%o", userfile_perm);
+      snprintf(s1, sizeof s1, "0%o", userfile_perm);
     } else
-      egg_snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
+      snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -225,10 +224,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
 
         default_uflags = fr.udef_global;
       } else if ((int *) ii->var == &userfile_perm) {
-        int p = oatoi(s);
-
-        if (p <= 0)
-          return "Invalid userfile permissions";
+        p = strtol(s, &endptr, 8);
+        if ((p < 01) || (p > 0777) || (*endptr))
+          return "Invalid userfile permissions, must be octal between 01 and 0777";
         userfile_perm = p;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
         return "Read-only variable";
@@ -267,7 +265,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     if ((st->str == firewall) && (firewall[0])) {
       char s1[127];
 
-      egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
+      snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
@@ -285,8 +283,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
-      if (strlen(s) > abs(st->max))
+      if (strlen(s) > abs(st->max)) {
+        putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
         s[abs(st->max)] = 0;
+      }
       if (st->str == botnetnick)
         botnet_change(s);
       else if (st->str == logfile_suffix)
@@ -318,20 +318,31 @@ static void tcl_cleanup_stringinfo(ClientData cd)
   nfree(cd);
 }
 
-/* Compatibility wrapper that calls Tcl functions with String API */
+/* Compatibility wrapper that calls Tcl functions with String API
+ *
+ * Is reentrant, can call itself recursively, so argv is dynamically allocated
+ * Tcl_IncrRefCount() is needed to preserve the strings we get Tcl_GetString()
+ * from being cleaned up if Tcl is invoked from this
+ */
 static int tcl_call_stringproc_cd(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-  static int max;
-  static const char **argv;
-  int i;
+  const char **argv;
+  int i, ret;
   struct tcl_call_stringinfo *info = cd;
+
   /* The string API guarantees argv[argc] == NULL, unlike the obj API */
-  if (objc + 1 > max)
-    argv = nrealloc(argv, (objc + 1) * sizeof *argv);
-  for (i = 0; i < objc; i++)
+  argv = nmalloc((objc + 1) * sizeof *argv);
+  for (i = 0; i < objc; i++) {
+    Tcl_IncrRefCount(objv[i]);
     argv[i] = Tcl_GetString(objv[i]);
+  }
   argv[objc] = NULL;
-  return (info->proc)(info->cd, interp, objc, argv);
+  ret = (info->proc)(info->cd, interp, objc, argv);
+  for (i = 0; i < objc; i++) {
+    Tcl_DecrRefCount(objv[i]);
+  }
+  nfree(argv);
+  return ret;
 }
 
 /* The standard case of no actual cd */
@@ -360,6 +371,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   while (table->name) {
     if (table->cdata) {
       info = nmalloc(sizeof *info);
+      strtot += sizeof(struct tcl_call_stringinfo);
       info->proc = table->callback;
       info->cd = table->cdata;
       Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc_cd, info, tcl_cleanup_stringinfo);
@@ -481,7 +493,6 @@ static tcl_ints def_tcl_ints[] = {
   {"max-socks",             &max_socks,            0},
   {"max-logs",              &max_logs,             0},
   {"max-logsize",           &max_logsize,          0},
-  {"quick-logs",            &quick_logs,           0},
   {"raw-log",               &raw_log,              1},
   {"protect-telnet",        &protect_telnet,       0},
   {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
@@ -498,7 +509,6 @@ static tcl_ints def_tcl_ints[] = {
   {"force-expire",          &force_expire,         0},
   {"dupwait-timeout",       &dupwait_timeout,      0},
   {"userfile-perm",         &userfile_perm,        0},
-  {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
   {"cidr-support",          &cidr_support,         0},
   {"remove-pass",           &remove_pass,          0},
@@ -506,6 +516,7 @@ static tcl_ints def_tcl_ints[] = {
   {"prefer-ipv6",           &pref_af,              0},
 #endif
   {"show-uname",            &show_uname,           0},
+  {"share-greet",           &share_greet,          0},
   {NULL,                    NULL,                  0}
 };
 
@@ -619,10 +630,14 @@ int tclthreadmainloop(int zero)
   return (i == -5);
 }
 
+struct threaddata *td_main = 0;
+
 struct threaddata *threaddata()
 {
   static Tcl_ThreadDataKey tdkey;
   struct threaddata *td = Tcl_GetThreadData(&tdkey, sizeof(struct threaddata));
+  if (!(td->mainloopfunc) && td_main) /* python thread */
+    return td_main;
   return td;
 }
 
@@ -642,6 +657,8 @@ void init_threaddata(int mainthread)
   td->blocktime.tv_usec = 0;
   td->MAXSOCKS = 0;
   increase_socks_max();
+  if (mainthread)
+    td_main = td;
 }
 
 /* workaround for Tcl that does not support unicode outside BMP (3 byte utf-8 characters) */
@@ -680,18 +697,19 @@ int needs_unicodesup(const char *str)
  * - encode high/low as 3-byte utf-8 strings
  * the length of the result could be len/4*6 bytes long, so
  * to avoid frequent reallocation/string appending, a temporary buffer is used
- * for long strings (>512 characters, which does not apply to IRC lines) and assembled to a Tcl_DString
- * for short strings the 512 character buffer is enough
+ * for long strings (>512 characters, which does not apply to IRC lines) chunks are assembled to a Tcl_DString
+ * for short strings the 512/4*6 character buffer is enough
  */
 Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 {
-  int stridx = 0, bufidx = 0;
-  char buf[512];
+  int stridx = 0, bufidx = 0, use_dstring = 0;
+  char buf[768];
   Tcl_DString ds;
   Tcl_Obj *result;
 
   /* chunked */
-  if (len > sizeof buf) {
+  if (len > 512) {
+    use_dstring = 1;
     Tcl_DStringInit(&ds);
   }
 
@@ -728,12 +746,12 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
         buf[bufidx++] = oldstr[stridx++];
       }
     }
-    if (len > sizeof buf && bufidx > sizeof buf - 6) {
+    if (use_dstring && bufidx > sizeof buf - 6) {
       Tcl_DStringAppend(&ds, buf, bufidx);
       bufidx = 0;
     }
   }
-  if (len > sizeof buf && bufidx) {
+  if (use_dstring && bufidx) {
     Tcl_DStringAppend(&ds, buf, bufidx);
     result = Tcl_NewStringObj(Tcl_DStringValue(&ds), Tcl_DStringLength(&ds));
     Tcl_DStringFree(&ds);
@@ -747,13 +765,13 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 int decode_surrogates(const char *str, uint32_t *high, uint32_t *low)
 {
   *high  = (*str++ & 0xf) << 12;
-  *high |= (*str++ & 0x3f) << 6; 
+  *high |= (*str++ & 0x3f) << 6;
   *high |= (*str++ & 0x3f) << 0;
   if (*high < 0xD800 || *high > 0xDBFF) {
     return 0;
   }
   *low  = (*str++ & 0xf) << 12;
-  *low |= (*str++ & 0x3f) << 6; 
+  *low |= (*str++ & 0x3f) << 6;
   *low |= (*str++ & 0x3f) << 0;
   if (*low < 0xDC00 || *low > 0xDFFF) {
     return 0;
@@ -771,6 +789,7 @@ Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
 {
   int stridx = 0, bufidx = 0;
   char *buf = nmalloc(len);
+  Tcl_Obj *o;
 
   while (stridx < len) {
     uint32_t low, high;
@@ -791,7 +810,10 @@ Tcl_Obj *egg_string_unicodesup_desurrogate(const char *oldstr, int len)
       }
     }
   }
-  return Tcl_NewStringObj(buf, bufidx);
+
+  o = Tcl_NewStringObj(buf, bufidx);
+  nfree(buf);
+  return o;
 }
 
 /* C function called for ::egg_tcl_tolower/toupper/totitle
@@ -905,16 +927,9 @@ void init_unicodesup(void)
 }
 #endif /* TCL_WORKAROUND_UNICODESUP */
 
-/* Not going through Tcl's crazy main() system (what on earth was he
- * smoking?!) so we gotta initialize the Tcl interpreter
- */
-void init_tcl(int argc, char **argv)
+void init_tcl0(int argc, char **argv)
 {
   Tcl_NotifierProcs notifierprocs;
-
-  const char *encoding;
-  int i, j;
-  char *langEnv, pver[1024] = "";
 
   egg_bzero(&notifierprocs, sizeof(notifierprocs));
   notifierprocs.initNotifierProc = tickle_InitNotifier;
@@ -928,7 +943,7 @@ void init_tcl(int argc, char **argv)
 
   Tcl_SetNotifier(&notifierprocs);
 
-/* This must be done *BEFORE* Tcl_SetSystemEncoding(),
+  /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */
   /* This is used for 'info nameofexecutable'.
@@ -936,6 +951,19 @@ void init_tcl(int argc, char **argv)
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
+#if TCL_MAJOR_VERSION >= 9
+  Tcl_InitSubsystems();
+#endif
+}
+
+/* Not going through Tcl's crazy main() system (what on earth was he
+ * smoking?!) so we gotta initialize the Tcl interpreter
+ */
+void init_tcl1(int argc, char **argv)
+{
+  const char *encoding;
+  int i, j;
+  char *langEnv, pver[1024] = "";
 
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
@@ -1246,17 +1274,17 @@ time_t get_expire_time(Tcl_Interp * irp, const char *s) {
   long expire_foo = strtol(s, &endptr, 10);
 
   if (*endptr) {
-    Tcl_AppendResult(irp, "bogus expire time", NULL);
+    Tcl_SetResult(irp, "bogus expire time", TCL_STATIC);
     return -1;
   }
   if (expire_foo < 0) {
-    Tcl_AppendResult(irp, "expire time must be 0 (perm) or greater than 0 days", NULL);
+    Tcl_SetResult(irp, "expire time must be 0 (perm) or greater than 0 days", TCL_STATIC);
     return -1;
   }
   if (expire_foo == 0)
     return 0;
   if (expire_foo > (60 * 24 * 2000)) {
-    Tcl_AppendResult(irp, "expire time must be equal to or less than 2000 days", NULL);
+    Tcl_SetResult(irp, "expire time must be equal to or less than 2000 days", TCL_STATIC);
     return -1;
   }
   return now + 60 * expire_foo;

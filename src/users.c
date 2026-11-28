@@ -12,7 +12,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,12 +30,10 @@
  */
 
 #include "main.h"
-#include "users.h"
-#include "chan.h"
 #include "modules.h"
 #include "tandem.h"
 
-#include <netinet/in.h>
+#include <errno.h>
 #include <arpa/inet.h>
 
 extern struct dcc_t *dcc;
@@ -144,7 +142,7 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
 }
 
 /* take host entry from ignore list and display it ignore-style */
-void display_ignore(int idx, int number, struct igrec *ignore)
+static void display_ignore(int idx, int number, struct igrec *ignore)
 {
   char dates[81], s[41];
 
@@ -480,7 +478,7 @@ static void tell_user(int idx, struct userrec *u)
     else
       strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
+  snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
                HANDLEN);
   if (!u_pass_match(u, "-"))
     p = 1;
@@ -504,7 +502,7 @@ static void tell_user(int idx, struct userrec *u)
       fr.chan = ch->flags;
       fr.udef_chan = ch->flags_udef;
       build_flags(s, &fr, NULL);
-      egg_snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n",
+      snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n",
                    HANDLEN - 9);
       dprintf(idx, format, " ", ch->channel, s, s1);
       if (ch->info != NULL)
@@ -524,13 +522,11 @@ void tell_user_ident(int idx, char *id)
   struct userrec *u;
 
   u = get_user_by_handle(userlist, id);
-  if (u == NULL)
-    u = get_user_by_host(id);
   if (u == NULL) {
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;
   }
-  egg_snprintf(format, sizeof format,
+  snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
   dprintf(idx, format, "HANDLE");
   tell_user(idx, u);
@@ -549,7 +545,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
 
   dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
   cnt = 0;
-  egg_snprintf(format, sizeof format,
+  snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
   dprintf(idx, format, "HANDLE");
   if (start > 1)
@@ -698,9 +694,10 @@ int readuserfile(char *file, struct userrec **ret)
     global_invites = NULL;
   }
   lasthand[0] = 0;
-  f = fopen(file, "r");
-  if (f == NULL)
+  if (!(f = fopen(file, "r"))) {
+    debug2("users: fopen(%s): %s", file, strerror(errno));
     return 0;
+  }
   noshare = noxtra = 1;
   /* read opening comment */
   s = buf;
@@ -1031,7 +1028,7 @@ void autolink_cycle(char *start)
   }                             /* new run through the user list */
   while (u && !autc) {
     while (u && !autc) {
-      if (u->flags & USER_BOT && strcmp(u->handle, botnetnick)) {              /* ignore our own user record */
+      if (u->flags & USER_BOT && strcasecmp(u->handle, botnetnick)) {              /* ignore our own user record */
         bfl = bot_flags(u);
         if (bfl & (BOT_HUB | BOT_ALT)) {
           linked = 0;

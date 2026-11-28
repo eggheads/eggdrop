@@ -2,7 +2,7 @@
  * tclserv.c -- part of server.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -210,7 +210,7 @@ static int tcl_isidentified STDVAR {
   }
   while (chan && (thechan == NULL || thechan == chan)) {
     if ((m = ismember(chan, argv[1]))) {
-      if (strcmp(m->account, "")) {
+      if (strcmp(m->account, "*") && strcmp(m->account, "")) {
         Tcl_AppendResult(irp, "1", NULL);
         return TCL_OK;
       }
@@ -241,12 +241,12 @@ static int tcl_tagmsg STDVAR {
   p = strtok(tagdict, " ");
   while (p != NULL) {
     if ((i % 2) != 0) {
-      taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
+      taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
     } else {
       if (strcmp(p, "{}") != 0) {
-        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
+        taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
       } else {
-        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
+        taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
       }
     }
     i++;
@@ -428,6 +428,44 @@ static int tcl_monitor STDVAR
   }
 }
 
+/* Return what Eggdrop is tracking for an open batch as a Tcl dict, or an
+ * empty string if no batch is open under that reference tag. Reference tags
+ * are case-sensitive, so the lookup is too.
+ */
+static int tcl_getbatch STDVAR {
+  batch_t *b;
+  Tcl_Obj *batchinfo;
+
+  BADARGS(2, 2, " batch-reference-tag");
+
+  b = batch_find(argv[1]);
+  if (!b) {
+    Tcl_AppendResult(irp, "", NULL);
+    return TCL_OK;
+  }
+  batchinfo = Tcl_NewDictObj();
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("reftag", -1),
+          Tcl_NewStringObj(b->reftag, -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("type", -1),
+          Tcl_NewStringObj(b->type, -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("args", -1),
+          Tcl_NewStringObj(b->args, -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("tags", -1),
+          Tcl_NewStringObj(b->tags, -1));
+  /* The parent is a pointer internally, scripts get its reference tag */
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("parent", -1),
+          Tcl_NewStringObj(b->parent ? b->parent->reftag : "", -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("suppress", -1),
+          Tcl_NewIntObj(b->suppress));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("started", -1),
+          Tcl_NewWideIntObj((Tcl_WideInt) b->started));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("seq", -1),
+          Tcl_NewWideIntObj((Tcl_WideInt) b->seq));
+  Tcl_SetObjResult(irp, batchinfo);
+  return TCL_OK;
+}
+
+
 static int tcl_jump STDVAR
 {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
@@ -582,6 +620,10 @@ static int tcl_server STDVAR {
 
   BADARGS(2, 5, " subcommand ?host ?port? ?password?");
   if (!strcmp(argv[1], "add")) {
+    if (argc < 3) {
+      Tcl_SetResult(irp, "wrong # args: should be \"server add host ?port ?password??\"", TCL_STATIC);
+      return TCL_ERROR;
+    }
     ret = add_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "", argc >= 5 && argv[4] ? argv[4] : "");
     if (!ret) {
       server = Tcl_NewListObj(0, NULL);
@@ -599,6 +641,10 @@ static int tcl_server STDVAR {
       Tcl_SetObjResult(irp, server);
     }
   } else if (!strcmp(argv[1], "remove")) {
+    if (argc < 3) {
+      Tcl_SetResult(irp, "wrong # args: should be \"server remove host ?port?\"", TCL_STATIC);
+      return TCL_ERROR;
+    }
     ret = del_server(argv[2], argc >= 4 && argv[3] ? argv[3] : "");
   } else if (!strcmp(argv[1], "list")) {
     Tcl_Obj *servers = Tcl_NewListObj(0, NULL);
@@ -655,5 +701,6 @@ static tcl_cmds my_tcl_cmds[] = {
   {"getaccount",    tcl_getaccount},
   {"isidentified",  tcl_isidentified},
   {"monitor",       tcl_monitor},
+  {"getbatch",      tcl_getbatch},
   {NULL,         NULL}
 };

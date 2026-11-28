@@ -4,6 +4,6 @@
    support for userfile sharing.
 
    Config file variables for configuring the transfer module:
-      %bxfer-timeout    copy-to-tmp         dcc-block%b
-      %bmax-dloads      sharefail-unlink%b
+      %bxfer-timeout    dcc-block           max-dloads%b
+      %bsharefail-unlink%b
    (Use %b'.help set <variable>'%b for more info)

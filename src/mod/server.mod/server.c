@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,6 @@
 #define MODULE_NAME "server"
 #define MAKING_SERVER
 
-#include <errno.h>
 #include "src/mod/module.h"
 #include "server.h"
 
@@ -32,9 +31,9 @@ static Function *global = NULL;
 
 static int ctcp_mode;
 static int serv;                /* sock # of server currently */
-static char newserver[121];     /* new server? */
+static char newserver[NEWSERVERMAX]; /* new server? */
 static int newserverport;       /* new server port? */
-static char newserverpass[121]; /* new server password? */
+static char newserverpass[NEWSERVERPASSMAX]; /* new server password? */
 static time_t trying_server;    /* trying to connect to a server right now? */
 static int server_lag;          /* how lagged (in seconds) is the server? */
 static char altnick[NICKLEN];   /* possible alternate nickname to use */
@@ -109,7 +108,7 @@ static struct monitor_list *monitor = NULL;
 
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                       H_ctcp, H_out, H_rawt, H_monitor;
+                       H_ctcp, H_out, H_rawt, H_monitor, H_batch;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -129,23 +128,19 @@ static int add_server(const char *, const char *, const char *);
 static int del_server(const char *, const char *);
 static void free_server(struct server_list *);
 
-static int sasl = 0;
 static int away_notify = 0;
 static int invite_notify = 0;
 static int message_tags = 0;
+static int batch = 0;
+static int labeled_response = 0;
 
 static char cap_request[CAPMAX - 9];
-static int sasl_mechanism = 0;
-static char sasl_username[NICKMAX + 1];
-static char sasl_password[81];
-static int sasl_continue = 1;
-static char sasl_ecdsa_key[121];
-static int sasl_timeout = 15;
-static int sasl_timeout_time = 0;
 
 #include "isupport.c"
 #include "tclisupport.c"
+#include "batch.c"
 #include "servmsg.c"
+#include "sasl.c"
 
 #define MAXPENALTY 10
 
@@ -156,13 +151,6 @@ static int burst;
 
 #include "cmdsserv.c"
 #include "tclserv.c"
-
-/* Available sasl mechanisms. */
-char const *SASL_MECHANISMS[SASL_MECHANISM_NUM] = {
-  [SASL_MECHANISM_PLAIN]                    = "PLAIN",
-  [SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE] = "ECDSA-NIST256P-CHALLENGE",
-  [SASL_MECHANISM_EXTERNAL]                 = "EXTERNAL"
-};
 
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
@@ -586,12 +574,12 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < SENDLINEMAX-1)) {
           if (newnick)
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
+            snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
         } else
-          egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
+          snprintf(newnicks, sizeof newnicks, ",%s", nick);
       }
-      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+      snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                    newnicks + 1, msg);
     }
     if (changed) {
@@ -652,7 +640,7 @@ static void purge_kicks(struct msgq_head *q)
             found = 1;
         }
         if (found)
-          egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
+          snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
         else {
           putlog(LOG_SRVOUT, "*", "%s isn't on any target channel; removing "
                  "kick.", nick);
@@ -673,7 +661,7 @@ static void purge_kicks(struct msgq_head *q)
             q->last = 0;
         } else {
           nfree(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
+          snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                        newnicks + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
@@ -734,7 +722,7 @@ static int deq_kick(int which)
   chan = newsplit(&reason);
   nicks = newsplit(&reason);
   while (strlen(nicks) > 0) {
-    egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks,
+    snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks,
                  newsplit(&nicks));
     nr++;
   }
@@ -752,11 +740,11 @@ static int deq_kick(int which)
           nick = splitnicks(&nicks);
           if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
               strlen(nick) + strlen(reason)) < 510)) {
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
+            snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
             nr++;
             changed = 1;
           } else
-            egg_snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
+            snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
         }
       }
       if (changed) {
@@ -773,7 +761,7 @@ static int deq_kick(int which)
             h->last = 0;
         } else {
           nfree(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan2,
+          snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan2,
                        newnicks2 + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
@@ -787,7 +775,7 @@ static int deq_kick(int which)
     else
       m = h->head->next;
   }
-  egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
+  snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
                reason);
   check_tcl_out(which, newmsg, 1);
   write_to_server(newmsg, strlen(newmsg));
@@ -1123,7 +1111,7 @@ static int del_server(const char *name, const char *port)
       curr = curr->next;
     }
   }
-  return found ? 0 : 3; 
+  return found ? 0 : 3;
 }
 
 /* Free a single removed server from server link list */
@@ -1242,11 +1230,9 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
  * Returns 2 if maximum number of nicks to be monitored reached
  */
 static int monitor_add(char * nick, int send) {
-  struct monitor_list *entry = nmalloc(sizeof(struct monitor_list));
+  struct monitor_list *entry;
   struct monitor_list *current = monitor;
   int count = 0;
-
-  memset(entry, 0, sizeof *entry);
 
   /* Check for duplicates before adding */
   while (current != NULL) {
@@ -1259,13 +1245,14 @@ static int monitor_add(char * nick, int send) {
   if (count >= max_monitor) {
     return 2;
   }
+  entry = nmalloc(sizeof(struct monitor_list));
+  memset(entry, 0, sizeof *entry);
   strlcpy(entry->nick, nick, NICKLEN);
   entry->next = monitor;
   monitor = entry;
   if (send) {
     dprintf(DP_SERVER, "MONITOR + %s\n", nick);
   }
-
   return 0;
 }
 
@@ -1413,7 +1400,7 @@ static int server_raw STDVAR
 
 static int server_rawt STDVAR
 {
-  int unused;
+  Tcl_Size unused;
   Tcl_Obj *tagdict;
   Function F = (Function) cd;
 
@@ -1442,6 +1429,18 @@ static int server_out STDVAR
   F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
+
+static int batch_5char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(6, 6, " reference type event parent args");
+
+  CHECKVALIDITY(batch_5char);
+  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
+  return TCL_OK;
+}
+
 
 static int monitor_2char STDVAR
 {
@@ -1692,7 +1691,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
     warn = 1;
   }
   else if (!strcasecmp(net_type, "5")) { /* For backwards compatibility */
-    net_type_int = NETT_OTHER; 
+    net_type_int = NETT_OTHER;
     warn = 1;
   } else {
     fatal("ERROR: NET-TYPE NOT SET.\n Must be one of DALNet, EFnet, freenode, "
@@ -1715,7 +1714,7 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     char s[40];
 
-    egg_snprintf(s, sizeof s, "%d", nick_len);
+    snprintf(s, sizeof s, "%d", nick_len);
     Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
@@ -1734,19 +1733,16 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
 }
 
 static tcl_strings my_tcl_strings[] = {
-  {"botnick",             NULL,           0,       STR_PROTECT},
-  {"altnick",             altnick,        NICKMAX,           0},
-  {"realname",            botrealname,    80,                0},
-  {"init-server",         initserver,     120,               0},
-  {"connect-server",      connectserver,  120,               0},
-  {"stackable-commands",  stackablecmds,  510,               0},
-  {"stackable2-commands", stackable2cmds, 510,               0},
-  {"cap-request",         cap_request,    CAPMAX - 9,        0},
-  {"sasl-username",       sasl_username,  NICKMAX,           0},
-  {"sasl-password",       sasl_password,  80,                0},
-  {"sasl-ecdsa-key",      sasl_ecdsa_key, 120,               0},
-  {"net-type",            net_type,       8,                 0},
-  {NULL,                  NULL,           0,                 0}
+  {"botnick",             NULL,           0,          STR_PROTECT},
+  {"altnick",             altnick,        NICKMAX,              0},
+  {"realname",            botrealname,    80,                   0},
+  {"init-server",         initserver,     120,                  0},
+  {"connect-server",      connectserver,  120,                  0},
+  {"stackable-commands",  stackablecmds,  510,                  0},
+  {"stackable2-commands", stackable2cmds, 510,                  0},
+  {"cap-request",         cap_request,    CAPMAX - 9,           0},
+  {"net-type",            net_type,       8,                    0},
+  {NULL,                  NULL,           0,                    0}
 };
 
 static tcl_coups my_tcl_coups[] = {
@@ -1784,13 +1780,11 @@ static tcl_ints my_tcl_ints[] = {
 #ifdef TLS
   {"ssl-verify-server", &tls_vfyserver,             0},
 #endif
-  {"sasl",              &sasl,                      0},
-  {"sasl-mechanism",    &sasl_mechanism,            0},
-  {"sasl-continue",     &sasl_continue,             0},
-  {"sasl-timeout",      &sasl_timeout,              0},
   {"away-notify",       &away_notify,               0},
   {"invite-notify",     &invite_notify,             0},
   {"message-tags",      &message_tags,              0},
+  {"batch",             &batch,                     0},
+  {"labeled-response",  &labeled_response,          0},
   {"extended-join",     &extended_join,             0},
   {"account-notify",    &account_notify,            0},
   {"account-tag",       &account_tag,               0},
@@ -1809,7 +1803,8 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
                            EGG_CONST char *name1,
                            EGG_CONST char *name2, int flags)
 {
-  int lc, code, i;
+  Tcl_Size lc, i;
+  int code;
   char x[1024];
   EGG_CONST char **list, *slist;
   struct server_list *q;
@@ -1820,13 +1815,13 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
     Tcl_DStringInit(&ds);
     for (q = serverlist; q; q = q->next) {
 #ifdef TLS
-      egg_snprintf(x, sizeof x, "%s%s%s:%s%d%s%s %s", strchr(q->name, ':') ?
+      snprintf(x, sizeof x, "%s%s%s:%s%d%s%s %s", strchr(q->name, ':') ?
                    "[" : "", q->name, strchr(q->name, ':') ? "]" : "",
                    q->ssl ? "+" : "", q->port ? q->port : default_port,
                    q->pass ? ":" : "", q->pass ? q->pass : "",
                    q->realname ? q->realname : "");
 #else
-      egg_snprintf(x, sizeof x, "%s%s%s:%d%s%s %s", strchr(q->name, ':') ?
+      snprintf(x, sizeof x, "%s%s%s:%d%s%s %s", strchr(q->name, ':') ?
                    "[" : "", q->name, strchr(q->name, ':') ? "]" : "",
                    q->port ? q->port : default_port, q->pass ? ":" : "",
                    q->pass ? q->pass : "", q->realname ? q->realname : "");
@@ -1944,7 +1939,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 #endif
     dcc[i].port = atoi(prt);
     (void) setsockname(&dcc[i].sockname, ip, dcc[i].port, 0);
-    dcc[i].u.dns->ip = &dcc[i].sockname;
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
@@ -1976,7 +1970,7 @@ static void dcc_chat_hostresolved(int i)
   char buf[512];
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
-  egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
+  snprintf(buf, sizeof buf, "%u", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, &dcc[i].sockname,
       dcc[i].u.dns->host, buf)) {
     lostdcc(i);
@@ -1985,7 +1979,7 @@ static void dcc_chat_hostresolved(int i)
   buf[0] = 0;
   dcc[i].sock = getsock(dcc[i].sockname.family, 0);
   if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0)
-    egg_snprintf(buf, sizeof buf, "%s", strerror(errno));
+    snprintf(buf, sizeof buf, "%s", strerror(errno));
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT, tls_vfydcc,
                                        LOG_MISC, dcc[i].host, &dcc_chat_sslcb))
@@ -2033,8 +2027,8 @@ static void server_secondly()
   deq_msg();
   if (!resolvserv && serv < 0)
     connect_server();
-  if (!--sasl_timeout_time)
-    handle_sasl_timeout();
+  else
+    sasl_secondly();
 }
 
 static void server_5minutely()
@@ -2094,10 +2088,14 @@ static void server_postrehash()
 
 static void server_die()
 {
+  char msg[MSGMAX];
   cycle_time = 100;
   if (server_online) {
-    dprintf(-serv, "QUIT :%s\n", quit_msg[0] ? quit_msg : "");
-    sleep(3);                   /* Give the server time to understand */
+    snprintf(msg, sizeof msg, "QUIT :%s", quit_msg);
+    dprintf(-serv, "%s\n", msg);
+    if (raw_log)
+      putlog(LOG_SRVOUT, "*", "[->] %s", msg);
+    sleep(1); /* Give the server time to understand. 1s should be enough. */
   }
   nuke_server(NULL);
 }
@@ -2165,12 +2163,12 @@ static void server_report(int idx, int details)
       dprintf(idx, "    NICK IS JUPED: %s%s\n", origbotname,
               keepnick ? " (trying)" : "");
     daysdur(now, server_online, s1);
-    egg_snprintf(s, sizeof s, "(connected %s)", s1);
+    snprintf(s, sizeof s, "(connected %s)", s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
         strlcpy(s1, " (bad pong replies)", sizeof s1);
       else
-        egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
+        snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
       strcat(s, s1);
     }
   }
@@ -2270,6 +2268,7 @@ static char *server_close()
   del_bind_table(H_ctcr);
   del_bind_table(H_ctcp);
   del_bind_table(H_out);
+  del_bind_table(H_batch);
   del_bind_table(H_monitor);
   rem_tcl_coups(my_tcl_coups);
   rem_tcl_strings(my_tcl_strings);
@@ -2305,6 +2304,7 @@ static char *server_close()
   del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   del_hook(HOOK_REHASH, (Function) server_postrehash);
   del_hook(HOOK_DIE, (Function) server_die);
+  sasl_close();
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -2381,7 +2381,10 @@ static Function server_table[] = {
   (Function) & find_capability,
   (Function) encode_msgtags,
   /* 52 - 55 */
-  (Function) & H_monitor
+  (Function) & H_monitor,
+  (Function) isupport_get_prefixchars,
+  (Function) batch_get_current,
+  (Function) & H_batch
 };
 
 char *server_start(Function *global_funcs)
@@ -2449,7 +2452,7 @@ char *server_start(Function *global_funcs)
 #endif
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 5);
+  module_register(MODULE_NAME, server_table, 1, 6);
   if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.8.0 or later.";
@@ -2492,6 +2495,7 @@ char *server_start(Function *global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   H_out = add_bind_table("out", HT_STACKABLE, server_out);
   H_monitor = add_bind_table("monitor", HT_STACKABLE, monitor_2char);
+  H_batch = add_bind_table("batch", HT_STACKABLE, batch_5char);
   isupport_init();
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_rawt, my_rawt_binds);
@@ -2502,27 +2506,6 @@ char *server_start(Function *global_funcs)
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
-  if (sasl) {
-    if ((sasl_mechanism < 0) || (sasl_mechanism >= SASL_MECHANISM_NUM)) {
-      fatal("ERROR: sasl-mechanism is not set to an allowed value, please check"
-            " it and try again", 0);
-    }
-#ifdef TLS
-#ifndef HAVE_EVP_PKEY_GET1_EC_KEY
-    if (sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) {
-      fatal("ERROR: NIST256 functionality missing from your TLS libs, please "
-            "choose a different SASL method", 0);
-    }
-#endif /* HAVE_EVP_PKEY_GET1_EC_KEY */
-#else  /* TLS */
-    if ((sasl_mechanism == SASL_MECHANISM_ECDSA_NIST256P_CHALLENGE) ||
-            (sasl_mechanism == SASL_MECHANISM_EXTERNAL)) {
-      fatal("ERROR: The selected SASL authentication method requires TLS "
-            "libraries which are not installed on this machine. Please "
-            "choose the PLAIN method in your config.", 0);
-    }
-#endif /* TLS */
-  }
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
@@ -2542,5 +2525,6 @@ char *server_start(Function *global_funcs)
   curserv = 999;
   /* Because this reads the interp variable, the read trace MUST be after */
   do_nettype();
+  sasl_start();
   return NULL;
 }

@@ -3,43 +3,43 @@
 
 0xc000,  Videresend notitser til: %.70s\n
 0xc001,Skiftede %d notits%s fra %s til %s.
-0xc002,Udløbne %d notits%s
+0xc002,UdlÃ¸bne %d notits%s
 0xc003,Ikke online; videresendt til %s.\n
-0xc004,Notitser er ikke understøttet af denne bot.
-0xc005,Desværre, den bruger har allerede for mange notitser.
-0xc006,Kan ikke oprette notitsfil. Desværre.
-0xc007,Notitsfil utilgængelig!
+0xc004,Notitser er ikke understÃ¸ttet af denne bot.
+0xc005,DesvÃ¦rre, den bruger har allerede for mange notitser.
+0xc006,Kan ikke oprette notitsfil. DesvÃ¦rre.
+0xc007,Notitsfil utilgÃ¦ngelig!
 0xc008,Gemt meddelse
 0xc009,Du har ingen meddelelser
-0xc00a, -- UDLØBER I DAG
-0xc00b, -- UDLØBER OM %d DAG(E)%s
-0xc00c,Du har følgende notitser ventende
-0xc00d,Du har ikke så mange beskeder
-0xc00e,Brug '.notes read' for at læse dem.
+0xc00a, -- UDLÃ˜BER I DAG
+0xc00b, -- UDLÃ˜BER OM %d DAG(E)%s
+0xc00c,Du har fÃ¸lgende notitser ventende
+0xc00d,Du har ikke sÃ¥ mange beskeder
+0xc00e,Brug '.notes read' for at lÃ¦se dem.
 0xc00f,Kan ikke rette notitsfilen
 0xc010,Slettede alle notitser
 0xc011,Slettet
 0xc012,tilbage
-0xc013,'#' kan være numre og/eller intervaller adskilt med ';'.
+0xc013,'#' kan vÃ¦re numre og/eller intervaller adskilt med ';'.
 0xc014,Det er en bot. Du kan ikke sende notitser til en bot.
 0xc015,Outside notits
 0xc016,Notits sendt.
 0xc017,For en liste:
 0xc019,### Du har %d notits(er)%s ventende.\n
 0xc01b,Notitser vil blive gemt.
-0xc01c,Du har ikke tilladelse til at ændre notitsignoreringer for %s\n
+0xc01c,Du har ikke tilladelse til at Ã¦ndre notitsignoreringer for %s\n
 0xc01d,Brugeren %s findes ikke.\n
 0xc01e,Ignorerer nu notitser fra %s\n
 0xc01f,Ignorerer allerede %s\n
-0xc020,Ignorerer ikke længere notitser fra %s\n
+0xc020,Ignorerer ikke lÃ¦ngere notitser fra %s\n
 0xc021,Notits ignorering %s blev ikke fundet i listen.\n
 0xc022,Der findes ingen notits ignoreringer.\n
 0xc023,Notits ignoreringer for %s:\n
 0xc024,Bruger findes ikke.
-0xc025,Kan ikke ændre notitsvideresendelse af bottens ejer.\n
+0xc025,Kan ikke Ã¦ndre notitsvideresendelse af bottens ejer.\n
 0xc026,Slettede notitsvideresendelse for %s\n
 0xc027,Du skal angive et botnavn at videresende til.
-0xc028,Ændrede notitsvideresendelse for %s til: %s\n
-0xc029,Funktion skal være en af følgende: INDEX, READ eller ERASE.
-0xc02a,Brug '.notes read' for at læse den.
+0xc028,Ã†ndrede notitsvideresendelse for %s til: %s\n
+0xc029,Funktion skal vÃ¦re en af fÃ¸lgende: INDEX, READ eller ERASE.
+0xc02a,Brug '.notes read' for at lÃ¦se den.
 0xc02b,NOTICE %s :Du har %d note%s ventende.\n

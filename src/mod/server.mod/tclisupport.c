@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +20,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-#include <ctype.h>
 
 int tcl_isupport STDOBJVAR;
 static int tcl_isupport_get STDOBJVAR;
@@ -67,14 +65,14 @@ int tcl_isupport STDOBJVAR
 
 static int tcl_isupport_get STDOBJVAR
 {
-  int keylen;
+  Tcl_Size keylen;
   const char *key, *value;
   Tcl_Obj *tclres;
 
   BADOBJARGS(2, 3, 2, "?setting?");
   if (objc == 2) {
     tclres = Tcl_NewListObj(0, NULL);
- 
+
    for (struct isupport *data = isupport_list; data; data = data->next) {
       Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(data->key, -1));
       Tcl_ListObjAppendElement(irp, tclres, Tcl_NewStringObj(isupport_get_from_record(data), -1));
@@ -95,13 +93,13 @@ static int tcl_isupport_get STDOBJVAR
 
 static int tcl_isupport_isset STDOBJVAR
 {
-  int keylen;
+  Tcl_Size keylen;
   const char *key, *value;
 
   BADOBJARGS(3, 3, 2, "setting");
   key = Tcl_GetStringFromObj(objv[2], &keylen);
   value = isupport_get(key, keylen);
-  Tcl_SetResult(interp, value ? "1" : "0", NULL);
+  Tcl_SetResult(interp, value ? "1" : "0", TCL_STATIC);
   return TCL_OK;
 }
 
@@ -109,7 +107,7 @@ static int tcl_isupport_isset STDOBJVAR
 /* not exposed for now */
 static int tcl_isupport_set STDOBJVAR
 {
-  int keylen, valuelen;
+  Tcl_Size keylen, valuelen;
   const char *key, *value;
 
   /* First one to check for type validity only */
@@ -126,7 +124,7 @@ static int tcl_isupport_set STDOBJVAR
 static int tcl_isupport_unset STDOBJVAR
 {
   struct isupport *data;
-  int keylen;
+  Tcl_Size keylen;
   const char *key;
 
   BADOBJARGS(3, 3, 2, "setting");
@@ -138,7 +136,7 @@ static int tcl_isupport_unset STDOBJVAR
     TCL_ERR_NOTSET(irp, objv[2]);
   }
   if (!data->value) {
-    Tcl_SetResult(interp, "no server value set, cannot unset default values, change 'set isupport-default' instead", NULL);
+    Tcl_SetResult(interp, "no server value set, cannot unset default values, change 'set isupport-default' instead", TCL_STATIC);
     return TCL_ERROR;
   }
   isupport_unset(key, keylen);
@@ -170,7 +168,7 @@ char *traced_isupport(ClientData cdata, Tcl_Interp *irp,
     }
     /* remove trailing space */
     if (Tcl_DStringLength(&ds))
-      Tcl_DStringTrunc(&ds, Tcl_DStringLength(&ds) - 1);
+      Tcl_DStringSetLength(&ds, Tcl_DStringLength(&ds) - 1);
     Tcl_SetVar2(interp, name1, name2, Tcl_DStringValue(&ds), TCL_GLOBAL_ONLY);
     Tcl_DStringFree(&ds);
 

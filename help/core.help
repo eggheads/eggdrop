@@ -7,15 +7,17 @@ DCC commands for %B, %V:
       %bwhoami       echo         strip        su%b
       %btrace        fixcodes     bottree      vbottree%b
       %bbotinfo      relay        -host        fprint%b
-      %bchfinger%b
+      %bchfinger     back         note         -account%b
 %{o|o}
    For ops:
       %baddlog       console      match        whois%b
+      %bresetconsole%b
 %{+t}
    For botnet masters:
       %b+bot         botattr      chhandle     chpass%b
       %b+host        -bot         link         chaddr%b
       %bboot         unlink       banner       dccstat%b
+      %b+account%b
 %{+m|m}
    For channel masters:
       %bchattr       save         backup       reload%b
@@ -133,7 +135,7 @@ See also: +lang, -lang, +lsec, -lsec, lstat
    Executes the specified Tcl command.
 
    See doc/tcl-commands.doc for details on Tcl commands added to Eggdrop, and
-   visit https://tcl.tk/ for more information on Tcl.
+   visit https://www.tcl-lang.org/ for more information on Tcl.
 %{help=set}%{+n}
 ###  %bset%b <variable> [value]
    Changes the values of config-file settings of the bot, or, if used without
@@ -183,7 +185,6 @@ default-flags
 log-time
 timestamp-format
 max-logsize
-quick-logs
 logfile-suffix
 quiet-save
 remote-boots

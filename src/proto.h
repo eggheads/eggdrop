@@ -9,7 +9,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,9 @@ extern int (*rfc_ncasecmp) (const char *, const char *, int);
 extern int (*rfc_toupper) (int);
 extern int (*rfc_tolower) (int);
 extern int (*match_noterej) (struct userrec *, char *);
+extern void (*webui_dcc_telnet_hostresolved) (int, int);
+extern size_t (*webui_frame) (char **, char *, size_t);
+extern void (*webui_unframe) (int, char *, int *);
 #endif
 
 /* botcmd.c */
@@ -103,7 +106,7 @@ void tell_verbose_status(int);
 void tell_settings(int);
 int logmodes(char *);
 int isowner(char *);
-char *masktype(int);
+const char *masktype(int);
 char *maskname(int);
 void reaffirm_owners(void);
 void add_hq_user(void);
@@ -124,8 +127,9 @@ int check_dcc_attrs(struct userrec *, int);
 int check_dcc_chanattrs(struct userrec *, char *, int, int);
 int check_int_range(char *value, int min, int max);
 int stripmodes(char *);
-char *stripmasktype(int);
+const char *stripmasktype(int);
 char *check_validpass(struct userrec *, char *);
+void cmd_die(struct userrec *, int, char *);
 
 /* dcc.c */
 void failed_link(int);
@@ -135,6 +139,7 @@ void dupwait_notify(char *);
 #ifdef TLS
 int dcc_fingerprint(int);
 #endif
+void dcc_telnet_hostresolved2(int, int);
 
 /* dccutil.c */
 int increase_socks_max(void);
@@ -149,6 +154,7 @@ extern void (*sharein) (int, char *);
 void chanout_but(int x, int chan, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
 void dcc_chatter(int);
 void lostdcc(int);
+void lostdcc_deferred(int);
 void killtransfer(int);
 void removedcc(int);
 void makepass(char *);
@@ -168,6 +174,7 @@ void del_dcc(int);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
+void init_tdns();
 extern void (*dns_hostbyip) (sockname_t *);
 void core_dns_hostbyip(sockname_t *);
 void call_hostbyip(sockname_t *, char *, int);
@@ -187,10 +194,9 @@ int exist_lang_section(char *);
 /* main.c */
 void fatal(const char *, int);
 int expected_memory(void);
-void eggContext(const char *, int, const char *);
-void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
+int expmem_modules(int);
 
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
@@ -226,13 +232,14 @@ void debug_mem_to_dcc(int);
 
 /* misc.c */
 int egg_strcatn(char *, const char *, size_t);
-int my_strcpy(char *, char *);
+int my_strcpy(char *, const char *);
 void putlog(int type, char *chname, const char *format, ...) ATTRIBUTE_FORMAT(printf,3,4);
-void flushlogs(void);
 void check_logsize(void);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);
 void remove_crlf(char **);
+parsed_irc_t parse_irc(char *);
+char *join_str_array(char **, int, char *, char *, size_t);
 char *newsplit(char **);
 char *splitnick(char **);
 void stridx(char *, char *, int);
@@ -281,6 +288,7 @@ int open_listen(int *);
 void getvhost(sockname_t *, int);
 int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
+int connect_nonblock(int, sockname_t *, int);
 int open_telnet_raw(int, sockname_t *);
 int open_telnet(int, char *, int);
 int answer(int, sockname_t *, uint16_t *, int);
@@ -310,6 +318,8 @@ int readtclprog(char *fname);
 
 /* tls.c */
 #ifdef TLS
+void verify_cert_expiry(int);
+void ssl_cleanup();
 int ssl_handshake(int, int, int, int, char *, IntFunc);
 char *ssl_fpconv(char *in, char *out);
 const char *ssl_getuid(int sock);
@@ -339,7 +349,6 @@ void correct_handle(char *);
 int write_user(struct userrec *, FILE *, int);
 int write_ignores(FILE *f, int);
 void write_userfile(int);
-struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
 void user_del_chan(char *);
 int check_conflags(struct flag_record *fr, int md);

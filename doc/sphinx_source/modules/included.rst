@@ -15,6 +15,7 @@ Modules included with Eggdrop
     mod/irc
     mod/notes
     mod/pbkdf2
+    mod/python
     mod/seen
     mod/server
     mod/share
@@ -73,14 +74,16 @@ Modules included with Eggdrop
     later retrieval.
 
 :ref:`pbkdf2`
-    This modules updates Eggdrop to use PBKDF2 for hashing purposes, such as for userfile passwords. It was specifically designed to work with the blowfish module to make the transition from blowfish to pbkdf2 password hashing as easy as possible. If you are transitioning a userfile from 1.8 or earlier, you should load this AND the blowfish module. By doing so, Eggdrop will seamlessly update the old blowfish hashes to the new PBKDF2 hashes once a user logs in for the first time, and allow you to (eventually) remove the blowfish module altogether. For new bots, you should load this module by itself and not use the blowfish module. The blowfish module is still required for encrypting/decrypting strings. Eggdrop will not start without an encryption module loaded.
+    This modules updates Eggdrop to use PBKDF2 for hashing purposes, such as for userfile passwords. It was specifically designed to work with the blowfish module to make the transition from blowfish to pbkdf2 password hashing as easy as possible. If you are transitioning a userfile from 1.8 or earlier, you should load this AND the blowfish module. By doing so, Eggdrop will seamlessly update the old blowfish hashes to the new PBKDF2 hashes once a user logs in for the first time, and allow you to (eventually) remove the blowfish module altogether. For new bots, you should load this module by itself and not use the blowfish module. The blowfish module is still required if you use Tcl to encrypt/decrypt strings in Tcl (ie, some scripts). Eggdrop will not start without a password-hashing module loaded.
+
+:ref:`python`
+    This module adds a python interpreter to Eggdrop, enabling you to run python scripts on your Eggdrop!
 
 :ref:`seen`
     This module provides very basic seen commands via msg, on channel
     or via dcc. This module works only for users in the bot's
     userlist. If you are looking for a better and more advanced seen
-    module, try the gseen module by G'Quann. You can find it at
-    http://www.kreativrauschen.com/gseen.mod/.
+    module, try the gseen module, originally written by G'Quann and forked/updated for modern Eggdrop by mortmann. You can find it at `<https://github.com/michaelortmann/gseen.mod>`_
 
 :ref:`server`
     This module provides the core server support. You have to load
@@ -100,7 +103,7 @@ Modules included with Eggdrop
 
 :ref:`uptime`
     This module reports uptime statistics to the uptime contest
-    web site at http://uptime.eggheads.org. Go look and see what
+    web site at `<https://www.eggheads.org/uptime>`_. Go look and see what
     your uptime is! It takes about 9 hours to show up, so if your
     bot isn't listed, try again later. See doc/settings/mod.uptime
     for more information, including details on what information is

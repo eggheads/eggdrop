@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,20 +24,7 @@
 #include <errno.h>
 #include "main.h"
 #include "modules.h"
-#include "tandem.h"
 #include "md5/md5.h"
-
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
-#endif
-
 #include <sys/stat.h>
 #include <sys/utsname.h>
 
@@ -120,6 +107,11 @@ static int tcl_logfile STDVAR
           logs[i].f = NULL;
         }
         logs[i].flags = 0;
+        if (logs[i].szlast != NULL) {
+          nfree(logs[i].szlast);
+          logs[i].szlast = NULL;
+          logs[i].szlast_len = 0;
+        }
       } else {
         logs[i].chname = nmalloc(strlen(argv[2]) + 1);
         strcpy(logs[i].chname, argv[2]);
@@ -232,7 +224,7 @@ static int tcl_binds STDVAR
             !wild_match_per(argv[1], tc->func_name))
           continue;
         build_flags(flg, &(tc->flags), NULL);
-        egg_snprintf(hits, sizeof hits, "%i", (int) tc->hits);
+        snprintf(hits, sizeof hits, "%i", (int) tc->hits);
         list[0] = tl->name;
         list[1] = flg;
         list[2] = tm->mask;
@@ -247,7 +239,7 @@ static int tcl_binds STDVAR
   return TCL_OK;
 }
 
-int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
+int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[], tcl_timer_t *stack) {
   char *endptr;
   long val;
 
@@ -270,7 +262,7 @@ int check_timer_syntax(Tcl_Interp *irp, int argc, char *argv[]) {
         return 1;
       }
       /* Check for existing timers by same name */
-      if (find_timer(timer, argv[4])) {
+      if (find_timer(stack, argv[4])) {
         Tcl_AppendResult(irp, "timer already exists by that name", NULL);
         return 1;
       }
@@ -285,7 +277,7 @@ static int tcl_timer STDVAR
 
   BADARGS(3, 5, " minutes command ?count ?name??");
 
-  if (check_timer_syntax(irp, argc, argv)) {
+  if (check_timer_syntax(irp, argc, argv, timer)) {
     return TCL_ERROR;
   }
   x = add_timer(&timer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
@@ -304,10 +296,10 @@ static int tcl_utimer STDVAR
 
   BADARGS(3, 5, " seconds command ?count ?name??");
 
-  if (check_timer_syntax(irp, argc, argv)) {
+  if (check_timer_syntax(irp, argc, argv, utimer)) {
     return TCL_ERROR;
   }
-  x = add_timer(&utimer, atoi(argv[1]), (argc == 4 ? atoi(argv[3]) : 1),
+  x = add_timer(&utimer, atoi(argv[1]), (argc >= 4 ? atoi(argv[3]) : 1),
                   argv[2], (argc == 5 ? argv[4] : '\0'), 0L);
   if (!x) {
     Tcl_AppendResult(irp, "Too many timers (wow, impressive). Timer not added", NULL);
@@ -418,12 +410,13 @@ static int tcl_unixtime STDVAR
 static int tcl_ctime STDVAR
 {
   time_t tt;
-  char s[25];
+  char s[26];
 
   BADARGS(2, 2, " unixtime");
 
   tt = (time_t) atol(argv[1]);
-  strlcpy(s, ctime(&tt), sizeof s);
+  ctime_r(&tt, s);
+  s[24] = 0;
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -486,7 +479,7 @@ static int tcl_rand STDVAR
 
   x = randint(i);
 
-  egg_snprintf(s, sizeof s, "%lu", x);
+  snprintf(s, sizeof s, "%lu", x);
 
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -501,7 +494,7 @@ static int tcl_sendnote STDVAR
   strlcpy(from, argv[1], sizeof from);
   strlcpy(to, argv[2], sizeof to);
   strlcpy(msg, argv[3], sizeof msg);
-  egg_snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
+  snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -553,7 +546,7 @@ static int tcl_die STDVAR
   BADARGS(1, 2, " ?reason?");
 
   if (argc == 2) {
-    egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
+    snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
     strlcpy(quit_msg, argv[1], 1024);
   } else {
     strlcpy(s, "BOT SHUTDOWN (No reason)", sizeof s);
@@ -602,13 +595,13 @@ static int tcl_modules STDVAR
 
   for (current = module_list; current; current = current->next) {
     list[0] = current->name;
-    egg_snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
+    snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
     list[1] = s;
     i = 2;
     for (dep = dependancy_list; dep && (i < 100); dep = dep->next) {
       if (dep->needing == current) {
         list2[0] = dep->needed->name;
-        egg_snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
+        snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
         list2[1] = s2;
         list[i] = Tcl_Merge(2, list2);
         i++;
@@ -651,9 +644,13 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_callevent STDVAR
 {
-  BADARGS(2, 2, " event");
+  BADARGS(2, 3, " event ?arg?");
 
-  check_tcl_event(argv[1]);
+  if (argc == 2) {
+    check_tcl_event(argv[1]);
+  } else {
+    check_tcl_event_arg(argv[1], argv[2]);
+  }
   return TCL_OK;
 }
 
@@ -775,12 +772,12 @@ static int tcl_status STDVAR
 
   if ((argc < 2) || !strcmp(argv[1], "cpu")) {
     Tcl_AppendElement(irp, "cputime");
-    egg_snprintf(s, sizeof s, "%f", getcputime());
+    snprintf(s, sizeof s, "%f", getcputime());
     Tcl_AppendElement(irp, s);
   }
   if ((argc < 2) || !strcmp(argv[1], "mem")) {
     Tcl_AppendElement(irp, "expmem");
-    egg_snprintf(s, sizeof s, "%d", expected_memory());
+    snprintf(s, sizeof s, "%d", expected_memory());
     Tcl_AppendElement(irp, s);
   }
   if ((argc < 2) || !strcmp(argv[1], "ipv6")) {
@@ -794,14 +791,18 @@ static int tcl_status STDVAR
   if ((argc < 2) || !strcmp(argv[1], "tls")) {
     Tcl_AppendElement(irp, "tls");
 #ifdef TLS
+  #if OPENSSL_VERSION_NUMBER >= 0x10100000L /* 1.1.0 */
+    Tcl_AppendElement(irp, OpenSSL_version(OPENSSL_VERSION));
+  #else
     Tcl_AppendElement(irp, SSLeay_version(SSLEAY_VERSION));
+  #endif
 #else
     Tcl_AppendElement(irp, "disabled");
 #endif
   }
   if ((argc < 2) || !strcmp(argv[1], "cache")) {
     Tcl_AppendElement(irp, "usercache");
-    egg_snprintf(s, sizeof s, "%4.1f", 100.0 *
+    snprintf(s, sizeof s, "%4.1f", 100.0 *
              ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
     Tcl_AppendElement(irp, s);
   }

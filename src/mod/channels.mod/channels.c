@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,9 +28,24 @@
 #include "src/mod/module.h"
 
 static Function *global = NULL;
-
+static void get_extban_prefix(char *prefix);
+static int is_extban_mask(const char *mask);
+static int extban_is_matchable(const char *mask);
 static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
+
+/* Look up an ISUPPORT (raw 005) value via server.mod, if loaded.
+ * Returns NULL if server.mod is not loaded or the key isn't set.
+ */
+static const char *servermod_isupport_get(const char *name)
+{
+  module_entry *me = module_find("server", 0, 0);
+  if (me && me->funcs && me->funcs[SERVER_GET_ISUPPORT])
+    return ((const char *(*)(const char *, size_t)) me->funcs[SERVER_GET_ISUPPORT])(name, strlen(name));
+  return NULL;
+}
+
+static p_tcl_bind_list H_chanset;
 
 static struct udef_struct *udef;
 
@@ -53,6 +68,126 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 #include "userchan.c"
 #include "udefchan.c"
 
+/* Parse extban mask into type and arg pointers.
+ * Supports both prefixed (<prefix><type>:<arg>) and non-prefixed (<type>:<arg>) forms.
+ * Returns a 1 if mask is an extban mask, 0 otherwise
+ * If 1 is returned:
+ *   type is filled with the extban character
+ *   arg points to the extban value
+ */
+int extban_parse(const char *mask, char *type, const char **arg) {
+  const char *value, *comma;
+  char prefix = 0;
+
+  /* now we know mask is set, don't check it again later*/
+  if (!mask || !mask[0] || strlen(mask) < 3)
+    return 0;
+
+  value = servermod_isupport_get("EXTBAN");
+  if (value && value[0]) {
+    comma = strchr(value, ',');
+    if (comma && comma - value == 1)
+      prefix = value[0];
+  }
+
+  /* Break out prefixed masks first when the server advertised a prefix. */
+  if (prefix && mask[0] == prefix && isalnum((unsigned char) mask[1]) &&
+      mask[2] == ':') {
+    if (type) {
+      *type = mask[1];
+    }
+    if (arg) {
+      *arg = mask + 3;
+    }
+    return 1;
+  }
+
+  /* Break out no-prefix mask. If EXTBAN is known and did not advertise a
+   * prefix, this is the only accepted form.
+   */
+  if (isalnum((unsigned char) mask[0]) && mask[1] == ':') {
+    if (type) {
+      *type = mask[0];
+    }
+    if (arg) {
+      *arg = mask + 2;
+    }
+    return 1;
+  }
+
+/* If EXTBAN is unknown (e.g. before connect), retain the historical fallback
+ * so stored prefixed extbans can still be parsediwth any non-alnum prefixchar.
+ */
+  if ((!value || !value[0]) && !isalnum((unsigned char) mask[0]) &&
+      isalnum((unsigned char) mask[1]) && mask[2] == ':') {
+    if (type)
+      *type = mask[1];
+    if (arg)
+      *arg = mask + 3; /* ~a:x!y@z -- mask+3 = x */
+    return 1;
+  }
+  return 0;
+}
+
+/* Return 1 if the server currently advertises support for the given extban
+ * flag, either through ACCOUNTEXTBAN or the EXTBAN type list; otherwise return
+ * 0 so callers can avoid trying to set or recheck it on this server.
+ */
+int extban_flag_supported(char flag)
+{
+  const char *accountflag, *value, *comma, *types;
+
+  accountflag = servermod_isupport_get("ACCOUNTEXTBAN");
+  if (accountflag && accountflag[0] && flag == accountflag[0])
+    return 1;
+
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0])
+    return 0;
+
+  comma = strchr(value, ',');
+  types = comma ? comma + 1 : value;
+  return strchr(types, flag) ? 1 : 0;
+}
+
+/* Return 1 if mask uses extban syntax. */
+static int is_extban_mask(const char *mask)
+{
+  return extban_parse(mask, NULL, NULL);
+}
+
+/* Extban prefix from ISUPPORT EXTBAN, if present.
+ * EXTBAN grammar is [prefix],<types>
+ */
+static void get_extban_prefix(char *prefix)
+{
+  const char *value, *comma;
+
+  /* Clear out old value */
+  if (prefix) {
+    *prefix = '\0';
+  }
+  value = servermod_isupport_get("EXTBAN");
+  if (!value || !value[0]) {
+    //TO DO: log issue to partyline
+    return;
+  }
+  comma = strchr(value, ',');
+  if (comma) {
+    if (comma == value) {
+      // No prefix
+      return;
+    }
+    if ((comma - value) == 1) {
+      if (prefix)
+        *prefix = value[0];
+      // Prefix
+      return;
+    }
+  }
+  // What do we do if no , present?
+  return;
+}
 
 static void *channel_malloc(int size, char *file, int line)
 {
@@ -241,6 +376,27 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
   }
 }
 
+static int builtin_chanset STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(3, 3, " chan setting value");
+
+  CHECKVALIDITY(builtin_chanset);
+  F(argv[1], argv[2], argv[3]);
+  return TCL_OK;
+}
+
+int check_tcl_chanset(const char *chan, const char *setting, const char *value)
+{
+  Tcl_SetVar(interp, "_chanset1", (char *) chan, 0);
+  Tcl_SetVar(interp, "_chanset2", (char *) setting, 0);
+  Tcl_SetVar(interp, "_chanset3", (char *) value, 0);
+
+  return BIND_EXEC_LOG == check_tcl_bind(H_chanset, setting, 0, " $_chanset1 $_chanset2 $_chanset3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_STACKRET | BIND_WANTRET);
+}
+
 /* Returns true if this is one of the channel masks
  */
 static int ismodeline(masklist *m, char *user)
@@ -385,14 +541,14 @@ static char *convert_element(char *src, char *dst)
 static void write_channels()
 {
   FILE *f;
-  char s[sizeof chanfile + 4], w[1024], w2[1024], name[163];
+  char s[sizeof chanfile + 4], s1[26], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
 
   if (!chanfile[0])
     return;
-  egg_snprintf(s, sizeof s, "%s~new", chanfile);
+  snprintf(s, sizeof s, "%s~new", chanfile);
   f = fopen(s, "w");
   chmod(s, userfile_perm);
   if (f == NULL) {
@@ -400,9 +556,10 @@ static void write_channels()
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file...");
-  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
-          botnetnick, ver, ctime(&now));
+    putlog(LOG_MISC, "*", "%s", CHAN_FILE_WRITING);
+  ctime_r(&now, s1);
+  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s",
+          botnetnick, ver, s1);
   for (chan = chanset; chan; chan = chan->next) {
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);
@@ -532,7 +689,7 @@ static void backup_chanfile()
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", "Backing up channel file...");
-  egg_snprintf(s, sizeof s, "%s~bak", chanfile);
+  snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }
 
@@ -592,7 +749,7 @@ static void channels_report(int idx, int details)
 
       if (s2[0]) {
         int len = strlen(s);
-        egg_snprintf(s + len, (sizeof s) - len, ", enforcing \"%s\"", s2); /* Concatenation */
+        snprintf(s + len, (sizeof s) - len, ", enforcing \"%s\"", s2); /* Concatenation */
       }
 
       s2[0] = 0;
@@ -607,74 +764,47 @@ static void channels_report(int idx, int details)
       if (s2[0]) {
         int len = strlen(s);
         s2[strlen(s2) - 2] = 0;
-        egg_snprintf(s + len, (sizeof s) - len, " (%s)", s2); /* Concatenation */
+        snprintf(s + len, (sizeof s) - len, " (%s)", s2); /* Concatenation */
       }
 
       /* If it's a !chan, we want to display it's unique name too <cybah> */
       if (chan->dname[0] == '!') {
         int len = strlen(s);
-        egg_snprintf(s + len, (sizeof s) - len, ", unique name %s", chan->name); /* Concatenation */
+        snprintf(s + len, (sizeof s) - len, ", unique name %s", chan->name); /* Concatenation */
       }
     }
 
     dprintf(idx, "%s\n", s);
 
     if (details) {
-      s[0] = 0;
-      i = 0;
-
-      if (channel_enforcebans(chan))
-        i += my_strcpy(s + i, "enforcebans ");
-      if (channel_dynamicbans(chan))
-        i += my_strcpy(s + i, "dynamicbans ");
-      if (!channel_nouserbans(chan))
-        i += my_strcpy(s + i, "userbans ");
-      if (channel_autoop(chan))
-        i += my_strcpy(s + i, "autoop ");
-      if (channel_bitch(chan))
-        i += my_strcpy(s + i, "bitch ");
-      if (channel_greet(chan))
-        i += my_strcpy(s + i, "greet ");
-      if (channel_protectops(chan))
-        i += my_strcpy(s + i, "protectops ");
-      if (channel_protecthalfops(chan))
-        i += my_strcpy(s + i, "protecthalfops ");
-      if (channel_protectfriends(chan))
-        i += my_strcpy(s + i, "protectfriends ");
-      if (channel_dontkickops(chan))
-        i += my_strcpy(s + i, "dontkickops ");
-      if (channel_logstatus(chan))
-        i += my_strcpy(s + i, "statuslog ");
-      if (channel_revenge(chan))
-        i += my_strcpy(s + i, "revenge ");
-      if (channel_revenge(chan))
-        i += my_strcpy(s + i, "revengebot ");
-      if (channel_secret(chan))
-        i += my_strcpy(s + i, "secret ");
-      if (channel_shared(chan))
-        i += my_strcpy(s + i, "shared ");
-      if (!channel_static(chan))
-        i += my_strcpy(s + i, "dynamic ");
-      if (channel_autovoice(chan))
-        i += my_strcpy(s + i, "autovoice ");
-      if (channel_autohalfop(chan))
-        i += my_strcpy(s + i, "autohalfop ");
-      if (channel_cycle(chan))
-        i += my_strcpy(s + i, "cycle ");
-      if (channel_seen(chan))
-        i += my_strcpy(s + i, "seen ");
-      if (channel_dynamicexempts(chan))
-        i += my_strcpy(s + i, "dynamicexempts ");
-      if (!channel_nouserexempts(chan))
-        i += my_strcpy(s + i, "userexempts ");
-      if (channel_dynamicinvites(chan))
-        i += my_strcpy(s + i, "dynamicinvites ");
-      if (!channel_nouserinvites(chan))
-        i += my_strcpy(s + i, "userinvites ");
-      if (channel_inactive(chan))
-        i += my_strcpy(s + i, "inactive ");
-      if (channel_nodesynch(chan))
-        my_strcpy(s + i, "nodesynch ");
+      if ((i = snprintf(s, sizeof s, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+                        channel_enforcebans(chan) ? "enforcebans " : "",
+                        channel_dynamicbans(chan) ? "dynamicbans " : "",
+                        !channel_nouserbans(chan) ? "userbans " : "",
+                        channel_autoop(chan) ? "autoop " : "",
+                        channel_bitch(chan) ? "bitch " : "",
+                        channel_greet(chan) ? "greet " : "",
+                        channel_protectops(chan) ? "protectops " : "",
+                        channel_protecthalfops(chan) ? "protecthalfops " : "",
+                        channel_protectfriends(chan) ? "protectfriends " : "",
+                        channel_dontkickops(chan) ? "dontkickops " : "",
+                        channel_logstatus(chan) ? "statuslog " : "",
+                        channel_revenge(chan) ? "revenge " : "",
+                        channel_revengebot(chan) ? "revengebot " : "",
+                        channel_secret(chan) ? "secret " : "",
+                        channel_shared(chan) ? "shared " : "",
+                        !channel_static(chan) ? "dynamic " : "",
+                        channel_autovoice(chan) ? "autovoice " : "",
+                        channel_autohalfop(chan) ? "autohalfop " : "",
+                        channel_cycle(chan) ? "cycle " : "",
+                        channel_seen(chan) ? "seen " : "",
+                        channel_dynamicexempts(chan) ? "dynamicexempts " : "",
+                        !channel_nouserexempts(chan) ? "userexempts " : "",
+                        channel_dynamicinvites(chan) ? "dynamicinvites " : "",
+                        !channel_nouserinvites(chan) ? "userinvites " : "",
+                        channel_inactive(chan) ? "inactive " : "",
+                        channel_nodesynch(chan) ? "nodesynch " : "")))
+        s[i - 2] = 0;
 
       dprintf(idx, "      Options: %s\n", s);
 
@@ -764,7 +894,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
                                 EGG_CONST char *name1,
                                 EGG_CONST char *name2, int flags)
 {
-  int i, items;
+  Tcl_Size i, items;
   char *t, *s;
   EGG_CONST char **item, *s2;
 
@@ -804,8 +934,45 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
+static char *traced_account_extban(ClientData cdata, Tcl_Interp *irp,
+                                   EGG_CONST char *name1,
+                                   EGG_CONST char *name2, int flags)
+{
+  const char *account_extban = servermod_isupport_get("ACCOUNTEXTBAN");
+
+  Tcl_SetVar2(interp, name1, name2,
+              (account_extban && account_extban[0]) ? account_extban : "",
+              TCL_GLOBAL_ONLY);
+  if (flags & TCL_TRACE_UNSETS) {
+    Tcl_TraceVar(interp, "account-extban",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_account_extban, NULL);
+  }
+  return NULL;
+}
+
+static char *traced_extban_flags(ClientData cdata, Tcl_Interp *irp,
+                                  EGG_CONST char *name1,
+                                  EGG_CONST char *name2, int flags)
+{
+  const char *extban = servermod_isupport_get("EXTBAN");
+  const char *comma, *extban_flags = "";
+
+  if (extban && extban[0]) {
+    comma = strchr(extban, ',');
+    extban_flags = comma ? comma + 1 : extban;
+  }
+
+  Tcl_SetVar2(interp, name1, name2, extban_flags, TCL_GLOBAL_ONLY);
+  if (flags & TCL_TRACE_UNSETS) {
+    Tcl_TraceVar(interp, "extban-flags",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_extban_flags, NULL);
+  }
+  return NULL;
+}
+
 static tcl_ints my_tcl_ints[] = {
-  {"share-greet",              NULL,                     0},
   {"use-info",                 &use_info,                0},
   {"quiet-save",               &quiet_save,              0},
   {"allow-ps",                 &allow_ps,                0},
@@ -883,6 +1050,14 @@ static char *channels_close()
   Tcl_UntraceVar(interp, "default-chanset",
                  TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                  traced_globchanset, NULL);
+  Tcl_UntraceVar(interp, "account-extban",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_account_extban, NULL);
+  Tcl_UntraceVar(interp, "extban-flags",
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 traced_extban_flags, NULL);
+  traced_account_extban(NULL, interp, "account-extban", NULL, TCL_TRACE_READS);
+  traced_extban_flags(NULL, interp, "extban-flags", NULL, TCL_TRACE_READS);
   rem_help_reference("channels.help");
   rem_help_reference("chaninfo.help");
   module_undepend(MODULE_NAME);
@@ -954,6 +1129,8 @@ static Function channels_table[] = {
   (Function) & global_exempt_time,
   /* 48 - 51 */
   (Function) & global_invite_time,
+  (Function) extban_parse,
+  (Function) extban_flag_supported
 };
 
 char *channels_start(Function *global_funcs)
@@ -1034,13 +1211,20 @@ char *channels_start(Function *global_funcs)
   Tcl_TraceVar(interp, "default-chanset",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_globchanset, NULL);
+  Tcl_TraceVar(interp, "account-extban",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_account_extban, NULL);
+  Tcl_TraceVar(interp, "extban-flags",
+               TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+               traced_extban_flags, NULL);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
+  H_chanset = add_bind_table("chanset", HT_STACKABLE, builtin_chanset);
   add_builtins(H_chon, my_chon);
   add_builtins(H_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");
   add_help_reference("chaninfo.help");
-  my_tcl_ints[0].val = &share_greet;
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
   read_channels(0, 0);

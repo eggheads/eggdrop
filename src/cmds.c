@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,7 +68,7 @@ static int add_bot_hostmask(int idx, char *nick)
         char s[UHOSTLEN+NICKLEN+5];
         struct userrec *u;
 
-        egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+        snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
         u = get_user_by_host(s);
         if (u) {
           dprintf(idx, "(Can't add hostmask for %s because it matches %s)\n",
@@ -76,9 +76,9 @@ static int add_bot_hostmask(int idx, char *nick)
           return 0;
         }
         if (strchr("~^+=-", m->userhost[0]))
-          egg_snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
+          snprintf(s, sizeof s, "*!?%s", m->userhost + 1);
         else
-          egg_snprintf(s, sizeof s, "*!%s", m->userhost);
+          snprintf(s, sizeof s, "*!%s", m->userhost);
         dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
         addhost_by_handle(nick, s);
         return 1;
@@ -122,13 +122,13 @@ static void tell_who(struct userrec *u, int idx, int chan)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel == chan) {
         if (atr & USER_OWNER) {
-          egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s",
+          snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s",
                        nicklen);
           sprintf(s, format, dcc[i].sock,
                   (geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick,
                   dcc[i].host);
         } else {
-          egg_snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
+          snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
           sprintf(s, format,
                   (geticon(i) == '-' ? ' ' : geticon(i)),
                   dcc[i].nick, dcc[i].host);
@@ -163,14 +163,14 @@ static void tell_who(struct userrec *u, int idx, int chan)
       }
       strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
       if (atr & USER_OWNER) {
-        egg_snprintf(format, sizeof format,
+        snprintf(format, sizeof format,
                      "  [%%.2lu]  %%s%%c%%-%us (%%s) %%s\n", nicklen);
         dprintf(idx, format, dcc[i].sock,
                 dcc[i].status & STAT_CALLED ? "<-" : "->",
                 dcc[i].status & STAT_SHARE ? '+' : ' ', dcc[i].nick, s,
                 dcc[i].u.bot->version);
       } else {
-        egg_snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n",
+        snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n",
                      nicklen);
         dprintf(idx, format, dcc[i].status & STAT_CALLED ? "<-" : "->",
                 dcc[i].status & STAT_SHARE ? '+' : ' ', dcc[i].nick, s,
@@ -185,11 +185,11 @@ static void tell_who(struct userrec *u, int idx, int chan)
         dprintf(idx, "Other people on the bot:\n");
       }
       if (atr & USER_OWNER) {
-        egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
+        snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
         sprintf(s, format, dcc[i].sock,
                 (geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       } else {
-        egg_snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
+        snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
         sprintf(s, format, (geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       }
       if (atr & USER_MASTER) {
@@ -224,13 +224,13 @@ static void tell_who(struct userrec *u, int idx, int chan)
         dprintf(idx, "Other people on the bot:\n");
       }
       if (atr & USER_OWNER) {
-        egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s",
+        snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s",
                      nicklen);
         sprintf(s, format,
                 dcc[i].sock, dcc[i].status & STAT_CHAT ? '+' : ' ',
                 dcc[i].nick, dcc[i].host);
       } else {
-        egg_snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
+        snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
         sprintf(s, format,
                 dcc[i].status & STAT_CHAT ? '+' : ' ',
                 dcc[i].nick, dcc[i].host);
@@ -1377,14 +1377,14 @@ void cmd_die(struct userrec *u, int idx, char *par)
 
   putlog(LOG_CMDS, "*", "#%s# die %s", dcc[idx].nick, par);
   if (par[0]) {
-    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
-    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick,
+    snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
+    snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick,
                  dcc[idx].host, par);
     strlcpy(quit_msg, par, 1024);
   } else {
-    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
+    snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
                  dcc[idx].nick);
-    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick,
+    snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick,
                  dcc[idx].host);
     strlcpy(quit_msg, dcc[idx].nick, 1024);
   }
@@ -1907,11 +1907,11 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
   }
   if ( !type && !glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
-    dprintf(idx, "You cannot add %s matching another user!\n",
-            type ? "an account" : "a host");
+    dprintf(idx, "You cannot add a host matching another user!\n");
     return 1;
   }
   if (type) {
+    // host-variable contains account
     u2 = get_user_by_account(host);
     if (u2) {
       dprintf(idx, "That account already exists for user %s\n", u2->handle);
@@ -1919,6 +1919,7 @@ static int add_to_handle(struct userrec *u, int idx, char *handle, char *host, i
     }
     addaccount_by_handle(handle, host);
   } else {
+    // host
     for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next) {
       if (!strcasecmp(q->extra, host)) {
         dprintf(idx, "That %s is already there.\n",
@@ -2576,7 +2577,7 @@ int stripmodes(char *s)
   return res;
 }
 
-char *stripmasktype(int x)
+const char *stripmasktype(int x)
 {
   static char s[20];
   char *p = s;
@@ -2605,30 +2606,21 @@ char *stripmasktype(int x)
 
 static char *stripmaskname(int x)
 {
-  static char s[161];
-  int i = 0;
+  static char s[128];
+  int i;
 
-  s[i] = 0;
-  if (x & STRIP_COLOR)
-    i += my_strcpy(s + i, "color, ");
-  if (x & STRIP_BOLD)
-    i += my_strcpy(s + i, "bold, ");
-  if (x & STRIP_REVERSE)
-    i += my_strcpy(s + i, "reverse, ");
-  if (x & STRIP_UNDERLINE)
-    i += my_strcpy(s + i, "underline, ");
-  if (x & STRIP_ANSI)
-    i += my_strcpy(s + i, "ansi, ");
-  if (x & STRIP_BELLS)
-    i += my_strcpy(s + i, "bells, ");
-  if (x & STRIP_ORDINARY)
-    i += my_strcpy(s + i, "ordinary, ");
-  if (x & STRIP_ITALICS)
-    i += my_strcpy(s + i, "italics, ");
-  if (!i)
-    strcpy(s, "none");
-  else
+  if ((i = snprintf(s, sizeof s, "%s%s%s%s%s%s%s%s",
+                    (x & STRIP_COLOR) ? "color, " : "",
+                    (x & STRIP_BOLD) ? "bold, " : "",
+                    (x & STRIP_REVERSE) ? "reverse, " : "",
+                    (x & STRIP_UNDERLINE) ? "underline, " : "",
+                    (x & STRIP_ANSI) ? "ansi, " : "",
+                    (x & STRIP_BELLS) ? "bells, " : "",
+                    (x & STRIP_ORDINARY) ? "ordinary, " : "",
+                    (x & STRIP_ITALICS) ? "italics, " : "")))
     s[i - 2] = 0;
+  else
+    strcpy(s, "none");
   return s;
 }
 
@@ -2701,6 +2693,8 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
   /* Set highlight flag here so user is able to control stripping of
    * bold also as intended -- dw 27/12/1999
    */
+  if (!u) /* dunno why, but this really happens -- mortmann */
+    return; /* make eggdrop crash-proof again */
   if (dcc[dest].u.chat->strip_flags & STRIP_BOLD && u->flags & USER_HIGHLITE) {
     u->flags &= ~USER_HIGHLITE;
   } else if (!(dcc[dest].u.chat->strip_flags & STRIP_BOLD) &&
@@ -2761,9 +2755,13 @@ static void cmd_su(struct userrec *u, int idx, char *par)
         dcc[idx].user = u;
         strcpy(dcc[idx].nick, par);
         /* Display password prompt and turn off echo (send IAC WILL ECHO). */
-        dprintf(idx, "Enter password for %s%s\n", par,
-                (dcc[idx].status & STAT_TELNET) ? TLN_IAC_C TLN_WILL_C
-                TLN_ECHO_C : "");
+        if (dcc[idx].status & STAT_TELNET) {
+          char buf[512];
+          snprintf(buf, sizeof buf, "Enter password for %s" TLN_IAC_C TLN_WILL_C
+                   TLN_ECHO_C "\r\n", par);
+          tputs(dcc[idx].sock, buf, strlen(buf));
+        } else
+          dprintf(idx, "Enter password for %s\n", par);
         dcc[idx].type = &DCC_CHAT_PASS;
       } else if (atr & USER_OWNER) {
         if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
@@ -2843,16 +2841,25 @@ static void cmd_page(struct userrec *u, int idx, char *par)
  */
 static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
+  struct rusage ru1, ru2;
+  int r = 0;
   int code;
   char *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
-  debug1("tcl: evaluate (.tcl): %s", msg);
+  debug1("tcl: evaluating .tcl %s", msg);
+  r = getrusage(RUSAGE_SELF, &ru1);
   code = Tcl_GlobalEval(interp, msg);
+  if (!r && !getrusage(RUSAGE_SELF, &ru2))
+    debug3("tcl: evaluated .tcl %s, user %.3fms sys %.3fms", msg,
+           (double) (ru2.ru_utime.tv_usec - ru1.ru_utime.tv_usec) / 1000 +
+           (double) (ru2.ru_utime.tv_sec  - ru1.ru_utime.tv_sec ) * 1000,
+           (double) (ru2.ru_stime.tv_usec - ru1.ru_stime.tv_usec) / 1000 +
+           (double) (ru2.ru_stime.tv_sec  - ru1.ru_stime.tv_sec ) * 1000);
 
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);
@@ -2875,7 +2882,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   char s[512], *result;
   Tcl_DString dstr;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2915,7 +2922,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
 {
   const char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2937,7 +2944,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 {
   char *p;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick) && must_be_owner) {
     dprintf(idx, "%s", MISC_NOSUCHCMD);
     return;
   }
@@ -2996,14 +3003,14 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
         p_expire = p + 1;
       }
     }
-    /* For whomever is stuck with maintaining this in 2033- this will
+    /* For whomever is stuck with maintaining this in 2033 - this will
      * break. Hopefully we've dealt with the max unixtime issue by now
      * (Year 2038 problem), but if you're reading this, clearly we
      * haven't because we are lazy. Sorry.
      */
     if (expire_time > (60 * 60 * 24 * 365 * 5)) {
-      dprintf(idx, "expire time must be equal to or less than 5 years" 
-          "(1825 days)\n");
+      dprintf(idx, "expire time must be equal to or less than 5 years "
+              "(1825 days)\n");
       return;
     }
   }
@@ -3326,7 +3333,7 @@ cmd_t C_dcc[] = {
   {"+host",     "t|m",  (IntFunc) cmd_pls_host,   NULL},
   {"+ignore",   "m",    (IntFunc) cmd_pls_ignore, NULL},
   {"+user",     "m",    (IntFunc) cmd_pls_user,   NULL},
-  {"-account",  "t|m",  (IntFunc) cmd_mns_account,NULL},
+  {"-account",  "",     (IntFunc) cmd_mns_account,NULL},
   {"-bot",      "t",    (IntFunc) cmd_mns_user,   NULL},
   {"-host",     "",     (IntFunc) cmd_mns_host,   NULL},
   {"-ignore",   "m",    (IntFunc) cmd_mns_ignore, NULL},

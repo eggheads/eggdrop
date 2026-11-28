@@ -2,7 +2,7 @@
  * transfer.c -- part of transfer.mod
  *
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -190,9 +190,9 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
   Tcl_SetVar(interp, "_sr1", hand, 0);
   Tcl_SetVar(interp, "_sr2", nick, 0);
   Tcl_SetVar(interp, "_sr3", path, 0);
-  egg_snprintf(s, sizeof s, "%lu", acked);
+  snprintf(s, sizeof s, "%lu", acked);
   Tcl_SetVar(interp, "_sr4", s, 0);
-  egg_snprintf(s, sizeof s, "%lu", length);
+  snprintf(s, sizeof s, "%lu", length);
   Tcl_SetVar(interp, "_sr5", s, 0);
   check_tcl_bind(h, hand, &fr, " $_sr1 $_sr2 $_sr3 $_sr4 $_sr5",
                  MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
@@ -291,19 +291,19 @@ static void eof_dcc_send(int idx)
                   + strlen(dcc[idx].u.xfer->origname) + 1);
     sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname);
 
-    if (copy_to_tmp && (l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
+    if ((l = fcopyfile(dcc[idx].u.xfer->f, nfn))) {
       putlog(LOG_MISC | LOG_FILES, "*", TRANSFER_FAILED_MOVE, nfn);
     }
     /* Only close now in case it was a tmpfile, as it's deleted upon close */
     fclose(dcc[idx].u.xfer->f);
 
     /* lookup handle */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     hand = u ? u->handle : "*";
 
-    /* Add to file database if not tmpfile or if copyfile succeeded */
-    if (!copy_to_tmp || !l) {
+    /* Add to file database if copyfile succeeded */
+    if (!l) {
       module_entry *fs = module_find("filesys", 0, 0);
 
       if (fs != NULL) {
@@ -358,7 +358,7 @@ static void eof_dcc_send(int idx)
       if (shunlink) {
         /* Drop that bot */
         dprintf(y, "bye\n");
-        egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+        snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
         botnet_send_unlinked(y, dcc[y].nick, s);
         putlog(LOG_BOTS, "*", "%s.", s);
         if (y != idx) {
@@ -436,7 +436,10 @@ static void dcc_get(int idx, char *buf, int len)
    * This is either a 4 bit ack or the 8 bit reget packet.
    */
   if (w < 4 || (w < 8 && dcc[idx].u.xfer->type == XFER_RESEND_PEND)) {
-    memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
+    char *dst = dcc[idx].u.xfer->type == XFER_RESEND_PEND ?
+                dcc[idx].u.xfer->reget_buf : dcc[idx].u.xfer->buf;
+
+    memcpy(&dst[dcc[idx].u.xfer->sofar], buf, len);
     dcc[idx].u.xfer->sofar += len;
     return;
     /* Waiting for the 8 bit reget packet? */
@@ -445,8 +448,8 @@ static void dcc_get(int idx, char *buf, int len)
     if (w == 8) {
       transfer_reget reget_data;
 
-      memcpy(&reget_data, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
-      memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
+      memcpy(&reget_data, dcc[idx].u.xfer->reget_buf, dcc[idx].u.xfer->sofar);
+      memcpy((char *) &reget_data + dcc[idx].u.xfer->sofar, buf, len);
       handle_resend_packet(idx, &reget_data);
       cmp = dcc[idx].u.xfer->offset;
     } else
@@ -581,7 +584,7 @@ static void eof_dcc_get(int idx)
       if (shunlink) {
         /* Drop that bot */
         dprintf(-dcc[y].sock, "bye\n");
-        egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
+        snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON, dcc[y].nick);
         botnet_send_unlinked(y, dcc[y].nick, s);
         putlog(LOG_BOTS, "*", "%s.", s);
         if (y != idx) {
@@ -599,7 +602,7 @@ static void eof_dcc_get(int idx)
 
     /* Call `lost' DCC trigger now.
      */
-    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
                        dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length, H_lost);
@@ -651,7 +654,7 @@ static void transfer_get_timeout(int i)
     if (y) {
       if (shunlink) {
         dprintf(y, "bye\n");
-        egg_snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
+        snprintf(xx, sizeof xx, TRANSFER_DICONNECT_TIMEOUT, dcc[y].nick);
         botnet_send_unlinked(y, dcc[y].nick, xx);
         putlog(LOG_BOTS, "*", "%s.", xx);
         if (y != i) {
@@ -674,7 +677,7 @@ static void transfer_get_timeout(int i)
 
     /* Call DCC `timeout' trigger now.
      */
-    egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
+    snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
     u = get_user_by_host(xx);
     check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir,
                        dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
@@ -961,8 +964,10 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 
   zz = -1;
   f = fopen(filename, "r");
-  if (!f)
+  if (!f) {
+    debug2("transfer: raw_dcc_resend_send(): fopen(%s): error: %s", filename, strerror(errno));
     return DCCSEND_BADFN;
+  }
   fseeko(f, 0, SEEK_END);
   dccfilesize = ftello(f);
   fclose(f);
@@ -988,19 +993,15 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   else
     nfn++;
 
-  if (copy_to_tmp) {
-    f = tmpfile();
-    if (!f)
-      return DCCSEND_BADFN;
-    if (copyfilef(filename, f)) {
-      fclose(f);
-      return DCCSEND_FCOPY;
-    }
-  } else
-    f = fopen(filename, "r");
-
-  if (!f)
+  f = tmpfile();
+  if (!f) {
+    debug1("transfer: raw_dcc_resend_send(): tmpfile(): error: %s", strerror(errno));
     return DCCSEND_BADFN;
+  }
+  if (copyfilef(filename, f)) {
+    fclose(f);
+    return DCCSEND_FCOPY;
+  }
 
   if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1) {
     fclose(f);

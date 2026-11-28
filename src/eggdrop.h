@@ -6,7 +6,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +60,7 @@
 #define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
 #define DIRMAX      512           /* paranoia                            */
 #define LOGLINEMAX  9000          /* for misc.c/putlog() <cybah>         */
+#define READMAX     16384         /* for read() and SSL_read()           */
 
 /* Invalid characters */
 #define BADHANDCHARS "-,+*=:!.@#;$%&"
@@ -88,20 +89,13 @@
 #define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
 #define PASSWORDLEN PASSWORDMAX + 1
 
-
-/* We have to generate compiler errors in a weird way since not all compilers
- * support the #error preprocessor directive. */
-#ifndef STDC_HEADERS
-#  include "Error: Your system must have standard ANSI C headers."
-#endif
-
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
 
 /* This allows us to make things a lot less messy in modules.c. */
 #ifndef STATIC
-#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_RLD) && !defined(MOD_USE_LOADER))
+#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_LOADER))
 #    include "Error: You can't compile with module support on this system (try make static)."
 #  else
 #    ifdef MOD_USE_DL
@@ -110,7 +104,6 @@
 #      endif
 #      undef MOD_USE_SHL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_SHL
@@ -119,7 +112,6 @@
 #      endif
 #      undef MOD_USE_DL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_DYLD
@@ -128,16 +120,6 @@
 #      endif
 #      undef MOD_USE_DL
 #      undef MOD_USE_SHL
-#      undef MOD_USE_RLD
-#      undef MOD_USE_LOADER
-#    endif
-#    ifdef MOD_USE_RLD
-#      ifndef HAVE_RLD_LOAD
-#        include "Error: We have detected that rld_load() should be used to load modules on this OS; but it was not found. Please use 'make static'."
-#      endif
-#      undef MOD_USE_DL
-#      undef MOD_USE_SHL
-#      undef MOD_USE_DYLD
 #      undef MOD_USE_LOADER
 #    endif
 #    ifdef MOD_USE_LOADER
@@ -147,7 +129,6 @@
 #      undef MOD_USE_DL
 #      undef MOD_USE_SHL
 #      undef MOD_USE_DYLD
-#      undef MOD_USE_RLD
 #    endif
 #  endif
 #endif
@@ -189,21 +170,13 @@
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
-#endif
-
+#include <sys/time.h> /* gettimeofday() POSIX 2001 */
+#include <time.h> /* POSIX 2001 */
+#include <sys/resource.h> /* getrusage() setrlimit() after time.h because of BSD */
 
 /* Yikes...who would have thought finding a usable random() would be so much
  * trouble?
- * Note: random(), rand(), and lrand48() are *not* thread safe.
+ * Note: random() is *not* thread safe.
  *
  * QNX doesn't include random() and srandom() in libc.so, only in libc.a
  * So we can only use these functions in static builds on QNX.
@@ -213,49 +186,15 @@
 #  undef HAVE_SRANDOM
 #endif
 
-#ifdef HAVE_RANDOM
-  /* On systems with random(), RANDOM_MAX may or may not be defined.
-   *
-   * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
-   * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
-   * assumes random() uses a 32 bit long int type per the standards.
-   */
-#  ifndef RANDOM_MAX
-#    define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
-#  endif
-#else                              /* !HAVE_RANDOM */
-   /* This shouldn't exist in this case, but just to be safe... */
-#  ifdef RANDOM_MAX
-#    undef RANDOM_MAX
-#  endif
-  /* If we don't have random() it's safe to assume we also don't have
-   * srandom(), and we need both.
-   */
-#  ifdef HAVE_RAND
-#    define random() rand()
-#    define srandom(x) srand(x)
-    /* Depending on the system int size, RAND_MAX can be either 0x7FFFFFFF
-     * (2^31-1), or 2147483647 for a 32 bit int, or 0x7FFF (2^15-1), or
-     * 32767 for a 16 bit int. The standards only state that RAND_MAX must
-     * be _at least_ 32767 but some systems with 16 bit int define it as
-     * 32767. See: SVr4, 4.3BSD, C89, C99, POSIX.1-2001.
-     */
-#    define RANDOM_MAX RAND_MAX    /* rand() -- 2^31-1 or 2^15-1 */
-#  else                            /* !HAVE_RAND */
-#    ifdef  HAVE_LRAND48
-#      define random() lrand48()
-#      define srandom(x) srand48(x)
-      /* For lrand48() we define RANDOM_MAX as 0x7FFFFFFF (2^31-1), or
-       * 2147483647 since this is what the SVr4 and POSIX.1-2001 standards
-       * call for. Note: SVID 3 declares these functions as obsolete and
-       * states rand() should be used instead.
-       */
-#      define RANDOM_MAX 0x7FFFFFFF /* lrand48() -- 2^31-1 */
-#    else                          /* !HAVE_LRAND48 */
-#      include "Error: Must define one of HAVE_RANDOM, HAVE_RAND, or HAVE_LRAND48"
-#    endif                         /* HAVE_LRAND48 */
-#  endif                           /* HAVE_RAND */
-#endif                             /* HAVE_RANDOM */
+/* On systems with random(), RANDOM_MAX may or may not be defined.
+ *
+ * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
+ * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
+ * assumes random() uses a 32 bit long int type per the standards.
+ */
+#ifndef RANDOM_MAX
+#  define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
+#endif
 
 
 /* Use high-order bits for getting the random integer. With a modern
@@ -277,14 +216,6 @@
 #define nmalloc(x)    n_malloc((x),__FILE__,__LINE__)
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x)      n_free((x),__FILE__,__LINE__)
-
-#ifdef DEBUG_CONTEXT
-#  define Context           eggContext(__FILE__, __LINE__, NULL)
-#  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#else
-#  define Context           do {} while (0)
-#  define ContextNote(note) do {} while (0)
-#endif
 
 #ifdef DEBUG_ASSERT
 #  define Assert(expr) do {                                             \
@@ -322,11 +253,14 @@ typedef uint32_t IP;
 
 /* The following functions are for backward compatibility only */
 #define egg_bzero(dest, len) memset(dest, 0, len)
+#define egg_inet_aton(src, dst) inet_pton(AF_INET, src, dst)
 #define egg_memcpy memcpy
 #define egg_memset memset
+#define egg_snprintf snprintf
 #define egg_strcasecmp strcasecmp
 #define egg_strftime strftime
 #define egg_strncasecmp strncasecmp
+#define egg_vsnprintf vsnprintf
 #define my_memcpy memcpy
 
 /***********************************************************************/
@@ -343,7 +277,17 @@ typedef int (*IntFunc) ();
 #endif
 
 #include <sys/socket.h>
-#include <netinet/in.h>
+
+#include <netinet/in.h> /* before resolv.h */
+#undef answer /* before resolv.h because it could collide with src/mod/module.h
+               * (dietlibc) */
+#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
+#ifndef HAVE_BASE64
+#  undef b64_ntop
+#  undef b64_pton
+#endif
+
+#include <arpa/inet.h>
 
 typedef struct {
   int family;
@@ -407,6 +351,7 @@ struct dcc_t {
     struct dns_info *dns;
     struct dupwait_info *dupwait;
     int ident_sock;
+    int webui_listen_idx;
     void *other;
   } u;                          /* Special use depending on type        */
 };
@@ -448,6 +393,8 @@ struct xfer_info {
   unsigned long block_pending;  /* bytes of this DCC block which weren't
                                  * sent yet.                               */
   time_t start_time;            /* Time when a xfer was started.           */
+  char reget_buf[8];            /* 8-byte reget packet; at the end of the
+                                 * struct to keep module compatibility     */
 };
 
 enum {                          /* transfer connection handling a ...   */
@@ -501,7 +448,9 @@ struct dns_info {
   char *cbuf;                   /* temporary buffer. Memory will be free'd
                                  * as soon as dns_info is free'd           */
   char *cptr;                   /* temporary pointer                       */
-  sockname_t *ip;               /* pointer to sockname with ipv4/6 address */
+  /* sockname with ipv4/6 address is dcc[i].sockname. we must not link that
+   * pointer here, because dcc array can be realloced
+   */
   int ibuf;                     /* temporary buffer for one integer        */
   char dns_type;                /* lookup type, e.g. RES_HOSTBYIP          */
   struct dcc_table *type;       /* type of the dcc table we are making the
@@ -547,6 +496,8 @@ struct dupwait_info {
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
 #define STAT_SERV    0x00100    /* this is a server connection          */
+#define STAT_WS      0x00200    /* webui websocket                      */
+#define STAT_LOSTDCC 0x00400    /* closed by remote, call lostdcc()     */
 
 /* For stripping out mIRC codes. */
 #define STRIP_COLOR     0x00001    /* remove mIRC color codes            */
@@ -597,9 +548,10 @@ typedef struct {
   char *filename;
   unsigned int mask;            /* what to send to this log                 */
   char *chname;                 /* which channel                            */
-  char szlast[LOGLINELEN];      /* for 'Last message repeated n times'
+  char *szlast;                 /* for 'Last message repeated n times'
                                  * stuff in misc.c/putlog() <cybah>         */
-  int repeats;                  /* number of times szLast has been repeated */
+  int szlast_len;               /* sizeof szlast                            */
+  int repeats;                  /* number of times szlast has been repeated */
   unsigned int flags;           /* other flags <rtc>                        */
   FILE *f;                      /* existing file                            */
 } log_t;
@@ -658,6 +610,8 @@ typedef struct {
 #define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
 #define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 #define SOCK_TCL        0x0800  /* tcl socket, don't do anything on it  */
+#define SOCK_WEBUI      0x1000  /* webui websocket pre-upgrade          */
+#define SOCK_WS         0x2000  /* webui websocket after framed upgrade */
 
 /* Flags to sock_has_data
  */
@@ -790,6 +744,19 @@ enum {
 #  define STRINGIFY1(x) #x
 #endif
 
+#ifndef MIN
+  #define MIN(a,b) (((a)<(b))?(a):(b))
+#endif
+#ifndef MAX
+  #define MAX(a,b) (((a)>(b))?(a):(b))
+#endif
+
+#define MAX_IRC_TOKENS 64 // TODO: does this make sense?
+typedef struct parsed_irc {
+  size_t argc;
+  char *argv[MAX_IRC_TOKENS];
+} parsed_irc_t;
+
 #ifdef EGG_TDNS
 #include <pthread.h>
 #define DTN_TYPE_HOSTBYIP 0
@@ -797,12 +764,13 @@ enum {
 
 /* linked list instead of array because of multi threading */
 struct dns_thread_node {
+  pthread_t thread_id;
   pthread_mutex_t mutex;
   int fildes[2];
   int type;
   sockname_t addr;
   char host[256];
-  int ok;
+  char strerror[3 * 64]; /* msg + gai_strerror() + strerror() */
   struct dns_thread_node *next;
 };
 

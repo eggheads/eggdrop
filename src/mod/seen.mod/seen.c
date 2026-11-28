@@ -11,7 +11,7 @@
  * 1.2a    1997-08-24      Minor fixes. [BB]
  */
 /*
- * Copyright (C) 1999 - 2023 Eggheads Development Team
+ * Copyright (C) 1999 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,23 +73,12 @@
 
 #include "src/mod/module.h"
 
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
-#endif
-
 #include "src/users.h"
 #include "src/chan.h"
 #include "channels.mod/channels.h"
 
 static Function *global = NULL;
-static void wordshift();
+static void wordshift(char*, char*, size_t);
 static void do_seen();
 static char *match_trigger();
 static char *getxtra();
@@ -123,7 +112,7 @@ static int pub_seen(char *nick, char *host, char *hand,
   struct chanset_t *chan = findchan_by_dname(channel);
 
   if ((chan != NULL) && channel_seen(chan)) {
-    egg_snprintf(prefix, sizeof prefix, "PRIVMSG %s :", chan->name);
+    snprintf(prefix, sizeof prefix, "PRIVMSG %s :", chan->name);
     do_seen(DP_HELP, prefix, nick, hand, chan->dname, text);
   }
   return 0;
@@ -153,7 +142,7 @@ static int dcc_seen(struct userrec *u, int idx, char *par)
 static void do_seen(int idx, char *prefix, char *nick, char *hand,
                     char *channel, char *text)
 {
-  char stuff[512], word1[512], word2[512], whotarget[128], object[128],
+  char word1[512], word2[512], whotarget[128], object[128],
        whoredirect[512], *oix, *lastonplace = 0;
   struct userrec *urec;
   struct chanset_t *chan;
@@ -164,6 +153,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   long tv;
   time_t laston = 0, work;
 
+  text[511] = 0; // truncate user input to make double sure we dont overflow
   whotarget[0]   = 0;
   whoredirect[0] = 0;
   object[0]      = 0;
@@ -175,7 +165,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     return;
   }
 
-  wordshift(word1, text);
+  wordshift(word1, text, sizeof word1);
   oix = strchr(word1, '\'');
   /* Have we got a NICK's target? */
   if (oix == word1)
@@ -186,7 +176,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       oix[-1] == 'X')))) {
     strlcpy(object, word1, sizeof object);
     object[oix - word1] = 0;
-    wordshift(word1, text);
+    wordshift(word1, text, sizeof word1);
     if (!word1[0]) {
       dprintf(idx, "%s%s's what, %s?\n", prefix, object, nick);
       return;
@@ -199,8 +189,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         m = ismember(chan, object);
         if (m) {
           onchan = 1;
-          snprintf(stuff, sizeof stuff, "%s!%s", object, m->userhost);
-          urec = get_user_by_host(stuff);
+          urec = get_user_from_member(m);
           if (!urec || !strcasecmp(object, urec->handle))
             break;
           strcat(whoredirect, object);
@@ -249,12 +238,12 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   }
   /* Keyword "my" */
   if (!strcasecmp(word1, "my")) {
-    wordshift(word1, text);
+    wordshift(word1, text, sizeof word1);
     if (!word1[0]) {
       dprintf(idx, "%sYour what, %s?\n", prefix, nick);
       return;
     }
-    /* Do I even KNOW the requestor? */
+    /* Do I even KNOW the requester? */
     if (hand[0] == '*' || !hand[0]) {
       dprintf(idx,
               "%sI don't know you, %s, so I don't know about your %s.\n",
@@ -291,12 +280,12 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   }
   /* "your" keyword */
   else if (!strcasecmp(word1, "your")) {
-    wordshift(word1, text);
+    wordshift(word1, text, sizeof word1);
     /* "your admin" */
     if (!strcasecmp(word1, "owner") || !strcasecmp(word1, "admin")) {
       if (admin[0]) {
         strlcpy(word2, admin, sizeof word2);
-        wordshift(whotarget, word2);
+        wordshift(whotarget, word2, sizeof whotarget);
         strcat(whoredirect, "My owner is ");
         strcat(whoredirect, whotarget);
         strcat(whoredirect, ", and ");
@@ -347,7 +336,7 @@ targetcont:
     if (m) {
       onchan = 1;
       snprintf(word1, sizeof word1, "%s!%s", whotarget, m->userhost);
-      urec = get_user_by_host(word1);
+      urec = get_user_from_member(m);
       if (!urec || !strcasecmp(whotarget, urec->handle))
         break;
       strcat(whoredirect, whotarget);
@@ -364,8 +353,7 @@ targetcont:
     while (chan) {
       m = chan->channel.member;
       while (m && m->nick[0]) {
-        snprintf(word2, sizeof word2, "%s!%s", m->nick, m->userhost);
-        urec = get_user_by_host(word2);
+        urec = get_user_from_member(m);
         if (urec && !strcasecmp(urec->handle, whotarget)) {
           strcat(whoredirect, whotarget);
           strcat(whoredirect, " is ");
@@ -443,7 +431,7 @@ targetcont:
     }
   }
   /* Target known, but nowhere to be seen. Give last IRC and botnet time */
-  wordshift(word1, text);
+  wordshift(word1, text, sizeof word1);
   if (!strcasecmp(word1, "anywhere"))
     cr = NULL;
   else
@@ -516,10 +504,10 @@ static char *fixnick(char *nick)
     case 'X':
     case 'z':
     case 'Z':
-      egg_snprintf(fixit, sizeof fixit, "%s'", nick);
+      snprintf(fixit, sizeof fixit, "%s'", nick);
       break;
     default:
-      egg_snprintf(fixit, sizeof fixit, "%s's", nick);
+      snprintf(fixit, sizeof fixit, "%s's", nick);
       break;
     }
   return fixit;
@@ -563,13 +551,13 @@ static char *getxtra(char *hand, char *field)
   return "";
 }
 
-static void wordshift(char *first, char *rest)
+static void wordshift(char *first, char *rest, size_t dstsize)
 {
   char *p, *q = rest;
 
   do {
     p = newsplit(&q);
-    strcpy(first, p);
+    strlcpy(first, p, dstsize);
     memmove(rest, q, strlen(q) + 1);
   } while (!strcasecmp(first, "and") || !strcasecmp(first, "or"));
 }

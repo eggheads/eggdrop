@@ -2,7 +2,7 @@
  * twitch.c -- part of twitch.mod
  *   A module that allows Eggdrop to connect to the Twitch game streaming
  *   service. Mostly.
- *   
+ *
  *   Twitch has an IRC interface, but it is only provided as a gateway and does
  *   not follow RFC in 97% of what it does. This module is intended to add some
  *   basic logging features, add some binds for twitch events, and track
@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright (C) 2020 - 2023 Eggheads Development Team
+ * Copyright (C) 2020 - 2025 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,7 @@ static int twitch_expmem()
 }
 
 /* Find a twitch channel by it's display name */
-twitchchan_t *findtchan_by_dname(char *name)
+static twitchchan_t *findtchan_by_dname(char *name)
 {
   twitchchan_t *chan;
 
@@ -87,7 +87,7 @@ twitchchan_t *findtchan_by_dname(char *name)
 }
 
 /* Remove given characters from a string */
-void remove_chars(char* str, char c) {
+static void remove_chars(char* str, char c) {
     char *pr = str, *pw = str;
     while (*pr) {
         *pw = *pr++;
@@ -360,13 +360,13 @@ static int gotwhisper(char *from, char *msg, Tcl_Obj *tags) {
     check_tcl_whisper(from, code, msg);
   }
   putlog(LOG_MSGS, "*", "[%s] %s %s", from, code, msg);
-  return 0; 
+  return 0;
 }
 
 static int gotclearmsg(char *from, char *msg, Tcl_Obj *tags) {
   char nick[NICKLEN], *chan, msgid[TOTALTAGMAX];
   char *value;
-  
+
   chan = newsplit(&msg);
   fixcolon(msg);
 
@@ -409,7 +409,7 @@ static int gothosttarget(char *from, char *msg) {
   check_tcl_hosttarget(chan, nick, viewers);
   if (nick[0] == '-') {             /* Check if it is an unhost */
     putlog(LOG_SERV, "*", "* TWITCH: %s has stopped host mode.", chan);
-  } else {   
+  } else {
     putlog(LOG_SERV, "*", "* TWITCH: %s has started hosting %s%s",
             chan, nick, (viewers) ? s : "");
   }
@@ -421,7 +421,7 @@ static int gotuserstate(char *from, char *chan, Tcl_Obj *tags) {
   int done = 0, trigger_bind = 0;
   Tcl_DictSearch s;
   Tcl_Obj *value, *key;
-  
+
   if (!(tchan = findtchan_by_dname(chan))) {    /* Find channel or, if it   */
     tchan = nmalloc(sizeof *tchan);             /* doesn't exist, create it */
     explicit_bzero(tchan, sizeof(twitchchan_t));
@@ -541,7 +541,7 @@ static int gotusernotice(char *from, char *msg, Tcl_Obj *tags) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a mystery gift", login);
   } else if (!strcmp(msgid, "giftpaidupgrade")) {
     GET_MSGTAG_VALUE_STR(tags, "msg-param-recipient-user-name", value, "USERNOTICE:GIFTPAIDUPGRADE");
-    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subsription upgrade to %s", login, value);
+    putlog(LOG_SERV, "*", "* TWITCH: %s gifted a subscription upgrade to %s", login, value);
   } else if (!strcmp(msgid, "rewardgift")) {
     putlog(LOG_SERV, "*", "* TWITCH: %s sent a reward gift", login);
   } else if (!strcmp(msgid, "anongiftpaidupgrade")) {
@@ -589,7 +589,7 @@ static int tcl_userstate STDVAR {
   Tcl_DStringAppendElement(&usdict, "mod");
   snprintf(s, sizeof s, "%d", tchan->userstate.mod);
   Tcl_DStringAppendElement(&usdict, s);
-  
+
   Tcl_AppendResult(irp, Tcl_DStringValue(&usdict), NULL);
   Tcl_DStringFree(&usdict);
   return TCL_OK;

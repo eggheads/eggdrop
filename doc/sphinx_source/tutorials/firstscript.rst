@@ -1,8 +1,8 @@
-=========================
-Writing an Eggdrop Script
-=========================
+=============================
+Writing an Eggdrop Tcl Script
+=============================
 
-So you want to write an Eggdrop script, but you don't really know where
+So you want to write an Eggdrop Tcl script, but you don't really know where
 to begin. This file will give you a very basic idea about what Eggdrop
 scripting is like, using a *very* simple script that may help you get
 started with your own scripts.
@@ -16,7 +16,7 @@ are helpful in debugging and testing your code.
 
 First, read through the script. Very few commands are listed here intentionally,
 but as you want to develop more advanced scripts, you will definitely want to
-get familiar with the `core Tcl language commands <https://www.tcl.tk/man/tcl8.6/TclCmd/contents.htm>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/using/tcl-commands.html>`_
+get familiar with the `core Tcl language commands <https://www.tcl-lang.org/man/tcl9.1/TclCmd/index.html>`_, especially the string- and list-related commands, as well as Eggdrop's own library of custom Tcl commands, located in `tcl-commands.doc <https://docs.eggheads.org/using/tcl-commands.html>`_
 
 If you have the .tcl command enabled, you can load a script by typing
 '.tcl source script/file.tcl' to load it. Otherwise, add it to your config
@@ -143,4 +143,4 @@ If you want to try these out, join #eggdrop on Libera and check your answers (an
 
     <br>
 
-Copyright (C) 2003 - 2023 Eggheads Development Team
+Copyright (C) 2003 - 2025 Eggheads Development Team
