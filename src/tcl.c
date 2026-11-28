@@ -282,15 +282,15 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (const char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
+      if (strlcpy(s1, s, sizeof s1) >= sizeof s1)
+        putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
       if (st->str == firewall) {
-        if (char *s2 = strchr(s, ':')) {
+        if (char *s2 = strchr(s1, ':')) {
           *s2++ = 0;
           firewallport = atoi(s2);
         } else
           firewallport = 1080;
       }
-      if (strlcpy(s1, s, sizeof s1) >= sizeof s1)
-        putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
       if (strlen(s1) > abs(st->max)) {
         putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
         s1[abs(st->max)] = 0;
