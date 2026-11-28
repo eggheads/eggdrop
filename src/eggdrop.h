@@ -49,10 +49,12 @@
  *       You should leave this at 32 characters and modify nick-len in the
  *       configuration file instead.
  */
-#define CHANNELLEN 80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
-#define HANDLEN    32 /* valid values 9->NICKMAX                             */
-#define NICKMAX    32 /* valid values HANDLEN->32                            */
-#define USERLEN    10
+#define CHANNELLEN  80 /* FIXME see issue #3 and issue #38 and rfc1459 <= 200 */
+#define HANDLEN     32 /* valid values 9->NICKMAX                             */
+#define NICKMAX     32 /* valid values HANDLEN->32                            */
+#define USERLEN     10
+#define REALNAMEMAX 130 /* maxreal Number 130 The maximum length of a real name.
+                           https://docs.inspircd.org/4/configuration/ */
 
 
 /* Handy string lengths */
@@ -88,6 +90,7 @@
 #define NOTENAMELEN ((HANDLEN * 2) + 1)
 #define PASSWORDMAX 30 /* highest value compatible to older eggdrop */
 #define PASSWORDLEN PASSWORDMAX + 1
+#define REALNAMELEN REALNAMEMAX + 1
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
