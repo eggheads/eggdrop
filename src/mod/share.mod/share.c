@@ -2229,6 +2229,7 @@ static cmd_t my_cmds[] = {
 
 static char *share_close()
 {
+  module_entry *me;
   int i;
   tandbuf *t, *tnext = NULL;
 
@@ -2261,6 +2262,12 @@ static char *share_close()
   rem_tcl_strings(my_strings);
   rem_builtins(H_dcc, my_cmds);
   rem_help_reference("share.help");
+
+  if ((me = module_find("compress", 1, 3))) {
+    compress_funcs = me->funcs;
+    compress_close_share();
+  }
+
   return NULL;
 }
 
@@ -2383,8 +2390,7 @@ char *share_start(Function *global_funcs)
   uff_init();
   uff_addtable(internal_uff_table);
 
-  me = module_find("compress", 1, 3);
-  if (me) {
+  if ((me = module_find("compress", 1, 3))) {
     compress_funcs = me->funcs;
     compress_start_share();
   }

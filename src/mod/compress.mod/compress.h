@@ -45,7 +45,8 @@ typedef enum {
 # define uncompress_file      ((int (*)(char *))(uncompress_funcs[7]))
 /* 8 - 11 */
 # define is_compressedfile    ((int (*)(char *))(uncompress_funcs[8]))
-# define compress_start_share ((void (*)(void))(compress_funcs[9]))
+# define compress_close_share ((void (*)(void))(compress_funcs[9]))
+# define compress_start_share ((void (*)(void))(compress_funcs[10]))
 #endif /* !MAKING_COMPRESS */
 
 #endif /* !_EGG_MOD_COMPRESS_COMPRESS_H */
