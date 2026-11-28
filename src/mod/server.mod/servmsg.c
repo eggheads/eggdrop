@@ -2093,6 +2093,7 @@ static void server_resolve_success(int servidx)
   serv = open_telnet_raw(dcc[servidx].sock, &dcc[servidx].sockname);
   if (serv < 0) {
     char *errstr = "";
+    *errstr2 = 0;
     if (errno == EINVAL) {
       errstr = IRC_VHOSTWRONGNET;
     } else if (errno == EADDRNOTAVAIL) {
@@ -2112,8 +2113,7 @@ static void server_resolve_success(int servidx)
     print_host_ssl_port(s, sizeof s, dcc[servidx].host, dcc[servidx].port);
 #endif
     putlog(LOG_SERV, "*", "%s %s (%s ip %s%s)", IRC_FAILEDCONNECT,
-           s, errstr, iptostr(&dcc[servidx].sockname.addr.sa),
-           errno == ENETUNREACH ? errstr2 : "");
+           s, errstr, iptostr(&dcc[servidx].sockname.addr.sa), errstr2);
     check_tcl_event("fail-server");
     lostdcc(servidx);
     return;
