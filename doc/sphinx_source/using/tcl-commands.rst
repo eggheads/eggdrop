@@ -13,7 +13,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.10.2. Most scripts written for the v1.3, v1.4,
+This list is accurate for Eggdrop v1.10.3. Most scripts written for the v1.3, v1.4,
 1.6, 1.8, and 1.9 series of Eggdrop should probably work in their current form, with only a very few needing minor modifications.
 Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
 
@@ -430,6 +430,36 @@ tagmsg <tags> <target>
 
 ----
 
+.. _tcl-getbatch:
+
+^^^^^^^^^^^^^^^^^^^^
+getbatch <reference>
+^^^^^^^^^^^^^^^^^^^^
+
+  Description
+     Provides information about an open IRCv3 batch session. ``reference`` is the batch reference tag, and is case-sensitive.
+
+  Returns
+     a dict of the information Eggdrop is tracking for the open batch session, or ``""`` if no batch is open under ``reference``. The dict contains the keys ``reftag``, ``type``, ``args``, ``tags``, ``parent``, ``suppress``, ``started`` and ``seq``. ``reftag`` is the batch reference tag; ``type`` is the batch type; ``args`` is everything after the type in the BATCH command; ``tags`` is a nested dict of the message tags sent with the BATCH command; ``parent`` is the reference tag of the parent batch session, or ``""`` if there is none; ``suppress`` is ``1`` if a batch bind is suppressing further bind processing of this batch session and ``0`` if not; ``started`` is a timestamp of when the batch was opened; and ``seq`` is an internally-tracked sequence number used to track batch session ordering.
+
+
+  Module
+     ``server``
+
+
+  .. admonition:: Example
+     :collapsible: closed
+     :class: tcl-example
+
+     .. code-block:: tcl
+
+        set batch [getbatch $reftag]
+        if {$batch ne ""} {
+          putlog "Batch $reftag is of type [dict get $batch type]"
+        }
+
+----
+
 .. _tcl-server-add:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -447,7 +477,7 @@ server add <ip/host> [[+]port [password]]
      ``server``
 
 
-  .. admonition:: Example — Add a server
+  .. admonition:: Example - Add a server
      :collapsible: closed
      :class: tcl-example
 
@@ -474,7 +504,7 @@ server remove <ip/host> [[+]port]
      ``server``
 
 
-  .. admonition:: Example — Remove a server
+  .. admonition:: Example - Remove a server
      :collapsible: closed
      :class: tcl-example
 
@@ -879,7 +909,7 @@ matchattr <handle> <flags> [channel]
      ``core``
 
 
-  .. admonition:: Example — Check user flags
+  .. admonition:: Example - Check user flags
      :collapsible: closed
      :class: tcl-example
 
@@ -1172,7 +1202,7 @@ newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
      ``channels``
 
 
-  .. admonition:: Example — Add a channel ban
+  .. admonition:: Example - Add a channel ban
      :collapsible: closed
      :class: tcl-example
 
@@ -2363,7 +2393,7 @@ channel add <name> [option-list]
      ``channels``
 
 
-  .. admonition:: Example — Add a channel
+  .. admonition:: Example - Add a channel
      :collapsible: closed
      :class: tcl-example
 
@@ -2390,7 +2420,7 @@ channel set <name> <options...>
      ``channels``
 
 
-  .. admonition:: Example — Change a channel setting
+  .. admonition:: Example - Change a channel setting
      :collapsible: closed
      :class: tcl-example
 
@@ -2418,7 +2448,7 @@ channel info <name>
      ``channels``
 
 
-  .. admonition:: Example — Inspect channel settings
+  .. admonition:: Example - Inspect channel settings
      :collapsible: closed
      :class: tcl-example
 
@@ -2446,7 +2476,7 @@ channel get <name> [setting]
      ``channels``
 
 
-  .. admonition:: Example — Read a channel setting
+  .. admonition:: Example - Read a channel setting
      :collapsible: closed
      :class: tcl-example
 
@@ -5288,7 +5318,7 @@ compressfile [-level <level>] <src-file> [target-file]
      ``compress``
 
 
-  .. admonition:: Example — Compress a file
+  .. admonition:: Example - Compress a file
      :collapsible: closed
      :class: tcl-example
 
@@ -5318,7 +5348,7 @@ uncompressfile <src-file> [target-file]
      ``compress``
 
 
-  .. admonition:: Example — Uncompress a file
+  .. admonition:: Example - Uncompress a file
      :collapsible: closed
      :class: tcl-example
 
@@ -6286,7 +6316,7 @@ timer <minutes> <tcl-command> [count [timerName]]
      ``core``
 
 
-  .. admonition:: Example — Schedule a timer
+  .. admonition:: Example - Schedule a timer
      :collapsible: closed
      :class: tcl-example
 
@@ -6313,7 +6343,7 @@ utimer <seconds> <tcl-command> [count [timerName]]
      ``core``
 
 
-  .. admonition:: Example — Schedule a short timer
+  .. admonition:: Example - Schedule a short timer
      :collapsible: closed
      :class: tcl-example
 
@@ -6685,7 +6715,7 @@ link [via-bot] <bot>
      ``core``
 
 
-  .. admonition:: Example — Link a bot
+  .. admonition:: Example - Link a bot
      :collapsible: closed
      :class: tcl-example
 
@@ -6766,7 +6796,7 @@ decrypt <key> <encrypted-base64-string>
      ``encryption``
 
 
-  .. admonition:: Example — Encrypt and decrypt text
+  .. admonition:: Example - Encrypt and decrypt text
      :collapsible: closed
      :class: tcl-example
 
@@ -6881,7 +6911,7 @@ dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argN]]
      ``core``
 
 
-  .. admonition:: Example — Resolve a hostname
+  .. admonition:: Example - Resolve a hostname
      :collapsible: closed
      :class: tcl-example
 
@@ -7437,7 +7467,7 @@ starttls <idx>
      ``core``
 
 
-  .. admonition:: Example — Start TLS on a connection
+  .. admonition:: Example - Start TLS on a connection
      :collapsible: closed
      :class: tcl-example
 
@@ -7522,7 +7552,7 @@ version
 ^^^^^^^
 
   Value
-     current bot version "1.1.2+pl1.10.2201"; first item is the text version, to include a patch string if present, and second item is a numerical version
+     current bot version "1.1.2+pl1 1010201"; first item is the text version, to include a patch string if present, and second item is a numerical version
 
   Module
      ``core``
@@ -7532,7 +7562,7 @@ numversion*
 ^^^^^^^^^^^
 
   Value
-     the current numeric bot version (for example: "1.10.21"). Numerical version is in the format of "MNNRRPP", where:
+     the current numeric bot version (for example: "1010201"). Numerical version is in the format of "MNNRRPP", where:
 
      .. list-table::
         :widths: 13 87
@@ -7744,7 +7774,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — MSG trigger
+  .. admonition:: Example - MSG trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -7779,7 +7809,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — DCC trigger
+  .. admonition:: Example - DCC trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -7814,7 +7844,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``filesys``
 
 
-  .. admonition:: Example — FIL trigger
+  .. admonition:: Example - FIL trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -7849,7 +7879,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — PUB trigger
+  .. admonition:: Example - PUB trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -7884,7 +7914,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — MSGM trigger
+  .. admonition:: Example - MSGM trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -7920,7 +7950,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — PUBM trigger
+  .. admonition:: Example - PUBM trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -7965,7 +7995,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — NOTC trigger
+  .. admonition:: Example - NOTC trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8001,7 +8031,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — JOIN trigger
+  .. admonition:: Example - JOIN trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8042,7 +8072,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — PART trigger
+  .. admonition:: Example - PART trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8077,7 +8107,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — SIGN trigger
+  .. admonition:: Example - SIGN trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8112,7 +8142,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — TOPC trigger
+  .. admonition:: Example - TOPC trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8147,7 +8177,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — KICK trigger
+  .. admonition:: Example - KICK trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8182,7 +8212,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — NICK trigger
+  .. admonition:: Example - NICK trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8237,7 +8267,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — MODE trigger
+  .. admonition:: Example - MODE trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8271,7 +8301,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — CTCP trigger
+  .. admonition:: Example - CTCP trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8307,7 +8337,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — CTCR trigger
+  .. admonition:: Example - CTCR trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8344,7 +8374,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — RAW trigger
+  .. admonition:: Example - RAW trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8380,7 +8410,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — BOT trigger
+  .. admonition:: Example - BOT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8415,7 +8445,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — CHON trigger
+  .. admonition:: Example - CHON trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8450,7 +8480,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — CHOF trigger
+  .. admonition:: Example - CHOF trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8485,7 +8515,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``transfer``
 
 
-  .. admonition:: Example — SENT trigger
+  .. admonition:: Example - SENT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8520,7 +8550,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``transfer``
 
 
-  .. admonition:: Example — RCVD trigger
+  .. admonition:: Example - RCVD trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8557,7 +8587,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — CHAT trigger
+  .. admonition:: Example - CHAT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8592,7 +8622,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — LINK trigger
+  .. admonition:: Example - LINK trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8627,7 +8657,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — DISC trigger
+  .. admonition:: Example - DISC trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8662,7 +8692,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — SPLT trigger
+  .. admonition:: Example - SPLT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8697,7 +8727,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — REJN trigger
+  .. admonition:: Example - REJN trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8732,7 +8762,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — FILT trigger
+  .. admonition:: Example - FILT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8768,7 +8798,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — NEED trigger
+  .. admonition:: Example - NEED trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8803,7 +8833,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — FLUD trigger
+  .. admonition:: Example - FLUD trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8839,7 +8869,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — NOTE trigger
+  .. admonition:: Example - NOTE trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8875,7 +8905,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — ACT trigger
+  .. admonition:: Example - ACT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8910,7 +8940,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — WALL trigger
+  .. admonition:: Example - WALL trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8947,7 +8977,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — BCST trigger
+  .. admonition:: Example - BCST trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -8982,7 +9012,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — CHJN trigger
+  .. admonition:: Example - CHJN trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9017,7 +9047,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — CHPT trigger
+  .. admonition:: Example - CHPT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9052,7 +9082,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — TIME trigger
+  .. admonition:: Example - TIME trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9087,7 +9117,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — AWAY trigger
+  .. admonition:: Example - AWAY trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9122,7 +9152,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — LOAD trigger
+  .. admonition:: Example - LOAD trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9158,7 +9188,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — UNLD trigger
+  .. admonition:: Example - UNLD trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9193,7 +9223,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — NKCH trigger
+  .. admonition:: Example - NKCH trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9249,7 +9279,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — EVNT trigger
+  .. admonition:: Example - EVNT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9284,7 +9314,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``transfer``
 
 
-  .. admonition:: Example — LOST trigger
+  .. admonition:: Example - LOST trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9319,7 +9349,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``transfer``
 
 
-  .. admonition:: Example — TOUT trigger
+  .. admonition:: Example - TOUT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9354,7 +9384,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — OUT trigger
+  .. admonition:: Example - OUT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9390,7 +9420,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — CRON trigger
+  .. admonition:: Example - CRON trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9425,7 +9455,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — LOG trigger
+  .. admonition:: Example - LOG trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9460,7 +9490,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — TLS trigger
+  .. admonition:: Example - TLS trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9495,7 +9525,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``core``
 
 
-  .. admonition:: Example — DIE trigger
+  .. admonition:: Example - DIE trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9530,7 +9560,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — IRCAWAY trigger
+  .. admonition:: Example - IRCAWAY trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9565,7 +9595,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — INVT trigger
+  .. admonition:: Example - INVT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9600,7 +9630,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — RAWT trigger
+  .. admonition:: Example - RAWT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9637,7 +9667,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — ACCOUNT trigger
+  .. admonition:: Example - ACCOUNT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9672,7 +9702,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``server``
 
 
-  .. admonition:: Example — ISUPPORT trigger
+  .. admonition:: Example - ISUPPORT trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9707,7 +9737,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — MONITOR trigger
+  .. admonition:: Example - MONITOR trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9742,7 +9772,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``irc``
 
 
-  .. admonition:: Example — CHGHOST trigger
+  .. admonition:: Example - CHGHOST trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9777,7 +9807,7 @@ The following is a list of bind types and how they work. Below each bind type is
      ``channels``
 
 
-  .. admonition:: Example — CHANSET trigger
+  .. admonition:: Example - CHANSET trigger
      :collapsible: closed
      :class: tcl-example
 
@@ -9795,6 +9825,41 @@ The following is a list of bind types and how they work. Below each bind type is
 
         <foobar> .chanset #lamest +autoop
         <LamestBot> Channel is #lamest, setting is autoop, value is 1
+
+.. _bind-batch:
+
+(58) BATCH (stackable)
+
+  ``bind batch <flags> <type> <proc>``
+
+  ``procname <reftag> <type> <event> <parent> <args> <tags>``
+
+  Description
+     Triggered when a server opens or closes an IRCv3 batch, or when Eggdrop discards one. flags are ignored, and type is the batch type and can contain wildcards. reftag is the reference tag identifying the batch, and is case-sensitive. type is the batch type, such as ``netsplit`` or ``chathistory``. event is ``start`` when the server opens the batch, ``end`` when the server closes it, or ``discard`` when Eggdrop administratively closes it due to either the parent batch closing first or it aging out of the table due to the server never closing it. parent is the reference tag of the enclosing batch if this batch is nested inside another, otherwise it is empty. args is the rest of the BATCH line after the type, and tags is a Tcl dict of the message tags on the line that opened the batch (empty if there were none).
+
+
+  Module
+     ``server``
+
+
+  .. admonition:: Example - BATCH trigger
+     :collapsible: closed
+     :class: tcl-example
+
+     .. code-block:: tcl
+
+        bind batch - "*" batch_proc
+
+        proc batch_proc {reftag type event parent args tags} {
+            putlog "Batch $reftag of type $type: $event, args are $args"
+        }
+
+     **Trigger and output**
+
+     .. code-block:: text
+
+        The server sends BATCH +yXNAbvnRHTRBv netsplit irc.hub other.host
+        <LamestBot> Batch yXNAbvnRHTRBv of type netsplit: start, args are irc.hub other.host
 
 .. _wildcards:
 
@@ -9838,76 +9903,80 @@ executed, which may cause unintended bind behavior.
 
 The following bind types use their proc's return value:
 
-#. ``MSG`` — Return ``1`` to make Eggdrop log the command as:
+#. ``MSG`` - Return ``1`` to make Eggdrop log the command as:
 
    .. code-block:: text
 
       (nick!user@host) !handle! command
 
-#. ``DCC`` — Return ``1`` to make Eggdrop log the command as:
+#. ``DCC`` - Return ``1`` to make Eggdrop log the command as:
 
    .. code-block:: text
 
       #handle# command
 
-#. ``FIL`` — Return ``1`` to make Eggdrop log the command as:
+#. ``FIL`` - Return ``1`` to make Eggdrop log the command as:
 
    .. code-block:: text
 
       #handle# files: command
 
-#. ``PUB`` — Return ``1`` to make Eggdrop log the command as:
+#. ``PUB`` - Return ``1`` to make Eggdrop log the command as:
 
    .. code-block:: text
 
       <<nick>> !handle! command
 
-#. ``CTCP`` — Return ``1`` to ask the bot not to process the CTCP command on
+#. ``CTCP`` - Return ``1`` to ask the bot not to process the CTCP command on
    its own. Otherwise, it may send its own response to the CTCP, including an
    error response for an unrecognized CTCP command.
 
-#. ``FILT`` — Return ``""`` to indicate the text has been processed and should
+#. ``FILT`` - Return ``""`` to indicate the text has been processed and should
    be ignored by the bot. Otherwise, the bot treats the returned text normally.
 
-#. ``FLUD`` — Return ``1`` to ask the bot not to take action on the flood.
+#. ``FLUD`` - Return ``1`` to ask the bot not to take action on the flood.
    Otherwise, it performs its normal flood punishment.
 
-#. ``RAW`` — Return ``1`` to ask the bot not to process the server text. This
+#. ``RAW`` - Return ``1`` to ask the bot not to process the server text. This
    can cause Eggdrop to miss events it would normally act on.
 
-#. ``CHON`` — Return ``1`` to ask the bot not to process the partyline join
+#. ``CHON`` - Return ``1`` to ask the bot not to process the partyline join
    event.
 
-#. ``CHOF`` — Return ``1`` to ask the bot not to process the partyline part
+#. ``CHOF`` - Return ``1`` to ask the bot not to process the partyline part
    event.
 
-#. ``WALL`` — Return ``1`` to make Eggdrop not log the message that triggered
+#. ``WALL`` - Return ``1`` to make Eggdrop not log the message that triggered
    this bind.
 
-#. ``NOTE`` — Return ``1`` to make Eggdrop stop processing the note. This
+#. ``NOTE`` - Return ``1`` to make Eggdrop stop processing the note. This
    includes stacked note bindings that would otherwise run afterward, as well
    as Eggdrop's built-in note handling routines.
 
-#. ``MSGM`` — Return ``1`` to make Eggdrop not log the message that triggered
+#. ``MSGM`` - Return ``1`` to make Eggdrop not log the message that triggered
    this bind.
 
-#. ``PUBM`` — Return ``1`` to make Eggdrop not log the message that triggered
+#. ``PUBM`` - Return ``1`` to make Eggdrop not log the message that triggered
    this bind.
 
-#. ``NOTC`` — Return ``1`` to make Eggdrop not log the message that triggered
+#. ``NOTC`` - Return ``1`` to make Eggdrop not log the message that triggered
    this bind.
 
-#. ``OUT`` — Return ``1`` to make Eggdrop drop the message instead of sending
+#. ``OUT`` - Return ``1`` to make Eggdrop drop the message instead of sending
    it. This is only meaningful for messages whose status is ``queued``.
 
-#. ``EVNT`` — Return ``1`` to make Eggdrop skip its default action for the
+#. ``EVNT`` - Return ``1`` to make Eggdrop skip its default action for the
    event. This is used for signal-type events and ignored for other events.
 
-#. ``TLS`` — Return ``1`` to disable verbose SSL information for the
+#. ``TLS`` - Return ``1`` to disable verbose SSL information for the
    handshake.
 
-#. ``RAWT`` — Return ``1`` to ask the bot not to process the server text.
+#. ``RAWT`` - Return ``1`` to ask the bot not to process the server text.
    This can cause Eggdrop to miss events it would normally act on.
 
-#. ``CHANSET`` — Return ``1`` to prevent the channel setting from being
+#. ``CHANSET`` - Return ``1`` to prevent the channel setting from being
    changed.
+
+#. ``BATCH`` - Return ``1`` on the ``start`` event to suppress the batch:
+   messages that are part of it, and of any batch nested inside it, do not
+   trigger other binds.

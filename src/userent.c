@@ -167,7 +167,7 @@ int def_tcl_get(Tcl_Interp * interp, struct userrec *u,
   return TCL_OK;
 }
 
-int def_tcl_append(Tcl_Interp * interp, struct userrec *u,
+static int def_tcl_append(Tcl_Interp * interp, struct userrec *u,
                    struct user_entry *e)
 {
   Tcl_AppendElement(interp, e->u.string);
@@ -240,7 +240,7 @@ struct user_entry_type USERENTRY_INFO = {
   def_tcl_append
 };
 
-int pass2_set(struct userrec *u, struct user_entry *e, void *new)
+static int pass2_set(struct userrec *u, struct user_entry *e, void *new)
 {
   if (e->u.extra) {
     explicit_bzero(e->u.extra, strlen(e->u.extra));
@@ -280,7 +280,7 @@ struct user_entry_type USERENTRY_PASS2 = {
   def_tcl_append
 };
 
-int pass_set(struct userrec *u, struct user_entry *e, void *buf)
+static int pass_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char *pass = buf;
   unsigned char *p;
@@ -1373,7 +1373,7 @@ struct user_entry_type USERENTRY_HOSTS = {
 };
 
 #ifdef TLS
-int fprint_unpack(struct userrec *u, struct user_entry *e)
+static int fprint_unpack(struct userrec *u, struct user_entry *e)
 {
   char *tmp;
 
@@ -1385,7 +1385,7 @@ int fprint_unpack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-int fprint_set(struct userrec *u, struct user_entry *e, void *buf)
+static int fprint_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char *fp = buf;
 
