@@ -258,13 +258,12 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
                         EGG_CONST char *name1,
                         EGG_CONST char *name2, int flags)
 {
-  char *s;
+  const char *s; // do not modify this string
+  char s1[4096]; // instead copy it to s1 and modify s1
   strinfo *st = (strinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     if ((st->str == firewall) && (firewall[0])) {
-      char s1[127];
-
       snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
@@ -281,25 +280,30 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
     }
-    s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
+    s = (const char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
-      if (strlen(s) > abs(st->max)) {
-        putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
-        s[abs(st->max)] = 0;
+      if (strlcpy(s1, s, sizeof s1) >= sizeof s1)
+        putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
+      if (st->str == firewall) {
+        if (char *s2 = strchr(s1, ':')) {
+          *s2++ = 0;
+          firewallport = atoi(s2);
+        } else
+          firewallport = 1080;
+      }
+      if (strlen(s1) > abs(st->max)) {
+        putlog(LOG_MISC, "*", "WARNING: Value for tcl variable %s truncated to %i chars", name1, abs(st->max));
+        s1[abs(st->max)] = 0;
       }
       if (st->str == botnetnick)
-        botnet_change(s);
+        botnet_change(s1);
       else if (st->str == logfile_suffix)
-        logsuffix_change(s);
-      else if (st->str == firewall) {
-        splitc(firewall, s, ':');
-        if (!firewall[0])
-          strcpy(firewall, s);
-        else
-          firewallport = atoi(s);
-      } else
-        strcpy(st->str, s);
-      if ((st->flags) && (s[0])) {
+        logsuffix_change(s1);
+      else if (st->str == firewall)
+        strcpy(firewall, s1);
+      else
+        strcpy(st->str, s1);
+      if ((st->flags) && (s1[0])) {
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
       }

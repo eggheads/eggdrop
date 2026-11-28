@@ -195,7 +195,7 @@ void splitc(char *first, char *rest, char divider)
   }
   *p = 0;
   if (first != NULL)
-    strcpy(first, rest);
+    memmove(first, rest, strlen(rest) + 1);
   if (first != rest)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
@@ -218,8 +218,13 @@ void splitcn(char *first, char *rest, char divider, size_t max)
     return;
   }
   *p = 0;
-  if (first != NULL)
-    strlcpy(first, rest, max);
+  if (first != NULL) {
+    if (max > 0) {
+      size_t len = MIN(strlen(rest), max - 1);
+      memmove(first, rest, len);
+      first[len] = 0;
+    }
+  }
   if (first != rest)
     memmove(rest, p + 1, strlen(p + 1) + 1);
 }
