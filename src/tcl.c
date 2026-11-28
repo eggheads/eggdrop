@@ -153,7 +153,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
   coupletinfo *cp = (coupletinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    egg_snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
+    snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -199,9 +199,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
     } else if ((int *) ii->var == &userfile_perm) {
-      egg_snprintf(s1, sizeof s1, "0%o", userfile_perm);
+      snprintf(s1, sizeof s1, "0%o", userfile_perm);
     } else
-      egg_snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
+      snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -265,7 +265,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     if ((st->str == firewall) && (firewall[0])) {
       char s1[127];
 
-      egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
+      snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
@@ -283,8 +283,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
-      if (strlen(s) > abs(st->max))
+      if (strlen(s) > abs(st->max)) {
+        putlog(LOG_MISC, "*", "WARNING: Value for %s truncated to %i chars", name1, abs(st->max));
         s[abs(st->max)] = 0;
+      }
       if (st->str == botnetnick)
         botnet_change(s);
       else if (st->str == logfile_suffix)
@@ -369,6 +371,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   while (table->name) {
     if (table->cdata) {
       info = nmalloc(sizeof *info);
+      strtot += sizeof(struct tcl_call_stringinfo);
       info->proc = table->callback;
       info->cd = table->cdata;
       Tcl_CreateObjCommand(interp, table->name, tcl_call_stringproc_cd, info, tcl_cleanup_stringinfo);
@@ -513,6 +516,7 @@ static tcl_ints def_tcl_ints[] = {
   {"prefer-ipv6",           &pref_af,              0},
 #endif
   {"show-uname",            &show_uname,           0},
+  {"share-greet",           &share_greet,          0},
   {NULL,                    NULL,                  0}
 };
 
@@ -693,18 +697,19 @@ int needs_unicodesup(const char *str)
  * - encode high/low as 3-byte utf-8 strings
  * the length of the result could be len/4*6 bytes long, so
  * to avoid frequent reallocation/string appending, a temporary buffer is used
- * for long strings (>512 characters, which does not apply to IRC lines) and assembled to a Tcl_DString
- * for short strings the 512 character buffer is enough
+ * for long strings (>512 characters, which does not apply to IRC lines) chunks are assembled to a Tcl_DString
+ * for short strings the 512/4*6 character buffer is enough
  */
 Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
 {
-  int stridx = 0, bufidx = 0;
-  char buf[512];
+  int stridx = 0, bufidx = 0, use_dstring = 0;
+  char buf[768];
   Tcl_DString ds;
   Tcl_Obj *result;
 
   /* chunked */
-  if (len > sizeof buf) {
+  if (len > 512) {
+    use_dstring = 1;
     Tcl_DStringInit(&ds);
   }
 
@@ -741,12 +746,12 @@ Tcl_Obj *egg_string_unicodesup_surrogate(const char *oldstr, int len)
         buf[bufidx++] = oldstr[stridx++];
       }
     }
-    if (len > sizeof buf && bufidx > sizeof buf - 6) {
+    if (use_dstring && bufidx > sizeof buf - 6) {
       Tcl_DStringAppend(&ds, buf, bufidx);
       bufidx = 0;
     }
   }
-  if (len > sizeof buf && bufidx) {
+  if (use_dstring && bufidx) {
     Tcl_DStringAppend(&ds, buf, bufidx);
     result = Tcl_NewStringObj(Tcl_DStringValue(&ds), Tcl_DStringLength(&ds));
     Tcl_DStringFree(&ds);

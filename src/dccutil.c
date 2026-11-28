@@ -155,7 +155,7 @@ void dprintf(int idx, const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(buf, LOGLINEMAX-1, format, va);
+  vsnprintf(buf, LOGLINEMAX-1, format, va);
   va_end(va);
   /* We can not use the return value vsnprintf() to determine where
    * to null terminate. The C99 standard specifies that vsnprintf()
@@ -223,7 +223,7 @@ void chatout(const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -248,7 +248,7 @@ void chanout_but(int x, int chan, const char *format, ...)
 
   va_start(va, format);
 
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -353,6 +353,18 @@ void lostdcc(int n)
   dcc[n].type = &DCC_LOST;
 }
 
+/* Mark an entry as lost, to be reaped in the mainloop asynchronously.
+ * Avoids reentrancy issues
+ */
+void lostdcc_deferred(int n)
+{
+  /* sanity check */
+  if (n < 0 || n >= max_dcc) {
+    return;
+  }
+  dcc[n].status |= STAT_LOSTDCC;
+}
+
 /* Remove entry from dcc list. Think twice before using this function,
  * because it invalidates any variables that point to a specific dcc
  * entry!
@@ -368,7 +380,7 @@ void removedcc(int n)
     nfree(dcc[n].u.other);
   dcc_total--;
   if (n < dcc_total)
-    memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
+    dcc[n] = dcc[dcc_total];
   else
     egg_bzero(&dcc[n], sizeof(struct dcc_t));   /* drummer */
 }
@@ -385,6 +397,12 @@ void dcc_remove_lost(void)
       dcc[i].sock = -1;
       removedcc(i);
       i--;
+    } else if (dcc[i].status & STAT_LOSTDCC) {
+      /* intentionally after DCC_LOST cleanup,
+       * so it doesn't clean immediately
+       */
+      dcc[i].status &= ~STAT_LOSTDCC;
+      lostdcc(i);
     }
   }
 }
@@ -412,13 +430,13 @@ void tell_dcc(int zidx)
   if (j > 40)
     j = 40;
 
-  egg_snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-6s %%-%u.%us %%s\n",
+  snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-6s %%-%u.%us %%s\n",
                j, j, nicklen, nicklen);
   dprintf(zidx, format, "IDX", "ADDR", "+ PORT", "NICK", "TYPE  INFO");
   dprintf(zidx, format, "---",
           "------------------------------------------------------", "------",
           "--------------------------------", "----- ---------");
-  egg_snprintf(format, sizeof format, "%%-3d %%-%u.%us %%c%%5d %%-%u.%us %%s\n",
+  snprintf(format, sizeof format, "%%-3d %%-%u.%us %%c%%5d %%-%u.%us %%s\n",
                j, j, nicklen, nicklen);
 
   /* Show server */
@@ -493,7 +511,7 @@ void *_get_data_ptr(int size, char *file, int line)
   char x[1024];
 
   p = strrchr(file, '/');
-  egg_snprintf(x, sizeof x, "dccutil.c:%s", p ? p + 1 : file);
+  snprintf(x, sizeof x, "dccutil.c:%s", p ? p + 1 : file);
   p = n_malloc(size, x, line);
 #else
   p = nmalloc(size);
@@ -557,16 +575,15 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
   /* Free old structure. */
   if (dcc[i].type && dcc[i].type->kill)
     dcc[i].type->kill(i, dcc[i].u.other);
-  else if (dcc[i].u.other) {
+  else if (dcc[i].u.other)
     nfree(dcc[i].u.other);
-    dcc[i].u.other = NULL;
-  }
 
   dcc[i].type = type;
   if (xtra_size) {
     dcc[i].u.other = nmalloc(xtra_size);
     egg_bzero(dcc[i].u.other, xtra_size);
-  }
+  } else
+    dcc[i].u.other = NULL;
 }
 
 int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
@@ -588,7 +605,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
       if ((dcc[idx].type->flags & DCT_CHAT) && (chat->channel >= 0)) {
         char x[1024];
 
-        egg_snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);
+        snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);
         chanout_but(idx, chat->channel, "*** %s", x);
         if (chat->channel < GLOBAL_CHANS)
           botnet_send_part_idx(idx, x);
@@ -622,7 +639,7 @@ void do_boot(int idx, char *by, char *reason)
   if ((dcc[idx].type->flags & DCT_CHAT) && (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick,
+    snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick,
                  reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < GLOBAL_CHANS)

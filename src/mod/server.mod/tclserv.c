@@ -241,12 +241,12 @@ static int tcl_tagmsg STDVAR {
   p = strtok(tagdict, " ");
   while (p != NULL) {
     if ((i % 2) != 0) {
-      taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
+      taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "%s", p);
     } else {
       if (strcmp(p, "{}") != 0) {
-        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
+        taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, "=%s;", p);
       } else {
-        taglen += egg_snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
+        taglen += snprintf(tag + taglen, CLITAGMAX - 9 - taglen, ";");
       }
     }
     i++;
@@ -427,6 +427,44 @@ static int tcl_monitor STDVAR
     return TCL_ERROR;
   }
 }
+
+/* Return what Eggdrop is tracking for an open batch as a Tcl dict, or an
+ * empty string if no batch is open under that reference tag. Reference tags
+ * are case-sensitive, so the lookup is too.
+ */
+static int tcl_getbatch STDVAR {
+  batch_t *b;
+  Tcl_Obj *batchinfo;
+
+  BADARGS(2, 2, " batch-reference-tag");
+
+  b = batch_find(argv[1]);
+  if (!b) {
+    Tcl_AppendResult(irp, "", NULL);
+    return TCL_OK;
+  }
+  batchinfo = Tcl_NewDictObj();
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("reftag", -1),
+          Tcl_NewStringObj(b->reftag, -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("type", -1),
+          Tcl_NewStringObj(b->type, -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("args", -1),
+          Tcl_NewStringObj(b->args, -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("tags", -1),
+          Tcl_NewStringObj(b->tags, -1));
+  /* The parent is a pointer internally, scripts get its reference tag */
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("parent", -1),
+          Tcl_NewStringObj(b->parent ? b->parent->reftag : "", -1));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("suppress", -1),
+          Tcl_NewIntObj(b->suppress));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("started", -1),
+          Tcl_NewWideIntObj((Tcl_WideInt) b->started));
+  Tcl_DictObjPut(irp, batchinfo, Tcl_NewStringObj("seq", -1),
+          Tcl_NewWideIntObj((Tcl_WideInt) b->seq));
+  Tcl_SetObjResult(irp, batchinfo);
+  return TCL_OK;
+}
+
 
 static int tcl_jump STDVAR
 {
@@ -663,5 +701,6 @@ static tcl_cmds my_tcl_cmds[] = {
   {"getaccount",    tcl_getaccount},
   {"isidentified",  tcl_isidentified},
   {"monitor",       tcl_monitor},
+  {"getbatch",      tcl_getbatch},
   {NULL,         NULL}
 };

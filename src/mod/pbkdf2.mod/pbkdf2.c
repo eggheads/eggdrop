@@ -15,7 +15,6 @@ static Function *global = NULL; /* before tclpbkdf2.c */
 
 #define MODULE_NAME "encryption2"
 
-#include <resolv.h> /* base64 encode b64_ntop() and base64 decode b64_pton() */
 #include <openssl/err.h>
 #include <openssl/rand.h>
 

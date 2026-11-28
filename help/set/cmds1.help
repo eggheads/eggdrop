@@ -1,7 +1,7 @@
 %{help=set botnet-nick}%{+n}
 ###  %bset botnet-nick%b <nickname>
    If you want to use a different nickname on the botnet than you
-   use on IRC (i.e. if you're on an un-trusted botnet), set this
+   use on IRC (i.e. if you're on an untrusted botnet), set this
    setting to the nick you would like to use.
 %{help=set userfile}%{+n}
 ###  %bset userfile%b <filename>
@@ -40,7 +40,7 @@
    variable to specify the listening address.
 %{help=set nat-ip}%{+n}
 ###  %bset nat-ip%b <ip-address>
-   If you have a NAT firewall (you box has an IP in one of the
+   If you have a NAT firewall (your box has an IP in one of the
    following ranges: 192.168.0.0-192.168.255.255,
    172.16.0.0-172.31.255.255, 10.0.0.0-10.255.255.255 and your
    firewall transparently changes your address to a unique address

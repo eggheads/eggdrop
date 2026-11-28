@@ -340,17 +340,8 @@ void remparty(char *bot, int sock)
         nfree(party[i].from);
       if (party[i].away)
         nfree(party[i].away);
-      if (i < parties) {
-        strcpy(party[i].bot, party[parties].bot);
-        strcpy(party[i].nick, party[parties].nick);
-        party[i].chan = party[parties].chan;
-        party[i].sock = party[parties].sock;
-        party[i].flag = party[parties].flag;
-        party[i].status = party[parties].status;
-        party[i].timer = party[parties].timer;
-        party[i].from = party[parties].from;
-        party[i].away = party[parties].away;
-      }
+      if (i < parties)
+        party[i] = party[parties];
     }
 }
 
@@ -476,11 +467,11 @@ void answer_local_whom(int idx, int chan)
   if (botnicklen < 9)
     botnicklen = 9;
 
-  egg_snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n",
+  snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n",
                nicklen, botnicklen);
   dprintf(idx, format, " Nick", " Bot", " Host");
   dprintf(idx, format, "----------", "---------", "--------------------");
-  egg_snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n",
+  snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n",
                nicklen, botnicklen);
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT) {

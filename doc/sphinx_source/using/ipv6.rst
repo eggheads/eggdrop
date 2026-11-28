@@ -1,5 +1,5 @@
 IPv6 support
-Last revised: Mar 24, 2021
+Last revised: Apr 26, 2026
 
 ============
 IPv6 support
@@ -28,12 +28,8 @@ Installation
 system supports IPv6 and will enable it automatically. You can override this
 behavior and manually enable or disable IPv6 with ./configure --enable-ipv6
 or ./configure --disable-ipv6.
-Older operating systems may have limited or no support for IPv6. Linux 2.4 &
-2.6, FreeBSD, NetBSD, OpenBSD and Mac OS X all have full IPv6 support.
-MS Windows has proper support beginning with Windows Vista. XP's IPv6 stack
-has some limitations and needs to be manually installed and enabled. Cygwin
-includes IPv6 only since version 1.7. Unofficial patches are available for
-1.5.x.
+All major operating systems and Cygwin have had full support for IPv6 for a
+heck of a long time.
 
 -----
 Usage

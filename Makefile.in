@@ -167,7 +167,7 @@ MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 all: @DEFAULT_MAKE@
 
 eggclean:
-	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~
+	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~ *.gcda *.gcno
 	@cd doc && $(MAKE) clean
 	@cd scripts && $(MAKE) clean
 	@cd src && $(MAKE) clean
@@ -329,7 +329,7 @@ sinstall: static
 	@$(MAKE) ainstall
 
 ainstall: install-bin install-modules install-data install-text \
-install-help install-language install-filesys install-doc install-scripts
+install-help install-language install-filesys install-webui install-doc install-scripts
 	@$(install-end)
 
 install-start:
@@ -433,6 +433,7 @@ install-text: install-start
 	if test ! -f $(DEST)/text/banner; then \
 		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
 	fi
+	cd src/mod/ && $(MAKE_INSTALL) install-text
 
 install-help: install-start
 	+@echo "Copying help files." && \
@@ -483,6 +484,25 @@ install-filesys: install-start
 		echo "Creating skeletal filesystem subdirectories."; \
 		$(MKDIR_P) $(DEST)/filesys >/dev/null; \
 		$(MKDIR_P) $(DEST)/filesys/incoming >/dev/null; \
+	fi
+
+# We cannot do this in webui.mod Makefile because there is no make target and
+# we cannot create such make target without breaking every other mod Makefile.
+# The only alternative i see would be to hardcode the 3 files into char arrays
+# but this is ugly. File systems were invented for a reason.
+install-webui: install-start
+	@if test ! -d $(DEST)/webui; then \
+		echo "Creating webui subdirectory."; \
+		$(MKDIR_P) $(DEST)/webui >/dev/null; \
+	fi && \
+	if test ! -f $(DEST)/webui/apple-touch-icon.png; then \
+		$(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/apple-touch-icon.png $(DEST)/webui/; \
+	fi && \
+	if test ! -f $(DEST)/webui/favicon.ico; then \
+		$(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/favicon.ico $(DEST)/webui/; \
+	fi && \
+	if test ! -f $(DEST)/webui/index.html; then \
+	        $(INSTALL_DATA) $(srcdir)/src/mod/webui.mod/index.html $(DEST)/webui/; \
 	fi
 
 install-doc: install-start
